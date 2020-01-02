@@ -1,0 +1,6 @@
+api:
+  threads: 12
+  customerKey:
+  customerSecret:
+  accessToken:
+  accessTokenSecret:

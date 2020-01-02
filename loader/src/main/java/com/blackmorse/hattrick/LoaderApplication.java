@@ -14,6 +14,8 @@ public class LoaderApplication {
 
     @Bean
     public CommandLineRunner runner(ApplicationContext ctx) {
-        return args -> {};
+        return args -> {
+
+        };
     }
 }
