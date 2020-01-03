@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Arrays;
+
 @SpringBootApplication
 public class LoaderApplication {
     public static void main(String[] args) {
@@ -15,7 +17,7 @@ public class LoaderApplication {
     @Bean
     public CommandLineRunner runner(ApplicationContext ctx) {
         return args -> {
-
+            ctx.getBean(Loader.class).load(Arrays.asList(3019));
         };
     }
 }
