@@ -2,7 +2,9 @@ package com.blackmorse.hattrick.api;
 
 import com.blackmorse.hattrick.HattrickApi;
 import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails;
+import com.blackmorse.hattrick.api.matchdetails.model.MatchDetails;
 import com.blackmorse.hattrick.api.matchesarchive.model.MatchesArchive;
+import com.blackmorse.hattrick.api.matchlineup.model.MatchLineUp;
 import com.blackmorse.hattrick.api.nationalteamdetails.model.NationalTeamDetails;
 import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.search.model.Search;
@@ -72,5 +74,13 @@ public class Hattrick {
 
     public MatchesArchive getArchiveMatches(Long teamId, Integer season) {
         return hattrickApi.matchesArchive().season(season).teamId(teamId).execute();
+    }
+
+    public MatchLineUp getMatchLineUp(Long matchId, Long teamId) {
+        return hattrickApi.matchLineUp().matchId(matchId).teamId(teamId).execute();
+    }
+
+    public MatchDetails getMatchDetails(Long matchId) {
+        return hattrickApi.matchDetails().matchId(matchId).execute();
     }
 }
