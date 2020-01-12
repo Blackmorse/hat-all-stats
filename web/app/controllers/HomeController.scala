@@ -11,6 +11,12 @@ import play.api.mvc._
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
 
+
+  def leagueUnit = Action { implicit  request: Request[AnyContent] =>
+
+    Ok(views.html.index())
+  }
+
   /**
    * Create an Action to render an HTML page.
    *
