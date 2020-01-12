@@ -4,3 +4,13 @@ api:
   customerSecret:
   accessToken:
   accessTokenSecret:
+
+spring:
+  datasource:
+    url:
+    driver-class-name:
+
+clickhouse:
+  batchSize:
+    match:
+    players:

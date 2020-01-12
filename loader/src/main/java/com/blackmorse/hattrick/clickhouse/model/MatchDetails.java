@@ -1,4 +1,4 @@
-package com.blackmorse.hattrick.clickhouse;
+package com.blackmorse.hattrick.clickhouse.model;
 
 import lombok.Builder;
 import lombok.Data;

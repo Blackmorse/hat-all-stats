@@ -8,6 +8,7 @@ import com.blackmorse.hattrick.api.matchlineup.model.MatchLineUp;
 import com.blackmorse.hattrick.api.nationalteamdetails.model.NationalTeamDetails;
 import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.search.model.Search;
+import com.blackmorse.hattrick.api.worlddetails.model.WorldDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -82,5 +83,9 @@ public class Hattrick {
 
     public MatchDetails getMatchDetails(Long matchId) {
         return hattrickApi.matchDetails().matchId(matchId).execute();
+    }
+
+    public WorldDetails getWorldDetails() {
+        return hattrickApi.worldDetails().execute();
     }
 }
