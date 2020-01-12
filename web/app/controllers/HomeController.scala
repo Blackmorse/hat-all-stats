@@ -1,5 +1,6 @@
 package controllers
 
+import hattrick.Hattrick
 import javax.inject._
 import play.api._
 import play.api.mvc._
@@ -9,12 +10,14 @@ import play.api.mvc._
  * application's home page.
  */
 @Singleton
-class HomeController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+class HomeController @Inject()(val controllerComponents: ControllerComponents,
+                               hattrick: Hattrick,
+                               configuration: Configuration) extends BaseController {
 
 
-  def leagueUnit = Action { implicit  request: Request[AnyContent] =>
-
-    Ok(views.html.index())
+  def leagueUnit(leagueUnitId: Long) = Action { implicit  request: Request[AnyContent] =>
+    val leagueDetails = hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute()
+    Ok(views.html.league(leagueDetails))
   }
 
   /**
@@ -25,6 +28,14 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * a path of `/`.
    */
   def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
+    val leagueId = configuration.get[Int]("hattrick.defaultCountryId")
+    val twoOneId = hattrick.api.search()
+      .searchType(3)
+      .searchLeagueId(leagueId)
+      .searchString("II.1")
+      .execute()
+        .getSearchResults.get(0)
+        .getResultId
+    Redirect(routes.HomeController.leagueUnit(twoOneId - 1))
   }
 }
