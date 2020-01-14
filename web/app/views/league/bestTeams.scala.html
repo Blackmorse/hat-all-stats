@@ -4,11 +4,13 @@
     <table>
         <tr>
             <th>Team</th>
+            <th>League</th>
             <th>HatStats</th>
         </tr>
         @for(team <- bestTeams) {
         <tr>
             <td>@team.teamName</td>
+            <td>@team.leagueUnitName</td>
             <td>@team.hatStats</td>
         </tr>
         }
