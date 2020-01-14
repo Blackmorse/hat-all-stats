@@ -11,6 +11,7 @@ public class MatchDetails {
     private Integer leagueId;
     private Integer divisionLevel;
     private Integer leagueUnitId;
+    private String leagueUnitName;
     private Long teamId;
     private String teamName;
     private Date date;

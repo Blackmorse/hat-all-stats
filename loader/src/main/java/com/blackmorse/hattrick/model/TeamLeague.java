@@ -9,6 +9,7 @@ public class TeamLeague {
     private final Integer leagueId;
     private final Integer leagueLevel;
     private final Integer leagueLevelUnitId;
+    private final String leagueUnitName;
     private final Integer currentMatchRound;
     private final Long teamId;
     private final String teamName;

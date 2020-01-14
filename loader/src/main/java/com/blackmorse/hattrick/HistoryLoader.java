@@ -79,6 +79,7 @@ public class HistoryLoader {
                                 .leagueId(league.getLeagueId())
                                 .leagueLevel(league.getLeagueLevel())
                                 .leagueLevelUnitId(league.getLeagueLevelUnitId())
+                                .leagueUnitName(league.getLeagueLevelUnitName())
                                 .currentMatchRound(league.getCurrentMatchRound())
                                 .teamId(team.getTeamId())
                                 .teamName(team.getTeamName())
@@ -104,7 +105,7 @@ public class HistoryLoader {
                         .map(match -> TeamLeagueMatch.builder()
                                 .matchId(match.getMatchId())
                                 .date(match.getMatchDate())
-                                .leagueTeamId(teamLeague)
+                                .teamLeague(teamLeague)
                             .build())
         );
     }
@@ -114,13 +115,13 @@ public class HistoryLoader {
                 .getTeam().getLineUp()
                 .stream()
                 .map(lineUpPlayer -> PlayerRating.builder()
-                        .leagueId(teamLeagueMatch.getLeagueTeamId().getLeagueId())
-                        .divisionLevel(teamLeagueMatch.getLeagueTeamId().getLeagueLevel())
-                        .leagueUnitId(teamLeagueMatch.getLeagueTeamId().getLeagueLevelUnitId())
-                        .teamId(teamLeagueMatch.getLeagueTeamId().getTeamId())
-                        .teamName(teamLeagueMatch.getLeagueTeamId().getTeamName())
+                        .leagueId(teamLeagueMatch.getTeamLeague().getLeagueId())
+                        .divisionLevel(teamLeagueMatch.getTeamLeague().getLeagueLevel())
+                        .leagueUnitId(teamLeagueMatch.getTeamLeague().getLeagueLevelUnitId())
+                        .teamId(teamLeagueMatch.getTeamLeague().getTeamId())
+                        .teamName(teamLeagueMatch.getTeamLeague().getTeamName())
                         .date(teamLeagueMatch.getDate())
-                        .round(teamLeagueMatch.getLeagueTeamId().getCurrentMatchRound())
+                        .round(teamLeagueMatch.getTeamLeague().getCurrentMatchRound())
                         .matchId(teamLeagueMatch.getMatchId())
                         .playerId(lineUpPlayer.getPlayerId())
                         .roleId(lineUpPlayer.getRoleId().getValue())
@@ -137,20 +138,21 @@ public class HistoryLoader {
         log.info("Got {} matches", matchesCount.incrementAndGet());
         com.blackmorse.hattrick.api.matchdetails.model.MatchDetails matchDetails = hattrick.getMatchDetails(teamLeagueMatch.getMatchId());
         HomeAwayTeam homeAwayTeam;
-        if (matchDetails.getMatch().getHomeTeam().getHomeTeamId().equals(teamLeagueMatch.getLeagueTeamId().getTeamId())) {
+        if (matchDetails.getMatch().getHomeTeam().getHomeTeamId().equals(teamLeagueMatch.getTeamLeague().getTeamId())) {
             homeAwayTeam = matchDetails.getMatch().getHomeTeam();
         } else {
             homeAwayTeam = matchDetails.getMatch().getAwayTeam();
         }
 
         return MatchDetails.builder()
-                .leagueId(teamLeagueMatch.getLeagueTeamId().getLeagueId())
-                .divisionLevel(teamLeagueMatch.getLeagueTeamId().getLeagueLevel())
-                .leagueUnitId(teamLeagueMatch.getLeagueTeamId().getLeagueLevelUnitId())
-                .teamId(teamLeagueMatch.getLeagueTeamId().getTeamId())
-                .teamName(teamLeagueMatch.getLeagueTeamId().getTeamName())
+                .leagueId(teamLeagueMatch.getTeamLeague().getLeagueId())
+                .divisionLevel(teamLeagueMatch.getTeamLeague().getLeagueLevel())
+                .leagueUnitId(teamLeagueMatch.getTeamLeague().getLeagueLevelUnitId())
+                .leagueUnitName(teamLeagueMatch.getTeamLeague().getLeagueUnitName())
+                .teamId(teamLeagueMatch.getTeamLeague().getTeamId())
+                .teamName(teamLeagueMatch.getTeamLeague().getTeamName())
                 .date(matchDetails.getMatch().getMatchDate())
-                .round(teamLeagueMatch.getLeagueTeamId().getCurrentMatchRound())
+                .round(teamLeagueMatch.getTeamLeague().getCurrentMatchRound())
                 .matchId(matchDetails.getMatch().getMatchId())
                 .formation(homeAwayTeam.getFormation())
                 .tacticType(homeAwayTeam.getTacticType())

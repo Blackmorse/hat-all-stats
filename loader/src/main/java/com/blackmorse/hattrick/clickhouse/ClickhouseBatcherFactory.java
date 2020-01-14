@@ -1,5 +1,6 @@
 package com.blackmorse.hattrick.clickhouse;
 
+import com.blackmorse.hattrick.clickhouse.mappers.MatchDetailsMapper;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.clickhouse.model.PlayerRating;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 @Component
@@ -19,47 +19,22 @@ public class ClickhouseBatcherFactory {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ExecutorService executorService;
     private final Integer matchBatchSize;
+    private final MatchDetailsMapper matchDetailsMapper;
 
     @Autowired
     public ClickhouseBatcherFactory(NamedParameterJdbcTemplate jdbcTemplate,
                                     @Qualifier("clickhouseExecutor") ExecutorService executorService,
-                                    @Value("${clickhouse.batchSize.match}") Integer matchBatchSize) {
+                                    @Value("${clickhouse.batchSize.match}") Integer matchBatchSize,
+                                    MatchDetailsMapper matchDetailsMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.executorService = executorService;
         this.matchBatchSize = matchBatchSize;
+        this.matchDetailsMapper = matchDetailsMapper;
     }
 
     public  ClickhouseBatcher<MatchDetails> createMatchDetails() {
-        String sql = "insert into hattrick.match_details (league_id, division_level, league_unit_id, team_id, team_name, time, round, match_id, formation, tactic_type, tactic_skill, rating_midfield, rating_right_def, rating_left_def, rating_mid_def, rating_right_att, rating_mid_att, rating_left_att, rating_indirect_set_pieces_def, rating_indirect_set_pieces_att) values " +
-                "(:league_id, :division_level, :league_unit_id, :team_id, :team_name, :time, :round, :match_id, :formation, :tactic_type, :tactic_skill, :rating_midfield, :rating_right_def, :rating_left_def, :rating_mid_def, :rating_right_att, :rating_mid_att, :rating_left_att, :rating_indirect_set_pieces_def, :rating_indirect_set_pieces_att)";
-
-
-        Function<MatchDetails, Map<String, Object>> jdbcParamsCreator = matchDetails -> {
-            Map<String, Object> map = new HashMap<>();
-
-            map.put("league_id", matchDetails.getLeagueId());
-            map.put("division_level", matchDetails.getDivisionLevel());
-            map.put("league_unit_id", matchDetails.getLeagueUnitId());
-            map.put("team_id", matchDetails.getTeamId());
-            map.put("team_name", matchDetails.getTeamName());
-            map.put("time", matchDetails.getDate());
-            map.put("round", matchDetails.getRound());
-            map.put("match_id", matchDetails.getMatchId());
-            map.put("formation", matchDetails.getFormation());
-            map.put("tactic_type", matchDetails.getTacticType());
-            map.put("tactic_skill", matchDetails.getTacticSkill());
-            map.put("rating_midfield", matchDetails.getRatingMidfield());
-            map.put("rating_right_def", matchDetails.getRatingRightDef());
-            map.put("rating_left_def", matchDetails.getRatingLeftDef());
-            map.put("rating_mid_def", matchDetails.getRatingMidDef());
-            map.put("rating_right_att", matchDetails.getRatingRightAtt());
-            map.put("rating_mid_att", matchDetails.getRatingMidAtt());
-            map.put("rating_left_att", matchDetails.getRatingLeftAtt());
-            map.put("rating_indirect_set_pieces_def", matchDetails.getRatingIndirectSetPiecesDef());
-            map.put("rating_indirect_set_pieces_att", matchDetails.getRatingIndirectSetPiecesAtt());
-
-            return map;
-        };
+        String sql = "insert into hattrick.match_details (league_id, division_level, league_unit_id, league_unit_name, team_id, team_name, time, round, match_id, formation, tactic_type, tactic_skill, rating_midfield, rating_right_def, rating_left_def, rating_mid_def, rating_right_att, rating_mid_att, rating_left_att, rating_indirect_set_pieces_def, rating_indirect_set_pieces_att) values " +
+                "(:league_id, :division_level, :league_unit_id, :league_unit_name, :team_id, :team_name, :time, :round, :match_id, :formation, :tactic_type, :tactic_skill, :rating_midfield, :rating_right_def, :rating_left_def, :rating_mid_def, :rating_right_att, :rating_mid_att, :rating_left_att, :rating_indirect_set_pieces_def, :rating_indirect_set_pieces_att)";
 
         return ClickhouseBatcher.<MatchDetails>builder()
                 .maxBatchSize(matchBatchSize)
@@ -67,7 +42,7 @@ public class ClickhouseBatcherFactory {
                 .tableName("hattrick.match_details")
                 .template(jdbcTemplate)
                 .baseSql(sql)
-                .jdbcParamsCreator(jdbcParamsCreator)
+                .jdbcParamsCreator(matchDetailsMapper)
                 .build();
     }
 

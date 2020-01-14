@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 @Builder
 public class TeamLeagueMatch {
-    private final TeamLeague leagueTeamId;
+    private final TeamLeague teamLeague;
     private final Long matchId;
     private final Date date;
 }
