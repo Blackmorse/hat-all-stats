@@ -1,9 +1,13 @@
 package controllers
 
+import databases.ClickhouseDAO
 import hattrick.Hattrick
 import javax.inject._
 import play.api._
 import play.api.mvc._
+
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -11,12 +15,20 @@ import play.api.mvc._
  */
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents,
-                               hattrick: Hattrick,
-                               configuration: Configuration) extends BaseController {
+                               val hattrick: Hattrick,
+                               val clickhouseDAO: ClickhouseDAO,
+                               val configuration: Configuration) extends BaseController {
 
 
   def leagueUnit(leagueUnitId: Long) = Action { implicit  request: Request[AnyContent] =>
     val leagueDetails = hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute()
+
+
+//    clickhouse.query(" select team_id, team_name, toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats from hattrick.match_details where division_level = 1 group by team_id, team_name order by hatstats desc limit 8")
+//      .onComplete(println(_))
+
+    clickhouseDAO.bestTeams.onComplete(println(_))
+
     Ok(views.html.league(leagueDetails))
   }
 
