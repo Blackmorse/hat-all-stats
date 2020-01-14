@@ -1,0 +1,15 @@
+#leftBar {
+  width: 125px;
+  border: 1px solid black
+}
+
+#header {
+  height: 70px;
+  align: center;
+  border: 1px solid black;
+  vertical-align: middle;
+}
+
+#content {
+  border: 1px solid black
+}
