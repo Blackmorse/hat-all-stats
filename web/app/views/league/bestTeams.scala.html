@@ -1,5 +1,16 @@
-@(leagueName: String, leagueId: Int)
+@(leagueName: String, leagueId: Int, bestTeams: List[models.clickhouse.AvgTeamRating])
 
-@main("Country", header(leagueName), leftBar(leagueId)) {
-    This is a content
+@main(leagueName, header(leagueName), leftBar(leagueId)) {
+    <table>
+        <tr>
+            <th>Team</th>
+            <th>HatStats</th>
+        </tr>
+        @for(team <- bestTeams) {
+        <tr>
+            <td>@team.teamName</td>
+            <td>@team.hatStats</td>
+        </tr>
+        }
+    </table>
 }

@@ -15,12 +15,11 @@ import ExecutionContext.Implicits.global
  */
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents,
-                               val hattrick: Hattrick,
-                               val clickhouseDAO: ClickhouseDAO,
+                               val leagueController: LeagueController,
                                val configuration: Configuration) extends BaseController {
 
 
   def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.league.bestTeams("Russia", configuration.get[Int]("hattrick.defaultCountryId")))
+    Redirect(routes.LeagueController.bestTeams(configuration.get[Int]("hattrick.defaultLeagueId")))
   }
 }
