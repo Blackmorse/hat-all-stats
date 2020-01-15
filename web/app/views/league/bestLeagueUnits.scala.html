@@ -1,0 +1,16 @@
+@(leagueName: String, leagueId: Int, bestLeagueUnits: List[models.clickhouse.league.LeagueUnitRating])
+
+@main(leagueName, header(leagueName), leftBar(leagueId)) {
+    <table>
+        <tr>
+            <th>League</th>
+            <th>HatStats</th>
+        </tr>
+        @for(leagueUnit <- bestLeagueUnits) {
+        <tr>
+            <td>@leagueUnit.leagueUnitName</td>
+            <td>@leagueUnit.hatStats</td>
+        </tr>
+        }
+    </table>
+}

@@ -25,4 +25,14 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     bestTeamsFuture.zipWith(leagueNameFuture){case(bestTeams, leagueName) =>
       Ok(views.html.league.bestTeams(leagueName, leagueId, bestTeams))}
   }
+
+  def bestLeagueUnits(leagueId: Int) = Action.async {implicit request =>
+
+    val leagueNameFuture = Future(hattrick.api.worldDetails().leagueId(leagueId).execute().getLeagueList.get(0).getEnglishName)
+
+    val bestLeagueUnitsFuture = clickhouseDAO.bestLeagueUnitsForLeague(leagueId)
+
+    bestLeagueUnitsFuture.zipWith(leagueNameFuture){case(bestLeagueUnits, leagueName) =>
+      Ok(views.html.league.bestLeagueUnits(leagueName, leagueId, bestLeagueUnits))}
+  }
 }
