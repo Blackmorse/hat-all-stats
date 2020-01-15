@@ -1,9 +1,9 @@
-@(leagueId: Int)
+@(leagueId: Int, season: Int)
 <table id="countryStatisticsTable">
     <tr>
-        <td><a href="@routes.LeagueController.bestTeams(leagueId)">Teams</a></td>
+        <td><a href="@routes.LeagueController.bestTeams(leagueId, season)">Teams</a></td>
     </tr>
     <tr>
-        <td><a href="@routes.LeagueController.bestLeagueUnits(leagueId)">Leagues</a></td>
+        <td><a href="@routes.LeagueController.bestLeagueUnits(leagueId, season)">Leagues</a></td>
     </tr>
 </table>

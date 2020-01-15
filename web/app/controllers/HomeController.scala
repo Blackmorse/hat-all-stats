@@ -5,6 +5,7 @@ import hattrick.Hattrick
 import javax.inject._
 import play.api._
 import play.api.mvc._
+import service.DefaultService
 
 import scala.concurrent._
 import ExecutionContext.Implicits.global
@@ -16,10 +17,11 @@ import ExecutionContext.Implicits.global
 @Singleton
 class HomeController @Inject()(val controllerComponents: ControllerComponents,
                                val leagueController: LeagueController,
-                               val configuration: Configuration) extends BaseController {
+                               val configuration: Configuration,
+                               val defaultService: DefaultService) extends BaseController {
 
 
   def index() = Action { implicit request: Request[AnyContent] =>
-    Redirect(routes.LeagueController.bestTeams(configuration.get[Int]("hattrick.defaultLeagueId")))
+    Redirect(routes.LeagueController.bestTeams(defaultService.defaultLeagueId, defaultService.currentSeason))
   }
 }

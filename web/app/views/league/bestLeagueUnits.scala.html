@@ -1,6 +1,6 @@
-@(leagueName: String, leagueId: Int, bestLeagueUnits: List[models.clickhouse.league.LeagueUnitRating])
+@(leagueName: String, leagueId: Int, season: Int, bestLeagueUnits: List[models.clickhouse.league.LeagueUnitRating])
 
-@main(leagueName, header(leagueName), leftBar(leagueId)) {
+@main(leagueName, header(leagueName), leftBar(leagueId, season)) {
     <table>
         <tr>
             <th>League</th>
