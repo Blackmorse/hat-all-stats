@@ -13,6 +13,7 @@ public class MatchDetailsMapper implements Function<MatchDetails, Map<String, Ob
     public Map<String, Object> apply(MatchDetails matchDetails) {
         Map<String, Object> map = new HashMap<>();
 
+        map.put("season", matchDetails.getSeason());
         map.put("league_id", matchDetails.getLeagueId());
         map.put("division_level", matchDetails.getDivisionLevel());
         map.put("league_unit_id", matchDetails.getLeagueUnitId());

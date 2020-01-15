@@ -10,7 +10,7 @@ import java.util.Date;
 public class PlayerRating {
     private Integer leagueId;
     private Integer divisionLevel;
-    private Integer leagueUnitId;
+    private Long leagueUnitId;
     private Long teamId;
     private String teamName;
     private Date date;

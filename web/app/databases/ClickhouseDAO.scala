@@ -23,7 +23,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
 
   def bestLeagueUnitsForLeague(leagueId: Int) = Future {
     db.withConnection{ implicit connection =>
-      SQL("select league_unit_id, league_unit_name, toInt32(avg(hatstats)) as hatstats from (select league_unit_id, league_unit_name, round, toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats from hattrick.match_details  group by league_unit_id, league_unit_name, round) group by league_unit_id, league_unit_name order by hatstats desc limit 8")
+      SQL(s"select league_unit_id, league_unit_name, toInt32(avg(hatstats)) as hatstats from (select league_unit_id, league_unit_name, round, toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats from hattrick.match_details where league_id=$leagueId  group by league_unit_id, league_unit_name, round) group by league_unit_id, league_unit_name order by hatstats desc limit 8")
         .as(LeagueUnitRating.leagueUnitRatingMapper.*)
     }
   }

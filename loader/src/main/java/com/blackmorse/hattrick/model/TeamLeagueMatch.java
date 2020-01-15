@@ -11,4 +11,6 @@ public class TeamLeagueMatch {
     private final TeamLeague teamLeague;
     private final Long matchId;
     private final Date date;
+    private final Integer matchRound;
+    private final Integer season;
 }

@@ -33,9 +33,8 @@ public class ClickhouseBatcherFactory {
     }
 
     public  ClickhouseBatcher<MatchDetails> createMatchDetails() {
-        String sql = "insert into hattrick.match_details (league_id, division_level, league_unit_id, league_unit_name, team_id, team_name, time, round, match_id, formation, tactic_type, tactic_skill, rating_midfield, rating_right_def, rating_left_def, rating_mid_def, rating_right_att, rating_mid_att, rating_left_att, rating_indirect_set_pieces_def, rating_indirect_set_pieces_att) values " +
-                "(:league_id, :division_level, :league_unit_id, :league_unit_name, :team_id, :team_name, :time, :round, :match_id, :formation, :tactic_type, :tactic_skill, :rating_midfield, :rating_right_def, :rating_left_def, :rating_mid_def, :rating_right_att, :rating_mid_att, :rating_left_att, :rating_indirect_set_pieces_def, :rating_indirect_set_pieces_att)";
-
+        String sql = "insert into hattrick.match_details (season, league_id, division_level, league_unit_id, league_unit_name, team_id, team_name, time, round, match_id, formation, tactic_type, tactic_skill, rating_midfield, rating_right_def, rating_left_def, rating_mid_def, rating_right_att, rating_mid_att, rating_left_att, rating_indirect_set_pieces_def, rating_indirect_set_pieces_att) values " +
+                "(:season, :league_id, :division_level, :league_unit_id, :league_unit_name, :team_id, :team_name, :time, :round, :match_id, :formation, :tactic_type, :tactic_skill, :rating_midfield, :rating_right_def, :rating_left_def, :rating_mid_def, :rating_right_att, :rating_mid_att, :rating_left_att, :rating_indirect_set_pieces_def, :rating_indirect_set_pieces_att)";
         return ClickhouseBatcher.<MatchDetails>builder()
                 .maxBatchSize(matchBatchSize)
                 .executorService(executorService)

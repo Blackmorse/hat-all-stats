@@ -3,13 +3,14 @@ package com.blackmorse.hattrick;
 import com.blackmorse.hattrick.api.Hattrick;
 import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails;
 import com.blackmorse.hattrick.api.matchdetails.model.HomeAwayTeam;
-import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.clickhouse.model.PlayerRating;
+import com.blackmorse.hattrick.model.LeagueInfo;
 import com.blackmorse.hattrick.model.TeamLeague;
 import com.blackmorse.hattrick.model.TeamLeagueMatch;
 import com.blackmorse.hattrick.model.enums.MatchType;
 import com.blackmorse.hattrick.subscribers.MatchDetailsSubscriber;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,14 +22,27 @@ import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
 @Slf4j
 public class HistoryLoader {
+    @Data
+    private static class LeagueInfoWithLeagueUnitDetails {
+        private final LeagueInfo leagueInfo;
+        private final LeagueDetails leagueDetails;
+    }
+
+    @Data
+    private static class LeagueInfoWithLeagueUnitId {
+        private final LeagueInfo leagueInfo;
+        private final Long leagueUnitId;
+    }
 
     private final Scheduler scheduler;
     private final Hattrick hattrick;
@@ -48,20 +62,22 @@ public class HistoryLoader {
     }
 
 
-    public void load(List<String> countryNames) {
+    public void load(List<String> countryNames, Integer seasonNumber) {
         ParallelFlux<TeamLeagueMatch> matchesFlux = Flux.fromStream(
-                        hattrick.getWorldDetails().getLeagueList().stream()
-                            .filter(league -> countryNames.contains(league.getLeagueName())))
-                .map(League::getNationalTeamId)
-                .map(countryTeamId -> hattrick.getNationalTeamDetails(countryTeamId).getTeam().getLeague().getLeagueID())
-                .map(leagueId -> hattrick.getLeagueUnitByName(leagueId, "II.1"))
-                .flatMap(this::getAllLeagueIds)
+                hattrick.getWorldDetails().getLeagueList().stream()
+                        .filter(league -> countryNames.contains(league.getLeagueName())))
+                .map(league ->
+                        new LeagueInfo(league.getLeagueId(), league.getSeriesMatchDate(), league.getMatchRound(),
+                                league.getSeasonOffset()))
+                .map(leagueInfo -> new LeagueInfoWithLeagueUnitDetails(leagueInfo, hattrick.getLeagueUnitByName(leagueInfo.getLeagueId(), "II.1")))
+                .flatMap(leagueInfoWithTwoOneDetails -> getAllLeagueIds2(leagueInfoWithTwoOneDetails.getLeagueInfo(), leagueInfoWithTwoOneDetails.leagueDetails))
                 .flatMap(Flux::fromIterable)
                 .parallel()
+
                 .runOn(scheduler)
-                .map(hattrick::getLeagueUnitById)
+                .map(leagueInfoWithLeagueUnitId -> new LeagueInfoWithLeagueUnitDetails(leagueInfoWithLeagueUnitId.getLeagueInfo(), hattrick.getLeagueUnitById(leagueInfoWithLeagueUnitId.getLeagueUnitId())))
                 .flatMap(this::teamsFromLeague)
-                .flatMap(this::getMatches);
+                .flatMap((TeamLeague teamLeague) -> getMatches(teamLeague, seasonNumber));
 
         matchesFlux
                 .map(this::matchDetailsFromMatch)
@@ -69,45 +85,53 @@ public class HistoryLoader {
     }
 
 
-    private Flux<TeamLeague> teamsFromLeague(LeagueDetails league) {
+    private Flux<TeamLeague> teamsFromLeague(LeagueInfoWithLeagueUnitDetails info) {
 
         return Flux.fromStream(
-                league.getTeams().
+                info.getLeagueDetails().getTeams().
                         stream().
                         filter(team -> team.getUserId() != 0L)
                         .map(team -> TeamLeague.builder()
-                                .leagueId(league.getLeagueId())
-                                .leagueLevel(league.getLeagueLevel())
-                                .leagueLevelUnitId(league.getLeagueLevelUnitId())
-                                .leagueUnitName(league.getLeagueLevelUnitName())
-                                .currentMatchRound(league.getCurrentMatchRound())
+                                .leagueId(info.getLeagueDetails().getLeagueId())
+                                .leagueLevel(info.getLeagueDetails().getLeagueLevel())
+                                .leagueLevelUnitId(info.getLeagueDetails().getLeagueLevelUnitId())
+                                .leagueUnitName(info.getLeagueDetails().getLeagueLevelUnitName())
+                                .nextMatchRound(info.getLeagueInfo().getNextRound())
+                                .nextRoundDate(info.getLeagueInfo().getNextLeagueMatch())
                                 .teamId(team.getTeamId())
                                 .teamName(team.getTeamName())
+                                .seasonOffset(info.getLeagueInfo().getSeasonOffset())
                             .build())
         );
     }
 
-    private Flux<List<Long>> getAllLeagueIds(LeagueDetails twoOne) {
-        return Mono.just(Collections.singletonList((long) (twoOne.getLeagueLevelUnitId() - 1)))
-                .concatWith(Flux.fromStream(
-                        IntStream.range(2, twoOne.getMaxLevel() + 1)
-//                        IntStream.range(4,5)
-                                .mapToObj(level -> hattrick.getLeagueUnitIdsForLevel(twoOne.getLeagueId(), level)))
-                );
+    private Flux<List<LeagueInfoWithLeagueUnitId>> getAllLeagueIds2(LeagueInfo leagueInfo, LeagueDetails twoOne) {
+        return Mono.just(Collections.singletonList(new LeagueInfoWithLeagueUnitId(leagueInfo, twoOne.getLeagueLevelUnitId() - 1)))
+                .concatWith(Flux.fromStream(IntStream.range(2, twoOne.getMaxLevel() + 1)
+                            .mapToObj(level -> hattrick.getLeagueUnitIdsForLevel(twoOne.getLeagueId(), level)
+                                                .stream().map(id -> new LeagueInfoWithLeagueUnitId(leagueInfo, id))
+                                                    .collect(Collectors.toList()))));
     }
 
-    private Flux<TeamLeagueMatch> getMatches(TeamLeague teamLeague) {
+    private Flux<TeamLeagueMatch> getMatches(TeamLeague teamLeague, Integer seasonNumber) {
         log.info("get {} teams", teams.incrementAndGet());
         return Flux.fromStream(
-                hattrick.getArchiveMatches(teamLeague.getTeamId(), 61).getTeam().getMatchList()
+                hattrick.getArchiveMatches(teamLeague.getTeamId(), seasonNumber + teamLeague.getSeasonOffset()).getTeam().getMatchList()
                         .stream()
                         .filter(match -> match.getMatchType().equals(MatchType.LEAGUE_MATCH))
                         .map(match -> TeamLeagueMatch.builder()
                                 .matchId(match.getMatchId())
                                 .date(match.getMatchDate())
+                                .matchRound(roundNumber(match.getMatchDate(), teamLeague.getNextRoundDate(), teamLeague.getNextMatchRound()))
                                 .teamLeague(teamLeague)
+                                .season(seasonNumber)
                             .build())
         );
+    }
+
+    private Integer roundNumber(Date matchDate, Date lastLeagueMatchDate, Integer currentRound) {
+        long daysBefore = (lastLeagueMatchDate.getTime() - matchDate.getTime()) / (1000 * 60 * 60 * 24 * 7);
+        return (int)(currentRound - daysBefore);
     }
 
     private Flux<PlayerRating> playerRatingFromMatch(TeamLeagueMatch teamLeagueMatch) {
@@ -121,7 +145,7 @@ public class HistoryLoader {
                         .teamId(teamLeagueMatch.getTeamLeague().getTeamId())
                         .teamName(teamLeagueMatch.getTeamLeague().getTeamName())
                         .date(teamLeagueMatch.getDate())
-                        .round(teamLeagueMatch.getTeamLeague().getCurrentMatchRound())
+                        .round(teamLeagueMatch.getTeamLeague().getNextMatchRound())
                         .matchId(teamLeagueMatch.getMatchId())
                         .playerId(lineUpPlayer.getPlayerId())
                         .roleId(lineUpPlayer.getRoleId().getValue())
@@ -145,6 +169,7 @@ public class HistoryLoader {
         }
 
         return MatchDetails.builder()
+                .season(teamLeagueMatch.getSeason())
                 .leagueId(teamLeagueMatch.getTeamLeague().getLeagueId())
                 .divisionLevel(teamLeagueMatch.getTeamLeague().getLeagueLevel())
                 .leagueUnitId(teamLeagueMatch.getTeamLeague().getLeagueLevelUnitId())
@@ -152,7 +177,7 @@ public class HistoryLoader {
                 .teamId(teamLeagueMatch.getTeamLeague().getTeamId())
                 .teamName(teamLeagueMatch.getTeamLeague().getTeamName())
                 .date(matchDetails.getMatch().getMatchDate())
-                .round(teamLeagueMatch.getTeamLeague().getCurrentMatchRound())
+                .round(teamLeagueMatch.getMatchRound())
                 .matchId(matchDetails.getMatch().getMatchId())
                 .formation(homeAwayTeam.getFormation())
                 .tacticType(homeAwayTeam.getTacticType())

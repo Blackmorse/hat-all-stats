@@ -8,9 +8,10 @@ import java.util.Date;
 @Data
 @Builder
 public class MatchDetails {
+    private Integer season;
     private Integer leagueId;
     private Integer divisionLevel;
-    private Integer leagueUnitId;
+    private Long leagueUnitId;
     private String leagueUnitName;
     private Long teamId;
     private String teamName;
