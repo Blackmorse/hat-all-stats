@@ -3,7 +3,8 @@ package models.clickhouse.league
 import anorm.SqlParser.get
 import anorm.~
 
-case class TeamRating(teamId: Long, teamName: String, league_unit_id: Long, leagueUnitName: String, hatStats: Int)
+case class TeamRating(teamId: Long, teamName: String, league_unit_id: Long, leagueUnitName: String,
+                      hatStats: Int, midfield: Int, defense: Int, attack: Int)
 
 object TeamRating {
   val teamRatingMapper = {
@@ -11,9 +12,12 @@ object TeamRating {
       get[String]("team_name") ~
       get[Long]("league_unit_id") ~
       get[String]("league_unit_name") ~
-      get[Int]("hatstats") map {
-      case teamId ~ teamName ~ leagueUnitId ~ leagueUnitName ~ hatstats =>
-        TeamRating(teamId, teamName, leagueUnitId, leagueUnitName, hatstats)
+      get[Int]("hatstats") ~
+      get[Int]("midfield") ~
+      get[Int]("defense") ~
+      get[Int]("attack") map {
+      case teamId ~ teamName ~ leagueUnitId ~ leagueUnitName ~ hatstats ~ midfield ~ defense ~ attack =>
+        TeamRating(teamId, teamName, leagueUnitId, leagueUnitName, hatstats, midfield, defense, attack)
     }
   }
 }
