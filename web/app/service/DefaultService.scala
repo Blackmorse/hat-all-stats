@@ -10,7 +10,7 @@ import collection.JavaConverters._
 class DefaultService @Inject() (val hattrick: Hattrick,
                                 val configuration: Configuration) {
   lazy val leagueIdToCountryNameMap = hattrick.api.worldDetails().execute()
-    .getLeagueList.asScala.map(league => league.getLeagueId -> league.getEnglishName)
+    .getLeagueList.asScala.map(league => league.getLeagueId -> league)
     .toMap
 
   lazy val currentSeason = configuration.get[Int]("hattrick.currentSeason")

@@ -13,6 +13,8 @@ libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
 libraryDependencies += "com.blackmorse.hattrick" % "api" % "0.0.3"
 
+libraryDependencies += "com.google.guava" % "guava" % "28.2-jre"
+
 libraryDependencies += jdbc
 libraryDependencies += "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
 

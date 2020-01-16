@@ -1,6 +1,9 @@
-@(leagueName: String, leagueId: Int, season: Int, bestTeams: List[models.clickhouse.league.TeamRating])
+@import play.api.data.Form
+@import controllers.WebLeagueDetails
 
-@main(leagueName, header(leagueName), leftBar(leagueId, season)) {
+@(details: WebLeagueDetails, bestTeams: List[models.clickhouse.league.TeamRating])(implicit messages: Messages)
+
+@main(details.leagueName, header(details), leftBar(details.leagueId, details.season)) {
     <table>
         <tr>
             <th>Team</th>

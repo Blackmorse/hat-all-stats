@@ -1,2 +1,19 @@
-@(leagueName: String)
-@leagueName
+@import helper._
+@import play.api.data.Form
+@import helpers.FieldHelpers._
+
+@import controllers.WebLeagueDetails
+
+@(details: WebLeagueDetails)(implicit messages: Messages)
+
+
+
+@details.leagueName
+->
+@select(
+  field = details.form("division_level"),
+  options = details.divisionLevels,
+  '_default -> "Choose"
+)
+
+<script src="@routes.Assets.versioned("javascripts/headerLeague.js")" type="text/javascript"></script>
