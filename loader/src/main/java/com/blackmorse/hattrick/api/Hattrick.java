@@ -9,7 +9,10 @@ import com.blackmorse.hattrick.api.nationalteamdetails.model.NationalTeamDetails
 import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.search.model.Search;
 import com.blackmorse.hattrick.api.worlddetails.model.WorldDetails;
+import com.blackmorse.hattrick.exceptions.HattrickException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -46,15 +49,18 @@ public class Hattrick {
         this.hattrickApi = hattrickApi;
     }
 
+    @Retryable(value = {HattrickException.class}, backoff = @Backoff(delay = 5000L))
     public NationalTeamDetails getNationalTeamDetails(Integer countryTeamId) {
         return hattrickApi.nationalTeamDetails().teamId(countryTeamId).execute();
     }
 
+    @Retryable(value = {HattrickException.class}, backoff = @Backoff(delay = 5000L))
     public LeagueDetails getLeagueUnitByName(Integer leagueId, String leagueName) {
         Search search = hattrickApi.search().searchType(3).searchLeagueId(leagueId).searchString(leagueName).execute();
         return hattrickApi.leagueDetails().leagueLevelUnitId(search.getSearchResults().get(0).getResultId()).execute();
     }
 
+    @Retryable(value = {HattrickException.class}, backoff = @Backoff(delay = 5000L))
     public List<Long> getLeagueUnitIdsForLevel(int leagueId, int level) {
         List<Long> result = new ArrayList<>();
 
@@ -69,22 +75,27 @@ public class Hattrick {
         return result;
     }
 
+    @Retryable(value = {HattrickException.class}, backoff = @Backoff(delay = 5000L))
     public LeagueDetails getLeagueUnitById(long id) {
         return hattrickApi.leagueDetails().leagueLevelUnitId(id).execute();
     }
 
+    @Retryable(value = {HattrickException.class}, backoff = @Backoff(delay = 5000L))
     public MatchesArchive getArchiveMatches(Long teamId, Integer season) {
         return hattrickApi.matchesArchive().season(season).teamId(teamId).execute();
     }
 
+    @Retryable(value = {HattrickException.class}, backoff = @Backoff(delay = 5000L))
     public MatchLineUp getMatchLineUp(Long matchId, Long teamId) {
         return hattrickApi.matchLineUp().matchId(matchId).teamId(teamId).execute();
     }
 
+    @Retryable(value = {HattrickException.class}, backoff = @Backoff(delay = 5000L))
     public MatchDetails getMatchDetails(Long matchId) {
         return hattrickApi.matchDetails().matchId(matchId).execute();
     }
 
+    @Retryable(value = {HattrickException.class}, backoff = @Backoff(delay = 5000L))
     public WorldDetails getWorldDetails() {
         return hattrickApi.worldDetails().execute();
     }
