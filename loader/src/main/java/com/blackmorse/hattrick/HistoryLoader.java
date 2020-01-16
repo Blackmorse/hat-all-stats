@@ -4,27 +4,25 @@ import com.blackmorse.hattrick.api.Hattrick;
 import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails;
 import com.blackmorse.hattrick.api.matchdetails.model.HomeAwayTeam;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
-import com.blackmorse.hattrick.clickhouse.model.PlayerRating;
 import com.blackmorse.hattrick.model.LeagueInfo;
 import com.blackmorse.hattrick.model.TeamLeague;
 import com.blackmorse.hattrick.model.TeamLeagueMatch;
 import com.blackmorse.hattrick.model.enums.MatchType;
 import com.blackmorse.hattrick.subscribers.MatchDetailsSubscriber;
+import io.reactivex.Flowable;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.ParallelFlux;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -56,38 +54,47 @@ public class HistoryLoader {
     public HistoryLoader(@Qualifier("apiExecutor") ExecutorService executorService,
                          Hattrick hattrick,
                          MatchDetailsSubscriber matchDetailsSubscriber) {
-        this.scheduler = Schedulers.fromExecutor(executorService);
+        this.scheduler = io.reactivex.schedulers.Schedulers.from(executorService);
         this.hattrick = hattrick;
         this.matchDetailsSubscriber = matchDetailsSubscriber;
     }
 
-
     public void load(List<String> countryNames, Integer seasonNumber) {
-        ParallelFlux<TeamLeagueMatch> matchesFlux = Flux.fromStream(
-                hattrick.getWorldDetails().getLeagueList().stream()
-                        .filter(league -> countryNames.contains(league.getLeagueName())))
+
+        Disposable subscribe = Flowable.fromIterable(hattrick.getWorldDetails().getLeagueList().stream()
+                .filter(league -> countryNames.contains(league.getLeagueName())).collect(Collectors.toList()))
                 .map(league ->
                         new LeagueInfo(league.getLeagueId(), league.getSeriesMatchDate(), league.getMatchRound(),
                                 league.getSeasonOffset()))
                 .map(leagueInfo -> new LeagueInfoWithLeagueUnitDetails(leagueInfo, hattrick.getLeagueUnitByName(leagueInfo.getLeagueId(), "II.1")))
-                .flatMap(leagueInfoWithTwoOneDetails -> getAllLeagueIds2(leagueInfoWithTwoOneDetails.getLeagueInfo(), leagueInfoWithTwoOneDetails.leagueDetails))
-                .flatMap(Flux::fromIterable)
+                .flatMap(leagueInfoWithTwoOneDetails -> getAllLeagueIds(leagueInfoWithTwoOneDetails.getLeagueInfo(), leagueInfoWithTwoOneDetails.getLeagueDetails()))
+                .flatMap(Flowable::fromIterable)
                 .parallel()
-
                 .runOn(scheduler)
                 .map(leagueInfoWithLeagueUnitId -> new LeagueInfoWithLeagueUnitDetails(leagueInfoWithLeagueUnitId.getLeagueInfo(), hattrick.getLeagueUnitById(leagueInfoWithLeagueUnitId.getLeagueUnitId())))
                 .flatMap(this::teamsFromLeague)
-                .flatMap((TeamLeague teamLeague) -> getMatches(teamLeague, seasonNumber));
-
-        matchesFlux
+                .flatMap((TeamLeague teamLeague) -> getMatches(teamLeague, seasonNumber))
                 .map(this::matchDetailsFromMatch)
+
+                .sequential()
                 .subscribe(matchDetailsSubscriber::onNext, matchDetailsSubscriber::onError, matchDetailsSubscriber::onComplete);
+
+
+
+        while(!subscribe.isDisposed()) {
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
-    private Flux<TeamLeague> teamsFromLeague(LeagueInfoWithLeagueUnitDetails info) {
 
-        return Flux.fromStream(
+    private Flowable<TeamLeague> teamsFromLeague(LeagueInfoWithLeagueUnitDetails info) {
+
+        return Flowable.fromIterable(
                 info.getLeagueDetails().getTeams().
                         stream().
                         filter(team -> team.getUserId() != 0L)
@@ -101,21 +108,23 @@ public class HistoryLoader {
                                 .teamId(team.getTeamId())
                                 .teamName(team.getTeamName())
                                 .seasonOffset(info.getLeagueInfo().getSeasonOffset())
-                            .build())
+                                .build())
+                        .collect(Collectors.toList())
         );
     }
 
-    private Flux<List<LeagueInfoWithLeagueUnitId>> getAllLeagueIds2(LeagueInfo leagueInfo, LeagueDetails twoOne) {
-        return Mono.just(Collections.singletonList(new LeagueInfoWithLeagueUnitId(leagueInfo, twoOne.getLeagueLevelUnitId() - 1)))
-                .concatWith(Flux.fromStream(IntStream.range(2, twoOne.getMaxLevel() + 1)
-                            .mapToObj(level -> hattrick.getLeagueUnitIdsForLevel(twoOne.getLeagueId(), level)
-                                                .stream().map(id -> new LeagueInfoWithLeagueUnitId(leagueInfo, id))
-                                                    .collect(Collectors.toList()))));
+    private Flowable<List<LeagueInfoWithLeagueUnitId>> getAllLeagueIds(LeagueInfo leagueInfo, LeagueDetails twoOne) {
+        return Flowable.just(Collections.singletonList(new LeagueInfoWithLeagueUnitId(leagueInfo, twoOne.getLeagueLevelUnitId() - 1)))
+                .concatWith(Flowable.fromIterable(IntStream.range(2, twoOne.getMaxLevel() + 1)
+                        .mapToObj(level -> hattrick.getLeagueUnitIdsForLevel(twoOne.getLeagueId(), level)
+                                .stream().map(id -> new LeagueInfoWithLeagueUnitId(leagueInfo, id))
+                                .collect(Collectors.toList())).collect(Collectors.toList())));
     }
 
-    private Flux<TeamLeagueMatch> getMatches(TeamLeague teamLeague, Integer seasonNumber) {
+
+    private Flowable<TeamLeagueMatch> getMatches(TeamLeague teamLeague, Integer seasonNumber) {
         log.info("get {} teams", teams.incrementAndGet());
-        return Flux.fromStream(
+        return Flowable.fromIterable(
                 hattrick.getArchiveMatches(teamLeague.getTeamId(), seasonNumber + teamLeague.getSeasonOffset()).getTeam().getMatchList()
                         .stream()
                         .filter(match -> match.getMatchType().equals(MatchType.LEAGUE_MATCH))
@@ -125,37 +134,14 @@ public class HistoryLoader {
                                 .matchRound(roundNumber(match.getMatchDate(), teamLeague.getNextRoundDate(), teamLeague.getNextMatchRound()))
                                 .teamLeague(teamLeague)
                                 .season(seasonNumber)
-                            .build())
+                                .build())
+                        .collect(Collectors.toList())
         );
     }
 
     private Integer roundNumber(Date matchDate, Date lastLeagueMatchDate, Integer currentRound) {
         long daysBefore = (lastLeagueMatchDate.getTime() - matchDate.getTime()) / (1000 * 60 * 60 * 24 * 7);
         return (int)(currentRound - daysBefore);
-    }
-
-    private Flux<PlayerRating> playerRatingFromMatch(TeamLeagueMatch teamLeagueMatch) {
-        return Flux.fromStream(hattrick.getMatchLineUp(teamLeagueMatch.getMatchId(), teamLeagueMatch.getMatchId())
-                .getTeam().getLineUp()
-                .stream()
-                .map(lineUpPlayer -> PlayerRating.builder()
-                        .leagueId(teamLeagueMatch.getTeamLeague().getLeagueId())
-                        .divisionLevel(teamLeagueMatch.getTeamLeague().getLeagueLevel())
-                        .leagueUnitId(teamLeagueMatch.getTeamLeague().getLeagueLevelUnitId())
-                        .teamId(teamLeagueMatch.getTeamLeague().getTeamId())
-                        .teamName(teamLeagueMatch.getTeamLeague().getTeamName())
-                        .date(teamLeagueMatch.getDate())
-                        .round(teamLeagueMatch.getTeamLeague().getNextMatchRound())
-                        .matchId(teamLeagueMatch.getMatchId())
-                        .playerId(lineUpPlayer.getPlayerId())
-                        .roleId(lineUpPlayer.getRoleId().getValue())
-                        .firstName(lineUpPlayer.getFirstName())
-                        .lastName(lineUpPlayer.getLastName())
-                        .ratingStars(lineUpPlayer.getRatingStars())
-                        .ratingStars(lineUpPlayer.getRatingStarsEndOfMatch())
-                        .behaviour(lineUpPlayer.getBehaviour())
-                    .build())
-        );
     }
 
     private MatchDetails matchDetailsFromMatch(TeamLeagueMatch teamLeagueMatch) {
@@ -191,6 +177,6 @@ public class HistoryLoader {
                 .ratingRightAtt(homeAwayTeam.getRatingRightAtt())
                 .ratingIndirectSetPiecesDef(homeAwayTeam.getRatingIndirectSetPiecesDef())
                 .ratingIndirectSetPiecesAtt(homeAwayTeam.getRatingIndirectSetPiecesAtt())
-            .build();
+                .build();
     }
 }
