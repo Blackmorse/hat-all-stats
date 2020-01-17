@@ -1,0 +1,21 @@
+@(bestTeams: List[models.clickhouse.league.TeamRating])
+<table>
+    <tr>
+        <th>Team</th>
+        <th>League</th>
+        <th>HatStats</th>
+        <th>MidField</th>
+        <th>Defense</th>
+        <th>Attack</th>
+    </tr>
+    @for(team <- bestTeams) {
+    <tr>
+        <td>@team.teamName</td>
+        <td>@team.leagueUnitName</td>
+        <td>@team.hatStats</td>
+        <td>@team.midfield</td>
+        <td>@team.defense</td>
+        <td>@team.attack</td>
+    </tr>
+    }
+</table>

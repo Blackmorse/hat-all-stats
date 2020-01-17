@@ -17,7 +17,7 @@ import ExecutionContext.Implicits.global
 case class DivisionLevelForm(divisionLevel: Int)
 
 case class WebLeagueDetails(leagueName: String, leagueId: Int, season: Int, form: Form[DivisionLevelForm],
-                            divisionLevels: Seq[(String, String)])
+                            divisionLevelsLinks: Seq[(String, String)])
 
 @Singleton
 class LeagueController @Inject() (val controllerComponents: ControllerComponents,
@@ -32,24 +32,25 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
   def bestTeams(leagueId: Int, season: Int) = Action.async { implicit request =>
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
-    val details = WebLeagueDetails(leagueName, leagueId, season, form, divisionLevels(leagueId))
+    val details = WebLeagueDetails(leagueName, leagueId, season, form, divisionLevels(leagueId, season ))
 
-    clickhouseDAO.bestTeamsForLeague(leagueId, season)
+    clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season))
       .map(bestTeams => Ok(views.html.league.bestTeams(details, bestTeams)))
   }
 
   def bestLeagueUnits(leagueId: Int, season: Int) = Action.async {implicit request =>
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
-    val details = WebLeagueDetails(leagueName, leagueId, season, form, divisionLevels(leagueId))
+    val details = WebLeagueDetails(leagueName, leagueId, season, form, divisionLevels(leagueId, season))
 
-    clickhouseDAO.bestLeagueUnitsForLeague(leagueId, season)
+    clickhouseDAO.bestLeagueUnits(leagueId = Some(leagueId), season = Some(season))
       .map(bestLeagueUnits => Ok(views.html.league.bestLeagueUnits(details, bestLeagueUnits)))
   }
 
-  private def divisionLevels(leagueId: Int): Seq[(String, String)] = {
+  private def divisionLevels(leagueId: Int, season: Int): Seq[(String, String)] = {
     val maxLevels = defaultService.leagueIdToCountryNameMap(leagueId).getNumberOfLevels
-    (1 to maxLevels).map(i => i.toString -> Romans(i))
+    (1 to maxLevels)
+      .map(i => routes.DivisionLevelController.bestTeams(leagueId, season, i).url -> Romans(i))
   }
 }
 

@@ -1,0 +1,7 @@
+@import controllers.WebDivisionLevelDetails
+
+@(details: WebDivisionLevelDetails)
+
+<a href="@routes.LeagueController.bestTeams(details.leagueId, details.season)">@details.leagueName</a>
+->
+@details.divisionLevelRoman

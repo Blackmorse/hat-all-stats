@@ -3,17 +3,4 @@
 
 @(details: WebLeagueDetails, bestLeagueUnits: List[models.clickhouse.league.LeagueUnitRating])(implicit messages: Messages)
 
-@main(details.leagueName, header(details), leftBar(details.leagueId, details.season)) {
-    <table>
-        <tr>
-            <th>League</th>
-            <th>HatStats</th>
-        </tr>
-        @for(leagueUnit <- bestLeagueUnits) {
-        <tr>
-            <td>@leagueUnit.leagueUnitName</td>
-            <td>@leagueUnit.hatStats</td>
-        </tr>
-        }
-    </table>
-}
+@main(details.leagueName, header(details), leftBar(details.leagueId, details.season))(common.bestLeagueUnitsTable(bestLeagueUnits))
