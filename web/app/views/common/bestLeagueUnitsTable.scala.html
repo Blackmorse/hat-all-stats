@@ -7,7 +7,7 @@
     </tr>
     @for(leagueUnit <- bestLeagueUnits) {
     <tr>
-        <td>@leagueUnit.leagueUnitName</td>
+        <td><a href="@routes.LeagueUnitController.bestTeamsById(leagueUnit.leagueUnitId)">@leagueUnit.leagueUnitName</a></td>
         <td>@leagueUnit.hatStats</td>
     </tr>
     }

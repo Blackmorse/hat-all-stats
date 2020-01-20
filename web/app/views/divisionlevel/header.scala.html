@@ -4,4 +4,10 @@
 
 <a href="@routes.LeagueController.bestTeams(details.leagueId, details.season)">@details.leagueName</a>
 ->
-@details.divisionLevelRoman
+<a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.season, details.divisionLevel)">@details.divisionLevelRoman</a>
+->
+<select id="leagueUnitNumber">
+    @for((leagueNumber, link) <- details.leagueUnitLinks) {
+    <option value ="@link">@leagueNumber</option>
+    }
+</select>

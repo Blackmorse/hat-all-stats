@@ -15,7 +15,10 @@ import scala.concurrent.Future
 class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContext) {
   private val db = dbApi.database("default")
 
-  def bestTeams(leagueId: Option[Int] = None, season: Option[Int] = None, divisionLevel: Option[Int] = None) = Future {
+  def bestTeams(leagueId: Option[Int] = None,
+                season: Option[Int] = None,
+                divisionLevel: Option[Int] = None,
+                leagueUnitId: Option[Long] = None) = Future {
     db.withConnection{implicit connection =>
       val matchDetailsSql = SqlBuilder("""select team_id,
                         |team_name,
@@ -31,12 +34,16 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
       leagueId.foreach(matchDetailsSql.leagueId)
       season.foreach(matchDetailsSql.season)
       divisionLevel.foreach(matchDetailsSql.divisionLevel)
+      leagueUnitId.foreach(matchDetailsSql.leagueUnitId)
 
       matchDetailsSql.build.as(TeamRating.teamRatingMapper.*)
     }
   }
 
-  def bestLeagueUnits(leagueId: Option[Int] = None, season: Option[Int] = None, divisionLevel: Option[Int] = None) = Future {
+  def bestLeagueUnits(leagueId: Option[Int] = None,
+                      season: Option[Int] = None,
+                      divisionLevel: Option[Int] = None,
+                      leagueUnitId: Option[Long] = None) = Future {
     db.withConnection{ implicit connection =>
       val matchDetailsSql = SqlBuilder("""select league_unit_id,
                         |league_unit_name,
@@ -53,6 +60,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
       leagueId.foreach(matchDetailsSql.leagueId)
       season.foreach(matchDetailsSql.season)
       divisionLevel.foreach(matchDetailsSql.divisionLevel)
+      leagueUnitId.foreach(matchDetailsSql.leagueUnitId)
 
       matchDetailsSql.build.as(LeagueUnitRating.leagueUnitRatingMapper.*)
     }
@@ -73,6 +81,11 @@ case class SqlBuilder(baseSql: String) {
   }
   def divisionLevel(divisionLevel: Int): SqlBuilder = {
     params += (("division_level", divisionLevel))
+    this
+  }
+
+  def leagueUnitId(leagueUnitId: Long): SqlBuilder = {
+    params += (("league_unit_id", leagueUnitId))
     this
   }
 

@@ -3,7 +3,7 @@ package models.clickhouse.league
 import anorm.SqlParser.get
 import anorm.~
 
-case class TeamRating(teamId: Long, teamName: String, league_unit_id: Long, leagueUnitName: String,
+case class TeamRating(teamId: Long, teamName: String, leagueUnitId: Long, leagueUnitName: String,
                       hatStats: Int, midfield: Int, defense: Int, attack: Int)
 
 object TeamRating {
