@@ -3,6 +3,7 @@ package com.blackmorse.hattrick.api;
 import com.blackmorse.hattrick.HattrickApi;
 import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails;
 import com.blackmorse.hattrick.api.matchdetails.model.MatchDetails;
+import com.blackmorse.hattrick.api.matches.model.Matches;
 import com.blackmorse.hattrick.api.matchesarchive.model.MatchesArchive;
 import com.blackmorse.hattrick.api.matchlineup.model.MatchLineUp;
 import com.blackmorse.hattrick.api.nationalteamdetails.model.NationalTeamDetails;
@@ -17,6 +18,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,5 +101,9 @@ public class Hattrick {
     @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 5, backoff = @Backoff(delay = 15000L))
     public WorldDetails getWorldDetails() {
         return hattrickApi.worldDetails().execute();
+    }
+
+    public Matches getLatestTeamMatches(Long teamId) {
+        return hattrickApi.matches().teamId(615797).lastMatchDate(new Date()).execute();
     }
 }

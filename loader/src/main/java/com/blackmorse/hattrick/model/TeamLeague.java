@@ -17,4 +17,6 @@ public class TeamLeague {
     private final Long teamId;
     private final String teamName;
     private final Integer seasonOffset;
+    //absolute value
+    private final Integer currentSeason;
 }

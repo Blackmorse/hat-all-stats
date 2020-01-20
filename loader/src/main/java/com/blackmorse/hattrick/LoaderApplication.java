@@ -19,7 +19,8 @@ public class LoaderApplication {
     @Bean
     public CommandLineRunner runner(ApplicationContext ctx) {
         return args -> {
-            ctx.getBean(HistoryLoader.class).load(Arrays.asList("Италия", "Россия"), 73);
+            ctx.getBean(HistoryLoader.class).load(Arrays.asList("Россия"));
+//            ctx.getBean(LastLeagueMatchLoader.class).load(Arrays.asList("Россия"));
         };
     }
 }

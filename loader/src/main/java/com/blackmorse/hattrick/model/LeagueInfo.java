@@ -10,4 +10,6 @@ public class LeagueInfo {
     private final Date nextLeagueMatch;
     private final Integer nextRound;
     private final Integer seasonOffset;
+    //Absolute value of season
+    private final Integer currentSeason;
 }
