@@ -52,7 +52,9 @@ public class ClickhouseBatcher<T> {
 
     public void flush() {
         synchronized (this) {
-            executorService.submit(() -> writeToClickhouse(batch));
+            List<T> tmpList = new ArrayList<>(batch);
+            batch.clear();
+            executorService.submit(() -> writeToClickhouse(tmpList));
         }
     }
 }
