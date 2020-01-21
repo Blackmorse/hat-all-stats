@@ -1,4 +1,4 @@
-@(bestTeams: List[models.clickhouse.league.TeamRating])
+@(bestTeams: List[models.clickhouse.TeamRating])
 <table>
     <tr>
         <th>Team</th>
@@ -10,7 +10,7 @@
     </tr>
     @for(team <- bestTeams) {
     <tr>
-        <td>@team.teamName</td>
+        <td><a href="@routes.TeamController.matches(team.teamId)">@team.teamName</a></td>
         <td><a href="@routes.LeagueUnitController.bestTeamsById(team.leagueUnitId)">@team.leagueUnitName</a></td>
         <td>@team.hatStats</td>
         <td>@team.midfield</td>

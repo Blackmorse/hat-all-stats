@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import javax.inject.Singleton
 import anorm._
 import com.google.inject.Inject
-import models.clickhouse.league.{LeagueUnitRating, TeamRating}
+import models.clickhouse.{LeagueUnitRating, TeamMatchInfo, TeamRating}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
 
@@ -73,6 +73,28 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
     }
   }
 
+  def teamMatchesForSeason(season: Int, leagueId: Int, divisionLevel: Int, leagueUnitId: Long, teamId: Long) = Future {
+    db.withConnection { implicit connection =>
+      val teamSql = SqlBuilder(
+        """SELECT
+          |    round,
+          |    match_id,
+          |    team_id,
+          |    team_name,
+          |    toInt32(((((((rating_midfield * 3) + rating_right_def) + rating_left_def) + rating_mid_def) + rating_right_att) + rating_mid_att) + rating_left_att) AS hatstats,
+          |    formation,
+          |    dt
+          |FROM hattrick.match_details
+          | __where__
+          |ORDER BY round ASC
+        """.stripMargin)
+        .season(season).leagueId(leagueId).divisionLevel(divisionLevel).leagueUnitId(leagueUnitId).teamId(teamId)
+        .build
+
+      teamSql.as(TeamMatchInfo.teamMatchInfoMapper.*)
+    }
+  }
+
 }
 
 case class SqlBuilder(baseSql: String) {
@@ -93,6 +115,11 @@ case class SqlBuilder(baseSql: String) {
 
   def leagueUnitId(leagueUnitId: Long): SqlBuilder = {
     params += (("league_unit_id", leagueUnitId))
+    this
+  }
+
+  def teamId(teamId: Long): SqlBuilder = {
+    params += (("team_id", teamId))
     this
   }
 

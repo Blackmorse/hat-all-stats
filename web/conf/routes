@@ -12,7 +12,9 @@ GET     /divisionlevel              controllers.DivisionLevelController.bestTeam
 GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, currentSeason: Int, divisionLevel: Int)
 
 GET     /leagueLevelUnit            controllers.LeagueUnitController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, leagueUnitNumber: Int)
-GET     /leagueLevelUnitById            controllers.LeagueUnitController.bestTeamsById(leagueUnitId: Long)
+GET     /leagueLevelUnitById        controllers.LeagueUnitController.bestTeamsById(leagueUnitId: Long)
+
+GET     /matches                    controllers.TeamController.matches(teamId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

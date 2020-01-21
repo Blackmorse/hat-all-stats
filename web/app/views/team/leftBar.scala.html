@@ -1,0 +1,9 @@
+@import controllers.WebTeamDetails
+
+@(details: WebTeamDetails)
+
+<table>
+    <tr>
+        <td><a href="@routes.TeamController.matches(details.teamId)">Matches</a></td>
+    </tr>
+</table>

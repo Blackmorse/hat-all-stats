@@ -1,4 +1,4 @@
-package models.clickhouse.league
+package models.clickhouse
 
 import anorm.SqlParser.get
 import anorm.~

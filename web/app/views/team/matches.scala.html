@@ -1,0 +1,28 @@
+@import controllers.WebTeamMatch
+@import controllers.WebTeamDetails
+
+@(matches: List[WebTeamMatch], details: WebTeamDetails)
+
+@main(details.teamName, header(details), leftBar(details)) {
+
+<table>
+    <tr>
+    <th >Round</th>
+        <th>Team</th>
+        <th>Formation</th>
+        <th>Hatstats</th>
+        <th>Result</th>
+        <th>Opposite Team</th>
+    </tr>
+    @for(matc <- matches) {
+    <tr>
+        <td>@matc.teamMatchInfo.round</td>
+        <td><a href="@routes.TeamController.matches(matc.teamMatchInfo.teamId)">@matc.teamMatchInfo.teamName</a></td>
+        <td>@matc.teamMatchInfo.formation</td>
+        <td>@matc.teamMatchInfo.hatStats</td>
+        <td><i><b>@matc.teamGoals : @matc.enemyGoals</b></i></td>
+        <td><a href="@routes.TeamController.matches(matc.enemyTeamId)">@matc.enemyTeamName</a></td>
+    </tr>
+    }
+</table>
+}

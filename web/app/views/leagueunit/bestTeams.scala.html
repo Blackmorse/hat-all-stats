@@ -1,7 +1,7 @@
 @import controllers.WebLeagueUnitDetails
 @import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails
 
-@(details: WebLeagueUnitDetails, leagueDetails: LeagueDetails, bestTeams: List[models.clickhouse.league.TeamRating])
+@(details: WebLeagueUnitDetails, leagueDetails: LeagueDetails, bestTeams: List[models.clickhouse.TeamRating])
 
 
 @main(details.leagueUnitName, header(details), leftBar(details)){
@@ -20,7 +20,7 @@
         @for(team <- leagueDetails.getTeams()) {
             <tr>
                 <td>@team.getPosition</td>
-                <td>@team.getTeamName</td>
+                <td><a href="@routes.TeamController.matches(team.getTeamId)">@team.getTeamName</a></td>
                 <td>@team.getMatches</td>
                 <td>@team.getGoalsFor</td>
                 <td>@team.getGoalsAgainst</td>

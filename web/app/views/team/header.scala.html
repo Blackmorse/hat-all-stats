@@ -1,0 +1,12 @@
+@import controllers.WebTeamDetails
+@import utils.Romans
+
+@(details: WebTeamDetails)
+
+<a href="@routes.LeagueController.bestTeams(details.leagueId, details.season)">@details.leagueName</a>
+->
+<a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.season, details.divisionLevel)">@Romans(details.divisionLevel)</a>
+->
+<a href="@routes.LeagueUnitController.bestTeamsById(details.leagueUnitId)">@details.leagueUnitName</a>
+->
+<a href="@routes.TeamController.matches(details.teamId)">@details.teamName</a>
