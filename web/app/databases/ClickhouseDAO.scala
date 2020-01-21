@@ -26,8 +26,8 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                         |league_unit_name,
                         |toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats,
                         |toInt32(avg(rating_midfield)) as midfield,
-                        |toInt32(avg((rating_right_def + rating_left_def + rating_mid_def)/3)) as defense,
-                        |toInt32(avg( (rating_right_att + rating_mid_att + rating_left_att)/3)) as attack
+                        |toInt32(avg((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
+                        |toInt32(avg( (rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
                         |from hattrick.match_details __where__
                         |group by team_id, team_name, league_unit_id, league_unit_name order by hatstats desc limit 8""".stripMargin)
 
@@ -47,11 +47,18 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
     db.withConnection{ implicit connection =>
       val matchDetailsSql = SqlBuilder("""select league_unit_id,
                         |league_unit_name,
-                        |toInt32(avg(hatstats)) as hatstats from
+                        |toInt32(avg(hatstats)) as hatstats,
+                        |toInt32(avg(midfield)) as midfield,
+                        |toInt32(avg(defense)) as defense,
+                        |toInt32(avg(attack)) as attack
+                        | from
                         |   (select league_unit_id,
                         |     league_unit_name,
                         |     round,
-                        |     toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats
+                        |     toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats,
+                        |     toInt32(avg(rating_midfield)) as midfield,
+                        |     toInt32(avg((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
+                        |     toInt32(avg((rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
                         |     from hattrick.match_details
                         |     __where__
                         |     group by league_unit_id, league_unit_name, round)

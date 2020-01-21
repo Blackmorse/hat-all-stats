@@ -4,11 +4,17 @@
     <tr>
         <th>League</th>
         <th>HatStats</th>
+        <th>Midfield</th>
+        <th>Defense</th>
+        <th>Attack</th>
     </tr>
     @for(leagueUnit <- bestLeagueUnits) {
     <tr>
         <td><a href="@routes.LeagueUnitController.bestTeamsById(leagueUnit.leagueUnitId)">@leagueUnit.leagueUnitName</a></td>
         <td>@leagueUnit.hatStats</td>
+        <td>@leagueUnit.midfield</td>
+        <td>@leagueUnit.defense</td>
+        <td>@leagueUnit.attack</td>
     </tr>
     }
 </table>
