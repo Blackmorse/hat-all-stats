@@ -7,6 +7,7 @@ import com.google.inject.Inject
 import models.clickhouse.{LeagueUnitRating, TeamMatchInfo, TeamRating}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
+import service.DefaultService
 
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -18,7 +19,8 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
   def bestTeams(leagueId: Option[Int] = None,
                 season: Option[Int] = None,
                 divisionLevel: Option[Int] = None,
-                leagueUnitId: Option[Long] = None) = Future {
+                leagueUnitId: Option[Long] = None,
+                page: Int = 0) = Future {
     db.withConnection{implicit connection =>
       val matchDetailsSql = SqlBuilder("""select team_id,
                         |team_name,
@@ -29,12 +31,13 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                         |toInt32(avg((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
                         |toInt32(avg( (rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
                         |from hattrick.match_details __where__
-                        |group by team_id, team_name, league_unit_id, league_unit_name order by hatstats desc limit 8""".stripMargin)
+                        |group by team_id, team_name, league_unit_id, league_unit_name order by hatstats desc __limit__""".stripMargin)
 
       leagueId.foreach(matchDetailsSql.leagueId)
       season.foreach(matchDetailsSql.season)
       divisionLevel.foreach(matchDetailsSql.divisionLevel)
       leagueUnitId.foreach(matchDetailsSql.leagueUnitId)
+      matchDetailsSql.page(page)
 
       matchDetailsSql.build.as(TeamRating.teamRatingMapper.*)
     }
@@ -99,6 +102,8 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
 
 case class SqlBuilder(baseSql: String) {
   private val params: mutable.Buffer[(String, ParameterValue)] = mutable.Buffer()
+  private var page = 0
+  private val pageSize = DefaultService.PAGE_SIZE
 
   def season(season: Int): SqlBuilder = {
     params += (("season", season))
@@ -123,13 +128,19 @@ case class SqlBuilder(baseSql: String) {
     this
   }
 
+  def page(page: Int): SqlBuilder = {
+    this.page = page
+    this
+  }
+
   def build: SimpleSql[Row] = {
-    val sql =  if(params.nonEmpty) {
+    val sql =  (if(params.nonEmpty) {
       val where = " where " + params.map{case (name, _) => s"$name = {$name}"}.mkString(" and ")
       baseSql.replace("__where__", where)
     } else {
       baseSql.replace("__where__", " ")
-    }
+    })
+    .replace("__limit__", s" limit ${page * pageSize}, $pageSize")
 
     SQL(sql)
       .on(params.map(NamedParameter.namedWithString): _*)

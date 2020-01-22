@@ -2,11 +2,10 @@ package controllers
 
 import databases.ClickhouseDAO
 import javax.inject.{Inject, Singleton}
+import models.web.BestTeams
 import play.api.mvc.{BaseController, ControllerComponents}
 
 import scala.concurrent._
-import play.api._
-import play.api.mvc._
 import service.DefaultService
 import play.api.data.Form
 import play.api.data.Forms._
@@ -29,13 +28,15 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     )(DivisionLevelForm.apply)(DivisionLevelForm.unapply))
 
 
-  def bestTeams(leagueId: Int, season: Int) = Action.async { implicit request =>
+  def bestTeams(leagueId: Int, season: Int, page: Int) = Action.async { implicit request =>
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
     val details = WebLeagueDetails(leagueName, leagueId, season, form, divisionLevels(leagueId, season ))
 
-    clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season))
-      .map(bestTeams => Ok(views.html.league.bestTeams(details, bestTeams)))
+    val pageUrlFunc: Int => String = p => routes.LeagueController.bestTeams(leagueId, season, p).url
+
+    clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season), page = page)
+      .map(bestTeams => Ok(views.html.league.bestTeams(details, BestTeams(bestTeams, page, pageUrlFunc))))
   }
 
   def bestLeagueUnits(leagueId: Int, season: Int) = Action.async {implicit request =>

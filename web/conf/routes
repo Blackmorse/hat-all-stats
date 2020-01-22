@@ -5,14 +5,14 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
-GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, currentSeason: Int)
+GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, currentSeason: Int, page: Int ?= 0)
 GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, currentSeason: Int)
 
-GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int)
+GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0)
 GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, currentSeason: Int, divisionLevel: Int)
 
-GET     /leagueLevelUnit            controllers.LeagueUnitController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, leagueUnitNumber: Int)
-GET     /leagueLevelUnitById        controllers.LeagueUnitController.bestTeamsById(leagueUnitId: Long)
+GET     /leagueLevelUnit            controllers.LeagueUnitController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, leagueUnitNumber: Int, page: Int ?= 0)
+GET     /leagueLevelUnitById        controllers.LeagueUnitController.bestTeamsById(leagueUnitId: Long, page: Int ?= 0)
 
 GET     /matches                    controllers.TeamController.matches(teamId: Long)
 

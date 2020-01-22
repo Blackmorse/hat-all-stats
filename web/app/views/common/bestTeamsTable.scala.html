@@ -1,6 +1,10 @@
-@(bestTeams: List[models.clickhouse.TeamRating])
+@import service.DefaultService
+@import models.web.BestTeams
+
+@(bestTeams: BestTeams)
 <table>
     <tr>
+        <th>Position</th>
         <th>Team</th>
         <th>League</th>
         <th>HatStats</th>
@@ -8,8 +12,9 @@
         <th>Defense</th>
         <th>Attack</th>
     </tr>
-    @for(team <- bestTeams) {
+    @for((team, index) <- bestTeams.teams.zipWithIndex) {
     <tr>
+        <td>@{DefaultService.PAGE_SIZE * bestTeams.page + index + 1}</td>
         <td><a href="@routes.TeamController.matches(team.teamId)">@team.teamName</a></td>
         <td><a href="@routes.LeagueUnitController.bestTeamsById(team.leagueUnitId)">@team.leagueUnitName</a></td>
         <td>@team.hatStats</td>
@@ -19,3 +24,14 @@
     </tr>
     }
 </table>
+
+@for(url <- bestTeams.prevUrl) {
+<a href="@url">Previous<<</a>
+}
+
+@{bestTeams.page + 1}
+
+@for(url <- bestTeams.nextUrl) {
+<a href="@url">>>Next</a>
+}
+
