@@ -1,5 +1,6 @@
 package controllers
 
+import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails
 import databases.ClickhouseDAO
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
@@ -10,8 +11,10 @@ import utils.{LeagueNameParser, Romans}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import collection.JavaConverters._
+
 case class WebLeagueUnitDetails(leagueName: String, leagueId: Int, season: Int, divisionLevel: Int,
-                                leagueUnitNumber: Int, leagueUnitName: String, leagueUnitId: Long)
+                                leagueUnitNumber: Int, leagueUnitName: String, leagueUnitId: Long, teamLinks: Seq[(String, String)])
 
 @Singleton
 class LeagueUnitController @Inject()(val controllerComponents: ControllerComponents,
@@ -29,14 +32,16 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
 
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
-    val details = WebLeagueUnitDetails(leagueName, leagueId, season, divisionLevel, leagueUnitNumber, Romans(divisionLevel) + "." + leagueUnitNumber, leagueUnitId)
-
     val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
 
     val bestTeamsFuture = clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season), divisionLevel = Some(divisionLevel),
       leagueUnitId = Some(leagueUnitId))
 
     leagueDetailsFuture.zipWith(bestTeamsFuture){case(leagueDetails, bestTeams) =>
+
+      val details = WebLeagueUnitDetails(leagueName, leagueId, season, divisionLevel, leagueUnitNumber,
+        Romans(divisionLevel) + "." + leagueUnitNumber, leagueUnitId, teamLinks(leagueDetails))
+
       Ok(views.html.leagueunit.bestTeams(details, leagueDetails, bestTeams))}
   }
 
@@ -49,11 +54,15 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
 
     val details = WebLeagueUnitDetails(leagueName, leagueDetails.getLeagueId,
       defaultService.currentSeason, leagueDetails.getLeagueLevel, leagueUnitNumber,
-      leagueDetails.getLeagueLevelUnitName, leagueDetails.getLeagueLevelUnitId)
+      leagueDetails.getLeagueLevelUnitName, leagueDetails.getLeagueLevelUnitId, teamLinks(leagueDetails))
 
     clickhouseDAO.bestTeams(leagueId = Some(leagueDetails.getLeagueId),
       season = Some(defaultService.currentSeason), divisionLevel = Some(leagueDetails.getLeagueLevel),
       leagueUnitId = Some(leagueDetails.getLeagueLevelUnitId))
       .map(bestTeams => Ok(views.html.leagueunit.bestTeams(details, leagueDetails, bestTeams)))
+  }
+
+  private def teamLinks(leagueDetails: LeagueDetails): Seq[(String, String)] = {
+    leagueDetails.getTeams.asScala.map(team => team.getTeamName -> routes.TeamController.matches(team.getTeamId).url)
   }
 }
