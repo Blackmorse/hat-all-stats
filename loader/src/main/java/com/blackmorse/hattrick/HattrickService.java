@@ -5,6 +5,7 @@ import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails;
 import com.blackmorse.hattrick.api.matchdetails.model.HomeAwayTeam;
 import com.blackmorse.hattrick.api.matchdetails.model.HomeTeam;
 import com.blackmorse.hattrick.api.matchdetails.model.Match;
+import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.model.LeagueInfo;
 import com.blackmorse.hattrick.model.LeagueInfoWithLeagueUnitDetails;
@@ -33,12 +34,14 @@ public class HattrickService {
 
     private AtomicLong teams = new AtomicLong();
     private AtomicLong matchDetailsCount = new AtomicLong();
+    private final Integer season;
 
     @Autowired
     public HattrickService(@Qualifier("apiExecutor") ExecutorService executorService,
                            Hattrick hattrick) {
         this.hattrick = hattrick;
         this.scheduler = io.reactivex.schedulers.Schedulers.from(executorService);
+        season = hattrick.getWorldDetails().getLeagueList().stream().filter(league -> league.getLeagueName().equals("Швеция")).map(League::getSeason).findFirst().get();
     }
 
     public List<LeagueInfoWithLeagueUnitId> getLeagueUnitsIdsForCountries(List<String> countryNames) {
@@ -89,7 +92,7 @@ public class HattrickService {
                             log.info("processing {} team", teams.incrementAndGet());
 
                             return TeamLeague.builder()
-                                    .leagueId(info.getLeagueDetails().getLeagueId())
+                                    .leagueId(info.getLeagueInfo().getLeagueId())
                                     .leagueLevel(info.getLeagueDetails().getLeagueLevel())
                                     .leagueLevelUnitId(info.getLeagueDetails().getLeagueLevelUnitId())
                                     .leagueUnitName(info.getLeagueDetails().getLeagueLevelUnitName())
@@ -142,5 +145,9 @@ public class HattrickService {
                 .ratingIndirectSetPiecesDef(homeAwayTeam.getRatingIndirectSetPiecesDef())
                 .ratingIndirectSetPiecesAtt(homeAwayTeam.getRatingIndirectSetPiecesAtt())
                 .build();
+    }
+
+    public Integer getSeason() {
+        return season;
     }
 }

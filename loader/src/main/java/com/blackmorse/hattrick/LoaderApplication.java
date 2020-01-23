@@ -1,5 +1,6 @@
 package com.blackmorse.hattrick;
 
+import com.blackmorse.hattrick.nov.SeasonHistoryLoader;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,8 +20,9 @@ public class LoaderApplication {
     @Bean
     public CommandLineRunner runner(ApplicationContext ctx) {
         return args -> {
-            ctx.getBean(HistoryLoader.class).load(Arrays.asList("Россия"));
+//            ctx.getBean(HistoryLoader.class).load(Arrays.asList("Россия"));
 //            ctx.getBean(LastLeagueMatchLoader.class).load(Arrays.asList("Россия"));
+            ctx.getBean(SeasonHistoryLoader.class).load(Arrays.asList("Hattrick International"), 73);
         };
     }
 }

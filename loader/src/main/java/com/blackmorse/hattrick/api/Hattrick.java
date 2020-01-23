@@ -2,6 +2,7 @@ package com.blackmorse.hattrick.api;
 
 import com.blackmorse.hattrick.HattrickApi;
 import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails;
+import com.blackmorse.hattrick.api.leaguefixtures.model.LeagueFixtures;
 import com.blackmorse.hattrick.api.matchdetails.model.MatchDetails;
 import com.blackmorse.hattrick.api.matches.model.Matches;
 import com.blackmorse.hattrick.api.matchesarchive.model.MatchesArchive;
@@ -9,6 +10,8 @@ import com.blackmorse.hattrick.api.matchlineup.model.MatchLineUp;
 import com.blackmorse.hattrick.api.nationalteamdetails.model.NationalTeamDetails;
 import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.search.model.Search;
+import com.blackmorse.hattrick.api.teamdetails.model.TeamDetails;
+import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.api.worlddetails.model.WorldDetails;
 import com.blackmorse.hattrick.exceptions.HattrickChppException;
 import com.blackmorse.hattrick.exceptions.HattrickTransferException;
@@ -25,31 +28,55 @@ import java.util.Map;
 
 @Component
 public class Hattrick {
-    private static Map<Integer, String> arabNumbers = new HashMap<>();
+    public static Map<Integer, String> arabToRomans = new HashMap<>();
+    public static Map<String, Integer> romansToArab = new HashMap<>();
 
     static {
-        arabNumbers.put(2, "II");
-        arabNumbers.put(3, "III");
-        arabNumbers.put(4, "IV");
-        arabNumbers.put(5, "V");
-        arabNumbers.put(6, "VI");
-        arabNumbers.put(7, "VII");
-        arabNumbers.put(8, "VIII");
-        arabNumbers.put(9, "IX");
-        arabNumbers.put(10, "X");
-        arabNumbers.put(11, "XI");
-        arabNumbers.put(12, "XII");
-        arabNumbers.put(13, "XIII");
-        arabNumbers.put(14, "XIV");
-        arabNumbers.put(15, "XV");
+        arabToRomans.put(2, "II");
+        arabToRomans.put(3, "III");
+        arabToRomans.put(4, "IV");
+        arabToRomans.put(5, "V");
+        arabToRomans.put(6, "VI");
+        arabToRomans.put(7, "VII");
+        arabToRomans.put(8, "VIII");
+        arabToRomans.put(9, "IX");
+        arabToRomans.put(10, "X");
+        arabToRomans.put(11, "XI");
+        arabToRomans.put(12, "XII");
+        arabToRomans.put(13, "XIII");
+        arabToRomans.put(14, "XIV");
+        arabToRomans.put(15, "XV");
+    }
+
+    static {
+        romansToArab.put("II", 2);
+        romansToArab.put("III", 3);
+        romansToArab.put("IV", 4);
+        romansToArab.put("V", 5);
+        romansToArab.put("VI", 6);
+        romansToArab.put("VII", 7);
+        romansToArab.put("VIII", 8);
+        romansToArab.put("IX", 9);
+        romansToArab.put("X", 10);
+        romansToArab.put("XI", 11);
+        romansToArab.put("XII", 12);
+        romansToArab.put("XIII", 13);
+        romansToArab.put("XIV", 14);
+        romansToArab.put("XV", 15);
     }
 
     private final HattrickApi hattrickApi;
 
+    public final Integer season;
+
+    public Integer getSeason() {
+        return season;
+    }
 
     @Autowired
     public Hattrick(HattrickApi hattrickApi) {
         this.hattrickApi = hattrickApi;
+        season = getWorldDetails().getLeagueList().stream().filter(league -> league.getLeagueName().equals("Швеция")).map(League::getSeason).findFirst().get();
     }
 
     @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 5, backoff = @Backoff(delay = 15000L))
@@ -64,18 +91,33 @@ public class Hattrick {
     }
 
     @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 5, backoff = @Backoff(delay = 15000L))
+    public LeagueFixtures leagueUnitFixturesById(Long id, Integer season) {
+        return hattrickApi.leagueFixtures().leagueLevelUnitId(id).season(season).execute();
+    }
+
+    @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 5, backoff = @Backoff(delay = 15000L))
+    public Search searchLeagueUnits(Integer leagueId, String searchString, Integer page) {
+        return hattrickApi.search().searchType(3).searchLeagueId(leagueId).pageIndex(page).searchString(searchString).execute();
+    }
+
+    @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 5, backoff = @Backoff(delay = 15000L))
     public List<Long> getLeagueUnitIdsForLevel(int leagueId, int level) {
         List<Long> result = new ArrayList<>();
 
-        Search leagueSearch = hattrickApi.search().searchLeagueId(leagueId).searchType(3).searchString(arabNumbers.get(level) + ".").execute();
+        Search leagueSearch = hattrickApi.search().searchLeagueId(leagueId).searchType(3).searchString(arabToRomans.get(level) + ".").execute();
         leagueSearch.getSearchResults().stream().map(Result::getResultId).forEach(result::add);
 
         for (int page = 1; page < leagueSearch.getPages(); page++) {
-            Search leagueSearchPage = hattrickApi.search().searchLeagueId(leagueId).pageIndex(page).searchType(3).searchString(arabNumbers.get(level) + ".").execute();
+            Search leagueSearchPage = hattrickApi.search().searchLeagueId(leagueId).pageIndex(page).searchType(3).searchString(arabToRomans.get(level) + ".").execute();
 
             leagueSearchPage.getSearchResults().stream().map(Result::getResultId).forEach(result::add);
         }
         return result;
+    }
+
+    @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 5, backoff = @Backoff(delay = 15000L))
+    public TeamDetails teamDetails(Long teamId) {
+        return hattrickApi.teamDetails().teamID(teamId).execute();
     }
 
     @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 5, backoff = @Backoff(delay = 15000L))
@@ -104,6 +146,6 @@ public class Hattrick {
     }
 
     public Matches getLatestTeamMatches(Long teamId) {
-        return hattrickApi.matches().teamId(615797).lastMatchDate(new Date()).execute();
+        return hattrickApi.matches().teamId(teamId.intValue()).lastMatchDate(new Date()).execute();
     }
 }

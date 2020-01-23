@@ -34,7 +34,7 @@ public class ClickhouseBatcher<T> {
         }
     }
 
-    private void writeToClickhouse(List<T> batch) {
+    public void writeToClickhouse(List<T> batch) {
         try {
             log.info("Writing {} lines to table {}", batch.size(), tableName);
 
