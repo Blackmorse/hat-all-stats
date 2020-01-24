@@ -1,8 +1,9 @@
-@import models.web.BestTeams
+@import models.web.WebPagedEntities
+@import models.clickhouse.TeamRating
 @import controllers.WebLeagueUnitDetails
 @import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails
 
-@(details: WebLeagueUnitDetails, leagueDetails: LeagueDetails, bestTeams: BestTeams)
+@(details: WebLeagueUnitDetails, leagueDetails: LeagueDetails, bestTeams: WebPagedEntities[TeamRating])
 
 
 @main(details.leagueUnitName, header(details), leftBar(details)){

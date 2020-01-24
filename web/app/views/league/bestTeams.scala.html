@@ -1,7 +1,8 @@
-@import models.web.BestTeams
+@import models.web.WebPagedEntities
+@import models.clickhouse.TeamRating
 @import play.api.data.Form
 @import controllers.WebLeagueDetails
 
-@(details: WebLeagueDetails, bestTeams: BestTeams)(implicit messages: Messages)
+@(details: WebLeagueDetails, bestTeams: WebPagedEntities[TeamRating])(implicit messages: Messages)
 
 @main(details.leagueName, header(details), leftBar(details.leagueId, details.season))(common.bestTeamsTable(bestTeams))

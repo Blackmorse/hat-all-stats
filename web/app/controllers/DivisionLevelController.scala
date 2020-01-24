@@ -2,12 +2,11 @@ package controllers
 
 import databases.ClickhouseDAO
 import javax.inject.{Inject, Singleton}
-import models.web.BestTeams
+import models.web.WebPagedEntities
 import play.api.mvc.{BaseController, ControllerComponents}
 import service.DefaultService
 import utils.Romans
 
-import scala.concurrent.ExecutionContext
 import scala.concurrent.ExecutionContext.Implicits.global
 
 case class WebDivisionLevelDetails(leagueName: String, leagueId: Int, season: Int, divisionLevel: Int, divisionLevelRoman: String,
@@ -26,17 +25,19 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
     val pageUrlFunc: Int => String = p => routes.DivisionLevelController.bestTeams(leagueId, season, divisionLevel, p).url
 
     clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season), divisionLevel = Some(divisionLevel), page = page)
-      .map(bestTeams => Ok(views.html.divisionlevel.bestTeams(details, BestTeams(bestTeams, page, pageUrlFunc))))
+      .map(bestTeams => Ok(views.html.divisionlevel.bestTeams(details, WebPagedEntities(bestTeams, page, pageUrlFunc))))
   }
 
-  def bestLeagueUnits(leagueId: Int, season: Int, divisionLevel: Int) = Action.async{  implicit request =>
+  def bestLeagueUnits(leagueId: Int, season: Int, divisionLevel: Int, page: Int) = Action.async{  implicit request =>
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
     val details = WebDivisionLevelDetails(leagueName, leagueId, season, divisionLevel, Romans(divisionLevel),
       leagueUnitNumbers(leagueId, season, divisionLevel))
 
-    clickhouseDAO.bestLeagueUnits(leagueId = Some(leagueId), season = Some(season), divisionLevel = Some(divisionLevel))
-      .map(bestLeagueUnits => Ok(views.html.divisionlevel.bestLeagueUnits(details, bestLeagueUnits)))
+    val pageUrlFunc: Int => String = p => routes.DivisionLevelController.bestLeagueUnits(leagueId, season, divisionLevel, p).url
+
+    clickhouseDAO.bestLeagueUnits(leagueId = Some(leagueId), season = Some(season), divisionLevel = Some(divisionLevel), page = page)
+      .map(bestLeagueUnits => Ok(views.html.divisionlevel.bestLeagueUnits(details, WebPagedEntities(bestLeagueUnits, page, pageUrlFunc))))
 
   }
 

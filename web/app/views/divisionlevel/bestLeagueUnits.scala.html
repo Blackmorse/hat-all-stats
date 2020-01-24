@@ -1,5 +1,7 @@
 @import controllers.WebDivisionLevelDetails
+@import models.clickhouse.LeagueUnitRating
+@import models.web.WebPagedEntities
 
-@(details: WebDivisionLevelDetails, bestLeagueUnits: List[models.clickhouse.LeagueUnitRating])
+@(details: WebDivisionLevelDetails, bestLeagueUnits: WebPagedEntities[LeagueUnitRating])
 
 @main(details.leagueName, header(details), leftBar(details))(common.bestLeagueUnitsTable(bestLeagueUnits))

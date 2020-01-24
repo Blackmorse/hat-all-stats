@@ -4,14 +4,14 @@ import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails
 import databases.ClickhouseDAO
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
-import models.web.BestTeams
+import models.web.WebPagedEntities
 import play.api.mvc.{BaseController, ControllerComponents}
 import service.DefaultService
 import utils.{LeagueNameParser, Romans}
 
-import scala.concurrent.Future
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
-import collection.JavaConverters._
+import scala.concurrent.Future
 
 case class WebLeagueUnitDetails(leagueName: String, leagueId: Int, season: Int, divisionLevel: Int,
                                 leagueUnitNumber: Int, leagueUnitName: String, leagueUnitId: Long, teamLinks: Seq[(String, String)])
@@ -44,7 +44,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       val details = WebLeagueUnitDetails(leagueName, leagueId, season, divisionLevel, leagueUnitNumber,
         Romans(divisionLevel) + "." + leagueUnitNumber, leagueUnitId, teamLinks(leagueDetails))
 
-      Ok(views.html.leagueunit.bestTeams(details, leagueDetails, BestTeams(bestTeams, page, pageUrlFunc)))}
+      Ok(views.html.leagueunit.bestTeams(details, leagueDetails, WebPagedEntities(bestTeams, page, pageUrlFunc)))}
   }
 
   def bestTeamsById(leagueUnitId: Long, page: Int) = Action.async{
@@ -63,7 +63,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
     clickhouseDAO.bestTeams(leagueId = Some(leagueDetails.getLeagueId),
       season = Some(defaultService.currentSeason), divisionLevel = Some(leagueDetails.getLeagueLevel),
       leagueUnitId = Some(leagueDetails.getLeagueLevelUnitId), page = page)
-      .map(bestTeams => Ok(views.html.leagueunit.bestTeams(details, leagueDetails, BestTeams(bestTeams, page, pageUrlFunc))))
+      .map(bestTeams => Ok(views.html.leagueunit.bestTeams(details, leagueDetails, WebPagedEntities(bestTeams, page, pageUrlFunc))))
   }
 
   private def teamLinks(leagueDetails: LeagueDetails): Seq[(String, String)] = {

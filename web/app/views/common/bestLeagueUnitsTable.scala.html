@@ -1,15 +1,21 @@
-@(bestLeagueUnits: List[models.clickhouse.LeagueUnitRating])
+@import service.DefaultService
+@import models.web.WebPagedEntities
+@import models.clickhouse.LeagueUnitRating
+
+@(bestLeagueUnits: WebPagedEntities[LeagueUnitRating])
 
 <table>
     <tr>
+        <th>Position</th>
         <th>League</th>
         <th>HatStats</th>
         <th>Midfield</th>
         <th>Defense</th>
         <th>Attack</th>
     </tr>
-    @for(leagueUnit <- bestLeagueUnits) {
+    @for((leagueUnit, index) <- bestLeagueUnits.entities.zipWithIndex) {
     <tr>
+        <td>@{DefaultService.PAGE_SIZE * bestLeagueUnits.page + index + 1}</td>
         <td><a href="@routes.LeagueUnitController.bestTeamsById(leagueUnit.leagueUnitId)">@leagueUnit.leagueUnitName</a></td>
         <td>@leagueUnit.hatStats</td>
         <td>@leagueUnit.midfield</td>
@@ -18,3 +24,13 @@
     </tr>
     }
 </table>
+
+@for(url <- bestLeagueUnits.prevUrl) {
+<a href="@url">Previous<<</a>
+}
+
+@{bestLeagueUnits.page + 1}
+
+@for(url <- bestLeagueUnits.nextUrl) {
+<a href="@url">>>Next</a>
+}

@@ -46,9 +46,10 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
   def bestLeagueUnits(leagueId: Option[Int] = None,
                       season: Option[Int] = None,
                       divisionLevel: Option[Int] = None,
-                      leagueUnitId: Option[Long] = None) = Future {
+                      leagueUnitId: Option[Long] = None,
+                      page: Int = 0) = Future {
     db.withConnection{ implicit connection =>
-      val matchDetailsSql = SqlBuilder("""select league_unit_id,
+      val leagueUnitsSql = SqlBuilder("""select league_unit_id,
                         |league_unit_name,
                         |toInt32(avg(hatstats)) as hatstats,
                         |toInt32(avg(midfield)) as midfield,
@@ -65,14 +66,15 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                         |     from hattrick.match_details
                         |     __where__
                         |     group by league_unit_id, league_unit_name, round)
-                        |group by league_unit_id, league_unit_name order by hatstats desc limit 8""".stripMargin)
+                        |group by league_unit_id, league_unit_name order by hatstats desc __limit__""".stripMargin)
 
-      leagueId.foreach(matchDetailsSql.leagueId)
-      season.foreach(matchDetailsSql.season)
-      divisionLevel.foreach(matchDetailsSql.divisionLevel)
-      leagueUnitId.foreach(matchDetailsSql.leagueUnitId)
+      leagueId.foreach(leagueUnitsSql.leagueId)
+      season.foreach(leagueUnitsSql.season)
+      divisionLevel.foreach(leagueUnitsSql.divisionLevel)
+      leagueUnitId.foreach(leagueUnitsSql.leagueUnitId)
+      leagueUnitsSql.page(page)
 
-      matchDetailsSql.build.as(LeagueUnitRating.leagueUnitRatingMapper.*)
+      leagueUnitsSql.build.as(LeagueUnitRating.leagueUnitRatingMapper.*)
     }
   }
 

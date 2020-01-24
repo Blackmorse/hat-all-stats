@@ -1,5 +1,6 @@
 package service
 
+import databases.ClickhouseDAO
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
@@ -8,6 +9,7 @@ import collection.JavaConverters._
 
 @Singleton
 class DefaultService @Inject() (val hattrick: Hattrick,
+                                val clickhouseDAO: ClickhouseDAO,
                                 val configuration: Configuration) {
   lazy val leagueIdToCountryNameMap = hattrick.api.worldDetails().execute()
     .getLeagueList.asScala.map(league => league.getLeagueId -> league)
@@ -27,6 +29,8 @@ class DefaultService @Inject() (val hattrick: Hattrick,
     8 -> (1 to 2048),
     9 -> (1 to 2048)
   )
+
+
 }
 
 object DefaultService {

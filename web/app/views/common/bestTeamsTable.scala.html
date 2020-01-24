@@ -1,7 +1,8 @@
 @import service.DefaultService
-@import models.web.BestTeams
+@import models.web.WebPagedEntities
+@import models.clickhouse.TeamRating
 
-@(bestTeams: BestTeams)
+@(bestTeams: WebPagedEntities[TeamRating])
 <table>
     <tr>
         <th>Position</th>
@@ -12,7 +13,7 @@
         <th>Defense</th>
         <th>Attack</th>
     </tr>
-    @for((team, index) <- bestTeams.teams.zipWithIndex) {
+    @for((team, index) <- bestTeams.entities.zipWithIndex) {
     <tr>
         <td>@{DefaultService.PAGE_SIZE * bestTeams.page + index + 1}</td>
         <td><a href="@routes.TeamController.matches(team.teamId)">@team.teamName</a></td>
