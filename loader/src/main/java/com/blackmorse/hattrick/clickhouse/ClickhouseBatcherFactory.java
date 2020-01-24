@@ -46,8 +46,8 @@ public class ClickhouseBatcherFactory {
     }
 
     public ClickhouseBatcher<PlayerRating> createPlayerRatings() {
-        String sql = "insert into hattrick.player_rating (league_id, division_level, league_unit_id, team_id, team_name, time, round, match_id, player_id, role_id, first_name, last_name, rating_stars, ratingStarsEndOfMatch, behaviour) " +
-                "values (:league_id, :division_level, :league_unit_id, :team_id, :team_name, :time, :round, :match_id, :player_id, :role_id, :first_name, :last_name, :rating_stars, :ratingStarsEndOfMatch, :behaviour)";
+        String sql = "insert into hattrick.player_rating (league_id, division_level, league_unit_id, team_id, team_name, time, round, match_id, player_id, role_id, first_name, last_name, rating_stars, start_minute, end_minute, ratingStarsEndOfMatch, behaviour) " +
+                "values (:league_id, :division_level, :league_unit_id, :team_id, :team_name, :time, :round, :match_id, :player_id, :role_id, :first_name, :last_name, :rating_stars, :start_minute, :end_minute, :ratingStarsEndOfMatch, :behaviour)";
 
         Function<PlayerRating, Map<String, Object>> jdbcParamsCreator = playerRating -> {
             Map<String, Object> map = new HashMap<>();
@@ -65,6 +65,8 @@ public class ClickhouseBatcherFactory {
             map.put("first_name", playerRating.getFirstName());
             map.put("last_name", playerRating.getLastName());
             map.put("rating_stars", (playerRating.getRatingStars() == null) ? 0.0f : playerRating.getRatingStars());
+            map.put("start_minute", playerRating.getStartMinute());
+            map.put("end_minute", playerRating.getEndMinute());
             map.put("ratingStarsEndOfMatch", (playerRating.getRatingStarsEndOfMatch() == null) ? 0.0f : playerRating.getRatingStarsEndOfMatch());
             map.put("behaviour", (playerRating.getBehaviour() == null) ? -2 : playerRating.getBehaviour());
 

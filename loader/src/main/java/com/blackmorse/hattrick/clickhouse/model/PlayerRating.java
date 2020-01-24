@@ -22,6 +22,8 @@ public class PlayerRating {
     private String firstName;
     private String lastName;
     private Double ratingStars;
+    private Integer startMinute;
+    private Integer endMinute;
     private Double ratingStarsEndOfMatch;
     private Integer behaviour;
 }
