@@ -24,38 +24,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
                                      val clickhouseDAO: ClickhouseDAO,
                                      val leagueUnitCalculatorService: LeagueUnitCalculatorService) extends BaseController {
 
-  def bestTeams(leagueId: Int, season: Int, divisionLevel: Int, leagueUnitNumber: Int, page: Int) = Action.async{implicit  request =>
-
-    val leagueUnitId = hattrick.api.search()
-      .searchLeagueId(leagueId)
-      .searchType(3)
-      .searchString(Romans(divisionLevel) + "." + leagueUnitNumber)
-        .execute().getSearchResults.get(0).getResultId
-
-    val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
-
-    val leagueFixtureFuture = Future(hattrick.api.leagueFixtures().season(defaultService.seasonForLeagueId(season, leagueId))
-      .leagueLevelUnitId(leagueUnitId).execute())
-
-    val bestTeamsFuture = clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season), divisionLevel = Some(divisionLevel),
-      leagueUnitId = Some(leagueUnitId), page = page)
-
-    val pageUrlFunc: Int => String = p => routes.LeagueUnitController.bestTeams(leagueId, season, divisionLevel, leagueUnitNumber, p).url
-
-    val seasonInfoFunc: Int => String = s => routes.LeagueUnitController.bestTeams(leagueId, s, divisionLevel, leagueUnitNumber, 0).url
-    val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueId, seasonInfoFunc))
-
-    leagueFixtureFuture.zipWith(bestTeamsFuture){case(leagueFixture, bestTeams) =>
-
-      val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture)
-
-      val details = WebLeagueUnitDetails(leagueName, leagueId, seasonInfo, divisionLevel, leagueUnitNumber,
-        Romans(divisionLevel) + "." + leagueUnitNumber, leagueUnitId, teamLinks(leagueUnitTeamStats))
-
-      Ok(views.html.leagueunit.bestTeams(details, leagueUnitTeamStats, WebPagedEntities(bestTeams, page, pageUrlFunc)))}
-  }
-
-  def bestTeamsById(leagueUnitId: Long, season: Int, page: Int) = Action.async{
+  def bestTeams(leagueUnitId: Long, season: Int, page: Int) = Action.async{
     val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
 
     leagueDetailsFuture.flatMap ( leagueDetails => {
@@ -65,7 +34,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       val leagueName = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId).getEnglishName
       val leagueUnitNumber = LeagueNameParser.getLeagueUnitNumberByName(leagueDetails.getLeagueLevelUnitName)
 
-      val seasonInfoFunc: Int => String = s => routes.LeagueUnitController.bestTeamsById(leagueUnitId, s, 0).url
+      val seasonInfoFunc: Int => String = s => routes.LeagueUnitController.bestTeams(leagueUnitId, s, 0).url
       val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueDetails.getLeagueId, seasonInfoFunc))
 
       val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture)
@@ -74,7 +43,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         seasonInfo, leagueDetails.getLeagueLevel, leagueUnitNumber,
         leagueDetails.getLeagueLevelUnitName, leagueDetails.getLeagueLevelUnitId, teamLinks(leagueUnitTeamStats))
 
-      val pageUrlFunc: Int => String = p => routes.LeagueUnitController.bestTeamsById(leagueDetails.getLeagueLevelUnitId, p).url
+      val pageUrlFunc: Int => String = p => routes.LeagueUnitController.bestTeams(leagueDetails.getLeagueLevelUnitId, p).url
 
       clickhouseDAO.bestTeams(leagueId = Some(leagueDetails.getLeagueId),
         season = Some(defaultService.currentSeason), divisionLevel = Some(leagueDetails.getLeagueLevel),

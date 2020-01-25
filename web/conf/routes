@@ -11,8 +11,7 @@ GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits
 GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0)
 GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0)
 
-GET     /leagueLevelUnit            controllers.LeagueUnitController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, leagueUnitNumber: Int, page: Int ?= 0)
-GET     /leagueLevelUnitById        controllers.LeagueUnitController.bestTeamsById(leagueUnitId: Long, season: Int, page: Int ?= 0)
+GET     /leagueLevelUnitById        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, season: Int, page: Int ?= 0)
 
 GET     /matches                    controllers.TeamController.matches(teamId: Long)
 
