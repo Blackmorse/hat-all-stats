@@ -3,9 +3,9 @@
 @(details: WebDivisionLevelDetails)
 <table id="countryStatisticsTable">
     <tr>
-        <td><a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.season, details.divisionLevel)">Teams</a></td>
+        <td><a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.seasonInfo.season, details.divisionLevel)">Teams</a></td>
     </tr>
     <tr>
-        <td><a href="@routes.DivisionLevelController.bestLeagueUnits(details.leagueId, details.season, details.divisionLevel)">Leagues</a></td>
+        <td><a href="@routes.DivisionLevelController.bestLeagueUnits(details.leagueId, details.seasonInfo.season, details.divisionLevel)">Leagues</a></td>
     </tr>
 </table>

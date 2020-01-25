@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import javax.inject.Singleton
 import anorm._
 import com.google.inject.Inject
-import models.clickhouse.{LeagueUnitRating, TeamMatchInfo, TeamRating}
+import models.clickhouse.{LeagueSeasons, LeagueUnitRating, TeamMatchInfo, TeamRating}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
 import service.DefaultService
@@ -30,7 +30,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                         |toInt32(avg(rating_midfield)) as midfield,
                         |toInt32(avg((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
                         |toInt32(avg( (rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
-                        |from hattrick.match_details __where__
+                        |from hattrick.match_details __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
                         |group by team_id, team_name, league_unit_id, league_unit_name order by hatstats desc __limit__""".stripMargin)
 
       leagueId.foreach(matchDetailsSql.leagueId)
@@ -38,6 +38,8 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
       divisionLevel.foreach(matchDetailsSql.divisionLevel)
       leagueUnitId.foreach(matchDetailsSql.leagueUnitId)
       matchDetailsSql.page(page)
+
+
 
       matchDetailsSql.build.as(TeamRating.teamRatingMapper.*)
     }
@@ -64,7 +66,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                         |     toInt32(avg((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
                         |     toInt32(avg((rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
                         |     from hattrick.match_details
-                        |     __where__
+                        |     __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
                         |     group by league_unit_id, league_unit_name, round)
                         |group by league_unit_id, league_unit_name order by hatstats desc __limit__""".stripMargin)
 
@@ -97,6 +99,13 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
         .build
 
       teamSql.as(TeamMatchInfo.teamMatchInfoMapper.*)
+    }
+  }
+
+  def seasonsForLeagues() =  {
+    db.withConnection { implicit connection =>
+      SqlBuilder("SELECT DISTINCT league_id, season from hattrick.match_details").build
+        .as(LeagueSeasons.mapper.*)
     }
   }
 

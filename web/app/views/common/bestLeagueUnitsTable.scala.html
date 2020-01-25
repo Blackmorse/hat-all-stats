@@ -1,8 +1,9 @@
 @import service.DefaultService
 @import models.web.WebPagedEntities
 @import models.clickhouse.LeagueUnitRating
+@import service.DefaultService
 
-@(bestLeagueUnits: WebPagedEntities[LeagueUnitRating])
+@(bestLeagueUnits: WebPagedEntities[LeagueUnitRating], season: Int)
 
 <table>
     <tr>
@@ -16,7 +17,7 @@
     @for((leagueUnit, index) <- bestLeagueUnits.entities.zipWithIndex) {
     <tr>
         <td>@{DefaultService.PAGE_SIZE * bestLeagueUnits.page + index + 1}</td>
-        <td><a href="@routes.LeagueUnitController.bestTeamsById(leagueUnit.leagueUnitId)">@leagueUnit.leagueUnitName</a></td>
+        <td><a href="@routes.LeagueUnitController.bestTeamsById(leagueUnit.leagueUnitId, season)">@leagueUnit.leagueUnitName</a></td>
         <td>@leagueUnit.hatStats</td>
         <td>@leagueUnit.midfield</td>
         <td>@leagueUnit.defense</td>

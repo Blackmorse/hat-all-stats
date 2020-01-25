@@ -6,6 +6,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
 import collection.JavaConverters._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class DefaultService @Inject() (val hattrick: Hattrick,
@@ -30,7 +31,12 @@ class DefaultService @Inject() (val hattrick: Hattrick,
     9 -> (1 to 2048)
   )
 
+  lazy val leagueSeasons = clickhouseDAO.seasonsForLeagues().groupBy(_.leagueId).mapValues(_.map(_.season)).mapValues(_.toSeq)
 
+  def seasonsWithLinks(leagueId: Int, seasonLinkFunction: Int => String): Seq[(String, String)] = leagueSeasons(leagueId)
+    .map(season => (season.toString, seasonLinkFunction(season)))
+
+  def seasonForLeagueId(season: Int, leagueId: Int) = leagueIdToCountryNameMap(leagueId).getSeasonOffset + season
 }
 
 object DefaultService {

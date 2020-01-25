@@ -5,4 +5,4 @@
 
 @(details: WebLeagueDetails, bestLeagueUnits: WebPagedEntities[LeagueUnitRating])(implicit messages: Messages)
 
-@main(details.leagueName, header(details), leftBar(details.leagueId, details.season))(common.bestLeagueUnitsTable(bestLeagueUnits))
+@main(details.leagueName, header(details), leftBar(details))(common.bestLeagueUnitsTable(bestLeagueUnits, details.seasonInfo.season))

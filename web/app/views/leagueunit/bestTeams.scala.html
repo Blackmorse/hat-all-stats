@@ -2,11 +2,11 @@
 @import models.clickhouse.TeamRating
 @import controllers.WebLeagueUnitDetails
 @import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails
+@import service.LeagueUnitTeamStat
 
-@(details: WebLeagueUnitDetails, leagueDetails: LeagueDetails, bestTeams: WebPagedEntities[TeamRating])
+@(details: WebLeagueUnitDetails, leagueTeamStats: Seq[LeagueUnitTeamStat], bestTeams: WebPagedEntities[TeamRating])
 
-
-@main(details.leagueUnitName, header(details), leftBar(details)){
+@stats(details, details.leagueUnitName, header(details), leftBar(details)){
     <table>
         <tr>
             <th></th>
@@ -19,20 +19,20 @@
             <th>П</th>
             <th>О</th>
         </tr>
-        @for(team <- leagueDetails.getTeams()) {
+        @for(team <- leagueTeamStats) {
             <tr>
-                <td>@team.getPosition</td>
-                <td><a href="@routes.TeamController.matches(team.getTeamId)">@team.getTeamName</a></td>
-                <td>@team.getMatches</td>
-                <td>@team.getGoalsFor</td>
-                <td>@team.getGoalsAgainst</td>
-                <td>@team.getWon</td>
-                <td>@team.getDraws</td>
-                <td>@team.getLost</td>
-                <td>@team.getPoints</td>
+                <td>@team.position</td>
+                <td><a href="@routes.TeamController.matches(team.teamId)">@team.teamName</a></td>
+                <td>@team.games</td>
+                <td>@team.scored</td>
+                <td>@team.missed</td>
+                <td>@team.win</td>
+                <td>@team.draw</td>
+                <td>@team.lost</td>
+                <td>@team.points</td>
             </tr>
         }
     </table>
 
-    @common.bestTeamsTable(bestTeams)
+    @common.bestTeamsTable(bestTeams, details.seasonInfo.season)
 }

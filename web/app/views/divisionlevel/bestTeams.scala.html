@@ -4,4 +4,4 @@
 
 @(details: WebDivisionLevelDetails, bestTeams: WebPagedEntities[TeamRating])
 
-@main(details.leagueName, header(details), leftBar(details))(common.bestTeamsTable(bestTeams))
+@stats(details, details.leagueName, header(details), leftBar(details))(common.bestTeamsTable(bestTeams, details.seasonInfo.season))

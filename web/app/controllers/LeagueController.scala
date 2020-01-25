@@ -2,7 +2,7 @@ package controllers
 
 import databases.ClickhouseDAO
 import javax.inject.{Inject, Singleton}
-import models.web.WebPagedEntities
+import models.web.{AbstractWebDetails, SeasonInfo, WebPagedEntities}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.{BaseController, ControllerComponents}
@@ -14,8 +14,8 @@ import scala.concurrent._
 
 case class DivisionLevelForm(divisionLevel: Int)
 
-case class WebLeagueDetails(leagueName: String, leagueId: Int, season: Int, form: Form[DivisionLevelForm],
-                            divisionLevelsLinks: Seq[(String, String)])
+case class WebLeagueDetails(leagueName: String, leagueId: Int, form: Form[DivisionLevelForm],
+                            divisionLevelsLinks: Seq[(String, String)], seasonInfo: SeasonInfo) extends AbstractWebDetails
 
 @Singleton
 class LeagueController @Inject() (val controllerComponents: ControllerComponents,
@@ -30,7 +30,10 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
   def bestTeams(leagueId: Int, season: Int, page: Int) = Action.async { implicit request =>
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
-    val details = WebLeagueDetails(leagueName, leagueId, season, form, divisionLevels(leagueId, season ))
+    val seasonFunction: Int => String = s => routes.LeagueController.bestTeams(leagueId ,s ,0).url
+    val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueId, seasonFunction))
+
+    val details = WebLeagueDetails(leagueName, leagueId, form, divisionLevels(leagueId, season), seasonInfo)
 
     val pageUrlFunc: Int => String = p => routes.LeagueController.bestTeams(leagueId, season, p).url
 
@@ -41,7 +44,10 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
   def bestLeagueUnits(leagueId: Int, season: Int, page: Int) = Action.async {implicit request =>
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
-    val details = WebLeagueDetails(leagueName, leagueId, season, form, divisionLevels(leagueId, season))
+    val seasonFunction: Int => String = s => routes.LeagueController.bestLeagueUnits(leagueId ,s ,0).url
+    val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueId, seasonFunction))
+
+    val details = WebLeagueDetails(leagueName, leagueId, form, divisionLevels(leagueId, season), seasonInfo)
 
     val pageUrlFunc: Int => String = p => routes.LeagueController.bestLeagueUnits(leagueId, season, p).url
 
@@ -49,10 +55,11 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       .map(bestLeagueUnits => Ok(views.html.league.bestLeagueUnits(details, WebPagedEntities(bestLeagueUnits, page, pageUrlFunc))))
   }
 
+
   private def divisionLevels(leagueId: Int, season: Int): Seq[(String, String)] = {
     val maxLevels = defaultService.leagueIdToCountryNameMap(leagueId).getNumberOfLevels
     (1 to maxLevels)
-      .map(i => routes.DivisionLevelController.bestTeams(leagueId, season, i).url -> Romans(i))
+      .map(i => Romans(i) -> routes.DivisionLevelController.bestTeams(leagueId, season, i).url )
   }
 }
 

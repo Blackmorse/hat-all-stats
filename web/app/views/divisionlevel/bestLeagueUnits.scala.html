@@ -4,4 +4,4 @@
 
 @(details: WebDivisionLevelDetails, bestLeagueUnits: WebPagedEntities[LeagueUnitRating])
 
-@main(details.leagueName, header(details), leftBar(details))(common.bestLeagueUnitsTable(bestLeagueUnits))
+@stats(details, details.leagueName, header(details), leftBar(details))(common.bestLeagueUnitsTable(bestLeagueUnits, details.seasonInfo.season))

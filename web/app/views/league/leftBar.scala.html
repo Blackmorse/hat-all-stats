@@ -1,9 +1,11 @@
-@(leagueId: Int, season: Int)
+@import controllers.WebLeagueDetails
+
+@(details: WebLeagueDetails)
 <table id="countryStatisticsTable">
     <tr>
-        <td><a href="@routes.LeagueController.bestTeams(leagueId, season)">Teams</a></td>
+        <td><a href="@routes.LeagueController.bestTeams(details.leagueId, details.seasonInfo.season)">Teams</a></td>
     </tr>
     <tr>
-        <td><a href="@routes.LeagueController.bestLeagueUnits(leagueId, season)">Leagues</a></td>
+        <td><a href="@routes.LeagueController.bestLeagueUnits(details.leagueId, details.seasonInfo.season)">Leagues</a></td>
     </tr>
 </table>

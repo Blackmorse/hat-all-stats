@@ -1,5 +1,5 @@
 $( document ).ready( function() {
-  $( '#division_level' ).on( 'change', function() {
+  $( '#divisionLevel' ).on( 'change', function() {
       location.href=this.value
   } )
 
@@ -9,5 +9,9 @@ $( document ).ready( function() {
 
   $( '#teamLinks' ).on( 'change', function() {
         location.href = this.value
-    } )
+  } )
+
+  $( '#seasonNumber' ).on( 'change', function() {
+      location.href = this.value
+  } )
 } )

@@ -9,10 +9,11 @@
 
 
 
-<a href="@routes.LeagueController.bestTeams(details.leagueId, details.season)">@details.leagueName</a>
+<a href="@routes.LeagueController.bestTeams(details.leagueId, details.seasonInfo.season)">@details.leagueName</a>
 ->
-@select(
-  field = details.form("division_level"),
-  options = details.divisionLevels,
-  '_default -> "Choose"
-)
+<select id="divisionLevel">
+  <option class="blank" value>Choose</option>
+  @for((level, link) <- details.divisionLevelsLinks) {
+  <option value="@link">@level</option>
+  }
+</select>

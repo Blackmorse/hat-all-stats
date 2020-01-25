@@ -1,0 +1,12 @@
+@import models.web.AbstractWebDetails
+
+@(details: AbstractWebDetails, title: String, header: Html, leftBar: Html)(content: Html)
+
+@main(title: String, header: Html, leftBar: Html){
+    <select id="seasonNumber">
+        @for((season, link) <- details.seasonInfo.allSeasons) {
+        <option value="@link" @{if(season==details.seasonInfo.season.toString) "selected"}>@season</option>
+        }
+    </select>
+    @content
+}
