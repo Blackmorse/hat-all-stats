@@ -1,7 +1,5 @@
 package com.blackmorse.hattrick.clickhouse;
 
-import com.blackmorse.hattrick.clickhouse.mappers.MatchDetailsMapper;
-import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,17 +13,14 @@ public class ClickhouseBatcherFactory {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ExecutorService executorService;
     private final Integer matchBatchSize;
-    private final MatchDetailsMapper matchDetailsMapper;
 
     @Autowired
     public ClickhouseBatcherFactory(NamedParameterJdbcTemplate jdbcTemplate,
                                     @Qualifier("clickhouseExecutor") ExecutorService executorService,
-                                    @Value("${clickhouse.batchSize.match}") Integer matchBatchSize,
-                                    MatchDetailsMapper matchDetailsMapper) {
+                                    @Value("${clickhouse.batchSize.match}") Integer matchBatchSize) {
         this.jdbcTemplate = jdbcTemplate;
         this.executorService = executorService;
         this.matchBatchSize = matchBatchSize;
-        this.matchDetailsMapper = matchDetailsMapper;
     }
 
 //    public ClickhouseWriter<MatchDetails> createMatchDetails() {

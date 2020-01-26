@@ -1,15 +1,13 @@
 package controllers
 
-import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails
 import databases.ClickhouseDAO
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import models.web.{AbstractWebDetails, SeasonInfo, WebPagedEntities}
 import play.api.mvc.{BaseController, ControllerComponents}
 import service.{DefaultService, LeagueUnitCalculatorService, LeagueUnitTeamStat}
-import utils.{LeagueNameParser, Romans}
+import utils.LeagueNameParser
 
-import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -46,7 +44,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       val pageUrlFunc: Int => String = p => routes.LeagueUnitController.bestTeams(leagueDetails.getLeagueLevelUnitId, p).url
 
       clickhouseDAO.bestTeams(leagueId = Some(leagueDetails.getLeagueId),
-        season = Some(defaultService.currentSeason), divisionLevel = Some(leagueDetails.getLeagueLevel),
+        season = Some(season), divisionLevel = Some(leagueDetails.getLeagueLevel),
         leagueUnitId = Some(leagueDetails.getLeagueLevelUnitId), page = page)
         .map(bestTeams => Ok(views.html.leagueunit.bestTeams(details, leagueUnitTeamStats, WebPagedEntities(bestTeams, page, pageUrlFunc))))
     } )

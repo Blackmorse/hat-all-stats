@@ -1,13 +1,11 @@
 package com.blackmorse.hattrick.clickhouse.mappers;
 
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Component
 public class MatchDetailsJdbcMapper extends AbstractJdbcMapper<MatchDetails> {
     public MatchDetailsJdbcMapper() {
         super("hattrick.match_details");

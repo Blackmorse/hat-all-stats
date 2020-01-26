@@ -1,7 +1,6 @@
 package com.blackmorse.hattrick;
 
 import com.blackmorse.hattrick.clickhouse.ClickhouseWriter;
-import com.blackmorse.hattrick.clickhouse.ClickhouseBatcherFactory;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.model.LeagueUnitId;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
@@ -10,6 +9,7 @@ import com.blackmorse.hattrick.model.converters.MatchDetailsConverter;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public class SeasonHistoryLoader {
 
     @Autowired
     public SeasonHistoryLoader(HattrickService hattrickService,
-                               ClickhouseWriter<MatchDetails> matchDetailsWriter,
+                               @Qualifier("matchDetailsWriter")ClickhouseWriter<MatchDetails> matchDetailsWriter,
                                MatchDetailsConverter matchDetailsConverter) {
         this.hattrickService = hattrickService;
         this.matchDetailsBatcher = matchDetailsWriter;
