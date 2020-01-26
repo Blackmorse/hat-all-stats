@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Data
 @Builder
-public class PlayerRating {
+public class PlayerLineUp {
     private Integer leagueId;
     private Integer divisionLevel;
     private Long leagueUnitId;

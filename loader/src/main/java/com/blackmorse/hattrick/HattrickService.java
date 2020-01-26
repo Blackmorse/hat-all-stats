@@ -6,6 +6,7 @@ import com.blackmorse.hattrick.api.leaguefixtures.model.LeagueFixtures;
 import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.teamdetails.model.TeamDetails;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
+import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.enums.MatchType;
 import com.blackmorse.hattrick.model.League;
 import com.blackmorse.hattrick.model.LeagueUnit;
@@ -38,17 +39,14 @@ import java.util.stream.IntStream;
 public class HattrickService {
     private final Scheduler scheduler;
     private final Hattrick hattrick;
-    private final MatchDetailsConverter matchDetailsConverter;
     private final AtomicLong leagueUnitCounter = new AtomicLong();
     private final AtomicLong teamsCounter  = new AtomicLong();
     private final AtomicLong matchDetailsCounter  = new AtomicLong();
 
     public HattrickService(@Qualifier("apiExecutor") ExecutorService executorService,
-                           Hattrick hattrick,
-                           MatchDetailsConverter matchDetailsConverter) {
+                           Hattrick hattrick) {
         this.scheduler = io.reactivex.schedulers.Schedulers.from(executorService);
         this.hattrick = hattrick;
-        this.matchDetailsConverter = matchDetailsConverter;
     }
 
     public List<LeagueUnitId> getAllLeagueUnitIdsForCountry(List<String> countryNames) {
@@ -107,6 +105,8 @@ public class HattrickService {
                     Integer offset = leagueUnitId.getLeague().getSeasonOffset();
                     Integer offsettedSeason = season + offset;
                     LeagueFixtures leagueFixtures = hattrick.leagueUnitFixturesById(leagueUnitId.getId(), offsettedSeason);
+
+                    log.info("LeagueFixture: {}", leagueUnitCounter.incrementAndGet());
 
                     LeagueUnit leagueUnit = //new SeasonHistoryLoader.LeagueUnit(leagueUnitId.getLeague(), leagueFixtures.getLeagueLevelUnitId(), leagueFixtures.getLeagueLevelUnitName());
                             LeagueUnit.builder()
@@ -171,13 +171,13 @@ public class HattrickService {
     }
 
     private static Integer leagueLevelFromName(String name) {
-        if(!name.contains(",")) return 1;
+        if(!name.contains(".")) return 1;
         else {
-            return Hattrick.romansToArab.get(name.split("\\.")[1]);
+            return Hattrick.romansToArab.get(name.split("\\.")[0]);
         }
     }
 
-    public List<MatchDetails> getMatchDetails(List<TeamWithMatches> teamWMatches) {
+    public List<TeamWithMatchDetails> getMatchDetails(List<TeamWithMatches> teamWMatches) {
         return Flowable.fromIterable(teamWMatches)
                 .flatMap(teamWithMatches -> Flowable.fromIterable(
                         teamWithMatches.getMatches().stream()
@@ -189,14 +189,14 @@ public class HattrickService {
                 .map(teamWithMatch -> {
                     com.blackmorse.hattrick.api.matchdetails.model.MatchDetails matchDetails = hattrick.getMatchDetails(teamWithMatch.getMatch().getId());
                     log.info("Match {}", matchDetailsCounter.incrementAndGet());
-                    return matchDetailsConverter.convert(teamWithMatch, matchDetails);
+                    return TeamWithMatchDetails.builder().teamWithMatch(teamWithMatch).matchDetails(matchDetails).build();
                 })
                 .sequential()
                 .toList()
                 .blockingGet();
     }
 
-    public List<MatchDetails> getLastMatchDetails(List<LeagueUnitId> leagueUnitIds) {
+    public List<TeamWithMatchDetails> getLastMatchDetails(List<LeagueUnitId> leagueUnitIds) {
         return Flowable.fromIterable(leagueUnitIds)
                 .parallel()
                 .runOn(scheduler)
@@ -221,16 +221,22 @@ public class HattrickService {
                 })
                 .map(team -> {
                     log.info("teams: {}", teamsCounter.incrementAndGet());
-                Match match =  hattrick.getLatestTeamMatches(team.getId()).getTeam().getMatchList().stream()
-                    .filter(m -> m.getMatchType().equals(MatchType.LEAGUE_MATCH))
-                    .max(Comparator.comparing(com.blackmorse.hattrick.api.matches.model.Match::getMatchDate))
-                    .map(m -> Match.builder()
-                            .id(m.getMatchId())
-                            .round(team.getLeagueUnit().getLeague().getNextRound() - 1)
-                            .date(m.getMatchDate())
-                            .season(hattrick.getSeason())
-                            .build())
-                    .orElse(null);
+                    List<com.blackmorse.hattrick.api.matchesarchive.model.Match> matchList = hattrick.getCurrentSeasonMatches(team.getId()).getTeam().getMatchList();
+
+                    Match match = null;
+
+                    if(matchList != null) {
+                        match = matchList.stream()
+                            .filter(m -> m.getMatchType().equals(MatchType.LEAGUE_MATCH))
+                            .max(Comparator.comparing(com.blackmorse.hattrick.api.matchesarchive.model.Match::getMatchDate))
+                            .map(m -> Match.builder()
+                                .id(m.getMatchId())
+                                .round(team.getLeagueUnit().getLeague().getNextRound() - 1)
+                                .date(m.getMatchDate())
+                                .season(hattrick.getSeason())
+                                .build())
+                        .orElse(null);
+                    }
 
             return TeamWithMatch.builder()
                     .team(team)
@@ -241,7 +247,7 @@ public class HattrickService {
                 .map(teamWithMatch -> {
                     log.info("match details: {}", matchDetailsCounter.incrementAndGet());
                     com.blackmorse.hattrick.api.matchdetails.model.MatchDetails matchDetails = hattrick.getMatchDetails(teamWithMatch.getMatch().getId());
-                    return matchDetailsConverter.convert(teamWithMatch, matchDetails);
+                    return TeamWithMatchDetails.builder().teamWithMatch(teamWithMatch).matchDetails(matchDetails).build();
                 }).sequential()
                 .toList()
                 .blockingGet();

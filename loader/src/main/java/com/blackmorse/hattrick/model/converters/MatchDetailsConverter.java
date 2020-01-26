@@ -3,12 +3,15 @@ package com.blackmorse.hattrick.model.converters;
 import com.blackmorse.hattrick.api.matchdetails.model.HomeAwayTeam;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.model.TeamWithMatch;
+import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MatchDetailsConverter {
-    public MatchDetails convert(TeamWithMatch teamWithMatch,
-                                com.blackmorse.hattrick.api.matchdetails.model.MatchDetails matchDetails) {
+    public MatchDetails convert(TeamWithMatchDetails teamWithMatchDetails) {
+        TeamWithMatch teamWithMatch = teamWithMatchDetails.getTeamWithMatch();
+        com.blackmorse.hattrick.api.matchdetails.model.MatchDetails matchDetails = teamWithMatchDetails.getMatchDetails();
+
         Long homeTeamId = matchDetails.getMatch().getHomeTeam().getHomeTeamId();
 
         HomeAwayTeam homeAwayTeam;

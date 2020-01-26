@@ -131,6 +131,11 @@ public class Hattrick {
     }
 
     @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 5, backoff = @Backoff(delay = 15000L))
+    public MatchesArchive getCurrentSeasonMatches(Long teamId) {
+        return hattrickApi.matchesArchive().teamId(teamId).execute();
+    }
+
+    @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 5, backoff = @Backoff(delay = 15000L))
     public MatchLineUp getMatchLineUp(Long matchId, Long teamId) {
         return hattrickApi.matchLineUp().matchId(matchId).teamId(teamId).execute();
     }
