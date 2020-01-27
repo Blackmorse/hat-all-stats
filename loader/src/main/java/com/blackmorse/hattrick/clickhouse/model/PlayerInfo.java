@@ -7,10 +7,12 @@ import java.util.Date;
 
 @Data
 @Builder
-public class PlayerLineUp {
+public class PlayerInfo {
+    private Integer season;
     private Integer leagueId;
     private Integer divisionLevel;
     private Long leagueUnitId;
+    private String leagueUnitName;
     private Long teamId;
     private String teamName;
     private Date date;
@@ -18,12 +20,14 @@ public class PlayerLineUp {
     private Long matchId;
 
     private Long playerId;
-    private Integer roleId;
     private String firstName;
     private String lastName;
-    private Double ratingStars;
-    private Integer startMinute;
-    private Integer endMinute;
-    private Double ratingStarsEndOfMatch;
-    private Integer behaviour;
+    private Integer roleId;
+    private Integer playedMinutes;
+    private Integer rating;
+    private Integer ratingEndOfMatch;
+    //0 Bruised, -1 no injury
+    private Integer injuryLevel;
+    private Integer TSI;
+    private Integer salary;
 }

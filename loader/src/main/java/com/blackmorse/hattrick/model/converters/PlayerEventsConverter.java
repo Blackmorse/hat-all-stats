@@ -7,6 +7,7 @@ import com.blackmorse.hattrick.clickhouse.model.PlayerEvents;
 import com.blackmorse.hattrick.model.TeamWithMatch;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.enums.BookingType;
+import com.blackmorse.hattrick.model.enums.InjuryType;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -40,13 +41,15 @@ public class PlayerEventsConverter {
                         id -> new PlayerEvents(teamWithMatch.getMatch().getSeason(), teamWithMatch.getMatch().getRound(), injury.getInjuryPlayerId()));
 
                 playerEvents.setInjury(injury.getInjuryType().getValue());
+                if (injury.getInjuryType().equals(InjuryType.INJURY)) {
+                    playerEvents.setLeftFieldMinute(injury.getInjuryMinute());
+                }
             }
         }
 
         if (teamWithMatchDetails.getMatchDetails().getMatch().getBookings() != null) {
             for (Booking booking : teamWithMatchDetails.getMatchDetails().getMatch().getBookings()) {
                 if (!booking.getBookingTeamId().equals(teamWithMatch.getTeam().getId())) continue;
-
                 PlayerEvents playerEvents = playersMap.computeIfAbsent(booking.getBookingPlayerId(),
                         id -> new PlayerEvents(teamWithMatch.getMatch().getSeason(), teamWithMatch.getMatch().getRound(), booking.getBookingPlayerId()));
 
@@ -55,6 +58,7 @@ public class PlayerEventsConverter {
                 } else {
                     playerEvents.setYellowCards(0);
                     playerEvents.setRedCards(1);
+                    playerEvents.setLeftFieldMinute(booking.getBookingMinute());
                 }
             }
         }

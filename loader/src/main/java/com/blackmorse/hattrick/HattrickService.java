@@ -6,6 +6,7 @@ import com.blackmorse.hattrick.api.leaguefixtures.model.LeagueFixtures;
 import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.teamdetails.model.TeamDetails;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
+import com.blackmorse.hattrick.model.TeamWithMatchAndPlayers;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.enums.MatchType;
 import com.blackmorse.hattrick.model.League;
@@ -42,6 +43,7 @@ public class HattrickService {
     private final AtomicLong leagueUnitCounter = new AtomicLong();
     private final AtomicLong teamsCounter  = new AtomicLong();
     private final AtomicLong matchDetailsCounter  = new AtomicLong();
+    private final AtomicLong teamsWithPlayersCounter = new AtomicLong();
 
     public HattrickService(@Qualifier("apiExecutor") ExecutorService executorService,
                            Hattrick hattrick) {
@@ -250,6 +252,20 @@ public class HattrickService {
                     return TeamWithMatchDetails.builder().teamWithMatch(teamWithMatch).matchDetails(matchDetails).build();
                 }).sequential()
                 .toList()
-                .blockingGet();
+            .blockingGet();
+    }
+
+    public List<TeamWithMatchAndPlayers> getPlayersFromTeam(List<TeamWithMatchDetails> teamWithMatchDetails) {
+        return Flowable.fromIterable(teamWithMatchDetails)
+                .parallel()
+                .runOn(scheduler)
+                .map(teamWithMatchDetail -> {
+                    log.info("Players for teams: {}", teamsWithPlayersCounter.incrementAndGet());
+                    return new TeamWithMatchAndPlayers(teamWithMatchDetail.getTeamWithMatch(),
+                            hattrick.getPlayersFromTeam(teamWithMatchDetail.getTeamWithMatch().getTeam().getId()));
+                })
+                .sequential()
+                .toList()
+            .blockingGet();
     }
 }

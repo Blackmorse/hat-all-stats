@@ -22,6 +22,7 @@ public class PlayerEventsJdbcMapper extends AbstractJdbcMapper<PlayerEvents> {
         map.put("red_cards", PlayerEvents::getRedCards);
         map.put("goals", PlayerEvents::getGoals);
         map.put("injury", PlayerEvents::getInjury);
+        map.put("left_minute", PlayerEvents::getLeftFieldMinute);
 
         return map;
     }

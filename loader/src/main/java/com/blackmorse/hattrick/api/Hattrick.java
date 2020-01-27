@@ -8,6 +8,7 @@ import com.blackmorse.hattrick.api.matches.model.Matches;
 import com.blackmorse.hattrick.api.matchesarchive.model.MatchesArchive;
 import com.blackmorse.hattrick.api.matchlineup.model.MatchLineUp;
 import com.blackmorse.hattrick.api.nationalteamdetails.model.NationalTeamDetails;
+import com.blackmorse.hattrick.api.players.model.Players;
 import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.search.model.Search;
 import com.blackmorse.hattrick.api.teamdetails.model.TeamDetails;
@@ -152,5 +153,10 @@ public class Hattrick {
 
     public Matches getLatestTeamMatches(Long teamId) {
         return hattrickApi.matches().teamId(teamId.intValue()).lastMatchDate(new Date()).execute();
+    }
+
+    @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 5, backoff = @Backoff(delay = 15000L))
+    public Players getPlayersFromTeam(Long teamId) {
+        return hattrickApi.players().teamID(teamId).includeMatchInfo(true).execute();
     }
 }
