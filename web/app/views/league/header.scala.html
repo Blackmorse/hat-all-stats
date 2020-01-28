@@ -11,7 +11,7 @@
 
 <a href="@routes.LeagueController.bestTeams(details.leagueId, details.seasonInfo.season)">@details.leagueName</a>
 ->
-<select id="divisionLevel">
+<select class="hrefSelect">
   <option class="blank" value>Choose</option>
   @for((level, link) <- details.divisionLevelsLinks) {
   <option value="@link">@level</option>

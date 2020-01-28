@@ -3,7 +3,7 @@ package controllers
 import databases.ClickhouseDAO
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
-import models.web.{AbstractWebDetails, SeasonInfo, WebPagedEntities}
+import models.web._
 import play.api.mvc.{BaseController, ControllerComponents}
 import service.{DefaultService, LeagueUnitCalculatorService, LeagueUnitTeamStat}
 import utils.LeagueNameParser
@@ -22,7 +22,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
                                      val clickhouseDAO: ClickhouseDAO,
                                      val leagueUnitCalculatorService: LeagueUnitCalculatorService) extends BaseController {
 
-  def bestTeams(leagueUnitId: Long, season: Int, page: Int) = Action.async{
+  def bestTeams(leagueUnitId: Long, season: Int, page: Int, statsType: StatsType) = Action.async{
     val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
 
     leagueDetailsFuture.flatMap ( leagueDetails => {
@@ -41,12 +41,16 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         seasonInfo, leagueDetails.getLeagueLevel, leagueUnitNumber,
         leagueDetails.getLeagueLevelUnitName, leagueDetails.getLeagueLevelUnitId, teamLinks(leagueUnitTeamStats))
 
-      val pageUrlFunc: Int => String = p => routes.LeagueUnitController.bestTeams(leagueDetails.getLeagueLevelUnitId, p).url
+      val pageUrlFunc: Int => String = p => routes.LeagueUnitController.bestTeams(leagueDetails.getLeagueLevelUnitId, season, p, statsType).url
+      val statsTypeFunc: StatsType => String = st => routes.LeagueUnitController.bestTeams(leagueDetails.getLeagueLevelUnitId, season, page, st).url
+
+      val currentRound = defaultService.currentRound(leagueDetails.getLeagueId)
 
       clickhouseDAO.bestTeams(leagueId = Some(leagueDetails.getLeagueId),
         season = Some(season), divisionLevel = Some(leagueDetails.getLeagueLevel),
-        leagueUnitId = Some(leagueDetails.getLeagueLevelUnitId), page = page)
-        .map(bestTeams => Ok(views.html.leagueunit.bestTeams(details, leagueUnitTeamStats, WebPagedEntities(bestTeams, page, pageUrlFunc))))
+        leagueUnitId = Some(leagueDetails.getLeagueLevelUnitId), page = page, statsType = statsType)
+        .map(bestTeams => Ok(views.html.leagueunit.bestTeams(details, leagueUnitTeamStats,
+          WebPagedEntities(bestTeams, page, pageUrlFunc, StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType)))))
     } )
   }
 

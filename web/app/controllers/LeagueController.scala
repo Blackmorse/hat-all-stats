@@ -2,7 +2,7 @@ package controllers
 
 import databases.ClickhouseDAO
 import javax.inject.{Inject, Singleton}
-import models.web.{AbstractWebDetails, SeasonInfo, WebPagedEntities}
+import models.web._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.{BaseController, ControllerComponents}
@@ -27,7 +27,9 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     )(DivisionLevelForm.apply)(DivisionLevelForm.unapply))
 
 
-  def bestTeams(leagueId: Int, season: Int, page: Int) = Action.async { implicit request =>
+  def bestTeams(leagueId: Int, season: Int, page: Int, statsType: StatsType) = Action.async { implicit request =>
+    println(statsType)
+
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
     val seasonFunction: Int => String = s => routes.LeagueController.bestTeams(leagueId ,s ,0).url
@@ -35,13 +37,19 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
     val details = WebLeagueDetails(leagueName, leagueId, form, divisionLevels(leagueId, season), seasonInfo)
 
-    val pageUrlFunc: Int => String = p => routes.LeagueController.bestTeams(leagueId, season, p).url
+    val pageUrlFunc: Int => String = p => routes.LeagueController.bestTeams(leagueId, season, p, statsType).url
+    val statTypeUrlFunc: StatsType => String = st => routes.LeagueController.bestTeams(leagueId, season, page, st).url
 
-    clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season), page = page)
-      .map(bestTeams => Ok(views.html.league.bestTeams(details, WebPagedEntities(bestTeams, page, pageUrlFunc))))
+    val currentRound = defaultService.currentRound(leagueId)
+
+    clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season), page = page, statsType = statsType)
+      .map(bestTeams => Ok(views.html.league.bestTeams(details,
+        WebPagedEntities(bestTeams, page, pageUrlFunc, StatTypeLinks.withAverages(statTypeUrlFunc, currentRound, statsType)))))
   }
 
-  def bestLeagueUnits(leagueId: Int, season: Int, page: Int) = Action.async {implicit request =>
+  def bestLeagueUnits(leagueId: Int, season: Int, page: Int, statsType: StatsType) = Action.async {implicit request =>
+    println(statsType)
+
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
     val seasonFunction: Int => String = s => routes.LeagueController.bestLeagueUnits(leagueId ,s ,0).url
@@ -49,10 +57,14 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
     val details = WebLeagueDetails(leagueName, leagueId, form, divisionLevels(leagueId, season), seasonInfo)
 
-    val pageUrlFunc: Int => String = p => routes.LeagueController.bestLeagueUnits(leagueId, season, p).url
+    val pageUrlFunc: Int => String = p => routes.LeagueController.bestLeagueUnits(leagueId, season, p, statsType).url
+    val statsTypeFunc: StatsType => String = st => routes.LeagueController.bestLeagueUnits(leagueId, season, page, st).url
 
-    clickhouseDAO.bestLeagueUnits(leagueId = Some(leagueId), season = Some(season), page = page)
-      .map(bestLeagueUnits => Ok(views.html.league.bestLeagueUnits(details, WebPagedEntities(bestLeagueUnits, page, pageUrlFunc))))
+    val currentRound = defaultService.currentRound(leagueId)
+
+    clickhouseDAO.bestLeagueUnits(leagueId = Some(leagueId), season = Some(season), page = page, statsType = statsType)
+      .map(bestLeagueUnits => Ok(views.html.league.bestLeagueUnits(details,
+        WebPagedEntities(bestLeagueUnits, page, pageUrlFunc, StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType)))))
   }
 
 

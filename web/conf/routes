@@ -5,13 +5,13 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
-GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, currentSeason: Int, page: Int ?= 0)
-GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, currentSeason: Int, page: Int ?= 0)
+GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg)
+GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg)
 
-GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0)
-GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0)
+GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg)
+GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg)
 
-GET     /leagueLevelUnitById        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, season: Int, page: Int ?= 0)
+GET     /leagueLevelUnitById        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, season: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg)
 
 GET     /matches                    controllers.TeamController.matches(teamId: Long)
 

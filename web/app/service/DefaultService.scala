@@ -37,6 +37,8 @@ class DefaultService @Inject() (val hattrick: Hattrick,
     .map(season => (season.toString, seasonLinkFunction(season)))
 
   def seasonForLeagueId(season: Int, leagueId: Int) = leagueIdToCountryNameMap(leagueId).getSeasonOffset + season
+
+  def currentRound(leagueId: Int) = Math.max(leagueIdToCountryNameMap(leagueId).getMatchRound - 1, 14)
 }
 
 object DefaultService {

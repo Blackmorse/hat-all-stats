@@ -9,7 +9,7 @@
 ->
 <a href="@routes.LeagueUnitController.bestTeams(details.leagueUnitId, details.seasonInfo.season)">@details.leagueUnitName</a>
 ->
-<select id="teamLinks">
+<select class="hrefSelect">
     <option class="blank" value>Choose</option>
     @for((teamName, teamLink) <- details.teamLinks){
     <option value="@teamLink">@teamName</option>
