@@ -12,7 +12,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 case class WebDivisionLevelDetails(leagueName: String, leagueId: Int, seasonInfo: SeasonInfo, divisionLevel: Int, divisionLevelRoman: String,
-                                   leagueUnitLinks: Seq[(String, String)]) extends AbstractWebDetails
+                                   leagueUnitLinks: Seq[(String, String)],
+                                   statTypeLinks: StatTypeLinks) extends AbstractWebDetails
 
 @Singleton
 class DivisionLevelController@Inject() (val controllerComponents: ControllerComponents,
@@ -36,10 +37,10 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
     clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season), divisionLevel = Some(divisionLevel), page = page, statsType = statsType)
       .zipWith(leagueUnitIdFuture){case (bestTeams, leagueUnitId) =>
         val details = WebDivisionLevelDetails(leagueName, leagueId, seasonInfo, divisionLevel, Romans(divisionLevel),
-          leagueUnitNumbers(season, divisionLevel, leagueUnitId))
+          leagueUnitNumbers(season, divisionLevel, leagueUnitId), StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType))
 
         Ok(views.html.divisionlevel.bestTeams(details,
-          WebPagedEntities(bestTeams, page, pageUrlFunc, StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType))))
+          WebPagedEntities(bestTeams, page, pageUrlFunc)))
       }
   }
 
@@ -61,10 +62,10 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       .zipWith(leagueUnitIdFuture){case (bestLeagueUnits, leagueUnitId) =>
 
         val details = WebDivisionLevelDetails(leagueName, leagueId, seasonInfo, divisionLevel, Romans(divisionLevel),
-          leagueUnitNumbers(season, divisionLevel, leagueUnitId))
+          leagueUnitNumbers(season, divisionLevel, leagueUnitId), StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType))
 
         Ok(views.html.divisionlevel.bestLeagueUnits(details,
-          WebPagedEntities(bestLeagueUnits, page, pageUrlFunc, StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType))))
+          WebPagedEntities(bestLeagueUnits, page, pageUrlFunc)))
       }
   }
 

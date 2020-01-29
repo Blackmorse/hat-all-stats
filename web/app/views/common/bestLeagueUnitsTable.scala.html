@@ -4,14 +4,6 @@
 @import service.DefaultService
 
 @(bestLeagueUnits: WebPagedEntities[LeagueUnitRating], season: Int)
-<div class="statsTypeDiv">
-    Round:
-    <select class="hrefSelect">
-        @for((name, link) <- bestLeagueUnits.statTypeLinks.links) {
-        <option value="@link" @{if(name==bestLeagueUnits.statTypeLinks.currentStatType.toString) "selected"}>@name</option>
-        }
-    </select>
-</div>
 <table>
     <tr>
         <th>Position</th>

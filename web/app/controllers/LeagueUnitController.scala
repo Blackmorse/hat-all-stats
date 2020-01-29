@@ -12,7 +12,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 case class WebLeagueUnitDetails(leagueName: String, leagueId: Int, seasonInfo: SeasonInfo, divisionLevel: Int,
-                                leagueUnitNumber: Int, leagueUnitName: String, leagueUnitId: Long, teamLinks: Seq[(String, String)])
+                                leagueUnitNumber: Int, leagueUnitName: String, leagueUnitId: Long,
+                                teamLinks: Seq[(String, String)], statTypeLinks: StatTypeLinks)
     extends AbstractWebDetails
 
 @Singleton
@@ -35,22 +36,34 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       val seasonInfoFunc: Int => String = s => routes.LeagueUnitController.bestTeams(leagueUnitId, s, 0).url
       val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueDetails.getLeagueId, seasonInfoFunc))
 
-      val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture)
+      val tillRound = statsType match {
+        case Round(round) => Some(round)
+        case _ => None
+      }
 
-      val details = WebLeagueUnitDetails(leagueName, leagueDetails.getLeagueId,
-        seasonInfo, leagueDetails.getLeagueLevel, leagueUnitNumber,
-        leagueDetails.getLeagueLevelUnitName, leagueDetails.getLeagueLevelUnitId, teamLinks(leagueUnitTeamStats))
+      val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
 
       val pageUrlFunc: Int => String = p => routes.LeagueUnitController.bestTeams(leagueDetails.getLeagueLevelUnitId, season, p, statsType).url
       val statsTypeFunc: StatsType => String = st => routes.LeagueUnitController.bestTeams(leagueDetails.getLeagueLevelUnitId, season, page, st).url
 
       val currentRound = defaultService.currentRound(leagueDetails.getLeagueId)
 
+      val details = WebLeagueUnitDetails(leagueName = leagueName,
+        leagueId = leagueDetails.getLeagueId,
+        seasonInfo = seasonInfo,
+        divisionLevel = leagueDetails.getLeagueLevel,
+        leagueUnitNumber = leagueUnitNumber,
+        leagueUnitName = leagueDetails.getLeagueLevelUnitName,
+        leagueUnitId = leagueDetails.getLeagueLevelUnitId,
+        teamLinks = teamLinks(leagueUnitTeamStats),
+        statTypeLinks = StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType))
+
       clickhouseDAO.bestTeams(leagueId = Some(leagueDetails.getLeagueId),
         season = Some(season), divisionLevel = Some(leagueDetails.getLeagueLevel),
         leagueUnitId = Some(leagueDetails.getLeagueLevelUnitId), page = page, statsType = statsType)
-        .map(bestTeams => Ok(views.html.leagueunit.bestTeams(details, leagueUnitTeamStats,
-          WebPagedEntities(bestTeams, page, pageUrlFunc, StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType)))))
+        .map(bestTeams =>
+          Ok(views.html.leagueunit.bestTeams(details, leagueUnitTeamStats,
+                        WebPagedEntities(bestTeams, page, pageUrlFunc))))
     } )
   }
 

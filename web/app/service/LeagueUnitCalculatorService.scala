@@ -18,10 +18,11 @@ class LeagueUnitCalculatorService  {
     }
   }
 
-  def calculate(leagueFixture: LeagueFixtures) = {
+  def calculate(leagueFixture: LeagueFixtures, tillRound: Option[Int] = None) = {
     val accumulatorMap = mutable.HashMap[Long, LeagueTeamStatAccumulator]()
 
-    for (matc <- leagueFixture.getMatches.asScala if matc.getHomeGoals != null) {
+    for (matc <- leagueFixture.getMatches.asScala
+         if matc.getHomeGoals != null && tillRound.map(matc.getMatchRound <= _).getOrElse(true)) {
       val homeTeamAccumulator = accumulatorMap.getOrElseUpdate(matc.getHomeTeam.getHomeTeamId, LeagueTeamStatAccumulator(matc.getHomeTeam))
       val awayTeamAccumulator = accumulatorMap.getOrElseUpdate(matc.getAwayTeam.getAwayTeamId, LeagueTeamStatAccumulator(matc.getAwayTeam))
 

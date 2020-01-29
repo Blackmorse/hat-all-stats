@@ -15,7 +15,8 @@ import scala.concurrent._
 case class DivisionLevelForm(divisionLevel: Int)
 
 case class WebLeagueDetails(leagueName: String, leagueId: Int, form: Form[DivisionLevelForm],
-                            divisionLevelsLinks: Seq[(String, String)], seasonInfo: SeasonInfo) extends AbstractWebDetails
+                            divisionLevelsLinks: Seq[(String, String)], seasonInfo: SeasonInfo,
+                            statTypeLinks: StatTypeLinks) extends AbstractWebDetails
 
 @Singleton
 class LeagueController @Inject() (val controllerComponents: ControllerComponents,
@@ -35,16 +36,16 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     val seasonFunction: Int => String = s => routes.LeagueController.bestTeams(leagueId ,s ,0).url
     val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueId, seasonFunction))
 
-    val details = WebLeagueDetails(leagueName, leagueId, form, divisionLevels(leagueId, season), seasonInfo)
-
     val pageUrlFunc: Int => String = p => routes.LeagueController.bestTeams(leagueId, season, p, statsType).url
     val statTypeUrlFunc: StatsType => String = st => routes.LeagueController.bestTeams(leagueId, season, page, st).url
 
     val currentRound = defaultService.currentRound(leagueId)
+    val details = WebLeagueDetails(leagueName, leagueId, form, divisionLevels(leagueId, season), seasonInfo,
+      StatTypeLinks.withAverages(statTypeUrlFunc, currentRound, statsType))
 
     clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season), page = page, statsType = statsType)
       .map(bestTeams => Ok(views.html.league.bestTeams(details,
-        WebPagedEntities(bestTeams, page, pageUrlFunc, StatTypeLinks.withAverages(statTypeUrlFunc, currentRound, statsType)))))
+        WebPagedEntities(bestTeams, page, pageUrlFunc))))
   }
 
   def bestLeagueUnits(leagueId: Int, season: Int, page: Int, statsType: StatsType) = Action.async {implicit request =>
@@ -55,16 +56,17 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     val seasonFunction: Int => String = s => routes.LeagueController.bestLeagueUnits(leagueId ,s ,0).url
     val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueId, seasonFunction))
 
-    val details = WebLeagueDetails(leagueName, leagueId, form, divisionLevels(leagueId, season), seasonInfo)
 
     val pageUrlFunc: Int => String = p => routes.LeagueController.bestLeagueUnits(leagueId, season, p, statsType).url
     val statsTypeFunc: StatsType => String = st => routes.LeagueController.bestLeagueUnits(leagueId, season, page, st).url
 
     val currentRound = defaultService.currentRound(leagueId)
+    val details = WebLeagueDetails(leagueName, leagueId, form, divisionLevels(leagueId, season), seasonInfo,
+      StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType))
 
     clickhouseDAO.bestLeagueUnits(leagueId = Some(leagueId), season = Some(season), page = page, statsType = statsType)
       .map(bestLeagueUnits => Ok(views.html.league.bestLeagueUnits(details,
-        WebPagedEntities(bestLeagueUnits, page, pageUrlFunc, StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType)))))
+        WebPagedEntities(bestLeagueUnits, page, pageUrlFunc))))
   }
 
 

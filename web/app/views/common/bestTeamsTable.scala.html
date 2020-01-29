@@ -3,14 +3,6 @@
 @import models.clickhouse.TeamRating
 
 @(bestTeams: WebPagedEntities[TeamRating], season: Int)
-<div class="statsTypeDiv">
-    Round:
-    <select class="hrefSelect">
-        @for((name, link) <- bestTeams.statTypeLinks.links) {
-        <option value="@link" @{if(name==bestTeams.statTypeLinks.currentStatType.toString) "selected"}>@name</option>
-        }
-    </select>
-</div>
 <table>
     <tr>
         <th>Position</th>

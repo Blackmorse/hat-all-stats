@@ -3,13 +3,21 @@
 @(details: AbstractWebDetails, title: String, header: Html, leftBar: Html)(content: Html)
 
 @main(title: String, header: Html, leftBar: Html){
-    <div class="seasonDiv">
+    <span class="seasonDiv">
         Season:
         <select class="hrefSelect">
             @for((season, link) <- details.seasonInfo.allSeasons) {
             <option value="@link" @{if(season==details.seasonInfo.season.toString) "selected"}>@season</option>
             }
         </select>
-    </div>
+    </span>
+    <span class="statsTypeDiv">
+        Round:
+        <select class="hrefSelect">
+            @for((name, link) <- details.statTypeLinks.links) {
+            <option value="@link" @{if(name==details.statTypeLinks.currentStatType.toString) "selected"}>@name</option>
+            }
+        </select>
+    </span>
     @content
 }
