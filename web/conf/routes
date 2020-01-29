@@ -5,13 +5,13 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
-GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg)
-GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg)
+GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
+GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
 
-GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg)
-GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg)
+GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
+GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
 
-GET     /leagueLevelUnitById        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, season: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg)
+GET     /leagueLevelUnitById        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, season: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
 
 GET     /matches                    controllers.TeamController.matches(teamId: Long)
 

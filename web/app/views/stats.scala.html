@@ -7,7 +7,7 @@
         Season:
         <select class="hrefSelect">
             @for((season, link) <- details.seasonInfo.allSeasons) {
-            <option value="@link" @{if(season==details.seasonInfo.season.toString) "selected"}>@season</option>
+                <option value="@link" @{if(season==details.seasonInfo.season.toString) "selected"}>@season</option>
             }
         </select>
     </span>
@@ -15,8 +15,16 @@
         Round:
         <select class="hrefSelect">
             @for((name, link) <- details.statTypeLinks.links) {
-            <option value="@link" @{if(name==details.statTypeLinks.currentStatType.toString) "selected"}>@name</option>
+                <option value="@link" @{if(name==details.statTypeLinks.currentStatType.toString) "selected"}>@name</option>
             }
+        </select>
+    </span>
+    <span class="sortByDiv">
+        Sort by:
+        <select class="hrefSelect">
+        @for((name, link) <- details.sortByLinks.links) {
+            <option value="@link" @{if(name==details.sortByLinks.currentSort) "selected"}>@name</option>
+        }
         </select>
     </span>
     @content

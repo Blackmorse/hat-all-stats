@@ -17,13 +17,17 @@ import scala.concurrent.Future
 class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContext) {
   private val db = dbApi.database("default")
 
+  val sortingColumns = Seq("hatstats", "midfield", "defense", "attack")
+
   def bestTeams(leagueId: Option[Int] = None,
                 season: Option[Int] = None,
                 divisionLevel: Option[Int] = None,
                 leagueUnitId: Option[Long] = None,
                 page: Int = 0,
-                statsType: StatsType) = Future {
+                statsType: StatsType,
+                sortBy: String = "hatstats") = Future {
     db.withConnection{implicit connection =>
+      if (!sortingColumns.contains(sortBy)) throw new Exception("Looks like SQL Injection")
 
       val sql = statsType match {
         case MultiplyRoundsType(func) => s"""select team_id,
@@ -35,7 +39,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                                            |toInt32($func((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
                                            |toInt32($func( (rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
                                            |from hattrick.match_details __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
-                                           |group by team_id, team_name, league_unit_id, league_unit_name order by hatstats desc, team_id desc __limit__""".stripMargin
+                                           |group by team_id, team_name, league_unit_id, league_unit_name order by $sortBy desc, team_id desc __limit__""".stripMargin
         case Round(round) => s"""select team_id,
                                |team_name,
                                |league_unit_id,
@@ -45,7 +49,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                                |toInt32((rating_right_def + rating_left_def + rating_mid_def) / 3) as defense,
                                |toInt32( (rating_right_att + rating_mid_att + rating_left_att) / 3) as attack
                                |from hattrick.match_details __where__ and round = $round
-                               | order by hatstats desc, team_id desc __limit__""".stripMargin
+                               | order by $sortBy desc, team_id desc __limit__""".stripMargin
       }
 
       val matchDetailsSql = SqlBuilder(sql)
@@ -56,8 +60,6 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
       leagueUnitId.foreach(matchDetailsSql.leagueUnitId)
       matchDetailsSql.page(page)
 
-
-
       matchDetailsSql.build.as(TeamRating.teamRatingMapper.*)
     }
   }
@@ -67,8 +69,11 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                       divisionLevel: Option[Int] = None,
                       leagueUnitId: Option[Long] = None,
                       page: Int = 0,
-                      statsType: StatsType = Avg) = Future {
+                      statsType: StatsType = Avg,
+                      sortBy: String = "hatstats") = Future {
     db.withConnection{ implicit connection =>
+      if (!sortingColumns.contains(sortBy)) throw new Exception("Looks like SQL Injection")
+
       val sql = statsType match {
         case MultiplyRoundsType(func) => s"""select league_unit_id,
                                            |league_unit_name,
@@ -87,7 +92,8 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                                            |     from hattrick.match_details
                                            |     __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
                                            |     group by league_unit_id, league_unit_name, round)
-                                           |group by league_unit_id, league_unit_name order by hatstats desc, league_unit_id desc __limit__""".stripMargin
+                                           |group by league_unit_id, league_unit_name order by $sortBy desc, league_unit_id desc __limit__""".stripMargin
+
         case Round(round) => s"""select league_unit_id,
                               |     league_unit_name,
                               |     toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats,
@@ -97,7 +103,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                               |     from hattrick.match_details
                               |     __where__ and round = $round and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
                               |     group by league_unit_id, league_unit_name
-                              | order by hatstats desc __limit__""".stripMargin
+                              | order by $sortBy desc __limit__""".stripMargin
       }
       val leagueUnitsSql = SqlBuilder(sql)
 
@@ -187,7 +193,6 @@ case class SqlBuilder(baseSql: String) {
     SQL(sql)
       .on(params.map(NamedParameter.namedWithString): _*)
   }
-
 }
 
 @Singleton
