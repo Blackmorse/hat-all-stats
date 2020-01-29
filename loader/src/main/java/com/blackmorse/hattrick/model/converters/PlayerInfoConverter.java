@@ -27,7 +27,9 @@ public class PlayerInfoConverter {
                             .matchId(teamWithMatch.getMatch().getId())
                             .playerId(player.getPlayerId())
                             .firstName(player.getFirstName())
-                            .lastName(player.getLastName());
+                            .lastName(player.getLastName())
+                            .age(player.getAge())
+                            .days(player.getAgeDays());
 
                     if(player.getLastMatch().getDate() != null && player.getLastMatch().getDate().equals(teamWithMatch.getMatch().getDate())) {
                         builder.playedMinutes(player.getLastMatch().getPlayedMinutes())

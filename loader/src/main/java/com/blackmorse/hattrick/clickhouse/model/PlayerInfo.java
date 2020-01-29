@@ -22,6 +22,8 @@ public class PlayerInfo {
     private Long playerId;
     private String firstName;
     private String lastName;
+    private Integer age;
+    private Integer days;
     private Integer roleId;
     private Integer playedMinutes;
     private Integer rating;

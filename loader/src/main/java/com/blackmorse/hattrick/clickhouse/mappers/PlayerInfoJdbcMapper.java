@@ -29,6 +29,8 @@ public class PlayerInfoJdbcMapper extends AbstractJdbcMapper<PlayerInfo> {
         map.put("player_id", PlayerInfo::getPlayerId);
         map.put("first_name", PlayerInfo::getFirstName);
         map.put("last_name", PlayerInfo::getLastName);
+        map.put("age", PlayerInfo::getAge);
+        map.put("days", PlayerInfo::getDays);
         map.put("role_id", PlayerInfo::getRoleId);
         map.put("played_minutes", PlayerInfo::getPlayedMinutes);
         map.put("rating", PlayerInfo::getRating);
