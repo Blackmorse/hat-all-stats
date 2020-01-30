@@ -5,7 +5,7 @@ import com.google.inject.Inject
 import databases.clickhouse.StatisticsCHRequest
 import javax.inject.Singleton
 import models.clickhouse.{LeagueSeasons, TeamMatchInfo}
-import models.web.{MultiplyRoundsType, Round, StatsType}
+import models.web.{Accumulate, MultiplyRoundsType, Round, StatsType}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
 
@@ -28,6 +28,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
 
       val sql = statsType match {
         case MultiplyRoundsType(func) => request.aggregateSql.replace("__func__", func).replace("__sortBy__", sortBy)
+        case Accumulate => request.aggregateSql.replace("__sortBy__", sortBy)
         case Round(round) => request.oneRoundSql.replace("__round__", round.toString).replace("__sortBy__", sortBy)
       }
 

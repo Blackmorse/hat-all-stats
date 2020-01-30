@@ -1,0 +1,8 @@
+@import models.clickhouse.PlayerStats
+@import models.web.WebPagedEntities
+@import play.api.data.Form
+@import controllers.WebLeagueDetails
+
+@(details: WebLeagueDetails, playerStats: WebPagedEntities[PlayerStats])(implicit messages: Messages)
+
+@stats(details, details.leagueName, header(details), leftBar(details))(common.playerStatsTable(playerStats, details.seasonInfo.season))

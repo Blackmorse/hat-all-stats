@@ -8,9 +8,14 @@ case class MultiplyRoundsType(function: String) extends StatsType {
   override def toString: String = function
 }
 
+object Accumulate extends StatsType {
+  override def toString: String = "all"
+}
+
 object Avg extends MultiplyRoundsType("avg")
 
 object Max extends MultiplyRoundsType("max")
+
 
 case class Round(round: Int) extends StatsType {
   override def toString: String = round.toString
@@ -23,6 +28,7 @@ object StatsType {
         .map(typeEither => typeEither.flatMap{
           case "avg" => Right(Avg)
           case "max" => Right(Max)
+          case "accumulate" => Right(Accumulate)
           case "statRound" =>
             stringBinder.bind("statRoundNumber", params)
               .map(statRoundNumberEither => statRoundNumberEither.flatMap(statRoundNumber => {
@@ -38,6 +44,7 @@ object StatsType {
     override def unbind(key: String, value: StatsType): String = value match {
       case Avg => stringBinder.unbind("statType", "avg")
       case Max => stringBinder.unbind("statType", "max")
+      case Accumulate => stringBinder.unbind("statType", "accumulate")
       case Round(num) => stringBinder.unbind("statType", "statRound") + "&" + stringBinder.unbind("statRoundNumber", num.toString)
     }
   }

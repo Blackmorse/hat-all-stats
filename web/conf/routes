@@ -7,13 +7,16 @@
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
 GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
+GET     /league/playerStats         controllers.LeagueController.playerStats(leagueId: Int, season: Int, page: Int ?=0, statsType: models.web.StatsType ?= models.web.Accumulate, sortBy: String ?= "scored")
 
 GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
 GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
+GET     /divisionlevel/playerStats  controllers.DivisionLevelController.playerStats(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Accumulate, sortBy: String ?= "scored")
 
-GET     /leagueLevelUnitById        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, season: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
+GET     /leagueLevelUnit        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, season: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
+GET     /leagueLevelUnit/playerStats    controllers.LeagueUnitController.playerStats(leagueUnitId: Long, season: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Accumulate, sortBy: String ?= "scored")
 
-GET     /matches                    controllers.TeamController.matches(teamId: Long)
+GET     /team/matches               controllers.TeamController.matches(teamId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
