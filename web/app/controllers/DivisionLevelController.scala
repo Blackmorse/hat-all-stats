@@ -1,6 +1,7 @@
 package controllers
 
 import databases.ClickhouseDAO
+import databases.clickhouse.StatisticsCHRequest
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import models.web._
@@ -18,7 +19,7 @@ case class WebDivisionLevelDetails(leagueName: String, leagueId: Int, seasonInfo
 
 @Singleton
 class DivisionLevelController@Inject() (val controllerComponents: ControllerComponents,
-                                        val clickhouseDAO: ClickhouseDAO,
+                                        implicit val clickhouseDAO: ClickhouseDAO,
                                         val defaultService: DefaultService,
                                         val hattrick: Hattrick) extends BaseController {
   def bestTeams(leagueId: Int, season: Int, divisionLevel: Int, page: Int, statsType: StatsType, sortBy: String) = Action.async{ implicit request =>
@@ -36,7 +37,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
 
     val currentRound = defaultService.currentRound(leagueId)
 
-    clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season), divisionLevel = Some(divisionLevel), page = page, statsType = statsType, sortBy = sortBy)
+    StatisticsCHRequest.bestHatstatsTeamRequest.execute(leagueId = Some(leagueId), season = Some(season), divisionLevel = Some(divisionLevel), page = page, statsType = statsType, sortBy = sortBy)
       .zipWith(leagueUnitIdFuture){case (bestTeams, leagueUnitId) =>
         val details = WebDivisionLevelDetails(leagueName = leagueName,
           leagueId = leagueId,
@@ -67,7 +68,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
 
     val currentRound = defaultService.currentRound(leagueId)
 
-    clickhouseDAO.bestLeagueUnits(leagueId = Some(leagueId), season = Some(season), divisionLevel = Some(divisionLevel), page = page, statsType = statsType, sortBy = sortBy)
+    StatisticsCHRequest.bestHatstatsLeagueRequest.execute(leagueId = Some(leagueId), season = Some(season), divisionLevel = Some(divisionLevel), page = page, statsType = statsType, sortBy = sortBy)
       .zipWith(leagueUnitIdFuture){case (bestLeagueUnits, leagueUnitId) =>
 
         val details = WebDivisionLevelDetails(leagueName = leagueName, leagueId = leagueId,

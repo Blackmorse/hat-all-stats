@@ -1,6 +1,7 @@
 package controllers
 
 import databases.ClickhouseDAO
+import databases.clickhouse.StatisticsCHRequest
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import models.web._
@@ -21,7 +22,7 @@ case class WebLeagueUnitDetails(leagueName: String, leagueId: Int, seasonInfo: S
 class LeagueUnitController @Inject()(val controllerComponents: ControllerComponents,
                                      val hattrick: Hattrick,
                                      val defaultService: DefaultService,
-                                     val clickhouseDAO: ClickhouseDAO,
+                                     implicit val clickhouseDAO: ClickhouseDAO,
                                      val leagueUnitCalculatorService: LeagueUnitCalculatorService) extends BaseController {
 
   def bestTeams(leagueUnitId: Long, season: Int, page: Int, statsType: StatsType, sortBy: String) = Action.async{
@@ -61,7 +62,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         statTypeLinks = StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType),
         sortByLinks = SortByLinks(sortByFunc, clickhouseDAO.sortingColumns, sortBy))
 
-      clickhouseDAO.bestTeams(leagueId = Some(leagueDetails.getLeagueId),
+      StatisticsCHRequest.bestHatstatsTeamRequest.execute(leagueId = Some(leagueDetails.getLeagueId),
         season = Some(season), divisionLevel = Some(leagueDetails.getLeagueLevel),
         leagueUnitId = Some(leagueDetails.getLeagueLevelUnitId), page = page, statsType = statsType, sortBy = sortBy)
         .map(bestTeams =>

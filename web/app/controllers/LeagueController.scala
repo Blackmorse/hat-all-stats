@@ -1,6 +1,7 @@
 package controllers
 
 import databases.ClickhouseDAO
+import databases.clickhouse.StatisticsCHRequest
 import javax.inject.{Inject, Singleton}
 import models.web._
 import play.api.data.Form
@@ -20,7 +21,7 @@ case class WebLeagueDetails(leagueName: String, leagueId: Int, form: Form[Divisi
 
 @Singleton
 class LeagueController @Inject() (val controllerComponents: ControllerComponents,
-                                  val clickhouseDAO: ClickhouseDAO,
+                                  implicit val clickhouseDAO: ClickhouseDAO,
                                   val defaultService: DefaultService) extends BaseController with play.api.i18n.I18nSupport {
 
   val form: Form[DivisionLevelForm] = Form(mapping(
@@ -43,9 +44,9 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       StatTypeLinks.withAverages(statTypeUrlFunc, currentRound, statsType),
       SortByLinks(sortByFunc, clickhouseDAO.sortingColumns, sortBy))
 
-    clickhouseDAO.bestTeams(leagueId = Some(leagueId), season = Some(season), page = page, statsType = statsType, sortBy = sortBy)
-      .map(bestTeams => Ok(views.html.league.bestTeams(details,
-        WebPagedEntities(bestTeams, page, pageUrlFunc))))
+      StatisticsCHRequest.bestHatstatsTeamRequest.execute(leagueId = Some(leagueId), season = Some(season), page = page, statsType = statsType, sortBy = sortBy)
+        .map(bestTeams => Ok(views.html.league.bestTeams(details,
+          WebPagedEntities(bestTeams, page, pageUrlFunc))))
   }
 
   def bestLeagueUnits(leagueId: Int, season: Int, page: Int, statsType: StatsType, sortBy: String) = Action.async {implicit request =>
@@ -64,9 +65,9 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       StatTypeLinks.withAverages(statsTypeFunc, currentRound, statsType),
       SortByLinks(sortByFunc, clickhouseDAO.sortingColumns, sortBy))
 
-    clickhouseDAO.bestLeagueUnits(leagueId = Some(leagueId), season = Some(season), page = page, statsType = statsType, sortBy = sortBy)
-      .map(bestLeagueUnits => Ok(views.html.league.bestLeagueUnits(details,
-        WebPagedEntities(bestLeagueUnits, page, pageUrlFunc))))
+      StatisticsCHRequest.bestHatstatsLeagueRequest.execute(leagueId = Some(leagueId), season = Some(season), page = page, statsType = statsType, sortBy = sortBy)
+        .map(bestLeagueUnits => Ok(views.html.league.bestLeagueUnits(details,
+          WebPagedEntities(bestLeagueUnits, page, pageUrlFunc))))
   }
 
 

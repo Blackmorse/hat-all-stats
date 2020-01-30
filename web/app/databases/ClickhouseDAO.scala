@@ -1,119 +1,45 @@
 package databases
 
 import akka.actor.ActorSystem
-import javax.inject.Singleton
-import anorm._
 import com.google.inject.Inject
-import models.clickhouse.{LeagueSeasons, LeagueUnitRating, TeamMatchInfo, TeamRating}
-import models.web.{Avg, MultiplyRoundsType, Round, StatsType}
+import databases.clickhouse.StatisticsCHRequest
+import javax.inject.Singleton
+import models.clickhouse.{LeagueSeasons, TeamMatchInfo}
+import models.web.{MultiplyRoundsType, Round, StatsType}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
-import service.DefaultService
 
-import scala.collection.mutable
 import scala.concurrent.Future
 
 @Singleton
 class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContext) {
   private val db = dbApi.database("default")
 
-  val sortingColumns = Seq("hatstats", "midfield", "defense", "attack")
-
-  def bestTeams(leagueId: Option[Int] = None,
-                season: Option[Int] = None,
-                divisionLevel: Option[Int] = None,
-                leagueUnitId: Option[Long] = None,
-                page: Int = 0,
-                statsType: StatsType,
-                sortBy: String = "hatstats") = Future {
-    db.withConnection{implicit connection =>
-      if (!sortingColumns.contains(sortBy)) throw new Exception("Looks like SQL Injection")
-
-      val sql = statsType match {
-        case MultiplyRoundsType(func) => s"""select team_id,
-                                           |team_name,
-                                           |league_unit_id,
-                                           |league_unit_name,
-                                           |toInt32($func(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats,
-                                           |toInt32($func(rating_midfield)) as midfield,
-                                           |toInt32($func((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
-                                           |toInt32($func( (rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
-                                           |from hattrick.match_details __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
-                                           |group by team_id, team_name, league_unit_id, league_unit_name order by $sortBy desc, team_id desc __limit__""".stripMargin
-        case Round(round) => s"""select team_id,
-                               |team_name,
-                               |league_unit_id,
-                               |league_unit_name,
-                               |rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att as hatstats,
-                               |rating_midfield as midfield,
-                               |toInt32((rating_right_def + rating_left_def + rating_mid_def) / 3) as defense,
-                               |toInt32( (rating_right_att + rating_mid_att + rating_left_att) / 3) as attack
-                               |from hattrick.match_details __where__ and round = $round
-                               | order by $sortBy desc, team_id desc __limit__""".stripMargin
-      }
-
-      val matchDetailsSql = SqlBuilder(sql)
-
-      leagueId.foreach(matchDetailsSql.leagueId)
-      season.foreach(matchDetailsSql.season)
-      divisionLevel.foreach(matchDetailsSql.divisionLevel)
-      leagueUnitId.foreach(matchDetailsSql.leagueUnitId)
-      matchDetailsSql.page(page)
-
-      matchDetailsSql.build.as(TeamRating.teamRatingMapper.*)
-    }
-  }
-
-  def bestLeagueUnits(leagueId: Option[Int] = None,
-                      season: Option[Int] = None,
-                      divisionLevel: Option[Int] = None,
-                      leagueUnitId: Option[Long] = None,
-                      page: Int = 0,
-                      statsType: StatsType = Avg,
-                      sortBy: String = "hatstats") = Future {
-    db.withConnection{ implicit connection =>
-      if (!sortingColumns.contains(sortBy)) throw new Exception("Looks like SQL Injection")
+  def execute[T](request: StatisticsCHRequest[T],
+                 leagueId: Option[Int] = None,
+                 season: Option[Int] = None,
+                 divisionLevel: Option[Int] = None,
+                 leagueUnitId: Option[Long] = None,
+                 page: Int = 0,
+                 statsType: StatsType,
+                 sortBy: String) = Future {
+    db.withConnection { implicit connection =>
+      if (!request.sortingColumns.contains(sortBy)) throw new Exception("Looks like SQL Injection")
 
       val sql = statsType match {
-        case MultiplyRoundsType(func) => s"""select league_unit_id,
-                                           |league_unit_name,
-                                           |toInt32($func(hatstats)) as hatstats,
-                                           |toInt32($func(midfield)) as midfield,
-                                           |toInt32($func(defense)) as defense,
-                                           |toInt32($func(attack)) as attack
-                                           | from
-                                           |   (select league_unit_id,
-                                           |     league_unit_name,
-                                           |     round,
-                                           |     toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats,
-                                           |     toInt32(avg(rating_midfield)) as midfield,
-                                           |     toInt32(avg((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
-                                           |     toInt32(avg((rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
-                                           |     from hattrick.match_details
-                                           |     __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
-                                           |     group by league_unit_id, league_unit_name, round)
-                                           |group by league_unit_id, league_unit_name order by $sortBy desc, league_unit_id desc __limit__""".stripMargin
-
-        case Round(round) => s"""select league_unit_id,
-                              |     league_unit_name,
-                              |     toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats,
-                              |     toInt32(avg(rating_midfield)) as midfield,
-                              |     toInt32(avg((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
-                              |     toInt32(avg((rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
-                              |     from hattrick.match_details
-                              |     __where__ and round = $round and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
-                              |     group by league_unit_id, league_unit_name
-                              | order by $sortBy desc __limit__""".stripMargin
+        case MultiplyRoundsType(func) => request.aggregateSql.replace("__func__", func).replace("__sortBy__", sortBy)
+        case Round(round) => request.oneRoundSql.replace("__round__", round.toString).replace("__sortBy__", sortBy)
       }
-      val leagueUnitsSql = SqlBuilder(sql)
 
-      leagueId.foreach(leagueUnitsSql.leagueId)
-      season.foreach(leagueUnitsSql.season)
-      divisionLevel.foreach(leagueUnitsSql.divisionLevel)
-      leagueUnitId.foreach(leagueUnitsSql.leagueUnitId)
-      leagueUnitsSql.page(page)
+      val builder = SqlBuilder(sql)
 
-      leagueUnitsSql.build.as(LeagueUnitRating.leagueUnitRatingMapper.*)
+      leagueId.foreach(builder.leagueId)
+      season.foreach(builder.season)
+      divisionLevel.foreach(builder.divisionLevel)
+      leagueUnitId.foreach(builder.leagueUnitId)
+      builder.page(page)
+
+      builder.build.as(request.parser.*)
     }
   }
 
@@ -146,53 +72,6 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
     }
   }
 
-}
-
-case class SqlBuilder(baseSql: String) {
-  private val params: mutable.Buffer[(String, ParameterValue)] = mutable.Buffer()
-  private var page = 0
-  private val pageSize = DefaultService.PAGE_SIZE
-
-  def season(season: Int): SqlBuilder = {
-    params += (("season", season))
-    this
-  }
-  def leagueId(leagueId: Int): SqlBuilder = {
-    params += (("league_id", leagueId))
-    this
-  }
-  def divisionLevel(divisionLevel: Int): SqlBuilder = {
-    params += (("division_level", divisionLevel))
-    this
-  }
-
-  def leagueUnitId(leagueUnitId: Long): SqlBuilder = {
-    params += (("league_unit_id", leagueUnitId))
-    this
-  }
-
-  def teamId(teamId: Long): SqlBuilder = {
-    params += (("team_id", teamId))
-    this
-  }
-
-  def page(page: Int): SqlBuilder = {
-    this.page = page
-    this
-  }
-
-  def build: SimpleSql[Row] = {
-    val sql =  (if(params.nonEmpty) {
-      val where = " where " + params.map{case (name, _) => s"$name = {$name}"}.mkString(" and ")
-      baseSql.replace("__where__", where)
-    } else {
-      baseSql.replace("__where__", " ")
-    })
-    .replace("__limit__", s" limit ${page * pageSize}, $pageSize")
-
-    SQL(sql)
-      .on(params.map(NamedParameter.namedWithString): _*)
-  }
 }
 
 @Singleton
