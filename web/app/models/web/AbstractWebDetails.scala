@@ -19,8 +19,13 @@ object StatTypeLinks {
     StatTypeLinks(seq, current)
   }
 
-  def withoutAverages(statTypeUrlFunc: StatsType => String, round: Int, current: StatsType): StatTypeLinks = {
+  def withAccumulator(statTypeUrlFunc: StatsType => String, round: Int, current: StatsType): StatTypeLinks = {
     val seq = (1 to round).map(roundNumber => (roundNumber.toString, statTypeUrlFunc(Round(roundNumber)))) ++ Seq(("all", statTypeUrlFunc(Accumulate)))
+    StatTypeLinks(seq, current)
+  }
+
+  def onlyRounds(statTypeUrlFunc: StatsType => String, round: Int, current: StatsType): StatTypeLinks = {
+    val seq = (1 to round).map(roundNumber => (roundNumber.toString, statTypeUrlFunc(Round(roundNumber))))
     StatTypeLinks(seq, current)
   }
 }

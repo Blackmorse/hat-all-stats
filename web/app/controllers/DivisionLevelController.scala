@@ -107,12 +107,49 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
           divisionLevel = divisionLevel,
           divisionLevelRoman = Romans(divisionLevel),
           leagueUnitLinks = leagueUnitNumbers(season, divisionLevel, leagueUnitId),
-          statTypeLinks = StatTypeLinks.withoutAverages(statsTypeFunc, currentRound, statsType),
+          statTypeLinks = StatTypeLinks.withAccumulator(statsTypeFunc, currentRound, statsType),
           sortByLinks = SortByLinks(sortByFunc, StatisticsCHRequest.playerStatsRequest.sortingColumns, sortBy))
 
         Ok(views.html.divisionlevel.playerStats(details,
           WebPagedEntities(playerStats, page, pageUrlFunc)))
       }
+  }
+
+  def teamState(leagueId: Int, season: Int, divisionLevel: Int, page: Int, statsTypeOpt: Option[StatsType], sortBy: String) = Action.async { implicit request =>
+    val currentRound = defaultService.currentRound(leagueId)
+
+    val statsType = statsTypeOpt.getOrElse(Round(currentRound))
+
+    val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
+
+    val seasonFunction: Int => String = s => routes.DivisionLevelController.teamState(leagueId, s, divisionLevel, 0).url
+    val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueId, seasonFunction))
+
+    val pageUrlFunc: Int => String = p => routes.DivisionLevelController.teamState(leagueId, season, divisionLevel, p, Some(statsType), sortBy).url
+    val statsTypeFunc: StatsType => String = st => routes.DivisionLevelController.teamState(leagueId, season, divisionLevel, page, Some(st), sortBy).url
+    val sortByFunc: String => String = sb => routes.DivisionLevelController.teamState(leagueId, season, divisionLevel, page, Some(statsType), sb).url
+
+    val leagueUnitIdFuture = Future(hattrick.api.search().searchLeagueId(leagueId).searchType(3).searchString(Romans(divisionLevel) + "." + "1")
+      .execute().getSearchResults.get(0).getResultId)
+
+    StatisticsCHRequest.teamStateRequest.execute(leagueId = Some(leagueId),
+      season = Some(season),
+      divisionLevel = Some(divisionLevel),
+      page = page,
+      statsType = statsType,
+      sortBy = sortBy)
+    .zipWith(leagueUnitIdFuture){case (teamState, leagueUnitId) =>
+      val details = WebDivisionLevelDetails(leagueName = leagueName,
+        leagueId = leagueId,
+        seasonInfo = seasonInfo,
+        divisionLevel = divisionLevel,
+        divisionLevelRoman = Romans(divisionLevel),
+        leagueUnitLinks = leagueUnitNumbers(season, divisionLevel, leagueUnitId),
+        statTypeLinks = StatTypeLinks.onlyRounds(statsTypeFunc, currentRound, statsType),
+        sortByLinks = SortByLinks(sortByFunc, StatisticsCHRequest.teamStateRequest.sortingColumns, sortBy))
+
+        Ok(views.html.divisionlevel.teamState(details, WebPagedEntities(teamState, page, pageUrlFunc)))
+    }
   }
 
   def leagueUnitNumbers(season: Int, divisionLevel: Int, baseLeagueUnitId: Long): Seq[(String, String)] =

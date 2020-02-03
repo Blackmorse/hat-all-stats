@@ -24,6 +24,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                  statsType: StatsType,
                  sortBy: String) = Future {
     db.withConnection { implicit connection =>
+
       if (!request.sortingColumns.contains(sortBy)) throw new Exception("Looks like SQL Injection")
 
       val sql = statsType match {

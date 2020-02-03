@@ -3,7 +3,7 @@ package databases
 package clickhouse
 
 import anorm.RowParser
-import models.clickhouse.{LeagueUnitRating, PlayerStats, TeamRating}
+import models.clickhouse.{LeagueUnitRating, PlayerStats, TeamRating, TeamState}
 import models.web.StatsType
 
 case class StatisticsCHRequest[T](aggregateSql: String, oneRoundSql: String, sortingColumns: Seq[String], parser: RowParser[T]) {
@@ -130,5 +130,31 @@ object StatisticsCHRequest {
     parser = PlayerStats.playerStatsMapper
   )
 
+  val teamStateRequest = StatisticsCHRequest(
+    aggregateSql = """""",
+    oneRoundSql = """SELECT
+                    |    team_name,
+                    |    team_id,
+                    |    league_unit_id,
+                    |    league_unit_name,
+                    |    sum(tsi) AS tsi,
+                    |    sum(salary) AS salary,
+                    |    sum(rating) AS rating,
+                    |    sum(rating_end_of_match) AS rating_end_of_match,
+                    |    floor(avg((age * 112) + days) / 112, 1) AS age,
+                    |    sumIf(injury_level, (played_minutes > 0) AND (injury_level > 0)) AS injury,
+                    |    countIf(injury_level, (played_minutes > 0) AND (injury_level > 0)) AS injury_count
+                    |FROM hattrick.player_stats
+                    |__where__ AND (round = __round__)
+                    |GROUP BY
+                    |    team_name,
+                    |    team_id,
+                    |    league_unit_id,
+                    |    league_unit_name
+                    |ORDER BY __sortBy__ DESC, team_id DESC
+                    |__limit__""".stripMargin,
+    sortingColumns = Seq("tsi", "salary", "rating", "rating_end_of_match", "age", "injury", "injury_count"),
+    parser = TeamState.teamStateMapper
+  )
 }
 

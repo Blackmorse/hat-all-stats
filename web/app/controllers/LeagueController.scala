@@ -80,7 +80,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
   def playerStats(leagueId: Int, season: Int, page: Int, statsType: StatsType, sortBy: String) = Action.async {implicit request =>
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
-    val seasonFunction: Int => String = s => routes.LeagueController.playerStats(leagueId, season, 0).url
+    val seasonFunction: Int => String = s => routes.LeagueController.playerStats(leagueId, s, 0).url
     val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueId, seasonFunction))
 
     val pageFunc: Int => String = p => routes.LeagueController.playerStats(leagueId, season, p, statsType, sortBy).url
@@ -89,15 +89,47 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
     val currentRound = defaultService.currentRound(leagueId)
 
-    val details = WebLeagueDetails(leagueName = leagueName, leagueId = leagueId,
+    val details = WebLeagueDetails(leagueName = leagueName,
+      leagueId = leagueId,
       form = form,
       divisionLevelsLinks = divisionLevels(leagueId, season),
       seasonInfo = seasonInfo,
-      statTypeLinks = StatTypeLinks.withoutAverages(statsTypeFunc, currentRound, statsType),
+      statTypeLinks = StatTypeLinks.withAccumulator(statsTypeFunc, currentRound, statsType),
       sortByLinks = SortByLinks(sortByFunc, StatisticsCHRequest.playerStatsRequest.sortingColumns, sortBy))
 
     StatisticsCHRequest.playerStatsRequest.execute(leagueId = Some(leagueId), season = Some(season), page = page, statsType = statsType, sortBy = sortBy)
         .map(playerStats => Ok(views.html.league.playerStats(details, WebPagedEntities(playerStats, page, pageFunc))))
+  }
+
+  def teamState(leagueId: Int, season: Int, page: Int, statsTypeOpt: Option[StatsType], sortBy: String) = Action.async { implicit request =>
+    val currentRound = defaultService.currentRound(leagueId)
+
+    val statsType = statsTypeOpt.getOrElse(Round(currentRound))
+
+    val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
+
+    val seasonFunction: Int => String = s => routes.LeagueController.teamState(leagueId, s, 0).url
+    val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueId, seasonFunction))
+
+    val pageFunc: Int => String = p => routes.LeagueController.teamState(leagueId, season, p, Some(statsType), sortBy).url
+    val statsTypeFunc: StatsType => String = st => routes.LeagueController.teamState(leagueId, season, page, Some(st), sortBy).url
+    val sortByFunc: String => String = sb => routes.LeagueController.teamState(leagueId, season, page, Some(statsType), sb).url
+
+
+    val details = WebLeagueDetails(leagueName = leagueName,
+      leagueId = leagueId,
+      form = form,
+      divisionLevelsLinks = divisionLevels(leagueId, season),
+      seasonInfo = seasonInfo,
+      statTypeLinks = StatTypeLinks.onlyRounds(statsTypeFunc, currentRound, statsType),
+      sortByLinks = SortByLinks(sortByFunc, StatisticsCHRequest.teamStateRequest.sortingColumns, sortBy))
+
+    StatisticsCHRequest.teamStateRequest.execute(leagueId = Some(leagueId),
+      season = Some(season),
+      page = page,
+      statsType = statsType,
+      sortBy = sortBy)
+    .map(teamStates => Ok(views.html.league.teamState(details, WebPagedEntities(teamStates, page, pageFunc))))
   }
 
 
