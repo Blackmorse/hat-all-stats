@@ -6,7 +6,7 @@ import javax.inject.{Inject, Singleton}
 import models.web._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.mvc.{BaseController, ControllerComponents}
+import play.api.mvc.{BaseController, Call, ControllerComponents}
 import service.DefaultService
 import utils.Romans
 
@@ -33,25 +33,41 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     )(DivisionLevelForm.apply)(DivisionLevelForm.unapply))
 
 
-  def bestTeams(leagueId: Int, season: Int, page: Int, statsType: StatsType, sortBy: String) = Action.async { implicit request =>
+  def bestTeams(leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async { implicit request =>
+    val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Avg, "hatstats"))
+
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
-    val seasonFunction: Int => String = s => routes.LeagueController.bestTeams(leagueId ,s ,0).url
-    val seasonInfo = SeasonInfo(season, defaultService.seasonsWithLinks(leagueId, seasonFunction))
+    val func: StatisticsParameters => Call = sp => routes.LeagueController.bestTeams(leagueId, Some(sp))
+    val seasonFunction = seasonInfoUrlFunc(statisticsParameters, func)
+    val seasonInfo = SeasonInfo(statisticsParameters.season, defaultService.seasonsWithLinks(leagueId, seasonFunction))
 
-    val pageUrlFunc: Int => String = p => routes.LeagueController.bestTeams(leagueId, season, p, statsType, sortBy).url
-    val statTypeUrlFunc: StatsType => String = st => routes.LeagueController.bestTeams(leagueId, season, page, st, sortBy).url
-    val sortByFunc: String => String = sb => routes.LeagueController.bestTeams(leagueId, season, page,statsType, sb).url
+    val pageFunc = pageUrlFunc(statisticsParameters, func)
+
+    val statTypeFunc = statTypeUrlFunc(statisticsParameters, func)
+    val sortByFunc = sortByUrlFunc(statisticsParameters, func)
 
     val currentRound = defaultService.currentRound(leagueId)
-    val details = WebLeagueDetails(leagueName, leagueId, form, divisionLevels(leagueId, season), seasonInfo,
-      StatTypeLinks.withAverages(statTypeUrlFunc, currentRound, statsType),
-      SortByLinks(sortByFunc, StatisticsCHRequest.bestHatstatsTeamRequest.sortingColumns, sortBy))
+    val details = WebLeagueDetails(leagueName, leagueId, form, divisionLevels(leagueId, statisticsParameters.season), seasonInfo,
+      StatTypeLinks.withAverages(statTypeFunc, currentRound, statisticsParameters.statsType),
+      SortByLinks(sortByFunc, StatisticsCHRequest.bestHatstatsTeamRequest.sortingColumns, statisticsParameters.sortBy))
 
-      StatisticsCHRequest.bestHatstatsTeamRequest.execute(leagueId = Some(leagueId), season = Some(season), page = page, statsType = statsType, sortBy = sortBy)
+      StatisticsCHRequest.bestHatstatsTeamRequest.execute(leagueId = Some(leagueId), season = Some(statisticsParameters.season), page = statisticsParameters.page, statsType = statisticsParameters.statsType, sortBy = statisticsParameters.sortBy)
         .map(bestTeams => Ok(views.html.league.bestTeams(details,
-          WebPagedEntities(bestTeams, page, pageUrlFunc))))
+          WebPagedEntities(bestTeams, statisticsParameters.page, pageFunc))))
   }
+
+  def pageUrlFunc(statisticsParameters: StatisticsParameters, func: StatisticsParameters => Call): Int => String = p =>
+    func(StatisticsParameters(statisticsParameters.season, p, statisticsParameters.statsType, statisticsParameters.sortBy)).url
+
+  def seasonInfoUrlFunc(statisticsParameters: StatisticsParameters, func: StatisticsParameters => Call): Int => String = s =>
+    func(StatisticsParameters(s, statisticsParameters.page, statisticsParameters.statsType, statisticsParameters.sortBy)).url
+
+  def statTypeUrlFunc(statisticsParameters: StatisticsParameters, func: StatisticsParameters => Call): StatsType => String = st =>
+    func(StatisticsParameters(statisticsParameters.season, statisticsParameters.page, st, statisticsParameters.sortBy)).url
+
+  def sortByUrlFunc(statisticsParameters: StatisticsParameters, func: StatisticsParameters => Call): String => String = sb =>
+    func(StatisticsParameters(statisticsParameters.season, statisticsParameters.page, statisticsParameters.statsType, sb)).url
 
   def bestLeagueUnits(leagueId: Int, season: Int, page: Int, statsType: StatsType, sortBy: String) = Action.async {implicit request =>
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName

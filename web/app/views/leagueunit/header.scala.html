@@ -3,7 +3,7 @@
 
 @(details: WebLeagueUnitDetails)
 
-<a href="@routes.LeagueController.bestTeams(details.leagueId, details.seasonInfo.season)">@details.leagueName</a>
+<a href="@routes.LeagueController.bestTeams(details.leagueId)">@details.leagueName</a>
 ->
 <a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.seasonInfo.season, details.divisionLevel)">@Romans(details.divisionLevel)</a>
 ->

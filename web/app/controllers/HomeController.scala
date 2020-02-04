@@ -22,6 +22,6 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
 
 
   def index() = Action { implicit request: Request[AnyContent] =>
-    Redirect(routes.LeagueController.bestTeams(defaultService.defaultLeagueId, defaultService.currentSeason))
+    Redirect(routes.LeagueController.bestTeams(defaultService.defaultLeagueId, None))
   }
 }

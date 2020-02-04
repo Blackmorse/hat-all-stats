@@ -5,7 +5,7 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
-GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
+GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
 GET     /league/playerStats         controllers.LeagueController.playerStats(leagueId: Int, season: Int, page: Int ?=0, statsType: models.web.StatsType ?= models.web.Accumulate, sortBy: String ?= "scored")
 GET     /league/teamState           controllers.LeagueController.teamState(leagueId: Int, season: Int, page: Int ?=0, statsTypeOpt: Option[models.web.StatsType] ?= None, sortBy: String ?= "rating")
