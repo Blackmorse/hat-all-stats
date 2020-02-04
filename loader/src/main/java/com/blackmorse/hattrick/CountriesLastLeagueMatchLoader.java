@@ -6,6 +6,7 @@ import com.blackmorse.hattrick.clickhouse.model.PlayerEvents;
 import com.blackmorse.hattrick.clickhouse.model.PlayerInfo;
 import com.blackmorse.hattrick.model.LeagueUnitId;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
+import com.blackmorse.hattrick.model.common.League;
 import com.blackmorse.hattrick.model.converters.MatchDetailsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerEventsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerInfoConverter;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class LastLeagueMatchLoader {
+public class CountriesLastLeagueMatchLoader {
     private final HattrickService hattrickService;
     private final ClickhouseWriter<MatchDetails> matchDetailsWriter;
     private final ClickhouseWriter<PlayerEvents> playerEventsWriter;
@@ -28,13 +29,13 @@ public class LastLeagueMatchLoader {
     private final PlayerInfoConverter playerInfoConverter;
 
     @Autowired
-    public LastLeagueMatchLoader(HattrickService hattrickService,
-                                 @Qualifier("matchDetailsWriter") ClickhouseWriter<MatchDetails> matchDetailsWriter,
-                                 @Qualifier("playerEventsWriter") ClickhouseWriter<PlayerEvents> playerEventsWriter,
-                                 @Qualifier("playerInfoWriter") ClickhouseWriter<PlayerInfo> playerInfoWriter,
-                                 MatchDetailsConverter matchDetailsConverter,
-                                 PlayerEventsConverter playerEventsConverter,
-                                 PlayerInfoConverter playerInfoConverter) {
+    public CountriesLastLeagueMatchLoader(HattrickService hattrickService,
+                                          @Qualifier("matchDetailsWriter") ClickhouseWriter<MatchDetails> matchDetailsWriter,
+                                          @Qualifier("playerEventsWriter") ClickhouseWriter<PlayerEvents> playerEventsWriter,
+                                          @Qualifier("playerInfoWriter") ClickhouseWriter<PlayerInfo> playerInfoWriter,
+                                          MatchDetailsConverter matchDetailsConverter,
+                                          PlayerEventsConverter playerEventsConverter,
+                                          PlayerInfoConverter playerInfoConverter) {
         this.hattrickService = hattrickService;
         this.matchDetailsWriter = matchDetailsWriter;
         this.playerEventsWriter = playerEventsWriter;
@@ -45,6 +46,7 @@ public class LastLeagueMatchLoader {
     }
 
     public void load(List<String> countryNames) {
+
         List<LeagueUnitId> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(countryNames);
 
         List<List<LeagueUnitId>> allLeagueUnitIdsForCountryChunks = Lists.partition(allLeagueUnitIdsForCountry, 341);
@@ -67,5 +69,7 @@ public class LastLeagueMatchLoader {
             playerEventsWriter.writeToClickhouse(playerEvents);
             playerInfoWriter.writeToClickhouse(playerInfos);
         }
+
+        hattrickService.shutDown();
     }
 }

@@ -268,4 +268,8 @@ public class HattrickService {
                 .toList()
             .blockingGet();
     }
+
+    public void shutDown() {
+        scheduler.shutdown();
+    }
 }
