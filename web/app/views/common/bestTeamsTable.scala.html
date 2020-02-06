@@ -2,7 +2,7 @@
 @import models.web.WebPagedEntities
 @import models.clickhouse.TeamRating
 
-@(bestTeams: WebPagedEntities[TeamRating], season: Int)
+@(bestTeams: WebPagedEntities[TeamRating])
 <table>
     <tr>
         <th>Position</th>
@@ -17,7 +17,7 @@
     <tr>
         <td>@{DefaultService.PAGE_SIZE * bestTeams.page + index + 1}</td>
         <td><a href="@routes.TeamController.matches(team.teamId)">@team.teamName</a></td>
-        <td><a href="@routes.LeagueUnitController.bestTeams(team.leagueUnitId, season)">@team.leagueUnitName</a></td>
+        <td><a href="@routes.LeagueUnitController.bestTeams(team.leagueUnitId)">@team.leagueUnitName</a></td>
         <td>@team.hatStats</td>
         <td>@team.midfield</td>
         <td>@team.defense</td>

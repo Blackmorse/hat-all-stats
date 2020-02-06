@@ -3,15 +3,15 @@
 @(details: WebDivisionLevelDetails)
 <table id="countryStatisticsTable">
     <tr>
-        <td><a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.seasonInfo.season, details.divisionLevel)">Teams</a></td>
+        <td><a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.divisionLevel)">Teams</a></td>
     </tr>
     <tr>
-        <td><a href="@routes.DivisionLevelController.bestLeagueUnits(details.leagueId, details.seasonInfo.season, details.divisionLevel)">Leagues</a></td>
+        <td><a href="@routes.DivisionLevelController.bestLeagueUnits(details.leagueId, details.divisionLevel)">Leagues</a></td>
     </tr>
     <tr>
-        <td><a href="@routes.DivisionLevelController.playerStats(details.leagueId, details.seasonInfo.season, details.divisionLevel)">Player statistics</a></td>
+        <td><a href="@routes.DivisionLevelController.playerStats(details.leagueId, details.divisionLevel)">Player statistics</a></td>
     </tr>
     <tr>
-       <td><a href="@routes.DivisionLevelController.teamState(details.leagueId, details.seasonInfo.season, details.divisionLevel)">Team State</a></td>
+       <td><a href="@routes.DivisionLevelController.teamState(details.leagueId, details.divisionLevel)">Team State</a></td>
     </tr>
 </table>

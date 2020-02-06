@@ -3,11 +3,11 @@
 
 @(details: WebLeagueUnitDetails)
 
-<a href="@routes.LeagueController.bestTeams(details.leagueId, details.seasonInfo.season)">@details.leagueName</a>
+<a href="@routes.LeagueController.bestTeams(details.leagueId)">@details.leagueName</a>
 ->
-<a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.seasonInfo.season, details.divisionLevel)">@Romans(details.divisionLevel)</a>
+<a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.divisionLevel)">@Romans(details.divisionLevel)</a>
 ->
-<a href="@routes.LeagueUnitController.bestTeams(details.leagueUnitId, details.seasonInfo.season)">@details.leagueUnitName</a>
+<a href="@routes.LeagueUnitController.bestTeams(details.leagueUnitId)">@details.leagueUnitName</a>
 ->
 <select class="hrefSelect">
     <option class="blank" value>Choose</option>

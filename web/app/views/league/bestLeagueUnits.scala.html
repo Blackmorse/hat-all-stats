@@ -1,8 +1,8 @@
 @import play.api.data.Form
 @import controllers.WebLeagueDetails
-@import models.web.WebPagedEntities
 @import models.clickhouse.LeagueUnitRating
+@import models.web.ViewData
 
-@(details: WebLeagueDetails, bestLeagueUnits: WebPagedEntities[LeagueUnitRating])(implicit messages: Messages)
+@(viewData: ViewData[LeagueUnitRating, WebLeagueDetails])(implicit messages: Messages)
 
-@stats(details, details.leagueName, header(details), leftBar(details))(common.bestLeagueUnitsTable(bestLeagueUnits, details.seasonInfo.season))
+@stats(viewData.details.leagueName, header(viewData.details), leftBar(viewData.details), viewData.links)(common.bestLeagueUnitsTable(viewData.webPagedEntities))

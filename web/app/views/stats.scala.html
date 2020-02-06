@@ -1,29 +1,31 @@
 @import models.web.AbstractWebDetails
+@import models.web.ViewData
+@import models.web.Links
 
-@(details: AbstractWebDetails, title: String, header: Html, leftBar: Html)(content: Html)
+@(title: String, header: Html, leftBar: Html, links: Links)(content: Html)
 
-@main(title: String, header: Html, leftBar: Html){
+@main(title, header, leftBar){
     <span class="seasonDiv">
         Season:
         <select class="hrefSelect">
-            @for((season, link) <- details.seasonInfo.allSeasons) {
-                <option value="@link" @{if(season==details.seasonInfo.season.toString) "selected"}>@season</option>
+            @for((season, link) <- links.seasonLinks.allSeasons) {
+                <option value="@link" @{if(season==links.seasonLinks.season.toString) "selected"}>@season</option>
             }
         </select>
     </span>
     <span class="statsTypeDiv">
         Round:
         <select class="hrefSelect">
-            @for((name, link) <- details.statTypeLinks.links) {
-                <option value="@link" @{if(name==details.statTypeLinks.currentStatType.toString) "selected"}>@name</option>
+            @for((name, link) <- links.statTypeLinks.links) {
+                <option value="@link" @{if(name==links.statTypeLinks.currentStatType.toString) "selected"}>@name</option>
             }
         </select>
     </span>
     <span class="sortByDiv">
         Sort by:
         <select class="hrefSelect">
-        @for((name, link) <- details.sortByLinks.links) {
-            <option value="@link" @{if(name==details.sortByLinks.currentSort) "selected"}>@name</option>
+        @for((name, link) <- links.sortByLinks.links) {
+            <option value="@link" @{if(name==links.sortByLinks.currentSort) "selected"}>@name</option>
         }
         </select>
     </span>

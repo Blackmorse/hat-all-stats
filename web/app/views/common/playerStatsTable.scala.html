@@ -2,7 +2,7 @@
 @import models.web.WebPagedEntities
 @import models.clickhouse.PlayerStats
 
-@(playerStats: WebPagedEntities[PlayerStats], season: Int)
+@(playerStats: WebPagedEntities[PlayerStats])
 
 <table>
     <tr>
@@ -24,7 +24,7 @@
         <td>@{DefaultService.PAGE_SIZE * playerStats.page + index + 1}</td>
         <td>@{playerStat.firstName + " " + playerStat.lastName}</td>
         <td><a href="@routes.TeamController.matches(playerStat.teamId)">@playerStat.teamName</a></td>
-        <td><a href="@routes.LeagueUnitController.bestTeams(playerStat.leagueUnitId, season)">@playerStat.leagueUnitName</a></td>
+        <td><a href="@routes.LeagueUnitController.bestTeams(playerStat.leagueUnitId)">@playerStat.leagueUnitName</a></td>
         <td>@playerStat.age</td>
         <td>@playerStat.games</td>
         <td>@playerStat.played</td>

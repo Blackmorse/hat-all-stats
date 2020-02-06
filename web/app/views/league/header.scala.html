@@ -2,14 +2,11 @@
 @import play.api.data.Form
 @import helpers.FieldHelpers._
 @import play.api.libs.json.Json
-
 @import controllers.WebLeagueDetails
 
 @(details: WebLeagueDetails)(implicit messages: Messages)
 
-
-
-<a href="@routes.LeagueController.bestTeams(details.leagueId, details.seasonInfo.season)">@details.leagueName</a>
+<a href="@routes.LeagueController.bestTeams(details.leagueId)">@details.leagueName</a>
 ->
 <select class="hrefSelect">
   <option class="blank" value>Choose</option>

@@ -1,7 +1,7 @@
 @import models.clickhouse.TeamState
-@import models.web.WebPagedEntities
 @import controllers.WebDivisionLevelDetails
+@import models.web.ViewData
 
-@(details: WebDivisionLevelDetails, teamState: WebPagedEntities[TeamState])
+@(viewData: ViewData[TeamState, WebDivisionLevelDetails])
 
-@stats(details, details.leagueName, header(details), leftBar(details))(common.teamStateTable(teamState, details.seasonInfo.season))
+@stats(viewData.details.leagueName, header(viewData.details), leftBar(viewData.details), viewData.links)(common.teamStateTable(viewData.webPagedEntities))

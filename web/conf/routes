@@ -5,19 +5,19 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
-GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
-GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, currentSeason: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
-GET     /league/playerStats         controllers.LeagueController.playerStats(leagueId: Int, season: Int, page: Int ?=0, statsType: models.web.StatsType ?= models.web.Accumulate, sortBy: String ?= "scored")
-GET     /league/teamState           controllers.LeagueController.teamState(leagueId: Int, season: Int, page: Int ?=0, statsTypeOpt: Option[models.web.StatsType] ?= None, sortBy: String ?= "rating")
+GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /league/playerStats         controllers.LeagueController.playerStats(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /league/teamState           controllers.LeagueController.teamState(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
-GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
-GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
-GET     /divisionlevel/playerStats  controllers.DivisionLevelController.playerStats(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Accumulate, sortBy: String ?= "scored")
-GET     /divisionlevel/teamState    controllers.DivisionLevelController.teamState(leagueId: Int, currentSeason: Int, divisionLevel: Int, page: Int ?= 0, statsTypeOpt: Option[models.web.StatsType] ?= None, sortBy: String ?= "rating")
+GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /divisionlevel/playerStats  controllers.DivisionLevelController.playerStats(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /divisionlevel/teamState    controllers.DivisionLevelController.teamState(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
-GET     /leagueLevelUnit        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, season: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Avg, sortBy: String ?= "hatstats")
-GET     /leagueLevelUnit/playerStats    controllers.LeagueUnitController.playerStats(leagueUnitId: Long, season: Int, page: Int ?= 0, statsType: models.web.StatsType ?= models.web.Accumulate, sortBy: String ?= "scored")
-GET     /leagueLevelUnit/teamState      controllers.LeagueUnitController.teamState(leagueUnitOd: Long, season: Int, page: Int ?= 0, statsType: Option[models.web.StatsType] ?= None, sortBy: String ?= "rating")
+GET     /leagueLevelUnit        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /leagueLevelUnit/playerStats    controllers.LeagueUnitController.playerStats(leagueUnitId: Long,  statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /leagueLevelUnit/teamState      controllers.LeagueUnitController.teamState(leagueUnitOd: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
 GET     /team/matches               controllers.TeamController.matches(teamId: Long)
 

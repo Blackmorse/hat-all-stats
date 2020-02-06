@@ -2,9 +2,9 @@
 
 @(details: WebDivisionLevelDetails)
 
-<a href="@routes.LeagueController.bestTeams(details.leagueId, details.seasonInfo.season)">@details.leagueName</a>
+<a href="@routes.LeagueController.bestTeams(details.leagueId)">@details.leagueName</a>
 ->
-<a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.seasonInfo.season, details.divisionLevel)">@details.divisionLevelRoman</a>
+<a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.divisionLevel)">@details.divisionLevelRoman</a>
 ->
 <select class="hrefSelect">
     <option class="blank" value>Choose</option>

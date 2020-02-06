@@ -1,12 +1,12 @@
-@import models.web.WebPagedEntities
 @import models.clickhouse.TeamRating
 @import controllers.WebLeagueUnitDetails
 @import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails
 @import service.LeagueUnitTeamStat
+@import models.web.ViewData
 
-@(details: WebLeagueUnitDetails, leagueTeamStats: Seq[LeagueUnitTeamStat], bestTeams: WebPagedEntities[TeamRating])
+@(viewData: ViewData[TeamRating, WebLeagueUnitDetails], leagueTeamStats: Seq[LeagueUnitTeamStat])
 
-@stats(details, details.leagueUnitName, header(details), leftBar(details)){
+@stats(viewData.details.leagueUnitName, header(viewData.details), leftBar(viewData.details), viewData.links){
     <table>
         <tr>
             <th></th>
@@ -34,5 +34,5 @@
         }
     </table>
 
-    @common.bestTeamsTable(bestTeams, details.seasonInfo.season)
+    @common.bestTeamsTable(viewData.webPagedEntities)
 }

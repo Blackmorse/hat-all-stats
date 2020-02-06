@@ -4,18 +4,22 @@ package clickhouse
 
 import anorm.RowParser
 import models.clickhouse.{LeagueUnitRating, PlayerStats, TeamRating, TeamState}
-import models.web.StatsType
+import models.web.StatisticsParameters
 
-case class StatisticsCHRequest[T](aggregateSql: String, oneRoundSql: String, sortingColumns: Seq[String], parser: RowParser[T]) {
+abstract class StatisticsType
+
+object AvgMax extends StatisticsType
+object Accumulated extends StatisticsType
+object OnlyRound extends StatisticsType
+
+case class StatisticsCHRequest[T](aggregateSql: String, oneRoundSql: String, sortingColumns: Seq[String], statisticsType: StatisticsType, parser: RowParser[T]) {
 
   def execute(leagueId: Option[Int] = None,
-              season: Option[Int] = None,
               divisionLevel: Option[Int] = None,
               leagueUnitId: Option[Long] = None,
-              page: Int = 0,
-              statsType: StatsType,
-              sortBy: String)(implicit clickhouseDAO: ClickhouseDAO) =
-    clickhouseDAO.execute(this, leagueId, season, divisionLevel, leagueUnitId, page, statsType, sortBy)
+              statisticsParameters: StatisticsParameters)(implicit clickhouseDAO: ClickhouseDAO) =
+    clickhouseDAO.execute(this, leagueId, Some(statisticsParameters.season), divisionLevel, leagueUnitId, statisticsParameters.page,
+      statisticsParameters.statsType, statisticsParameters.sortBy)
 }
 
 object StatisticsCHRequest {
@@ -41,6 +45,7 @@ object StatisticsCHRequest {
                     |from hattrick.match_details __where__ and round = __round__
                     | order by __sortBy__ desc, team_id desc __limit__""".stripMargin,
     sortingColumns = Seq("hatstats", "midfield", "defense", "attack"),
+    statisticsType = AvgMax,
     parser = TeamRating.teamRatingMapper
   )
 
@@ -74,6 +79,7 @@ object StatisticsCHRequest {
                     |     group by league_unit_id, league_unit_name
                     | order by __sortBy__ desc, league_unit_id desc __limit__""".stripMargin,
     sortingColumns = Seq("hatstats", "midfield", "defense", "attack"),
+    statisticsType = AvgMax,
     parser = LeagueUnitRating.leagueUnitRatingMapper
   )
 
@@ -127,6 +133,7 @@ object StatisticsCHRequest {
                     |ORDER BY __sortBy__ DESC
                     |__limit__""".stripMargin,
     sortingColumns = Seq("age", "games", "played", "scored", "yellow_cards", "red_cards", "total_injuries"),//TODO goal_rate
+    statisticsType = Accumulated,
     parser = PlayerStats.playerStatsMapper
   )
 
@@ -154,6 +161,7 @@ object StatisticsCHRequest {
                     |ORDER BY __sortBy__ DESC, team_id DESC
                     |__limit__""".stripMargin,
     sortingColumns = Seq("tsi", "salary", "rating", "rating_end_of_match", "age", "injury", "injury_count"),
+    statisticsType = OnlyRound,
     parser = TeamState.teamStateMapper
   )
 }

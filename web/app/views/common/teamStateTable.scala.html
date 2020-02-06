@@ -2,7 +2,7 @@
 @import models.web.WebPagedEntities
 @import models.clickhouse.TeamState
 
-@(teamStates: WebPagedEntities[TeamState], season: Int)
+@(teamStates: WebPagedEntities[TeamState])
 
 <table>
     <tr>
@@ -21,7 +21,7 @@
     <tr>
         <td>@{DefaultService.PAGE_SIZE * teamStates.page + index + 1}</td>
         <td><a href="@routes.TeamController.matches(state.teamId)">@state.teamName</a></td>
-        <td><a href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId, season)">@state.leagueUnitName</a></td>
+        <td><a href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId)">@state.leagueUnitName</a></td>
         <td>@state.tsi</td>
         <td>@state.salary</td>
         <td>@state.rating</td>
