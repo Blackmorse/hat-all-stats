@@ -17,8 +17,9 @@ case class StatisticsCHRequest[T](aggregateSql: String, oneRoundSql: String, sor
   def execute(leagueId: Option[Int] = None,
               divisionLevel: Option[Int] = None,
               leagueUnitId: Option[Long] = None,
+              teamId: Option[Long] = None,
               statisticsParameters: StatisticsParameters)(implicit clickhouseDAO: ClickhouseDAO) =
-    clickhouseDAO.execute(this, leagueId, Some(statisticsParameters.season), divisionLevel, leagueUnitId, statisticsParameters.page,
+    clickhouseDAO.execute(this, leagueId, Some(statisticsParameters.season), divisionLevel, leagueUnitId, teamId, statisticsParameters.page,
       statisticsParameters.statsType, statisticsParameters.sortBy)
 }
 

@@ -20,6 +20,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                  season: Option[Int] = None,
                  divisionLevel: Option[Int] = None,
                  leagueUnitId: Option[Long] = None,
+                 teamId: Option[Long] = None,
                  page: Int = 0,
                  statsType: StatsType,
                  sortBy: String) = Future {
@@ -39,6 +40,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
       season.foreach(builder.season)
       divisionLevel.foreach(builder.divisionLevel)
       leagueUnitId.foreach(builder.leagueUnitId)
+      teamId.foreach(builder.teamId)
       builder.page(page)
 
       builder.build.as(request.parser.*)

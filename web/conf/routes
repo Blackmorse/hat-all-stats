@@ -20,6 +20,7 @@ GET     /leagueLevelUnit/playerStats    controllers.LeagueUnitController.playerS
 GET     /leagueLevelUnit/teamState      controllers.LeagueUnitController.teamState(leagueUnitOd: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
 GET     /team/matches               controllers.TeamController.matches(teamId: Long)
+GET     /team/playerStats           controllers.TeamController.playerStats(teamId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
