@@ -1,0 +1,48 @@
+@import models.web.WebPagedEntities
+@import models.clickhouse.PlayersState
+@import service.DefaultService
+
+@(playerStates: WebPagedEntities[PlayersState])
+
+<table>
+    <tr>
+        <th>Position</th>
+        <th>Player</th>
+        <th>Team </th>
+        <th>League</th>
+        <th>Age</th>
+        <th>TSI</th>
+        <th>Salary</th>
+        <th>Rating</th>
+        <th>Rating End Of Match</th>
+        <th>Injury</th>
+        <th>Red Card</th>
+        <th>Yellow Card</th>
+    </tr>
+    @for((playerState, index) <- playerStates.entities.zipWithIndex) {
+    <tr>
+        <td>@{DefaultService.PAGE_SIZE * playerStates.page + index + 1}</td>
+        <td>@{playerState.firstName + " " + playerState.lastName}</td>
+        <td><a href="@routes.TeamController.matches(playerState.teamId)">@playerState.teamName</a></td>
+        <td><a href="@routes.LeagueUnitController.bestTeams(playerState.leagueUnitId)">@playerState.leagueUnitName</a></td>
+        <td>@playerState.age</td>
+        <td>@playerState.tsi</td>
+        <td>@playerState.salary</td>
+        <td>@playerState.rating</td>
+        <td>@playerState.ratingEndOfMatch</td>
+        <td>@playerState.injuryLevel</td>
+        <td>@playerState.redCards</td>
+        <td>@playerState.yellowCards</td>
+    </tr>
+    }
+</table>
+
+@for(url <- playerStates.prevUrl) {
+<a href="@url">Previous<<</a>
+}
+
+@{playerStates.page + 1}
+
+@for(url <- playerStates.nextUrl) {
+<a href="@url">>>Next</a>
+}

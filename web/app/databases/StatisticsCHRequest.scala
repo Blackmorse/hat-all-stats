@@ -3,7 +3,7 @@ package databases
 package clickhouse
 
 import anorm.RowParser
-import models.clickhouse.{LeagueUnitRating, PlayerStats, TeamRating, TeamState}
+import models.clickhouse._
 import models.web.StatisticsParameters
 
 abstract class StatisticsType
@@ -164,6 +164,34 @@ object StatisticsCHRequest {
     sortingColumns = Seq("tsi", "salary", "rating", "rating_end_of_match", "age", "injury", "injury_count"),
     statisticsType = OnlyRound,
     parser = TeamState.teamStateMapper
+  )
+
+  val playerStateRequest = StatisticsCHRequest(
+    aggregateSql = "",
+    oneRoundSql = """SELECT
+                    |    team_name,
+                    |    team_id,
+                    |    league_unit_name,
+                    |    league_unit_id,
+                    |    player_id,
+                    |    first_name,
+                    |    last_name,
+                    |    floor(((age * 112) + days) / 112, 1) AS age,
+                    |    tsi,
+                    |    salary,
+                    |    rating,
+                    |    rating_end_of_match,
+                    |    injury_level,
+                    |    red_cards,
+                    |    yellow_cards
+                    |FROM hattrick.player_stats
+                    |__where__ AND (round = __round__)
+                    |ORDER BY
+                    |    __sortBy__ DESC, player_id DESC
+                    |__limit__""".stripMargin,
+    sortingColumns = Seq("age", "tsi", "salary", "rating", "rating_end_of_match", "injury_level", "red_cards", "yellow_cards"),
+    statisticsType = OnlyRound,
+    parser = PlayersState.playersStateMapper
   )
 }
 

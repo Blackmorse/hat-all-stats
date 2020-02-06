@@ -2,11 +2,11 @@ package controllers
 
 import com.blackmorse.hattrick.model.enums.MatchType
 import databases.ClickhouseDAO
-import databases.clickhouse.{Accumulated, StatisticsCHRequest}
+import databases.clickhouse.{Accumulated, OnlyRound, StatisticsCHRequest}
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import models.clickhouse.TeamMatchInfo
-import models.web.{AbstractWebDetails, Accumulate, StatisticsParameters, ViewDataFactory}
+import models.web._
 import play.api.mvc.{BaseController, Call, ControllerComponents}
 import service.DefaultService
 
@@ -102,6 +102,46 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
          Ok(views.html.team.playerStats(viewData))
 
        })
+  }
+
+  def playerState(teamId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async { implicit request =>
+
+    val func: StatisticsParameters => Call = sp => routes.TeamController.playerState(teamId, Some(sp))
+
+    val teamDetails = hattrick.api.teamDetails().teamID(teamId).execute().getTeams.asScala.filter(_.getTeamId == teamId).head
+
+    val leagueId = teamDetails.getLeague.getLeagueId
+    val divisionLevel = teamDetails.getLeagueLevelUnit.getLeagueLevel
+    val leagueUnitId = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitId
+
+    val currentRound = defaultService.currentRound(leagueId)
+    val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "rating"))
+
+
+    val details = WebTeamDetails(teamId = teamId,
+      teamName = teamDetails.getTeamName,
+      leagueId = leagueId,
+      leagueName = teamDetails.getLeague.getLeagueName,
+      season = statisticsParameters.season,
+      divisionLevel = divisionLevel,
+      leagueUnitId = leagueUnitId,
+      leagueUnitName = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitName)
+
+    StatisticsCHRequest.playerStateRequest.execute(leagueId = Some(leagueId),
+      divisionLevel = Some(divisionLevel),
+      leagueUnitId = Some(leagueUnitId),
+      teamId = Some(teamId),
+      statisticsParameters = statisticsParameters)
+        .map(playerStates => {
+          viewDataFactory.create(details = details,
+            func = func,
+            statisticsType = OnlyRound,
+            statisticsParameters = statisticsParameters,
+            statisticsCHRequest = StatisticsCHRequest.playerStateRequest,
+            entities = playerStates)
+        }).map(viewData => Ok(views.html.team.playerState(viewData)))
+
+//    Future(Ok())
   }
 }
 

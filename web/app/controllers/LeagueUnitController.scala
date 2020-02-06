@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 case class WebLeagueUnitDetails(leagueName: String, leagueId: Int, divisionLevel: Int,
-                                leagueUnitNumber: Int, leagueUnitName: String, leagueUnitId: Long,
+                                 leagueUnitName: String, leagueUnitId: Long,
                                 teamLinks: Seq[(String, String)])
     extends AbstractWebDetails
 
@@ -34,7 +34,6 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         .leagueLevelUnitId(leagueUnitId).execute()
 
       val leagueName = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId).getEnglishName
-      val leagueUnitNumber = LeagueNameParser.getLeagueUnitNumberByName(leagueDetails.getLeagueLevelUnitName)
 
       val tillRound = statisticsParameters.statsType match {
         case Round(round) => Some(round)
@@ -47,7 +46,6 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       val details = WebLeagueUnitDetails(leagueName = leagueName,
         leagueId = leagueDetails.getLeagueId,
         divisionLevel = leagueDetails.getLeagueLevel,
-        leagueUnitNumber = leagueUnitNumber,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
         leagueUnitId = leagueDetails.getLeagueLevelUnitId,
         teamLinks = teamLinks(leagueUnitTeamStats))
@@ -81,23 +79,21 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         .leagueLevelUnitId(leagueUnitId).execute()
 
       val leagueName = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId).getEnglishName
-      val leagueUnitNumber = LeagueNameParser.getLeagueUnitNumberByName(leagueDetails.getLeagueLevelUnitName)
 
       val tillRound = statisticsParameters.statsType match {
         case Round(round) => Some(round)
         case _ => None
       }
 
+      //TODO not neccesary to calculate team stats
       val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
 
       val details = WebLeagueUnitDetails(leagueName = leagueName,
         leagueId = leagueDetails.getLeagueId,
         divisionLevel = leagueDetails.getLeagueLevel,
-        leagueUnitNumber = leagueUnitNumber,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
         leagueUnitId = leagueDetails.getLeagueLevelUnitId,
         teamLinks = teamLinks(leagueUnitTeamStats))
-
 
       StatisticsCHRequest.playerStatsRequest.execute(leagueId = Some(leagueDetails.getLeagueId),
         divisionLevel = Some(leagueDetails.getLeagueLevel),
@@ -121,7 +117,6 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
 
     leagueDetailsFuture.flatMap ( leagueDetails => {
       val currentRound = defaultService.currentRound(leagueDetails.getLeagueId)
-
       val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "rating"))
 
       val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.teamState(leagueUnitId, Some(sp))
@@ -130,7 +125,6 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         .leagueLevelUnitId(leagueUnitId).execute()
 
       val leagueName = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId).getEnglishName
-      val leagueUnitNumber = LeagueNameParser.getLeagueUnitNumberByName(leagueDetails.getLeagueLevelUnitName)
 
       val tillRound = statisticsParameters.statsType match {
         case Round(round) => Some(round)
@@ -148,7 +142,6 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
               leagueName = leagueName,
               leagueId = leagueDetails.getLeagueId,
               divisionLevel = leagueDetails.getLeagueLevel,
-              leagueUnitNumber = leagueUnitNumber,
               leagueUnitName =  leagueDetails.getLeagueLevelUnitName,
               leagueUnitId = leagueUnitId,
               teamLinks = teamLinks(leagueUnitTeamStats))
@@ -164,6 +157,51 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
           })
     })
   }
+
+
+  def playerState(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async { implicit request =>
+    val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
+    leagueDetailsFuture.flatMap ( leagueDetails => {
+      val currentRound = defaultService.currentRound(leagueDetails.getLeagueId)
+      val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "rating"))
+
+      val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.playerState(leagueUnitId, Some(sp))
+
+      val leagueFixture = hattrick.api.leagueFixtures().season(defaultService.seasonForLeagueId(statisticsParameters.season, leagueDetails.getLeagueId))
+        .leagueLevelUnitId(leagueUnitId).execute()
+
+      val leagueName = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId).getEnglishName
+
+      val tillRound = statisticsParameters.statsType match {
+        case Round(round) => Some(round)
+        case _ => None
+      }
+
+      val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
+
+     StatisticsCHRequest.playerStateRequest.execute(leagueId = Some(leagueDetails.getLeagueId),
+        divisionLevel = Some(leagueDetails.getLeagueLevel),
+        leagueUnitId = Some(leagueUnitId),
+        statisticsParameters = statisticsParameters)
+          .map(playerStates => {
+            val details = WebLeagueUnitDetails(
+              leagueName = leagueName,
+              leagueId = leagueDetails.getLeagueId,
+              divisionLevel = leagueDetails.getLeagueLevel,
+              leagueUnitName  = leagueDetails.getLeagueLevelUnitName,
+              leagueUnitId = leagueUnitId,
+              teamLinks = teamLinks(leagueUnitTeamStats))
+
+            viewDataFactory.create(details = details,
+              func = func,
+              statisticsType = OnlyRound,
+              statisticsParameters = statisticsParameters,
+              statisticsCHRequest = StatisticsCHRequest.playerStateRequest,
+              entities = playerStates)
+          }).map(viewData => Ok(views.html.leagueunit.playerState(viewData)))
+    } )
+  }
+
 
   private def teamLinks(leagueTeamStats: Seq[LeagueUnitTeamStat]): Seq[(String, String)] = {
     leagueTeamStats.map(stat => stat.teamName -> routes.TeamController.matches(stat.teamId).url)
