@@ -34,8 +34,8 @@ public class PlayerInfoConverter {
                     if(player.getLastMatch().getDate() != null && player.getLastMatch().getDate().equals(teamWithMatch.getMatch().getDate())) {
                         builder.playedMinutes(player.getLastMatch().getPlayedMinutes())
                             .roleId(player.getLastMatch().getPositionCode().getValue())
-                            .rating(player.getLastMatch().getRating().intValue())
-                            .ratingEndOfMatch(player.getLastMatch().getRatingEndOfGame().intValue());
+                            .rating((int)(player.getLastMatch().getRating() * 10))
+                            .ratingEndOfMatch((int) (player.getLastMatch().getRatingEndOfGame() * 10));
                     } else {
                         builder.playedMinutes(0)
                                 .roleId(0)

@@ -22,9 +22,9 @@ public class LoaderApplication {
 //            ctx.getBean(HistoryLoader.class).load(Arrays.asList("Россия"));
 //            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList("Кувейт"/*,"Италия","Польша","Hattrick International", "Испания"*/));
 //            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList("Hattrick International"));
-//            ctx.getBean(SeasonHistoryLoader.class).load(Arrays.asList("Россия"), 71);
+            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList("Россия"));
 
-            ctx.getBean(ScheduledLastLeagueLoader.class).load();
+//            ctx.getBean(ScheduledLastLeagueLoader.class).load();
         };
     }
 }

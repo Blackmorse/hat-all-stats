@@ -15,10 +15,16 @@ public class MatchDetailsConverter {
         Long homeTeamId = matchDetails.getMatch().getHomeTeam().getHomeTeamId();
 
         HomeAwayTeam homeAwayTeam;
+        Integer goals = null;
+        Integer enemyGoals = null;
         if (homeTeamId.equals(teamWithMatch.getTeam().getId())) {
             homeAwayTeam = matchDetails.getMatch().getHomeTeam();
+            goals = matchDetails.getMatch().getHomeTeam().getHomeGoals();
+            enemyGoals = matchDetails.getMatch().getAwayTeam().getAwayGoals();
         } else {
             homeAwayTeam = matchDetails.getMatch().getAwayTeam();
+            goals = matchDetails.getMatch().getAwayTeam().getAwayGoals();
+            enemyGoals = matchDetails.getMatch().getHomeTeam().getHomeGoals();
         }
 
         return MatchDetails.builder()
@@ -33,6 +39,8 @@ public class MatchDetailsConverter {
                 .round(teamWithMatch.getMatch().getRound())
                 .matchId(teamWithMatch.getMatch().getId())
 
+                .goals(goals)
+                .enemyGoals(enemyGoals)
                 .formation(homeAwayTeam.getFormation())
                 .tacticType(homeAwayTeam.getTacticType())
                 .tacticSkill(homeAwayTeam.getTacticSkill())

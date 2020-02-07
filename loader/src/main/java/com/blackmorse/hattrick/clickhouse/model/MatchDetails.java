@@ -19,6 +19,8 @@ public class MatchDetails {
     private Integer round;
     private Long matchId;
 
+    private Integer goals;
+    private Integer enemyGoals;
     private String formation;
     private Integer tacticType;
     private Integer tacticSkill;

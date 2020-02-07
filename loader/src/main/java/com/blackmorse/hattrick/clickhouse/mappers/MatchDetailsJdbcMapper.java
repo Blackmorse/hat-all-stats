@@ -25,6 +25,9 @@ public class MatchDetailsJdbcMapper extends AbstractJdbcMapper<MatchDetails> {
         map.put("time", MatchDetails::getDate);
         map.put("round", MatchDetails::getRound);
         map.put("match_id", MatchDetails::getMatchId);
+
+        map.put("goals", MatchDetails::getGoals);
+        map.put("enemy_goals", MatchDetails::getEnemyGoals);
         map.put("formation", MatchDetails::getFormation);
         map.put("tactic_type", MatchDetails::getTacticType);
         map.put("tactic_skill", MatchDetails::getTacticSkill);
