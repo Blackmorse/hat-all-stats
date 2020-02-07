@@ -33,7 +33,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     "division_level" -> number
     )(DivisionLevelForm.apply)(DivisionLevelForm.unapply))
 
-  def stats[T](leagueId: Int,
+  private def stats[T](leagueId: Int,
             statisticsParametersOpt: Option[StatisticsParameters],
             sortColumn: String,
             statisticsType: StatisticsType,

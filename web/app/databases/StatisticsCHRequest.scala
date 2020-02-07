@@ -216,6 +216,7 @@ object StatisticsCHRequest {
                     |    league_unit_name
                     |ORDER BY
                     |    __sortBy__ DESC,
+                    |    scored DESC,
                     |    team_id DESC
                     |__limit__""".stripMargin,
     sortingColumns = Seq("scored", "missed", "wins", "draws", "loses", "points"),
