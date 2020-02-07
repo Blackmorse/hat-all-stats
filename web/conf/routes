@@ -9,12 +9,14 @@ GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits
 GET     /league/playerStats         controllers.LeagueController.playerStats(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /league/teamState           controllers.LeagueController.teamState(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /league/playerState         controllers.LeagueController.playerState(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /league/formalTeamStats     controllers.LeagueController.formalTeamStats(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
 GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /divisionlevel/playerStats  controllers.DivisionLevelController.playerStats(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /divisionlevel/teamState    controllers.DivisionLevelController.teamState(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /divisionlevel/playerState  controllers.DivisionLevelController.playerState(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /divisionlevel/formalTeamStats  controllers.DivisionLevelController.formalTeamStats(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
 GET     /leagueLevelUnit        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /leagueLevelUnit/playerStats    controllers.LeagueUnitController.playerStats(leagueUnitId: Long,  statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)

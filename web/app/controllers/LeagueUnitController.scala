@@ -7,7 +7,6 @@ import javax.inject.{Inject, Singleton}
 import models.web._
 import play.api.mvc.{BaseController, Call, ControllerComponents}
 import service.{DefaultService, LeagueUnitCalculatorService, LeagueUnitTeamStat}
-import utils.LeagueNameParser
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

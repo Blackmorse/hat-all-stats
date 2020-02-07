@@ -193,5 +193,33 @@ object StatisticsCHRequest {
     statisticsType = OnlyRound,
     parser = PlayersState.playersStateMapper
   )
-}
 
+  val formalTeamStats = StatisticsCHRequest(
+    aggregateSql = "",
+    oneRoundSql = """SELECT
+                    |    team_id,
+                    |    team_name,
+                    |    league_unit_id,
+                    |    league_unit_name,
+                    |    sum(goals) AS scored,
+                    |    sum(enemy_goals) AS missed,
+                    |    countIf(goals > enemy_goals) AS wins,
+                    |    countIf(goals = enemy_goals) AS draws,
+                    |    countIf(goals < enemy_goals) AS loses,
+                    |    (3 * wins) + draws AS points
+                    |FROM hattrick.match_details
+                    |__where__ and round <= __round__
+                    |GROUP BY
+                    |    team_name,
+                    |    team_id,
+                    |    league_unit_id,
+                    |    league_unit_name
+                    |ORDER BY
+                    |    __sortBy__ DESC,
+                    |    team_id DESC
+                    |__limit__""".stripMargin,
+    sortingColumns = Seq("scored", "missed", "wins", "draws", "loses", "points"),
+    statisticsType = OnlyRound,
+    parser = FormalTeamStats.formalTeamStatsMapper
+  )
+}

@@ -140,8 +140,6 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
             statisticsCHRequest = StatisticsCHRequest.playerStateRequest,
             entities = playerStates)
         }).map(viewData => Ok(views.html.team.playerState(viewData)))
-
-//    Future(Ok())
   }
 }
 

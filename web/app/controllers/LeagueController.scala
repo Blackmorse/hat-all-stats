@@ -156,6 +156,29 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
         .map(viewData => Ok(views.html.league.playerState(viewData)))
   }
 
+  def formalTeamStats(leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async{implicit request =>
+    val currentRound = defaultService.currentRound(leagueId)
+    val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "points"))
+
+    val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
+
+    val func: StatisticsParameters => Call = sp => routes.LeagueController.formalTeamStats(leagueId, Some(sp))
+
+    val details = WebLeagueDetails(leagueName = leagueName,
+      leagueId = leagueId,
+      form = form,
+      divisionLevelsLinks = divisionLevels(leagueId))
+
+    StatisticsCHRequest.formalTeamStats.execute(leagueId = Some(leagueId),
+      statisticsParameters = statisticsParameters).map(formalTeamStats =>
+        viewDataFactory.create(details = details,
+          func = func,
+          statisticsType = OnlyRound,
+          statisticsParameters = statisticsParameters,
+          statisticsCHRequest = StatisticsCHRequest.formalTeamStats,
+          entities = formalTeamStats))
+        .map(viewData => Ok(views.html.league.formalTeamStats(viewData)))
+  }
 
   private def divisionLevels(leagueId: Int): Seq[(String, String)] = {
     val maxLevels = defaultService.leagueIdToCountryNameMap(leagueId).getNumberOfLevels

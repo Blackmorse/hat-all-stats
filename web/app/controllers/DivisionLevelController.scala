@@ -177,6 +177,36 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
         }.map(viewData => Ok(views.html.divisionlevel.playerState(viewData)))
   }
 
+  def formalTeamStats(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async{ implicit request =>
+    val currentRound = defaultService.currentRound(leagueId)
+    val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "points"))
+
+    val func: StatisticsParameters => Call = sp => routes.DivisionLevelController.formalTeamStats(leagueId, divisionLevel, Some(sp))
+
+    val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
+
+    val leagueUnitIdFuture = Future(hattrick.api.search().searchLeagueId(leagueId).searchType(3).searchString(Romans(divisionLevel) + "." + "1")
+      .execute().getSearchResults.get(0).getResultId)
+
+    StatisticsCHRequest.formalTeamStats.execute(leagueId = Some(leagueId),
+      divisionLevel = Some(divisionLevel),
+      statisticsParameters = statisticsParameters)
+      .zipWith(leagueUnitIdFuture){case (playerStates, leagueUnitId) =>
+        val details = WebDivisionLevelDetails(leagueName = leagueName,
+          leagueId = leagueId,
+          divisionLevel = divisionLevel,
+          divisionLevelRoman = Romans(divisionLevel),
+          leagueUnitLinks = leagueUnitNumbers(statisticsParameters.season, divisionLevel, leagueUnitId))
+
+        viewDataFactory.create(details = details,
+          func = func,
+          statisticsType = OnlyRound,
+          statisticsParameters = statisticsParameters,
+          statisticsCHRequest = StatisticsCHRequest.formalTeamStats,
+          entities = playerStates)
+      }.map(viewData => Ok(views.html.divisionlevel.formalTeamStats(viewData)))
+  }
+
   def leagueUnitNumbers(season: Int, divisionLevel: Int, baseLeagueUnitId: Long): Seq[(String, String)] =
     defaultService.leagueNumbersMap(divisionLevel).map(number =>
       number.toString -> routes.LeagueUnitController.bestTeams(baseLeagueUnitId + number - 1, None).url)
