@@ -31,6 +31,29 @@ import java.util.Map;
 public class Hattrick {
     public static Map<Integer, String> arabToRomans = new HashMap<>();
     public static Map<String, Integer> romansToArab = new HashMap<>();
+    public static Map<Integer, Integer> leagueLevelNumberTeams = new HashMap<>();
+
+//    lazy val leagueNumbersMap = Map(1 -> Seq(1),
+//    2 -> (1 to 4),
+//            3 -> (1 to 16),
+//            4 -> (1 to 64),
+//            5 -> (1 to 256),
+//            6 -> (1 to 1024),
+//            7 -> (1 to 1024),
+//            8 -> (1 to 2048),
+//            9 -> (1 to 2048)
+
+    static {
+        leagueLevelNumberTeams.put(1, 1);
+        leagueLevelNumberTeams.put(2, 4);
+        leagueLevelNumberTeams.put(3, 16);
+        leagueLevelNumberTeams.put(4, 64);
+        leagueLevelNumberTeams.put(5, 256);
+        leagueLevelNumberTeams.put(6, 1024);
+        leagueLevelNumberTeams.put(7, 1024);
+        leagueLevelNumberTeams.put(8, 2048);
+        leagueLevelNumberTeams.put(9, 2048);
+    }
 
     static {
         arabToRomans.put(2, "II");

@@ -11,6 +11,7 @@ import com.blackmorse.hattrick.model.converters.MatchDetailsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerEventsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerInfoConverter;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class CountriesLastLeagueMatchLoader {
     private final HattrickService hattrickService;
     private final ClickhouseWriter<MatchDetails> matchDetailsWriter;
@@ -46,6 +48,8 @@ public class CountriesLastLeagueMatchLoader {
     }
 
     public void load(List<String> countryNames) {
+
+        log.info("Starting to load countries: {}", countryNames);
 
         List<LeagueUnitId> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(countryNames);
 

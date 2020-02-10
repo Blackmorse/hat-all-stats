@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class ScheduledLastLeagueLoader {
     private final Hattrick hattrick;
     private final CountriesLastLeagueMatchLoader countriesLastLeagueMatchLoader;
-    private BlockingQueue<DateWithLeagues> queue;
 
     @Autowired
     public ScheduledLastLeagueLoader(Hattrick hattrick,
@@ -34,10 +33,10 @@ public class ScheduledLastLeagueLoader {
     public void load() {
         Timer timer = new Timer();
 
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         Map<Date, List<League>> collect = hattrick.getWorldDetails().getLeagueList().stream().collect(Collectors.groupingBy(League::getSeriesMatchDate));
 
-        queue = new ArrayBlockingQueue<>(collect.size());
 
         collect
                 .entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey))
@@ -47,20 +46,12 @@ public class ScheduledLastLeagueLoader {
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            queue.add(dateWithLeagues);
+                            executorService.submit(() -> countriesLastLeagueMatchLoader.load(dateWithLeagues.getCountries()));
                         }
-                    }, new Date(dateWithLeagues.getDate().getTime() + 1000 * 60 * 120));
+                    }, new Date(dateWithLeagues.getDate().getTime() + 1000 * 60 * 60 * 3));
                 });
-
-        while(true) {
-            try {
-                DateWithLeagues dateWithLeagues = queue.take();
-               countriesLastLeagueMatchLoader.load(dateWithLeagues.getCountries());
-            } catch (InterruptedException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
     }
+
 
     @Data
     public static class DateWithLeagues {

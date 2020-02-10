@@ -1,17 +1,15 @@
 package com.blackmorse.hattrick;
 
 import com.blackmorse.hattrick.api.Hattrick;
+import com.blackmorse.hattrick.api.LeagueUnitIdsLoader;
 import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails;
 import com.blackmorse.hattrick.api.leaguefixtures.model.LeagueFixtures;
 import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.teamdetails.model.TeamDetails;
-import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.model.TeamWithMatchAndPlayers;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.enums.MatchType;
-import com.blackmorse.hattrick.model.League;
 import com.blackmorse.hattrick.model.LeagueUnit;
-import com.blackmorse.hattrick.model.converters.MatchDetailsConverter;
 import com.blackmorse.hattrick.model.LeagueUnitId;
 import com.blackmorse.hattrick.model.Match;
 import com.blackmorse.hattrick.model.Team;
@@ -40,64 +38,24 @@ import java.util.stream.IntStream;
 public class HattrickService {
     private final Scheduler scheduler;
     private final Hattrick hattrick;
+    private final LeagueUnitIdsLoader leagueUnitIdsLoader;
     private final AtomicLong leagueUnitCounter = new AtomicLong();
     private final AtomicLong teamsCounter  = new AtomicLong();
     private final AtomicLong matchDetailsCounter  = new AtomicLong();
     private final AtomicLong teamsWithPlayersCounter = new AtomicLong();
 
     public HattrickService(@Qualifier("apiExecutor") ExecutorService executorService,
-                           Hattrick hattrick) {
+                           Hattrick hattrick,
+                           LeagueUnitIdsLoader leagueUnitIdsLoader) {
         this.scheduler = io.reactivex.schedulers.Schedulers.from(executorService);
         this.hattrick = hattrick;
+        this.leagueUnitIdsLoader = leagueUnitIdsLoader;
     }
 
     public List<LeagueUnitId> getAllLeagueUnitIdsForCountry(List<String> countryNames) {
-        Flowable<LeagueUnitId> leagueIds = Flowable.fromIterable(
-                hattrick.getWorldDetails().getLeagueList()
-                        .stream()
-                        .filter(league -> countryNames.contains(league.getLeagueName())).collect(Collectors.toList())
-        ).map(league -> League.builder()
-                .id(league.getLeagueId())
-                .nextRound(league.getMatchRound())
-                .seasonOffset(league.getSeasonOffset())
-                .maxLevel(league.getNumberOfLevels())
-                .build()
-        ).map(league -> {
-            LeagueDetails leagueUnit = hattrick.getLeagueUnitByName(league.getId(), "II.1");
-            return LeagueUnit.builder()
-                    .league(league)
-                    .id(leagueUnit.getLeagueLevelUnitId())
-                    .name(leagueUnit.getLeagueLevelUnitName())
-                    .build();
-        }).flatMap(this::getAllLeagueIds);
-
-        return leagueIds.toList().blockingGet();
+        return leagueUnitIdsLoader.load(countryNames);
     }
 
-    private Flowable<LeagueUnitId> getAllLeagueIds(LeagueUnit twoOne) {
-
-        return Flowable.just(LeagueUnitId.builder().league(twoOne.getLeague()).id(twoOne.getId() - 1).build()).concatWith(
-                Flowable.fromIterable(IntStream.range(2, twoOne.getLeague().getMaxLevel() + 1)
-                        .boxed()
-                        .collect(Collectors.toList()))
-                        .map(level -> hattrick.searchLeagueUnits(twoOne.getLeague().getId(), Hattrick.arabToRomans.get(level) + ".", 0))
-                        .flatMap(searchResult ->
-                                Flowable.fromIterable(
-                                        IntStream.range(0, searchResult.getPages())
-                                                .mapToObj(page -> new StringAndNumber(searchResult.getSearchParams().getSearchString(), page))
-                                                .collect(Collectors.toList())
-                                )
-                        )
-                        .parallel()
-                        .runOn(scheduler)
-                        .map(leagueLevelWPage ->
-                                hattrick.searchLeagueUnits(twoOne.getLeague().getId(), leagueLevelWPage.getString(), leagueLevelWPage.getNumber())
-                        ).flatMap(search -> Flowable.fromIterable(
-                        search.getSearchResults().stream().map(Result::getResultId).collect(Collectors.toList())
-                ))
-                        .map(number -> LeagueUnitId.builder().league(twoOne.getLeague()).id(number).build())
-                        .sequential());
-    }
 
     public List<TeamWithMatches> getAllTeamsWithMatches(List<LeagueUnitId> leagueUnitIds, Integer season) {
         return Flowable.fromIterable(leagueUnitIds)
