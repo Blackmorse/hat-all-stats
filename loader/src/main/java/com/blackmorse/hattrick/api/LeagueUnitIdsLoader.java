@@ -51,24 +51,50 @@ public class LeagueUnitIdsLoader {
                 .runOn(scheduler)
                 .flatMap(leagueWithLevel -> {
                     log.info("{} league levels loaded", leagueUnitIdCounter.incrementAndGet());
+                    if (leagueWithLevel.league.getId() != 1 /* Sweden */) {
+                        List<Result> searchResults = hattrick.searchLeagueUnits(leagueWithLevel.getLeague().getId(), Hattrick.arabToRomans.get(leagueWithLevel.getLevel()) + ".1", 0)
+                                .getSearchResults();
+                        Long baseNumber;
+                        if (leagueWithLevel.getLevel() == 2) {
+                            baseNumber = searchResults.get(0).getResultId() - 1;
+                        } else {
+                            baseNumber = searchResults.get(0).getResultId();
+                        }
 
-                    List<Result> searchResults = hattrick.searchLeagueUnits(leagueWithLevel.getLeague().getId(), Hattrick.arabToRomans.get(leagueWithLevel.getLevel()) + ".1", 0)
-                            .getSearchResults();
-                    Long baseNumber;
-                    if(leagueWithLevel.getLevel() == 2) {
-                        baseNumber = searchResults.get(0).getResultId() - 1;
+                        List<LeagueUnitId> leagueUnitIdList = LongStream.range(baseNumber, baseNumber + Hattrick.leagueLevelNumberTeams.get(leagueWithLevel.getLevel()) + 1)
+                                .mapToObj(number -> LeagueUnitId.builder()
+                                        .league(leagueWithLevel.league)
+                                        .id(number)
+                                        .build())
+                                .collect(Collectors.toList());
+
+                        return Flowable.fromIterable(leagueUnitIdList);
                     } else {
-                        baseNumber = searchResults.get(0).getResultId();
+                        Long baseNumber;
+                        if (leagueWithLevel.getLevel() == 2) {
+                            List<Result> searchResults = hattrick.searchLeagueUnits(leagueWithLevel.getLeague().getId(), "Ia", 0)
+                                    .getSearchResults();
+                            baseNumber = searchResults.get(0).getResultId() - 1;
+                        } else if (leagueWithLevel.getLevel() == 3) {
+                            List<Result> searchResults = hattrick.searchLeagueUnits(leagueWithLevel.getLeague().getId(), "IIa", 0)
+                                    .getSearchResults();
+                            baseNumber = searchResults.get(0).getResultId();
+                        } else {
+                            List<Result> searchResults = hattrick.searchLeagueUnits(leagueWithLevel.getLeague().getId(), Hattrick.arabToRomans.get(leagueWithLevel.getLevel() - 1) + ".1", 0)
+                                    .getSearchResults();
+                            baseNumber = searchResults.get(0).getResultId();
+                        }
+
+
+                        List<LeagueUnitId> leagueUnitIdList = LongStream.range(baseNumber, baseNumber + Hattrick.leagueLevelNumberTeams.get(leagueWithLevel.getLevel()) + 1)
+                                .mapToObj(number -> LeagueUnitId.builder()
+                                        .league(leagueWithLevel.league)
+                                        .id(number)
+                                        .build())
+                                .collect(Collectors.toList());
+
+                        return Flowable.fromIterable(leagueUnitIdList);
                     }
-
-                    List<LeagueUnitId> leagueUnitIdList = LongStream.range(baseNumber, baseNumber + Hattrick.leagueLevelNumberTeams.get(leagueWithLevel.getLevel()) + 1)
-                            .mapToObj(number -> LeagueUnitId.builder()
-                                    .league(leagueWithLevel.league)
-                                    .id(number)
-                                    .build())
-                            .collect(Collectors.toList());
-
-                    return Flowable.fromIterable(leagueUnitIdList);
                 }).sequential().toList().blockingGet();
     }
 
