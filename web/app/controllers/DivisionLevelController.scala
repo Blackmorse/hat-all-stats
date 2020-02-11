@@ -44,8 +44,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
 
     val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
-    val leagueUnitIdFuture = Future(hattrick.api.search().searchLeagueId(leagueId).searchType(3).searchString(Romans(divisionLevel) + "." + "1")
-      .execute().getSearchResults.get(0).getResultId)
+    val leagueUnitIdFuture = defaultService.firstIdOfDivisionLeagueUnit(leagueId, divisionLevel)
 
     statisticsCHRequest.execute(leagueId = Some(leagueId),
       divisionLevel = Some(divisionLevel),

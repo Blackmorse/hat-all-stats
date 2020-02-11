@@ -4,9 +4,11 @@ import databases.ClickhouseDAO
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
+import utils.Romans
 
 import collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class DefaultService @Inject() (val hattrick: Hattrick,
@@ -39,6 +41,32 @@ class DefaultService @Inject() (val hattrick: Hattrick,
   def seasonForLeagueId(season: Int, leagueId: Int) = leagueIdToCountryNameMap(leagueId).getSeasonOffset + season
 
   def currentRound(leagueId: Int) = Math.max(leagueIdToCountryNameMap(leagueId).getMatchRound - 1, 14)
+
+  def firstIdOfDivisionLeagueUnit(leagueId: Int, level: Int): Future[Long] = Future {
+    if (leagueId == 1 /* Sweden */) {
+      if(level == 1) {
+        hattrick.api.search().searchLeagueId(leagueId).searchType(3).searchString("Ia")
+          .execute().getSearchResults.get(0).getResultId - 1
+      } else if (level == 2) {
+        hattrick.api.search().searchLeagueId(leagueId).searchType(3).searchString("Ia")
+          .execute().getSearchResults.get(0).getResultId
+      } else if (level == 3) {
+        hattrick.api.search().searchLeagueId(leagueId).searchType(3).searchString("IIa")
+          .execute().getSearchResults.get(0).getResultId
+      } else {
+        hattrick.api.search().searchLeagueId(leagueId).searchType(3).searchString(Romans(level - 1) + ".1")
+          .execute().getSearchResults.get(0).getResultId
+      }
+    } else {
+      if (level == 1) {
+        hattrick.api.search().searchLeagueId(leagueId).searchType(3).searchString("II.1")
+          .execute().getSearchResults.get(0).getResultId - 1
+      } else {
+        hattrick.api.search().searchLeagueId(leagueId).searchType(3).searchString(Romans(level) + ".1")
+          .execute().getSearchResults.get(0).getResultId
+      }
+    }
+  }
 }
 
 object DefaultService {
