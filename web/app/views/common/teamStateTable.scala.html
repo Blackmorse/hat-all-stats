@@ -19,7 +19,7 @@
     </tr>
     @for((state, index) <- teamStates.entities.zipWithIndex) {
     <tr>
-        <td>@{DefaultService.PAGE_SIZE * teamStates.page + index + 1}</td>
+        <td>@{DefaultService.PAGE_SIZE * teamStates.pageInfo.page + index + 1}</td>
         <td><a href="@routes.TeamController.matches(state.teamId)">@state.teamName</a></td>
         <td><a href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId)">@state.leagueUnitName</a></td>
         <td>@state.tsi</td>
@@ -33,12 +33,4 @@
     }
 </table>
 
-@for(url <- teamStates.prevUrl) {
-<a href="@url">Previous<<</a>
-}
-
-@{teamStates.page + 1}
-
-@for(url <- teamStates.nextUrl) {
-<a href="@url">>>Next</a>
-}
+@pageNav(teamStates.pageInfo)

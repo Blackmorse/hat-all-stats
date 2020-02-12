@@ -15,7 +15,7 @@
     </tr>
     @for((leagueUnit, index) <- bestLeagueUnits.entities.zipWithIndex) {
     <tr>
-        <td>@{DefaultService.PAGE_SIZE * bestLeagueUnits.page + index + 1}</td>
+        <td>@{DefaultService.PAGE_SIZE * bestLeagueUnits.pageInfo.page + index + 1}</td>
         <td><a href="@routes.LeagueUnitController.bestTeams(leagueUnit.leagueUnitId)">@leagueUnit.leagueUnitName</a></td>
         <td>@leagueUnit.hatStats</td>
         <td>@leagueUnit.midfield</td>
@@ -25,12 +25,4 @@
     }
 </table>
 
-@for(url <- bestLeagueUnits.prevUrl) {
-<a href="@url">Previous<<</a>
-}
-
-@{bestLeagueUnits.page + 1}
-
-@for(url <- bestLeagueUnits.nextUrl) {
-<a href="@url">>>Next</a>
-}
+@pageNav(bestLeagueUnits.pageInfo)

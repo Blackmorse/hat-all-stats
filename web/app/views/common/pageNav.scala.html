@@ -1,0 +1,15 @@
+@import models.web.PageInfo
+
+@(pageInfo: PageInfo)
+
+<nav class="pageNavigation">
+    @for(url <- pageInfo.prevUrl) {
+    <a href="@url">Previous<<</a>
+    }
+
+    @{pageInfo.page + 1}
+
+    @for(url <- pageInfo.nextUrl) {
+    <a href="@url">>>Next</a>
+    }
+</nav>
