@@ -46,7 +46,7 @@ case class SqlBuilder(baseSql: String) {
     } else {
       baseSql.replace("__where__", " ")
     })
-      .replace("__limit__", s" limit ${page * pageSize}, $pageSize")
+      .replace("__limit__", s" limit ${page * pageSize}, ${pageSize + 1}")
 
     SQL(sql)
       .on(params.map(NamedParameter.namedWithString): _*)
