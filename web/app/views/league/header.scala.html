@@ -1,10 +1,6 @@
-@import helper._
-@import play.api.data.Form
-@import helpers.FieldHelpers._
-@import play.api.libs.json.Json
 @import controllers.WebLeagueDetails
 
-@(details: WebLeagueDetails)(implicit messages: Messages)
+@(details: WebLeagueDetails)
 
 <a href="@routes.LeagueController.bestTeams(details.leagueId)">@details.leagueName</a>
 ->

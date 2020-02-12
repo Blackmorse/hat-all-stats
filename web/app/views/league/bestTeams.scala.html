@@ -1,8 +1,7 @@
 @import models.clickhouse.TeamRating
-@import play.api.data.Form
 @import controllers.WebLeagueDetails
 @import models.web.ViewData
 
-@(viewData: ViewData[TeamRating, WebLeagueDetails])(implicit messages: Messages)
+@(viewData: ViewData[TeamRating, WebLeagueDetails])
 
 @stats(viewData.details.leagueName, header(viewData.details), leftBar(viewData.details), viewData.links)(common.bestTeamsTable(viewData.webPagedEntities))
