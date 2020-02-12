@@ -18,7 +18,7 @@ class DefaultService @Inject() (val hattrick: Hattrick,
     .getLeagueList.asScala.map(league => league.getLeagueId -> league)
     .toMap
 
-  lazy val currentSeason = configuration.get[Int]("hattrick.currentSeason")
+  lazy val currentSeason = leagueIdToCountryNameMap(1).getSeason
 
   lazy val defaultLeagueId = configuration.get[Int]("hattrick.defaultLeagueId")
 
