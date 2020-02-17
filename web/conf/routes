@@ -2,6 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
+GET     /lang                       controllers.HomeController.lang(lang: String)
 
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
