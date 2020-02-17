@@ -7,12 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -23,6 +18,16 @@ public class ScheduledLastLeagueLoader {
     private final Hattrick hattrick;
     private final CountriesLastLeagueMatchLoader countriesLastLeagueMatchLoader;
 
+    private static final Map<Integer, Integer> countriesToMinutesOffset = new HashMap<>();
+
+    static {
+        countriesToMinutesOffset.put(24, 90); //Poland
+        countriesToMinutesOffset.put(4, 30); //Italy
+        countriesToMinutesOffset.put(36, 60); //Spain
+        countriesToMinutesOffset.put(46,135); //Switzerland
+        countriesToMinutesOffset.put(3, 30); //Germany
+    }
+
     @Autowired
     public ScheduledLastLeagueLoader(Hattrick hattrick,
                                      CountriesLastLeagueMatchLoader countriesLastLeagueMatchLoader) {
@@ -32,23 +37,17 @@ public class ScheduledLastLeagueLoader {
 
     public void load() {
         Timer timer = new Timer();
-
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        Map<Date, List<League>> collect = hattrick.getWorldDetails().getLeagueList().stream().collect(Collectors.groupingBy(League::getSeriesMatchDate));
-
-
-        collect
-                .entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey))
-                .map(entry -> new DateWithLeagues(entry.getKey(),
-                        entry.getValue().stream().map(League::getLeagueName).collect(Collectors.toList())))
-                .forEach(dateWithLeagues -> {
+        hattrick.getWorldDetails().getLeagueList().stream().sorted(Comparator.comparing(League::getSeriesMatchDate))
+                .forEach(league -> {
+                   Integer minutesOffset = countriesToMinutesOffset.getOrDefault(league.getLeagueId(), 0);
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            executorService.submit(() -> countriesLastLeagueMatchLoader.load(dateWithLeagues.getCountries()));
+                            executorService.submit(() -> countriesLastLeagueMatchLoader.load(Arrays.asList(league.getLeagueName())));
                         }
-                    }, new Date(dateWithLeagues.getDate().getTime() + 1000 * 60 * 60 * 3));
+                    }, new Date(league.getSeriesMatchDate().getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000));
                 });
     }
 
@@ -56,6 +55,6 @@ public class ScheduledLastLeagueLoader {
     @Data
     public static class DateWithLeagues {
         private final Date date;
-        private final List<String> countries;
+        private final List<League> countries;
     }
 }
