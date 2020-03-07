@@ -19,12 +19,12 @@ public class LoaderApplication {
     @Bean
     public CommandLineRunner runner(ApplicationContext ctx) {
         return args -> {
-//            ctx.getBean(HistoryLoader.class).load(Arrays.asList("Россия"));
-            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList("Швейцария", "Шотландия", "Германия", "Ангола", "Лихтенштейн", "Финляндия", "Кипр"));
-//            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList("Hattrick International"));
-//            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList("Швеция"));
+//            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList( "Эстония", "Чехия", "Латвия", "Черногория", "Италия"
+//            ));
 
-//            ctx.getBean(ScheduledLastLeagueLoader.class).load();
+            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList("Россия"));
+//
+//            ctx.getBean(ScheduledLastLeagueLoader.class).load();{"data":{"playerId":403314670,"positionId":113},"channel":"position-player","offset":{"x":27,"y":45}}
         };
     }
 }
