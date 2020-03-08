@@ -1,6 +1,6 @@
 @import controllers.WebLeagueDetails
 
-@(details: WebLeagueDetails)
+@(details: WebLeagueDetails)(implicit messages: Messages)
 <table id="countryStatisticsTable">
     <tr>
         <td><a href="@routes.LeagueController.bestTeams(details.leagueId)">Teams</a></td>

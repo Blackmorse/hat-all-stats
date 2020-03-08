@@ -2,7 +2,7 @@
 @import models.clickhouse.PlayersState
 @import service.DefaultService
 
-@(playerStates: WebPagedEntities[PlayersState])
+@(playerStates: WebPagedEntities[PlayersState])(implicit messages: Messages)
 
 <table>
     <tr>

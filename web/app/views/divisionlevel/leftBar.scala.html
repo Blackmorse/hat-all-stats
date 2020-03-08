@@ -1,6 +1,6 @@
 @import controllers.WebDivisionLevelDetails
 
-@(details: WebDivisionLevelDetails)
+@(details: WebDivisionLevelDetails)(implicit messages: Messages)
 <table id="countryStatisticsTable">
     <tr>
         <td><a href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.divisionLevel)">Teams</a></td>

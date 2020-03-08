@@ -2,6 +2,6 @@
 @import controllers.WebDivisionLevelDetails
 @import models.web.ViewData
 
-@(viewData: ViewData[TeamRating, WebDivisionLevelDetails])
+@(viewData: ViewData[TeamRating, WebDivisionLevelDetails])(implicit messages: Messages)
 
 @stats(viewData.details.leagueName, header(viewData.details), leftBar(viewData.details), viewData.links)(common.bestTeamsTable(viewData.webPagedEntities))

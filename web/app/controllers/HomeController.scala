@@ -1,14 +1,9 @@
 package controllers
 
-import databases.ClickhouseDAO
-import hattrick.Hattrick
 import javax.inject._
 import play.api._
 import play.api.mvc._
 import service.DefaultService
-
-import scala.concurrent._
-import ExecutionContext.Implicits.global
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -23,5 +18,9 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
 
   def index() = Action { implicit request: Request[AnyContent] =>
     Redirect(routes.LeagueController.bestTeams(defaultService.defaultLeagueId, None))
+  }
+
+  def lang(lang: String) = Action { implicit request: Request[AnyContent] =>
+    Redirect(request.headers("Referer"), 302).withSession(request.session - "lang" + ("lang" -> lang))
   }
 }

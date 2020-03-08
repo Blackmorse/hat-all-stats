@@ -2,7 +2,7 @@
 @import service.DefaultService
 @import models.clickhouse.FormalTeamStats
 
-@(formalTeamStats: WebPagedEntities[FormalTeamStats])
+@(formalTeamStats: WebPagedEntities[FormalTeamStats])(implicit messages: Messages)
 
 <table>
     <tr>

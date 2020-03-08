@@ -4,7 +4,7 @@
 @import service.LeagueUnitTeamStat
 @import models.web.ViewData
 
-@(viewData: ViewData[TeamRating, WebLeagueUnitDetails], leagueTeamStats: Seq[LeagueUnitTeamStat])
+@(viewData: ViewData[TeamRating, WebLeagueUnitDetails], leagueTeamStats: Seq[LeagueUnitTeamStat])(implicit messages: Messages)
 
 @stats(viewData.details.leagueUnitName, header(viewData.details), leftBar(viewData.details), viewData.links){
     <table>

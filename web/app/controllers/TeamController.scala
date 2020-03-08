@@ -24,9 +24,9 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
                                implicit val clickhouseDAO: ClickhouseDAO,
                                val hattrick: Hattrick,
                                val defaultService: DefaultService,
-                               val viewDataFactory: ViewDataFactory) extends BaseController {
+                               val viewDataFactory: ViewDataFactory) extends BaseController with MessageSupport {
 
-  def matches(teamId: Long) = Action.async {
+  def matches(teamId: Long) = Action.async { implicit request =>
     val teamDetails = hattrick.api.teamDetails().teamID(teamId).execute().getTeams.asScala.filter(_.getTeamId == teamId).head
 
     val leagueId = teamDetails.getLeague.getLeagueId
@@ -38,7 +38,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
       val details = WebTeamDetails(teamId, teamDetails.getTeamName, leagueId, defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName,
         season, divisionLevel, leagueUnitId, teamDetails.getLeagueLevelUnit.getLeagueLevelUnitName)
 
-      Ok(views.html.team.matches(matches, details))
+      Ok(views.html.team.matches(matches, details)(messages))
     })
   }
 
@@ -99,7 +99,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
            statisticsParameters = statisticsParameters,
            statisticsCHRequest = StatisticsCHRequest.playerStatsRequest,
            entities = playerStats)
-         Ok(views.html.team.playerStats(viewData))
+         Ok(views.html.team.playerStats(viewData)(messages))
 
        })
   }
@@ -139,7 +139,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
             statisticsParameters = statisticsParameters,
             statisticsCHRequest = StatisticsCHRequest.playerStateRequest,
             entities = playerStates)
-        }).map(viewData => Ok(views.html.team.playerState(viewData)))
+        }).map(viewData => Ok(views.html.team.playerState(viewData)(messages)))
   }
 }
 

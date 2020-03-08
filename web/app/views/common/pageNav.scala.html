@@ -1,6 +1,6 @@
 @import models.web.PageInfo
 
-@(pageInfo: PageInfo)
+@(pageInfo: PageInfo)(implicit messages: Messages)
 
 <nav class="pageNavigation">
     @for(url <- pageInfo.prevUrl) {

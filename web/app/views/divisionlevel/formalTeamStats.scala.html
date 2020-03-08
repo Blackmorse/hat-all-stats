@@ -2,6 +2,6 @@
 @import models.web.ViewData
 @import models.clickhouse.FormalTeamStats
 
-@(viewData: ViewData[FormalTeamStats, WebDivisionLevelDetails])
+@(viewData: ViewData[FormalTeamStats, WebDivisionLevelDetails])(implicit messages: Messages)
 
 @stats(viewData.details.leagueName, header(viewData.details), leftBar(viewData.details), viewData.links)(common.formalTeamStatsTable(viewData.webPagedEntities))

@@ -12,7 +12,6 @@ import service.DefaultService
 import utils.Romans
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 case class WebDivisionLevelDetails(leagueName: String, leagueId: Int, divisionLevel: Int, divisionLevelRoman: String,
                                    leagueUnitLinks: Seq[(String, String)]) extends AbstractWebDetails
@@ -22,7 +21,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
                                         implicit val clickhouseDAO: ClickhouseDAO,
                                         val defaultService: DefaultService,
                                         val hattrick: Hattrick,
-                                        val viewDataFactory: ViewDataFactory) extends BaseController {
+                                        val viewDataFactory: ViewDataFactory) extends BaseController with MessageSupport {
 
   private def stats[T](leagueId: Int,
             divisionLevel: Int,
@@ -31,7 +30,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
             statisticsType: StatisticsType,
             func: StatisticsParameters => Call,
             statisticsCHRequest: StatisticsCHRequest[T],
-            viewFunc: ViewData[T, WebDivisionLevelDetails] => play.twirl.api.HtmlFormat.Appendable) = Action.async { implicit request =>
+            viewFunc: ViewData[T, WebDivisionLevelDetails] => Messages => play.twirl.api.HtmlFormat.Appendable) = Action.async { implicit request =>
 
     val statsType = statisticsType match {
       case AvgMax => Avg
@@ -62,7 +61,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
           statisticsParameters = statisticsParameters,
           statisticsCHRequest = statisticsCHRequest,
           entities = entities)
-      }.map(viewData => Ok(viewFunc(viewData)))
+      }.map(viewData => Ok(viewFunc(viewData).apply(messages)))
   }
 
   def bestTeams(leagueId: Int,divisionLevel: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
@@ -73,7 +72,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       statisticsType = AvgMax,
       func = sp => routes.DivisionLevelController.bestTeams(leagueId, divisionLevel, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.bestHatstatsTeamRequest,
-      viewFunc = {viewData: ViewData[TeamRating, WebDivisionLevelDetails] => views.html.divisionlevel.bestTeams(viewData)}
+      viewFunc = {viewData: ViewData[TeamRating, WebDivisionLevelDetails] => messages => views.html.divisionlevel.bestTeams(viewData)(messages)}
     )
 
   def bestLeagueUnits(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
@@ -84,7 +83,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       statisticsType = AvgMax,
       func = sp => routes.DivisionLevelController.bestLeagueUnits(leagueId, divisionLevel, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.bestHatstatsLeagueRequest,
-      viewFunc = {viewData: ViewData[LeagueUnitRating, WebDivisionLevelDetails] => views.html.divisionlevel.bestLeagueUnits(viewData)}
+      viewFunc = {viewData: ViewData[LeagueUnitRating, WebDivisionLevelDetails] => messages => views.html.divisionlevel.bestLeagueUnits(viewData)(messages)}
     )
 
 
@@ -96,7 +95,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       statisticsType = Accumulated,
       func = sp => routes.DivisionLevelController.playerStats(leagueId, divisionLevel, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.playerStatsRequest,
-      viewFunc = {viewData: ViewData[PlayerStats, WebDivisionLevelDetails] => views.html.divisionlevel.playerStats(viewData)}
+      viewFunc = {viewData: ViewData[PlayerStats, WebDivisionLevelDetails] => messages => views.html.divisionlevel.playerStats(viewData)(messages)}
     )
 
 
@@ -108,7 +107,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       statisticsType = OnlyRound,
       func = sp => routes.DivisionLevelController.teamState(leagueId, divisionLevel, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.teamStateRequest,
-      viewFunc = {viewData: ViewData[TeamState, WebDivisionLevelDetails] => views.html.divisionlevel.teamState(viewData)}
+      viewFunc = {viewData: ViewData[TeamState, WebDivisionLevelDetails] => messages => views.html.divisionlevel.teamState(viewData)(messages)}
     )
 
 
@@ -120,7 +119,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       statisticsType = OnlyRound,
       func = sp => routes.DivisionLevelController.playerState(leagueId, divisionLevel, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.playerStateRequest,
-      viewFunc = {viewData: ViewData[PlayersState, WebDivisionLevelDetails] => views.html.divisionlevel.playerState(viewData)}
+      viewFunc = {viewData: ViewData[PlayersState, WebDivisionLevelDetails] => messages => views.html.divisionlevel.playerState(viewData)(messages)}
     )
 
 
@@ -132,7 +131,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       statisticsType = OnlyRound,
       func = sp => routes.DivisionLevelController.formalTeamStats(leagueId, divisionLevel, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.formalTeamStats,
-      viewFunc = {viewData: ViewData[FormalTeamStats, WebDivisionLevelDetails] => views.html.divisionlevel.formalTeamStats(viewData)}
+      viewFunc = {viewData: ViewData[FormalTeamStats, WebDivisionLevelDetails] => messages => views.html.divisionlevel.formalTeamStats(viewData)(messages)}
     )
 
 

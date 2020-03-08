@@ -22,9 +22,9 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
                                      val defaultService: DefaultService,
                                      implicit val clickhouseDAO: ClickhouseDAO,
                                      val leagueUnitCalculatorService: LeagueUnitCalculatorService,
-                                     val viewDataFactory: ViewDataFactory) extends BaseController {
+                                     val viewDataFactory: ViewDataFactory) extends BaseController with MessageSupport {
 
-  def bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async{
+  def bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async{ implicit request =>
     val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Avg, "hatstats"))
     val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
 
@@ -61,7 +61,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
               statisticsCHRequest = StatisticsCHRequest.bestHatstatsTeamRequest,
               entities = bestTeams)
 
-            Ok(views.html.leagueunit.bestTeams(viewData, leagueUnitTeamStats))
+            Ok(views.html.leagueunit.bestTeams(viewData, leagueUnitTeamStats)(messages))
           })
     } )
   }
@@ -106,7 +106,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
             statisticsCHRequest =  StatisticsCHRequest.playerStatsRequest,
             entities = playerStats)
 
-          Ok(views.html.leagueunit.playerStats(viewData))
+          Ok(views.html.leagueunit.playerStats(viewData)(messages))
         })
     })
   }
@@ -152,7 +152,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
               statisticsCHRequest = StatisticsCHRequest.teamStateRequest,
               entities = teamState)
 
-            Ok(views.html.leagueunit.teamState(viewData))
+            Ok(views.html.leagueunit.teamState(viewData)(messages))
           })
     })
   }
@@ -160,6 +160,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
 
   def playerState(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async { implicit request =>
     val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
+
     leagueDetailsFuture.flatMap ( leagueDetails => {
       val currentRound = defaultService.currentRound(leagueDetails.getLeagueId)
       val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "rating"))
@@ -197,7 +198,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
               statisticsParameters = statisticsParameters,
               statisticsCHRequest = StatisticsCHRequest.playerStateRequest,
               entities = playerStates)
-          }).map(viewData => Ok(views.html.leagueunit.playerState(viewData)))
+          }).map(viewData => Ok(views.html.leagueunit.playerState(viewData)(messages)))
     } )
   }
 

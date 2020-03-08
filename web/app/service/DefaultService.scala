@@ -40,7 +40,7 @@ class DefaultService @Inject() (val hattrick: Hattrick,
 
   def seasonForLeagueId(season: Int, leagueId: Int) = leagueIdToCountryNameMap(leagueId).getSeasonOffset + season
 
-  def currentRound(leagueId: Int) = Math.max(leagueIdToCountryNameMap(leagueId).getMatchRound - 1, 14)
+  def currentRound(leagueId: Int) = Math.min(leagueIdToCountryNameMap(leagueId).getMatchRound - 1, 14)
 
   def firstIdOfDivisionLeagueUnit(leagueId: Int, level: Int): Future[Long] = Future {
     if (leagueId == 1 /* Sweden */) {

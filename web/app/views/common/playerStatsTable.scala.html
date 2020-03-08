@@ -2,7 +2,7 @@
 @import models.web.WebPagedEntities
 @import models.clickhouse.PlayerStats
 
-@(playerStats: WebPagedEntities[PlayerStats])
+@(playerStats: WebPagedEntities[PlayerStats])(implicit messages: Messages)
 
 <table>
     <tr>

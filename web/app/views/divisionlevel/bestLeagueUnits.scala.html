@@ -2,6 +2,6 @@
 @import models.clickhouse.LeagueUnitRating
 @import models.web.ViewData
 
-@(viewData: ViewData[LeagueUnitRating, WebDivisionLevelDetails])
+@(viewData: ViewData[LeagueUnitRating, WebDivisionLevelDetails])(implicit messages: Messages)
 
 @stats(viewData.details.leagueName, header(viewData.details), leftBar(viewData.details), viewData.links)(common.bestLeagueUnitsTable(viewData.webPagedEntities))

@@ -1,6 +1,6 @@
 @import controllers.WebLeagueUnitDetails
 
-@(details: WebLeagueUnitDetails)
+@(details: WebLeagueUnitDetails)(implicit messages: Messages)
 <table>
     <tr>
         <td><a href="@routes.LeagueUnitController.bestTeams(details.leagueUnitId)">Teams</a></td>

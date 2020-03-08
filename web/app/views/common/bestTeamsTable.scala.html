@@ -2,7 +2,7 @@
 @import models.web.WebPagedEntities
 @import models.clickhouse.TeamRating
 
-@(bestTeams: WebPagedEntities[TeamRating])
+@(bestTeams: WebPagedEntities[TeamRating])(implicit messages: Messages)
 <table>
     <tr>
         <th>Position</th>

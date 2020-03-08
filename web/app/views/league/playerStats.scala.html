@@ -2,6 +2,6 @@
 @import controllers.WebLeagueDetails
 @import models.web.ViewData
 
-@(viewData: ViewData[PlayerStats, WebLeagueDetails])
+@(viewData: ViewData[PlayerStats, WebLeagueDetails])(implicit messages: Messages)
 
 @stats(viewData.details.leagueName, header(viewData.details), leftBar(viewData.details), viewData.links)(common.playerStatsTable(viewData.webPagedEntities))
