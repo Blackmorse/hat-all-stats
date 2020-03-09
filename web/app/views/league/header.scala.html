@@ -2,8 +2,10 @@
 
 @(details: WebLeagueDetails)
 
-<a href="@routes.LeagueController.bestTeams(details.leagueId)">@details.leagueName</a>
-->
+<a class="header_link" href="@routes.LeagueController.bestTeams(details.leagueId)">
+  <span class="header_link_text">@details.leagueName</span>
+</a>
+&#8674;
 <select class="hrefSelect">
   <option class="blank" value>Choose</option>
   @for((level, link) <- details.divisionLevelsLinks) {

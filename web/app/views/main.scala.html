@@ -11,22 +11,28 @@
     <head>
         <title>Alltid - @title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/header.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     </head>
     <body>
-        <aside class="languageLinks">
-            <a href="@{routes.HomeController.lang("en")}">en</a>
-            <a href="@{routes.HomeController.lang("ru")}">ru</a>
-        </aside>
-        <div id="header">@header</div>
-        <table>
-            <tr>
-                <td id="leftBar">@leftBar</td>
-                <td id="content">@content</td>
-            </tr>
-        </table>
+        <div class="main_frame">
+            <aside class="language_links">
+                <a href="@{routes.HomeController.lang("en")}">en</a>
+                <a href="@{routes.HomeController.lang("ru")}">ru</a>
+            </aside>
+            <header class="header">@header</header>
+            <main>
+                <aside class="left_bar">
+                    @leftBar
+                </aside>
+                <section class="content">
+                    @content
+                </section>
+
+            </main>
+        </div>
 
       <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
       <script src="@routes.Assets.versioned("javascripts/header.js")" type="text/javascript"></script>

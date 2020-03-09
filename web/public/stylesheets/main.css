@@ -1,15 +1,27 @@
-#leftBar {
-  width: 125px;
-  border: 1px solid black
+body {
+    /* display: flex; */
+    /* justify-content: center; */
+    background: #dcf7d5;
 }
 
-#header {
-  height: 70px;
-  align: center;
-  border: 1px solid black;
-  vertical-align: middle;
+.main_frame {
+    min-width: 900px;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
 }
 
-#content {
-  border: 1px solid black
+.language_links {
+    align-self: flex-end;
+    font-size: 0.7em;
+    margin-bottom: 5px;
+}
+
+
+
+main {
+    display: flex;
+    background: white;
+    border-radius: 3px;
 }
