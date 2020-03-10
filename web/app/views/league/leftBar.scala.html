@@ -1,23 +1,16 @@
 @import controllers.WebLeagueDetails
 
 @(details: WebLeagueDetails)(implicit messages: Messages)
-<table id="countryStatisticsTable">
-    <tr>
-        <td><a href="@routes.LeagueController.bestTeams(details.leagueId)">Teams</a></td>
-    </tr>
-    <tr>
-        <td><a href="@routes.LeagueController.bestLeagueUnits(details.leagueId)">Leagues</a></td>
-    </tr>
-    <tr>
-        <td><a href="@routes.LeagueController.playerStats(details.leagueId)">Player statistics</a></td>
-    </tr>
-    <tr>
-        <td><a href="@routes.LeagueController.teamState(details.leagueId)">Team State</a></td>
-    </tr>
-    <tr>
-        <td><a href="@routes.LeagueController.playerState(details.leagueId)">Player State</a></td>
-    </tr>
-    <tr>
-        <td><a href="@routes.LeagueController.formalTeamStats(details.leagueId)">Formal Team Stats</a></td>
-    </tr>
-</table>
+    <header class="left_bar_header">Statistics</header>
+
+    <a class="left_bar_link" href="@routes.LeagueController.bestTeams(details.leagueId)">Teams</a>
+
+    <a class="left_bar_link" href="@routes.LeagueController.bestLeagueUnits(details.leagueId)">Leagues</a>
+
+    <a class="left_bar_link" href="@routes.LeagueController.playerStats(details.leagueId)">Player statistics</a>
+
+    <a class="left_bar_link" href="@routes.LeagueController.teamState(details.leagueId)">Team State</a>
+
+    <a class="left_bar_link" href="@routes.LeagueController.playerState(details.leagueId)">Player State</a>
+
+    <a class="left_bar_link" href="@routes.LeagueController.formalTeamStats(details.leagueId)">Formal Team Stats</a>

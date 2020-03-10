@@ -1,15 +1,10 @@
 @import controllers.WebTeamDetails
 
 @(details: WebTeamDetails)(implicit messages: Messages)
+    <header class="left_bar_header">Statistics</header>
 
-<table>
-    <tr>
-        <td><a href="@routes.TeamController.matches(details.teamId)">Matches</a></td>
-    </tr>
-    <tr>
-        <td><a href="@routes.TeamController.playerStats(details.teamId)">Player stats</a></td>
-    </tr>
-    <tr>
-        <td><a href="@routes.TeamController.playerState(details.teamId)">Player state</a></td>
-    </tr>
-</table>
+    <a class="left_bar_link" href="@routes.TeamController.matches(details.teamId)">Matches</a>
+
+    <a class="left_bar_link" href="@routes.TeamController.playerStats(details.teamId)">Player stats</a>
+
+    <a class="left_bar_link" href="@routes.TeamController.playerState(details.teamId)">Player state</a>

@@ -1,17 +1,12 @@
 @import controllers.WebLeagueUnitDetails
 
 @(details: WebLeagueUnitDetails)(implicit messages: Messages)
-<table>
-    <tr>
-        <td><a href="@routes.LeagueUnitController.bestTeams(details.leagueUnitId)">Teams</a></td>
-    </tr>
-    <tr>
-        <td><a href="@routes.LeagueUnitController.playerStats(details.leagueUnitId)">Player statistics</a></td>
-    </tr>
-    <tr>
-        <td><a href="@routes.LeagueUnitController.teamState(details.leagueUnitId)">Team State</a></td>
-    </tr>
-    <tr>
-        <td><a href="@routes.LeagueUnitController.playerState(details.leagueUnitId)">Player State</a></td>
-    </tr>
-</table>
+    <header class="left_bar_header">Statistics</header>
+
+    <a class="left_bar_link" href="@routes.LeagueUnitController.bestTeams(details.leagueUnitId)">Teams</a>
+
+    <a class="left_bar_link" href="@routes.LeagueUnitController.playerStats(details.leagueUnitId)">Player statistics</a>
+
+    <a class="left_bar_link" href="@routes.LeagueUnitController.teamState(details.leagueUnitId)">Team State</a>
+
+    <a class="left_bar_link" href="@routes.LeagueUnitController.playerState(details.leagueUnitId)">Player State</a>

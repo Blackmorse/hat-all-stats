@@ -1,0 +1,45 @@
+.left_bar {
+    width: 150px;
+    background: white;
+
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+
+    margin: 0px 10px 0 0;
+    padding: 0 0 10px;
+    border: 0;
+    border-radius: 3px;
+    border: 1px solid green;
+
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.left_bar_header {
+    padding: 5px 5px;
+    margin: 0 0 10px;
+    background: green;
+    border-radius: 3px;
+
+    font-family: 'Merriweather', serif;
+    font-size: 1.0em;
+    color: white;
+}
+
+.left_bar_link {
+    margin: 5px 10px;
+    font-family: 'Merriweather', serif;
+    font-size: 0.8em;
+    text-decoration: none;
+    color: black;
+}
+
+.left_bar_link:hover {
+    text-decoration: underline;
+}
+
+.left_bar_link:visited,
+.left_bar_link:active {
+    color: black;
+    text-decoration: none;
+}

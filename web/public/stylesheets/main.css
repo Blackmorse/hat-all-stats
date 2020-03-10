@@ -1,6 +1,6 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather&display=swap');
+
 body {
-    /* display: flex; */
-    /* justify-content: center; */
     background: #dcf7d5;
 }
 
@@ -12,16 +12,20 @@ body {
     flex-direction: column;
 }
 
+.content {
+    background: white;
+    flex-grow: 1;
+}
+
 .language_links {
     align-self: flex-end;
     font-size: 0.7em;
     margin-bottom: 5px;
 }
 
-
-
 main {
     display: flex;
-    background: white;
     border-radius: 3px;
+
+    
 }
