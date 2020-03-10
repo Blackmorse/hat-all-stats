@@ -6,7 +6,7 @@
 
 @(viewData: ViewData[TeamRating, WebLeagueUnitDetails], leagueTeamStats: Seq[LeagueUnitTeamStat])(implicit messages: Messages)
 
-@stats(viewData.details.leagueUnitName, header(viewData.details), leftBar(viewData.details), viewData.links){
+@stats(viewData.details.leagueUnitName, "Teams", header(viewData.details), leftBar(viewData.details), viewData.links){
     <table>
         <tr>
             <th></th>

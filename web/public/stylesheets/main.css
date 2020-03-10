@@ -14,7 +14,9 @@ body {
 
 .content {
     background: white;
-    flex-grow: 1;
+    /* flex-grow: 1; */
+    max-width: 100%;
+    width: 100%;
 }
 
 .language_links {
@@ -25,7 +27,5 @@ body {
 
 main {
     display: flex;
-    border-radius: 3px;
-
-    
+    border-radius: 3px;    
 }

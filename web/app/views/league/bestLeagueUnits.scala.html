@@ -4,4 +4,4 @@
 
 @(viewData: ViewData[LeagueUnitRating, WebLeagueDetails])(implicit messages: Messages)
 
-@stats(viewData.details.leagueName, header(viewData.details), leftBar(viewData.details), viewData.links)(common.bestLeagueUnitsTable(viewData.webPagedEntities))
+@stats(viewData.details.leagueName, "Best Leagues", header(viewData.details), leftBar(viewData.details), viewData.links)(common.bestLeagueUnitsTable(viewData.webPagedEntities))

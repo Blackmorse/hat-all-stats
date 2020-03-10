@@ -1,0 +1,30 @@
+.content {
+    border-radius: 3px;
+    border: 1px solid green;
+
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+.content_header {
+    padding: 5px 5px;
+    margin: 0 0 10px;
+    background: green;
+    border-radius: 3px;
+
+    font-family: 'Merriweather', serif;
+    font-size: 1.0em;
+    color: white;
+}
+
+.table_filter {
+    display: flex;
+    flex-direction: row-reverse;
+    font-size: 0.9em;
+}
+
+.content_body {
+    margin: 5px;
+    /* font-family: 'Merriweather', serif; */
+}
