@@ -29,10 +29,16 @@
         <td class="value">@playerStat.games</td>
         <td class="value">@playerStat.played</td>
         <td class="value">@playerStat.scored</td>
-        <td class="value">@playerStat.yellowCards</td>
-        <td class="value">@playerStat.redCards</td>
-        <td class="value">@playerStat.totalInjuries</td>
-        <td class="value">@playerStat.goalRate</td>
+        <td class="value"><span class="yellow card"></span><span class="mult">x</span>@playerStat.yellowCards</td>
+        <td class="value"><span class="red card"></span><span class="mult">x</span>@playerStat.redCards</td>
+        <td class="value">
+            <svg width="10px" height="10px">
+                <line x1="0" y1="5" x2="10" y2="5" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+                <line x1="5" y1="0" x2="5" y2="10" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+            </svg>
+            @playerStat.totalInjuries
+        </td>
+        <td class="value">@{if(playerStat.goalRate == Double.PositiveInfinity || playerStat.goalRate == Double.NegativeInfinity) "" else playerStat.goalRate}</td>
     </tr>
     }
 </table>

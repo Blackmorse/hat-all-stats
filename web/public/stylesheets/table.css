@@ -25,3 +25,23 @@ tr:nth-child(2n) {
 .value {
     text-align: center;
 }
+
+.yellow {
+    background: yellow;
+}
+
+.red {
+    background: red;
+}
+
+.card {
+    display: inline-block;
+    width: 8px;
+    height: 15px;
+    transform: rotate(20deg);
+}
+
+.mult {
+    font-size: 0.6em;
+    
+}

@@ -27,7 +27,13 @@
         <td class="value">@state.rating</td>
         <td class="value">@state.ratingEndOfMatch</td>
         <td class="value">@state.age</td>
-        <td class="value">@state.injury</td>
+        <td class="value">
+            <svg width="10px" height="10px">
+                <line x1="0" y1="5" x2="10" y2="5" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+                <line x1="5" y1="0" x2="5" y2="10" style="stroke:rgb(255,0,0);stroke-width:2"></line>
+            </svg>
+            @state.injury
+        </td>
         <td class="value">@state.injuryCount</td>
     </tr>
     }

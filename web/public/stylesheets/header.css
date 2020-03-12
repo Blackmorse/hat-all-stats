@@ -22,6 +22,7 @@
     display: flex;
     align-items: center;
     padding: 0 5px;
+    color: white;
 
     -moz-user-select: none;
     -khtml-user-select: none;
