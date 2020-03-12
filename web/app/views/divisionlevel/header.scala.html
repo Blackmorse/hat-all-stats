@@ -2,11 +2,11 @@
 
 @(details: WebDivisionLevelDetails)
 
-<a class="header_link" href="@routes.LeagueController.bestTeams(details.leagueId)">
-    <span class="header_link_text">@details.leagueName</span>
+<a class="header_link" href="@routes.LeagueController.bestTeams(details.league.getLeagueId)">
+    <span class="header_link_text">@details.league.getEnglishName</span>
 </a>
 &#8674;
-<a class="header_link" href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.divisionLevel)">
+<a class="header_link" href="@routes.DivisionLevelController.bestTeams(details.league.getLeagueId, details.divisionLevel)">
     @details.divisionLevelRoman
 </a>
 &#8674;

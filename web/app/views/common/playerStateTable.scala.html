@@ -1,9 +1,13 @@
 @import models.web.WebPagedEntities
 @import models.clickhouse.PlayersState
 @import service.DefaultService
+@import models.web.ViewData
+@import models.web.AbstractWebDetails
 
-@(playerStates: WebPagedEntities[PlayersState])(implicit messages: Messages)
+@(viewData: ViewData[PlayersState, AbstractWebDetails])(implicit messages: Messages)
 
+@playerStates = @{viewData.webPagedEntities}
+@formatter = @{java.text.NumberFormat.getIntegerInstance}
 <table>
     <tr>
         <th class="position hint" popped-hint="Position">P</th>
@@ -12,7 +16,7 @@
         <th class="value">League</th>
         <th class="value">Age</th>
         <th class="value">TSI</th>
-        <th class="value">Salary</th>
+        <th class="value">Salary, @viewData.details.league.getCountry.getCurrencyName</th>
         <th class="value hint" popped-hint="Rating">Rat</th>
         <th class="value hint" popped-hint="Rating End Of Match">REM</th>
         <th class="value hint" popped-hint="Injury">Inj</th>
@@ -26,8 +30,10 @@
         <td><a href="@routes.TeamController.matches(playerState.teamId)">@playerState.teamName</a></td>
         <td class="value"><a href="@routes.LeagueUnitController.bestTeams(playerState.leagueUnitId)">@playerState.leagueUnitName</a></td>
         <td class="value">@playerState.age</td>
-        <td class="value">@playerState.tsi</td>
-        <td class="value">@playerState.salary</td>
+        <td class="value">@formatter.format(playerState.tsi)</td>
+        <td class="value">
+            @{formatter.format((playerState.salary / viewData.details.league.getCountry.getCurrencyRate).toInt)}
+        </td>
         <td class="value">@playerState.rating</td>
         <td class="value">@playerState.ratingEndOfMatch</td>
         <td class="value">

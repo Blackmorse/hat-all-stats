@@ -3,14 +3,14 @@
 @(details: WebLeagueDetails)(implicit messages: Messages)
     <header class="left_bar_header">Statistics</header>
 
-    <a class="left_bar_link" href="@routes.LeagueController.bestTeams(details.leagueId)">Teams</a>
+    <a class="left_bar_link" href="@routes.LeagueController.bestTeams(details.league.getLeagueId)">Teams</a>
 
-    <a class="left_bar_link" href="@routes.LeagueController.bestLeagueUnits(details.leagueId)">Leagues</a>
+    <a class="left_bar_link" href="@routes.LeagueController.bestLeagueUnits(details.league.getLeagueId)">Leagues</a>
 
-    <a class="left_bar_link" href="@routes.LeagueController.playerStats(details.leagueId)">Player statistics</a>
+    <a class="left_bar_link" href="@routes.LeagueController.playerStats(details.league.getLeagueId)">Player statistics</a>
 
-    <a class="left_bar_link" href="@routes.LeagueController.teamState(details.leagueId)">Team State</a>
+    <a class="left_bar_link" href="@routes.LeagueController.teamState(details.league.getLeagueId)">Team State</a>
 
-    <a class="left_bar_link" href="@routes.LeagueController.playerState(details.leagueId)">Player State</a>
+    <a class="left_bar_link" href="@routes.LeagueController.playerState(details.league.getLeagueId)">Player State</a>
 
-    <a class="left_bar_link" href="@routes.LeagueController.formalTeamStats(details.leagueId)">Formal Team Stats</a>
+    <a class="left_bar_link" href="@routes.LeagueController.formalTeamStats(details.league.getLeagueId)">Formal Team Stats</a>

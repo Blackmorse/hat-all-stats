@@ -1,5 +1,6 @@
 package controllers
 
+import com.blackmorse.hattrick.api.worlddetails.model.League
 import databases.ClickhouseDAO
 import databases.clickhouse.{Accumulated, AvgMax, OnlyRound, StatisticsCHRequest}
 import hattrick.Hattrick
@@ -11,7 +12,7 @@ import service.{DefaultService, LeagueUnitCalculatorService, LeagueUnitTeamStat}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-case class WebLeagueUnitDetails(leagueName: String, leagueId: Int, divisionLevel: Int,
+case class WebLeagueUnitDetails(league: League, divisionLevel: Int,
                                  leagueUnitName: String, leagueUnitId: Long,
                                 teamLinks: Seq[(String, String)])
     extends AbstractWebDetails
@@ -32,8 +33,6 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       val leagueFixture = hattrick.api.leagueFixtures().season(defaultService.seasonForLeagueId(statisticsParameters.season, leagueDetails.getLeagueId))
         .leagueLevelUnitId(leagueUnitId).execute()
 
-      val leagueName = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId).getEnglishName
-
       val tillRound = statisticsParameters.statsType match {
         case Round(round) => Some(round)
         case _ => None
@@ -42,8 +41,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.bestTeams(leagueUnitId, Some(sp))
       val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
 
-      val details = WebLeagueUnitDetails(leagueName = leagueName,
-        leagueId = leagueDetails.getLeagueId,
+      val details = WebLeagueUnitDetails(league = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId),
         divisionLevel = leagueDetails.getLeagueLevel,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
         leagueUnitId = leagueDetails.getLeagueLevelUnitId,
@@ -87,8 +85,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       //TODO not neccesary to calculate team stats
       val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
 
-      val details = WebLeagueUnitDetails(leagueName = leagueName,
-        leagueId = leagueDetails.getLeagueId,
+      val details = WebLeagueUnitDetails(league = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId),
         divisionLevel = leagueDetails.getLeagueLevel,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
         leagueUnitId = leagueDetails.getLeagueLevelUnitId,
@@ -138,8 +135,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         statisticsParameters = statisticsParameters)
           .map(teamState => {
             val details = WebLeagueUnitDetails(
-              leagueName = leagueName,
-              leagueId = leagueDetails.getLeagueId,
+              league = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId),
               divisionLevel = leagueDetails.getLeagueLevel,
               leagueUnitName =  leagueDetails.getLeagueLevelUnitName,
               leagueUnitId = leagueUnitId,
@@ -185,8 +181,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         statisticsParameters = statisticsParameters)
           .map(playerStates => {
             val details = WebLeagueUnitDetails(
-              leagueName = leagueName,
-              leagueId = leagueDetails.getLeagueId,
+              league = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId),
               divisionLevel = leagueDetails.getLeagueLevel,
               leagueUnitName  = leagueDetails.getLeagueLevelUnitName,
               leagueUnitId = leagueUnitId,

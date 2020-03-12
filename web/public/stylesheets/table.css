@@ -16,6 +16,7 @@ th {
     background: #bbf0c9;
     text-align: left;
     height: 25px;
+    padding: 0 5px;
 }
 
 tr:nth-child(2n) {

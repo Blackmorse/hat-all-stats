@@ -1,5 +1,6 @@
 package controllers
 
+import com.blackmorse.hattrick.api.worlddetails.model.League
 import com.blackmorse.hattrick.model.enums.MatchType
 import databases.ClickhouseDAO
 import databases.clickhouse.{Accumulated, OnlyRound, StatisticsCHRequest}
@@ -16,7 +17,7 @@ import collection.JavaConverters._
 
 case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, enemyTeamId: Long, enemyTeamName: String, teamGoals: Int, enemyGoals: Int)
 
-case class WebTeamDetails(teamId: Long, teamName: String, leagueId: Int, leagueName: String, season: Int,
+case class WebTeamDetails(teamId: Long, teamName: String, league: League, season: Int,
                           divisionLevel: Int, leagueUnitId: Long, leagueUnitName: String) extends AbstractWebDetails
 
 @Singleton
@@ -35,8 +36,13 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
     val leagueUnitId = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitId
 
     matchesFuture(leagueId, season, divisionLevel, leagueUnitId, teamId) map (matches => {
-      val details = WebTeamDetails(teamId, teamDetails.getTeamName, leagueId, defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName,
-        season, divisionLevel, leagueUnitId, teamDetails.getLeagueLevelUnit.getLeagueLevelUnitName)
+      val details = WebTeamDetails(teamId = teamId,
+          teamName = teamDetails.getTeamName,
+          league = defaultService.leagueIdToCountryNameMap(leagueId),
+          season = season,
+          divisionLevel = divisionLevel,
+          leagueUnitId = leagueUnitId,
+          leagueUnitName = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitName)
 
       Ok(views.html.team.matches(matches, details)(messages))
     })
@@ -80,8 +86,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
 
     val details = WebTeamDetails(teamId = teamId,
       teamName = teamDetails.getTeamName,
-      leagueId = leagueId,
-      leagueName = teamDetails.getLeague.getLeagueName,
+      league = defaultService.leagueIdToCountryNameMap(leagueId),
       season = statisticsParameters.season,
       divisionLevel = divisionLevel,
       leagueUnitId = leagueUnitId,
@@ -120,8 +125,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
 
     val details = WebTeamDetails(teamId = teamId,
       teamName = teamDetails.getTeamName,
-      leagueId = leagueId,
-      leagueName = teamDetails.getLeague.getLeagueName,
+      league = defaultService.leagueIdToCountryNameMap(leagueId),
       season = statisticsParameters.season,
       divisionLevel = divisionLevel,
       leagueUnitId = leagueUnitId,

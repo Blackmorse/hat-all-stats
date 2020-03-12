@@ -5,7 +5,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
 import service.DefaultService
 
-case class ViewData[T, V <: AbstractWebDetails](details: V,
+case class ViewData[T, +V <: AbstractWebDetails](details: V,
                                                 webPagedEntities: WebPagedEntities[T],
                                                 links: Links)
 
@@ -21,9 +21,9 @@ class ViewDataFactory @Inject() (val defaultService: DefaultService) {
                                          statisticsCHRequest: StatisticsCHRequest[T],
                                          entities: List[T]): ViewData[T, V] = {
     val seasonLinks = SeasonLinks(statisticsParameters.season,
-      defaultService.seasonsWithLinks(details.leagueId, seasonInfoUrlFunc(statisticsParameters, func)))
+      defaultService.seasonsWithLinks(details.league.getLeagueId, seasonInfoUrlFunc(statisticsParameters, func)))
 
-    val currentRound = defaultService.currentRound(details.leagueId)
+    val currentRound = defaultService.currentRound(details.league.getLeagueId)
     val statsTypeFunc = statTypeUrlFunc(statisticsParameters, func)
     val statTypeLinks = statisticsType match {
       case AvgMax => StatTypeLinks.withAverages(statsTypeFunc, currentRound, statisticsParameters.statsType)

@@ -2,6 +2,7 @@
 @import models.clickhouse.PlayersState
 @import controllers.WebDivisionLevelDetails
 
+
 @(viewData: ViewData[PlayersState, WebDivisionLevelDetails])(implicit messages: Messages)
 
-@stats(viewData.details.leagueName, "Player State", header(viewData.details), leftBar(viewData.details), viewData.links)(common.playerStateTable(viewData.webPagedEntities))
+@stats(viewData.details.league.getEnglishName, "Player State", header(viewData.details), leftBar(viewData.details), viewData.links)(common.playerStateTable(viewData))

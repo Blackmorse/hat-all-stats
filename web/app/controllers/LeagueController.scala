@@ -1,5 +1,6 @@
 package controllers
 
+import com.blackmorse.hattrick.api.worlddetails.model.{Country, League}
 import databases.ClickhouseDAO
 import databases.clickhouse._
 import javax.inject.{Inject, Singleton}
@@ -15,8 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 case class DivisionLevelForm(divisionLevel: Int)
 
-case class WebLeagueDetails(leagueName: String,
-                            leagueId: Int,
+case class WebLeagueDetails(league: League,
                             divisionLevelsLinks: Seq[(String, String)]) extends AbstractWebDetails
 
 @Singleton
@@ -41,10 +41,8 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     }
 
     val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn))
-    val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
 
-    val details = WebLeagueDetails(leagueName = leagueName,
-      leagueId = leagueId,
+    val details = WebLeagueDetails(league = defaultService.leagueIdToCountryNameMap(leagueId),
       divisionLevelsLinks = divisionLevels(leagueId))
 
     request.session.data.contains("lang")

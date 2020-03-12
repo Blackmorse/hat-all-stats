@@ -2,8 +2,8 @@
 
 @(details: WebLeagueDetails)
 
-<a class="header_link" href="@routes.LeagueController.bestTeams(details.leagueId)">
-  <span class="header_link_text">@details.leagueName</span>
+<a class="header_link" href="@routes.LeagueController.bestTeams(details.league.getLeagueId)">
+  <span class="header_link_text">@details.league.getEnglishName</span>
 </a>
 &#8674;
 <select class="hrefSelect">

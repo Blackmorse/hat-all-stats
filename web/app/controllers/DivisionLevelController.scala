@@ -1,5 +1,6 @@
 package controllers
 
+import com.blackmorse.hattrick.api.worlddetails.model.League
 import databases.ClickhouseDAO
 import databases.clickhouse._
 import hattrick.Hattrick
@@ -13,7 +14,7 @@ import utils.Romans
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-case class WebDivisionLevelDetails(leagueName: String, leagueId: Int, divisionLevel: Int, divisionLevelRoman: String,
+case class WebDivisionLevelDetails(league: League, divisionLevel: Int, divisionLevelRoman: String,
                                    leagueUnitLinks: Seq[(String, String)]) extends AbstractWebDetails
 
 @Singleton
@@ -41,16 +42,13 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
     }
     val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn))
 
-    val leagueName = defaultService.leagueIdToCountryNameMap(leagueId).getEnglishName
-
     val leagueUnitIdFuture = defaultService.firstIdOfDivisionLeagueUnit(leagueId, divisionLevel)
 
     statisticsCHRequest.execute(leagueId = Some(leagueId),
       divisionLevel = Some(divisionLevel),
       statisticsParameters = statisticsParameters)
       .zipWith(leagueUnitIdFuture){case(entities, leagueUnitId) =>
-        val details = WebDivisionLevelDetails(leagueName = leagueName,
-          leagueId = leagueId,
+        val details = WebDivisionLevelDetails(league = defaultService.leagueIdToCountryNameMap(leagueId),
           divisionLevel = divisionLevel,
           divisionLevelRoman = Romans(divisionLevel),
           leagueUnitLinks = leagueUnitNumbers(statisticsParameters.season, divisionLevel, leagueUnitId))

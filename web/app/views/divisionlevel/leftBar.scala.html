@@ -3,15 +3,15 @@
 @(details: WebDivisionLevelDetails)(implicit messages: Messages)
     <header class="left_bar_header">Statistics</header>
 
-    <a class="left_bar_link" href="@routes.DivisionLevelController.bestTeams(details.leagueId, details.divisionLevel)">Teams</a>
+    <a class="left_bar_link" href="@routes.DivisionLevelController.bestTeams(details.league.getLeagueId, details.divisionLevel)">Teams</a>
 
-    <a class="left_bar_link" href="@routes.DivisionLevelController.bestLeagueUnits(details.leagueId, details.divisionLevel)">Leagues</a>
+    <a class="left_bar_link" href="@routes.DivisionLevelController.bestLeagueUnits(details.league.getLeagueId, details.divisionLevel)">Leagues</a>
 
-    <a class="left_bar_link" href="@routes.DivisionLevelController.playerStats(details.leagueId, details.divisionLevel)">Player statistics</a>
+    <a class="left_bar_link" href="@routes.DivisionLevelController.playerStats(details.league.getLeagueId, details.divisionLevel)">Player statistics</a>
 
-    <a class="left_bar_link" href="@routes.DivisionLevelController.teamState(details.leagueId, details.divisionLevel)">Team State</a>
+    <a class="left_bar_link" href="@routes.DivisionLevelController.teamState(details.league.getLeagueId, details.divisionLevel)">Team State</a>
 
-    <a class="left_bar_link" href="@routes.DivisionLevelController.playerState(details.leagueId, details.divisionLevel)">Player State</a>
+    <a class="left_bar_link" href="@routes.DivisionLevelController.playerState(details.league.getLeagueId, details.divisionLevel)">Player State</a>
 
-    <a class="left_bar_link" href="@routes.DivisionLevelController.formalTeamStats(details.leagueId, details.divisionLevel)">Formal Team Stats</a>
+    <a class="left_bar_link" href="@routes.DivisionLevelController.formalTeamStats(details.league.getLeagueId, details.divisionLevel)">Formal Team Stats</a>
 
