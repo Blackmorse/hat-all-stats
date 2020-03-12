@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+.position {
+    width: 20px;
+}
+
+table {
+    width: 100%;
+    border-spacing: 0px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9em;
+    margin: 5px 0 15px;
+}
+
+th {
+    background: #bbf0c9;
+    text-align: left;
+    height: 25px;
+}
+
+tr:nth-child(2n) {
+    background-color: #dce3de;
+}
+
+.value {
+    text-align: center;
+}

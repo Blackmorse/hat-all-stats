@@ -6,29 +6,29 @@
 
 <table>
     <tr>
-        <th>Position</th>
+        <th class="position hint" popped-hint="Position">P</th>
         <th>Team</th>
-        <th>League</th>
-        <th>TSI</th>
-        <th>Salary</th>
-        <th>Rating</th>
-        <th>Rating End Of Match</th>
-        <th>Average age</th>
-        <th>Injury weeks</th>
-        <th>Injuries number</th>
+        <th class="value">League</th>
+        <th class="value">TSI</th>
+        <th class="value">Salary</th>
+        <th class="value hint" popped-hint="Rating">Rat</th>
+        <th class="value hint" popped-hint="Rating End Of Match">REM</th>
+        <th class="value hint" popped-hint="Average age">AA</th>
+        <th class="value hint" popped-hint="Total Injury Weeks">InjW</th>
+        <th class="value hint" popped-hint="Total Injury Number">InjN</th>
     </tr>
     @for((state, index) <- teamStates.entities.zipWithIndex) {
     <tr>
         <td>@{DefaultService.PAGE_SIZE * teamStates.pageInfo.page + index + 1}</td>
         <td><a href="@routes.TeamController.matches(state.teamId)">@state.teamName</a></td>
-        <td><a href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId)">@state.leagueUnitName</a></td>
-        <td>@state.tsi</td>
-        <td>@state.salary</td>
-        <td>@state.rating</td>
-        <td>@state.ratingEndOfMatch</td>
-        <td>@state.age</td>
-        <td>@state.injury</td>
-        <td>@state.injuryCount</td>
+        <td class="value"><a href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId)">@state.leagueUnitName</a></td>
+        <td class="value">@state.tsi</td>
+        <td class="value">@state.salary</td>
+        <td class="value">@state.rating</td>
+        <td class="value">@state.ratingEndOfMatch</td>
+        <td class="value">@state.age</td>
+        <td class="value">@state.injury</td>
+        <td class="value">@state.injuryCount</td>
     </tr>
     }
 </table>

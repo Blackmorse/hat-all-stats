@@ -6,33 +6,33 @@
 
 <table>
     <tr>
-        <th>Position</th>
+        <th class="position hint" popped-hint="Position">P</th>
         <th>Name</th>
         <th>Team</th>
-        <th>League</th>
-        <th>Age</th>
-        <th>Games</th>
-        <th>Minutes</th>
-        <th>Scored</th>
-        <th>Yellow Cards</th>
-        <th>Red Cards</th>
-        <th>Injuries</th>
-        <th>Minutes per Goal</th>
+        <th class="value">League</th>
+        <th class="value">Age</th>
+        <th class="value">Games</th>
+        <th class="value hint" popped-hint="Minutes">Min</th>
+        <th class="value hint" popped-hint="Scored">Sc</th>
+        <th class="value hint" popped-hint="Yellow Cards">YC</th>
+        <th class="value hint" popped-hint="Red Cards">RC</th>
+        <th class="value hint" popped-hint="Injuries">Inj</th>
+        <th class="value hint" popped-hint="Minutes Per Goal">MPG</th>
     </tr>
     @for((playerStat, index) <- playerStats.entities.zipWithIndex) {
     <tr>
         <td>@{DefaultService.PAGE_SIZE * playerStats.pageInfo.page + index + 1}</td>
         <td>@{playerStat.firstName + " " + playerStat.lastName}</td>
         <td><a href="@routes.TeamController.matches(playerStat.teamId)">@playerStat.teamName</a></td>
-        <td><a href="@routes.LeagueUnitController.bestTeams(playerStat.leagueUnitId)">@playerStat.leagueUnitName</a></td>
-        <td>@playerStat.age</td>
-        <td>@playerStat.games</td>
-        <td>@playerStat.played</td>
-        <td>@playerStat.scored</td>
-        <td>@playerStat.yellowCards</td>
-        <td>@playerStat.redCards</td>
-        <td>@playerStat.totalInjuries</td>
-        <td>@playerStat.goalRate</td>
+        <td class="value"><a href="@routes.LeagueUnitController.bestTeams(playerStat.leagueUnitId)">@playerStat.leagueUnitName</a></td>
+        <td class="value">@playerStat.age</td>
+        <td class="value">@playerStat.games</td>
+        <td class="value">@playerStat.played</td>
+        <td class="value">@playerStat.scored</td>
+        <td class="value">@playerStat.yellowCards</td>
+        <td class="value">@playerStat.redCards</td>
+        <td class="value">@playerStat.totalInjuries</td>
+        <td class="value">@playerStat.goalRate</td>
     </tr>
     }
 </table>

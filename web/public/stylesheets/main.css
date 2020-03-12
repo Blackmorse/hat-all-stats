@@ -14,7 +14,6 @@ body {
 
 .content {
     background: white;
-    /* flex-grow: 1; */
     max-width: 100%;
     width: 100%;
 }
@@ -28,4 +27,22 @@ body {
 main {
     display: flex;
     border-radius: 3px;    
+}
+
+.hint {
+    position: relative;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-underline-offset: 5px;
+}
+
+.hint:hover::after {
+    content: attr(popped-hint);
+    position: absolute;
+    left:0px;
+    /* top: -10px; */
+    color: white;
+    z-index: 2;
+
+    background: rgba(0, 0, 0, 0.5);
 }

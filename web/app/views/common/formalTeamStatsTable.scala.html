@@ -6,27 +6,27 @@
 
 <table>
     <tr>
-        <th>Position</th>
+        <th class="position hint" popped-hint="Position">P</th>
         <th>Team</th>
-        <th>League</th>
-        <th>Scored</th>
-        <th>Missed</th>
-        <th>W</th>
-        <th>L</th>
-        <th>D</th>
-        <th>Points</th>
+        <th class="value">League</th>
+        <th class="value hint" popped-hint="Win">W</th>
+        <th class="value hint" popped-hint="Lose">L</th>
+        <th class="value hint" popped-hint="Draw">D</th>
+        <th class="value hint" popped-hint="Goals For">GF</th>
+        <th class="value hint" popped-hint="Goals Against">GA</th>
+        <th class="value hint" popped-hint="Points">Pts</th>
     </tr>
     @for((teamStats, index) <- formalTeamStats.entities.zipWithIndex) {
     <tr>
         <td>@{DefaultService.PAGE_SIZE * formalTeamStats.pageInfo.page + index + 1}</td>
         <td><a href="@routes.TeamController.matches(teamStats.teamId)">@teamStats.teamName</a></td>
-        <td><a href="@routes.LeagueUnitController.bestTeams(teamStats.leagueUnitId)">@teamStats.leagueUnitName</a></td>
-        <td>@teamStats.scored</td>
-        <td>@teamStats.missed</td>
-        <td>@teamStats.wins</td>
-        <td>@teamStats.lost</td>
-        <td>@teamStats.draws</td>
-        <td>@teamStats.points</td>
+        <td class="value"><a href="@routes.LeagueUnitController.bestTeams(teamStats.leagueUnitId)">@teamStats.leagueUnitName</a></td>
+        <td class="value">@teamStats.wins</td>
+        <td class="value">@teamStats.lost</td>
+        <td class="value">@teamStats.draws</td>
+        <td class="value">@teamStats.scored</td>
+        <td class="value">@teamStats.missed</td>
+        <td class="value">@teamStats.points</td>
     </tr>
     }
 </table>

@@ -6,21 +6,21 @@
 @(bestLeagueUnits: WebPagedEntities[LeagueUnitRating])(implicit messages: Messages)
 <table>
     <tr>
-        <th>Position</th>
-        <th>League</th>
-        <th>HatStats</th>
-        <th>Midfield</th>
-        <th>Defense</th>
-        <th>Attack</th>
+        <th class="position hint" popped-hint="Position">P</th>
+        <th class="value">League</th>
+        <th class="value">HatStats</th>
+        <th class="value">Midfield</th>
+        <th class="value">Defense</th>
+        <th class="value">Attack</th>
     </tr>
     @for((leagueUnit, index) <- bestLeagueUnits.entities.zipWithIndex) {
     <tr>
         <td>@{DefaultService.PAGE_SIZE * bestLeagueUnits.pageInfo.page + index + 1}</td>
-        <td><a href="@routes.LeagueUnitController.bestTeams(leagueUnit.leagueUnitId)">@leagueUnit.leagueUnitName</a></td>
-        <td>@leagueUnit.hatStats</td>
-        <td>@leagueUnit.midfield</td>
-        <td>@leagueUnit.defense</td>
-        <td>@leagueUnit.attack</td>
+        <td class="value"><a href="@routes.LeagueUnitController.bestTeams(leagueUnit.leagueUnitId)">@leagueUnit.leagueUnitName</a></td>
+        <td class="value">@leagueUnit.hatStats</td>
+        <td class="value">@leagueUnit.midfield</td>
+        <td class="value">@leagueUnit.defense</td>
+        <td class="value">@leagueUnit.attack</td>
     </tr>
     }
 </table>

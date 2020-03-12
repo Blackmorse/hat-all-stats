@@ -9,27 +9,27 @@
 @stats(viewData.details.leagueUnitName, "Teams", header(viewData.details), leftBar(viewData.details), viewData.links){
     <table>
         <tr>
-            <th></th>
-            <th>Название</th>
-            <th>И</th>
-            <th>З</th>
-            <th>Пр</th>
-            <th>В</th>
-            <th>Н</th>
-            <th>П</th>
-            <th>О</th>
+            <th class="position hint" popped-hint="Position">P</th>
+            <th>Name</th>
+            <th class="value">Games</th>
+            <th class="value hint" popped-hint="Win">W</th>
+            <th class="value hint" popped-hint="Draw">D</th>
+            <th class="value hint" popped-hint="Lose">L</th>
+            <th class="value hint" popped-hint="Goals For">GF</th>
+            <th class="value hint" popped-hint="Goals Agains">GA</th>
+            <th class="value hint" popped-hint="Points">Pts</th>
         </tr>
         @for(team <- leagueTeamStats) {
             <tr>
                 <td>@team.position</td>
                 <td><a href="@routes.TeamController.matches(team.teamId)">@team.teamName</a></td>
-                <td>@team.games</td>
-                <td>@team.scored</td>
-                <td>@team.missed</td>
-                <td>@team.win</td>
-                <td>@team.draw</td>
-                <td>@team.lost</td>
-                <td>@team.points</td>
+                <td class="value">@team.games</td>
+                <td class="value">@team.win</td>
+                <td class="value">@team.draw</td>
+                <td class="value">@team.lost</td>
+                <td class="value">@team.scored</td>
+                <td class="value">@team.missed</td>
+                <td class="value">@team.points</td>
             </tr>
         }
     </table>

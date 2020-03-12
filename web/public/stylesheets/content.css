@@ -28,3 +28,8 @@
     margin: 5px;
     /* font-family: 'Merriweather', serif; */
 }
+
+.page_navigation {
+    display: flex;
+    justify-content: center;
+}
