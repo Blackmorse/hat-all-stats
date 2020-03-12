@@ -4,12 +4,34 @@
 
 <nav class="page_navigation">
     @for(url <- pageInfo.prevUrl) {
-    <a href="@url">Previous<<</a>
+    <a class="a_page" href="@url">
+        <div class="page_link">
+            &laquo;
+        </div>
+    </a>
+    <a class="a_page" href="@url">
+        <div class="page_link">
+            @{pageInfo.page}
+        </div>
+    </a>
     }
 
-    @{pageInfo.page + 1}
+    <a>
+        <div class="page_link page_link_selected">
+            @{pageInfo.page + 1}
+        </div>
+    </a>
 
     @for(url <- pageInfo.nextUrl) {
-    <a href="@url">>>Next</a>
+    <a class="a_page" href="@url">
+        <div class="page_link">
+            @{pageInfo.page + 2}
+        </div>
+    </a>
+    <a class="a_page" href="@url">
+        <div class="page_link">
+            &raquo;
+        </div>
+    </a>
     }
 </nav>
