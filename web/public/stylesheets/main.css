@@ -5,8 +5,8 @@ body {
 }
 
 .main_frame {
-    min-width: 900px;
-    max-width: 900px;
+    min-width: 1100px;
+    max-width: 1100px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;

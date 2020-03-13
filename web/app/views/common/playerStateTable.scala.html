@@ -13,7 +13,7 @@
         <th class="position hint" popped-hint="Position">P</th>
         <th>Player</th>
         <th>Team </th>
-        <th class="value">League</th>
+        <th class="value league">League</th>
         <th class="value">Age</th>
         <th class="value">TSI</th>
         <th class="value">Salary, @viewData.details.league.getCountry.getCurrencyName</th>
@@ -28,14 +28,26 @@
         <td>@{DefaultService.PAGE_SIZE * playerStates.pageInfo.page + index + 1}</td>
         <td>@{playerState.firstName + " " + playerState.lastName}</td>
         <td><a href="@routes.TeamController.matches(playerState.teamId)">@playerState.teamName</a></td>
-        <td class="value"><a href="@routes.LeagueUnitController.bestTeams(playerState.leagueUnitId)">@playerState.leagueUnitName</a></td>
+        <td class="value league"><a href="@routes.LeagueUnitController.bestTeams(playerState.leagueUnitId)">@playerState.leagueUnitName</a></td>
         <td class="value">@playerState.age</td>
         <td class="value">@formatter.format(playerState.tsi)</td>
         <td class="value">
             @{formatter.format((playerState.salary / viewData.details.league.getCountry.getCurrencyRate).toInt)}
         </td>
-        <td class="value">@playerState.rating</td>
-        <td class="value">@playerState.ratingEndOfMatch</td>
+        <td class="value">
+            <div class="rating">
+                <img class="star" src="@routes.Assets.versioned("images/star.svg")">
+                <span class="mult">x</span>
+                <span class="rating">@{playerState.rating.toDouble / 10}</span>
+            </div>
+        </td>
+        <td class="value">
+            <div class="rating">
+                <img class="star" src="@routes.Assets.versioned("images/star.svg")">
+                <span class="mult">x</span>
+                <span class="rating">@{playerState.ratingEndOfMatch.toDouble / 10}</span>
+            </div>
+        </td>
         <td class="value">
             <svg width="10px" height="10px">
                 <line x1="0" y1="5" x2="10" y2="5" style="stroke:rgb(255,0,0);stroke-width:2"></line>

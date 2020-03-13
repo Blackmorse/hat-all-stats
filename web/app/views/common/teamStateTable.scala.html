@@ -28,8 +28,20 @@
         <td class="value">@formatter.format(state.tsi)</td>
         <td class="value">
             @{formatter.format((state.salary / viewData.details.league.getCountry.getCurrencyRate).toInt)}
-        <td class="value">@state.rating</td>
-        <td class="value">@state.ratingEndOfMatch</td>
+        <td class="value">
+            <div class="rating">
+                <img class="star" src="@routes.Assets.versioned("images/star.svg")">
+                <span class="mult">x</span>
+                <span class="rating">@{state.rating.toDouble / 10}</span>
+            </div>
+        </td>
+        <td class="value">
+            <div class="rating">
+                <img class="star" src="@routes.Assets.versioned("images/star.svg")">
+                <span class="mult">x</span>
+                <span class="rating">@{state.ratingEndOfMatchg.toDouble / 10}</span>
+            </div>
+        </td>
         <td class="value">@state.age</td>
         <td class="value">
             <svg width="10px" height="10px">

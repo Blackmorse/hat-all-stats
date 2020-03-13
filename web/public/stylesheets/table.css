@@ -43,6 +43,23 @@ tr:nth-child(2n) {
 }
 
 .mult {
-    font-size: 0.6em;
-    
+    font-size: 0.6em; 
+    align-self: flex-end;
+}
+
+.star {
+    width: 20px;
+    height: 20px;
+}
+
+.rating {
+    display: flex;
+    align-items: stretch;
+    /* flex-wrap: wrap; */
+}
+
+.league {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
