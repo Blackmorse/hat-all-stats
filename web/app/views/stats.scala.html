@@ -2,7 +2,7 @@
 @import models.web.ViewData
 @import models.web.Links
 
-@(title: String, statsName: String, header: Html, leftBar: Html, links: Links)(content: Html)
+@(title: String, statsName: String, header: Html, leftBar: Html, links: Links)(content: Html)(implicit messages: Messages)
 
 @main(title, header, leftBar){
     <header class="content_header">@statsName</header>
@@ -10,7 +10,7 @@
     <div class="content_body">
         <div class="table_filter">
             <span class="seasonDiv">
-                Season:
+                @messages("common.season")
                 <select class="hrefSelect">
                     @for((season, link) <- links.seasonLinks.allSeasons) {
                         <option value="@link" @{if(season==links.seasonLinks.season.toString) "selected"}>@season</option>
@@ -18,7 +18,7 @@
                 </select>
             </span>
             <span class="statsTypeDiv">
-                Round:
+                @messages("common.round")
                 <select class="hrefSelect">
                     @for((name, link) <- links.statTypeLinks.links) {
                         <option value="@link" @{if(name==links.statTypeLinks.currentStatType.toString) "selected"}>@name</option>
@@ -26,7 +26,7 @@
                 </select>
             </span>
             <span class="sortByDiv">
-                Sort by:
+                @messages("common.sort_by")
                 <select class="hrefSelect">
                 @for((name, link) <- links.sortByLinks.links) {
                     <option value="@link" @{if(name==links.sortByLinks.currentSort) "selected"}>@name</option>

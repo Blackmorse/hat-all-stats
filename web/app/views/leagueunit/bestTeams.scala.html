@@ -6,18 +6,18 @@
 
 @(viewData: ViewData[TeamRating, WebLeagueUnitDetails], leagueTeamStats: Seq[LeagueUnitTeamStat])(implicit messages: Messages)
 
-@stats(viewData.details.leagueUnitName, "Teams", header(viewData.details), leftBar(viewData.details), viewData.links){
+@stats(viewData.details.leagueUnitName, messages("menu.best_teams"), header(viewData.details), leftBar(viewData.details), viewData.links){
     <table>
         <tr>
-            <th class="position hint" popped-hint="Position">P</th>
-            <th>Name</th>
-            <th class="value">Games</th>
-            <th class="value hint" popped-hint="Win">W</th>
-            <th class="value hint" popped-hint="Draw">D</th>
-            <th class="value hint" popped-hint="Lose">L</th>
-            <th class="value hint" popped-hint="Goals For">GF</th>
-            <th class="value hint" popped-hint="Goals Agains">GA</th>
-            <th class="value hint" popped-hint="Points">Pts</th>
+            <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>
+            <th>@messages("table.team")</th>
+            <th class="value">@messages("")</th>
+            <th class="value hint" popped-hint="@messages("table.win")">@messages("table.win_abbr")</th>
+            <th class="value hint" popped-hint="@messages("table.draw")">@messages("table.draw_abbr")</th>
+            <th class="value hint" popped-hint="@messages("table.lose_abbr")">@messages("table.lose_abbr")</th>
+            <th class="value hint" popped-hint="@messages("table.goals_for")">@messages("table.goals_for_abbr")</th>
+            <th class="value hint" popped-hint="@messages("table.goals_against")">@messages("table.goals_against_abbr")</th>
+            <th class="value hint" popped-hint="@messages("table.points")">@messages("table.points_abbr")</th>
         </tr>
         @for(team <- leagueTeamStats) {
             <tr>

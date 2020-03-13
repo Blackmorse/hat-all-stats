@@ -4,4 +4,4 @@
 
 @(viewData: ViewData[PlayersState, WebTeamDetails])(implicit messages: Messages)
 
-@stats(viewData.details.teamName, "Player State", header(viewData.details), leftBar(viewData.details), viewData.links)(common.playerStateTable(viewData))
+@stats(viewData.details.teamName, messages("menu.player_state"), header(viewData.details), leftBar(viewData.details), viewData.links)(common.playerStateTable(viewData))

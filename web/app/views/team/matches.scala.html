@@ -5,24 +5,28 @@
 
 @main(details.teamName, header(details), leftBar(details)) {
 
-<table>
-    <tr>
-    <th >Round</th>
-        <th>Team</th>
-        <th>Formation</th>
-        <th>Hatstats</th>
-        <th>Result</th>
-        <th>Opposite Team</th>
-    </tr>
-    @for(matc <- matches) {
-    <tr>
-        <td>@matc.teamMatchInfo.round</td>
-        <td><a href="@routes.TeamController.matches(matc.teamMatchInfo.teamId)">@matc.teamMatchInfo.teamName</a></td>
-        <td>@matc.teamMatchInfo.formation</td>
-        <td>@matc.teamMatchInfo.hatStats</td>
-        <td><i><b>@matc.teamGoals : @matc.enemyGoals</b></i></td>
-        <td><a href="@routes.TeamController.matches(matc.enemyTeamId)">@matc.enemyTeamName</a></td>
-    </tr>
+<header class="content_header">@messages("menu.matches")</header>
+
+<div class="content_body">
+    <table>
+        <tr>
+            <th>@messages("table.round")</th>
+            <th>@messages("table.team")</th>
+            <th class="value">@messages("table.formation")</th>
+            <th class="value">@messages("table.hatstats")</th>
+            <th class="value">@messages("table.result")</th>
+            <th>@messages("table.opposite_team")</th>
+        </tr>
+        @for(matc <- matches) {
+        <tr>
+            <td>@matc.teamMatchInfo.round</td>
+            <td><a href="@routes.TeamController.matches(matc.teamMatchInfo.teamId)">@matc.teamMatchInfo.teamName</a></td>
+            <td class="value">@matc.teamMatchInfo.formation</td>
+            <td class="value">@matc.teamMatchInfo.hatStats</td>
+            <td class="value"><i><b>@matc.teamGoals : @matc.enemyGoals</b></i></td>
+            <td><a href="@routes.TeamController.matches(matc.enemyTeamId)">@matc.enemyTeamName</a></td>
+        </tr>
+        }
+    </table>
     }
-</table>
-}
+</div>

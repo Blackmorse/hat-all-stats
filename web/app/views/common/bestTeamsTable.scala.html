@@ -5,13 +5,13 @@
 @(bestTeams: WebPagedEntities[TeamRating])(implicit messages: Messages)
 <table>
     <tr>
-        <th class="position hint" popped-hint="Position">P</th>
-        <th>Team</th>
-        <th class="value">League</th>
-        <th class="value">HatStats</th>
-        <th class="value">MidField</th>
-        <th class="value">Defense</th>
-        <th class="value">Attack</th>
+        <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>
+        <th>@messages("table.team")</th>
+        <th class="value">@messages("table.league")</th>
+        <th class="value">@messages("table.hatstats")</th>
+        <th class="value">@messages("table.midfield")</th>
+        <th class="value">@messages("table.defense")</th>
+        <th class="value">@messages("table.attack")</th>
     </tr>
     @for((team, index) <- bestTeams.entities.zipWithIndex) {
     <tr>

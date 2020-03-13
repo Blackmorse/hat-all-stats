@@ -10,18 +10,18 @@
 @formatter = @{java.text.NumberFormat.getIntegerInstance}
 <table>
     <tr>
-        <th class="position hint" popped-hint="Position">P</th>
-        <th>Player</th>
-        <th>Team </th>
-        <th class="value league">League</th>
-        <th class="value">Age</th>
-        <th class="value">TSI</th>
-        <th class="value">Salary, @viewData.details.league.getCountry.getCurrencyName</th>
-        <th class="value hint" popped-hint="Rating">Rat</th>
-        <th class="value hint" popped-hint="Rating End Of Match">REM</th>
-        <th class="value hint" popped-hint="Injury">Inj</th>
-        <th class="value hint" popped-hint="Red Cards">RC</th>
-        <th class="value hint" popped-hint="Yellow Cards">YC</th>
+        <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>
+        <th>@messages("table.player")</th>
+        <th>@messages("table.team")</th>
+        <th class="value league">@messages("table.league")</th>
+        <th class="value">@messages("table.age")</th>
+        <th class="value">@messages("table.tsi")</th>
+        <th class="value">@messages("table.salary"), @viewData.details.league.getCountry.getCurrencyName</th>
+        <th class="value hint" popped-hint="@messages("table.rating")">@messages("table.rating_abbr")</th>
+        <th class="value hint" popped-hint="@messages("table.rating_end_of_match")">@messages("table.rating_end_of_match_abbr")</th>
+        <th class="value hint" popped-hint="@messages("table.injury")">@messages("table.injury_abbr")</th>
+        <th class="value hint" popped-hint="@messages("table.red_cards")">@messages("table.red_cards_abbr")</th>
+        <th class="value hint" popped-hint="@messages("table.yellow_cards")">@messages("table.yellow_cards_abbr")</th>
     </tr>
     @for((playerState, index) <- playerStates.entities.zipWithIndex) {
     <tr>

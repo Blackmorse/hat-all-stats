@@ -6,18 +6,18 @@
 
 <table>
     <tr>
-        <th class="position hint" popped-hint="Position">P</th>
-        <th>Name</th>
-        <th>Team</th>
-        <th class="value">League</th>
-        <th class="value">Age</th>
-        <th class="value">Games</th>
-        <th class="value hint" popped-hint="Minutes">Min</th>
-        <th class="value hint" popped-hint="Scored">Sc</th>
-        <th class="value hint" popped-hint="Yellow Cards">YC</th>
-        <th class="value hint" popped-hint="Red Cards">RC</th>
-        <th class="value hint" popped-hint="Injuries">Inj</th>
-        <th class="value hint" popped-hint="Minutes Per Goal">MPG</th>
+        <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>
+        <th>@messages("table.player")</th>
+        <th>@messages("table.team")</th>
+        <th class="value">@messages("table.league")</th>
+        <th class="value">@messages("table.age")</th>
+        <th class="value">@messages("table.games")</th>
+        <th class="value hint" popped-hint="@messages("table.minutes")">@messages("table.minutes_abbr")</th>
+        <th class="value hint" popped-hint="@messages("table.scored")">@messages("table.scored_abbr")</th>
+        <th class="value hint" popped-hint="@messages("table.yellow_cards")">@messages("table.yellow_cards_abbr")</th>
+        <th class="value hint" popped-hint="@messages("table.red_cards")">@messages("table.red_cards_abbr")</th>
+        <th class="value hint" popped-hint="@messages("table.injury")">@messages("table.injury_abbr")</th>
+        <th class="value hint" popped-hint="@messages("table.minutes_per_goal")">@messages("table.minutes_per_goal_abbr")</th>
     </tr>
     @for((playerStat, index) <- playerStats.entities.zipWithIndex) {
     <tr>

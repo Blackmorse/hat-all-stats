@@ -1,12 +1,12 @@
 @import controllers.WebLeagueUnitDetails
 
 @(details: WebLeagueUnitDetails)(implicit messages: Messages)
-    <header class="left_bar_header">Statistics</header>
+    <header class="left_bar_header">@messages("menu.statistics")</header>
 
-    <a class="left_bar_link" href="@routes.LeagueUnitController.bestTeams(details.leagueUnitId)">Teams</a>
+    <a class="left_bar_link" href="@routes.LeagueUnitController.bestTeams(details.leagueUnitId)">@messages("menu.best_teams")</a>
 
-    <a class="left_bar_link" href="@routes.LeagueUnitController.playerStats(details.leagueUnitId)">Player statistics</a>
+    <a class="left_bar_link" href="@routes.LeagueUnitController.playerStats(details.leagueUnitId)">@messages("menu.player_stats")</a>
 
-    <a class="left_bar_link" href="@routes.LeagueUnitController.teamState(details.leagueUnitId)">Team State</a>
+    <a class="left_bar_link" href="@routes.LeagueUnitController.teamState(details.leagueUnitId)">@messages("menu.team_state")</a>
 
-    <a class="left_bar_link" href="@routes.LeagueUnitController.playerState(details.leagueUnitId)">Player State</a>
+    <a class="left_bar_link" href="@routes.LeagueUnitController.playerState(details.leagueUnitId)">@messages("menu.player_state")</a>
