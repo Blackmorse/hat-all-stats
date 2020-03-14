@@ -2,13 +2,14 @@ package models.web
 
 import play.api.mvc.QueryStringBindable
 
-case class StatisticsParameters(season: Int, page: Int, statsType: StatsType, sortBy: String)
+case class StatisticsParameters(season: Int, page: Int, statsType: StatsType, sortBy: String, pageSize: Int)
 
 object StatisticsParameters {
   implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]) = new QueryStringBindable[StatisticsParameters] {
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, StatisticsParameters]] = {
       val seasonRes = stringBinder.bind("season", params).map(a => a.map(_.toInt))
       val pageRes = stringBinder.bind("page", params).map(a => a.map(_.toInt))
+      val pageSizeRes = stringBinder.bind("pageSize", params).map(a => a.map(_.toInt))
       val statsTypeRes = stringBinder.bind("statType", params)
         .map(typeEither => typeEither.flatMap{
           case "avg" => Right(Avg)
@@ -26,8 +27,8 @@ object StatisticsParameters {
         })
       val sortByRes = stringBinder.bind("sortBy", params)
 
-      for (season <- seasonRes; page <- pageRes; statsType <- statsTypeRes; sortBy <- sortByRes) yield {
-        for(s <- season; p <- page; st <- statsType; sb <- sortBy) yield StatisticsParameters(s, p, st, sb)
+      for (season <- seasonRes; page <- pageRes; statsType <- statsTypeRes; sortBy <- sortByRes; pageSize <- pageSizeRes) yield {
+        for(s <- season; p <- page; st <- statsType; sb <- sortBy; ps <- pageSize) yield StatisticsParameters(s, p, st, sb, ps)
       }
     }
 
@@ -40,7 +41,7 @@ object StatisticsParameters {
       }
 
       stringBinder.unbind("season", value.season.toString) + "&" + stringBinder.unbind("page", value.page.toString) + "&" + statsTypeStr +
-        "&" + stringBinder.unbind("sortBy", value.sortBy)
+        "&" + stringBinder.unbind("sortBy", value.sortBy) + "&" + stringBinder.unbind("pageSize", value.pageSize.toString)
     }
   }
 }

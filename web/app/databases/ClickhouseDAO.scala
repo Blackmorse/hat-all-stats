@@ -8,6 +8,7 @@ import models.clickhouse.{LeagueSeasons, TeamMatchInfo}
 import models.web.{Accumulate, MultiplyRoundsType, Round, StatsType}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
+import service.DefaultService
 
 import scala.concurrent.Future
 
@@ -22,6 +23,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                  leagueUnitId: Option[Long] = None,
                  teamId: Option[Long] = None,
                  page: Int = 0,
+                 pageSize: Int = DefaultService.PAGE_SIZE,
                  statsType: StatsType,
                  sortBy: String) = Future {
     db.withConnection { implicit connection =>
@@ -42,6 +44,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
       leagueUnitId.foreach(builder.leagueUnitId)
       teamId.foreach(builder.teamId)
       builder.page(page)
+      builder.pageSize(pageSize)
 
       builder.build.as(request.parser.*)
     }

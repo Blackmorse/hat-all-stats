@@ -3,7 +3,6 @@ package controllers
 import com.blackmorse.hattrick.api.worlddetails.model.League
 import databases.ClickhouseDAO
 import databases.clickhouse._
-import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import models.clickhouse._
 import models.web._
@@ -21,7 +20,6 @@ case class WebDivisionLevelDetails(league: League, divisionLevel: Int, divisionL
 class DivisionLevelController@Inject() (val controllerComponents: ControllerComponents,
                                         implicit val clickhouseDAO: ClickhouseDAO,
                                         val defaultService: DefaultService,
-                                        val hattrick: Hattrick,
                                         val viewDataFactory: ViewDataFactory) extends BaseController with MessageSupport {
 
   private def stats[T](leagueId: Int,
@@ -40,7 +38,8 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
         val currentRound = defaultService.currentRound(leagueId)
         Round(currentRound)
     }
-    val statisticsParameters = statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn))
+    val statisticsParameters =
+      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn, DefaultService.PAGE_SIZE))
 
     val leagueUnitIdFuture = defaultService.firstIdOfDivisionLeagueUnit(leagueId, divisionLevel)
 

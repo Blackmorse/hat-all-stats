@@ -70,5 +70,5 @@ class DefaultService @Inject() (val hattrick: Hattrick,
 }
 
 object DefaultService {
-  val PAGE_SIZE = 8
+  val PAGE_SIZE = 16
 }

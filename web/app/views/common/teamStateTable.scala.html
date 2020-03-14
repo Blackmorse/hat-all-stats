@@ -1,4 +1,3 @@
-@import service.DefaultService
 @import models.web.WebPagedEntities
 @import models.clickhouse.TeamState
 @import models.web.ViewData
@@ -22,7 +21,7 @@
     </tr>
     @for((state, index) <- teamStates.entities.zipWithIndex) {
     <tr>
-        <td>@{DefaultService.PAGE_SIZE * teamStates.pageInfo.page + index + 1}</td>
+        <td>@{teamStates.pageInfo.pageSize * teamStates.pageInfo.page + index + 1}</td>
         <td><a href="@routes.TeamController.matches(state.teamId)">@state.teamName</a></td>
         <td class="value"><a href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId)">@state.leagueUnitName</a></td>
         <td class="value">@formatter.format(state.tsi)</td>

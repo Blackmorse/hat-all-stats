@@ -33,7 +33,16 @@
                 }
                 </select>
             </span>
+            <span class="pageSizeDiv">
+                Page size:
+                <select class="hrefSelect">
+                    @for((pageSize, link) <- links.pageSizeLinks.links) {
+                    <option value="@link" @{if(pageSize==links.pageSizeLinks.currentPageSize.toString) "selected"}>@pageSize</option>
+                    }
+                </select>
+            </span>
         </div>
+
         @content
 
     </div>

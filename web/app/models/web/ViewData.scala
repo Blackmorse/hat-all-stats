@@ -33,11 +33,14 @@ class ViewDataFactory @Inject() (val defaultService: DefaultService) {
 
     val sortByLinks = SortByLinks(sortByUrlFunc(statisticsParameters, func), statisticsCHRequest.sortingColumns, statisticsParameters.sortBy)
 
-    val webPagedEntities = WebPagedEntities(entities, statisticsParameters.page, pageUrlFunc(statisticsParameters, func))
+    val pageSizeLinks = PageSizeLinks(pageSizeUrlFunc(statisticsParameters, func), statisticsParameters.pageSize)
+
+    val webPagedEntities = WebPagedEntities(entities, statisticsParameters.page, statisticsParameters.pageSize, pageUrlFunc(statisticsParameters, func))
 
     val links = Links(seasonLinks = seasonLinks,
       statTypeLinks = statTypeLinks,
-      sortByLinks = sortByLinks)
+      sortByLinks = sortByLinks,
+      pageSizeLinks = pageSizeLinks)
 
     ViewData(details = details,
       links = links,
@@ -45,15 +48,17 @@ class ViewDataFactory @Inject() (val defaultService: DefaultService) {
   }
 
   private def pageUrlFunc(statisticsParameters: StatisticsParameters, func: StatisticsParameters => Call): Int => String = p =>
-    func(StatisticsParameters(statisticsParameters.season, p, statisticsParameters.statsType, statisticsParameters.sortBy)).url
+    func(StatisticsParameters(statisticsParameters.season, p, statisticsParameters.statsType, statisticsParameters.sortBy, statisticsParameters.pageSize)).url
 
   private def seasonInfoUrlFunc(statisticsParameters: StatisticsParameters, func: StatisticsParameters => Call): Int => String = s =>
-    func(StatisticsParameters(s, statisticsParameters.page, statisticsParameters.statsType, statisticsParameters.sortBy)).url
+    func(StatisticsParameters(s, statisticsParameters.page, statisticsParameters.statsType, statisticsParameters.sortBy, statisticsParameters.pageSize)).url
 
   private def statTypeUrlFunc(statisticsParameters: StatisticsParameters, func: StatisticsParameters => Call): StatsType => String = st =>
-    func(StatisticsParameters(statisticsParameters.season, statisticsParameters.page, st, statisticsParameters.sortBy)).url
+    func(StatisticsParameters(statisticsParameters.season, statisticsParameters.page, st, statisticsParameters.sortBy, statisticsParameters.pageSize)).url
 
   private def sortByUrlFunc(statisticsParameters: StatisticsParameters, func: StatisticsParameters => Call): String => String = sb =>
-    func(StatisticsParameters(statisticsParameters.season, statisticsParameters.page, statisticsParameters.statsType, sb)).url
+    func(StatisticsParameters(statisticsParameters.season, statisticsParameters.page, statisticsParameters.statsType, sb, statisticsParameters.pageSize)).url
 
+  private def pageSizeUrlFunc(statisticsParameters: StatisticsParameters, func: StatisticsParameters => Call): Int => String = ps =>
+    func(StatisticsParameters(statisticsParameters.season, 0 /*scroll to beginning*/, statisticsParameters.statsType, statisticsParameters.sortBy, ps)).url
 }

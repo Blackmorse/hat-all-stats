@@ -9,7 +9,7 @@ import scala.collection.mutable
 case class SqlBuilder(baseSql: String) {
   private val params: mutable.Buffer[(String, ParameterValue)] = mutable.Buffer()
   private var page = 0
-  private val pageSize = DefaultService.PAGE_SIZE
+  private var pageSize = DefaultService.PAGE_SIZE
 
   def season(season: Int): SqlBuilder = {
     params += (("season", season))
@@ -36,6 +36,11 @@ case class SqlBuilder(baseSql: String) {
 
   def page(page: Int): SqlBuilder = {
     this.page = page
+    this
+  }
+
+  def pageSize(pageSize: Int): SqlBuilder = {
+    this.pageSize = pageSize
     this
   }
 

@@ -1,10 +1,15 @@
 package models.web
 
-case class Links(seasonLinks: SeasonLinks, statTypeLinks: StatTypeLinks, sortByLinks: SortByLinks)
+case class Links(seasonLinks: SeasonLinks,
+                 statTypeLinks: StatTypeLinks,
+                 sortByLinks: SortByLinks,
+                 pageSizeLinks: PageSizeLinks)
 
 case class SeasonLinks(season: Int, allSeasons: Seq[(String, String)])
 
 case class StatTypeLinks(links: Seq[(String, String)], currentStatType: StatsType)
+
+case class PageSizeLinks(links: Seq[(String, String)], currentPageSize: Int)
 
 object StatTypeLinks {
   def withAverages(statTypeUrlFunc: StatsType => String, round: Int, current: StatsType): StatTypeLinks = {
@@ -30,5 +35,13 @@ case class SortByLinks(links: Seq[(String, String)], currentSort: String)
 object SortByLinks {
   def apply(sortByFunc: String => String, columns: Seq[String], currentSort: String): SortByLinks = {
     SortByLinks(columns.map(column => column -> sortByFunc(column)), currentSort)
+  }
+}
+
+object PageSizeLinks {
+  private val pageSizes = Seq(16, 32, 64)
+
+  def apply(pageSizeFunc: Int => String, currentPageSize: Int): PageSizeLinks = {
+    PageSizeLinks(pageSizes.map(ps => (ps.toString, pageSizeFunc(ps))), currentPageSize)
   }
 }
