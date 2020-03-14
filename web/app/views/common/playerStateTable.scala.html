@@ -26,8 +26,8 @@
     <tr>
         <td>@{playerStates.pageInfo.pageSize * playerStates.pageInfo.page + index + 1}</td>
         <td>@{playerState.firstName + " " + playerState.lastName}</td>
-        <td><a href="@routes.TeamController.matches(playerState.teamId)">@playerState.teamName</a></td>
-        <td class="value league"><a href="@routes.LeagueUnitController.bestTeams(playerState.leagueUnitId)">@playerState.leagueUnitName</a></td>
+        <td><a class="table_link" href="@routes.TeamController.matches(playerState.teamId)">@playerState.teamName</a></td>
+        <td class="value league"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(playerState.leagueUnitId)">@playerState.leagueUnitName</a></td>
         <td class="value">@playerState.age</td>
         <td class="value">@formatter.format(playerState.tsi)</td>
         <td class="value">

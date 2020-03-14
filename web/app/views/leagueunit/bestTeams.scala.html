@@ -22,7 +22,7 @@
         @for(team <- leagueTeamStats) {
             <tr>
                 <td>@team.position</td>
-                <td><a href="@routes.TeamController.matches(team.teamId)">@team.teamName</a></td>
+                <td><a class="table_link" href="@routes.TeamController.matches(team.teamId)">@team.teamName</a></td>
                 <td class="value">@team.games</td>
                 <td class="value">@team.win</td>
                 <td class="value">@team.draw</td>

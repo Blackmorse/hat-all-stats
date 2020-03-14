@@ -22,8 +22,8 @@
     <tr>
         <td>@{playerStats.pageInfo.pageSize * playerStats.pageInfo.page + index + 1}</td>
         <td>@{playerStat.firstName + " " + playerStat.lastName}</td>
-        <td><a href="@routes.TeamController.matches(playerStat.teamId)">@playerStat.teamName</a></td>
-        <td class="value"><a href="@routes.LeagueUnitController.bestTeams(playerStat.leagueUnitId)">@playerStat.leagueUnitName</a></td>
+        <td><a class="table_link" href="@routes.TeamController.matches(playerStat.teamId)">@playerStat.teamName</a></td>
+        <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(playerStat.leagueUnitId)">@playerStat.leagueUnitName</a></td>
         <td class="value">@playerStat.age</td>
         <td class="value">@playerStat.games</td>
         <td class="value">@playerStat.played</td>
@@ -37,7 +37,7 @@
             </svg>
             @playerStat.totalInjuries
         </td>
-        <td class="value">@{if(playerStat.goalRate == Double.PositiveInfinity || playerStat.goalRate == Double.NegativeInfinity) "" else playerStat.goalRate}</td>
+        <td class="value">@{if(playerStat.goalRate == Double.PositiveInfinity || playerStat.goalRate == Double.NegativeInfinity || playerStat.goalRate.equals(Double.NaN):qu) "" else playerStat.goalRate}</td>
     </tr>
     }
 </table>

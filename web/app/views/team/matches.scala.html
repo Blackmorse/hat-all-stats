@@ -20,11 +20,11 @@
         @for(matc <- matches) {
         <tr>
             <td>@matc.teamMatchInfo.round</td>
-            <td><a href="@routes.TeamController.matches(matc.teamMatchInfo.teamId)">@matc.teamMatchInfo.teamName</a></td>
+            <td><a class="table_link" href="@routes.TeamController.matches(matc.teamMatchInfo.teamId)">@matc.teamMatchInfo.teamName</a></td>
             <td class="value">@matc.teamMatchInfo.formation</td>
             <td class="value">@matc.teamMatchInfo.hatStats</td>
             <td class="value"><i><b>@matc.teamGoals : @matc.enemyGoals</b></i></td>
-            <td><a href="@routes.TeamController.matches(matc.enemyTeamId)">@matc.enemyTeamName</a></td>
+            <td><a class="table_link" href="@routes.TeamController.matches(matc.enemyTeamId)">@matc.enemyTeamName</a></td>
         </tr>
         }
     </table>

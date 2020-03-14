@@ -22,8 +22,8 @@
     @for((state, index) <- teamStates.entities.zipWithIndex) {
     <tr>
         <td>@{teamStates.pageInfo.pageSize * teamStates.pageInfo.page + index + 1}</td>
-        <td><a href="@routes.TeamController.matches(state.teamId)">@state.teamName</a></td>
-        <td class="value"><a href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId)">@state.leagueUnitName</a></td>
+        <td><a class="table_link" href="@routes.TeamController.matches(state.teamId)">@state.teamName</a></td>
+        <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId)">@state.leagueUnitName</a></td>
         <td class="value">@formatter.format(state.tsi)</td>
         <td class="value">
             @{formatter.format((state.salary / viewData.details.league.getCountry.getCurrencyRate).toInt)}

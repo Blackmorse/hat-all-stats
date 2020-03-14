@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Baloo+Thambi+2&display=swap');
 
 .position {
     width: 20px;
@@ -7,12 +8,13 @@
 table {
     width: 100%;
     border-spacing: 0px;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.9em;
+    
     margin: 5px 0 10px;
 }
 
 th {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.9em;
     background: #bbf0c9;
     text-align: left;
     height: 25px;
@@ -21,6 +23,11 @@ th {
 
 tr:nth-child(2n) {
     background-color: #dce3de;
+}
+
+td {
+    font-family: 'Baloo Thambi 2', cursive;
+    font-size: 0.9em;
 }
 
 .value {
@@ -62,4 +69,19 @@ tr:nth-child(2n) {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+
+.table_link {
+    color: black;
+    text-decoration: underline;
+}
+
+.table_link:visited
+.table_link:active {
+    color: black;
+    text-decoration: underline;
+}
+
+ .table_link:hover {
+    text-decoration: none;
 }

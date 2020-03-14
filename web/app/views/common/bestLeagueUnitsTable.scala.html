@@ -15,7 +15,7 @@
     @for((leagueUnit, index) <- bestLeagueUnits.entities.zipWithIndex) {
     <tr>
         <td>@{bestLeagueUnits.pageInfo.pageSize * bestLeagueUnits.pageInfo.page + index + 1}</td>
-        <td class="value"><a href="@routes.LeagueUnitController.bestTeams(leagueUnit.leagueUnitId)">@leagueUnit.leagueUnitName</a></td>
+        <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(leagueUnit.leagueUnitId)">@leagueUnit.leagueUnitName</a></td>
         <td class="value">@leagueUnit.hatStats</td>
         <td class="value">@leagueUnit.midfield</td>
         <td class="value">@leagueUnit.defense</td>
