@@ -2,7 +2,12 @@ package models.web
 
 import play.api.mvc.QueryStringBindable
 
-case class StatisticsParameters(season: Int, page: Int, statsType: StatsType, sortBy: String, pageSize: Int)
+case class StatisticsParameters(season: Int,
+                                page: Int,
+                                statsType: StatsType,
+                                sortBy: String,
+                                pageSize: Int,
+                                sortingDirection: SortingDirection)
 
 object StatisticsParameters {
   implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]) = new QueryStringBindable[StatisticsParameters] {
@@ -25,10 +30,21 @@ object StatisticsParameters {
               })).getOrElse(Left("Unable to parse"))
           case _ => Left("Unable to Parse")
         })
+
       val sortByRes = stringBinder.bind("sortBy", params)
 
-      for (season <- seasonRes; page <- pageRes; statsType <- statsTypeRes; sortBy <- sortByRes; pageSize <- pageSizeRes) yield {
-        for(s <- season; p <- page; st <- statsType; sb <- sortBy; ps <- pageSize) yield StatisticsParameters(s, p, st, sb, ps)
+      val sortingDirectionRes = stringBinder.bind("sortDirection", params).map(eith => eith.map {
+        case "desc" => Desc
+        case "asc" => Asc
+      })
+
+      for (season <- seasonRes;
+           page <- pageRes;
+           statsType <- statsTypeRes;
+           sortBy <- sortByRes;
+           pageSize <- pageSizeRes;
+           sortingDirection <- sortingDirectionRes) yield {
+        for(s <- season; p <- page; st <- statsType; sb <- sortBy; ps <- pageSize; sd <- sortingDirection) yield StatisticsParameters(s, p, st, sb, ps, sd)
       }
     }
 
@@ -40,8 +56,17 @@ object StatisticsParameters {
         case Round(num) => stringBinder.unbind("statType", "statRound") + "&" + stringBinder.unbind("statRoundNumber", num.toString)
       }
 
-      stringBinder.unbind("season", value.season.toString) + "&" + stringBinder.unbind("page", value.page.toString) + "&" + statsTypeStr +
-        "&" + stringBinder.unbind("sortBy", value.sortBy) + "&" + stringBinder.unbind("pageSize", value.pageSize.toString)
+      val sortingDirectionStr = value.sortingDirection match {
+        case Asc => "asc"
+        case Desc => "desc"
+      }
+
+      stringBinder.unbind("season", value.season.toString) + "&" +
+        stringBinder.unbind("page", value.page.toString) + "&" +
+        statsTypeStr + "&" +
+        stringBinder.unbind("sortBy", value.sortBy) + "&" +
+        stringBinder.unbind("pageSize", value.pageSize.toString) + "&" +
+        stringBinder.unbind("sortDirection", sortingDirectionStr)
     }
   }
 }

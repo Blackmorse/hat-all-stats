@@ -55,6 +55,11 @@ table.formation=Formation
 table.result=Result
 table.opposite_team=Opposite Team
 
-common.season=Season:
-common.round=Round:
-common.sort_by=Sort By:
+#filter
+filter.page_size=Page:
+filter.sorting_direction=Sorting
+filter.asc=ascending
+filter.desc=descending
+filter.season=Season:
+filter.round=Round:
+filter.sort_by=Sort By:

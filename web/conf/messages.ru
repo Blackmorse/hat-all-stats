@@ -55,6 +55,11 @@ table.formation=Расстановка
 table.result=Результат
 table.opposite_team=Соперник
 
-common.season=Сезон:
-common.round=Тур:
-common.sort_by=Сортировка:
+#filter
+filter.page_size=Размер страницы:
+filter.sorting_direction=Сортировка:
+filter.asc=по возрастанию
+filter.desc=по убыванию
+filter.season=Сезон:
+filter.round=Тур:
+filter.sort_by=Сортировка:

@@ -41,7 +41,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     }
 
     val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn, DefaultService.PAGE_SIZE))
+      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn, DefaultService.PAGE_SIZE, Desc))
 
     val details = WebLeagueDetails(league = defaultService.leagueIdToCountryNameMap(leagueId),
       divisionLevelsLinks = divisionLevels(leagueId))

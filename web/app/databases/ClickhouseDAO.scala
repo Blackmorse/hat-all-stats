@@ -5,7 +5,7 @@ import com.google.inject.Inject
 import databases.clickhouse.StatisticsCHRequest
 import javax.inject.Singleton
 import models.clickhouse.{LeagueSeasons, TeamMatchInfo}
-import models.web.{Accumulate, MultiplyRoundsType, Round, StatsType}
+import models.web.{Accumulate, Desc, MultiplyRoundsType, Round, SortingDirection, StatsType}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
 import service.DefaultService
@@ -25,7 +25,8 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                  page: Int = 0,
                  pageSize: Int = DefaultService.PAGE_SIZE,
                  statsType: StatsType,
-                 sortBy: String) = Future {
+                 sortBy: String,
+                 sortingDirection: SortingDirection = Desc) = Future {
     db.withConnection { implicit connection =>
 
       if (!request.sortingColumns.contains(sortBy)) throw new Exception("Looks like SQL Injection")
@@ -45,6 +46,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
       teamId.foreach(builder.teamId)
       builder.page(page)
       builder.pageSize(pageSize)
+      builder.sortingDirection(sortingDirection)
 
       builder.build.as(request.parser.*)
     }

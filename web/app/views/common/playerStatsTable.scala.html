@@ -37,7 +37,7 @@
             </svg>
             @playerStat.totalInjuries
         </td>
-        <td class="value">@{if(playerStat.goalRate == Double.PositiveInfinity || playerStat.goalRate == Double.NegativeInfinity || playerStat.goalRate.equals(Double.NaN):qu) "" else playerStat.goalRate}</td>
+        <td class="value">@{if(playerStat.goalRate == Double.PositiveInfinity || playerStat.goalRate == Double.NegativeInfinity || playerStat.goalRate.equals(Double.NaN)) "" else playerStat.goalRate}</td>
     </tr>
     }
 </table>

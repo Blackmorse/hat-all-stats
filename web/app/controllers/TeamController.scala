@@ -75,7 +75,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
 
   def playerStats(teamId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async { implicit request =>
     val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Accumulate, "scored", DefaultService.PAGE_SIZE))
+      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Accumulate, "scored", DefaultService.PAGE_SIZE, Desc))
 
     val func: StatisticsParameters => Call = sp => routes.TeamController.playerStats(teamId, Some(sp))
 
@@ -122,7 +122,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
 
     val currentRound = defaultService.currentRound(leagueId)
     val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "rating", DefaultService.PAGE_SIZE))
+      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "rating", DefaultService.PAGE_SIZE, Desc))
 
 
     val details = WebTeamDetails(teamId = teamId,

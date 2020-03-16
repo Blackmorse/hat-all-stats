@@ -39,7 +39,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
         Round(currentRound)
     }
     val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn, DefaultService.PAGE_SIZE))
+      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn, DefaultService.PAGE_SIZE, Desc))
 
     val leagueUnitIdFuture = defaultService.firstIdOfDivisionLeagueUnit(leagueId, divisionLevel)
 

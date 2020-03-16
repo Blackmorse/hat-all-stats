@@ -28,7 +28,8 @@ case class StatisticsCHRequest[T](aggregateSql: String, oneRoundSql: String, sor
       page = statisticsParameters.page,
       pageSize = statisticsParameters.pageSize,
       statsType = statisticsParameters.statsType,
-      sortBy = statisticsParameters.sortBy)
+      sortBy = statisticsParameters.sortBy,
+      sortingDirection = statisticsParameters.sortingDirection)
 }
 
 object StatisticsCHRequest {
@@ -52,7 +53,7 @@ object StatisticsCHRequest {
                     |toInt32((rating_right_def + rating_left_def + rating_mid_def) / 3) as defense,
                     |toInt32( (rating_right_att + rating_mid_att + rating_left_att) / 3) as attack
                     |from hattrick.match_details __where__ and round = __round__
-                    | order by __sortBy__ desc, team_id desc __limit__""".stripMargin,
+                    | order by __sortBy__ __sortingDirection__, team_id __sortingDirection__ __limit__""".stripMargin,
     sortingColumns = Seq("hatstats", "midfield", "defense", "attack"),
     statisticsType = AvgMax,
     parser = TeamRating.teamRatingMapper
@@ -86,7 +87,7 @@ object StatisticsCHRequest {
                     |     from hattrick.match_details
                     |     __where__ and round = __round__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
                     |     group by league_unit_id, league_unit_name
-                    | order by __sortBy__ desc, league_unit_id desc __limit__""".stripMargin,
+                    | order by __sortBy__ __sortingDirection__, league_unit_id __sortingDirection__ __limit__""".stripMargin,
     sortingColumns = Seq("hatstats", "midfield", "defense", "attack"),
     statisticsType = AvgMax,
     parser = LeagueUnitRating.leagueUnitRatingMapper
@@ -119,7 +120,7 @@ object StatisticsCHRequest {
                      |    team_name,
                      |    league_unit_id,
                      |    league_unit_name
-                     |ORDER BY __sortBy__ DESC, player_id DESC
+                     |ORDER BY __sortBy__ __sortingDirection__, player_id __sortingDirection__
                      |__limit__""".stripMargin,
     oneRoundSql = """SELECT
                     |    player_id,
@@ -139,9 +140,9 @@ object StatisticsCHRequest {
                     |    floor(played / scored, 2) AS goal_rate
                     |FROM hattrick.player_stats
                     |__where__ AND (round = __round__)
-                    |ORDER BY __sortBy__ DESC
+                    |ORDER BY __sortBy__ __sortingDirection__
                     |__limit__""".stripMargin,
-    sortingColumns = Seq("age", "games", "played", "scored", "yellow_cards", "red_cards", "total_injuries"),//TODO goal_rate
+    sortingColumns = Seq("age", "games", "played", "scored", "yellow_cards", "red_cards", "total_injuries", "goal_rate"),
     statisticsType = Accumulated,
     parser = PlayerStats.playerStatsMapper
   )
@@ -167,7 +168,7 @@ object StatisticsCHRequest {
                     |    team_id,
                     |    league_unit_id,
                     |    league_unit_name
-                    |ORDER BY __sortBy__ DESC, team_id DESC
+                    |ORDER BY __sortBy__ __sortingDirection__, team_id __sortingDirection__
                     |__limit__""".stripMargin,
     sortingColumns = Seq("tsi", "salary", "rating", "rating_end_of_match", "age", "injury", "injury_count"),
     statisticsType = OnlyRound,
@@ -195,7 +196,7 @@ object StatisticsCHRequest {
                     |FROM hattrick.player_stats
                     |__where__ AND (round = __round__)
                     |ORDER BY
-                    |    __sortBy__ DESC, player_id DESC
+                    |    __sortBy__ __sortingDirection__, player_id __sortingDirection__
                     |__limit__""".stripMargin,
     sortingColumns = Seq("age", "tsi", "salary", "rating", "rating_end_of_match", "injury_level", "red_cards", "yellow_cards"),
     statisticsType = OnlyRound,
@@ -223,9 +224,9 @@ object StatisticsCHRequest {
                     |    league_unit_id,
                     |    league_unit_name
                     |ORDER BY
-                    |    __sortBy__ DESC,
-                    |    scored DESC,
-                    |    team_id DESC
+                    |    __sortBy__ __sortingDirection__,
+                    |    scored __sortingDirection__,
+                    |    team_id __sortingDirection__
                     |__limit__""".stripMargin,
     sortingColumns = Seq("scored", "missed", "wins", "draws", "loses", "points"),
     statisticsType = OnlyRound,
