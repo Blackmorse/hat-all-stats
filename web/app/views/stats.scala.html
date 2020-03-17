@@ -28,8 +28,10 @@
             <span class="sortByDiv">
                 @messages("filter.sort_by")
                 <select class="hrefSelect">
-                @for((name, link) <- links.sortByLinks.links) {
-                    <option value="@link" @{if(name==links.sortByLinks.currentSort) "selected"}>@name</option>
+                @for(sortLink <- links.sortByLinks.links) {
+                    <option value="@sortLink.link" @{if(sortLink.columnName==links.sortByLinks.currentSort) "selected"}>
+                        @messages(sortLink.localizationKey)
+                    </option>
                 }
                 </select>
             </span>

@@ -54,6 +54,12 @@ table.round=Тур
 table.formation=Расстановка
 table.result=Результат
 table.opposite_team=Соперник
+table.total_injury_weeks_abbr=Травмы
+table.total_injury_weeks=Общий уровень травм
+table.total_injury_number_abbr=Кол-во травм
+table.total_injury_number=Общее количество травм
+table.average_age_abbr=СВ
+table.average_age=Средний возраст
 
 #filter
 filter.page_size=Размер страницы:

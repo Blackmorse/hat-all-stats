@@ -12,7 +12,7 @@ object AvgMax extends StatisticsType
 object Accumulated extends StatisticsType
 object OnlyRound extends StatisticsType
 
-case class StatisticsCHRequest[T](aggregateSql: String, oneRoundSql: String, sortingColumns: Seq[String], statisticsType: StatisticsType, parser: RowParser[T]) {
+case class StatisticsCHRequest[T](aggregateSql: String, oneRoundSql: String, sortingColumns: Seq[(String, String)], statisticsType: StatisticsType, parser: RowParser[T]) {
 
   def execute(leagueId: Option[Int] = None,
               divisionLevel: Option[Int] = None,
@@ -54,7 +54,8 @@ object StatisticsCHRequest {
                     |toInt32( (rating_right_att + rating_mid_att + rating_left_att) / 3) as attack
                     |from hattrick.match_details __where__ and round = __round__
                     | order by __sortBy__ __sortingDirection__, team_id __sortingDirection__ __limit__""".stripMargin,
-    sortingColumns = Seq("hatstats", "midfield", "defense", "attack"),
+    sortingColumns = Seq(("hatstats", "table.hatstats"), ("midfield", "table.midfield"),
+      ("defense", "table.defense"), ("attack", "table.attack")),
     statisticsType = AvgMax,
     parser = TeamRating.teamRatingMapper
   )
@@ -88,7 +89,8 @@ object StatisticsCHRequest {
                     |     __where__ and round = __round__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
                     |     group by league_unit_id, league_unit_name
                     | order by __sortBy__ __sortingDirection__, league_unit_id __sortingDirection__ __limit__""".stripMargin,
-    sortingColumns = Seq("hatstats", "midfield", "defense", "attack"),
+    sortingColumns = Seq(("hatstats", "table.hatstats"), ("midfield", "table.midfield"),
+      ("defense", "table.defense"), ("attack", "table.attack")),
     statisticsType = AvgMax,
     parser = LeagueUnitRating.leagueUnitRatingMapper
   )
@@ -142,7 +144,9 @@ object StatisticsCHRequest {
                     |__where__ AND (round = __round__)
                     |ORDER BY __sortBy__ __sortingDirection__
                     |__limit__""".stripMargin,
-    sortingColumns = Seq("age", "games", "played", "scored", "yellow_cards", "red_cards", "total_injuries", "goal_rate"),
+    sortingColumns = Seq(("age", "table.age"), ("games", "table.games"), ("played", "table.minutes"),
+      ("scored", "table.scored"), ("yellow_cards", "table.yellow_cards"), ("red_cards", "table.red_cards"),
+      ("total_injuries", "table.injury"), ("goal_rate", "table.minutes_per_goal")),
     statisticsType = Accumulated,
     parser = PlayerStats.playerStatsMapper
   )
@@ -170,7 +174,9 @@ object StatisticsCHRequest {
                     |    league_unit_name
                     |ORDER BY __sortBy__ __sortingDirection__, team_id __sortingDirection__
                     |__limit__""".stripMargin,
-    sortingColumns = Seq("tsi", "salary", "rating", "rating_end_of_match", "age", "injury", "injury_count"),
+    sortingColumns = Seq(("tsi", "table.tsi"), ("salary", "table.salary"), ("rating", "table.rating"),
+      ("rating_end_of_match", "table.rating_end_of_match"), ("age", "table.average_age"),
+      ("injury", "table.total_injury_weeks"), ("injury_count", "table.total_injury_number")),
     statisticsType = OnlyRound,
     parser = TeamState.teamStateMapper
   )
@@ -198,7 +204,9 @@ object StatisticsCHRequest {
                     |ORDER BY
                     |    __sortBy__ __sortingDirection__, player_id __sortingDirection__
                     |__limit__""".stripMargin,
-    sortingColumns = Seq("age", "tsi", "salary", "rating", "rating_end_of_match", "injury_level", "red_cards", "yellow_cards"),
+    sortingColumns = Seq(("age", "table.age"), ("tsi", "table.tsi"), ("salary", "table.salary"),
+      ("rating", "table.rating"), ("rating_end_of_match", "table.rating_end_of_match"),
+      ("injury_level", "table.injury"), ("red_cards", "table.red_cards"), ("yellow_cards", "table.yellow_cards")),
     statisticsType = OnlyRound,
     parser = PlayersState.playersStateMapper
   )
@@ -228,7 +236,8 @@ object StatisticsCHRequest {
                     |    scored __sortingDirection__,
                     |    team_id __sortingDirection__
                     |__limit__""".stripMargin,
-    sortingColumns = Seq("scored", "missed", "wins", "draws", "loses", "points"),
+    sortingColumns = Seq(("scored", "table.scored"), ("missed", "table.goals_against"), ("wins", "table.win"),
+      ("draws", "table.draw"), ("loses", "table.lose"), ("points", "table.points")),
     statisticsType = OnlyRound,
     parser = FormalTeamStats.formalTeamStatsMapper
   )

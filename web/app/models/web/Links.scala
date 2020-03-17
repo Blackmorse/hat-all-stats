@@ -33,11 +33,14 @@ object StatTypeLinks {
   }
 }
 
-case class SortByLinks(links: Seq[(String, String)], currentSort: String)
+case class SortLink(columnName: String, localizationKey: String, link: String)
+
+case class SortByLinks(links: Seq[SortLink], currentSort: String)
 
 object SortByLinks {
-  def apply(sortByFunc: String => String, columns: Seq[String], currentSort: String): SortByLinks = {
-    SortByLinks(columns.map(column => column -> sortByFunc(column)), currentSort)
+  def apply(sortByFunc: String => String, columns: Seq[(String, String)], currentSort: String): SortByLinks = {
+    SortByLinks(columns.map{case(column, localizationKey) =>
+      SortLink(column, localizationKey, sortByFunc(column))}, currentSort)
   }
 }
 

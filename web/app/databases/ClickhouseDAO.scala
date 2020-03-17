@@ -29,7 +29,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                  sortingDirection: SortingDirection = Desc) = Future {
     db.withConnection { implicit connection =>
 
-      if (!request.sortingColumns.contains(sortBy)) throw new Exception("Looks like SQL Injection")
+      if (!request.sortingColumns.map(_._1).contains(sortBy)) throw new Exception("Looks like SQL Injection")
 
       val sql = statsType match {
         case MultiplyRoundsType(func) => request.aggregateSql.replace("__func__", func).replace("__sortBy__", sortBy)

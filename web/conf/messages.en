@@ -45,7 +45,7 @@ table.yellow_cards_abbr=YC
 table.yellow_cards=Yellow Cards
 table.games=Games
 table.minutes_abbr=Min
-table.minutes=Player Minutes
+table.minutes=Played Minutes
 table.scored_abbr=Sc
 table.scored=Scored
 table.minutes_per_goal_abbr=MPG
@@ -54,6 +54,12 @@ table.round=Round
 table.formation=Formation
 table.result=Result
 table.opposite_team=Opposite Team
+table.total_injury_weeks_abbr=InjW
+table.total_injury_weeks=Total Injury Weeks
+table.total_injury_number_abbr=InjN
+table.total_injury_number=Total Injury Number
+table.average_age_abbr=AA
+table.average_age=Average age
 
 #filter
 filter.page_size=Page:
