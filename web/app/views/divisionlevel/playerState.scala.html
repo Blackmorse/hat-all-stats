@@ -5,6 +5,6 @@
 
 @(viewData: ViewData[PlayersState, WebDivisionLevelDetails])(implicit messages: Messages)
 
-@main(viewData.details.league.getEnglishName, header(viewData.details), leftBar(viewData.details), messages("menu.player_state")) {
+@main(viewData.details.divisionLevelRoman, header(viewData.details), leftBar(viewData.details), messages("menu.player_state")) {
     @stats(viewData.links)(common.playerStateTable(viewData))
 }
