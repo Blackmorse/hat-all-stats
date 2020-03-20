@@ -2,59 +2,53 @@
 @import models.web.ViewData
 @import models.web.Links
 
-@(title: String, statsName: String, header: Html, leftBar: Html, links: Links)(content: Html)(implicit messages: Messages)
+@(links: Links)(content: Html)(implicit messages: Messages)
+<div class="table_filter">
+    <span class="seasonDiv">
+        @messages("filter.season")
+        <select class="hrefSelect">
+            @for((season, link) <- links.seasonLinks.allSeasons) {
+                <option value="@link" @{if(season==links.seasonLinks.season.toString) "selected"}>@season</option>
+            }
+        </select>
+    </span>
+    <span class="statsTypeDiv">
+        @messages("filter.round")
+        <select class="hrefSelect">
+            @for((name, link) <- links.statTypeLinks.links) {
+                <option value="@link" @{if(name==links.statTypeLinks.currentStatType.toString) "selected"}>@name</option>
+            }
+        </select>
+    </span>
+    <span class="sortByDiv">
+        @messages("filter.sort_by")
+        <select class="hrefSelect">
+        @for(sortLink <- links.sortByLinks.links) {
+            <option value="@sortLink.link" @{if(sortLink.columnName==links.sortByLinks.currentSort) "selected"}>
+                @messages(sortLink.localizationKey)
+            </option>
+        }
+        </select>
+    </span>
+    <span class="pageSizeDiv">
+        @messages("filter.page_size")
+        <select class="hrefSelect">
+            @for((pageSize, link) <- links.pageSizeLinks.links) {
+            <option value="@link" @{if(pageSize==links.pageSizeLinks.currentPageSize.toString) "selected"}>@pageSize</option>
+            }
+        </select>
+    </span>
 
-@main(title, header, leftBar){
-    <header class="content_header">@statsName</header>
+    <span class="sortingDirectionDiv">
+        @messages("filter.sorting_direction")
+        <select class="hrefSelect">
+            @for((direction, link) <- links.sortingDirectionLinks.links) {
+            <option value="@link" @{if(direction==links.sortingDirectionLinks.currentDirection.toString) "selected"}>@messages(direction.toString)</option>
+            }
+        </select>
+    </span>
+</div>
 
-    <div class="content_body">
-        <div class="table_filter">
-            <span class="seasonDiv">
-                @messages("filter.season")
-                <select class="hrefSelect">
-                    @for((season, link) <- links.seasonLinks.allSeasons) {
-                        <option value="@link" @{if(season==links.seasonLinks.season.toString) "selected"}>@season</option>
-                    }
-                </select>
-            </span>
-            <span class="statsTypeDiv">
-                @messages("filter.round")
-                <select class="hrefSelect">
-                    @for((name, link) <- links.statTypeLinks.links) {
-                        <option value="@link" @{if(name==links.statTypeLinks.currentStatType.toString) "selected"}>@name</option>
-                    }
-                </select>
-            </span>
-            <span class="sortByDiv">
-                @messages("filter.sort_by")
-                <select class="hrefSelect">
-                @for(sortLink <- links.sortByLinks.links) {
-                    <option value="@sortLink.link" @{if(sortLink.columnName==links.sortByLinks.currentSort) "selected"}>
-                        @messages(sortLink.localizationKey)
-                    </option>
-                }
-                </select>
-            </span>
-            <span class="pageSizeDiv">
-                @messages("filter.page_size")
-                <select class="hrefSelect">
-                    @for((pageSize, link) <- links.pageSizeLinks.links) {
-                    <option value="@link" @{if(pageSize==links.pageSizeLinks.currentPageSize.toString) "selected"}>@pageSize</option>
-                    }
-                </select>
-            </span>
+@content
 
-            <span class="sortingDirectionDiv">
-                @messages("filter.sorting_direction")
-                <select class="hrefSelect">
-                    @for((direction, link) <- links.sortingDirectionLinks.links) {
-                    <option value="@link" @{if(direction==links.sortingDirectionLinks.currentDirection.toString) "selected"}>@messages(direction.toString)</option>
-                    }
-                </select>
-            </span>
-        </div>
 
-        @content
-
-    </div>
-}

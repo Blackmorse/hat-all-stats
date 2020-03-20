@@ -4,4 +4,6 @@
 
 @(viewData: ViewData[TeamRating, WebDivisionLevelDetails])(implicit messages: Messages)
 
-@stats(viewData.details.league.getEnglishName, messages("menu.best_teams"), header(viewData.details), leftBar(viewData.details), viewData.links)(common.bestTeamsTable(viewData.webPagedEntities))
+@main(viewData.details.league.getEnglishName, header(viewData.details), leftBar(viewData.details), messages("menu.best_teams")) {
+    @stats(viewData.links)(common.bestTeamsTable(viewData.webPagedEntities))
+}

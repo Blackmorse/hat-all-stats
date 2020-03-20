@@ -6,7 +6,10 @@
 
 @(viewData: ViewData[TeamRating, WebLeagueUnitDetails], leagueTeamStats: Seq[LeagueUnitTeamStat])(implicit messages: Messages)
 
-@stats(viewData.details.leagueUnitName, messages("menu.best_teams"), header(viewData.details), leftBar(viewData.details), viewData.links){
+
+
+@main(viewData.details.leagueUnitName, header(viewData.details), leftBar(viewData.details), messages("menu.best_teams")) {
+
     <table>
         <tr>
             <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>
@@ -20,19 +23,21 @@
             <th class="value hint" popped-hint="@messages("table.points")">@messages("table.points_abbr")</th>
         </tr>
         @for(team <- leagueTeamStats) {
-            <tr>
-                <td>@team.position</td>
-                <td><a class="table_link" href="@routes.TeamController.matches(team.teamId)">@team.teamName</a></td>
-                <td class="value">@team.games</td>
-                <td class="value">@team.win</td>
-                <td class="value">@team.draw</td>
-                <td class="value">@team.lost</td>
-                <td class="value">@team.scored</td>
-                <td class="value">@team.missed</td>
-                <td class="value">@team.points</td>
-            </tr>
+        <tr>
+            <td>@team.position</td>
+            <td><a class="table_link" href="@routes.TeamController.matches(team.teamId)">@team.teamName</a></td>
+            <td class="value">@team.games</td>
+            <td class="value">@team.win</td>
+            <td class="value">@team.draw</td>
+            <td class="value">@team.lost</td>
+            <td class="value">@team.scored</td>
+            <td class="value">@team.missed</td>
+            <td class="value">@team.points</td>
+        </tr>
         }
     </table>
 
-    @common.bestTeamsTable(viewData.webPagedEntities)
+    @stats(viewData.links){
+        @common.bestTeamsTable(viewData.webPagedEntities)
+    }
 }

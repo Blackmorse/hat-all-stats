@@ -4,7 +4,7 @@
  * two arguments, a `String` for the title of the page and an `Html`
  * object to insert into the body of the page.
  *@
-@(title: String, header: Html, leftBar: Html)(content: Html)
+@(title: String, header: Html, leftBar: Html, contentLabel: String)(content: Html)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +33,10 @@
                     @leftBar
                 </aside>
                 <section class="content">
-                    @content
+                    <header class="content_header">@contentLabel</header>
+                    <div class="content_body">
+                        @content
+                    </div>
                 </section>
 
             </main>

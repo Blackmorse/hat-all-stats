@@ -3,9 +3,7 @@
 
 @(matches: List[WebTeamMatch], details: WebTeamDetails)(implicit messages: Messages)
 
-@main(details.teamName, header(details), leftBar(details)) {
-
-<header class="content_header">@messages("menu.matches")</header>
+@main(details.teamName, header(details), leftBar(details), messages("menu.matches")) {
 
 <div class="content_body">
     <table>

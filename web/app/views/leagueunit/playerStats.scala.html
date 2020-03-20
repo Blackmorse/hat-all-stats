@@ -4,4 +4,6 @@
 
 @(viewData: ViewData[PlayerStats, WebLeagueUnitDetails])(implicit messages: Messages)
 
-@stats(viewData.details.leagueUnitName, messages("menu.player_stats"), header(viewData.details), leftBar(viewData.details), viewData.links)(common.playerStatsTable(viewData.webPagedEntities))
+@main(viewData.details.leagueUnitName, header(viewData.details), leftBar(viewData.details), messages("menu.player_stats")) {
+    @stats(viewData.links)(common.playerStatsTable(viewData.webPagedEntities))
+}
