@@ -4,7 +4,7 @@ import anorm.SqlParser.get
 import anorm.~
 
 case class PlayersState(teamName: String, teamId: Long, leagueUnitName: String, leagueUnitId: Long, playerId: Long,
-                        firstName: String, lastName: String, age: Double, tsi: Int, salary: Int,
+                        firstName: String, lastName: String, age: Integer, tsi: Int, salary: Int,
                         rating: Int, ratingEndOfMatch: Int, injuryLevel: Int, redCards: Int, yellowCards: Int)
 
 object PlayersState {
@@ -16,7 +16,7 @@ object PlayersState {
     get[Long]("player_id") ~
     get[String]("first_name") ~
     get[String]("last_name") ~
-    get[Double]("age") ~
+    get[Int]("age") ~
     get[Int]("tsi") ~
     get[Int]("salary") ~
     get[Int]("rating") ~

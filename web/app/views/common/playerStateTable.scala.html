@@ -28,7 +28,7 @@
         <td>@{playerState.firstName + " " + playerState.lastName}</td>
         <td><a class="table_link" href="@routes.TeamController.matches(playerState.teamId)">@playerState.teamName</a></td>
         <td class="value league"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(playerState.leagueUnitId)">@playerState.leagueUnitName</a></td>
-        <td class="value">@playerState.age</td>
+        <td class="value">@{playerState.age / 112},@{playerState.age % 112}</td>
         <td class="value">@formatter.format(playerState.tsi)</td>
         <td class="value">
             @{formatter.format((playerState.salary / viewData.details.league.getCountry.getCurrencyRate).toInt)}

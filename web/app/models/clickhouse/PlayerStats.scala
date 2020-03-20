@@ -4,7 +4,7 @@ import anorm.SqlParser.get
 import anorm.~
 
 case class PlayerStats(playerId: Long, firstName: String, lastName: String, teamId: Long, teamName: String, leagueUnitId: Long, leagueUnitName: String,
-                  age: Double, games: Int, played: Int, scored: Int, yellowCards: Int, redCards: Int, totalInjuries: Int, goalRate: Double)
+                  age: Int, games: Int, played: Int, scored: Int, yellowCards: Int, redCards: Int, totalInjuries: Int, goalRate: Double)
 
 object PlayerStats {
   val playerStatsMapper = {
@@ -15,7 +15,7 @@ object PlayerStats {
     get[String]("team_name") ~
     get[Long]("league_unit_id") ~
     get[String]("league_unit_name") ~
-    get[Double]("age") ~
+    get[Int]("age") ~
     get[Int]("games") ~
     get[Int]("played") ~
     get[Int]("scored") ~

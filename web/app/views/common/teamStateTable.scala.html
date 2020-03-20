@@ -41,7 +41,7 @@
                 <span class="rating">@{state.ratingEndOfMatch.toDouble / 10}</span>
             </div>
         </td>
-        <td class="value">@state.age</td>
+        <td class="value">@{state.age / 112},@{state.age % 112}</td>
         <td class="value">
             <svg width="10px" height="10px">
                 <line x1="0" y1="5" x2="10" y2="5" style="stroke:rgb(255,0,0);stroke-width:2"></line>
