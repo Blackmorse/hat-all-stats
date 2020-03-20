@@ -35,9 +35,6 @@ class DefaultService @Inject() (val hattrick: Hattrick,
 
   lazy val leagueSeasons = clickhouseDAO.seasonsForLeagues().groupBy(_.leagueId).mapValues(_.map(_.season)).mapValues(_.toSeq)
 
-  def seasonsWithLinks(leagueId: Int, seasonLinkFunction: Int => String): Seq[(String, String)] = leagueSeasons(leagueId)
-    .map(season => (season.toString, seasonLinkFunction(season)))
-
   def seasonForLeagueId(season: Int, leagueId: Int) = leagueIdToCountryNameMap(leagueId).getSeasonOffset + season
 
   def currentRound(leagueId: Int) = Math.min(leagueIdToCountryNameMap(leagueId).getMatchRound - 1, 14)

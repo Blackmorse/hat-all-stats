@@ -20,8 +20,8 @@ class ViewDataFactory @Inject() (val defaultService: DefaultService) {
                                          statisticsParameters: StatisticsParameters,
                                          statisticsCHRequest: StatisticsCHRequest[T],
                                          entities: List[T]): ViewData[T, V] = {
-    val seasonLinks = SeasonLinks(statisticsParameters.season,
-      defaultService.seasonsWithLinks(details.league.getLeagueId, seasonInfoUrlFunc(statisticsParameters, func)))
+    val seasonLinks = SeasonLinks(statisticsParameters.season, seasonInfoUrlFunc(statisticsParameters, func),
+      defaultService.leagueSeasons(details.league.getLeagueId), details.league.getSeasonOffset)
 
     val currentRound = defaultService.currentRound(details.league.getLeagueId)
     val statsTypeFunc = statTypeUrlFunc(statisticsParameters, func)

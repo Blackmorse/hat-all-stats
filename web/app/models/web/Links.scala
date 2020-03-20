@@ -14,6 +14,13 @@ case class PageSizeLinks(links: Seq[(String, String)], currentPageSize: Int)
 
 case class SortingDirectionLinks(links: Seq[(String, String)], currentDirection: SortingDirection)
 
+object SeasonLinks {
+  def apply(currentSeason: Int, seasonLinkFunction: Int => String,
+            seasons: Seq[Int], seasonOffset: Int): SeasonLinks = {
+    SeasonLinks(currentSeason + seasonOffset, seasons.map(season => ((season + seasonOffset).toString, seasonLinkFunction(season))))
+  }
+}
+
 object StatTypeLinks {
   def withAverages(statTypeUrlFunc: StatsType => String, round: Int, current: StatsType): StatTypeLinks = {
     val seq = Seq(Avg.function -> statTypeUrlFunc(Avg), Max.function -> statTypeUrlFunc(Max)) ++
