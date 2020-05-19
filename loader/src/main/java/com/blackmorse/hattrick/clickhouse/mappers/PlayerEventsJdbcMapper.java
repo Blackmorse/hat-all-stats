@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class PlayerEventsJdbcMapper extends AbstractJdbcMapper<PlayerEvents> {
-    public PlayerEventsJdbcMapper() {
-        super("hattrick.player_events");
+    public PlayerEventsJdbcMapper(String databaseName) {
+        super(databaseName + ".player_events");
     }
 
     @Override

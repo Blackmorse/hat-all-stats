@@ -8,9 +8,10 @@ api:
 spring:
   datasource:
     url:
-    driver-class-name:
+    driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
 
 clickhouse:
+  databaseName:
   batchSize:
     match:
     players:

@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class MatchDetailsJdbcMapper extends AbstractJdbcMapper<MatchDetails> {
-    public MatchDetailsJdbcMapper() {
-        super("hattrick.match_details");
+    public MatchDetailsJdbcMapper(String databaseName) {
+        super(databaseName + ".match_details");
     }
 
     @Override

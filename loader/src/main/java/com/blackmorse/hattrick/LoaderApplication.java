@@ -24,7 +24,6 @@ public class LoaderApplication {
 
             ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList("Россия"));
 //
-//            ctx.getBean(ScheduledLastLeagueLoader.class).load();{"data":{"playerId":403314670,"positionId":113},"channel":"position-player","offset":{"x":27,"y":45}}
         };
     }
 }
