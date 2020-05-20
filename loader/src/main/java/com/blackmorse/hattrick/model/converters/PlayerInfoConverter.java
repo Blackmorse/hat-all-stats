@@ -43,7 +43,7 @@ public class PlayerInfoConverter {
                                 .ratingEndOfMatch(0);
                     }
 
-                    builder.injuryLevel(player.getInjuryLevel())
+                    builder.injuryLevel(player.getInjuryLevel() == null ? -1 : player.getInjuryLevel())
                             .TSI(player.getTsi())
                             .salary(player.getSalary());
 

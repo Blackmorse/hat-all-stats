@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public class PlayerInfoJdbcMapper extends AbstractJdbcMapper<PlayerInfo> {
     public PlayerInfoJdbcMapper(String databaseName) {
-        super(databaseName + "player_info");
+        super(databaseName + ".player_info");
     }
 
     @Override

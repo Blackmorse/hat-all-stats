@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 @EnableScheduling
 @Configuration
 public class Config {
-    @Value("${spring.databaseName}")
+    @Value("${clickhouse.databaseName}")
     private String databaseName;
 
     @Bean("apiExecutor")

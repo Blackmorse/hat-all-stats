@@ -161,23 +161,26 @@ public class HattrickService {
                 .parallel()
                 .runOn(scheduler)
                 .flatMap(leagueUnitId -> {
-                    LeagueDetails leagueDetails = hattrick.getLeagueUnitById(leagueUnitId.getId());
+                        LeagueDetails leagueDetails = hattrick.getLeagueUnitById(leagueUnitId.getId());
 
-                    LeagueUnit leagueUnit = LeagueUnit.builder()
-                            .league(leagueUnitId.getLeague())
-                            .id(leagueUnitId.getId())
-                            .name(leagueDetails.getLeagueLevelUnitName())
-                            .level(leagueDetails.getLeagueLevel())
-                            .build();
+                        LeagueUnit leagueUnit = LeagueUnit.builder()
+                                .league(leagueUnitId.getLeague())
+                                .id(leagueUnitId.getId())
+                                .name(leagueDetails.getLeagueLevelUnitName())
+                                .level(leagueDetails.getLeagueLevel())
+                                .build();
 
-                    log.info("League details: {}", leagueUnitCounter.incrementAndGet());
-                    return Flowable.fromIterable(leagueDetails.getTeams().stream()
-                            .filter(team -> team.getUserId() != 0L)
-                            .map(team -> Team.builder()
-                                    .leagueUnit(leagueUnit)
-                                    .id(team.getTeamId())
-                                    .name(team.getTeamName())
-                                    .build()).collect(Collectors.toList()));
+                        log.info("League details: {}", leagueUnitCounter.incrementAndGet());
+                        if (leagueDetails.getTeams() == null) {
+                            return Flowable.empty();
+                        }
+                        return Flowable.fromIterable(leagueDetails.getTeams().stream()
+                                .filter(team -> team.getUserId() != 0L)
+                                .map(team -> Team.builder()
+                                        .leagueUnit(leagueUnit)
+                                        .id(team.getTeamId())
+                                        .name(team.getTeamName())
+                                        .build()).collect(Collectors.toList()));
                 })
                 .map(team -> {
                     log.info("teams: {}", teamsCounter.incrementAndGet());
