@@ -1,12 +1,12 @@
 package com.blackmorse.hattrick;
 
 import com.blackmorse.hattrick.clickhouse.ClickhouseWriter;
+import com.blackmorse.hattrick.clickhouse.PlayersJoiner;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.clickhouse.model.PlayerEvents;
 import com.blackmorse.hattrick.clickhouse.model.PlayerInfo;
 import com.blackmorse.hattrick.model.LeagueUnitId;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
-import com.blackmorse.hattrick.model.common.League;
 import com.blackmorse.hattrick.model.converters.MatchDetailsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerEventsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerInfoConverter;
@@ -27,6 +27,7 @@ public class CountriesLastLeagueMatchLoader {
     private final ClickhouseWriter<MatchDetails> matchDetailsWriter;
     private final ClickhouseWriter<PlayerEvents> playerEventsWriter;
     private final ClickhouseWriter<PlayerInfo> playerInfoWriter;
+    private final PlayersJoiner playersJoiner;
     private final MatchDetailsConverter matchDetailsConverter;
     private final PlayerEventsConverter playerEventsConverter;
     private final PlayerInfoConverter playerInfoConverter;
@@ -36,6 +37,7 @@ public class CountriesLastLeagueMatchLoader {
                                           @Qualifier("matchDetailsWriter") ClickhouseWriter<MatchDetails> matchDetailsWriter,
                                           @Qualifier("playerEventsWriter") ClickhouseWriter<PlayerEvents> playerEventsWriter,
                                           @Qualifier("playerInfoWriter") ClickhouseWriter<PlayerInfo> playerInfoWriter,
+                                          PlayersJoiner playersJoiner,
                                           MatchDetailsConverter matchDetailsConverter,
                                           PlayerEventsConverter playerEventsConverter,
                                           PlayerInfoConverter playerInfoConverter) {
@@ -43,6 +45,7 @@ public class CountriesLastLeagueMatchLoader {
         this.matchDetailsWriter = matchDetailsWriter;
         this.playerEventsWriter = playerEventsWriter;
         this.playerInfoWriter = playerInfoWriter;
+        this.playersJoiner = playersJoiner;
         this.matchDetailsConverter = matchDetailsConverter;
         this.playerEventsConverter = playerEventsConverter;
         this.playerInfoConverter = playerInfoConverter;
@@ -76,6 +79,11 @@ public class CountriesLastLeagueMatchLoader {
                 matchDetailsWriter.writeToClickhouse(lastMatchDetails);
                 playerEventsWriter.writeToClickhouse(playerEvents);
                 playerInfoWriter.writeToClickhouse(playerInfos);
+
+                if (!lastMatchDetails.isEmpty()) {
+                    MatchDetails matchDetails = lastMatchDetails.get(0);
+                    playersJoiner.join(matchDetails.getSeason(), matchDetails.getLeagueId(), matchDetails.getRound());
+                }
             }
         }
         hattrickService.shutDown();

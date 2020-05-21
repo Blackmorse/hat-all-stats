@@ -22,7 +22,7 @@ public class LoaderApplication {
 //            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList( "Эстония", "Чехия", "Латвия", "Черногория", "Италия"
 //            ));
 
-            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList("Россия"));
+            ctx.getBean(CountriesLastLeagueMatchLoader.class).load(Arrays.asList("Ангола"));
 //
         };
     }
