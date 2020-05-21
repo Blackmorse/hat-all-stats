@@ -56,36 +56,38 @@ public class CountriesLastLeagueMatchLoader {
         log.info("Starting to load countries: {}", countryNames);
 
         for (String countryName : countryNames) {
+            try {
+                List<LeagueUnitId> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(Arrays.asList(countryName));
 
+                List<List<LeagueUnitId>> allLeagueUnitIdsForCountryChunks = Lists.partition(allLeagueUnitIdsForCountry, 350);
 
-            List<LeagueUnitId> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(Arrays.asList(countryName));
+                for (List<LeagueUnitId> allLeagueUnitIdsForCountryChunk : allLeagueUnitIdsForCountryChunks) {
+                    List<TeamWithMatchDetails> lastTeamWithMatchDetails = hattrickService.getLastMatchDetails(allLeagueUnitIdsForCountryChunk);
 
-            List<List<LeagueUnitId>> allLeagueUnitIdsForCountryChunks = Lists.partition(allLeagueUnitIdsForCountry, 350);
+                    List<MatchDetails> lastMatchDetails = lastTeamWithMatchDetails.stream().map(matchDetailsConverter::convert).collect(Collectors.toList());
 
-            for (List<LeagueUnitId> allLeagueUnitIdsForCountryChunk : allLeagueUnitIdsForCountryChunks) {
-                List<TeamWithMatchDetails> lastTeamWithMatchDetails = hattrickService.getLastMatchDetails(allLeagueUnitIdsForCountryChunk);
+                    List<PlayerEvents> playerEvents = lastTeamWithMatchDetails.stream()
+                            .flatMap(playerEventsConverter::convert)
+                            .collect(Collectors.toList());
 
-                List<MatchDetails> lastMatchDetails = lastTeamWithMatchDetails.stream().map(matchDetailsConverter::convert).collect(Collectors.toList());
+                    List<PlayerInfo> playerInfos = hattrickService.getPlayersFromTeam(lastTeamWithMatchDetails)
+                            .stream()
+                            .flatMap(playerInfoConverter::convert)
+                            .collect(Collectors.toList());
 
-                List<PlayerEvents> playerEvents = lastTeamWithMatchDetails.stream()
-                        .flatMap(playerEventsConverter::convert)
-                        .collect(Collectors.toList());
+                    matchDetailsWriter.writeToClickhouse(lastMatchDetails);
+                    playerEventsWriter.writeToClickhouse(playerEvents);
+                    playerInfoWriter.writeToClickhouse(playerInfos);
 
-                List<PlayerInfo> playerInfos = hattrickService.getPlayersFromTeam(lastTeamWithMatchDetails)
-                        .stream()
-                        .flatMap(playerInfoConverter::convert)
-                        .collect(Collectors.toList());
-
-                matchDetailsWriter.writeToClickhouse(lastMatchDetails);
-                playerEventsWriter.writeToClickhouse(playerEvents);
-                playerInfoWriter.writeToClickhouse(playerInfos);
-
-                if (!lastMatchDetails.isEmpty()) {
-                    MatchDetails matchDetails = lastMatchDetails.get(0);
-                    playersJoiner.join(matchDetails.getSeason(), matchDetails.getLeagueId(), matchDetails.getRound());
+                    if (!lastMatchDetails.isEmpty()) {
+                        MatchDetails matchDetails = lastMatchDetails.get(0);
+                        playersJoiner.join(matchDetails.getSeason(), matchDetails.getLeagueId(), matchDetails.getRound());
+                    }
                 }
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
             }
         }
-        hattrickService.shutDown();
+//        hattrickService.shutDown();
     }
 }
