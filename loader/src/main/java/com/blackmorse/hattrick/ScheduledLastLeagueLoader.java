@@ -2,6 +2,7 @@ package com.blackmorse.hattrick;
 
 import com.blackmorse.hattrick.api.Hattrick;
 import com.blackmorse.hattrick.api.worlddetails.model.League;
+import com.blackmorse.hattrick.api.worlddetails.model.WorldDetails;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Component
@@ -39,7 +41,18 @@ public class ScheduledLastLeagueLoader {
         Timer timer = new Timer();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        hattrick.getWorldDetails().getLeagueList().stream().sorted(Comparator.comparing(League::getSeriesMatchDate))
+        WorldDetails worldDetails = hattrick.getWorldDetails();
+
+        Integer leaguesSize = worldDetails.getLeagueList().size();
+        AtomicInteger loadedCountries = new AtomicInteger(0);
+        countriesLastLeagueMatchLoader.setCallback(() -> {
+            Integer progress = loadedCountries.incrementAndGet();
+            if (progress >= leaguesSize) {
+                System.exit(0);
+            }
+        });
+
+        worldDetails.getLeagueList().stream().sorted(Comparator.comparing(League::getSeriesMatchDate))
                 .forEach(league -> {
                    Integer minutesOffset = countriesToMinutesOffset.getOrDefault(league.getLeagueId(), 0);
                     timer.schedule(new TimerTask() {

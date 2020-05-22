@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,6 +32,7 @@ public class CountriesLastLeagueMatchLoader {
     private final MatchDetailsConverter matchDetailsConverter;
     private final PlayerEventsConverter playerEventsConverter;
     private final PlayerInfoConverter playerInfoConverter;
+    private Runnable callback;
 
     @Autowired
     public CountriesLastLeagueMatchLoader(HattrickService hattrickService,
@@ -86,8 +88,16 @@ public class CountriesLastLeagueMatchLoader {
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
+            } finally {
+                if (callback != null) {
+                    callback.run();
+                }
             }
         }
 //        hattrickService.shutDown();
+    }
+
+    public void setCallback(Runnable callback) {
+        this.callback = callback;
     }
 }
