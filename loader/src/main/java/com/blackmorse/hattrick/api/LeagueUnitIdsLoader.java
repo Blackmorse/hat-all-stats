@@ -168,6 +168,10 @@ public class LeagueUnitIdsLoader {
         higherLeagueMap.put(154, 258073L);
         higherLeagueMap.put(155, 258477L);
         higherLeagueMap.put(156, 258498L);
+        higherLeagueMap.put(157, 258519L);
+        higherLeagueMap.put(158, 258540L);
+        higherLeagueMap.put(159, 258561L);
+        higherLeagueMap.put(160, 258582L);
         higherLeagueMap.put(1000, 256687L);
     }
 
