@@ -6,6 +6,7 @@ import com.blackmorse.hattrick.api.leaguedetails.model.LeagueDetails;
 import com.blackmorse.hattrick.api.leaguefixtures.model.LeagueFixtures;
 import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.teamdetails.model.TeamDetails;
+import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.model.TeamWithMatchAndPlayers;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.enums.MatchType;
@@ -228,6 +229,11 @@ public class HattrickService {
                 .sequential()
                 .toList()
             .blockingGet();
+    }
+
+    public League getLeagueByCountryName(String countryName) {
+        return hattrick.getWorldDetails().getLeagueList().stream()
+                .filter(league -> league.getLeagueName().equals(countryName)).findFirst().get();
     }
 
     public void shutDown() {

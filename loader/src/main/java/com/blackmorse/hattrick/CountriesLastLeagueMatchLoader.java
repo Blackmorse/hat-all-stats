@@ -1,7 +1,9 @@
 package com.blackmorse.hattrick;
 
+import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.clickhouse.ClickhouseWriter;
 import com.blackmorse.hattrick.clickhouse.PlayersJoiner;
+import com.blackmorse.hattrick.clickhouse.TeamRankCalculator;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.clickhouse.model.PlayerEvents;
 import com.blackmorse.hattrick.clickhouse.model.PlayerInfo;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Component
@@ -31,6 +34,7 @@ public class CountriesLastLeagueMatchLoader {
     private final MatchDetailsConverter matchDetailsConverter;
     private final PlayerEventsConverter playerEventsConverter;
     private final PlayerInfoConverter playerInfoConverter;
+    private final TeamRankCalculator teamRankCalculator;
 
     @Autowired
     public CountriesLastLeagueMatchLoader(HattrickService hattrickService,
@@ -40,7 +44,8 @@ public class CountriesLastLeagueMatchLoader {
                                           PlayersJoiner playersJoiner,
                                           MatchDetailsConverter matchDetailsConverter,
                                           PlayerEventsConverter playerEventsConverter,
-                                          PlayerInfoConverter playerInfoConverter) {
+                                          PlayerInfoConverter playerInfoConverter,
+                                          TeamRankCalculator teamRankCalculator) {
         this.hattrickService = hattrickService;
         this.matchDetailsWriter = matchDetailsWriter;
         this.playerEventsWriter = playerEventsWriter;
@@ -49,6 +54,7 @@ public class CountriesLastLeagueMatchLoader {
         this.matchDetailsConverter = matchDetailsConverter;
         this.playerEventsConverter = playerEventsConverter;
         this.playerInfoConverter = playerInfoConverter;
+        this.teamRankCalculator = teamRankCalculator;
     }
 
     public void load(List<String> countryNames) {
@@ -57,6 +63,8 @@ public class CountriesLastLeagueMatchLoader {
 
         for (String countryName : countryNames) {
             try {
+                League league = hattrickService.getLeagueByCountryName(countryName);
+
                 List<LeagueUnitId> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(Arrays.asList(countryName));
 
                 List<List<LeagueUnitId>> allLeagueUnitIdsForCountryChunks = Lists.partition(allLeagueUnitIdsForCountry, 350);
@@ -82,6 +90,7 @@ public class CountriesLastLeagueMatchLoader {
                     if (!lastMatchDetails.isEmpty()) {
                         MatchDetails matchDetails = lastMatchDetails.get(0);
                         playersJoiner.join(matchDetails.getSeason(), matchDetails.getLeagueId(), matchDetails.getRound());
+                        teamRankCalculator.calculate(league);
                     }
                 }
             } catch (Exception e) {
