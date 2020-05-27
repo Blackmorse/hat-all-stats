@@ -18,7 +18,6 @@ public class ClickhouseWriter<T> {
                             AbstractJdbcMapper<T> jdbcMapper) {
         this.template = template;
         this.jdbcMapper = jdbcMapper;
-
     }
 
     public void writeToClickhouse(List<T> batch) {

@@ -1,11 +1,13 @@
 package com.blackmorse.hattrick.clickhouse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class PlayersJoiner {
     private final static String INSERT_SQL = "INSERT INTO {database}.player_stats SELECT \n" +
             "    player_info.season, \n" +
@@ -58,6 +60,7 @@ public class PlayersJoiner {
 
 
     public void join(int season, int leagueId, int round) {
+        log.info("Calculating player stats events for leagueId {}", leagueId);
         jdbcTemplate.update(replace(INSERT_SQL, season, leagueId, round));
 
         jdbcTemplate.update(replace(ALTER_EVENTS_SQL, season, leagueId, round));
