@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,8 @@ public class ScheduledLastLeagueLoader {
     }
 
     public void load() {
+        AtomicBoolean isOver = new AtomicBoolean(false);
+
         Timer timer = new Timer();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -48,7 +52,7 @@ public class ScheduledLastLeagueLoader {
         countriesLastLeagueMatchLoader.setCallback(() -> {
             Integer progress = loadedCountries.incrementAndGet();
             if (progress >= leaguesSize) {
-                System.exit(0);
+                isOver.set(true);
             }
         });
 
@@ -62,6 +66,17 @@ public class ScheduledLastLeagueLoader {
                         }
                     }, new Date(league.getSeriesMatchDate().getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000));
                 });
+
+        while(true) {
+            try {
+                if (isOver.get()) {
+                    System.exit(0);
+                }
+                TimeUnit.SECONDS.sleep(10L);
+            } catch (InterruptedException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
     }
 
 
