@@ -4,27 +4,29 @@
 @(matches: List[WebTeamMatch], details: WebTeamDetails)(implicit messages: Messages)
 
 @main(details.teamName, header(details), leftBar(details), messages("menu.matches")) {
-
-<div class="content_body">
-    <table>
-        <tr>
-            <th>@messages("table.round")</th>
-            <th>@messages("table.team")</th>
-            <th class="value">@messages("table.formation")</th>
-            <th class="value">@messages("table.hatstats")</th>
-            <th class="value">@messages("table.result")</th>
-            <th>@messages("table.opposite_team")</th>
-        </tr>
-        @for(matc <- matches) {
-        <tr>
-            <td>@matc.teamMatchInfo.round</td>
-            <td><a class="table_link" href="@routes.TeamController.matches(matc.teamMatchInfo.teamId)">@matc.teamMatchInfo.teamName</a></td>
-            <td class="value">@matc.teamMatchInfo.formation</td>
-            <td class="value">@matc.teamMatchInfo.hatStats</td>
-            <td class="value"><i><b>@matc.teamGoals : @matc.enemyGoals</b></i></td>
-            <td><a class="table_link" href="@routes.TeamController.matches(matc.enemyTeamId)">@matc.enemyTeamName</a></td>
-        </tr>
+<section class="statistics_section">
+    <header class="statistics_header"><span class="statistics_header_triangle">&#x25BC;</span></header>
+    <div class="content_body">
+        <table>
+            <tr>
+                <th>@messages("table.round")</th>
+                <th>@messages("table.team")</th>
+                <th class="value">@messages("table.formation")</th>
+                <th class="value">@messages("table.hatstats")</th>
+                <th class="value">@messages("table.result")</th>
+                <th>@messages("table.opposite_team")</th>
+            </tr>
+            @for(matc <- matches) {
+            <tr>
+                <td>@matc.teamMatchInfo.round</td>
+                <td><a class="table_link" href="@routes.TeamController.matches(matc.teamMatchInfo.teamId)">@matc.teamMatchInfo.teamName</a></td>
+                <td class="value">@matc.teamMatchInfo.formation</td>
+                <td class="value">@matc.teamMatchInfo.hatStats</td>
+                <td class="value"><i><b>@matc.teamGoals : @matc.enemyGoals</b></i></td>
+                <td><a class="table_link" href="@routes.TeamController.matches(matc.enemyTeamId)">@matc.enemyTeamName</a></td>
+            </tr>
+            }
+        </table>
         }
-    </table>
-    }
-</div>
+    </div>
+</section>
