@@ -1,5 +1,6 @@
 package com.blackmorse.hattrick.clickhouse;
 
+import com.blackmorse.hattrick.api.worlddetails.model.League;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,12 +60,12 @@ public class PlayersJoiner {
     }
 
 
-    public void join(int season, int leagueId, int round) {
-        log.info("Calculating player stats events for leagueId {}", leagueId);
-        jdbcTemplate.update(replace(INSERT_SQL, season, leagueId, round));
+    public void join(League league) {
+        log.info("Calculating player stats events for leagueId {}", league.getLeagueId());
+        jdbcTemplate.update(replace(INSERT_SQL, league.getSeason(), league.getLeagueId(), league.getMatchRound()));
 
-        jdbcTemplate.update(replace(ALTER_EVENTS_SQL, season, leagueId, round));
-        jdbcTemplate.update(replace(ALTER_INFO_SQL, season, leagueId, round));
+        jdbcTemplate.update(replace(ALTER_EVENTS_SQL, league.getSeason(), league.getLeagueId(), league.getMatchRound()));
+        jdbcTemplate.update(replace(ALTER_INFO_SQL, league.getSeason(), league.getLeagueId(), league.getMatchRound()));
 
     }
 

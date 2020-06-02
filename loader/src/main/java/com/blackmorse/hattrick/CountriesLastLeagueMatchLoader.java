@@ -86,13 +86,9 @@ public class CountriesLastLeagueMatchLoader {
                     matchDetailsWriter.writeToClickhouse(lastMatchDetails);
                     playerEventsWriter.writeToClickhouse(playerEvents);
                     playerInfoWriter.writeToClickhouse(playerInfos);
-
-                    if (!lastMatchDetails.isEmpty()) {
-                        MatchDetails matchDetails = lastMatchDetails.get(0);
-                        playersJoiner.join(matchDetails.getSeason(), matchDetails.getLeagueId(), matchDetails.getRound());
-                        teamRankCalculator.calculate(league);
-                    }
                 }
+                playersJoiner.join(league);
+                teamRankCalculator.calculate(league);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
