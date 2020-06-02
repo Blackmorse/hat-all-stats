@@ -2,6 +2,7 @@ package com.blackmorse.hattrick;
 
 import com.blackmorse.hattrick.api.Hattrick;
 import com.blackmorse.hattrick.api.worlddetails.model.League;
+import com.blackmorse.hattrick.api.worlddetails.model.WorldDetails;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Component
@@ -36,10 +40,23 @@ public class ScheduledLastLeagueLoader {
     }
 
     public void load() {
+        AtomicBoolean isOver = new AtomicBoolean(false);
+
         Timer timer = new Timer();
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        hattrick.getWorldDetails().getLeagueList().stream().sorted(Comparator.comparing(League::getSeriesMatchDate))
+        WorldDetails worldDetails = hattrick.getWorldDetails();
+
+        Integer leaguesSize = worldDetails.getLeagueList().size();
+        AtomicInteger loadedCountries = new AtomicInteger(0);
+        countriesLastLeagueMatchLoader.setCallback(() -> {
+            Integer progress = loadedCountries.incrementAndGet();
+            if (progress >= leaguesSize) {
+                isOver.set(true);
+            }
+        });
+
+        worldDetails.getLeagueList().stream().sorted(Comparator.comparing(League::getSeriesMatchDate))
                 .forEach(league -> {
                    Integer minutesOffset = countriesToMinutesOffset.getOrDefault(league.getLeagueId(), 0);
                     timer.schedule(new TimerTask() {
@@ -49,6 +66,17 @@ public class ScheduledLastLeagueLoader {
                         }
                     }, new Date(league.getSeriesMatchDate().getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000));
                 });
+
+        while(true) {
+            try {
+                if (isOver.get()) {
+                    System.exit(0);
+                }
+                TimeUnit.SECONDS.sleep(10L);
+            } catch (InterruptedException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
     }
 
 
