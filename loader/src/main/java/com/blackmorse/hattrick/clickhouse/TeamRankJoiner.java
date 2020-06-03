@@ -82,12 +82,6 @@ public class TeamRankJoiner {
         jdbcTemplate.execute(sql);
     }
 
-    public static void main(String[] args) {
-        TeamRankJoiner teamRankJoiner = new TeamRankJoiner("hattrick_tmp", null);
-
-        System.out.println(teamRankJoiner.createSql(74, 35, 0, null));
-    }
-
     private String createSql(Integer season, Integer leagueId, Integer round, Integer divisionLevel) {
         String whereStatement = "(season = " + season +
                 ") AND (league_id = " + leagueId + ") " +

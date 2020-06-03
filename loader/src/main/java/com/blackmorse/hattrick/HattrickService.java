@@ -67,7 +67,7 @@ public class HattrickService {
                     Integer offsettedSeason = season + offset;
                     LeagueFixtures leagueFixtures = hattrick.leagueUnitFixturesById(leagueUnitId.getId(), offsettedSeason);
 
-                    log.info("LeagueFixture: {}", leagueUnitCounter.incrementAndGet());
+                    log.debug("LeagueFixture: {}", leagueUnitCounter.incrementAndGet());
 
                     LeagueUnit leagueUnit = //new SeasonHistoryLoader.LeagueUnit(leagueUnitId.getLeague(), leagueFixtures.getLeagueLevelUnitId(), leagueFixtures.getLeagueLevelUnitName());
                             LeagueUnit.builder()
@@ -116,7 +116,7 @@ public class HattrickService {
 
                     TeamDetails teamDetails = hattrick.teamDetails(teamWithMatches.getTeam().getId());
 
-                    log.info("{} teamDetails {} is OK: {}", teamsCounter.incrementAndGet(), teamWithMatches.getTeam().getLeagueUnit().getName(), teamDetails.getUser().getUserId() != 0L);
+                    log.debug("{} teamDetails {} is OK: {}", teamsCounter.incrementAndGet(), teamWithMatches.getTeam().getLeagueUnit().getName(), teamDetails.getUser().getUserId() != 0L);
                     return teamDetails.getUser().getUserId() != 0L;
                 })
                 .sequential()
@@ -149,7 +149,7 @@ public class HattrickService {
                 .runOn(scheduler)
                 .map(teamWithMatch -> {
                     com.blackmorse.hattrick.api.matchdetails.model.MatchDetails matchDetails = hattrick.getMatchDetails(teamWithMatch.getMatch().getId());
-                    log.info("Match {}", matchDetailsCounter.incrementAndGet());
+                    log.debug("Match {}", matchDetailsCounter.incrementAndGet());
                     return TeamWithMatchDetails.builder().teamWithMatch(teamWithMatch).matchDetails(matchDetails).build();
                 })
                 .sequential()
@@ -171,7 +171,7 @@ public class HattrickService {
                                 .level(leagueDetails.getLeagueLevel())
                                 .build();
 
-                        log.info("League details: {}", leagueUnitCounter.incrementAndGet());
+                        log.debug("League details: {}", leagueUnitCounter.incrementAndGet());
                         if (leagueDetails.getTeams() == null) {
                             return Flowable.empty();
                         }
@@ -184,7 +184,7 @@ public class HattrickService {
                                         .build()).collect(Collectors.toList()));
                 })
                 .map(team -> {
-                    log.info("teams: {}", teamsCounter.incrementAndGet());
+                    log.debug("teams: {}", teamsCounter.incrementAndGet());
                     List<com.blackmorse.hattrick.api.matchesarchive.model.Match> matchList = hattrick.getCurrentSeasonMatches(team.getId()).getTeam().getMatchList();
 
                     Match match = null;
@@ -209,7 +209,7 @@ public class HattrickService {
         })
                 .filter(teamWithMatch -> teamWithMatch.getMatch() != null)
                 .map(teamWithMatch -> {
-                    log.info("match details: {}", matchDetailsCounter.incrementAndGet());
+                    log.debug("match details: {}", matchDetailsCounter.incrementAndGet());
                     com.blackmorse.hattrick.api.matchdetails.model.MatchDetails matchDetails = hattrick.getMatchDetails(teamWithMatch.getMatch().getId());
                     return TeamWithMatchDetails.builder().teamWithMatch(teamWithMatch).matchDetails(matchDetails).build();
                 }).sequential()
@@ -222,7 +222,7 @@ public class HattrickService {
                 .parallel()
                 .runOn(scheduler)
                 .map(teamWithMatchDetail -> {
-                    log.info("Players for teams: {}", teamsWithPlayersCounter.incrementAndGet());
+                    log.debug("Players for teams: {}", teamsWithPlayersCounter.incrementAndGet());
                     return new TeamWithMatchAndPlayers(teamWithMatchDetail.getTeamWithMatch(),
                             hattrick.getPlayersFromTeam(teamWithMatchDetail.getTeamWithMatch().getTeam().getId()));
                 })

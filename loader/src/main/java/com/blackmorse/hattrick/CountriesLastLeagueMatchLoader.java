@@ -65,11 +65,13 @@ public class CountriesLastLeagueMatchLoader {
             try {
                 League league = hattrickService.getLeagueByCountryName(countryName);
 
+                log.info("Load country {}, leagueId: {}", countryName, league.getLeagueId());
                 List<LeagueUnitId> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(Arrays.asList(countryName));
 
                 List<List<LeagueUnitId>> allLeagueUnitIdsForCountryChunks = Lists.partition(allLeagueUnitIdsForCountry, 350);
 
                 for (List<LeagueUnitId> allLeagueUnitIdsForCountryChunk : allLeagueUnitIdsForCountryChunks) {
+                    log.info("Chunk of leagueUnits size {} for ({}, {})", allLeagueUnitIdsForCountryChunk.size(), countryName, league.getLeagueId());
                     List<TeamWithMatchDetails> lastTeamWithMatchDetails = hattrickService.getLastMatchDetails(allLeagueUnitIdsForCountryChunk);
 
                     List<MatchDetails> lastMatchDetails = lastTeamWithMatchDetails.stream().map(matchDetailsConverter::convert).collect(Collectors.toList());
@@ -83,11 +85,16 @@ public class CountriesLastLeagueMatchLoader {
                             .flatMap(playerInfoConverter::convert)
                             .collect(Collectors.toList());
 
+                    log.info("Writing match details for ({}, {}) to Clickhouse: {} rows", lastMatchDetails.size(), countryName, league.getLeagueId());
                     matchDetailsWriter.writeToClickhouse(lastMatchDetails);
+                    log.info("Writing player events for ({}, {}) to Clickhouse: {} rows", playerEvents.size(), countryName, league.getLeagueId());
                     playerEventsWriter.writeToClickhouse(playerEvents);
+                    log.info("Writing player info for ({}, {}) to Clickhouse: {} rows", playerInfos.size(), countryName, league.getLeagueId());
                     playerInfoWriter.writeToClickhouse(playerInfos);
                 }
+                log.info("Joining player_stats for ({}, {}) ", countryName, league.getLeagueId());
                 playersJoiner.join(league);
+                log.info("Calculating team ranks for ({}, {})", countryName, league.getLeagueId());
                 teamRankCalculator.calculate(league);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);

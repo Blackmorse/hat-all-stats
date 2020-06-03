@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,16 +56,20 @@ public class ScheduledLastLeagueLoader {
                 isOver.set(true);
             }
         });
-
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
         worldDetails.getLeagueList().stream().sorted(Comparator.comparing(League::getSeriesMatchDate))
                 .forEach(league -> {
                    Integer minutesOffset = countriesToMinutesOffset.getOrDefault(league.getLeagueId(), 0);
-                    timer.schedule(new TimerTask() {
+
+                   Date time = new Date(league.getSeriesMatchDate().getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000);
+                   timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
                             executorService.submit(() -> countriesLastLeagueMatchLoader.load(Arrays.asList(league.getLeagueName())));
                         }
-                    }, new Date(league.getSeriesMatchDate().getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000));
+                    }, time);
+
+                    log.info("Scheduled loading ({}, {}) to {}", league.getLeagueName(), league.getLeagueId(), format.format(time));
                 });
 
         while(true) {

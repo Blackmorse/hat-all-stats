@@ -204,13 +204,13 @@ public class LeagueUnitIdsLoader {
                     if (leagueWithLevel.league.getId() != 1 /* Sweden */) {
                         if (leagueWithLevel.getLevel() == 1) {
                             res.add(LeagueUnitId.builder().league(leagueWithLevel.league).id(higherLeagueMap.get(leagueWithLevel.league.getId())).build());
-                            log.info("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
+                            log.debug("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
                         } else {
                             Search search = hattrick.searchLeagueUnits(leagueWithLevel.league.getId(), Hattrick.arabToRomans.get(leagueWithLevel.level) + ".", 0);
                             IntStream.range(0, search.getPages()).forEach(page -> {
                                 Search searchPage = hattrick.searchLeagueUnits(leagueWithLevel.league.getId(), Hattrick.arabToRomans.get(leagueWithLevel.level) + ".", page);
                                 searchPage.getSearchResults().forEach(result -> {
-                                    log.info("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
+                                    log.debug("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
                                     res.add(LeagueUnitId.builder().league(leagueWithLevel.league).id(result.getResultId()).build());
                                 });
                             });
@@ -218,7 +218,7 @@ public class LeagueUnitIdsLoader {
                     } else {
                         if (leagueWithLevel.getLevel() == 1) {
                             res.add(LeagueUnitId.builder().league(leagueWithLevel.league).id(higherLeagueMap.get(leagueWithLevel.league.getId())).build());
-                            log.info("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
+                            log.debug("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
                         } else if (leagueWithLevel.getLevel() == 2) {
                             List<Result> searchResults = hattrick.searchLeagueUnits(leagueWithLevel.getLeague().getId(), "Ia", 0)
                                     .getSearchResults();
@@ -226,7 +226,7 @@ public class LeagueUnitIdsLoader {
 
                             IntStream.range(0, 4).mapToObj(i -> LeagueUnitId.builder().league(leagueWithLevel.league).id(baseNumber + i).build())
                                 .forEach(leagueUnitId -> {
-                                    log.info("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
+                                    log.debug("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
                                     res.add(leagueUnitId);
                                 });
                         } else if (leagueWithLevel.getLevel() == 3) {
@@ -236,7 +236,7 @@ public class LeagueUnitIdsLoader {
 
                             IntStream.range(0, 16).mapToObj(i -> LeagueUnitId.builder().league(leagueWithLevel.league).id(baseNumber + i).build())
                                     .forEach(leagueUnitId -> {
-                                        log.info("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
+                                        log.debug("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
                                         res.add(leagueUnitId);
                                     });
                         } else {
@@ -244,7 +244,7 @@ public class LeagueUnitIdsLoader {
                             IntStream.range(0, search.getPages()).forEach(page -> {
                                 Search searchPage = hattrick.searchLeagueUnits(leagueWithLevel.league.getId(), Hattrick.arabToRomans.get(leagueWithLevel.level - 1) + ".", page);
                                 searchPage.getSearchResults().forEach(result -> {
-                                    log.info("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
+                                    log.debug("{} league units loaded", leagueUnitIdCounter.incrementAndGet());
                                     res.add(LeagueUnitId.builder().league(leagueWithLevel.league).id(result.getResultId()).build());
                                 });
                             });

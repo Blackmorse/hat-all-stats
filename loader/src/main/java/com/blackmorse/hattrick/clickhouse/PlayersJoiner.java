@@ -61,11 +61,17 @@ public class PlayersJoiner {
 
 
     public void join(League league) {
-        log.info("Calculating player stats events for leagueId {}", league.getLeagueId());
-        jdbcTemplate.update(replace(INSERT_SQL, league.getSeason(), league.getLeagueId(), league.getMatchRound()));
+        String insert = replace(INSERT_SQL, league.getSeason(), league.getLeagueId(), league.getMatchRound());
+        log.debug("Executing insert into player_stats: {}", insert);
+        jdbcTemplate.update(insert);
 
-        jdbcTemplate.update(replace(ALTER_EVENTS_SQL, league.getSeason(), league.getLeagueId(), league.getMatchRound()));
-        jdbcTemplate.update(replace(ALTER_INFO_SQL, league.getSeason(), league.getLeagueId(), league.getMatchRound()));
+        String truncateEvents = replace(ALTER_EVENTS_SQL, league.getSeason(), league.getLeagueId(), league.getMatchRound());
+        log.debug("Truncating player_events: {}", truncateEvents);
+        jdbcTemplate.update(truncateEvents);
+
+        String truncateInfo = replace(ALTER_INFO_SQL, league.getSeason(), league.getLeagueId(), league.getMatchRound());
+        log.debug("Truncating player_info: {}", truncateInfo);
+        jdbcTemplate.update(truncateInfo);
 
     }
 

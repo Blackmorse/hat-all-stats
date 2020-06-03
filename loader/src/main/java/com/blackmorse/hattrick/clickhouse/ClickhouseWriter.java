@@ -22,13 +22,13 @@ public class ClickhouseWriter<T> {
 
     public void writeToClickhouse(List<T> batch) {
         try {
-            log.info("Writing {} lines with sql {}", batch.size(), jdbcMapper.getSql());
+            log.debug("Writing {} lines with sql {}", batch.size(), jdbcMapper.getSql());
 
             MapSqlParameterSource[] mapSqlParameterSources = batch.stream().map(jdbcMapper.getTMapFunction())
                     .map(MapSqlParameterSource::new).toArray(MapSqlParameterSource[]::new);
 
             template.batchUpdate(jdbcMapper.getSql(), mapSqlParameterSources);
-            log.info("Success");
+            log.info("{} rows successfully written", batch.size());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             batch.forEach(entry -> log.trace(entry.toString()));
