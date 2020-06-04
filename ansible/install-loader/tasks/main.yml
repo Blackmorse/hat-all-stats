@@ -1,0 +1,11 @@
+---
+# tasks file for install-loader
+ - name: create logs directory
+   file:
+     path: "{{ base_project_directory }}/logs"
+     state: directory
+
+ - name: configure logback
+   template:
+     src: logback.xml.j2
+     dest: "{{ base_project_directory }}/hat-all-stats/loader/src/main/resources/logback.xml"

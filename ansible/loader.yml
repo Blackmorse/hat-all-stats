@@ -1,0 +1,3 @@
+ - hosts: master-server
+   roles:
+     - install-loader
