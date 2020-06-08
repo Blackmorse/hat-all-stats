@@ -7,6 +7,7 @@ menu.team_state=Показатели команд в туре
 menu.player_state=Показатели игроков
 menu.formal_team_stats=Турнирные показатели команд
 menu.matches=Матчи
+menu.team_rankings=Положение команды
 
 #Table
 table.position_abbr=П
@@ -60,6 +61,9 @@ table.total_injury_number_abbr=Кол-во травм
 table.total_injury_number=Общее количество травм
 table.average_age_abbr=СВ
 table.average_age=Средний возраст
+
+#team_rankings
+team_rankings.ranking=Рейтинг в
 
 #filter
 filter.page_size=Размер страницы:

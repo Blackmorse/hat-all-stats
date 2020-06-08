@@ -1,0 +1,184 @@
+@import controllers.WebTeamDetails
+@import utils.LeagueNameParser
+@import models.clickhouse.TeamRankings
+@import models.web.Round
+@import service.DefaultService
+@import models.web.StatisticsParameters
+
+@(leagueTeamRankings: List[TeamRankings], divisionLevelTeamRankings: List[TeamRankings], details: WebTeamDetails)(implicit messages: Messages)
+
+@bestTeamsLeagueLink(leagueId: Int, statisticsParameters: Option[StatisticsParameters], selectedTeamId: Option[Long]) = @{
+        routes.LeagueController.bestTeams(leagueId, statisticsParameters, selectedTeamId)
+    }
+
+@bestTeamsDivisionLevelLink(leagueId: Int, divisionLevel: Int, statisticsParameters: Option[StatisticsParameters], selectedTeamId: Option[Long]) = @{
+        routes.DivisionLevelController.bestTeams(leagueId, divisionLevel, statisticsParameters, selectedTeamId)
+    }
+
+@playerStateLeagueLink(leagueId: Int, statisticsParameters: Option[StatisticsParameters], selectedTeamId: Option[Long]) = @{
+    routes.LeagueController.teamState(leagueId, statisticsParameters, selectedTeamId)
+})
+
+@playerStateDivisionLevelLink(leagueId: Int, divisionLevel: Int, statisticsParameters: Option[StatisticsParameters], selectedTeamId: Option[Long]) = @{
+    routes.DivisionLevelController.teamState(leagueId, divisionLevel, statisticsParameters, selectedTeamId)
+}
+
+
+@lastLeagueTeamRanking = @{leagueTeamRankings.headOption}
+@previousLeagueTeamRanking = @{leagueTeamRankings.lift(1)}
+
+@lastDivisionTeamRanking = @{divisionLevelTeamRankings.headOption}
+@previousDivisionTeamRanking = @{divisionLevelTeamRankings.lift(1)}
+
+@main(details.teamName, header(details), leftBar(details), messages("menu.team_rankings")) {
+    <section class="statistics_section">
+        <header class="statistics_header">
+            <span class="statistics_header_triangle">&#x25BC;</span>
+        </header>
+
+        @if(lastDivisionTeamRanking.isDefined) {
+            <div class="rankings_grid">
+                <div class="rankings_grid_row">
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.hatstats"),
+                        teamRankings => teamRankings.hatstats,
+                        teamRankings => teamRankings.hatstatsPosition,
+                        "hatstats",
+                        details,
+                        bestTeamsLeagueLink,
+                        bestTeamsDivisionLevelLink)
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.attack"),
+                        teamRankings => teamRankings.attack,
+                        teamRankings => teamRankings.attackPosition,
+                        "attack",
+                        details,
+                        bestTeamsLeagueLink,
+                        bestTeamsDivisionLevelLink,
+                        attack => Html((attack / 3).toString))
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.defense"),
+                        teamRankings => teamRankings.defense,
+                        teamRankings => teamRankings.defensePosition,
+                        "defense",
+                        details,
+                        bestTeamsLeagueLink,
+                        bestTeamsDivisionLevelLink,
+                        defense => Html((defense / 3).toString))
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.midfield"),
+                        teamRankings => teamRankings.midfield,
+                        teamRankings => teamRankings.midfieldPosition,
+                        "midfield",
+                        details,
+                        bestTeamsLeagueLink,
+                        bestTeamsDivisionLevelLink)
+                </div>
+                <div class="rankings_grid_row">
+
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.age"),
+                        teamRankings => teamRankings.age,
+                        teamRankings => teamRankings.agePosition,
+                        "age",
+                        details,
+                        playerStateLeagueLink,
+                        playerStateDivisionLevelLink,
+                        age => common.formatters.ageFormatter(age))
+
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.total_injury_weeks"),
+                        teamRankings => teamRankings.injury,
+                        teamRankings => teamRankings.injuryPosition,
+                        "injury",
+                        details,
+                        playerStateLeagueLink,
+                        playerStateDivisionLevelLink,
+                        injury => common.formatters.injuryFormatter(injury))
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.total_injury_number"),
+                        teamRankings => teamRankings.injuryCount,
+                        teamRankings => teamRankings.injuryCountPosition,
+                        "injury_count",
+                        details,
+                        playerStateLeagueLink,
+                        playerStateDivisionLevelLink,
+                        injuryCount => Html(injuryCount.toString)
+                    )
+                </div>
+                <div class="rankings_grid_row">
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.tsi"),
+                        teamRankings => teamRankings.tsi,
+                        teamRankings => teamRankings.tsiPosition,
+                        "tsi",
+                        details,
+                        playerStateLeagueLink,
+                        playerStateDivisionLevelLink,
+                        tsi => common.formatters.tsiFormatter(tsi)
+                    )
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.salary") + ", " + details.league.getCountry.getCurrencyName,
+                        teamRankings => teamRankings.salary,
+                        teamRankings => teamRankings.salaryPosition,
+                        "salary",
+                        details,
+                        playerStateLeagueLink,
+                        playerStateDivisionLevelLink,
+                        salary => common.formatters.salaryFormatter(salary, details.league))
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.rating"),
+                        teamRankings => teamRankings.rating,
+                        teamRankings => teamRankings.ratingPosition,
+                        "rating",
+                        details,
+                        playerStateLeagueLink,
+                        playerStateDivisionLevelLink,
+                        rating => common.formatters.ratingFormatter(rating))
+                    @common.teamRanking(lastLeagueTeamRanking.get,
+                        previousLeagueTeamRanking,
+                        lastDivisionTeamRanking.get,
+                        previousDivisionTeamRanking,
+                        messages("table.rating_end_of_match"),
+                        teamRankings => teamRankings.ratingEndOfMatch,
+                        teamRankings => teamRankings.ratingEndOfMatchPosition,
+                        "rating_end_of_match",
+                        details,
+                        playerStateLeagueLink,
+                        playerStateDivisionLevelLink,
+                        rating => common.formatters.ratingFormatter(rating))
+                </div>
+            </div>
+        }
+    </section>
+}

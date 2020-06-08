@@ -31,7 +31,8 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
                        statisticsType: StatisticsType,
                        func: StatisticsParameters => Call,
                        statisticsCHRequest: StatisticsCHRequest[T],
-                       viewFunc: ViewData[T, WebLeagueDetails] => Messages => play.twirl.api.HtmlFormat.Appendable) = Action.async { implicit request =>
+                       viewFunc: ViewData[T, WebLeagueDetails] => Messages => play.twirl.api.HtmlFormat.Appendable,
+                       selectedId: Option[Long] = None) = Action.async { implicit request =>
     val statsType = statisticsType match {
       case AvgMax => Avg
       case Accumulated => Accumulate
@@ -55,18 +56,22 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
         statisticsType = statisticsType,
         statisticsParameters = statisticsParameters,
         statisticsCHRequest = statisticsCHRequest,
-        entities = entities))
+        entities = entities,
+        selectedId = selectedId))
       .map(viewData => Ok(viewFunc(viewData).apply(messages)))
   }
 
-  def bestTeams(leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) = {
+  def bestTeams(leagueId: Int,
+                statisticsParametersOpt: Option[StatisticsParameters],
+                selectedTeamId: Option[Long]) = {
     stats(leagueId = leagueId,
       statisticsParametersOpt = statisticsParametersOpt,
       sortColumn = "hatstats",
       statisticsType = AvgMax,
       func = sp => routes.LeagueController.bestTeams(leagueId, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.bestHatstatsTeamRequest,
-      viewFunc = { viewData: web.ViewData[TeamRating, WebLeagueDetails] => messages => views.html.league.bestTeams(viewData)(messages) }
+      viewFunc = { viewData: web.ViewData[TeamRating, WebLeagueDetails] => messages => views.html.league.bestTeams(viewData)(messages) },
+      selectedId = selectedTeamId
     )
   }
 
@@ -90,14 +95,17 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       viewFunc = {viewData: web.ViewData[PlayerStats, WebLeagueDetails] => messages => views.html.league.playerStats(viewData)(messages)}
     )
 
-  def teamState(leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
+  def teamState(leagueId: Int,
+                statisticsParametersOpt: Option[StatisticsParameters],
+                selectedTeam: Option[Long] = None) =
     stats(leagueId = leagueId,
       statisticsParametersOpt =  statisticsParametersOpt,
       sortColumn = "rating",
       statisticsType = OnlyRound,
       func = sp => routes.LeagueController.teamState(leagueId, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.teamStateRequest,
-      viewFunc = {viewData: web.ViewData[TeamState, WebLeagueDetails] => messages => views.html.league.teamState(viewData)(messages)})
+      viewFunc = {viewData: web.ViewData[TeamState, WebLeagueDetails] => messages => views.html.league.teamState(viewData)(messages)},
+      selectedId = selectedTeam)
 
   def playerState(leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
     stats(leagueId = leagueId,

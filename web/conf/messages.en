@@ -7,6 +7,7 @@ menu.team_state=Team round stats
 menu.player_state=Player round stats
 menu.formal_team_stats=Team season stats
 menu.matches=Matches
+menu.team_rankings=Team Rankings
 
 #Table
 table.position_abbr=P
@@ -60,6 +61,9 @@ table.total_injury_number_abbr=InjN
 table.total_injury_number=Total Injury Number
 table.average_age_abbr=AA
 table.average_age=Average age
+
+#team_rankings
+team_rankings.ranking=Ranking at 
 
 #filter
 filter.page_size=Page:

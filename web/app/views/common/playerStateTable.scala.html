@@ -6,8 +6,7 @@
 @(viewData: ViewData[PlayersState, AbstractWebDetails])(implicit messages: Messages)
 
 @playerStates = @{viewData.webPagedEntities}
-@formatter = @{java.text.NumberFormat.getIntegerInstance}
-<table>
+<table class="statistics_table">
     <tr>
         <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>
         <th>@messages("table.player")</th>
@@ -28,33 +27,14 @@
         <td>@{playerState.firstName + " " + playerState.lastName}</td>
         <td><a class="table_link" href="@routes.TeamController.matches(playerState.teamId)">@playerState.teamName</a></td>
         <td class="value league"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(playerState.leagueUnitId)">@playerState.leagueUnitName</a></td>
-        <td class="value">@{playerState.age / 112},@{playerState.age % 112}</td>
-        <td class="value">@formatter.format(playerState.tsi)</td>
+        <td class="value">@common.formatters.ageFormatter(playerState.age)</td>
+        <td class="value">@common.formatters.tsiFormatter(playerState.tsi)</td>
         <td class="value">
-            @{formatter.format((playerState.salary / viewData.details.league.getCountry.getCurrencyRate).toInt)}
+            @common.formatters.salaryFormatter(playerState.salary, viewData.details.league)
         </td>
-        <td class="value">
-            <div class="rating">
-                <img class="star" src="@routes.Assets.versioned("images/star.svg")">
-                <span class="mult">x</span>
-                <span class="rating">@{playerState.rating.toDouble / 10}</span>
-            </div>
-        </td>
-        <td class="value">
-            <div class="rating">
-                <img class="star" src="@routes.Assets.versioned("images/star.svg")">
-                <span class="mult">x</span>
-                <span class="rating">@{playerState.ratingEndOfMatch.toDouble / 10}</span>
-            </div>
-        </td>
-        <td class="value">
-            <svg width="10px" height="10px">
-                <line x1="0" y1="5" x2="10" y2="5" style="stroke:rgb(255,0,0);stroke-width:2"></line>
-                <line x1="5" y1="0" x2="5" y2="10" style="stroke:rgb(255,0,0);stroke-width:2"></line>
-            </svg>
-            @{if(playerState.injuryLevel == -1) 0 else playerState.injuryLevel}
-
-        </td>
+        <td class="value">@common.formatters.ratingFormatter(playerState.rating)</td>
+        <td class="value">@common.formatters.ratingFormatter(playerState.ratingEndOfMatch)</td>
+        <td class="value">@common.formatters.injuryFormatter(playerState.injuryLevel)</td>
         <td class="value"><span class="red card"></span><span class="mult">x</span>@playerState.redCards</td>
         <td class="value"><span class="yellow card"></span><span class="mult">x</span>@playerState.yellowCards</td>
     </tr>

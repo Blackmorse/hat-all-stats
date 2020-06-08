@@ -1,7 +1,8 @@
 @import controllers.WebTeamDetails
-
+@import controllers.WebTeamDetails
 @(details: WebTeamDetails)(implicit messages: Messages)
     <header class="left_bar_header">@messages("menu.statistics")</header>
+    <a class="left_bar_link" href="@routes.TeamController.teamRankings(details.teamId)">@messages("menu.team_rankings")</a>
 
     <a class="left_bar_link" href="@routes.TeamController.matches(details.teamId)">@messages("menu.matches")</a>
 

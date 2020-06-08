@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import com.google.inject.Inject
 import databases.clickhouse.StatisticsCHRequest
 import javax.inject.Singleton
-import models.clickhouse.{LeagueSeasons, TeamMatchInfo}
+import models.clickhouse.{LeagueSeasons, TeamMatchInfo, TeamRankings, TeamRating}
 import models.web.{Accumulate, Desc, MultiplyRoundsType, Round, SortingDirection, StatsType}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
@@ -73,6 +73,49 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
       teamSql.as(TeamMatchInfo.teamMatchInfoMapper.*)
     }
   }
+
+  def teamRankings(season: Int, leagueId: Int, divisionLevel: Int,
+                   leagueUnitId: Long, teamId: Long) = Future(
+    db.withConnection { implicit  connection =>
+      val teamRankingsSql = SqlBuilder("""SELECT
+        |    team_id,
+        |    team_name,
+        |    round,
+        |    rank_type,
+        |    match_id,
+        |    hatstats,
+        |    hatstats_position,
+        |    attack,
+        |    attack_position,
+        |    midfield,
+        |    midfield_position,
+        |    defense,
+        |    defense_position,
+        |    tsi,
+        |    tsi_position,
+        |    salary,
+        |    salary_position,
+        |    rating,
+        |    rating_position,
+        |    rating_end_of_match,
+        |    rating_end_of_match_position,
+        |    toInt32(age) as age,
+        |    age_position,
+        |    injury,
+        |    injury_position,
+        |    injury_count,
+        |    injury_count_position
+        |FROM hattrick.team_rankings
+        | __where__
+        |ORDER BY
+        |    rank_type ASC,
+        |    round ASC
+        |    """.stripMargin)
+        .season(season).leagueId(leagueId).divisionLevel(divisionLevel).leagueUnitId(leagueUnitId).teamId(teamId)
+        .build
+
+        teamRankingsSql.as(TeamRankings.teamRankingsMapper.*)
+  } )
 
   def seasonsForLeagues() =  {
     db.withConnection { implicit connection =>

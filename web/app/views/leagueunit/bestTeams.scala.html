@@ -10,8 +10,10 @@
 
 @main(viewData.details.leagueUnitName, header(viewData.details), leftBar(viewData.details), messages("menu.best_teams")) {
     <section class="statistics_section">
-        <header class="statistics_header"><span class="statistics_header_triangle">&#x25BC;</span></header>
-            <table>
+        <header class="statistics_header">
+            <span class="statistics_header_triangle">&#x25BC;</span>
+        </header>
+            <table class="statistics_table">
                 <tr>
                 <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>
                 <th>@messages("table.team")</th>

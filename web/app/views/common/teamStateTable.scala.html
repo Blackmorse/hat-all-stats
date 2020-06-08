@@ -5,8 +5,7 @@
 
 @(viewData: ViewData[TeamState, AbstractWebDetails])(implicit messages: Messages)
 @teamStates = @{viewData.webPagedEntities}
-@formatter = @{java.text.NumberFormat.getIntegerInstance}
-<table>
+<table class="statistics_table">
     <tr>
         <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>
         <th>@messages("table.team")</th>
@@ -20,35 +19,17 @@
         <th class="value hint" popped-hint="@messages("table.total_injury_number")">@messages("table.total_injury_number_abbr")</th>
     </tr>
     @for((state, index) <- teamStates.entities.zipWithIndex) {
-    <tr>
+    <tr @{if(teamStates.selectedId.contains(state.teamId)) "class=selected_row"}>
         <td>@{teamStates.pageInfo.pageSize * teamStates.pageInfo.page + index + 1}</td>
         <td><a class="table_link" href="@routes.TeamController.matches(state.teamId)">@state.teamName</a></td>
         <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId)">@state.leagueUnitName</a></td>
-        <td class="value">@formatter.format(state.tsi)</td>
+        <td class="value">@common.formatters.tsiFormatter(state.tsi)</td>
         <td class="value">
-            @{formatter.format((state.salary / viewData.details.league.getCountry.getCurrencyRate).toInt)}
-        <td class="value">
-            <div class="rating">
-                <img class="star" src="@routes.Assets.versioned("images/star.svg")">
-                <span class="mult">x</span>
-                <span class="rating">@{state.rating.toDouble / 10}</span>
-            </div>
-        </td>
-        <td class="value">
-            <div class="rating">
-                <img class="star" src="@routes.Assets.versioned("images/star.svg")">
-                <span class="mult">x</span>
-                <span class="rating">@{state.ratingEndOfMatch.toDouble / 10}</span>
-            </div>
-        </td>
-        <td class="value">@{state.age / 112},@{state.age % 112}</td>
-        <td class="value">
-            <svg width="10px" height="10px">
-                <line x1="0" y1="5" x2="10" y2="5" style="stroke:rgb(255,0,0);stroke-width:2"></line>
-                <line x1="5" y1="0" x2="5" y2="10" style="stroke:rgb(255,0,0);stroke-width:2"></line>
-            </svg>
-            @state.injury
-        </td>
+            @common.formatters.salaryFormatter(state.salary, viewData.details.league)
+        <td class="value">@common.formatters.ratingFormatter(state.rating)</td>
+        <td class="value">@common.formatters.ratingFormatter(state.ratingEndOfMatch)</td>
+        <td class="value">@common.formatters.ageFormatter(state.age)</td>
+        <td class="value">@common.formatters.injuryFormatter(state.injury)</td>
         <td class="value">@state.injuryCount</td>
     </tr>
     }

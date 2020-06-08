@@ -5,9 +5,12 @@
 
 @main(details.teamName, header(details), leftBar(details), messages("menu.matches")) {
 <section class="statistics_section">
-    <header class="statistics_header"><span class="statistics_header_triangle">&#x25BC;</span></header>
+    <header class="statistics_header">
+        <span class="statistics_header_triangle">&#x25BC;</span>
+        <span class="statistics_header_text"></span>
+    </header>
     <div class="content_body">
-        <table>
+        <table class="statistics_table">
             <tr>
                 <th>@messages("table.round")</th>
                 <th>@messages("table.team")</th>

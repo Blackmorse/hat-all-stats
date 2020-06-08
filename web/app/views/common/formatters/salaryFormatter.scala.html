@@ -1,0 +1,7 @@
+@import com.blackmorse.hattrick.api.worlddetails.model.League
+
+@(salary: Int, league: League)
+
+@formatter = @{java.text.NumberFormat.getIntegerInstance}
+
+@{formatter.format((salary / league.getCountry.getCurrencyRate).toInt)}

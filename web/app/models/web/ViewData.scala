@@ -19,7 +19,8 @@ class ViewDataFactory @Inject() (val defaultService: DefaultService) {
                                          statisticsType: StatisticsType,
                                          statisticsParameters: StatisticsParameters,
                                          statisticsCHRequest: StatisticsCHRequest[T],
-                                         entities: List[T]): ViewData[T, V] = {
+                                         entities: List[T],
+                                         selectedId: Option[Long] = None): ViewData[T, V] = {
     val seasonLinks = SeasonLinks(statisticsParameters.season, seasonInfoUrlFunc(statisticsParameters, func),
       defaultService.leagueSeasons(details.league.getLeagueId), details.league.getSeasonOffset)
 
@@ -37,7 +38,7 @@ class ViewDataFactory @Inject() (val defaultService: DefaultService) {
 
     val sortingDirectionLinks = SortingDirectionLinks(sortingDirectionUrlFunc(statisticsParameters, func), statisticsParameters.sortingDirection)
 
-    val webPagedEntities = WebPagedEntities(entities, statisticsParameters.page, statisticsParameters.pageSize, pageUrlFunc(statisticsParameters, func))
+    val webPagedEntities = WebPagedEntities(entities, statisticsParameters.page, statisticsParameters.pageSize, pageUrlFunc(statisticsParameters, func), selectedId)
 
     val links = Links(seasonLinks = seasonLinks,
       statTypeLinks = statTypeLinks,

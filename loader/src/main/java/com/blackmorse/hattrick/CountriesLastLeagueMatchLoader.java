@@ -86,11 +86,11 @@ public class CountriesLastLeagueMatchLoader {
                             .flatMap(playerInfoConverter::convert)
                             .collect(Collectors.toList());
 
-                    log.info("Writing match details for ({}, {}) to Clickhouse: {} rows", lastMatchDetails.size(), countryName, league.getLeagueId());
+                    log.info("Writing match details for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), lastMatchDetails.size());
                     matchDetailsWriter.writeToClickhouse(lastMatchDetails);
-                    log.info("Writing player events for ({}, {}) to Clickhouse: {} rows", playerEvents.size(), countryName, league.getLeagueId());
+                    log.info("Writing player events for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerEvents.size());
                     playerEventsWriter.writeToClickhouse(playerEvents);
-                    log.info("Writing player info for ({}, {}) to Clickhouse: {} rows", playerInfos.size(), countryName, league.getLeagueId());
+                    log.info("Writing player info for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerInfos.size());
                     playerInfoWriter.writeToClickhouse(playerInfos);
                 }
                 log.info("Joining player_stats for ({}, {}) ", countryName, league.getLeagueId());

@@ -1,0 +1,7 @@
+@(rating: Int)
+
+<div class="rating">
+    <img class="star" src="@routes.Assets.versioned("images/star.svg")">
+    <span class="mult">x</span>
+    <span class="rating">@{rating.toDouble / 10}</span>
+</div>

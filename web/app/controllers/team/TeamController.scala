@@ -1,21 +1,19 @@
 package controllers
 
+import com.blackmorse.hattrick.api.teamdetails.model.{Team, TeamDetails}
 import com.blackmorse.hattrick.api.worlddetails.model.League
-import com.blackmorse.hattrick.model.enums.MatchType
 import databases.ClickhouseDAO
 import databases.clickhouse.{Accumulated, OnlyRound, StatisticsCHRequest}
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
-import models.clickhouse.TeamMatchInfo
 import models.web._
 import play.api.mvc.{BaseController, Call, ControllerComponents}
 import service.DefaultService
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import collection.JavaConverters._
 
-case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, enemyTeamId: Long, enemyTeamName: String, teamGoals: Int, enemyGoals: Int)
+
 
 case class WebTeamDetails(teamId: Long, teamName: String, league: League, season: Int,
                           divisionLevel: Int, leagueUnitId: Long, leagueUnitName: String) extends AbstractWebDetails
@@ -25,53 +23,52 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
                                implicit val clickhouseDAO: ClickhouseDAO,
                                val hattrick: Hattrick,
                                val defaultService: DefaultService,
+                               val matchController: MatchController,
                                val viewDataFactory: ViewDataFactory) extends BaseController with MessageSupport {
 
-  def matches(teamId: Long) = Action.async { implicit request =>
-    val teamDetails = hattrick.api.teamDetails().teamID(teamId).execute().getTeams.asScala.filter(_.getTeamId == teamId).head
+  private def fetchTeamDetails(teamId: Long) =
+    hattrick.api.teamDetails().teamID(teamId).execute().getTeams.asScala.filter(_.getTeamId == teamId).head
 
-    val leagueId = teamDetails.getLeague.getLeagueId
-    val divisionLevel = teamDetails.getLeagueLevelUnit.getLeagueLevel
+  private def fetchWebTeamDetails(team: Team, season: Int) =
+    WebTeamDetails(teamId = team.getTeamId,
+      teamName = team.getTeamName,
+      league = defaultService.leagueIdToCountryNameMap(team.getLeague.getLeagueId),
+      season = season,
+      divisionLevel = team.getLeagueLevelUnit.getLeagueLevel,
+      leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId,
+      leagueUnitName = team.getLeagueLevelUnit.getLeagueLevelUnitName)
+
+  def teamRankings(teamId: Long) = Action.async { implicit request =>
+    val teamDetails = fetchTeamDetails(teamId)
     val season = defaultService.currentSeason
-    val leagueUnitId = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitId
 
-    matchesFuture(leagueId, season, divisionLevel, leagueUnitId, teamId) map (matches => {
-      val details = WebTeamDetails(teamId = teamId,
-          teamName = teamDetails.getTeamName,
-          league = defaultService.leagueIdToCountryNameMap(leagueId),
-          season = season,
-          divisionLevel = divisionLevel,
-          leagueUnitId = leagueUnitId,
-          leagueUnitName = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitName)
+    val teamRankingsFuture = clickhouseDAO.teamRankings(season = season,
+      leagueId = teamDetails.getLeague.getLeagueId,
+      divisionLevel = teamDetails.getLeagueLevelUnit.getLeagueLevel,
+      leagueUnitId = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitId,
+      teamId = teamId)
+
+    val webTeamDetails = fetchWebTeamDetails(teamDetails, season)
+
+    teamRankingsFuture.map {teamRankings => {
+      val divisionLevelTeamRankings = teamRankings.filter(_.rank_type == "division_level").sortBy(_.round).reverse
+      val leagueTeamRankings = teamRankings.filter(_.rank_type == "league_id").sortBy(_.round).reverse
+      Ok(views.html.team.teamRankings(leagueTeamRankings, divisionLevelTeamRankings, webTeamDetails)(messages))
+    }}
+
+//    Future(Ok(""))
+  }
+
+  def matches(teamId: Long) = Action.async { implicit request =>
+    val teamDetails = fetchTeamDetails(teamId)
+    val season = defaultService.currentSeason
+
+    matchController.matchesFuture(teamDetails, season) map (matches => {
+      val details = fetchWebTeamDetails(teamDetails, season)
 
       Ok(views.html.team.matches(matches, details)(messages))
     })
   }
-
-  private def matchesFuture(leagueId: Int, season: Int, divisionLevel: Int, leagueUnitId: Long, teamId: Long) = {
-    val htMatchesFuture = Future(hattrick.api.matchesArchive().teamId(teamId).season(season).execute())
-
-    val chMatchesFuture = clickhouseDAO.teamMatchesForSeason(season, leagueId, divisionLevel, leagueUnitId, teamId)
-
-    chMatchesFuture.zipWith(htMatchesFuture) { case (chMatches, htMatches) =>
-      val htMatchesMap = htMatches.getTeam.getMatchList.asScala
-        .filter(matc => matc.getMatchType == MatchType.LEAGUE_MATCH)
-        .map(matc => (matc.getMatchId, matc)).toMap
-
-      chMatches.map(chMatch => {
-        val htMatch = htMatchesMap(chMatch.matchId)
-
-        val (teamGoals, enemyGoals, enemyTeamName, enemyTeamId) = if (htMatch.getHomeTeam.getHomeTeamId == chMatch.teamId) {
-          (htMatch.getHomeGoals, htMatch.getAwayGoals, htMatch.getAwayTeam.getAwayTeamName, htMatch.getAwayTeam.getAwayTeamId)
-        } else {
-          (htMatch.getAwayGoals, htMatch.getHomeGoals, htMatch.getHomeTeam.getHomeTeamName, htMatch.getHomeTeam.getHomeTeamId)
-        }
-
-        WebTeamMatch(chMatch, enemyTeamId, enemyTeamName, teamGoals, enemyGoals)
-      })
-    }
-  }
-
 
   def playerStats(teamId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async { implicit request =>
     val statisticsParameters =
@@ -79,19 +76,13 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
 
     val func: StatisticsParameters => Call = sp => routes.TeamController.playerStats(teamId, Some(sp))
 
-    val teamDetails = hattrick.api.teamDetails().teamID(teamId).execute().getTeams.asScala.filter(_.getTeamId == teamId).head
+    val teamDetails = fetchTeamDetails(teamId)
 
     val leagueId = teamDetails.getLeague.getLeagueId
     val divisionLevel = teamDetails.getLeagueLevelUnit.getLeagueLevel
     val leagueUnitId = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitId
 
-    val details = WebTeamDetails(teamId = teamId,
-      teamName = teamDetails.getTeamName,
-      league = defaultService.leagueIdToCountryNameMap(leagueId),
-      season = statisticsParameters.season,
-      divisionLevel = divisionLevel,
-      leagueUnitId = leagueUnitId,
-      leagueUnitName = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitName)
+    val details = fetchWebTeamDetails(teamDetails, statisticsParameters.season)
 
    StatisticsCHRequest.playerStatsRequest.execute(leagueId = Some(leagueId),
      divisionLevel = Some(divisionLevel),
@@ -114,7 +105,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
 
     val func: StatisticsParameters => Call = sp => routes.TeamController.playerState(teamId, Some(sp))
 
-    val teamDetails = hattrick.api.teamDetails().teamID(teamId).execute().getTeams.asScala.filter(_.getTeamId == teamId).head
+    val teamDetails = fetchTeamDetails(teamId)
 
     val leagueId = teamDetails.getLeague.getLeagueId
     val divisionLevel = teamDetails.getLeagueLevelUnit.getLeagueLevel
@@ -124,14 +115,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
     val statisticsParameters =
       statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "rating", DefaultService.PAGE_SIZE, Desc))
 
-
-    val details = WebTeamDetails(teamId = teamId,
-      teamName = teamDetails.getTeamName,
-      league = defaultService.leagueIdToCountryNameMap(leagueId),
-      season = statisticsParameters.season,
-      divisionLevel = divisionLevel,
-      leagueUnitId = leagueUnitId,
-      leagueUnitName = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitName)
+    val details = fetchWebTeamDetails(teamDetails, statisticsParameters.season)
 
     StatisticsCHRequest.playerStateRequest.execute(leagueId = Some(leagueId),
       divisionLevel = Some(divisionLevel),

@@ -53,7 +53,7 @@ object StatisticsCHRequest {
                     |toInt32((rating_right_def + rating_left_def + rating_mid_def) / 3) as defense,
                     |toInt32( (rating_right_att + rating_mid_att + rating_left_att) / 3) as attack
                     |from hattrick.match_details __where__ and round = __round__
-                    | order by __sortBy__ __sortingDirection__, team_id __sortingDirection__ __limit__""".stripMargin,
+                    | order by __sortBy__ __sortingDirection__, team_id desc, team_name desc __limit__""".stripMargin,
     sortingColumns = Seq(("hatstats", "table.hatstats"), ("midfield", "table.midfield"),
       ("defense", "table.defense"), ("attack", "table.attack")),
     statisticsType = AvgMax,

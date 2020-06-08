@@ -5,7 +5,7 @@
     width: 20px;
 }
 
-table {
+.statistics_table {
     width: 100%;
     border-spacing: 0px;
     
@@ -13,7 +13,7 @@ table {
     /*margin: 15px;*/
 }
 
-th {
+.statistics_table th {
     font-family: 'Open Sans', sans-serif;
     font-size: 0.9em;
     background: #bbf0c9;
@@ -22,51 +22,35 @@ th {
     padding: 0 5px;
 }
 
-tr:nth-child(2n) {
+.statistics_table tr:nth-child(2n) {
     background-color: #dce3de;
 }
 
-td {
+.statistics_table td {
     font-family: 'Baloo Thambi 2', cursive;
     font-size: 0.9em;
 }
 
-.value {
+.statistics_table .value {
     text-align: center;
 }
 
-.yellow {
+.statistics_table .yellow {
     background: yellow;
 }
 
-.red {
+ .statistics_table .red {
     background: red;
 }
 
-.card {
+.statistics_table .card {
     display: inline-block;
     width: 8px;
     height: 15px;
     transform: rotate(20deg);
 }
 
-.mult {
-    font-size: 0.6em; 
-    align-self: flex-end;
-}
-
-.star {
-    width: 20px;
-    height: 20px;
-}
-
-.rating {
-    display: flex;
-    align-items: stretch;
-    /* flex-wrap: wrap; */
-}
-
-.league {
+.statistics_table .league {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -83,6 +67,10 @@ td {
     text-decoration: underline;
 }
 
- .table_link:hover {
+.table_link:hover {
     text-decoration: none;
+}
+
+.selected_row {
+    background: #ffe65e !important;
 }
