@@ -4,7 +4,6 @@ import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.search.model.Search;
 import com.blackmorse.hattrick.model.League;
 import com.blackmorse.hattrick.model.LeagueUnitId;
-import com.sun.tools.javac.comp.Flow;
 import io.reactivex.Flowable;
 import io.reactivex.Scheduler;
 import lombok.Data;

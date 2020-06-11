@@ -10,6 +10,7 @@ import org.springframework.retry.annotation.EnableRetry;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SpringBootApplication
@@ -24,10 +25,13 @@ public class LoaderApplication {
     public CommandLineRunner runner(ApplicationContext ctx) {
         return args -> {
             if (args.length == 0) {
-                log.info("Posiible commands: schedule, load <list_of_contries>")
+                log.info("Posiible commands: schedule, load <list_of_contries>");
             } else if (args[0].equals("schedule")) {
                 log.info("Command of scheduling next round...");
-                ctx.getBean(ScheduledLastLeagueLoader.class).load();
+                ctx.getBean(ScheduledCountryLoader.class).loadFrom(Optional.empty());
+            } else if (args[0].equals("scheduleFrom")) {
+                log.info("Command of scheduling from {}", args[1]);
+                ctx.getBean(ScheduledCountryLoader.class).loadFrom(Optional.of(args[1]));
             } else if (args[0].equals("load")) {
                 String countries = args[1];
                 List<String> countriesList = Arrays.stream(countries.split(",")).map(String::trim).collect(Collectors.toList());

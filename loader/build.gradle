@@ -11,7 +11,7 @@ repositories {
 
 group = 'com.blackmorse.hattrick'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+sourceCompatibility = '1.9'
 
 dependencies {
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.6'
