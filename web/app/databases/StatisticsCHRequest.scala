@@ -42,8 +42,8 @@ object StatisticsCHRequest {
                      |toInt32(__func__(rating_midfield)) as midfield,
                      |toInt32(__func__((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
                      |toInt32(__func__( (rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
-                     |from hattrick.match_details __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
-                     |group by team_id, team_name, league_unit_id, league_unit_name order by __sortBy__ desc, team_id desc __limit__""".stripMargin,
+                     |from hattrick.match_details __where__
+                     |group by team_id, team_name, league_unit_id, league_unit_name order by __sortBy__ __sortingDirection__, team_id desc __limit__""".stripMargin,
     oneRoundSql = """select team_id,
                     |team_name,
                     |league_unit_id,
