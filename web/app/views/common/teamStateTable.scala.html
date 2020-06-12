@@ -11,7 +11,8 @@
         <th>@messages("table.team")</th>
         <th class="value">@messages("table.league")</th>
         <th class="value">@messages("table.tsi")</th>
-        <th class="value">@messages("table.salary"), @viewData.details.league.getCountry.getCurrencyName</th>
+        <th class="value">@messages("table.salary"),
+            @{if (viewData.details.league.getCountry.getCurrencyName == null) "$" else viewData.details.league.getCountry.getCurrencyName}</th>
         <th class="value hint" popped-hint="@messages("table.rating")">@messages("table.rating_abbr")</th>
         <th class="value hint" popped-hint="@messages("table.rating_end_of_match")">@messages("table.rating_end_of_match_abbr")</th>
         <th class="value hint" popped-hint="@messages("table.average_age")">@messages("table.average_age_abbr")</th>
