@@ -7,6 +7,7 @@ import com.blackmorse.hattrick.clickhouse.mappers.PlayerInfoJdbcMapper;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.clickhouse.model.PlayerEvents;
 import com.blackmorse.hattrick.clickhouse.model.PlayerInfo;
+import com.blackmorse.hattrick.telegram.Telegram;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,17 +42,20 @@ public class Config {
     }
 
     @Bean("playerEventsWriter")
-    public ClickhouseWriter<PlayerEvents> playerEventsClickhouseWriter(NamedParameterJdbcTemplate template) {
-        return new ClickhouseWriter<>(template, new PlayerEventsJdbcMapper(databaseName));
+    public ClickhouseWriter<PlayerEvents> playerEventsClickhouseWriter(NamedParameterJdbcTemplate template,
+                                                                       Telegram telegram) {
+        return new ClickhouseWriter<>(template, new PlayerEventsJdbcMapper(databaseName), telegram);
     }
 
     @Bean("matchDetailsWriter")
-    public ClickhouseWriter<MatchDetails> matchDetailsClickhouseWriter(NamedParameterJdbcTemplate template) {
-        return new ClickhouseWriter<>(template, new MatchDetailsJdbcMapper(databaseName));
+    public ClickhouseWriter<MatchDetails> matchDetailsClickhouseWriter(NamedParameterJdbcTemplate template,
+                                                                       Telegram telegram) {
+        return new ClickhouseWriter<>(template, new MatchDetailsJdbcMapper(databaseName), telegram);
     }
 
     @Bean("playerInfoWriter")
-    public ClickhouseWriter<PlayerInfo> playerInfoClickhouseWriter(NamedParameterJdbcTemplate template) {
-        return new ClickhouseWriter<>(template, new PlayerInfoJdbcMapper(databaseName));
+    public ClickhouseWriter<PlayerInfo> playerInfoClickhouseWriter(NamedParameterJdbcTemplate template,
+                                                                   Telegram telegram) {
+        return new ClickhouseWriter<>(template, new PlayerInfoJdbcMapper(databaseName), telegram);
     }
 }

@@ -22,8 +22,8 @@ public class Telegram {
     @Autowired
     public Telegram(@Value("${telegram.botToken}") String botToken,
                     @Value("${telegram.chatId}") Integer chatId,
-                    @Value("${telegram.proxyHost}") String proxyHost,
-                    @Value("${telegram.proxyPost}") Integer proxyPort) {
+                    @Value("${telegram.socksHost}") String proxyHost,
+                    @Value("${telegram.socksPort}") Integer proxyPort) {
         this.botToken = botToken;
         this.chatId = chatId;
         this.proxyHost = proxyHost;
