@@ -12,6 +12,7 @@ import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.converters.MatchDetailsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerEventsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerInfoConverter;
+import com.blackmorse.hattrick.telegram.Telegram;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,7 @@ public class CountriesLastLeagueMatchLoader {
     private final PlayerEventsConverter playerEventsConverter;
     private final PlayerInfoConverter playerInfoConverter;
     private final TeamRankCalculator teamRankCalculator;
+    private final Telegram telegram;
     private Runnable callback;
 
     @Autowired
@@ -45,7 +47,8 @@ public class CountriesLastLeagueMatchLoader {
                                           MatchDetailsConverter matchDetailsConverter,
                                           PlayerEventsConverter playerEventsConverter,
                                           PlayerInfoConverter playerInfoConverter,
-                                          TeamRankCalculator teamRankCalculator) {
+                                          TeamRankCalculator teamRankCalculator,
+                                          Telegram telegram) {
         this.hattrickService = hattrickService;
         this.matchDetailsWriter = matchDetailsWriter;
         this.playerEventsWriter = playerEventsWriter;
@@ -55,6 +58,7 @@ public class CountriesLastLeagueMatchLoader {
         this.playerEventsConverter = playerEventsConverter;
         this.playerInfoConverter = playerInfoConverter;
         this.teamRankCalculator = teamRankCalculator;
+        this.telegram = telegram;
     }
 
     public void load(List<String> countryNames) {
@@ -99,6 +103,7 @@ public class CountriesLastLeagueMatchLoader {
                 teamRankCalculator.calculate(league);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
+                telegram.send(e.getMessage());
             } finally {
                 if (callback != null) {
                     callback.run();

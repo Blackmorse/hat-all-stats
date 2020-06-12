@@ -3,6 +3,7 @@ package com.blackmorse.hattrick;
 import com.blackmorse.hattrick.api.Hattrick;
 import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.api.worlddetails.model.WorldDetails;
+import com.blackmorse.hattrick.telegram.Telegram;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -41,11 +42,14 @@ public class ScheduledCountryLoader {
 
     private final Hattrick hattrick;
     private final CountriesLastLeagueMatchLoader countriesLastLeagueMatchLoader;
+    private final Telegram telegram;
 
     @Autowired
-    public ScheduledCountryLoader(Hattrick hattrick, CountriesLastLeagueMatchLoader countriesLastLeagueMatchLoader) {
+    public ScheduledCountryLoader(Hattrick hattrick,
+                                  CountriesLastLeagueMatchLoader countriesLastLeagueMatchLoader, Telegram telegram) {
         this.hattrick = hattrick;
         this.countriesLastLeagueMatchLoader = countriesLastLeagueMatchLoader;
+        this.telegram = telegram;
     }
 
     public void loadFrom(Optional<String> country) {
@@ -111,6 +115,7 @@ public class ScheduledCountryLoader {
                 TimeUnit.SECONDS.sleep(10L);
             } catch (InterruptedException e) {
                 log.error(e.getMessage(), e);
+                telegram.send(e.getMessage());
             }
         }
 

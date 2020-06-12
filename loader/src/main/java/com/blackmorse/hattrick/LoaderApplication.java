@@ -25,7 +25,7 @@ public class LoaderApplication {
     public CommandLineRunner runner(ApplicationContext ctx) {
         return args -> {
             if (args.length == 0) {
-                log.info("Posiible commands: schedule, load <list_of_contries>");
+                log.info("Possible commands: schedule, load <list_of_countries>");
             } else if (args[0].equals("schedule")) {
                 log.info("Command of scheduling next round...");
                 ctx.getBean(ScheduledCountryLoader.class).loadFrom(Optional.empty());

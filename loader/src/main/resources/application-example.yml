@@ -15,3 +15,9 @@ clickhouse:
   batchSize:
     match:
     players:
+
+telegram:
+  botToken:
+  chatId:
+  socksHost:
+  socksPort:
