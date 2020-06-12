@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.net.*;
+
 
 @Component
 @Slf4j
@@ -32,19 +32,13 @@ public class Telegram {
 
 
     public void send(String message) {
-        Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyHost, proxyPort));
-
         String urlString = String.format(URL_STRING, botToken, chatId, message);
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection socksConnection
-                    = (HttpURLConnection) url.openConnection(proxy);
 
-            try(InputStream is = new BufferedInputStream(socksConnection.getInputStream());) {
-            }
-            catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
+        String command = "curl --socks5-hostname " + proxyHost + ":" + proxyPort + " "
+                + urlString;
+
+        try {
+            Runtime.getRuntime().exec(command);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
