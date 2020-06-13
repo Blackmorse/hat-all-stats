@@ -45,6 +45,7 @@ table.red_cards=Красные Карточки
 table.yellow_cards_abbr=ЖК
 table.yellow_cards=Желтые Карточки
 table.games=Игры
+table.games_abbr=И
 table.minutes_abbr=Мин
 table.minutes=Сыгранные минуты
 table.scored_abbr=Заб

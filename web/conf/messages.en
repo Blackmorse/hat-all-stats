@@ -45,6 +45,7 @@ table.red_cards=Red Cards
 table.yellow_cards_abbr=YC
 table.yellow_cards=Yellow Cards
 table.games=Games
+table.games_abbr=G
 table.minutes_abbr=Min
 table.minutes=Played Minutes
 table.scored_abbr=Sc
