@@ -25,6 +25,13 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
                                      val leagueUnitCalculatorService: LeagueUnitCalculatorService,
                                      val viewDataFactory: ViewDataFactory) extends BaseController with MessageSupport {
 
+  def bestTeamsByName(leagueUnitName: String, leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) = {
+    val search = hattrick.api.search().searchType(3).searchLeagueId(leagueId).searchString(leagueUnitName).execute()
+    val leagueUnitId = search.getSearchResults.get(0).getResultId
+
+    bestTeams(leagueUnitId, statisticsParametersOpt)
+  }
+
   def bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async{ implicit request =>
     val statisticsParameters =
       statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Avg, "hatstats", DefaultService.PAGE_SIZE, Desc))

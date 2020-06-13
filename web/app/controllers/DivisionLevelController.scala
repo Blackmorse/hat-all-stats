@@ -10,6 +10,7 @@ import play.api.i18n.Messages
 import play.api.mvc.{BaseController, Call, ControllerComponents}
 import service.DefaultService
 import utils.Romans
+import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -42,16 +43,14 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
     val statisticsParameters =
       statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn, DefaultService.PAGE_SIZE, Desc))
 
-    val leagueUnitIdFuture = defaultService.firstIdOfDivisionLeagueUnit(leagueId, divisionLevel)
-
     statisticsCHRequest.execute(leagueId = Some(leagueId),
       divisionLevel = Some(divisionLevel),
       statisticsParameters = statisticsParameters)
-      .zipWith(leagueUnitIdFuture){case(entities, leagueUnitId) =>
+      .map{ entities =>
         val details = WebDivisionLevelDetails(league = defaultService.leagueIdToCountryNameMap(leagueId),
           divisionLevel = divisionLevel,
           divisionLevelRoman = Romans(divisionLevel),
-          leagueUnitLinks = leagueUnitNumbers(statisticsParameters.season, divisionLevel, leagueUnitId))
+          leagueUnitLinks = leagueUnitLinks(leagueId, divisionLevel))
 
         viewDataFactory.create(details = details,
           func = func,
@@ -140,8 +139,13 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       viewFunc = {viewData: ViewData[FormalTeamStats, WebDivisionLevelDetails] => messages => views.html.divisionlevel.formalTeamStats(viewData)(messages)}
     )
 
-
-  def leagueUnitNumbers(season: Int, divisionLevel: Int, baseLeagueUnitId: Long): Seq[(String, String)] =
-    defaultService.leagueNumbersMap(divisionLevel).map(number =>
-      number.toString -> routes.LeagueUnitController.bestTeams(baseLeagueUnitId + number - 1, None).url)
+  def leagueUnitLinks(leagueId: Int, divisionLevel: Int): Seq[(String, String)] = {
+    if (divisionLevel == 1) {
+      Seq("1" -> routes.LeagueUnitController.bestTeams(higherLeagueMap.get(leagueId), None).url)
+    } else {
+      defaultService.leagueNumbersMap(divisionLevel).map(number =>
+        number
+          .toString -> routes.LeagueUnitController.bestTeamsByName(s"${Romans.apply(divisionLevel)}.$number", leagueId, None).url)
+    }
+  }
 }

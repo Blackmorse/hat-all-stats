@@ -23,62 +23,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import static com.blackmorse.hattrick.common.CommonData.*;
 
 @Component
 public class Hattrick {
-    public static Map<Integer, String> arabToRomans = new HashMap<>();
-    public static Map<String, Integer> romansToArab = new HashMap<>();
-    public static Map<Integer, Integer> leagueLevelNumberTeams = new HashMap<>();
-
-    static {
-        leagueLevelNumberTeams.put(1, 1);
-        leagueLevelNumberTeams.put(2, 4);
-        leagueLevelNumberTeams.put(3, 16);
-        leagueLevelNumberTeams.put(4, 64);
-        leagueLevelNumberTeams.put(5, 256);
-        leagueLevelNumberTeams.put(6, 1024);
-        leagueLevelNumberTeams.put(7, 1024);
-        leagueLevelNumberTeams.put(8, 2048);
-        leagueLevelNumberTeams.put(9, 2048);
-    }
-
-    static {
-        arabToRomans.put(2, "II");
-        arabToRomans.put(3, "III");
-        arabToRomans.put(4, "IV");
-        arabToRomans.put(5, "V");
-        arabToRomans.put(6, "VI");
-        arabToRomans.put(7, "VII");
-        arabToRomans.put(8, "VIII");
-        arabToRomans.put(9, "IX");
-        arabToRomans.put(10, "X");
-        arabToRomans.put(11, "XI");
-        arabToRomans.put(12, "XII");
-        arabToRomans.put(13, "XIII");
-        arabToRomans.put(14, "XIV");
-        arabToRomans.put(15, "XV");
-    }
-
-    static {
-        romansToArab.put("II", 2);
-        romansToArab.put("III", 3);
-        romansToArab.put("IV", 4);
-        romansToArab.put("V", 5);
-        romansToArab.put("VI", 6);
-        romansToArab.put("VII", 7);
-        romansToArab.put("VIII", 8);
-        romansToArab.put("IX", 9);
-        romansToArab.put("X", 10);
-        romansToArab.put("XI", 11);
-        romansToArab.put("XII", 12);
-        romansToArab.put("XIII", 13);
-        romansToArab.put("XIV", 14);
-        romansToArab.put("XV", 15);
-    }
-
     private final HattrickApi hattrickApi;
 
     public final Integer season;

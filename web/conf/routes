@@ -19,6 +19,7 @@ GET     /divisionlevel/teamState    controllers.DivisionLevelController.teamStat
 GET     /divisionlevel/playerState  controllers.DivisionLevelController.playerState(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /divisionlevel/formalTeamStats  controllers.DivisionLevelController.formalTeamStats(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
+GET     /leagueLevelUnitByName        controllers.LeagueUnitController.bestTeamsByName(leagueUnitName: String, leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /leagueLevelUnit        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /leagueLevelUnit/playerStats    controllers.LeagueUnitController.playerStats(leagueUnitId: Long,  statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /leagueLevelUnit/teamState      controllers.LeagueUnitController.teamState(leagueUnitOd: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)

@@ -7,6 +7,7 @@ import com.blackmorse.hattrick.api.leaguefixtures.model.LeagueFixtures;
 import com.blackmorse.hattrick.api.search.model.Result;
 import com.blackmorse.hattrick.api.teamdetails.model.TeamDetails;
 import com.blackmorse.hattrick.api.worlddetails.model.League;
+import com.blackmorse.hattrick.common.CommonData;
 import com.blackmorse.hattrick.model.TeamWithMatchAndPlayers;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.enums.MatchType;
@@ -134,7 +135,7 @@ public class HattrickService {
     private static Integer leagueLevelFromName(String name) {
         if(!name.contains(".")) return 1;
         else {
-            return Hattrick.romansToArab.get(name.split("\\.")[0]);
+            return CommonData.romansToArab.get(name.split("\\.")[0]);
         }
     }
 
