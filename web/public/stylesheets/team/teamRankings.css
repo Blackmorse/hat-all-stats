@@ -9,7 +9,7 @@
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    height: 120px;
+    height: 160px;
 }
 
 .ranking {
@@ -42,7 +42,7 @@
     font-weight: bold;
     color: white;
     margin: 0 0 2px 0;
-    height: 60px;
+    height: 20px;
     border-bottom: 1px solid black;
     display: flex;
     justify-content: center;
@@ -55,32 +55,37 @@
 }
 
 .ranking_table {
-    height: 60px;
+    height: 120px;
     width: 100%;
 }
 
 .ranking_row {
-    height: 20px;
+    /*height: 20px;*/
 }
 
 
 .ranking_row_name {
     font-family: 'Merriweather', serif;
-    width: 50%;
+    width: 30%;
     text-align: right;
     font-size: 0.7em;
 }
 
 .ranking_row_value {
-    width: 25%;
+    width: 35%;
     text-align: center;
 }
 
 .ranking_row_diff {
     font-family: 'Merriweather', serif;
-    width: 25%;
+    width: 35%;
     text-align: left;
     font-size: 0.7em;
+}
+
+.ranking_row_diff_value {
+    display: flex;
+    align-items: center;
 }
 
 .trend_down {

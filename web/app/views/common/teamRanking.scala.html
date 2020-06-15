@@ -26,21 +26,21 @@
         <tr class="ranking_row">
             <td class="ranking_row_name">@rankName</td>
             <td class="ranking_row_value">@formatter(valueFunc(lastDivisionLevelTeamRanking))</td>
-            <td class="ranking_row_diff">
+            <td class="ranking_row_diff"><div class="ranking_row_diff_value">
                 @if(previousDivisionLevelTeamRanking.isDefined) {
                     @if(valueFunc(previousDivisionLevelTeamRanking.get) > valueFunc(lastDivisionLevelTeamRanking)) {
                         <img class="trend_down" src="@routes.Assets.versioned("images/trend-red.png")">
-                        +@{formatter(valueFunc(lastDivisionLevelTeamRanking) - valueFunc(previousDivisionLevelTeamRanking.get))}
+                        -@{formatter(valueFunc(previousDivisionLevelTeamRanking.get) - valueFunc(lastDivisionLevelTeamRanking))}
                     }
                     @if(valueFunc(previousDivisionLevelTeamRanking.get) < valueFunc(lastDivisionLevelTeamRanking)) {
                         <img class="trend_up" src="@routes.Assets.versioned("images/trend-green.png")">
-                            @{formatter(valueFunc(lastDivisionLevelTeamRanking) - valueFunc(previousDivisionLevelTeamRanking.get))}
+                        +@{formatter(valueFunc(lastDivisionLevelTeamRanking) - valueFunc(previousDivisionLevelTeamRanking.get))}
                     }
                     @if(valueFunc(previousDivisionLevelTeamRanking.get) == valueFunc(lastDivisionLevelTeamRanking)) {
                         <img src="@routes.Assets.versioned("images/trend-gray.png")">+@formatter(0)
                     }
                 }
-            </td>
+            </div></td>
         </tr>
         <tr class="ranking_row">
             <td class="ranking_row_name">
@@ -63,12 +63,12 @@
             <td class="ranking_row_diff">
                 @if(previousLeagueTeamRanking.isDefined) {
                     @if(positionFunc(previousLeagueTeamRanking.get) > positionFunc(lastLeagueTeamRanking)) {
-                        <img class="trend_down" src="@routes.Assets.versioned("images/trend-red.png")">
-                        +@{positionFunc(lastLeagueTeamRanking) - positionFunc(previousLeagueTeamRanking.get)}
-                    }
-                    @if(positionFunc(previousLeagueTeamRanking.get) < positionFunc(lastLeagueTeamRanking)) {
                         <img class="trend_up" src="@routes.Assets.versioned("images/trend-green.png")">
                         @{positionFunc(lastLeagueTeamRanking) - positionFunc(previousLeagueTeamRanking.get)}
+                    }
+                    @if(positionFunc(previousLeagueTeamRanking.get) < positionFunc(lastLeagueTeamRanking)) {
+                        <img class="trend_down" src="@routes.Assets.versioned("images/trend-red.png")">
+                        +@{positionFunc(lastLeagueTeamRanking) - positionFunc(previousLeagueTeamRanking.get)}
                     }
                     @if(positionFunc(previousLeagueTeamRanking.get) == positionFunc(lastLeagueTeamRanking)) {
                         <img src="@routes.Assets.versioned("images/trend-gray.png")">+0
@@ -99,12 +99,12 @@
             <td class="ranking_row_diff">
                 @if(previousDivisionLevelTeamRanking.isDefined) {
                     @if(positionFunc(previousDivisionLevelTeamRanking.get) > positionFunc(lastDivisionLevelTeamRanking)) {
-                        <img class="trend_down" src="@routes.Assets.versioned("images/trend-red.png")">
-                        +@{positionFunc(lastDivisionLevelTeamRanking) - positionFunc(previousDivisionLevelTeamRanking.get)}
-                    }
-                    @if(positionFunc(previousDivisionLevelTeamRanking.get) < positionFunc(lastDivisionLevelTeamRanking)) {
                         <img class="trend_up" src="@routes.Assets.versioned("images/trend-green.png")">
                         @{positionFunc(lastDivisionLevelTeamRanking) - positionFunc(previousDivisionLevelTeamRanking.get)}
+                    }
+                    @if(positionFunc(previousDivisionLevelTeamRanking.get) < positionFunc(lastDivisionLevelTeamRanking)) {
+                        <img class="trend_down" src="@routes.Assets.versioned("images/trend-red.png")">
+                        +@{positionFunc(lastDivisionLevelTeamRanking) - positionFunc(previousDivisionLevelTeamRanking.get)}
                     }
                     @if(positionFunc(previousDivisionLevelTeamRanking.get) == positionFunc(lastDivisionLevelTeamRanking)) {
                         <img src="@routes.Assets.versioned("images/trend-gray.png")">+0

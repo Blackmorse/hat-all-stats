@@ -17,7 +17,7 @@
 
 @playerStateLeagueLink(leagueId: Int, statisticsParameters: Option[StatisticsParameters], selectedTeamId: Option[Long]) = @{
     routes.LeagueController.teamState(leagueId, statisticsParameters, selectedTeamId)
-})
+}
 
 @playerStateDivisionLevelLink(leagueId: Int, divisionLevel: Int, statisticsParameters: Option[StatisticsParameters], selectedTeamId: Option[Long]) = @{
     routes.DivisionLevelController.teamState(leagueId, divisionLevel, statisticsParameters, selectedTeamId)
@@ -100,32 +100,30 @@
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
                         age => common.formatters.ageFormatter(age))
-
                     @common.teamRanking(lastLeagueTeamRanking.get,
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
-                        messages("table.total_injury_weeks"),
-                        teamRankings => teamRankings.injury,
-                        teamRankings => teamRankings.injuryPosition,
-                        "injury",
+                        messages("table.rating"),
+                        teamRankings => teamRankings.rating,
+                        teamRankings => teamRankings.ratingPosition,
+                        "rating",
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
-                        injury => common.formatters.injuryFormatter(injury))
+                        rating => common.formatters.ratingFormatter(rating))
                     @common.teamRanking(lastLeagueTeamRanking.get,
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
-                        messages("table.total_injury_number"),
-                        teamRankings => teamRankings.injuryCount,
-                        teamRankings => teamRankings.injuryCountPosition,
-                        "injury_count",
+                        messages("table.rating_end_of_match"),
+                        teamRankings => teamRankings.ratingEndOfMatch,
+                        teamRankings => teamRankings.ratingEndOfMatchPosition,
+                        "rating_end_of_match",
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
-                        injuryCount => Html(injuryCount.toString)
-                    )
+                        rating => common.formatters.ratingFormatter(rating))
                 </div>
                 <div class="rankings_grid_row">
                     @common.teamRanking(lastLeagueTeamRanking.get,
@@ -157,26 +155,27 @@
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
-                        messages("table.rating"),
-                        teamRankings => teamRankings.rating,
-                        teamRankings => teamRankings.ratingPosition,
-                        "rating",
+                        messages("table.total_injury_weeks"),
+                        teamRankings => teamRankings.injury,
+                        teamRankings => teamRankings.injuryPosition,
+                        "injury",
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
-                        rating => common.formatters.ratingFormatter(rating))
+                        injury => common.formatters.injuryFormatter(injury))
                     @common.teamRanking(lastLeagueTeamRanking.get,
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
-                        messages("table.rating_end_of_match"),
-                        teamRankings => teamRankings.ratingEndOfMatch,
-                        teamRankings => teamRankings.ratingEndOfMatchPosition,
-                        "rating_end_of_match",
+                        messages("table.total_injury_number"),
+                        teamRankings => teamRankings.injuryCount,
+                        teamRankings => teamRankings.injuryCountPosition,
+                        "injury_count",
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
-                        rating => common.formatters.ratingFormatter(rating))
+                        injuryCount => Html(injuryCount.toString)
+                    )
                 </div>
             </div>
         }

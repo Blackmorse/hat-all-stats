@@ -40,20 +40,20 @@ object StatisticsCHRequest {
                      |league_unit_name,
                      |toInt32(__func__(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats,
                      |toInt32(__func__(rating_midfield)) as midfield,
-                     |toInt32(__func__((rating_right_def + rating_left_def + rating_mid_def) / 3)) as defense,
-                     |toInt32(__func__( (rating_right_att + rating_mid_att + rating_left_att) / 3)) as attack
-                     |from hattrick.match_details __where__
-                     |group by team_id, team_name, league_unit_id, league_unit_name order by __sortBy__ __sortingDirection__, team_id desc __limit__""".stripMargin,
+                     |toInt32(__func__((rating_right_def + rating_left_def + rating_mid_def))) as defense,
+                     |toInt32(__func__( (rating_right_att + rating_mid_att + rating_left_att))) as attack
+                     |from hattrick.match_details __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
+                     |group by team_id, team_name, league_unit_id, league_unit_name order by __sortBy__ __sortingDirection__, team_id asc __limit__""".stripMargin,
     oneRoundSql = """select team_id,
                     |team_name,
                     |league_unit_id,
                     |league_unit_name,
                     |rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att as hatstats,
                     |rating_midfield as midfield,
-                    |toInt32((rating_right_def + rating_left_def + rating_mid_def) / 3) as defense,
-                    |toInt32( (rating_right_att + rating_mid_att + rating_left_att) / 3) as attack
+                    |toInt32((rating_right_def + rating_left_def + rating_mid_def) ) as defense,
+                    |toInt32( (rating_right_att + rating_mid_att + rating_left_att) ) as attack
                     |from hattrick.match_details __where__ and round = __round__
-                    | order by __sortBy__ __sortingDirection__, team_id desc, team_name desc __limit__""".stripMargin,
+                    | order by __sortBy__ __sortingDirection__,  team_id asc __limit__""".stripMargin,
     sortingColumns = Seq(("hatstats", "table.hatstats"), ("midfield", "table.midfield"),
       ("defense", "table.defense"), ("attack", "table.attack")),
     statisticsType = AvgMax,
@@ -172,7 +172,7 @@ object StatisticsCHRequest {
                     |    team_id,
                     |    league_unit_id,
                     |    league_unit_name
-                    |ORDER BY __sortBy__ __sortingDirection__, team_id __sortingDirection__
+                    |ORDER BY __sortBy__ __sortingDirection__, team_id asc
                     |__limit__""".stripMargin,
     sortingColumns = Seq(("tsi", "table.tsi"), ("salary", "table.salary"), ("rating", "table.rating"),
       ("rating_end_of_match", "table.rating_end_of_match"), ("age", "table.average_age"),

@@ -24,8 +24,6 @@ class MatchController @Inject()(val controllerComponents: ControllerComponents,
 
     val chMatchesFuture = clickhouseDAO.teamMatchesForSeason(season = season,
       leagueId = teamDetails.getLeague.getLeagueId,
-      divisionLevel = teamDetails.getLeagueLevelUnit.getLeagueLevel,
-      leagueUnitId = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitId,
       teamId = teamDetails.getTeamId)
 
     chMatchesFuture.zipWith(htMatchesFuture) { case (chMatches, htMatches) =>

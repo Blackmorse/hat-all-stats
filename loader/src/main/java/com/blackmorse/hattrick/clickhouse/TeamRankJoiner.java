@@ -37,10 +37,9 @@ public class TeamRankJoiner {
             "        {field} AS {field_alias}" +
             "    FROM {database}.match_details" +
             "    WHERE {where}" +
-            "    ORDER BY {field_alias} DESC" +
+            "    ORDER BY {field_alias} DESC, team_id ASC" +
             ") " +
-            "ORDER BY team_name ASC," +
-            "         team_id ASC";
+            "ORDER BY team_id ASC";
 
 
     private static final String player_stats_request = "SELECT " +
@@ -59,10 +58,9 @@ public class TeamRankJoiner {
             "    GROUP BY " +
             "        team_id, " +
             "        team_name" +
-            "    ORDER BY {field_alias} DESC" +
+            "    ORDER BY {field_alias} DESC, team_id ASC" +
             ")" +
             "ORDER BY " +
-            "    team_name ASC, " +
             "    team_id ASC ";
 
     private final String database;
@@ -73,6 +71,10 @@ public class TeamRankJoiner {
                           JdbcTemplate jdbcTemplate) {
         this.database = database;
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new TeamRankJoiner("hattrick", null).createSql(75, 136, 1, null));
     }
 
     public void join(Integer season, Integer leagueId, Integer round, Integer divisionLevel) {
@@ -99,10 +101,9 @@ public class TeamRankJoiner {
                 "        {field} AS {field_alias}" +
                 "    FROM {database}.match_details" +
                 "    WHERE {where}" +
-                "    ORDER BY {field_alias} DESC" +
+                "    ORDER BY {field_alias} DESC, team_id ASC" +
                 ")" +
-                "ORDER BY team_name ASC," +
-                "         team_id ASC";
+                "ORDER BY team_id ASC";
 
         String request = base_request
                 .replace("{field}", "rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att")
