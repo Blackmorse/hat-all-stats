@@ -62,17 +62,26 @@
             </td>
             <td class="ranking_row_diff">
                 @if(previousLeagueTeamRanking.isDefined) {
-                    @if(positionFunc(previousLeagueTeamRanking.get) > positionFunc(lastLeagueTeamRanking)) {
-                        <img class="trend_up" src="@routes.Assets.versioned("images/trend-green.png")">
-                        @{positionFunc(lastLeagueTeamRanking) - positionFunc(previousLeagueTeamRanking.get)}
-                    }
-                    @if(positionFunc(previousLeagueTeamRanking.get) < positionFunc(lastLeagueTeamRanking)) {
-                        <img class="trend_down" src="@routes.Assets.versioned("images/trend-red.png")">
-                        +@{positionFunc(lastLeagueTeamRanking) - positionFunc(previousLeagueTeamRanking.get)}
-                    }
-                    @if(positionFunc(previousLeagueTeamRanking.get) == positionFunc(lastLeagueTeamRanking)) {
-                        <img src="@routes.Assets.versioned("images/trend-gray.png")">+0
-                    }
+                    <a class="table_link" href="@{leagueLink(details.league.getLeagueId,
+                        Some(models.web.StatisticsParameters(details.season,
+                            positionFunc(previousLeagueTeamRanking.get) / DefaultService.PAGE_SIZE,
+                            Round(lastLeagueTeamRanking.round - 1),
+                            sortingField,
+                            DefaultService.PAGE_SIZE,
+                            models.web.Desc)),
+                        Some(details.teamId))}">
+                        @if(positionFunc(previousLeagueTeamRanking.get) > positionFunc(lastLeagueTeamRanking)) {
+                            <img class="trend_up" src="@routes.Assets.versioned("images/trend-green.png")">
+                            @{positionFunc(lastLeagueTeamRanking) - positionFunc(previousLeagueTeamRanking.get)}
+                        }
+                        @if(positionFunc(previousLeagueTeamRanking.get) < positionFunc(lastLeagueTeamRanking)) {
+                            <img class="trend_down" src="@routes.Assets.versioned("images/trend-red.png")">
+                            +@{positionFunc(lastLeagueTeamRanking) - positionFunc(previousLeagueTeamRanking.get)}
+                        }
+                        @if(positionFunc(previousLeagueTeamRanking.get) == positionFunc(lastLeagueTeamRanking)) {
+                            <img src="@routes.Assets.versioned("images/trend-gray.png")">+0
+                        }
+                    </a>
                 }
             </td>
         </tr>
@@ -98,17 +107,28 @@
             </td>
             <td class="ranking_row_diff">
                 @if(previousDivisionLevelTeamRanking.isDefined) {
-                    @if(positionFunc(previousDivisionLevelTeamRanking.get) > positionFunc(lastDivisionLevelTeamRanking)) {
-                        <img class="trend_up" src="@routes.Assets.versioned("images/trend-green.png")">
-                        @{positionFunc(lastDivisionLevelTeamRanking) - positionFunc(previousDivisionLevelTeamRanking.get)}
-                    }
-                    @if(positionFunc(previousDivisionLevelTeamRanking.get) < positionFunc(lastDivisionLevelTeamRanking)) {
-                        <img class="trend_down" src="@routes.Assets.versioned("images/trend-red.png")">
-                        +@{positionFunc(lastDivisionLevelTeamRanking) - positionFunc(previousDivisionLevelTeamRanking.get)}
-                    }
-                    @if(positionFunc(previousDivisionLevelTeamRanking.get) == positionFunc(lastDivisionLevelTeamRanking)) {
-                        <img src="@routes.Assets.versioned("images/trend-gray.png")">+0
-                    }
+                    <a class="table_link" href="@{divisionLevelLink(
+                        details.league.getLeagueId,
+                        details.divisionLevel,
+                        Some(models.web.StatisticsParameters(details.season,
+                            positionFunc(previousDivisionLevelTeamRanking.get) / DefaultService.PAGE_SIZE,
+                            Round(lastDivisionLevelTeamRanking.round - 1),
+                            sortingField,
+                            DefaultService.PAGE_SIZE,
+                            models.web.Desc)),
+                        Some(details.teamId))}">
+                        @if(positionFunc(previousDivisionLevelTeamRanking.get) > positionFunc(lastDivisionLevelTeamRanking)) {
+                            <img class="trend_up" src="@routes.Assets.versioned("images/trend-green.png")">
+                            @{positionFunc(lastDivisionLevelTeamRanking) - positionFunc(previousDivisionLevelTeamRanking.get)}
+                        }
+                        @if(positionFunc(previousDivisionLevelTeamRanking.get) < positionFunc(lastDivisionLevelTeamRanking)) {
+                            <img class="trend_down" src="@routes.Assets.versioned("images/trend-red.png")">
+                            +@{positionFunc(lastDivisionLevelTeamRanking) - positionFunc(previousDivisionLevelTeamRanking.get)}
+                        }
+                        @if(positionFunc(previousDivisionLevelTeamRanking.get) == positionFunc(lastDivisionLevelTeamRanking)) {
+                            <img src="@routes.Assets.versioned("images/trend-gray.png")">+0
+                        }
+                    </a>
                 }
             </td>
         </tr>
