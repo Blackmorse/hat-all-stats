@@ -87,19 +87,18 @@
                         bestTeamsDivisionLevelLink)
                 </div>
                 <div class="rankings_grid_row">
-
                     @common.teamRanking(lastLeagueTeamRanking.get,
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
-                        messages("table.age"),
-                        teamRankings => teamRankings.age,
-                        teamRankings => teamRankings.agePosition,
-                        "age",
+                        messages("table.salary") + ", " + details.league.getCountry.getCurrencyName,
+                        teamRankings => teamRankings.salary,
+                        teamRankings => teamRankings.salaryPosition,
+                        "salary",
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
-                        age => common.formatters.ageFormatter(age))
+                        salary => common.formatters.salaryFormatter(salary, details.league))
                     @common.teamRanking(lastLeagueTeamRanking.get,
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
@@ -143,14 +142,14 @@
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
-                        messages("table.salary") + ", " + details.league.getCountry.getCurrencyName,
-                        teamRankings => teamRankings.salary,
-                        teamRankings => teamRankings.salaryPosition,
-                        "salary",
+                        messages("table.age"),
+                        teamRankings => teamRankings.age,
+                        teamRankings => teamRankings.agePosition,
+                        "age",
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
-                        salary => common.formatters.salaryFormatter(salary, details.league))
+                        age => common.formatters.ageFormatter(age))
                     @common.teamRanking(lastLeagueTeamRanking.get,
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
