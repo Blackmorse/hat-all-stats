@@ -69,7 +69,7 @@ public class CountriesLastLeagueMatchLoader {
             try {
                 League league = hattrickService.getLeagueByCountryName(countryName);
 
-                log.info("Load country {}, leagueId: {}", countryName, league.getLeagueId());
+                log.info("Loading country {}, leagueId: {}...", countryName, league.getLeagueId());
                 log.info("There is {} active teams in ({}, {})", league.getActiveTeams(), countryName, league.getLeagueId());
                 List<LeagueUnitId> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(Arrays.asList(countryName));
 
