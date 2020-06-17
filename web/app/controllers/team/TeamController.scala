@@ -32,7 +32,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
   private def fetchWebTeamDetails(team: Team, season: Int) =
     WebTeamDetails(teamId = team.getTeamId,
       teamName = team.getTeamName,
-      league = defaultService.leagueIdToCountryNameMap(team.getLeague.getLeagueId),
+      league = defaultService.leagueInfo(team.getLeague.getLeagueId),
       season = season,
       divisionLevel = team.getLeagueLevelUnit.getLeagueLevel,
       leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId,
@@ -40,7 +40,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
 
   def teamRankings(teamId: Long) = Action.async { implicit request =>
     val teamDetails = fetchTeamDetails(teamId)
-    val season = defaultService.currentSeason
+    val season = defaultService.leagueInfo.currentSeason(teamDetails.getLeague.getLeagueId)
 
     val teamRankingsFuture = clickhouseDAO.teamRankings(season = season,
       leagueId = teamDetails.getLeague.getLeagueId,
@@ -61,7 +61,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
 
   def matches(teamId: Long) = Action.async { implicit request =>
     val teamDetails = fetchTeamDetails(teamId)
-    val season = defaultService.currentSeason
+    val season = defaultService.leagueInfo.currentSeason(teamDetails.getLeague.getLeagueId)
 
     matchController.matchesFuture(teamDetails, season) map (matches => {
       val details = fetchWebTeamDetails(teamDetails, season)
@@ -71,9 +71,6 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
   }
 
   def playerStats(teamId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async { implicit request =>
-    val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Accumulate, "scored", DefaultService.PAGE_SIZE, Desc))
-
     val func: StatisticsParameters => Call = sp => routes.TeamController.playerStats(teamId, Some(sp))
 
     val teamDetails = fetchTeamDetails(teamId)
@@ -81,6 +78,9 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
     val leagueId = teamDetails.getLeague.getLeagueId
     val divisionLevel = teamDetails.getLeagueLevelUnit.getLeagueLevel
     val leagueUnitId = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitId
+
+    val statisticsParameters =
+      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueId), 0, Accumulate, "scored", DefaultService.PAGE_SIZE, Desc))
 
     val details = fetchWebTeamDetails(teamDetails, statisticsParameters.season)
 
@@ -111,9 +111,9 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
     val divisionLevel = teamDetails.getLeagueLevelUnit.getLeagueLevel
     val leagueUnitId = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitId
 
-    val currentRound = defaultService.currentRound(leagueId)
+    val currentRound = defaultService.leagueInfo.currentRound(leagueId)
     val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "rating", DefaultService.PAGE_SIZE, Desc))
+      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueId), 0, Round(currentRound), "rating", DefaultService.PAGE_SIZE, Desc))
 
     val details = fetchWebTeamDetails(teamDetails, statisticsParameters.season)
 

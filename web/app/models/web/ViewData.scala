@@ -22,14 +22,14 @@ class ViewDataFactory @Inject() (val defaultService: DefaultService) {
                                          entities: List[T],
                                          selectedId: Option[Long] = None): ViewData[T, V] = {
     val seasonLinks = SeasonLinks(statisticsParameters.season, seasonInfoUrlFunc(statisticsParameters, func),
-      defaultService.leagueSeasons(details.league.getLeagueId), details.league.getSeasonOffset)
+      defaultService.leagueInfo.seasons(details.league.getLeagueId), details.league.getSeasonOffset)
 
-    val currentRound = defaultService.currentRound(details.league.getLeagueId)
+    val rounds = defaultService.leagueInfo.rounds(details.league.getLeagueId, statisticsParameters.season)
     val statsTypeFunc = statTypeUrlFunc(statisticsParameters, func)
     val statTypeLinks = statisticsType match {
-      case AvgMax => StatTypeLinks.withAverages(statsTypeFunc, currentRound, statisticsParameters.statsType)
-      case Accumulated => StatTypeLinks.withAccumulator(statsTypeFunc, currentRound, statisticsParameters.statsType)
-      case OnlyRound => StatTypeLinks.onlyRounds(statsTypeFunc, currentRound, statisticsParameters.statsType)
+      case AvgMax => StatTypeLinks.withAverages(statsTypeFunc, rounds, statisticsParameters.statsType)
+      case Accumulated => StatTypeLinks.withAccumulator(statsTypeFunc, rounds, statisticsParameters.statsType)
+      case OnlyRound => StatTypeLinks.onlyRounds(statsTypeFunc, rounds, statisticsParameters.statsType)
     }
 
     val sortByLinks = SortByLinks(sortByUrlFunc(statisticsParameters, func), statisticsCHRequest.sortingColumns, statisticsParameters.sortBy)

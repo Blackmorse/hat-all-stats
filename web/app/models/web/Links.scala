@@ -22,20 +22,20 @@ object SeasonLinks {
 }
 
 object StatTypeLinks {
-  def withAverages(statTypeUrlFunc: StatsType => String, round: Int, current: StatsType): StatTypeLinks = {
+  def withAverages(statTypeUrlFunc: StatsType => String, rounds: Seq[Int], current: StatsType): StatTypeLinks = {
     val seq = Seq(Avg.function -> statTypeUrlFunc(Avg), Max.function -> statTypeUrlFunc(Max)) ++
-      (1 to round).map(roundNumber => (roundNumber.toString, statTypeUrlFunc(Round(roundNumber))))
+      rounds.map(roundNumber => (roundNumber.toString, statTypeUrlFunc(Round(roundNumber))))
 
     StatTypeLinks(seq, current)
   }
 
-  def withAccumulator(statTypeUrlFunc: StatsType => String, round: Int, current: StatsType): StatTypeLinks = {
-    val seq = (1 to round).map(roundNumber => (roundNumber.toString, statTypeUrlFunc(Round(roundNumber)))) ++ Seq(("all", statTypeUrlFunc(Accumulate)))
+  def withAccumulator(statTypeUrlFunc: StatsType => String, rounds: Seq[Int], current: StatsType): StatTypeLinks = {
+    val seq = rounds.map(roundNumber => (roundNumber.toString, statTypeUrlFunc(Round(roundNumber)))) ++ Seq(("all", statTypeUrlFunc(Accumulate)))
     StatTypeLinks(seq, current)
   }
 
-  def onlyRounds(statTypeUrlFunc: StatsType => String, round: Int, current: StatsType): StatTypeLinks = {
-    val seq = (1 to round).map(roundNumber => (roundNumber.toString, statTypeUrlFunc(Round(roundNumber))))
+  def onlyRounds(statTypeUrlFunc: StatsType => String, rounds: Seq[Int], current: StatsType): StatTypeLinks = {
+    val seq = rounds.map(roundNumber => (roundNumber.toString, statTypeUrlFunc(Round(roundNumber))))
     StatTypeLinks(seq, current)
   }
 }

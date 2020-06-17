@@ -37,17 +37,17 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       case AvgMax => Avg
       case Accumulated => Accumulate
       case OnlyRound =>
-        val currentRound = defaultService.currentRound(leagueId)
+        val currentRound = defaultService.leagueInfo.currentRound(leagueId)
         Round(currentRound)
     }
     val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn, DefaultService.PAGE_SIZE, Desc))
+      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueId), 0, statsType, sortColumn, DefaultService.PAGE_SIZE, Desc))
 
     statisticsCHRequest.execute(leagueId = Some(leagueId),
       divisionLevel = Some(divisionLevel),
       statisticsParameters = statisticsParameters)
       .map{ entities =>
-        val details = WebDivisionLevelDetails(league = defaultService.leagueIdToCountryNameMap(leagueId),
+        val details = WebDivisionLevelDetails(league = defaultService.leagueInfo(leagueId),
           divisionLevel = divisionLevel,
           divisionLevelRoman = Romans(divisionLevel),
           leagueUnitLinks = leagueUnitLinks(leagueId, divisionLevel))

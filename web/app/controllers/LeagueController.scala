@@ -37,14 +37,14 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       case AvgMax => Avg
       case Accumulated => Accumulate
       case OnlyRound =>
-        val currentRound = defaultService.currentRound(leagueId)
+        val currentRound = defaultService.leagueInfo.currentRound(leagueId)
         Round(currentRound)
     }
 
     val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, statsType, sortColumn, DefaultService.PAGE_SIZE, Desc))
+      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueId), 0, statsType, sortColumn, DefaultService.PAGE_SIZE, Desc))
 
-    val details = WebLeagueDetails(league = defaultService.leagueIdToCountryNameMap(leagueId),
+    val details = WebLeagueDetails(league = defaultService.leagueInfo(leagueId),
       divisionLevelsLinks = divisionLevels(leagueId))
 
     request.session.data.contains("lang")
@@ -127,7 +127,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       viewFunc = {viewData: web.ViewData[FormalTeamStats, WebLeagueDetails] => messages => views.html.league.formalTeamStats(viewData)(messages)}
     )
   private def divisionLevels(leagueId: Int): Seq[(String, String)] = {
-    val maxLevels = defaultService.leagueIdToCountryNameMap(leagueId).getNumberOfLevels
+    val maxLevels = defaultService.leagueInfo(leagueId).getNumberOfLevels
     (1 to maxLevels)
       .map(i => Romans(i) -> routes.DivisionLevelController.bestTeams(leagueId, i).url )
   }

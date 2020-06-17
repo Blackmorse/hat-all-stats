@@ -33,13 +33,13 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
   }
 
   def bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async{ implicit request =>
-    val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Avg, "hatstats", DefaultService.PAGE_SIZE, Desc))
-
     val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
 
     leagueDetailsFuture.flatMap ( leagueDetails => {
-      val leagueFixture = hattrick.api.leagueFixtures().season(defaultService.seasonForLeagueId(statisticsParameters.season, leagueDetails.getLeagueId))
+      val statisticsParameters =
+        statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueDetails.getLeagueId), 0, Avg, "hatstats", DefaultService.PAGE_SIZE, Desc))
+
+      val leagueFixture = hattrick.api.leagueFixtures().season(defaultService.getAbsoluteSeasonFromRelative(statisticsParameters.season, leagueDetails.getLeagueId))
         .leagueLevelUnitId(leagueUnitId).execute()
 
       val tillRound = statisticsParameters.statsType match {
@@ -50,7 +50,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.bestTeams(leagueUnitId, Some(sp))
       val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
 
-      val details = WebLeagueUnitDetails(league = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId),
+      val details = WebLeagueUnitDetails(league = defaultService.leagueInfo(leagueDetails.getLeagueId),
         divisionLevel = leagueDetails.getLeagueLevel,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
         leagueUnitId = leagueDetails.getLeagueLevelUnitId,
@@ -74,18 +74,16 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
   }
 
   def playerStats(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async {implicit  request =>
-    val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Accumulate, "scored", DefaultService.PAGE_SIZE, Desc))
-
     val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
 
     val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.playerStats(leagueUnitId, Some(sp))
 
     leagueDetailsFuture.flatMap ( leagueDetails => {
-      val leagueFixture = hattrick.api.leagueFixtures().season(defaultService.seasonForLeagueId(statisticsParameters.season, leagueDetails.getLeagueId))
-        .leagueLevelUnitId(leagueUnitId).execute()
+      val statisticsParameters =
+        statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueDetails.getLeagueId), 0, Accumulate, "scored", DefaultService.PAGE_SIZE, Desc))
 
-      val leagueName = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId).getEnglishName
+      val leagueFixture = hattrick.api.leagueFixtures().season(defaultService.getAbsoluteSeasonFromRelative(statisticsParameters.season, leagueDetails.getLeagueId))
+        .leagueLevelUnitId(leagueUnitId).execute()
 
       val tillRound = statisticsParameters.statsType match {
         case Round(round) => Some(round)
@@ -95,7 +93,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       //TODO not neccesary to calculate team stats
       val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
 
-      val details = WebLeagueUnitDetails(league = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId),
+      val details = WebLeagueUnitDetails(league = defaultService.leagueInfo(leagueDetails.getLeagueId),
         divisionLevel = leagueDetails.getLeagueLevel,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
         leagueUnitId = leagueDetails.getLeagueLevelUnitId,
@@ -122,13 +120,13 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
     val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
 
     leagueDetailsFuture.flatMap ( leagueDetails => {
-      val currentRound = defaultService.currentRound(leagueDetails.getLeagueId)
+      val currentRound = defaultService.leagueInfo.currentRound(leagueDetails.getLeagueId)
       val statisticsParameters =
-        statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "rating", DefaultService.PAGE_SIZE, Desc))
+        statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueDetails.getLeagueId), 0, Round(currentRound), "rating", DefaultService.PAGE_SIZE, Desc))
 
       val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.teamState(leagueUnitId, Some(sp))
 
-      val leagueFixture = hattrick.api.leagueFixtures().season(defaultService.seasonForLeagueId(statisticsParameters.season, leagueDetails.getLeagueId))
+      val leagueFixture = hattrick.api.leagueFixtures().season(defaultService.getAbsoluteSeasonFromRelative(statisticsParameters.season, leagueDetails.getLeagueId))
         .leagueLevelUnitId(leagueUnitId).execute()
 
       val tillRound = statisticsParameters.statsType match {
@@ -144,7 +142,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         statisticsParameters = statisticsParameters)
           .map(teamState => {
             val details = WebLeagueUnitDetails(
-              league = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId),
+              league = defaultService.leagueInfo(leagueDetails.getLeagueId),
               divisionLevel = leagueDetails.getLeagueLevel,
               leagueUnitName =  leagueDetails.getLeagueLevelUnitName,
               leagueUnitId = leagueUnitId,
@@ -167,13 +165,13 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
     val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
 
     leagueDetailsFuture.flatMap ( leagueDetails => {
-      val currentRound = defaultService.currentRound(leagueDetails.getLeagueId)
+      val currentRound = defaultService.leagueInfo.currentRound(leagueDetails.getLeagueId)
       val statisticsParameters =
-        statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.currentSeason, 0, Round(currentRound), "rating", DefaultService.PAGE_SIZE, Desc))
+        statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueDetails.getLeagueId), 0, Round(currentRound), "rating", DefaultService.PAGE_SIZE, Desc))
 
       val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.playerState(leagueUnitId, Some(sp))
 
-      val leagueFixture = hattrick.api.leagueFixtures().season(defaultService.seasonForLeagueId(statisticsParameters.season, leagueDetails.getLeagueId))
+      val leagueFixture = hattrick.api.leagueFixtures().season(defaultService.getAbsoluteSeasonFromRelative(statisticsParameters.season, leagueDetails.getLeagueId))
         .leagueLevelUnitId(leagueUnitId).execute()
 
       val tillRound = statisticsParameters.statsType match {
@@ -189,7 +187,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         statisticsParameters = statisticsParameters)
           .map(playerStates => {
             val details = WebLeagueUnitDetails(
-              league = defaultService.leagueIdToCountryNameMap(leagueDetails.getLeagueId),
+              league = defaultService.leagueInfo(leagueDetails.getLeagueId),
               divisionLevel = leagueDetails.getLeagueLevel,
               leagueUnitName  = leagueDetails.getLeagueLevelUnitName,
               leagueUnitId = leagueUnitId,
