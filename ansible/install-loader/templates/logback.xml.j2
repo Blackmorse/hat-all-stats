@@ -10,13 +10,27 @@
       </encoder>
   </appender>
 
-  <appender name="rolling_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <appender name="debug_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
           <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
               <level>DEBUG</level>
           </filter>
           <file>{{ base_project_directory }}/logs/debug.log</file>
           <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                   <fileNamePattern>{{ base_project_directory }}/logs/debug.%d{yyyy-ww}</fileNamePattern>
+                  <maxHistory>4</maxHistory>
+          </rollingPolicy>
+          <encoder>
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n</pattern>
+          </encoder>
+  </appender>
+
+  <appender name="info_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+          <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+              <level>INFO</level>
+          </filter>
+          <file>{{ base_project_directory }}/logs/info.log</file>
+          <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                  <fileNamePattern>{{ base_project_directory }}/logs/info.%d{yyyy-ww}</fileNamePattern>
                   <maxHistory>32</maxHistory>
           </rollingPolicy>
           <encoder>
@@ -24,20 +38,25 @@
           </encoder>
   </appender>
 
-  <appender name="error_file" class="ch.qos.logback.core.FileAppender">
- <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
-        <file>{{ base_project_directory }}/logs/error.log </file>
-        <append>true</append>
-        <encoder>
-             <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n</pattern>
-        </encoder>
+  <appender name="error_appender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+          <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+              <level>ERROR</level>
+          </filter>
+          <file>{{ base_project_directory }}/logs/error.log</file>
+          <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                  <fileNamePattern>{{ base_project_directory }}/logs/error.%d{yyyy-ww}</fileNamePattern>
+                  <maxHistory>32</maxHistory>
+          </rollingPolicy>
+          <encoder>
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %logger{36}.%M - %msg%n</pattern>
+          </encoder>
   </appender>
+  
 
   <logger name="com.blackmorse" level="debug">
-     <appender-ref ref="rolling_appender" />
-     <appender-ref ref="error_file" />
+     <appender-ref ref="debug_appender" />
+     <appender-ref ref="info_appender" />
+     <appender-ref ref="error_appender" />
   </logger>
 
   <root level="info">
