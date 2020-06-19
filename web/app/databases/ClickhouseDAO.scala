@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import com.google.inject.Inject
 import databases.clickhouse.StatisticsCHRequest
 import javax.inject.Singleton
-import models.clickhouse.{HistoryInfo, LeagueSeasons, TeamMatchInfo, TeamRankings, TeamRating}
+import models.clickhouse.{HistoryInfo, TeamMatchInfo, TeamRankings}
 import models.web.{Accumulate, Desc, MultiplyRoundsType, Round, SortingDirection, StatsType}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
@@ -117,22 +117,16 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
         teamRankingsSql.as(TeamRankings.teamRankingsMapper.*)
   } )
 
-  def seasonsForLeagues() =  {
+  def historyInfo(leagueId: Option[Int], season: Option[Int], round: Option[Int]): List[HistoryInfo] = {
     db.withConnection { implicit connection =>
-      SqlBuilder("SELECT DISTINCT league_id, season from hattrick.match_details").build
-        .as(LeagueSeasons.mapper.*)
-    }
-  }
-
-  def historyInfo(): List[HistoryInfo] = {
-    db.withConnection { implicit connection =>
-      SqlBuilder( """SELECT
+      val builder = SqlBuilder( """SELECT
                       |    season,
                       |    league_id,
                       |    division_level,
                       |    round,
                       |    count() AS cnt
                       |FROM hattrick.match_details
+                      | __where__
                       |GROUP BY
                       |    season,
                       |    league_id,
@@ -143,8 +137,13 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                       |    league_id ASC,
                       |    division_level ASC,
                       |    round ASC
-                      |""".stripMargin).build
-        .as(HistoryInfo.mapper.*)
+                      |""".stripMargin)
+
+        leagueId.foreach(builder.leagueId)
+        season.foreach(builder.season)
+        round.foreach(builder.round)
+
+        builder.build.as(HistoryInfo.mapper.*)
     }
   }
 

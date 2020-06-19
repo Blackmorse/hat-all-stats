@@ -1,1 +1,17 @@
-base_project_directory:
+base_project_directory: 
+
+hattrick: 
+  customerKey: 
+  customerSecret: 
+  accessToken:  
+  accessTokenSecret: 
+
+clickhouse:
+        jdbc_url: "jdbc:clickhouse://"
+    
+loader:
+  loader_url: ""
+
+web:
+        defaultLeagueId: 
+

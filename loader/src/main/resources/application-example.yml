@@ -16,6 +16,9 @@ clickhouse:
     match:
     players:
 
+web:
+  url: /loader/leagueRound
+
 telegram:
   botToken:
   chatId:

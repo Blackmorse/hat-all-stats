@@ -30,5 +30,7 @@ GET     /team/matches               controllers.TeamController.matches(teamId: L
 GET     /team/playerStats           controllers.TeamController.playerStats(teamId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /team/playerState           controllers.TeamController.playerState(teamId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
+POST    /loader/leagueRound         controllers.LoaderController.leagueRound(season: Int, leagueId: Int, round: Int)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

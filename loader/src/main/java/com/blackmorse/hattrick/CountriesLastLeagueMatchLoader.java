@@ -1,5 +1,6 @@
 package com.blackmorse.hattrick;
 
+import com.blackmorse.hattrick.api.AlltidLike;
 import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.clickhouse.ClickhouseWriter;
 import com.blackmorse.hattrick.clickhouse.PlayersJoiner;
@@ -36,6 +37,7 @@ public class CountriesLastLeagueMatchLoader {
     private final PlayerInfoConverter playerInfoConverter;
     private final TeamRankCalculator teamRankCalculator;
     private final Telegram telegram;
+    private final AlltidLike alltidLike;
     private Runnable callback;
 
     @Autowired
@@ -48,6 +50,7 @@ public class CountriesLastLeagueMatchLoader {
                                           PlayerEventsConverter playerEventsConverter,
                                           PlayerInfoConverter playerInfoConverter,
                                           TeamRankCalculator teamRankCalculator,
+                                          AlltidLike alltidLike,
                                           Telegram telegram) {
         this.hattrickService = hattrickService;
         this.matchDetailsWriter = matchDetailsWriter;
@@ -58,6 +61,7 @@ public class CountriesLastLeagueMatchLoader {
         this.playerEventsConverter = playerEventsConverter;
         this.playerInfoConverter = playerInfoConverter;
         this.teamRankCalculator = teamRankCalculator;
+        this.alltidLike = alltidLike;
         this.telegram = telegram;
     }
 
@@ -69,7 +73,7 @@ public class CountriesLastLeagueMatchLoader {
             try {
                 League league = hattrickService.getLeagueByCountryName(countryName);
 
-                log.info("Load country {}, leagueId: {}", countryName, league.getLeagueId());
+                log.info("Loading country {}, leagueId: {}...", countryName, league.getLeagueId());
                 log.info("There is {} active teams in ({}, {})", league.getActiveTeams(), countryName, league.getLeagueId());
                 List<LeagueUnitId> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(Arrays.asList(countryName));
 
@@ -101,6 +105,8 @@ public class CountriesLastLeagueMatchLoader {
                 playersJoiner.join(league);
                 log.info("Calculating team ranks for ({}, {})", countryName, league.getLeagueId());
                 teamRankCalculator.calculate(league);
+                log.info("Send request to web about new round...");
+                alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 telegram.send(e.getMessage());

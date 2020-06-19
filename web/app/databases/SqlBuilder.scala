@@ -36,6 +36,11 @@ case class SqlBuilder(baseSql: String) {
     this
   }
 
+  def round(round: Int): SqlBuilder = {
+    params += (("round", round))
+    this
+  }
+
   def page(page: Int): SqlBuilder = {
     this.page = page
     this

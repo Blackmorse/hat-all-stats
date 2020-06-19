@@ -1,0 +1,30 @@
+play.i18n.langs = [ "en", "ru" ]
+
+play.filters.enabled += play.filters.hosts.AllowedHostsFilter
+
+play.filters.hosts.routeModifiers.whiteList = []
+play.filters.hosts.routeModifiers.blackList = ["{{ loader.loader_url }}"]
+
+hattrick {
+  customerKey = "{{ hattrick.customerKey }}"
+  customerSecret = "{{ hattrick.customerSecret }}"
+  accessToken = "{{ hattrick.accessToken }}"
+  accessTokenSecret = "{{ hattrick.accessTokenSecret }}"
+
+  defaultLeagueId = {{ web.defaultLeagueId }}
+}
+
+
+db.default.driver = ru.yandex.clickhouse.ClickHouseDriver
+db.default.url = "{{ clickhouse.jdbc_url }}"
+
+fixedConnectionPool = 20
+
+database.clickhouse {
+  executor = "thread-pool-executor"
+  throughput = 1
+  thread-pool-executor {
+    fixed-pool-size = ${fixedConnectionPool}
+  }
+}
+
