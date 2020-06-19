@@ -9,14 +9,14 @@ import models.web
 import models.web._
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
-import service.DefaultService
+import service.{DefaultService, LeagueInfo}
 import utils.Romans
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 case class DivisionLevelForm(divisionLevel: Int)
 
-case class WebLeagueDetails(league: League,
+case class WebLeagueDetails(leagueInfo: LeagueInfo,
                             divisionLevelsLinks: Seq[(String, String)]) extends AbstractWebDetails
 
 @Singleton
@@ -44,7 +44,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     val statisticsParameters =
       statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueId), 0, statsType, sortColumn, DefaultService.PAGE_SIZE, Desc))
 
-    val details = WebLeagueDetails(league = defaultService.leagueInfo(leagueId),
+    val details = WebLeagueDetails(leagueInfo = defaultService.leagueInfo(leagueId),
       divisionLevelsLinks = divisionLevels(leagueId))
 
     request.session.data.contains("lang")
@@ -127,7 +127,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       viewFunc = {viewData: web.ViewData[FormalTeamStats, WebLeagueDetails] => messages => views.html.league.formalTeamStats(viewData)(messages)}
     )
   private def divisionLevels(leagueId: Int): Seq[(String, String)] = {
-    val maxLevels = defaultService.leagueInfo(leagueId).getNumberOfLevels
+    val maxLevels = defaultService.leagueInfo(leagueId).league.getNumberOfLevels
     (1 to maxLevels)
       .map(i => Romans(i) -> routes.DivisionLevelController.bestTeams(leagueId, i).url )
   }

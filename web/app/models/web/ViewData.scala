@@ -22,9 +22,9 @@ class ViewDataFactory @Inject() (val defaultService: DefaultService) {
                                          entities: List[T],
                                          selectedId: Option[Long] = None): ViewData[T, V] = {
     val seasonLinks = SeasonLinks(statisticsParameters.season, seasonInfoUrlFunc(statisticsParameters, func),
-      defaultService.leagueInfo.seasons(details.league.getLeagueId), details.league.getSeasonOffset)
+      defaultService.leagueInfo.seasons(details.leagueInfo.league.getLeagueId), details.leagueInfo.league.getSeasonOffset)
 
-    val rounds = defaultService.leagueInfo.rounds(details.league.getLeagueId, statisticsParameters.season)
+    val rounds = defaultService.leagueInfo.rounds(details.leagueInfo.league.getLeagueId, statisticsParameters.season)
     val statsTypeFunc = statTypeUrlFunc(statisticsParameters, func)
     val statTypeLinks = statisticsType match {
       case AvgMax => StatTypeLinks.withAverages(statsTypeFunc, rounds, statisticsParameters.statsType)

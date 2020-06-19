@@ -44,12 +44,12 @@
         </tr>
         <tr class="ranking_row">
             <td class="ranking_row_name">
-                <a class="table_link" href="@routes.LeagueController.bestTeams(details.league.getLeagueId)">
-                    @details.league.getEnglishName
+                <a class="table_link" href="@routes.LeagueController.bestTeams(details.leagueInfo.league.getLeagueId)">
+                    @details.leagueInfo.league.getEnglishName
                 </a>
             </td>
             <td class="ranking_row_value">
-                <a class="table_link" href="@{leagueLink(details.league.getLeagueId,
+                <a class="table_link" href="@{leagueLink(details.leagueInfo.league.getLeagueId,
                     Some(models.web.StatisticsParameters(details.season,
                         positionFunc(lastLeagueTeamRanking) / DefaultService.PAGE_SIZE,
                         Round(lastLeagueTeamRanking.round),
@@ -57,12 +57,12 @@
                         DefaultService.PAGE_SIZE,
                         models.web.Desc)),
                     Some(details.teamId))}">
-                    @{positionFunc(lastLeagueTeamRanking) + 1}
-                </a>
+                    @{positionFunc(lastLeagueTeamRanking) + 1}</a>
+                <span class="max_ranking_teams">/@details.leagueInfo.seasonInfo(details.season).roundInfo(lastLeagueTeamRanking.round).divisionLevelInfo.values.map(_.count).sum</span>
             </td>
             <td class="ranking_row_diff">
                 @if(previousLeagueTeamRanking.isDefined) {
-                    <a class="table_link" href="@{leagueLink(details.league.getLeagueId,
+                    <a class="table_link" href="@{leagueLink(details.leagueInfo.league.getLeagueId,
                         Some(models.web.StatisticsParameters(details.season,
                             positionFunc(previousLeagueTeamRanking.get) / DefaultService.PAGE_SIZE,
                             Round(lastLeagueTeamRanking.round - 1),
@@ -87,13 +87,13 @@
         </tr>
         <tr class="ranking_row">
             <td class="ranking_row_name">
-                <a class="table_link" href="@routes.DivisionLevelController.bestTeams(details.league.getLeagueId, details.divisionLevel)">
+                <a class="table_link" href="@routes.DivisionLevelController.bestTeams(details.leagueInfo.league.getLeagueId, details.divisionLevel)">
                     @LeagueNameParser.getLeagueUnitNumberByName(details.leagueUnitName)._1
                 </a>
             </td>
             <td class="ranking_row_value">
                 <a class="table_link" href="@{divisionLevelLink(
-                    details.league.getLeagueId,
+                    details.leagueInfo.league.getLeagueId,
                     details.divisionLevel,
                     Some(models.web.StatisticsParameters(details.season,
                         positionFunc(lastDivisionLevelTeamRanking) / DefaultService.PAGE_SIZE,
@@ -102,13 +102,13 @@
                         DefaultService.PAGE_SIZE,
                         models.web.Desc)),
                     Some(details.teamId))}">
-                @{positionFunc(lastDivisionLevelTeamRanking) + 1}
-                </a>
+                @{positionFunc(lastDivisionLevelTeamRanking) + 1}</a>
+                <span class="max_ranking_teams">/@details.leagueInfo.seasonInfo(details.season).roundInfo(lastLeagueTeamRanking.round).divisionLevelInfo(details.divisionLevel).count</span>
             </td>
             <td class="ranking_row_diff">
                 @if(previousDivisionLevelTeamRanking.isDefined) {
                     <a class="table_link" href="@{divisionLevelLink(
-                        details.league.getLeagueId,
+                        details.leagueInfo.league.getLeagueId,
                         details.divisionLevel,
                         Some(models.web.StatisticsParameters(details.season,
                             positionFunc(previousDivisionLevelTeamRanking.get) / DefaultService.PAGE_SIZE,

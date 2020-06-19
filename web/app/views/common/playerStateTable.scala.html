@@ -15,7 +15,7 @@
         <th class="value">@messages("table.age")</th>
         <th class="value">@messages("table.tsi")</th>
         <th class="value">@messages("table.salary"),
-            @{if (viewData.details.league.getCountry.getCurrencyName == null) "$" else viewData.details.league.getCountry.getCurrencyName}
+            @{if (viewData.details.leagueInfo.league.getCountry.getCurrencyName == null) "$" else viewData.details.leagueInfo.league.getCountry.getCurrencyName}
         </th>
         <th class="value hint" popped-hint="@messages("table.rating")">@messages("table.rating_abbr")</th>
         <th class="value hint" popped-hint="@messages("table.rating_end_of_match")">@messages("table.rating_end_of_match_abbr")</th>
@@ -32,7 +32,7 @@
         <td class="value">@common.formatters.ageFormatter(playerState.age)</td>
         <td class="value">@common.formatters.tsiFormatter(playerState.tsi)</td>
         <td class="value">
-            @common.formatters.salaryFormatter(playerState.salary, viewData.details.league)
+            @common.formatters.salaryFormatter(playerState.salary, viewData.details.leagueInfo.league)
         </td>
         <td class="value">@common.formatters.ratingFormatter(playerState.rating)</td>
         <td class="value">@common.formatters.ratingFormatter(playerState.ratingEndOfMatch)</td>

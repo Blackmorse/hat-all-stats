@@ -95,3 +95,7 @@
 .trend_up {
     transform: rotate(-45deg);
 }
+
+.max_ranking_teams {
+    font-size: 0.7em;
+}

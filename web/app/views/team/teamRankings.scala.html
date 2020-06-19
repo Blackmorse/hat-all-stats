@@ -91,14 +91,14 @@
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
-                        messages("table.salary") + ", " + details.league.getCountry.getCurrencyName,
+                        messages("table.salary") + ", " + details.leagueInfo.league.getCountry.getCurrencyName,
                         teamRankings => teamRankings.salary,
                         teamRankings => teamRankings.salaryPosition,
                         "salary",
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
-                        salary => common.formatters.salaryFormatter(salary, details.league))
+                        salary => common.formatters.salaryFormatter(salary, details.leagueInfo.league))
                     @common.teamRanking(lastLeagueTeamRanking.get,
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,

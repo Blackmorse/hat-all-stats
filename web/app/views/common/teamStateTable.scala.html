@@ -12,7 +12,7 @@
         <th class="value">@messages("table.league")</th>
         <th class="value">@messages("table.tsi")</th>
         <th class="value">@messages("table.salary"),
-            @{if (viewData.details.league.getCountry.getCurrencyName == null) "$" else viewData.details.league.getCountry.getCurrencyName}</th>
+            @{if (viewData.details.leagueInfo.league.getCountry.getCurrencyName == null) "$" else viewData.details.leagueInfo.league.getCountry.getCurrencyName}</th>
         <th class="value hint" popped-hint="@messages("table.rating")">@messages("table.rating_abbr")</th>
         <th class="value hint" popped-hint="@messages("table.rating_end_of_match")">@messages("table.rating_end_of_match_abbr")</th>
         <th class="value hint" popped-hint="@messages("table.average_age")">@messages("table.average_age_abbr")</th>
@@ -26,7 +26,7 @@
         <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId)">@state.leagueUnitName</a></td>
         <td class="value">@common.formatters.tsiFormatter(state.tsi)</td>
         <td class="value">
-            @common.formatters.salaryFormatter(state.salary, viewData.details.league)
+            @common.formatters.salaryFormatter(state.salary, viewData.details.leagueInfo.league)
         <td class="value">@common.formatters.ratingFormatter(state.rating)</td>
         <td class="value">@common.formatters.ratingFormatter(state.ratingEndOfMatch)</td>
         <td class="value">@common.formatters.ageFormatter(state.age)</td>

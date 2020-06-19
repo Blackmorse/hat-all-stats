@@ -8,13 +8,13 @@ import models.clickhouse._
 import models.web._
 import play.api.i18n.Messages
 import play.api.mvc.{BaseController, Call, ControllerComponents}
-import service.DefaultService
+import service.{DefaultService, LeagueInfo}
 import utils.Romans
 import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-case class WebDivisionLevelDetails(league: League, divisionLevel: Int, divisionLevelRoman: String,
+case class WebDivisionLevelDetails(leagueInfo: LeagueInfo, divisionLevel: Int, divisionLevelRoman: String,
                                    leagueUnitLinks: Seq[(String, String)]) extends AbstractWebDetails
 
 @Singleton
@@ -47,7 +47,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       divisionLevel = Some(divisionLevel),
       statisticsParameters = statisticsParameters)
       .map{ entities =>
-        val details = WebDivisionLevelDetails(league = defaultService.leagueInfo(leagueId),
+        val details = WebDivisionLevelDetails(leagueInfo = defaultService.leagueInfo(leagueId),
           divisionLevel = divisionLevel,
           divisionLevelRoman = Romans(divisionLevel),
           leagueUnitLinks = leagueUnitLinks(leagueId, divisionLevel))

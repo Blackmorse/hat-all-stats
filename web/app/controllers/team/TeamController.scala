@@ -8,14 +8,14 @@ import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import models.web._
 import play.api.mvc.{BaseController, Call, ControllerComponents}
-import service.DefaultService
+import service.{DefaultService, LeagueInfo}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import collection.JavaConverters._
 
 
 
-case class WebTeamDetails(teamId: Long, teamName: String, league: League, season: Int,
+case class WebTeamDetails(teamId: Long, teamName: String, leagueInfo: LeagueInfo, season: Int,
                           divisionLevel: Int, leagueUnitId: Long, leagueUnitName: String) extends AbstractWebDetails
 
 @Singleton
@@ -32,7 +32,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
   private def fetchWebTeamDetails(team: Team, season: Int) =
     WebTeamDetails(teamId = team.getTeamId,
       teamName = team.getTeamName,
-      league = defaultService.leagueInfo(team.getLeague.getLeagueId),
+      leagueInfo = defaultService.leagueInfo(team.getLeague.getLeagueId),
       season = season,
       divisionLevel = team.getLeagueLevelUnit.getLeagueLevel,
       leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId,
@@ -55,8 +55,6 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
       val leagueTeamRankings = teamRankings.filter(_.rank_type == "league_id").sortBy(_.round).reverse
       Ok(views.html.team.teamRankings(leagueTeamRankings, divisionLevelTeamRankings, webTeamDetails)(messages))
     }}
-
-//    Future(Ok(""))
   }
 
   def matches(teamId: Long) = Action.async { implicit request =>

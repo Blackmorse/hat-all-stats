@@ -27,7 +27,7 @@ class DefaultService @Inject() (val hattrick: Hattrick,
     9 -> (1 to 2048)
   )
 
-  def getAbsoluteSeasonFromRelative(season: Int, leagueId: Int) = leagueInfo(leagueId).getSeasonOffset + season
+  def getAbsoluteSeasonFromRelative(season: Int, leagueId: Int) = leagueInfo(leagueId).league.getSeasonOffset + season
 
   val leagueInfo: LeaguesInfo = {
     val leagueIdToCountryNameMap = hattrick.api.worldDetails().execute()
@@ -57,7 +57,7 @@ class DefaultService @Inject() (val hattrick: Hattrick,
 }
 
 case class LeaguesInfo(leagueInfo: mutable.Map[Int, LeagueInfo]) {
-  def apply(leagueId: Int) = leagueInfo(leagueId).league
+  def apply(leagueId: Int) = leagueInfo(leagueId)
 
   def seasons(leagueId: Int): Seq[Int] = {
     leagueInfo(leagueId).seasonInfo.keys.toSeq
