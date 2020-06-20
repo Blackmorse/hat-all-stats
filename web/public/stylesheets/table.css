@@ -55,14 +55,9 @@
     overflow: hidden;
     white-space: nowrap;
 }
-
+.table_link:visited,
+.table_link:active,
 .table_link {
-    color: black;
-    text-decoration: underline;
-}
-
-.table_link:visited
-.table_link:active {
     color: black;
     text-decoration: underline;
 }
