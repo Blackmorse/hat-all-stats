@@ -1,0 +1,20 @@
+.nearest_matches {
+    margin: 7px;
+}
+
+.nearest_matches td {
+    text-align: center;
+}
+
+.matches_date {
+    width: 10%;
+    font-size: 0.8em !important;
+}
+
+.matches_team {
+    width: 40%;
+}
+
+.matches_result {
+    width: 10%;
+}

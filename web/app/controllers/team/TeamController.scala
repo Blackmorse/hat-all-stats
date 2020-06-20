@@ -1,7 +1,7 @@
 package controllers
 
-import com.blackmorse.hattrick.api.teamdetails.model.{Team, TeamDetails}
-import com.blackmorse.hattrick.api.worlddetails.model.League
+import com.blackmorse.hattrick.api.teamdetails.model.Team
+import com.blackmorse.hattrick.model.enums.MatchType
 import databases.ClickhouseDAO
 import databases.clickhouse.{Accumulated, OnlyRound, StatisticsCHRequest}
 import hattrick.Hattrick
@@ -12,6 +12,8 @@ import service.{DefaultService, LeagueInfo}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import collection.JavaConverters._
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 
 
@@ -39,22 +41,41 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
       leagueUnitName = team.getLeagueLevelUnit.getLeagueLevelUnitName)
 
   def teamRankings(teamId: Long) = Action.async { implicit request =>
-    val teamDetails = fetchTeamDetails(teamId)
-    val season = defaultService.leagueInfo.currentSeason(teamDetails.getLeague.getLeagueId)
+    val teamDetailsFuture = Future(fetchTeamDetails(teamId))
 
-    val teamRankingsFuture = clickhouseDAO.teamRankings(season = season,
-      leagueId = teamDetails.getLeague.getLeagueId,
-      divisionLevel = teamDetails.getLeagueLevelUnit.getLeagueLevel,
-      leagueUnitId = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitId,
-      teamId = teamId)
+    val matchesFuture = Future(hattrick.api.matches().teamId(teamId).execute()
+      .getTeam.getMatchList.asScala
+      .filter(_.getMatchType == MatchType.LEAGUE_MATCH))
 
-    val webTeamDetails = fetchWebTeamDetails(teamDetails, season)
+    teamDetailsFuture.zipWith(matchesFuture) { case (teamDetails, matches) =>
 
-    teamRankingsFuture.map {teamRankings => {
-      val divisionLevelTeamRankings = teamRankings.filter(_.rank_type == "division_level").sortBy(_.round).reverse
-      val leagueTeamRankings = teamRankings.filter(_.rank_type == "league_id").sortBy(_.round).reverse
-      Ok(views.html.team.teamRankings(leagueTeamRankings, divisionLevelTeamRankings, webTeamDetails)(messages))
-    }}
+      val season = defaultService.leagueInfo.currentSeason(teamDetails.getLeague.getLeagueId)
+
+      val teamRankingsFuture = clickhouseDAO.teamRankings(season = season,
+        leagueId = teamDetails.getLeague.getLeagueId,
+        divisionLevel = teamDetails.getLeagueLevelUnit.getLeagueLevel,
+        leagueUnitId = teamDetails.getLeagueLevelUnit.getLeagueLevelUnitId,
+        teamId = teamId)
+
+      val playedMatches = matches
+        .filter(_.getStatus == "FINISHED")
+        .sortBy(_.getMatchDate)
+        .takeRight(3)
+
+      val upcomingMatches = matches.filter(_.getStatus == "UPCOMING")
+        .sortBy(_.getMatchDate)
+        .take(3)
+
+      val webTeamDetails = fetchWebTeamDetails(teamDetails, season)
+
+      teamRankingsFuture.map { teamRankings => {
+        val divisionLevelTeamRankings = teamRankings.filter(_.rank_type == "division_level").sortBy(_.round).reverse
+        val leagueTeamRankings = teamRankings.filter(_.rank_type == "league_id").sortBy(_.round).reverse
+        Ok(views.html.team.teamRankings(leagueTeamRankings, divisionLevelTeamRankings,
+          webTeamDetails, playedMatches, upcomingMatches)(messages))
+        }
+      }
+    }.flatten
   }
 
   def matches(teamId: Long) = Action.async { implicit request =>

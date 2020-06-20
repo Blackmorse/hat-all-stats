@@ -1,11 +1,11 @@
 @import controllers.WebTeamDetails
 @import utils.LeagueNameParser
 @import models.clickhouse.TeamRankings
-@import models.web.Round
-@import service.DefaultService
 @import models.web.StatisticsParameters
+@import com.blackmorse.hattrick.api.matches.model.Match
 
-@(leagueTeamRankings: List[TeamRankings], divisionLevelTeamRankings: List[TeamRankings], details: WebTeamDetails)(implicit messages: Messages)
+@(leagueTeamRankings: List[TeamRankings], divisionLevelTeamRankings: List[TeamRankings],
+        details: WebTeamDetails, playedMatches: Seq[Match], upcomingMatches: Seq[Match])(implicit messages: Messages)
 
 @bestTeamsLeagueLink(leagueId: Int, statisticsParameters: Option[StatisticsParameters], selectedTeamId: Option[Long]) = @{
         routes.LeagueController.bestTeams(leagueId, statisticsParameters, selectedTeamId)
@@ -31,6 +31,28 @@
 @previousDivisionTeamRanking = @{divisionLevelTeamRankings.lift(1)}
 
 @main(details.teamName, header(details), leftBar(details), messages("menu.team_rankings")) {
+
+    <div class="section_row">
+        <div class="section_row_element">
+            <section class="statistics_section">
+                <header class="statistics_header">
+                    <span class="statistics_header_triangle">&#x25BC; @messages("matches.played_matches")</span>
+                </header>
+
+                @common.matchesTable(playedMatches)
+            </section>
+        </div>
+        <div class="section_row_element">
+            <section class="statistics_section">
+                <header class="statistics_header">
+                    <span class="statistics_header_triangle">&#x25BC; @messages("matches.upcoming_matches")</span>
+                </header>
+
+                @common.matchesTable(upcomingMatches)
+            </section>
+        </div>
+    </div>
+
     <section class="statistics_section">
         <header class="statistics_header">
             <span class="statistics_header_triangle">&#x25BC;</span>

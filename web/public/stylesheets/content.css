@@ -27,12 +27,23 @@
 
 .content_body {
     margin: 5px;
-    /* font-family: 'Merriweather', serif; */
 }
 
 .page_navigation {
     display: flex;
     justify-content: center;
+}
+
+.section_row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 99%;
+    margin: 5px auto 10px;
+}
+
+.section_row_element {
+    width: 50%;
 }
 
 .statistics_section {

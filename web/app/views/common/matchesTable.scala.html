@@ -1,0 +1,24 @@
+@import com.blackmorse.hattrick.api.matches.model.Match
+@import java.text.SimpleDateFormat
+
+@(matches: Seq[Match])
+
+@simpleDateFormat = @{new SimpleDateFormat("dd.MM.yy")}
+
+<div class="nearest_matches">
+    <table class="statistics_table">
+        @for(matc <- matches) {
+            <tr>
+                <td class="matches_date">@simpleDateFormat.format(matc.getMatchDate)</td>
+                <td class="matches_team">@matc.getHomeTeam.getHomeTeamName</td>
+                @if(matc.getStatus == "FINISHED") {
+                    <td class="matches_result">@matc.getHomeGoals : @matc.getAwayGoals</td>
+                }
+                @if(matc.getStatus == "UPCOMING") {
+                    <td class="matches_result">-:-</td>
+                }
+                <td class="matches_team">@matc.getAwayTeam.getAwayTeamName</td>
+            </tr>
+        }
+    </table>
+</div>

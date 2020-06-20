@@ -66,6 +66,10 @@ table.average_age=Average age
 #team_rankings
 team_rankings.ranking=Ranking at 
 
+#matches
+matches.played_matches=Played matches
+matches.upcoming_matches=Upcoming matches
+
 #filter
 filter.page_size=Page:
 filter.sorting_direction=Sorting

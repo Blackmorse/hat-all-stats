@@ -66,6 +66,10 @@ table.average_age=Средний возраст
 #team_rankings
 team_rankings.ranking=Рейтинг в
 
+#matches
+matches.played_matches=Сыгранные матчи
+matches.upcoming_matches=Предстоящие матчи
+
 #filter
 filter.page_size=Размер страницы:
 filter.sorting_direction=Сортировка:
