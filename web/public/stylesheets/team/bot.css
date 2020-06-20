@@ -1,0 +1,12 @@
+.bot_div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /*width: 100%;*/
+}
+
+.bot_text {
+    text-align: center;
+    font-family: 'Merriweather', serif;
+}

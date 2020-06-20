@@ -78,3 +78,7 @@ filter.desc=по убыванию
 filter.season=Сезон:
 filter.round=Тур:
 filter.sort_by=Сортировка:
+
+#bot
+bot.header=Упс, это бот
+bot.description=В данный момент команда выглядит, как бот. Статистика для ботов недоступна :(

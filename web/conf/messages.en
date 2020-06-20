@@ -78,3 +78,7 @@ filter.desc=descending
 filter.season=Season:
 filter.round=Round:
 filter.sort_by=Sort By:
+
+#bot
+bot.header=Oops, this is a bot
+bot.description=At the current point this team seems to be a bot. Statistics for bots is not supported :(

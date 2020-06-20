@@ -19,12 +19,12 @@ case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, enemyTeamId: Long, enemyTe
 class MatchController @Inject()(val controllerComponents: ControllerComponents,
                                 val clickhouseDAO: ClickhouseDAO,
                                 val hattrick: Hattrick) {
-  def matchesFuture(teamDetails: Team, season: Int) = {
-    val htMatchesFuture = Future(hattrick.api.matchesArchive().teamId(teamDetails.getTeamId).season(season).execute())
+  def matchesFuture(webTeamDetails: WebTeamDetails, season: Int) = {
+    val htMatchesFuture = Future(hattrick.api.matchesArchive().teamId(webTeamDetails.teamId).season(season).execute())
 
     val chMatchesFuture = clickhouseDAO.teamMatchesForSeason(season = season,
-      leagueId = teamDetails.getLeague.getLeagueId,
-      teamId = teamDetails.getTeamId)
+      leagueId = webTeamDetails.leagueInfo.leagueId,
+      teamId = webTeamDetails.teamId)
 
     chMatchesFuture.zipWith(htMatchesFuture) { case (chMatches, htMatches) =>
       val htMatchesMap = htMatches.getTeam.getMatchList.asScala
