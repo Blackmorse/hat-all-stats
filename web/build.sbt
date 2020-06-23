@@ -11,7 +11,7 @@ scalaVersion := "2.12.1"
 
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
-libraryDependencies += "com.blackmorse.hattrick" % "api" % "0.0.8"
+libraryDependencies += "com.blackmorse.hattrick" % "api" % "0.0.9"
 libraryDependencies += "com.blackmorse.hattrick" % "hattrick-common" % "0.0.1"
 
 libraryDependencies += jdbc

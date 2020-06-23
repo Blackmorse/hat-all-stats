@@ -8,6 +8,8 @@ menu.player_state=Player round stats
 menu.formal_team_stats=Team season stats
 menu.matches=Matches
 menu.team_rankings=Team Rankings
+menu.search=Search
+menu.team_search=Team search
 
 #Table
 table.position_abbr=P

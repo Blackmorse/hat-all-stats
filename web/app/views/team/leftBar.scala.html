@@ -1,6 +1,7 @@
 @import controllers.WebTeamDetails
 @import controllers.WebTeamDetails
 @(details: WebTeamDetails)(implicit messages: Messages)
+<div class="left_bar">
     <header class="left_bar_header">@messages("menu.statistics")</header>
     <a class="left_bar_link" href="@routes.TeamController.teamRankings(details.teamId)">@messages("menu.team_rankings")</a>
 
@@ -9,3 +10,7 @@
     <a class="left_bar_link" href="@routes.TeamController.playerStats(details.teamId)">@messages("menu.player_stats")</a>
 
     <a class="left_bar_link" href="@routes.TeamController.playerState(details.teamId)">@messages("menu.player_state")</a>
+</div>
+<div class="left_bar">
+    @common.searchBar(details.leagueInfo.leagueId)
+</div>

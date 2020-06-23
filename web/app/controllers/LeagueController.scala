@@ -1,20 +1,25 @@
 package controllers
 
-import com.blackmorse.hattrick.api.worlddetails.model.{Country, League}
+import com.blackmorse.hattrick.model.enums.SearchType
 import databases.ClickhouseDAO
 import databases.clickhouse._
+import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import models.clickhouse._
 import models.web
 import models.web._
+import play.api.data.Form
+import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import service.{DefaultService, LeagueInfo}
 import utils.Romans
+import play.api.data.validation.Constraints._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-case class DivisionLevelForm(divisionLevel: Int)
+import collection.JavaConverters._
 
 case class WebLeagueDetails(leagueInfo: LeagueInfo,
                             divisionLevelsLinks: Seq[(String, String)]) extends AbstractWebDetails
@@ -23,7 +28,8 @@ case class WebLeagueDetails(leagueInfo: LeagueInfo,
 class LeagueController @Inject() (val controllerComponents: ControllerComponents,
                                   implicit val clickhouseDAO: ClickhouseDAO,
                                   val defaultService: DefaultService,
-                                  val viewDataFactory: ViewDataFactory) extends BaseController with I18nSupport with MessageSupport {
+                                  val viewDataFactory: ViewDataFactory,
+                                  val hattrick: Hattrick) extends BaseController with I18nSupport with MessageSupport {
 
   private def stats[T](leagueId: Int,
                        statisticsParametersOpt: Option[StatisticsParameters],
@@ -126,9 +132,54 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       statisticsCHRequest = StatisticsCHRequest.formalTeamStats,
       viewFunc = {viewData: web.ViewData[FormalTeamStats, WebLeagueDetails] => messages => views.html.league.formalTeamStats(viewData)(messages)}
     )
+
+  def search(leagueId: Int) = Action.async { implicit request =>
+    val details = WebLeagueDetails(leagueInfo = defaultService.leagueInfo(leagueId),
+      divisionLevelsLinks = divisionLevels(leagueId))
+    Future(Ok(views.html.league.searchPage(details, SearchForm.form, Seq())(messages)))
+  }
+
+  def processSearch() = Action.async{ implicit request =>
+
+    SearchForm.form.bindFromRequest().fold(
+      formWithErrors => Future(BadRequest("")),
+      form => Future.successful({
+        Redirect(routes.LeagueController.searchResult(form.leagueId, form.teamName))
+      })
+    )
+  }
+
+  def searchResult(leagueId: Int, teamName: String) = Action.async { implicit request =>
+    val details = WebLeagueDetails(leagueInfo = defaultService.leagueInfo(leagueId),
+      divisionLevelsLinks = divisionLevels(leagueId))
+
+    val teamsFuture = Future(hattrick.api.search()
+      .searchType(SearchType.TEAMS).searchLeagueId(leagueId).searchString(teamName)
+        .execute())
+
+    teamsFuture.map(teams => {
+      val seq = Option(teams.getSearchResults.asScala)
+        .map(results => results.map(result => (result.getResultId.toLong, result.getResultName)))
+          .getOrElse(Seq())
+
+      Ok(views.html.league.searchPage(details, SearchForm.form, seq)(messages))
+    })
+  }
+
   private def divisionLevels(leagueId: Int): Seq[(String, String)] = {
     val maxLevels = defaultService.leagueInfo(leagueId).league.getNumberOfLevels
     (1 to maxLevels)
       .map(i => Romans(i) -> routes.DivisionLevelController.bestTeams(leagueId, i).url )
   }
+}
+
+case class SearchForm(teamName: String, leagueId: Int)
+
+object SearchForm {
+  val form: Form[SearchForm] = Form(
+    mapping(
+      "teamName" -> text.verifying(nonEmpty),
+       "leagueId" -> number
+    )(SearchForm.apply)(SearchForm.unapply)
+  )
 }

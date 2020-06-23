@@ -1,6 +1,7 @@
 package controllers
 
 import com.blackmorse.hattrick.api.worlddetails.model.League
+import com.blackmorse.hattrick.model.enums.SearchType
 import databases.ClickhouseDAO
 import databases.clickhouse.{Accumulated, AvgMax, OnlyRound, StatisticsCHRequest}
 import hattrick.Hattrick
@@ -26,7 +27,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
                                      val viewDataFactory: ViewDataFactory) extends BaseController with MessageSupport {
 
   def bestTeamsByName(leagueUnitName: String, leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) = {
-    val search = hattrick.api.search().searchType(3).searchLeagueId(leagueId).searchString(leagueUnitName).execute()
+    val search = hattrick.api.search().searchType(SearchType.SERIES).searchLeagueId(leagueId).searchString(leagueUnitName).execute()
     val leagueUnitId = search.getSearchResults.get(0).getResultId
 
     bestTeams(leagueUnitId, statisticsParametersOpt)

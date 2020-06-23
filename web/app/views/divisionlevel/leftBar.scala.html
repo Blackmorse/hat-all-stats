@@ -1,6 +1,7 @@
 @import controllers.WebDivisionLevelDetails
 
 @(details: WebDivisionLevelDetails)(implicit messages: Messages)
+<div class="left_bar">
     <header class="left_bar_header">@messages("menu.statistics")</header>
 
     <a class="left_bar_link" href="@routes.DivisionLevelController.bestTeams(details.leagueInfo.league.getLeagueId, details.divisionLevel)">@messages("menu.best_teams")</a>
@@ -14,4 +15,7 @@
     <a class="left_bar_link" href="@routes.DivisionLevelController.playerState(details.leagueInfo.league.getLeagueId, details.divisionLevel)">@messages("menu.player_state")</a>
 
     <a class="left_bar_link" href="@routes.DivisionLevelController.formalTeamStats(details.leagueInfo.league.getLeagueId, details.divisionLevel)">@messages("menu.formal_team_stats")</a>
-
+</div>
+<div class="left_bar">
+    @common.searchBar(details.leagueInfo.leagueId)
+</div>

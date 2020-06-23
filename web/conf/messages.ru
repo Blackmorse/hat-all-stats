@@ -8,6 +8,8 @@ menu.player_state=Показатели игроков
 menu.formal_team_stats=Турнирные показатели команд
 menu.matches=Матчи
 menu.team_rankings=Положение команды
+menu.search=Поиск
+menu.team_search=Поиск команд
 
 #Table
 table.position_abbr=П
@@ -82,3 +84,6 @@ filter.sort_by=Сортировка:
 #bot
 bot.header=Упс, это бот
 bot.description=В данный момент команда выглядит, как бот. Статистика для ботов недоступна :(
+
+#search
+search.section_name=
