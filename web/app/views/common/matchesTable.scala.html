@@ -11,7 +11,7 @@
             <tr>
                 <td class="matches_date">@simpleDateFormat.format(matc.getMatchDate)</td>
                 <td class="matches_team">
-                    <a class="table_link" href="@routes.TeamController.matches(matc.getHomeTeam.getHomeTeamId)">@matc.getHomeTeam.getHomeTeamName</a>
+                    <a class="table_link" href="@routes.TeamController.teamOverview(matc.getHomeTeam.getHomeTeamId)">@matc.getHomeTeam.getHomeTeamName</a>
                 </td>
                 @if(matc.getStatus == "FINISHED") {
                     <td class="matches_result">@matc.getHomeGoals : @matc.getAwayGoals</td>
@@ -20,7 +20,7 @@
                     <td class="matches_result">-:-</td>
                 }
                 <td class="matches_team">
-                    <a class="table_link" href="@routes.TeamController.matches(matc.getAwayTeam.getAwayTeamId)">@matc.getAwayTeam.getAwayTeamName</a>
+                    <a class="table_link" href="@routes.TeamController.teamOverview(matc.getAwayTeam.getAwayTeamId)">@matc.getAwayTeam.getAwayTeamName</a>
                 </td>
             </tr>
         }

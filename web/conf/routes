@@ -28,7 +28,7 @@ GET     /leagueLevelUnit/playerStats    controllers.LeagueUnitController.playerS
 GET     /leagueLevelUnit/teamState      controllers.LeagueUnitController.teamState(leagueUnitOd: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /leagueLevelUnit/playerState    controllers.LeagueUnitController.playerState(leagueUnitOd: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
-GET     /team/teamRankings          controllers.TeamController.teamRankings(teamId: Long)
+GET     /team/teamOverview          controllers.TeamController.teamOverview(teamId: Long)
 GET     /team/matches               controllers.TeamController.matches(teamId: Long)
 GET     /team/playerStats           controllers.TeamController.playerStats(teamId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /team/playerState           controllers.TeamController.playerState(teamId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)

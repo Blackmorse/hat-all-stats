@@ -10,6 +10,7 @@ menu.matches=Matches
 menu.team_rankings=Team Rankings
 menu.search=Search
 menu.team_search=Team search
+menu.team_overview=Overview
 
 #Table
 table.position_abbr=P

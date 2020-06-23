@@ -17,7 +17,7 @@
                 }
             </div>
             @for((id, name) <- teams) {
-                <a class="table_link" href="@routes.TeamController.matches(id)">@name</a><br>
+                <a class="table_link" href="@routes.TeamController.teamOverview(id)">@name</a><br>
             }
         </div>
     </section>

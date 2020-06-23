@@ -22,7 +22,7 @@
     <tr>
         <td>@{playerStats.pageInfo.pageSize * playerStats.pageInfo.page + index + 1}</td>
         <td>@{playerStat.firstName + " " + playerStat.lastName}</td>
-        <td><a class="table_link" href="@routes.TeamController.matches(playerStat.teamId)">@playerStat.teamName</a></td>
+        <td><a class="table_link" href="@routes.TeamController.teamOverview(playerStat.teamId)">@playerStat.teamName</a></td>
         <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(playerStat.leagueUnitId)">@playerStat.leagueUnitName</a></td>
         <td class="value">@{playerStat.age / 112},@{playerStat.age % 112}</td>
         <td class="value">@playerStat.games</td>

@@ -43,7 +43,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
     fetchWebTeamDetails(team, season)
   }
 
-  def teamRankings(teamId: Long) = Action.async { implicit request =>
+  def teamOverview(teamId: Long) = Action.async { implicit request =>
     val teamDetailsFuture = Future(hattrick.api.teamDetails().teamID(teamId).execute())
 
     val matchesFuture = Future(hattrick.api.matches().teamId(teamId).execute()

@@ -10,6 +10,7 @@ menu.matches=Матчи
 menu.team_rankings=Положение команды
 menu.search=Поиск
 menu.team_search=Поиск команд
+menu.team_overview=Обзор
 
 #Table
 table.position_abbr=П

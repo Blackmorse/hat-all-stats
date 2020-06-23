@@ -18,7 +18,7 @@
     @for((teamStats, index) <- formalTeamStats.entities.zipWithIndex) {
     <tr>
         <td>@{formalTeamStats.pageInfo.pageSize * formalTeamStats.pageInfo.page + index + 1}</td>
-        <td><a class="table_link" href="@routes.TeamController.matches(teamStats.teamId)">@teamStats.teamName</a></td>
+        <td><a class="table_link" href="@routes.TeamController.teamOverview(teamStats.teamId)">@teamStats.teamName</a></td>
         <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(teamStats.leagueUnitId)">@teamStats.leagueUnitName</a></td>
         <td class="value">@teamStats.wins</td>
         <td class="value">@teamStats.lost</td>

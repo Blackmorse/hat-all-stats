@@ -22,7 +22,7 @@
     @for((state, index) <- teamStates.entities.zipWithIndex) {
     <tr @{if(teamStates.selectedId.contains(state.teamId)) "class=selected_row"}>
         <td>@{teamStates.pageInfo.pageSize * teamStates.pageInfo.page + index + 1}</td>
-        <td><a class="table_link" href="@routes.TeamController.matches(state.teamId)">@state.teamName</a></td>
+        <td><a class="table_link" href="@routes.TeamController.teamOverview(state.teamId)">@state.teamName</a></td>
         <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(state.leagueUnitId)">@state.leagueUnitName</a></td>
         <td class="value">@common.formatters.tsiFormatter(state.tsi)</td>
         <td class="value">

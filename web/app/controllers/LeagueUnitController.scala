@@ -206,6 +206,6 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
 
 
   private def teamLinks(leagueTeamStats: Seq[LeagueUnitTeamStat]): Seq[(String, String)] = {
-    leagueTeamStats.map(stat => stat.teamName -> routes.TeamController.matches(stat.teamId).url)
+    leagueTeamStats.map(stat => stat.teamName -> routes.TeamController.teamOverview(stat.teamId).url)
   }
 }
