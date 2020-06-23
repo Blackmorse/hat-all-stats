@@ -86,5 +86,6 @@ filter.sort_by=Сортировка:
 bot.header=Упс, это бот
 bot.description=В данный момент команда выглядит, как бот. Статистика для ботов недоступна :(
 
-#search
-search.section_name=
+#error
+error.header=Ошибка
+error.description=Похоже, такой страницы не существует или на сервере произошла ошибка. Пишите (ник в HT: Blackmorse)

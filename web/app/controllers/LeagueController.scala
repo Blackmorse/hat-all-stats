@@ -51,7 +51,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueId), 0, statsType, sortColumn, DefaultService.PAGE_SIZE, Desc))
 
     val details = WebLeagueDetails(leagueInfo = defaultService.leagueInfo(leagueId),
-      divisionLevelsLinks = divisionLevels(leagueId))
+      divisionLevelsLinks = defaultService.divisionLevelLinks(leagueId))
 
     request.session.data.contains("lang")
 
@@ -135,7 +135,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
   def search(leagueId: Int) = Action.async { implicit request =>
     val details = WebLeagueDetails(leagueInfo = defaultService.leagueInfo(leagueId),
-      divisionLevelsLinks = divisionLevels(leagueId))
+      divisionLevelsLinks = defaultService.divisionLevelLinks(leagueId))
     Future(Ok(views.html.league.searchPage(details, SearchForm.form, Seq())(messages)))
   }
 
@@ -151,7 +151,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
   def searchResult(leagueId: Int, teamName: String) = Action.async { implicit request =>
     val details = WebLeagueDetails(leagueInfo = defaultService.leagueInfo(leagueId),
-      divisionLevelsLinks = divisionLevels(leagueId))
+      divisionLevelsLinks = defaultService.divisionLevelLinks(leagueId))
 
     val teamsFuture = Future(hattrick.api.search()
       .searchType(SearchType.TEAMS).searchLeagueId(leagueId).searchString(teamName)
@@ -164,12 +164,6 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
       Ok(views.html.league.searchPage(details, SearchForm.form, seq)(messages))
     })
-  }
-
-  private def divisionLevels(leagueId: Int): Seq[(String, String)] = {
-    val maxLevels = defaultService.leagueInfo(leagueId).league.getNumberOfLevels
-    (1 to maxLevels)
-      .map(i => Romans(i) -> routes.DivisionLevelController.bestTeams(leagueId, i).url )
   }
 }
 

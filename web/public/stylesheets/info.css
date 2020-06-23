@@ -1,4 +1,4 @@
-.bot_div {
+.info_div {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -6,7 +6,15 @@
     /*width: 100%;*/
 }
 
-.bot_text {
+.info_text {
     text-align: center;
     font-family: 'Merriweather', serif;
+}
+
+.info_image {
+    height: 500px;
+}
+
+.info_image > img {
+    height: 100%;
 }

@@ -1,11 +1,13 @@
 package service
 
 import com.blackmorse.hattrick.api.worlddetails.model.League
+import controllers.routes
 import databases.ClickhouseDAO
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import models.clickhouse.HistoryInfo
 import play.api.Configuration
+import utils.Romans
 
 import collection.JavaConverters._
 import scala.collection.mutable
@@ -26,6 +28,12 @@ class DefaultService @Inject() (val hattrick: Hattrick,
     8 -> (1 to 2048),
     9 -> (1 to 2048)
   )
+
+  def divisionLevelLinks(leagueId: Int): Seq[(String, String)] = {
+    val maxLevels = leagueInfo(leagueId).league.getNumberOfLevels
+    (1 to maxLevels)
+      .map(i => Romans(i) -> routes.DivisionLevelController.bestTeams(leagueId, i).url )
+  }
 
   def getAbsoluteSeasonFromRelative(season: Int, leagueId: Int) = leagueInfo(leagueId).league.getSeasonOffset + season
 

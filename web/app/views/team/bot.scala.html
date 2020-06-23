@@ -3,9 +3,9 @@
 @(details: WebTeamDetails)(implicit messages: Messages)
 
 @main(details.teamName, header(details), leftBar(details), messages("bot.header")) {
-    <div class="bot_div">
-        <div class="bot_text">@messages("bot.description")</div>
-        <div class="bot_image">
+    <div class="info_div">
+        <div class="info_text">@messages("bot.description")</div>
+        <div class="info_image">
             <img src="@routes.Assets.versioned("images/football-robot.png")">
         </div>
     </div>
