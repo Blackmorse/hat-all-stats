@@ -74,7 +74,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
         teamRankingsFuture.map { teamRankings => {
           val divisionLevelTeamRankings = teamRankings.filter(_.rank_type == "division_level").sortBy(_.round).reverse
           val leagueTeamRankings = teamRankings.filter(_.rank_type == "league_id").sortBy(_.round).reverse
-          Ok(views.html.team.teamRankings(leagueTeamRankings, divisionLevelTeamRankings,
+          Ok(views.html.team.teamOverview(leagueTeamRankings, divisionLevelTeamRankings,
             webTeamDetails, playedMatches, upcomingMatches)(messages))
         }
         }
