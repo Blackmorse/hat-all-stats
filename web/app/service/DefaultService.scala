@@ -76,7 +76,7 @@ case class LeaguesInfo(leagueInfo: mutable.Map[Int, LeagueInfo]) {
   }
 
   def currentRound(leagueId: Int): Int = {
-    leagueInfo(leagueId).seasonInfo.maxBy(_._1)._1
+    leagueInfo(leagueId).seasonInfo.maxBy(_._1)._2.roundInfo.maxBy(_._1)._1
   }
 
   def rounds(leagueId: Int, season: Int): Seq[Int] = {
