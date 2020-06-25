@@ -71,15 +71,24 @@ public class ScheduledCountryLoader {
                         } else {
                             seriesMatchDate = league.getSeriesMatchDate();
                         }
-                        return new LeagueTime(league.getLeagueId(), league.getLeagueName(), seriesMatchDate);
+
+                        Integer minutesOffset = countriesToMinutesOffset.getOrDefault(league.getLeagueId(), 0);
+                        return new LeagueTime(league.getLeagueId(), league.getLeagueName(),
+                                new Date(seriesMatchDate.getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000));
                     })
                     .sorted(Comparator.comparing(LeagueTime::getTime))
                     .dropWhile(leagueTime -> !leagueTime.league.equals(country.get()))
                     .collect(Collectors.toList());
         } else {
             leagueTimes = worldDetails.getLeagueList().stream()
-                    .sorted(Comparator.comparing(League::getSeriesMatchDate))
-                    .map(league -> new LeagueTime(league.getLeagueId(), league.getLeagueName(), league.getSeriesMatchDate()))
+                    .map(league -> {
+                        Integer minutesOffset = countriesToMinutesOffset.getOrDefault(league.getLeagueId(), 0);
+
+                        Date time = new Date(league.getSeriesMatchDate().getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000);
+
+                        return new LeagueTime(league.getLeagueId(), league.getLeagueName(), time);
+                    })
+                    .sorted(Comparator.comparing(LeagueTime::getTime))
                     .collect(Collectors.toList());
         }
 
@@ -94,17 +103,15 @@ public class ScheduledCountryLoader {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
         leagueTimes.forEach(leagueTime -> {
-            Integer minutesOffset = countriesToMinutesOffset.getOrDefault(leagueTime.getId(), 0);
 
-            Date time = new Date(leagueTime.time.getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000);
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
                     executorService.submit(() -> countriesLastLeagueMatchLoader.load(Arrays.asList(leagueTime.league)));
                 }
-            }, time);
+            }, leagueTime.getTime());
 
-            log.info("Scheduled loading ({}, {}) to {}", leagueTime.league, leagueTime.id, format.format(time));
+            log.info("Scheduled loading ({}, {}) to {}", leagueTime.league, leagueTime.id, format.format(leagueTime.getTime()));
         });
 
         while(true) {
