@@ -1,5 +1,7 @@
 package com.blackmorse.hattrick;
 
+import com.blackmorse.hattrick.api.Hattrick;
+import com.blackmorse.hattrick.clickhouse.TeamRankJoiner;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -37,6 +39,22 @@ public class LoaderApplication {
                 List<String> countriesList = Arrays.stream(countries.split(",")).map(String::trim).collect(Collectors.toList());
                 log.info("Command to load countries: {}", countriesList);
                 ctx.getBean(CountriesLastLeagueMatchLoader.class).load(countriesList);
+            } else if (args[0].equals("teamRank")) {
+                Integer season = Integer.valueOf(args[1]);
+                Integer leagueId = Integer.valueOf(args[2]);
+                Integer round = Integer.valueOf(args[3]);
+
+                Integer numberOfLevels = ctx.getBean(Hattrick.class).getWorldDetails().getLeagueList()
+                        .stream()
+                        .filter(league -> league.getLeagueId().equals(leagueId))
+                        .findFirst()
+                        .get()
+                        .getNumberOfLevels();
+
+                ctx.getBean(TeamRankJoiner.class).join(season, leagueId, round, null);
+                for (int i = 1; i <= numberOfLevels; i++) {
+                    ctx.getBean(TeamRankJoiner.class).join(season, leagueId, round, i);
+                }
             }
         };
     }

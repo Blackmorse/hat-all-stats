@@ -73,10 +73,6 @@ public class TeamRankJoiner {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public static void main(String[] args) {
-        System.out.println(new TeamRankJoiner("hattrick", null).createSql(75, 136, 1, null));
-    }
-
     public void join(Integer season, Integer leagueId, Integer round, Integer divisionLevel) {
         String sql = createSql(season, leagueId, round, divisionLevel);
 
