@@ -55,10 +55,6 @@ table.scored_abbr=Заб
 table.scored=Забито
 table.minutes_per_goal_abbr=М/Г
 table.minutes_per_goal=Минут на Гол
-table.round=Тур
-table.formation=Расстановка
-table.result=Результат
-table.opposite_team=Соперник
 table.total_injury_weeks_abbr=Травмы
 table.total_injury_weeks=Общий уровень травм
 table.total_injury_number_abbr=Кол-во травм
@@ -72,6 +68,17 @@ team_rankings.ranking=Рейтинг в
 #matches
 matches.played_matches=Сыгранные матчи
 matches.upcoming_matches=Предстоящие матчи
+matches.result=Результат
+matches.home_team=Дома
+matches.away_team=На выезде
+matches.ratings=Рейтинги
+matches.defense_lmr=Защита Л/Ц/П
+matches.midfield=Полузащита
+matches.attack_lmr=Атака Л/Ц/П
+matches.summary=Общая информация
+matches.date=Дата
+matches.formation=Расстановка
+matches.hatstats=HatStats
 
 #filter
 filter.page_size=Размер страницы:

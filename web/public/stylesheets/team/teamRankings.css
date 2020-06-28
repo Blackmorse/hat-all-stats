@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    /*align-items: stretch;*/
 }
 
 .rankings_grid_row {
@@ -17,7 +16,7 @@
     border: 1px solid black;
     margin: 5px;
     border-radius: 3px;
-    background: #fffbdc
+    background: #fffbdc;
 }
 
 .rankings_grid_row:nth-child(1) > .ranking {

@@ -60,6 +60,13 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
           |    match_id,
           |    team_id,
           |    team_name,
+          |    rating_midfield,
+          |    rating_right_def,
+          |    rating_left_def,
+          |    rating_mid_def,
+          |    rating_right_att,
+          |    rating_mid_att,
+          |    rating_left_att,
           |    toInt32(((((((rating_midfield * 3) + rating_right_def) + rating_left_def) + rating_mid_def) + rating_right_att) + rating_mid_att) + rating_left_att) AS hatstats,
           |    formation,
           |    dt

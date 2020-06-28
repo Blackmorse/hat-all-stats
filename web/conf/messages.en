@@ -55,10 +55,6 @@ table.scored_abbr=Sc
 table.scored=Scored
 table.minutes_per_goal_abbr=MPG
 table.minutes_per_goal=Minutes Per Goal
-table.round=Round
-table.formation=Formation
-table.result=Result
-table.opposite_team=Opposite Team
 table.total_injury_weeks_abbr=InjW
 table.total_injury_weeks=Total Injury Weeks
 table.total_injury_number_abbr=InjN
@@ -72,6 +68,17 @@ team_rankings.ranking=Ranking at
 #matches
 matches.played_matches=Played matches
 matches.upcoming_matches=Upcoming matches
+matches.result=Result
+matches.home_team=Home team
+matches.away_team=Away team
+matches.ratings=Ratings
+matches.defense_lmr=Defense L/M/R
+matches.midfield=Midfield
+matches.attack_lmr=Attach L/M/R
+matches.summary=Summary
+matches.date=Date
+matches.formation=Formation
+matches.hatstats=HatStats
 
 #filter
 filter.page_size=Page:

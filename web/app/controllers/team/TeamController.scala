@@ -10,7 +10,6 @@ import models.web._
 import play.api.mvc.{BaseController, Call, ControllerComponents}
 import service.{DefaultService, LeagueInfo}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import collection.JavaConverters._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -1,6 +1,7 @@
 package controllers
 
-import com.blackmorse.hattrick.api.teamdetails.model.Team
+import java.util.Date
+
 import com.blackmorse.hattrick.model.enums.MatchType
 import databases.ClickhouseDAO
 import hattrick.Hattrick
@@ -13,7 +14,9 @@ import models.clickhouse.TeamMatchInfo
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, enemyTeamId: Long, enemyTeamName: String, teamGoals: Int, enemyGoals: Int)
+case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, date: Date,
+                        homeTeamId: Long, homeTeamName: String, homeTeamGoals: Int,
+                        awayTeamId: Long, awayTeamName: String, awayTeamGoals: Int)
 
 @Singleton
 class MatchController @Inject()(val controllerComponents: ControllerComponents,
@@ -34,13 +37,18 @@ class MatchController @Inject()(val controllerComponents: ControllerComponents,
       chMatches.map(chMatch => {
         val htMatch = htMatchesMap(chMatch.matchId)
 
-        val (teamGoals, enemyGoals, enemyTeamName, enemyTeamId) = if (htMatch.getHomeTeam.getHomeTeamId == chMatch.teamId) {
-          (htMatch.getHomeGoals, htMatch.getAwayGoals, htMatch.getAwayTeam.getAwayTeamName, htMatch.getAwayTeam.getAwayTeamId)
-        } else {
-          (htMatch.getAwayGoals, htMatch.getHomeGoals, htMatch.getHomeTeam.getHomeTeamName, htMatch.getHomeTeam.getHomeTeamId)
-        }
+//        val (teamGoals, enemyGoals, enemyTeamName, enemyTeamId) = if (htMatch.getHomeTeam.getHomeTeamId == chMatch.teamId) {
+//          (htMatch.getHomeGoals, htMatch.getAwayGoals, htMatch.getAwayTeam.getAwayTeamName, htMatch.getAwayTeam.getAwayTeamId)
+//        } else {
+//          (htMatch.getAwayGoals, htMatch.getHomeGoals, htMatch.getHomeTeam.getHomeTeamName, htMatch.getHomeTeam.getHomeTeamId)
+//        }
 
-        WebTeamMatch(chMatch, enemyTeamId, enemyTeamName, teamGoals, enemyGoals)
+//        WebTeamMatch(chMatch, enemyTeamId, enemyTeamName, teamGoals, enemyGoals)
+
+          WebTeamMatch(chMatch, htMatch.getMatchDate,
+            htMatch.getHomeTeam.getHomeTeamId, htMatch.getHomeTeam.getHomeTeamName, htMatch.getHomeGoals,
+            htMatch.getAwayTeam.getAwayTeamId, htMatch.getAwayTeam.getAwayTeamName, htMatch.getAwayGoals
+          )
       })
     }
   }
