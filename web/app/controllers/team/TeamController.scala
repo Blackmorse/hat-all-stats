@@ -108,11 +108,11 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
       val statisticsParameters =
         statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(webDetails.leagueInfo.league.getLeagueId), 0, Accumulate, "scored", DefaultService.PAGE_SIZE, Desc))
 
-      val details = fetchWebTeamDetails(teamDetails, statisticsParameters.season)
+      val details = fetchWebTeamDetails(teamDetails, teamId)
 
       StatisticsCHRequest.playerStatsRequest.execute(leagueId = Some(webDetails.leagueInfo.league.getLeagueId),
         divisionLevel = Some(webDetails.divisionLevel),
-        leagueUnitId = Some(webDetails.divisionLevel),
+        leagueUnitId = Some(webDetails.leagueUnitId),
         teamId = Some(teamId),
         statisticsParameters = statisticsParameters)
         .map(playerStats => {
