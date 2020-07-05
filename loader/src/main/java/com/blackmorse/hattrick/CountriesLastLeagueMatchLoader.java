@@ -8,7 +8,7 @@ import com.blackmorse.hattrick.clickhouse.TeamRankCalculator;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.clickhouse.model.PlayerEvents;
 import com.blackmorse.hattrick.clickhouse.model.PlayerInfo;
-import com.blackmorse.hattrick.model.LeagueUnitId;
+import com.blackmorse.hattrick.model.LeagueUnit;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.converters.MatchDetailsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerEventsConverter;
@@ -75,11 +75,11 @@ public class CountriesLastLeagueMatchLoader {
 
                 log.info("Loading country {}, leagueId: {}...", countryName, league.getLeagueId());
                 log.info("There is {} active teams in ({}, {})", league.getActiveTeams(), countryName, league.getLeagueId());
-                List<LeagueUnitId> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(Arrays.asList(countryName));
+                List<LeagueUnit> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(Arrays.asList(countryName));
 
-                List<List<LeagueUnitId>> allLeagueUnitIdsForCountryChunks = Lists.partition(allLeagueUnitIdsForCountry, 350);
+                List<List<LeagueUnit>> allLeagueUnitIdsForCountryChunks = Lists.partition(allLeagueUnitIdsForCountry, 350);
 
-                for (List<LeagueUnitId> allLeagueUnitIdsForCountryChunk : allLeagueUnitIdsForCountryChunks) {
+                for (List<LeagueUnit> allLeagueUnitIdsForCountryChunk : allLeagueUnitIdsForCountryChunks) {
                     log.info("Chunk of leagueUnits size {} for ({}, {})", allLeagueUnitIdsForCountryChunk.size(), countryName, league.getLeagueId());
                     List<TeamWithMatchDetails> lastTeamWithMatchDetails = hattrickService.getLastMatchDetails(allLeagueUnitIdsForCountryChunk);
 
