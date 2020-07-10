@@ -134,12 +134,8 @@ public class LeagueUnitsLoader {
                             });
                         }
                     }
-
-
-//                    }
                     return Flowable.fromIterable(res);
                 })
-
                 .sequential().toList().blockingGet();
     }
 
@@ -147,12 +143,5 @@ public class LeagueUnitsLoader {
     private static class LeagueWithLevel {
         private final League league;
         private final Integer level;
-    }
-
-    @Data
-    private static class LeagueWithLevelWithPage {
-        private final League league;
-        private final Integer level;
-        private final Integer page;
     }
 }

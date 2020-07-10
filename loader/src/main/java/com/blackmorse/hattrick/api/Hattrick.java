@@ -121,4 +121,9 @@ public class Hattrick {
     public Players getPlayersFromTeam(Long teamId) {
         return hattrickApi.players().teamID(teamId).includeMatchInfo(true).execute();
     }
+
+    @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 10, backoff = @Backoff(delay = 15000L))
+    public LeagueFixtures getLeagueFixture(Long leagueUnitId, Integer season) {
+        return hattrickApi.leagueFixtures().leagueLevelUnitId(leagueUnitId).season(season).execute();
+    }
 }

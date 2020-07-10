@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public
-class Team {
+public class Team {
     private final LeagueUnit leagueUnit;
 
     private final Long id;

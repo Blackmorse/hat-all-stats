@@ -38,6 +38,7 @@ public class CountriesLastLeagueMatchLoader {
     private final TeamRankCalculator teamRankCalculator;
     private final Telegram telegram;
     private final AlltidLike alltidLike;
+    private final PromotionsLoader promotionsLoader;
     private Runnable callback;
 
     @Autowired
@@ -51,7 +52,8 @@ public class CountriesLastLeagueMatchLoader {
                                           PlayerInfoConverter playerInfoConverter,
                                           TeamRankCalculator teamRankCalculator,
                                           AlltidLike alltidLike,
-                                          Telegram telegram) {
+                                          Telegram telegram,
+                                          PromotionsLoader promotionsLoader) {
         this.hattrickService = hattrickService;
         this.matchDetailsWriter = matchDetailsWriter;
         this.playerEventsWriter = playerEventsWriter;
@@ -63,6 +65,7 @@ public class CountriesLastLeagueMatchLoader {
         this.teamRankCalculator = teamRankCalculator;
         this.alltidLike = alltidLike;
         this.telegram = telegram;
+        this.promotionsLoader = promotionsLoader;
     }
 
     public void load(List<String> countryNames) {
@@ -107,6 +110,12 @@ public class CountriesLastLeagueMatchLoader {
                 teamRankCalculator.calculate(league);
                 log.info("Send request to web about new round...");
                 alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
+
+                //Load promotions
+                if (league.getMatchRound() - 1 == 14) {
+                    log.info("It's last round of season. Time to load promotions!");
+                    promotionsLoader.load(countryName);
+                }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 telegram.send(e.getMessage());

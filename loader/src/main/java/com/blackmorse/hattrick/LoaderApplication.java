@@ -55,6 +55,10 @@ public class LoaderApplication {
                 for (int i = 1; i <= numberOfLevels; i++) {
                     ctx.getBean(TeamRankJoiner.class).join(season, leagueId, round, i);
                 }
+            } else if (args[0].equals("promotions")) {
+                String country = args[1];
+
+                ctx.getBean(PromotionsLoader.class).load(country, 74);
             }
         };
     }
