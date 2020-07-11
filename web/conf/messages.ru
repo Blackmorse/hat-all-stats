@@ -96,3 +96,8 @@ bot.description=В данный момент команда выглядит, к
 #error
 error.header=Ошибка
 error.description=Похоже, такой страницы не существует или на сервере произошла ошибка. Пишите (ник в HT: Blackmorse)
+
+#promotions
+menu.promotions=Переходы между лигами
+promotions.auto_promotions=Автоматические переходы
+promotions.qualifications=Квалификации

@@ -15,7 +15,6 @@ public class PromoteTeam {
     public Integer points;
     public Integer diff;
     public Integer scored;
-    public PromoteType promoteType;
 
     @Override
     public boolean equals(Object obj) {

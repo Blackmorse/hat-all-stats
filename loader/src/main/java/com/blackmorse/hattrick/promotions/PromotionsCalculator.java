@@ -25,7 +25,7 @@ public class PromotionsCalculator {
     }
 
     private final Map<Integer, DivisionTeams> divisionTeams = new HashMap<>();
-    private final PromotionListsMerger<PromoteTeam, Promotion> merger;// = new PromotionListsMerger<>(Promotion::new);
+    private final PromotionListsMerger<PromoteTeam, Promotion> merger;
 
     public PromotionsCalculator(League league, Integer season) {
         for (int divisionLevel = 1; divisionLevel <= league.getNumberOfLevels() - 1; divisionLevel++) {
@@ -56,13 +56,11 @@ public class PromotionsCalculator {
         List<PromoteTeam> qualifyGoingDownTeams = divisionTeams.get(divisionLevel).teams.stream()
                 .filter(promoteTeam -> promoteTeam.getPosition() == 5 || promoteTeam.getPosition() == 6)
                 .sorted(straightComparator)
-                .peek(promoteTeam -> promoteTeam.promoteType = PromoteType.QUALIFY)
                 .collect(Collectors.toList());
 
         List<PromoteTeam> autoGoingDownTeams = divisionTeams.get(divisionLevel).teams.stream()
                 .filter(promoteTeam -> promoteTeam.getPosition() == 7 || promoteTeam.getPosition() == 8)
                 .sorted(straightComparator)
-                .peek(promoteTeam -> promoteTeam.promoteType = PromoteType.AUTO)
                 .collect(Collectors.toList());
 
         List<PromoteTeam> goingUpTeams = divisionTeams.get(divisionLevel + 1).teams.stream()
@@ -74,23 +72,26 @@ public class PromotionsCalculator {
         List<PromoteTeam> autoGoingUpTeams = goingUpTeams.stream()
                 .limit(autoGoingDownTeams.size())
                 .sorted(downStrategy.getAutoPromoteStrategy().equals(DownStrategy.FORWARD) ? straightComparator : reverseComparator)
-                .peek(promoteTeam -> promoteTeam.promoteType = PromoteType.AUTO)
                 .collect(Collectors.toList());
 
         List<PromoteTeam> qualifyGoingUpTeams = goingUpTeams.stream()
                 .skip(autoGoingDownTeams.size())
                 .limit(qualifyGoingDownTeams.size())
                 .sorted(downStrategy.getQualifyPromoteStrategy().equals(DownStrategy.FORWARD) ? straightComparator : reverseComparator)
-                .peek(promoteTeam -> promoteTeam.promoteType = PromoteType.QUALIFY)
                 .collect(Collectors.toList());
 
         List<Promotion> result = new ArrayList<>();
 
         List<Promotion> autoPromotions = merger.mergeTeams(autoGoingDownTeams, autoGoingUpTeams);
+        autoPromotions.forEach(promotion -> promotion.promoteType = PromoteType.AUTO);
+
         List<Promotion> qualifyPromotions = merger.mergeTeams(qualifyGoingDownTeams, qualifyGoingUpTeams);
+        qualifyPromotions.forEach(promotion -> promotion.promoteType = PromoteType.QUALIFY);
 
         result.addAll(autoPromotions);
         result.addAll(qualifyPromotions);
+
+        result.forEach(promotion -> promotion.upDivisionLevel = divisionLevel);
 
         return result;
     }

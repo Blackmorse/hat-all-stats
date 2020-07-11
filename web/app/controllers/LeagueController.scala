@@ -13,7 +13,6 @@ import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
 import service.{DefaultService, LeagueInfo}
-import utils.Romans
 import play.api.data.validation.Constraints._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,6 +22,8 @@ import collection.JavaConverters._
 
 case class WebLeagueDetails(leagueInfo: LeagueInfo,
                             divisionLevelsLinks: Seq[(String, String)]) extends AbstractWebDetails
+
+case class PromotionWithType(upDivisionLevel: Int, promoteType: String, promotions: List[Promotion])
 
 @Singleton
 class LeagueController @Inject() (val controllerComponents: ControllerComponents,
@@ -132,6 +133,22 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       statisticsCHRequest = StatisticsCHRequest.formalTeamStats,
       viewFunc = {viewData: web.ViewData[FormalTeamStats, WebLeagueDetails] => messages => views.html.league.formalTeamStats(viewData)(messages)}
     )
+
+
+
+  def promotions(leagueId: Int) = Action.async { implicit request =>
+    val details = WebLeagueDetails(leagueInfo = defaultService.leagueInfo(leagueId),
+      divisionLevelsLinks = defaultService.divisionLevelLinks(leagueId))
+    clickhouseDAO.promotions(season = defaultService.leagueInfo.currentSeason(leagueId),
+      leagueId = leagueId).map(promotions => {
+      val promotionsWithType = promotions.groupBy(promotion => (promotion.upDivisionLevel, promotion.promoteType))
+        .toSeq.sortBy(_._1)
+        .map{case((upDivisionLevel, promoteType), promotions) => PromotionWithType(upDivisionLevel, promoteType, promotions)
+        }
+
+      Ok(views.html.league.promotions(details, promotionsWithType)(messages))
+    })
+  }
 
   def search(leagueId: Int) = Action.async { implicit request =>
     val details = WebLeagueDetails(leagueInfo = defaultService.leagueInfo(leagueId),

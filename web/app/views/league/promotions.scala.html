@@ -1,0 +1,64 @@
+@import controllers.WebLeagueDetails
+@import controllers.PromotionWithType
+@import utils.Romans
+
+@(details: WebLeagueDetails, promotionsWithType: Seq[PromotionWithType])(implicit messages: Messages)
+
+@main(details.leagueInfo.league.getEnglishName, header(details), leftBar(details), messages("menu.promotions")) {
+    <section class="statistics_section">
+        <header class="statistics_header">
+                <span class="statistics_header_text">&#x25BC;</span>
+        </header>
+        <div class="promotions_content">
+            @for(promotionWithType <- promotionsWithType) {
+            <span class="promotion_type">
+                @Romans(promotionWithType.upDivisionLevel) &#x2194; @Romans(promotionWithType.upDivisionLevel+1)
+                @{if(promotionWithType.promoteType == "auto")  messages("promotions.auto_promotions") else messages("promotions.qualifications")}
+            </span>
+            <table class="promotions_table">
+                @for(promotion <- promotionWithType.promotions){
+                    <tr class="promotion_row">
+                        <td class="promotion_teams">
+                            <table class="promotion_entry_table">
+                                @for(downTeam <- promotion.downTeams) {
+                                    <tr>
+                                        <td class="promotion_team_name">
+                                            <a class="table_link" href="@routes.TeamController.teamOverview(downTeam.teamId)">
+                                                @downTeam.teamName
+                                            </a>
+                                        </td>
+                                        <td class="promotion_league_unit_name">
+                                            <a class="table_link" href="@routes.LeagueUnitController.bestTeams(downTeam.leagueUnitId)">
+                                                @downTeam.leagueUnitName
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        </td>
+                        <td class="promotions_separator">-</td>
+                        <td class="promotion_teams">
+                            <table class="promotion_entry_table">
+                            @for(upTeam <- promotion.upTeams) {
+                                <tr>
+                                    <td class="promotion_league_unit_name">
+                                        <a class="table_link" href="@routes.LeagueUnitController.bestTeams(upTeam.leagueUnitId)">
+                                            @upTeam.leagueUnitName
+                                        </a>
+                                    </td>
+                                    <td class="promotion_team_name">
+                                        <a class="table_link" href="@routes.TeamController.teamOverview(upTeam.teamId)">
+                                            @upTeam.teamName
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                            </table>
+                        </td>
+                    </tr>
+                }
+            </table>
+            }
+        </div>
+    </section>
+}

@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import com.google.inject.Inject
 import databases.clickhouse.StatisticsCHRequest
 import javax.inject.Singleton
-import models.clickhouse.{HistoryInfo, TeamMatchInfo, TeamRankings}
+import models.clickhouse.{HistoryInfo, Promotion, TeamMatchInfo, TeamRankings}
 import models.web.{Accumulate, Desc, MultiplyRoundsType, Round, SortingDirection, StatsType}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
@@ -80,6 +80,42 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
       teamSql.as(TeamMatchInfo.teamMatchInfoMapper.*)
     }
   }
+
+  def promotions(season: Int, leagueId: Int) = Future(
+    db.withConnection { implicit connection =>
+      val promotionsSql = SqlBuilder(
+        """SELECT
+          |season,
+          |league_id,
+          |up_division_level,
+          |promotion_type,
+          |`going_down_teams.team_id`,
+          |`going_down_teams.team_name`,
+          |`going_down_teams.division_level`,
+          |`going_down_teams.league_unit_id`,
+          |`going_down_teams.league_unit_name`,
+          |`going_down_teams.position`,
+          |`going_down_teams.points`,
+          |`going_down_teams.diff`,
+          |`going_down_teams.scored`,
+          |`going_up_teams.team_id`,
+          |`going_up_teams.team_name`,
+          |`going_up_teams.division_level`,
+          |`going_up_teams.league_unit_id`,
+          |`going_up_teams.league_unit_name`,
+          |`going_up_teams.position`,
+          |`going_up_teams.points`,
+          |`going_up_teams.diff`,
+          |`going_up_teams.scored`
+          |FROM hattrick.promotions
+          |__where__""".stripMargin)
+        .season(season)
+        .leagueId(leagueId)
+        .build
+
+      promotionsSql.as(Promotion.promotionMapper.*)
+    }
+  )
 
   def teamRankings(season: Int, leagueId: Int, divisionLevel: Int,
                    leagueUnitId: Long, teamId: Long) = Future(

@@ -19,6 +19,8 @@ public class PromotionsMapper extends AbstractJdbcMapper<Promotion> {
 
         map.put("season", Promotion::getSeason);
         map.put("league_id", Promotion::getLeagueId);
+        map.put("up_division_level", Promotion::getUpDivisionLevel);
+        map.put("promotion_type", promotion -> promotion.getPromoteType().getStringValue());
 
         map.put("going_down_teams.team_id", fieldFromPromoteTeamFunction(Promotion::getDownTeams, promoteTeam -> promoteTeam.getTeam().getId()));
         map.put("going_down_teams.team_name", fieldFromPromoteTeamFunction(Promotion::getDownTeams, promoteTeam -> promoteTeam.getTeam().getName()));
@@ -29,8 +31,6 @@ public class PromotionsMapper extends AbstractJdbcMapper<Promotion> {
         map.put("going_down_teams.points", fieldFromPromoteTeamFunction(Promotion::getDownTeams, PromoteTeam::getPoints));
         map.put("going_down_teams.diff", fieldFromPromoteTeamFunction(Promotion::getDownTeams, PromoteTeam::getDiff));
         map.put("going_down_teams.scored", fieldFromPromoteTeamFunction(Promotion::getDownTeams, PromoteTeam::getScored));
-        map.put("going_down_teams.promotion_type", fieldFromPromoteTeamFunction(Promotion::getDownTeams,
-                promoteTeam -> promoteTeam.getPromoteType().getStringValue()));
 
         map.put("going_up_teams.team_id", fieldFromPromoteTeamFunction(Promotion::getUpTeams, promoteTeam -> promoteTeam.getTeam().getId()));
         map.put("going_up_teams.team_name", fieldFromPromoteTeamFunction(Promotion::getUpTeams, promoteTeam -> promoteTeam.getTeam().getName()));
@@ -41,7 +41,6 @@ public class PromotionsMapper extends AbstractJdbcMapper<Promotion> {
         map.put("going_up_teams.points", fieldFromPromoteTeamFunction(Promotion::getUpTeams, PromoteTeam::getPoints));
         map.put("going_up_teams.diff", fieldFromPromoteTeamFunction(Promotion::getUpTeams, PromoteTeam::getDiff));
         map.put("going_up_teams.scored", fieldFromPromoteTeamFunction(Promotion::getUpTeams, PromoteTeam::getScored));
-        map.put("going_up_teams.promotion_type", fieldFromPromoteTeamFunction(Promotion::getUpTeams, promoteTeam -> promoteTeam.getPromoteType().getStringValue()));
 
         return map;
     }

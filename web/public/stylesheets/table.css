@@ -22,7 +22,7 @@
     padding: 0 5px;
 }
 
-.statistics_table tr:nth-child(2n) {
+.statistics_table > tbody > tr:nth-child(2n) {
     background-color: #dce3de;
 }
 

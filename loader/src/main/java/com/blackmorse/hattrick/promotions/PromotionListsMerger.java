@@ -60,7 +60,7 @@ public class PromotionListsMerger<Team, Promote extends IPromotion> {
         Iterator<Promote> iterator = result.iterator();
 
         Promote previous = iterator.next();
-        Promote next ;//= //terator.next();
+        Promote next ;
         do {
             next = iterator.next();
             if (previous.getUpTeams().equals(next.getUpTeams())) {
@@ -69,13 +69,7 @@ public class PromotionListsMerger<Team, Promote extends IPromotion> {
             } else {
                 previous = next;
             }
-//            next = iterator.next();
         } while (iterator.hasNext());
-
-//        if (previous.getUpTeams().equals(next.getUpTeams())) {
-//            iterator.remove();
-//            previous.getDownTeams().addAll(next.getDownTeams());
-//        }
 
             return result;
     }

@@ -95,3 +95,8 @@ main {
 .github_link:hover {
     text-decoration: none;
 }
+
+.promotion_link {
+    color: red !important;
+    font-weight: bold !important;
+}

@@ -1,0 +1,12 @@
+@import models.web.AbstractWebDetails
+
+@(details: AbstractWebDetails)(implicit messages: Messages)
+
+@if(details.leagueInfo.league.getMatchRound > 14) {
+    <div class="left_bar">
+        <header class="left_bar_header">@messages("menu.promotions")</header>
+        <a class="left_bar_link promotion_link" href="@routes.LeagueController.promotions(details.leagueInfo.leagueId)">
+        @messages("menu.promotions")
+        </a>
+    </div>
+}
