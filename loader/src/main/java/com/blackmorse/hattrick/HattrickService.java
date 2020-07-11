@@ -32,8 +32,8 @@ public class HattrickService {
         this.teamLoader = teamLoader;
     }
 
-    public List<LeagueUnit> getAllLeagueUnitIdsForCountry(List<String> countryNames) {
-        return leagueUnitsLoader.load(countryNames);
+    public List<LeagueUnit> getAllLeagueUnitIdsForCountry(String countryName) {
+        return leagueUnitsLoader.load(countryName);
     }
 
     public List<TeamWithMatchDetails> getLastMatchDetails(List<LeagueUnit> leagueUnits) {

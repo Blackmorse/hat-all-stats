@@ -37,11 +37,11 @@ public class LeagueUnitsLoader {
         this.scheduler = io.reactivex.schedulers.Schedulers.from(executorService);
     }
 
-    public List<LeagueUnit> load(List<String> countryNames) {
+    public List<LeagueUnit> load(String countryName) {
         return Flowable.fromIterable(
                 hattrick.getWorldDetails().getLeagueList()
                         .stream()
-                        .filter(league -> countryNames.contains(league.getLeagueName())).collect(Collectors.toList()))
+                        .filter(league -> countryName.equals(league.getLeagueName())).collect(Collectors.toList()))
                 .map(league -> League.builder()
                         .id(league.getLeagueId())
                         .nextRound(league.getMatchRound())

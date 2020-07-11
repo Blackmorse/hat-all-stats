@@ -32,7 +32,7 @@ public class PromotionsLoader {
 
     public void load(String countryName) {
         List<LeagueUnit> allLeagueUnitIdsForCountry =
-                hattrickService.getAllLeagueUnitIdsForCountry(Arrays.asList(countryName));
+                hattrickService.getAllLeagueUnitIdsForCountry(countryName);
 
         League league = hattrickService.getLeagueByCountryName(countryName);
         log.info("Loading promotions for {}", countryName);
