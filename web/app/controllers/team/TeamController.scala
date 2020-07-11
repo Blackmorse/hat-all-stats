@@ -45,16 +45,18 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
   def teamOverview(teamId: Long) = Action.async { implicit request =>
     val teamDetailsFuture = Future(hattrick.api.teamDetails().teamID(teamId).execute())
 
-    val matchesFuture = Future(hattrick.api.matches().teamId(teamId).execute()
-      .getTeam.getMatchList.asScala
-      .filter(_.getMatchType == MatchType.LEAGUE_MATCH))
+    val matchesFuture = Future(hattrick.api.matches().teamId(teamId)
+      .execute()
+      .getTeam.getMatchList)
 
-    teamDetailsFuture.zipWith(matchesFuture) { case (teamDetails, matches) =>
+    teamDetailsFuture.zipWith(matchesFuture) { case (teamDetails, matchList) =>
       val webTeamDetails = fetchWebTeamDetails(teamDetails, teamId)
 
       if(teamDetails.getUser.getUserId == 0L) {
         Future(Ok(views.html.team.bot(webTeamDetails)(messages)))
       } else {
+        val matches = matchList.asScala
+          .filter(_.getMatchType == MatchType.LEAGUE_MATCH)
         val teamRankingsFuture = clickhouseDAO.teamRankings(season = webTeamDetails.season,
           leagueId = webTeamDetails.leagueInfo.leagueId,
           divisionLevel = webTeamDetails.divisionLevel,
