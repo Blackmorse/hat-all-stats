@@ -1,0 +1,34 @@
+---
+# tasks file for install-docker-clickhouse
+- name: install pip
+  become: true
+  apt:
+    name: python3-pip
+    state: present
+
+- name: install python docker
+  pip:
+    name: docker
+
+- name: create clickhouse directory
+  file:
+    path: "{{ base_project_directory }}/clickhouse/volume"
+    state: directory
+
+- name: copy users.xml
+  template:
+    src: users.xml.j2
+    dest: "{{ base_project_directory }}/clickhouse/users.xml"
+
+- name: start docker
+  docker_container: 
+    name: clickhouse-server-hattrick
+    image: yandex/clickhouse-server:20.4
+    volumes:
+      - "{{ base_project_directory }}/clickhouse/volume:/var/lib/clickhouse"
+      - "{{ base_project_directory }}/clickhouse/users.xml:/etc/clickhouse-server/users.xml"
+    ulimits:
+      - nofile:262144:262144
+    ports:
+      - 8123:8123
+    state: started

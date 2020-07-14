@@ -19,6 +19,8 @@ hattrick {
 
 db.default.driver = ru.yandex.clickhouse.ClickHouseDriver
 db.default.url = "{{ clickhouse.jdbc_url }}"
+db.default.user=web
+db.default.password="{{ clickhouse.users.web.password }}"
 
 fixedConnectionPool = 20
 
