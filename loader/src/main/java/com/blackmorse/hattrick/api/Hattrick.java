@@ -16,6 +16,7 @@ import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.api.worlddetails.model.WorldDetails;
 import com.blackmorse.hattrick.exceptions.HattrickChppException;
 import com.blackmorse.hattrick.exceptions.HattrickTransferException;
+import com.blackmorse.hattrick.model.enums.SearchType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -49,7 +50,7 @@ public class Hattrick {
 
     @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 10, backoff = @Backoff(delay = 15000L))
     public LeagueDetails getLeagueUnitByName(Integer leagueId, String leagueName) {
-        Search search = hattrickApi.search().searchType(3).searchLeagueId(leagueId).searchString(leagueName).execute();
+        Search search = hattrickApi.search().searchType(SearchType.SERIES).searchLeagueId(leagueId).searchString(leagueName).execute();
         return hattrickApi.leagueDetails().leagueLevelUnitId(search.getSearchResults().get(0).getResultId()).execute();
     }
 
@@ -60,18 +61,18 @@ public class Hattrick {
 
     @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 10, backoff = @Backoff(delay = 15000L))
     public Search searchLeagueUnits(Integer leagueId, String searchString, Integer page) {
-        return hattrickApi.search().searchType(3).searchLeagueId(leagueId).pageIndex(page).searchString(searchString).execute();
+        return hattrickApi.search().searchType(SearchType.SERIES).searchLeagueId(leagueId).pageIndex(page).searchString(searchString).execute();
     }
 
     @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 10, backoff = @Backoff(delay = 15000L))
     public List<Long> getLeagueUnitIdsForLevel(int leagueId, int level) {
         List<Long> result = new ArrayList<>();
 
-        Search leagueSearch = hattrickApi.search().searchLeagueId(leagueId).searchType(3).searchString(arabToRomans.get(level) + ".").execute();
+        Search leagueSearch = hattrickApi.search().searchLeagueId(leagueId).searchType(SearchType.SERIES).searchString(arabToRomans.get(level) + ".").execute();
         leagueSearch.getSearchResults().stream().map(Result::getResultId).forEach(result::add);
 
         for (int page = 1; page < leagueSearch.getPages(); page++) {
-            Search leagueSearchPage = hattrickApi.search().searchLeagueId(leagueId).pageIndex(page).searchType(3).searchString(arabToRomans.get(level) + ".").execute();
+            Search leagueSearchPage = hattrickApi.search().searchLeagueId(leagueId).pageIndex(page).searchType(SearchType.SERIES).searchString(arabToRomans.get(level) + ".").execute();
 
             leagueSearchPage.getSearchResults().stream().map(Result::getResultId).forEach(result::add);
         }
