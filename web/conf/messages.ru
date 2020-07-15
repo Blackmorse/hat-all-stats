@@ -96,6 +96,7 @@ bot.description=В данный момент команда выглядит, к
 #error
 error.header=Ошибка
 error.description=Похоже, такой страницы не существует или на сервере произошла ошибка. Пишите (ник в HT: Blackmorse)
+error.empty_field=Поле не заполнено
 
 #promotions
 menu.promotions=Переходы между лигами

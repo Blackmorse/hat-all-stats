@@ -156,10 +156,13 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     Future(Ok(views.html.league.searchPage(details, SearchForm.form, Seq())(messages)))
   }
 
-  def processSearch() = Action.async{ implicit request =>
-
+  def processSearch(leagueId: Int) = Action.async{ implicit request =>
     SearchForm.form.bindFromRequest().fold(
-      formWithErrors => Future(BadRequest("")),
+      formWithErrors => {
+        val details = WebLeagueDetails(leagueInfo = defaultService.leagueInfo(leagueId),
+          divisionLevelsLinks = defaultService.divisionLevelLinks(leagueId))
+        Future(BadRequest(views.html.league.searchPage(details, formWithErrors, Seq())(messages)))
+      },
       form => Future.successful({
         Redirect(routes.LeagueController.searchResult(form.leagueId, form.teamName))
       })

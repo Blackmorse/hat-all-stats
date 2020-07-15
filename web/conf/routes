@@ -12,7 +12,7 @@ GET     /league/teamState           controllers.LeagueController.teamState(leagu
 GET     /league/playerState         controllers.LeagueController.playerState(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /league/formalTeamStats     controllers.LeagueController.formalTeamStats(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /league/search              controllers.LeagueController.search(leagueId: Int)
-GET     /league/processSearch       controllers.LeagueController.processSearch()
+GET     /league/processSearch       controllers.LeagueController.processSearch(leagueId: Int)
 GET     /league/searchResult        controllers.LeagueController.searchResult(leagueId: Int, teamName: String)
 GET     /league/promotions          controllers.LeagueController.promotions(leagueId: Int)
 

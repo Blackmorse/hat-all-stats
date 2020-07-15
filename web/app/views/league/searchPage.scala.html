@@ -10,10 +10,13 @@
         </header>
         <div class="search_section">
             <div class="search_form">
-                @helper.form(routes.LeagueController.processSearch()) {
+                @helper.form(routes.LeagueController.processSearch(details.leagueInfo.leagueId)) {
                     <input type="text" id="teamName" name="teamName" value="">
                     <input type="text" id="leagueId" name="leagueId" value="@details.leagueInfo.leagueId">
                     <input type="submit" value="@messages("menu.search")">
+                    @if(!searchForm.errors.isEmpty) {
+                        <span class="form_error">@messages("error.empty_field")</span>
+                    }
                 }
             </div>
             @for((id, name) <- teams) {

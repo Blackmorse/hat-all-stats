@@ -5,3 +5,8 @@
 #leagueId {
     display: none;
 }
+
+.form_error {
+    color: red;
+    font-size: 0.6em;
+}

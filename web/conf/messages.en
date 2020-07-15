@@ -96,6 +96,7 @@ bot.description=At the current point this team seems to be a bot. Statistics for
 #error
 error.header=Error
 error.description=Seems like page doesn't exists or it is internal server error. Feel free to contact me (HT login: Blackmorse)
+error.empty_field=Required field
 
 #promotions
 menu.promotions=Promotions and qualifiers
