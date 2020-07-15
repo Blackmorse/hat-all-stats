@@ -80,30 +80,27 @@ public class CountriesLastLeagueMatchLoader {
                 log.info("There is {} active teams in ({}, {})", league.getActiveTeams(), countryName, league.getLeagueId());
                 List<LeagueUnit> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(countryName);
 
-                List<List<LeagueUnit>> allLeagueUnitIdsForCountryChunks = Lists.partition(allLeagueUnitIdsForCountry, 350);
+                log.info("There are {} league units in ({}, {})", allLeagueUnitIdsForCountry.size(), countryName, league.getLeagueId());
+                List<TeamWithMatchDetails> lastTeamWithMatchDetails = hattrickService.getLastMatchDetails(allLeagueUnitIdsForCountry);
 
-                for (List<LeagueUnit> allLeagueUnitIdsForCountryChunk : allLeagueUnitIdsForCountryChunks) {
-                    log.info("Chunk of leagueUnits size {} for ({}, {})", allLeagueUnitIdsForCountryChunk.size(), countryName, league.getLeagueId());
-                    List<TeamWithMatchDetails> lastTeamWithMatchDetails = hattrickService.getLastMatchDetails(allLeagueUnitIdsForCountryChunk);
+                List<MatchDetails> lastMatchDetails = lastTeamWithMatchDetails.stream().map(matchDetailsConverter::convert).collect(Collectors.toList());
 
-                    List<MatchDetails> lastMatchDetails = lastTeamWithMatchDetails.stream().map(matchDetailsConverter::convert).collect(Collectors.toList());
+                List<PlayerEvents> playerEvents = lastTeamWithMatchDetails.stream()
+                        .flatMap(playerEventsConverter::convert)
+                        .collect(Collectors.toList());
 
-                    List<PlayerEvents> playerEvents = lastTeamWithMatchDetails.stream()
-                            .flatMap(playerEventsConverter::convert)
-                            .collect(Collectors.toList());
+                List<PlayerInfo> playerInfos = hattrickService.getPlayersFromTeam(lastTeamWithMatchDetails)
+                        .stream()
+                        .flatMap(playerInfoConverter::convert)
+                        .collect(Collectors.toList());
 
-                    List<PlayerInfo> playerInfos = hattrickService.getPlayersFromTeam(lastTeamWithMatchDetails)
-                            .stream()
-                            .flatMap(playerInfoConverter::convert)
-                            .collect(Collectors.toList());
+                log.info("Writing match details for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), lastMatchDetails.size());
+                matchDetailsWriter.writeToClickhouse(lastMatchDetails);
+                log.info("Writing player events for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerEvents.size());
+                playerEventsWriter.writeToClickhouse(playerEvents);
+                log.info("Writing player info for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerInfos.size());
+                playerInfoWriter.writeToClickhouse(playerInfos);
 
-                    log.info("Writing match details for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), lastMatchDetails.size());
-                    matchDetailsWriter.writeToClickhouse(lastMatchDetails);
-                    log.info("Writing player events for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerEvents.size());
-                    playerEventsWriter.writeToClickhouse(playerEvents);
-                    log.info("Writing player info for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerInfos.size());
-                    playerInfoWriter.writeToClickhouse(playerInfos);
-                }
                 log.info("Joining player_stats for ({}, {}) ", countryName, league.getLeagueId());
                 playersJoiner.join(league);
                 log.info("Calculating team ranks for ({}, {})", countryName, league.getLeagueId());
@@ -112,9 +109,9 @@ public class CountriesLastLeagueMatchLoader {
                 alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
 
                 //Load promotions
-                if (league.getMatchRound() - 1 == 14) {
+                if (league.getMatchRound() - 1 == 6) {
                     log.info("It's last round of season. Time to load promotions!");
-                    promotionsLoader.load(countryName);
+                    promotionsLoader.load(countryName, allLeagueUnitIdsForCountry);
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);

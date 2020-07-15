@@ -30,10 +30,14 @@ public class PromotionsLoader {
         this.hattrick = hattrick;
     }
 
-    public void load(String countryName) {
+    public void loadCountry(String countryName) {
         List<LeagueUnit> allLeagueUnitIdsForCountry =
                 hattrickService.getAllLeagueUnitIdsForCountry(countryName);
 
+        load(countryName, allLeagueUnitIdsForCountry);
+    }
+
+    public void load(String countryName, List<LeagueUnit> allLeagueUnitIdsForCountry) {
         League league = hattrickService.getLeagueByCountryName(countryName);
         log.info("Loading promotions for {}", countryName);
         log.info("There are {} league units at {}", allLeagueUnitIdsForCountry.size(), countryName);

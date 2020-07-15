@@ -58,7 +58,7 @@ public class LoaderApplication {
             } else if (args[0].equals("promotions")) {
                 String country = args[1];
 
-                ctx.getBean(PromotionsLoader.class).load(country);
+                ctx.getBean(PromotionsLoader.class).loadCountry(country);
             }
         };
     }
