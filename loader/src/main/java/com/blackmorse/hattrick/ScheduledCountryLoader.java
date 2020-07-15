@@ -33,8 +33,7 @@ public class ScheduledCountryLoader {
     @AllArgsConstructor
     @Getter
     private final static class LeagueTime {
-        public Integer id;
-        public String league;
+        public League league;
         public Date time;
     }
 
@@ -71,11 +70,11 @@ public class ScheduledCountryLoader {
                         }
 
                         Integer minutesOffset = countriesToMinutesOffset.getOrDefault(league.getLeagueId(), 0);
-                        return new LeagueTime(league.getLeagueId(), league.getLeagueName(),
+                        return new LeagueTime(league,
                                 new Date(seriesMatchDate.getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000));
                     })
                     .sorted(Comparator.comparing(LeagueTime::getTime))
-                    .dropWhile(leagueTime -> !leagueTime.league.equals(country.get()))
+                    .dropWhile(leagueTime -> !leagueTime.league.getLeagueName().equals(country.get()))
                     .collect(Collectors.toList());
         } else {
             leagueTimes = worldDetails.getLeagueList().stream()
@@ -84,7 +83,7 @@ public class ScheduledCountryLoader {
 
                         Date time = new Date(league.getSeriesMatchDate().getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000);
 
-                        return new LeagueTime(league.getLeagueId(), league.getLeagueName(), time);
+                        return new LeagueTime(league, time);
                     })
                     .sorted(Comparator.comparing(LeagueTime::getTime))
                     .collect(Collectors.toList());
@@ -121,18 +120,19 @@ public class ScheduledCountryLoader {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    Future<?> submit = executorService.submit(() -> countriesLastLeagueMatchLoader.load(Arrays.asList(leagueTime.league)));
+                    Future<?> submit = executorService.submit(() -> countriesLastLeagueMatchLoader.load(Arrays.asList(leagueTime.league.getLeagueName())));
                     try {
                         submit.get();
                     } catch (Exception e) {
-                        LeagueTime newLeagueTime = new LeagueTime(leagueTime.getId(), leagueTime.getLeague(),
+                        LeagueTime newLeagueTime = new LeagueTime(leagueTime.league,
                                 new Date(leagueTime.getTime().getTime() + 30 * 60 * 1000));
                         schedule(Arrays.asList(newLeagueTime), executorService, timer);
                     }
                 }
             }, leagueTime.getTime());
 
-            log.info("Scheduled loading ({}, {}) to {}", leagueTime.league, leagueTime.id, format.format(leagueTime.getTime()));
+            log.info("Scheduled loading ({}, {}) with {} active teams to {}", leagueTime.league.getLeagueName(),
+                    leagueTime.league.getLeagueId(), leagueTime.league.getActiveTeams(), format.format(leagueTime.getTime()));
         });
     }
 }
