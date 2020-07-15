@@ -73,6 +73,7 @@ public class CountriesLastLeagueMatchLoader {
         log.info("Starting to load countries: {}", countryNames);
 
         for (String countryName : countryNames) {
+            boolean writtenToClickhouse  = false;
             try {
                 League league = hattrickService.getLeagueByCountryName(countryName);
 
@@ -94,6 +95,7 @@ public class CountriesLastLeagueMatchLoader {
                         .flatMap(playerInfoConverter::convert)
                         .collect(Collectors.toList());
 
+                writtenToClickhouse = true;
                 log.info("Writing match details for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), lastMatchDetails.size());
                 matchDetailsWriter.writeToClickhouse(lastMatchDetails);
                 log.info("Writing player events for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerEvents.size());
@@ -109,17 +111,20 @@ public class CountriesLastLeagueMatchLoader {
                 alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
 
                 //Load promotions
-                if (league.getMatchRound() - 1 == 6) {
+                if (league.getMatchRound() - 1 == 14) {
                     log.info("It's last round of season. Time to load promotions!");
                     promotionsLoader.load(countryName, allLeagueUnitIdsForCountry);
+                }
+                if (callback != null) {
+                    callback.run();
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 telegram.send(e.getMessage());
-            } finally {
-                if (callback != null) {
-                    callback.run();
+                if(!writtenToClickhouse) {
+                    throw new RuntimeException(e);
                 }
+                log.error("Seems that some data for {} was written to CH and then failed. You must take a look", countryName);
             }
         }
     }

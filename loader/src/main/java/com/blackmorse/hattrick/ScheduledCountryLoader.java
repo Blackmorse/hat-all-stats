@@ -12,9 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -101,18 +99,7 @@ public class ScheduledCountryLoader {
             }
         });
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
-        leagueTimes.forEach(leagueTime -> {
-
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    executorService.submit(() -> countriesLastLeagueMatchLoader.load(Arrays.asList(leagueTime.league)));
-                }
-            }, leagueTime.getTime());
-
-            log.info("Scheduled loading ({}, {}) to {}", leagueTime.league, leagueTime.id, format.format(leagueTime.getTime()));
-        });
+        schedule(leagueTimes, executorService, timer);
 
         while(true) {
             try {
@@ -125,6 +112,27 @@ public class ScheduledCountryLoader {
                 telegram.send(e.getMessage());
             }
         }
+    }
 
+    private void schedule(List<LeagueTime> leagueTimes, ExecutorService executorService, Timer timer ) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+        leagueTimes.forEach(leagueTime -> {
+
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Future<?> submit = executorService.submit(() -> countriesLastLeagueMatchLoader.load(Arrays.asList(leagueTime.league)));
+                    try {
+                        submit.get();
+                    } catch (Exception e) {
+                        LeagueTime newLeagueTime = new LeagueTime(leagueTime.getId(), leagueTime.getLeague(),
+                                new Date(leagueTime.getTime().getTime() + 30 * 60 * 1000));
+                        schedule(Arrays.asList(newLeagueTime), executorService, timer);
+                    }
+                }
+            }, leagueTime.getTime());
+
+            log.info("Scheduled loading ({}, {}) to {}", leagueTime.league, leagueTime.id, format.format(leagueTime.getTime()));
+        });
     }
 }
