@@ -83,7 +83,7 @@
                         details,
                         bestTeamsLeagueLink,
                         bestTeamsDivisionLevelLink,
-                        attack => Html((attack / 3).toString))
+                        attack => Html(attack.toString))
                     @common.teamRanking(lastLeagueTeamRanking.get,
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
@@ -95,13 +95,13 @@
                         details,
                         bestTeamsLeagueLink,
                         bestTeamsDivisionLevelLink,
-                        defense => Html((defense / 3).toString))
+                        defense => Html(defense.toString))
                     @common.teamRanking(lastLeagueTeamRanking.get,
                         previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.midfield"),
-                        teamRankings => teamRankings.midfield,
+                        teamRankings => teamRankings.midfield * 3,
                         teamRankings => teamRankings.midfieldPosition,
                         "midfield",
                         details,

@@ -18,9 +18,9 @@
         <td><a class="table_link" href="@routes.TeamController.teamOverview(team.teamId)">@team.teamName</a></td>
         <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(team.leagueUnitId)">@team.leagueUnitName</a></td>
         <td class="value">@team.hatStats</td>
-        <td class="value">@team.midfield</td>
-        <td class="value">@{team.defense / 3}</td>
-        <td class="value">@{team.attack / 3}</td>
+        <td class="value">@{team.midfield * 3}</td>
+        <td class="value">@team.defense</td>
+        <td class="value">@team.attack</td>
     </tr>
     }
 </table>
