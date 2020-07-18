@@ -11,13 +11,12 @@ import models.web._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc._
+import play.api.mvc.{Cookie, _}
 import service.{DefaultService, LeagueInfo}
 import play.api.data.validation.Constraints._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
 import collection.JavaConverters._
 
 case class WebLeagueDetails(leagueInfo: LeagueInfo,
@@ -53,8 +52,6 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
     val details = WebLeagueDetails(leagueInfo = defaultService.leagueInfo(leagueId),
       divisionLevelsLinks = defaultService.divisionLevelLinks(leagueId))
-
-    request.session.data.contains("lang")
 
     statisticsCHRequest.execute(leagueId = Some(leagueId),
       statisticsParameters = statisticsParameters)

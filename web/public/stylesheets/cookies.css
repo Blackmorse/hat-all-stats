@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+
+#cookies {
+    font-family: 'Merriweather', serif;
+    position: fixed;
+    bottom: 0;
+    left:0;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    width: 100%;
+    background-color: #bbf0c9;
+    border-radius: 2px;
+    box-shadow: 3px 3px 5px 6px gray;
+}
+
+.cookie_header {
+    width: 300px;
+    margin-top: 10px;
+    margin-left: auto; 
+    margin-right: auto;
+    margin-bottom: 7px;
+    text-align: center;
+    font-size: 1.3em;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.cookie_article {
+    width: 700px;
+    margin-left: auto; 
+    margin-right: auto;    
+    margin-bottom: 10px;
+    text-align: justify;
+}
+
+#cookie_yes {
+    width: 120px;
+    margin-left: auto; 
+    margin-right: auto; 
+    margin-bottom: 5px;
+
+    box-shadow: 0px 1px 3px -3px #cf866c;
+	background:linear-gradient(to bottom, rgb(36, 172, 88) 5%, rgb(21, 107, 21) 100%);
+	background-color:green;
+	border:1px solid green;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:17px;
+	text-decoration:none;
+    text-shadow:1px 1px 0px #854629;
+}

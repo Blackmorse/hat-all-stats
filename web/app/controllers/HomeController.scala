@@ -21,6 +21,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents,
   }
 
   def lang(lang: String) = Action { implicit request: Request[AnyContent] =>
-    Redirect(request.headers("Referer"), 302).withSession(request.session - "lang" + ("lang" -> lang))
+    // Redirect(request.headers("Referer"), 302).withSession(request.session - "lang" + ("lang" -> lang))
+    Redirect(request.headers("Referer"), 302).withCookies(Cookie("lang", lang, sameSite = Some(Cookie.SameSite.None), httpOnly = false))
   }
 }

@@ -102,3 +102,8 @@ error.empty_field=Required field
 menu.promotions=Promotions and qualifiers
 promotions.auto_promotions=Auto-promotions
 promotions.qualifications=Qualifications
+
+#cookies
+cookies.header=This site uses cookies.
+cookies.content=We inform you that this site uses own cookies to improve your user experience. By continuing to browse this website, you declare to accept the use of cookies.
+cookies.accept=Accept
