@@ -3,7 +3,7 @@ package models.web
 import databases.clickhouse._
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
-import service.DefaultService
+import service.LeagueInfoService
 
 case class ViewData[T, +V <: AbstractWebDetails](details: V,
                                                 webPagedEntities: WebPagedEntities[T],
@@ -12,7 +12,7 @@ case class ViewData[T, +V <: AbstractWebDetails](details: V,
 
 
 @Singleton
-class ViewDataFactory @Inject() (val defaultService: DefaultService) {
+class ViewDataFactory @Inject() (val leagueInfoService: LeagueInfoService) {
 
   def create[T, V <: AbstractWebDetails](details: V,
                                          func: StatisticsParameters => Call,
@@ -22,9 +22,9 @@ class ViewDataFactory @Inject() (val defaultService: DefaultService) {
                                          entities: List[T],
                                          selectedId: Option[Long] = None): ViewData[T, V] = {
     val seasonLinks = SeasonLinks(statisticsParameters.season, seasonInfoUrlFunc(statisticsParameters, func),
-      defaultService.leagueInfo.seasons(details.leagueInfo.league.getLeagueId), details.leagueInfo.league.getSeasonOffset)
+      leagueInfoService.leagueInfo.seasons(details.leagueInfo.league.getLeagueId), details.leagueInfo.league.getSeasonOffset)
 
-    val rounds = defaultService.leagueInfo.rounds(details.leagueInfo.league.getLeagueId, statisticsParameters.season)
+    val rounds = leagueInfoService.leagueInfo.rounds(details.leagueInfo.league.getLeagueId, statisticsParameters.season)
     val statsTypeFunc = statTypeUrlFunc(statisticsParameters, func)
     val statTypeLinks = statisticsType match {
       case AvgMax => StatTypeLinks.withAverages(statsTypeFunc, rounds, statisticsParameters.statsType)

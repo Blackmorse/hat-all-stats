@@ -3,7 +3,7 @@ package controllers
 import javax.inject._
 import play.api._
 import play.api.mvc._
-import service.DefaultService
+import service.LeagueInfoService
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -13,15 +13,15 @@ import service.DefaultService
 class HomeController @Inject()(val controllerComponents: ControllerComponents,
                                val leagueController: LeagueController,
                                val configuration: Configuration,
-                               val defaultService: DefaultService) extends BaseController {
+                               val leagueInfoService: LeagueInfoService) extends BaseController {
 
 
   def index() = Action { implicit request: Request[AnyContent] =>
-    Redirect(routes.LeagueController.bestTeams(defaultService.defaultLeagueId, None))
+    Redirect(routes.LeagueController.bestTeams(leagueInfoService.defaultLeagueId, None))
   }
 
   def lang(lang: String) = Action { implicit request: Request[AnyContent] =>
-    // Redirect(request.headers("Referer"), 302).withSession(request.session - "lang" + ("lang" -> lang))
-    Redirect(request.headers("Referer"), 302).withCookies(Cookie("lang", lang, sameSite = Some(Cookie.SameSite.None), httpOnly = false))
+    Redirect(request.headers("Referer"), 302).withCookies(Cookie("lang", lang, 
+      sameSite = Some(Cookie.SameSite.Lax), httpOnly = false))
   }
 }

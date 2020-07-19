@@ -8,7 +8,7 @@ import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import models.web._
 import play.api.mvc.{BaseController, Call, ControllerComponents}
-import service.{DefaultService, LeagueInfo}
+import service.{LeagueInfoService, DefaultService, LeagueInfo}
 
 import collection.JavaConverters._
 import scala.concurrent.Future
@@ -23,6 +23,7 @@ case class WebTeamDetails(teamId: Long, teamName: String, leagueInfo: LeagueInfo
 class TeamController @Inject()(val controllerComponents: ControllerComponents,
                                implicit val clickhouseDAO: ClickhouseDAO,
                                val hattrick: Hattrick,
+                               val leagueInfoService: LeagueInfoService,
                                val defaultService: DefaultService,
                                val matchController: MatchController,
                                val viewDataFactory: ViewDataFactory) extends BaseController with MessageSupport {
@@ -30,7 +31,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
   private def fetchWebTeamDetails(team: Team, season: Int) =
     WebTeamDetails(teamId = team.getTeamId,
       teamName = team.getTeamName,
-      leagueInfo = defaultService.leagueInfo(team.getLeague.getLeagueId),
+      leagueInfo = leagueInfoService.leagueInfo(team.getLeague.getLeagueId),
       season = season,
       divisionLevel = team.getLeagueLevelUnit.getLeagueLevel,
       leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId,
@@ -38,7 +39,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
 
   private def fetchWebTeamDetails(teamDetails: TeamDetails, teamId: Long): WebTeamDetails = {
     val team = teamDetails.getTeams.asScala.filter(_.getTeamId == teamId).head
-    val season = defaultService.leagueInfo.currentSeason(team.getLeague.getLeagueId)
+    val season = leagueInfoService.leagueInfo.currentSeason(team.getLeague.getLeagueId)
     fetchWebTeamDetails(team, season)
   }
 
@@ -107,8 +108,10 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
       Future(Ok(views.html.team.bot(webDetails)(messages)))
     } else {
 
-      val statisticsParameters =
-        statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(webDetails.leagueInfo.league.getLeagueId), 0, Accumulate, "scored", DefaultService.PAGE_SIZE, Desc))
+      val (statisticsParameters, cookies) = defaultService.statisticsParameters(statisticsParametersOpt,
+          leagueId = webDetails.leagueInfo.league.getLeagueId,
+          statsType = Accumulate,
+          sortColumn = "scored")
 
       val details = fetchWebTeamDetails(teamDetails, teamId)
 
@@ -124,7 +127,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
             statisticsParameters = statisticsParameters,
             statisticsCHRequest = StatisticsCHRequest.playerStatsRequest,
             entities = playerStats)
-          Ok(views.html.team.playerStats(viewData)(messages))
+          Ok(views.html.team.playerStats(viewData)(messages)).withCookies(cookies: _*)
         })
     }
   }
@@ -141,9 +144,12 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
     val divisionLevel = team.getLeagueLevelUnit.getLeagueLevel
     val leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId
 
-    val currentRound = defaultService.leagueInfo.currentRound(leagueId)
-    val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueId), 0, Round(currentRound), "rating", DefaultService.PAGE_SIZE, Desc))
+    val currentRound = leagueInfoService.leagueInfo.currentRound(leagueId)
+
+    val (statisticsParameters, cookies) = defaultService.statisticsParameters(statisticsParametersOpt,
+        leagueId = leagueId,
+        statsType = Round(currentRound),
+        sortColumn = "rating")
 
     val details = fetchWebTeamDetails(team, statisticsParameters.season)
 
@@ -162,7 +168,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
             statisticsParameters = statisticsParameters,
             statisticsCHRequest = StatisticsCHRequest.playerStateRequest,
             entities = playerStates)
-        }).map(viewData => Ok(views.html.team.playerState(viewData)(messages)))
+        }).map(viewData => Ok(views.html.team.playerState(viewData)(messages)).withCookies(cookies: _*))
     }
   }
 }

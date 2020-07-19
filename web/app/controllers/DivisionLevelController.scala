@@ -8,7 +8,7 @@ import models.clickhouse._
 import models.web._
 import play.api.i18n.Messages
 import play.api.mvc.{BaseController, Call, ControllerComponents}
-import service.{DefaultService, LeagueInfo}
+import service.{DefaultService, LeagueInfo, LeagueInfoService}
 import utils.Romans
 import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 
@@ -20,6 +20,7 @@ case class WebDivisionLevelDetails(leagueInfo: LeagueInfo, divisionLevel: Int, d
 @Singleton
 class DivisionLevelController@Inject() (val controllerComponents: ControllerComponents,
                                         implicit val clickhouseDAO: ClickhouseDAO,
+                                        val leagueInfoService: LeagueInfoService,
                                         val defaultService: DefaultService,
                                         val viewDataFactory: ViewDataFactory) extends BaseController with MessageSupport {
 
@@ -37,17 +38,20 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       case AvgMax => Avg
       case Accumulated => Accumulate
       case OnlyRound =>
-        val currentRound = defaultService.leagueInfo.currentRound(leagueId)
+        val currentRound = leagueInfoService.leagueInfo.currentRound(leagueId)
         Round(currentRound)
     }
-    val statisticsParameters =
-      statisticsParametersOpt.getOrElse(StatisticsParameters(defaultService.leagueInfo.currentSeason(leagueId), 0, statsType, sortColumn, DefaultService.PAGE_SIZE, Desc))
+   
+    val (statisticsParameters, cookies) = defaultService.statisticsParameters(statisticsParametersOpt, 
+        leagueId = leagueId,
+        statsType = statsType,
+        sortColumn = sortColumn)
 
     statisticsCHRequest.execute(leagueId = Some(leagueId),
       divisionLevel = Some(divisionLevel),
       statisticsParameters = statisticsParameters)
       .map{ entities =>
-        val details = WebDivisionLevelDetails(leagueInfo = defaultService.leagueInfo(leagueId),
+        val details = WebDivisionLevelDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
           divisionLevel = divisionLevel,
           divisionLevelRoman = Romans(divisionLevel),
           leagueUnitLinks = leagueUnitLinks(leagueId, divisionLevel))
@@ -59,7 +63,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
           statisticsCHRequest = statisticsCHRequest,
           entities = entities,
           selectedId = selectedId)
-      }.map(viewData => Ok(viewFunc(viewData).apply(messages)))
+      }.map(viewData => Ok(viewFunc(viewData).apply(messages)).withCookies(cookies: _*))
   }
 
   def bestTeams(leagueId: Int,
@@ -143,7 +147,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
     if (divisionLevel == 1) {
       Seq("1" -> routes.LeagueUnitController.bestTeams(higherLeagueMap.get(leagueId), None).url)
     } else {
-      defaultService.leagueNumbersMap(divisionLevel).map(number =>
+      leagueInfoService.leagueNumbersMap(divisionLevel).map(number =>
         number
           .toString -> routes.LeagueUnitController.bestTeamsByName(s"${Romans.apply(divisionLevel)}.$number", leagueId, None).url)
     }
