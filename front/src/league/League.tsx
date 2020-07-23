@@ -4,6 +4,7 @@ import React from 'react';
 import Layout from '../Layout';
 import TopMenu from '../menu/TopMenu';
 import LeftMenu from '../menu/LeftMenu'
+import TeamHatstats from './TeamHatstats';
 
 interface MatchParams {
     leagueId: string;
@@ -30,7 +31,7 @@ class League extends Layout<Props, {}> {
     }
 
     content() {
-      return <span></span>
+      return <TeamHatstats leagueId={Number(this.props.match.params.leagueId)} />
     }
 }
 

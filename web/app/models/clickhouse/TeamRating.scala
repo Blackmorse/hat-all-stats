@@ -2,11 +2,14 @@ package models.clickhouse
 
 import anorm.SqlParser.get
 import anorm.~
+import play.api.libs.json.Json
 
 case class TeamRating(teamId: Long, teamName: String, leagueUnitId: Long, leagueUnitName: String,
                       hatStats: Int, midfield: Int, defense: Int, attack: Int)
 
 object TeamRating {
+  implicit val writes = Json.writes[TeamRating]
+
   val teamRatingMapper = {
     get[Long]("team_id") ~
       get[String]("team_name") ~
