@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import LeagueData from './../rest/models/LeagueData'
-import getLeagueData from '../rest/Client';
+import {getLeagueData} from '../rest/Client';
 import './TopMenu.css'
 
 interface Props {
@@ -20,7 +20,7 @@ class TopMenu extends React.Component<Props, State> {
 
     componentDidMount() {
         let leagueId = this.props.leagueId
-        getLeagueData(Number(leagueId), leagueData => this.setState({
+        getLeagueData(leagueId, leagueData => this.setState({
           leagueData: leagueData
         }))
     }
@@ -33,7 +33,7 @@ class TopMenu extends React.Component<Props, State> {
 
           <select className="href_select">
             {this.state.leagueData?.divisionLevels.map(divisionLevel => {
-              return <option value={divisionLevel}>{divisionLevel}</option>}
+              return <option value={divisionLevel} key={'division_level_select_' + divisionLevel}>{divisionLevel}</option>}
             )}
           </select>
 
