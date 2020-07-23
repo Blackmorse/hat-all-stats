@@ -1,0 +1,11 @@
+body {
+  background: #dcf7d5;
+}
+
+.main_frame {
+  min-width: 1100px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}

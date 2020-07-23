@@ -5,6 +5,7 @@
 GET     /lang                       controllers.HomeController.lang(lang: String)
 
 GET     /worldOverview              controllers.WorldController.overview()
+GET     /api/league/:leagueId                 controllers.RestLeagueController.getLeagueData(leagueId: Int)
 
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.overview(leagueId: Int)
