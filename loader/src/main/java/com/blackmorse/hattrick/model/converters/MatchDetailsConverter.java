@@ -14,15 +14,22 @@ public class MatchDetailsConverter {
 
         Long homeTeamId = matchDetails.getMatch().getHomeTeam().getHomeTeamId();
 
-        HomeAwayTeam homeAwayTeam;
-        Integer goals = null;
-        Integer enemyGoals = null;
+        HomeAwayTeam currentTeam;
+        HomeAwayTeam oppositeTeam;
+        Integer goals;
+        Integer enemyGoals;
+        MatchDetails.IsHomeMatch isHomeMatch;
+
         if (homeTeamId.equals(teamWithMatch.getTeam().getId())) {
-            homeAwayTeam = matchDetails.getMatch().getHomeTeam();
+            isHomeMatch = MatchDetails.IsHomeMatch.HOME;
+            currentTeam = matchDetails.getMatch().getHomeTeam();
+            oppositeTeam = matchDetails.getMatch().getAwayTeam();
             goals = matchDetails.getMatch().getHomeTeam().getHomeGoals();
             enemyGoals = matchDetails.getMatch().getAwayTeam().getAwayGoals();
         } else {
-            homeAwayTeam = matchDetails.getMatch().getAwayTeam();
+            isHomeMatch = MatchDetails.IsHomeMatch.AWAY;
+            oppositeTeam = matchDetails.getMatch().getHomeTeam();
+            currentTeam = matchDetails.getMatch().getAwayTeam();
             goals = matchDetails.getMatch().getAwayTeam().getAwayGoals();
             enemyGoals = matchDetails.getMatch().getHomeTeam().getHomeGoals();
         }
@@ -39,20 +46,37 @@ public class MatchDetailsConverter {
                 .round(teamWithMatch.getMatch().getRound())
                 .matchId(teamWithMatch.getMatch().getId())
 
+                .isHomeMatch(isHomeMatch)
                 .goals(goals)
                 .enemyGoals(enemyGoals)
-                .formation(homeAwayTeam.getFormation())
-                .tacticType(homeAwayTeam.getTacticType())
-                .tacticSkill(homeAwayTeam.getTacticSkill())
-                .ratingMidfield(homeAwayTeam.getRatingMidfield())
-                .ratingLeftDef(homeAwayTeam.getRatingLeftDef())
-                .ratingMidDef(homeAwayTeam.getRatingMidDef())
-                .ratingRightDef(homeAwayTeam.getRatingRightDef())
-                .ratingLeftAtt(homeAwayTeam.getRatingLeftAtt())
-                .ratingMidAtt(homeAwayTeam.getRatingMidAtt())
-                .ratingRightAtt(homeAwayTeam.getRatingRightAtt())
-                .ratingIndirectSetPiecesDef(homeAwayTeam.getRatingIndirectSetPiecesDef())
-                .ratingIndirectSetPiecesAtt(homeAwayTeam.getRatingIndirectSetPiecesAtt())
+
+                .soldTotal(matchDetails.getMatch().getArena().getSoldTotal())
+
+                .formation(currentTeam.getFormation())
+                .tacticType(currentTeam.getTacticType())
+                .tacticSkill(currentTeam.getTacticSkill())
+                .ratingMidfield(currentTeam.getRatingMidfield())
+                .ratingLeftDef(currentTeam.getRatingLeftDef())
+                .ratingMidDef(currentTeam.getRatingMidDef())
+                .ratingRightDef(currentTeam.getRatingRightDef())
+                .ratingLeftAtt(currentTeam.getRatingLeftAtt())
+                .ratingMidAtt(currentTeam.getRatingMidAtt())
+                .ratingRightAtt(currentTeam.getRatingRightAtt())
+                .ratingIndirectSetPiecesDef(currentTeam.getRatingIndirectSetPiecesDef())
+                .ratingIndirectSetPiecesAtt(currentTeam.getRatingIndirectSetPiecesAtt())
+
+                .oppositeFormation(oppositeTeam.getFormation())
+                .oppositeTacticType(oppositeTeam.getTacticType())
+                .oppositeTacticSkill(oppositeTeam.getTacticSkill())
+                .oppositeRatingMidfield(oppositeTeam.getRatingMidfield())
+                .oppositeRatingLeftDef(oppositeTeam.getRatingLeftDef())
+                .oppositeRatingMidDef(oppositeTeam.getRatingMidDef())
+                .oppositeRatingRightDef(oppositeTeam.getRatingRightDef())
+                .oppositeRatingLeftAtt(oppositeTeam.getRatingLeftAtt())
+                .oppositeRatingMidAtt(oppositeTeam.getRatingMidAtt())
+                .oppositeRatingRightAtt(oppositeTeam.getRatingRightAtt())
+                .oppositeRatingIndirectSetPiecesDef(oppositeTeam.getRatingIndirectSetPiecesDef())
+                .oppositeRatingIndirectSetPiecesAtt(oppositeTeam.getRatingIndirectSetPiecesAtt())
                 .build();
     }
 }

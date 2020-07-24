@@ -4,15 +4,17 @@ CREATE TABLE match_details
     `league_id` UInt16,
     `division_level` UInt8,
     `league_unit_id` UInt32,
-    `league_unit_name` String,
+    `league_unit_name` LowCardinality(String),
     `team_id` UInt64,
     `team_name` String,
     `time` DateTime,
     `dt` Date DEFAULT toDate(time),
     `round` UInt8,
     `match_id` UInt64,
+    `is_home_match` Enum8('home' = 0, 'away' = 1),
     `goals` UInt8,
     `enemy_goals` UInt8,
+    `sold_total` UInt32,
     `formation` LowCardinality(String),
     `tactic_type` UInt8,
     `tactic_skill` UInt8,
@@ -24,10 +26,21 @@ CREATE TABLE match_details
     `rating_mid_att` UInt8,
     `rating_left_att` UInt8,
     `rating_indirect_set_pieces_def` UInt8,
-    `rating_indirect_set_pieces_att` UInt8
+    `rating_indirect_set_pieces_att` UInt8,
+    `opposite_formation` LowCardinality(String),
+    `opposite_tactic_type` UInt8,
+    `opposite_tactic_skill` UInt8,
+    `opposite_rating_midfield` UInt8,
+    `opposite_rating_right_def` UInt8,
+    `opposite_rating_left_def` UInt8,
+    `opposite_rating_mid_def` UInt8,
+    `opposite_rating_right_att` UInt8,
+    `opposite_rating_mid_att` UInt8,
+    `opposite_rating_left_att` UInt8,
+    `opposite_rating_indirect_set_pieces_def` UInt8,
+    `opposite_rating_indirect_set_pieces_att` UInt8
 )
 ENGINE = MergeTree()
 PARTITION BY season
-ORDER BY (season, league_id, division_level, league_unit_id, round)
+ORDER BY (season, league_id, division_level, league_unit_id, team_id, dt)
 SETTINGS index_granularity = 512
-

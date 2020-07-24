@@ -26,8 +26,12 @@ public class MatchDetailsJdbcMapper extends AbstractJdbcMapper<MatchDetails> {
         map.put("round", MatchDetails::getRound);
         map.put("match_id", MatchDetails::getMatchId);
 
+        map.put("is_home_match", matchDetails -> matchDetails.getIsHomeMatch().getStringValue());
         map.put("goals", MatchDetails::getGoals);
         map.put("enemy_goals", MatchDetails::getEnemyGoals);
+
+        map.put("sold_total", MatchDetails::getSoldTotal);
+
         map.put("formation", MatchDetails::getFormation);
         map.put("tactic_type", MatchDetails::getTacticType);
         map.put("tactic_skill", MatchDetails::getTacticSkill);
@@ -38,8 +42,21 @@ public class MatchDetailsJdbcMapper extends AbstractJdbcMapper<MatchDetails> {
         map.put("rating_right_att", MatchDetails::getRatingRightAtt);
         map.put("rating_mid_att", MatchDetails::getRatingMidAtt);
         map.put("rating_left_att", MatchDetails::getRatingLeftAtt);
-        map.put("rating_indirect_set_pieces_def", MatchDetails::getRatingIndirectSetPiecesDef);
-        map.put("rating_indirect_set_pieces_att", MatchDetails::getRatingIndirectSetPiecesAtt);
+        map.put("rating_indirect_set_pieces_def", MatchDetails::getOppositeRatingIndirectSetPiecesDef);
+        map.put("rating_indirect_set_pieces_att", MatchDetails::getOppositeRatingIndirectSetPiecesAtt);
+
+        map.put("opposite_formation", MatchDetails::getOppositeFormation);
+        map.put("opposite_tactic_type", MatchDetails::getOppositeTacticType);
+        map.put("opposite_tactic_skill", MatchDetails::getOppositeTacticSkill);
+        map.put("opposite_rating_midfield", MatchDetails::getOppositeRatingMidfield);
+        map.put("opposite_rating_right_def", MatchDetails::getOppositeRatingRightDef);
+        map.put("opposite_rating_left_def", MatchDetails::getOppositeRatingLeftDef);
+        map.put("opposite_rating_mid_def", MatchDetails::getOppositeRatingMidDef);
+        map.put("opposite_rating_right_att", MatchDetails::getOppositeRatingRightAtt);
+        map.put("opposite_rating_mid_att", MatchDetails::getOppositeRatingMidAtt);
+        map.put("opposite_rating_left_att", MatchDetails::getOppositeRatingLeftAtt);
+        map.put("opposite_rating_indirect_set_pieces_def", MatchDetails::getOppositeRatingIndirectSetPiecesDef);
+        map.put("opposite_rating_indirect_set_pieces_att", MatchDetails::getOppositeRatingIndirectSetPiecesAtt);
 
         return map;
     }
