@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class PromotionsMapper extends AbstractJdbcMapper<Promotion> {
-    public PromotionsMapper(String databaseName) {
+public class PromotionsJdbcMapper extends AbstractJdbcMapper<Promotion> {
+    public PromotionsJdbcMapper(String databaseName) {
         super(databaseName + ".promotions");
     }
 

@@ -1,13 +1,11 @@
 package com.blackmorse.hattrick;
 
 import com.blackmorse.hattrick.clickhouse.ClickhouseWriter;
-import com.blackmorse.hattrick.clickhouse.mappers.MatchDetailsJdbcMapper;
-import com.blackmorse.hattrick.clickhouse.mappers.PlayerEventsJdbcMapper;
-import com.blackmorse.hattrick.clickhouse.mappers.PlayerInfoJdbcMapper;
-import com.blackmorse.hattrick.clickhouse.mappers.PromotionsMapper;
+import com.blackmorse.hattrick.clickhouse.mappers.*;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.clickhouse.model.PlayerEvents;
 import com.blackmorse.hattrick.clickhouse.model.PlayerInfo;
+import com.blackmorse.hattrick.clickhouse.model.TeamDetails;
 import com.blackmorse.hattrick.promotions.model.Promotion;
 import com.blackmorse.hattrick.telegram.Telegram;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +62,12 @@ public class Config {
     @Bean("promotionsWriter")
     public ClickhouseWriter<Promotion> promotionClickhouseWriter(NamedParameterJdbcTemplate template,
                                                                  Telegram telegram) {
-        return new ClickhouseWriter<>(template, new PromotionsMapper(databaseName), telegram);
+        return new ClickhouseWriter<>(template, new PromotionsJdbcMapper(databaseName), telegram);
+    }
+
+    @Bean("teamDetailsWriter")
+    public ClickhouseWriter<TeamDetails> teamDetailsClickhouseWriter(NamedParameterJdbcTemplate template,
+                                                                     Telegram telegram) {
+        return new ClickhouseWriter<>(template, new TeamDetailsJdbcMapper(databaseName), telegram);
     }
 }

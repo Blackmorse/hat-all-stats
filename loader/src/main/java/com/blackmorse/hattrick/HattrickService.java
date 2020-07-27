@@ -3,6 +3,7 @@ package com.blackmorse.hattrick;
 import com.blackmorse.hattrick.api.*;
 import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.model.TeamWithMatchAndPlayers;
+import com.blackmorse.hattrick.model.TeamWithMatchAndTeamDetails;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.LeagueUnit;
 import com.blackmorse.hattrick.promotions.model.PromoteTeam;
@@ -18,18 +19,21 @@ public class HattrickService {
     private final LeagueUnitsLoader leagueUnitsLoader;
     private final MatchLoader matchLoader;
     private final PlayersLoader playersLoader;
-    private final TeamLoader teamLoader;
+    private final PromoteTeamLoader promoteTeamLoader;
+    private final TeamDetailsLoader teamDetailsLoader;
 
     public HattrickService(Hattrick hattrick,
                            LeagueUnitsLoader leagueUnitsLoader,
                            MatchLoader matchLoader,
                            PlayersLoader playersLoader,
-                           TeamLoader teamLoader) {
+                           PromoteTeamLoader promoteTeamLoader,
+                           TeamDetailsLoader teamDetailsLoader) {
         this.hattrick = hattrick;
         this.leagueUnitsLoader = leagueUnitsLoader;
         this.matchLoader = matchLoader;
         this.playersLoader = playersLoader;
-        this.teamLoader = teamLoader;
+        this.promoteTeamLoader = promoteTeamLoader;
+        this.teamDetailsLoader = teamDetailsLoader;
     }
 
     public List<LeagueUnit> getAllLeagueUnitIdsForCountry(String countryName) {
@@ -50,10 +54,14 @@ public class HattrickService {
     }
 
     public List<PromoteTeam> getPromoteTeams(List<LeagueUnit> leagueUnits) {
-        return teamLoader.getPromoteTeams(leagueUnits);
+        return promoteTeamLoader.getPromoteTeams(leagueUnits);
     }
 
     public List<PromoteTeam> getHistoryPromoteTeams(List<LeagueUnit> leagueUnits, Integer season) {
-        return teamLoader.getHistoryPromoteTeams(leagueUnits, season);
+        return promoteTeamLoader.getHistoryPromoteTeams(leagueUnits, season);
+    }
+
+    public List<TeamWithMatchAndTeamDetails> getTeamDetails(List<TeamWithMatchDetails> teamWithMatchDetails) {
+        return teamDetailsLoader.getTeamDetails(teamWithMatchDetails);
     }
 }

@@ -8,19 +8,20 @@ import com.blackmorse.hattrick.clickhouse.TeamRankCalculator;
 import com.blackmorse.hattrick.clickhouse.model.MatchDetails;
 import com.blackmorse.hattrick.clickhouse.model.PlayerEvents;
 import com.blackmorse.hattrick.clickhouse.model.PlayerInfo;
+import com.blackmorse.hattrick.clickhouse.model.TeamDetails;
 import com.blackmorse.hattrick.model.LeagueUnit;
+import com.blackmorse.hattrick.model.TeamWithMatchAndTeamDetails;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.converters.MatchDetailsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerEventsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerInfoConverter;
+import com.blackmorse.hattrick.model.converters.TeamDetailsConverter;
 import com.blackmorse.hattrick.telegram.Telegram;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,10 +32,12 @@ public class CountriesLastLeagueMatchLoader {
     private final ClickhouseWriter<MatchDetails> matchDetailsWriter;
     private final ClickhouseWriter<PlayerEvents> playerEventsWriter;
     private final ClickhouseWriter<PlayerInfo> playerInfoWriter;
+    private final ClickhouseWriter<TeamDetails> teamDetailsWriter;
     private final PlayersJoiner playersJoiner;
     private final MatchDetailsConverter matchDetailsConverter;
     private final PlayerEventsConverter playerEventsConverter;
     private final PlayerInfoConverter playerInfoConverter;
+    private final TeamDetailsConverter teamDetailsConverter;
     private final TeamRankCalculator teamRankCalculator;
     private final Telegram telegram;
     private final AlltidLike alltidLike;
@@ -46,10 +49,12 @@ public class CountriesLastLeagueMatchLoader {
                                           @Qualifier("matchDetailsWriter") ClickhouseWriter<MatchDetails> matchDetailsWriter,
                                           @Qualifier("playerEventsWriter") ClickhouseWriter<PlayerEvents> playerEventsWriter,
                                           @Qualifier("playerInfoWriter") ClickhouseWriter<PlayerInfo> playerInfoWriter,
+                                          ClickhouseWriter<TeamDetails> teamDetailsWriter,
                                           PlayersJoiner playersJoiner,
                                           MatchDetailsConverter matchDetailsConverter,
                                           PlayerEventsConverter playerEventsConverter,
                                           PlayerInfoConverter playerInfoConverter,
+                                          TeamDetailsConverter teamDetailsConverter,
                                           TeamRankCalculator teamRankCalculator,
                                           AlltidLike alltidLike,
                                           Telegram telegram,
@@ -58,10 +63,12 @@ public class CountriesLastLeagueMatchLoader {
         this.matchDetailsWriter = matchDetailsWriter;
         this.playerEventsWriter = playerEventsWriter;
         this.playerInfoWriter = playerInfoWriter;
+        this.teamDetailsWriter = teamDetailsWriter;
         this.playersJoiner = playersJoiner;
         this.matchDetailsConverter = matchDetailsConverter;
         this.playerEventsConverter = playerEventsConverter;
         this.playerInfoConverter = playerInfoConverter;
+        this.teamDetailsConverter = teamDetailsConverter;
         this.teamRankCalculator = teamRankCalculator;
         this.alltidLike = alltidLike;
         this.telegram = telegram;
@@ -95,6 +102,11 @@ public class CountriesLastLeagueMatchLoader {
                         .flatMap(playerInfoConverter::convert)
                         .collect(Collectors.toList());
 
+                List<TeamDetails> teamDetails = hattrickService.getTeamDetails(lastTeamWithMatchDetails)
+                        .stream()
+                        .map(teamDetailsConverter::convert)
+                        .collect(Collectors.toList());
+
                 writtenToClickhouse = true;
                 log.info("Writing match details for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), lastMatchDetails.size());
                 matchDetailsWriter.writeToClickhouse(lastMatchDetails);
@@ -102,6 +114,9 @@ public class CountriesLastLeagueMatchLoader {
                 playerEventsWriter.writeToClickhouse(playerEvents);
                 log.info("Writing player info for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerInfos.size());
                 playerInfoWriter.writeToClickhouse(playerInfos);
+
+                log.info("Writing teams details for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), teamDetails.size());
+                teamDetailsWriter.writeToClickhouse(teamDetails);
 
                 log.info("Joining player_stats for ({}, {}) ", countryName, league.getLeagueId());
                 playersJoiner.join(league);

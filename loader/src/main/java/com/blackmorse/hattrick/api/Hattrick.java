@@ -80,8 +80,11 @@ public class Hattrick {
     }
 
     @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 10, backoff = @Backoff(delay = 15000L))
-    public TeamDetails teamDetails(Long teamId) {
-        return hattrickApi.teamDetails().teamID(teamId).execute();
+    public TeamDetails getTeamDetails(Long teamId) {
+        return hattrickApi.teamDetails().teamID(teamId)
+                .includeDomesticFlags(true)
+                .includeFlags(true)
+                .execute();
     }
 
     @Retryable(value = {HattrickChppException.class, HattrickTransferException.class}, maxAttempts = 10, backoff = @Backoff(delay = 15000L))

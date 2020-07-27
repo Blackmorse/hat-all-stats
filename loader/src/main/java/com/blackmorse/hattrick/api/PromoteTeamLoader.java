@@ -23,13 +23,13 @@ import java.util.stream.Stream;
 
 @Component
 @Slf4j
-public class TeamLoader {
+public class PromoteTeamLoader {
     private final Scheduler scheduler;
     private final Hattrick hattrick;
     private final AtomicLong pomotionsLeaguesCounter = new AtomicLong();
 
-    public TeamLoader(@Qualifier("apiExecutor") ExecutorService executorService,
-                       Hattrick hattrick) {
+    public PromoteTeamLoader(@Qualifier("apiExecutor") ExecutorService executorService,
+                             Hattrick hattrick) {
         this.scheduler = io.reactivex.schedulers.Schedulers.from(executorService);
         this.hattrick = hattrick;
     }
