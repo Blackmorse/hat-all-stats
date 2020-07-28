@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 public class TeamDetailsConverter {
     public TeamDetails convert(TeamWithMatchAndTeamDetails teamWithMatchAndTeamDetails) {
         Integer trophyNumber = Math.toIntExact(teamWithMatchAndTeamDetails.getTeamDetails()
-                .getTrophyList().stream().filter(trophy -> !trophy.getTrophyTypeId().equals(TrophyTypeId.TOURNAMENT_WINNER))
+                .getTrophyList().stream().filter(trophy -> !trophy.getTrophyTypeId().equals(TrophyTypeId.TOURNAMENT_WINNER) &&
+                                                            !trophy.getTrophyTypeId().equals(TrophyTypeId.STUDY_TOURNNAMENT))
                 .count());
 
         return TeamDetails.builder()
