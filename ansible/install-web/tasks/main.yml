@@ -4,3 +4,17 @@
    template:
      src: application.conf.j2
      dest: "{{ base_project_directory }}/hat-all-stats/web/conf/application.conf"
+
+ - name: unit for web
+   become: true
+   template:
+     src: hattid-web.service.j2
+     dest: /etc/systemd/system/hattid-web.service
+
+ - name: enable systemd for web
+   become: true
+   systemd:
+     name: hattid-web
+     daemon_reload: yes
+     enabled: yes
+     state: started

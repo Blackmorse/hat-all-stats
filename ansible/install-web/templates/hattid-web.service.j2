@@ -1,0 +1,13 @@
+[Unit]
+Description=Hattid Web
+
+[Service]
+WorkingDirectory={{ base_project_directory }}/hat-all-stats/web
+ExecStart=sbt 'runProd 9999'
+User={{ ansible_user_id }}
+Type=simple
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
