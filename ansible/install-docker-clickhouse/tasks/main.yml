@@ -24,6 +24,7 @@
   docker_container: 
     name: clickhouse-server-hattrick
     image: yandex/clickhouse-server:20.4
+    restart_policy: always
     volumes:
       - "{{ base_project_directory }}/clickhouse/volume:/var/lib/clickhouse"
       - "{{ base_project_directory }}/clickhouse/users.xml:/etc/clickhouse-server/users.xml"
