@@ -9,3 +9,13 @@
    template:
      src: logback.xml.j2
      dest: "{{ base_project_directory }}/hat-all-stats/loader/src/main/resources/logback.xml"
+
+ - name: configure loader
+   template:
+     src: application.yml.j2
+     dest: "{{ base_project_directory }}/hat-all-stats/loader/src/main/resources/application.yml"
+
+ - name: build loader jar
+   shell:
+     chdir: "{{ base_project_directory }}/hat-all-stats/loader"
+     cmd: gradle assemble

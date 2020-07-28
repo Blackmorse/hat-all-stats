@@ -7,11 +7,22 @@ hattrick:
   accessTokenSecret: 
 
 clickhouse:
-        jdbc_url: "jdbc:clickhouse://"
+  jdbc_url: "jdbc:clickhouse://"
+  users:
+    web:
+      name: web
+      password: 
     
 loader:
   loader_url: ""
+  threads: 80
+  databaseName: hattrick
+  telegram:
+    botToken: 
+    chatId: 174396659
+    socksHost: 195.69.140.151
+    socksPort: 1080
 
 web:
-        defaultLeagueId: 
-
+  defaultLeagueId:
+  port: 
