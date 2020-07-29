@@ -13,6 +13,10 @@ public class TeamDetailsConverter {
                                                             !trophy.getTrophyTypeId().equals(TrophyTypeId.STUDY_TOURNNAMENT))
                 .count());
 
+        Integer numberOfVictories = teamWithMatchAndTeamDetails.getTeamDetails().getNumberOfVictories() == null ? 0 :
+                teamWithMatchAndTeamDetails.getTeamDetails().getNumberOfVictories();
+        Integer numberOfUndefeated = teamWithMatchAndTeamDetails.getTeamDetails().getNumberOfUndefeated() == null ? 0 :
+                teamWithMatchAndTeamDetails.getTeamDetails().getNumberOfUndefeated();
         return TeamDetails.builder()
                 .season(teamWithMatchAndTeamDetails.getTeamWithMatch().getMatch().getSeason())
                 .leagueId(teamWithMatchAndTeamDetails.getTeamWithMatch().getTeam().getLeagueUnit().getLeague().getId())
@@ -28,8 +32,8 @@ public class TeamDetailsConverter {
                 .awayFlags(teamWithMatchAndTeamDetails.getTeamDetails().getFlags().getAwayFlags().size())
                 .fanclubSize(teamWithMatchAndTeamDetails.getTeamDetails().getFanclub().getFanclubSize())
                 .trophiesNumber(trophyNumber)
-                .numberOfVictories(teamWithMatchAndTeamDetails.getTeamDetails().getNumberOfVictories())
-                .numberOfUndefeated(teamWithMatchAndTeamDetails.getTeamDetails().getNumberOfUndefeated())
+                .numberOfVictories(numberOfVictories)
+                .numberOfUndefeated(numberOfUndefeated)
             .build();
     }
 }
