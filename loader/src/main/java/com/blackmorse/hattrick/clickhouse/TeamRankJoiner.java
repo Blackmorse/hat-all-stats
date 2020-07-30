@@ -22,7 +22,7 @@ public class TeamRankJoiner {
         final String fieldAlias;
         final String request;
     }
-    
+
     private static final String base_fields = " season, league_id, round, division_level, league_unit_id, league_unit_name, team_id, team_name, match_id, ";
     private static final String match_details_request = "SELECT " +
             "team_id, " +
@@ -41,6 +41,22 @@ public class TeamRankJoiner {
             ") " +
             "ORDER BY team_id ASC";
 
+    private static final String team_details_request = "SELECT " +
+            "team_id, " +
+            "team_name, " +
+            "    {field_alias}, " +
+            "    rowNumberInAllBlocks() AS {field_alias}_position" +
+            " FROM " +
+            "(" +
+            "    SELECT " +
+            "team_id, " +
+            "team_name, " +
+            "        {field} AS {field_alias}" +
+            "    FROM {database}.team_details" +
+            "    WHERE {where}" +
+            "    ORDER BY {field_alias} DESC, team_id ASC" +
+            ") " +
+            "ORDER BY team_id ASC";
 
     private static final String player_stats_request = "SELECT " +
             "    team_id, " +
@@ -119,6 +135,8 @@ public class TeamRankJoiner {
         requestsParams.add(new SqlRequestParam("avg((age * 112) + days)", "age", player_stats_request));
         requestsParams.add(new SqlRequestParam("sumIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury", player_stats_request));
         requestsParams.add(new SqlRequestParam("countIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury_count", player_stats_request));
+
+        requestsParams.add(new SqlRequestParam("power_rating", "power_rating", team_details_request));
 
         String newFields = "hatstats, hatstats_position";
 
