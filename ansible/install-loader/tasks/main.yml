@@ -19,3 +19,9 @@
    shell:
      chdir: "{{ base_project_directory }}/hat-all-stats/loader"
      cmd: gradle assemble
+
+ - name: cron for loader
+   cron: 
+    weekday: "5"
+    hour: "12"
+    job: "java -jar {{base_project_directory }}/hat-all-stats/loader/build/libs/loader-0.0.1-SNAPSHOT.jar schedule"
