@@ -24,4 +24,5 @@
    cron: 
     weekday: "5"
     hour: "12"
+    minute: "0"
     job: "java -jar {{base_project_directory }}/hat-all-stats/loader/build/libs/loader-0.0.1-SNAPSHOT.jar schedule"
