@@ -50,6 +50,8 @@ public class MatchDetails {
     private final Integer ratingIndirectSetPiecesDef;
     private final Integer ratingIndirectSetPiecesAtt;
 
+    private final Long oppositeTeamId;
+    private final String oppositeTeamName;
     private final String oppositeFormation;
     private final Integer oppositeTacticType;
     private final Integer oppositeTacticSkill;

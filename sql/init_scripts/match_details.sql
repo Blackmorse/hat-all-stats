@@ -27,6 +27,8 @@ CREATE TABLE match_details
     `rating_left_att` UInt8,
     `rating_indirect_set_pieces_def` UInt8,
     `rating_indirect_set_pieces_att` UInt8,
+    `opposite_team_id` UInt64,
+    `opposite_team_name` String,
     `opposite_formation` LowCardinality(String),
     `opposite_tactic_type` UInt8,
     `opposite_tactic_skill` UInt8,

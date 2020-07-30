@@ -16,6 +16,8 @@ public class MatchDetailsConverter {
 
         HomeAwayTeam currentTeam;
         HomeAwayTeam oppositeTeam;
+        Long oppositeTeamId;
+        String oppositeTeamName;
         Integer goals;
         Integer enemyGoals;
         MatchDetails.IsHomeMatch isHomeMatch;
@@ -24,11 +26,15 @@ public class MatchDetailsConverter {
             isHomeMatch = MatchDetails.IsHomeMatch.HOME;
             currentTeam = matchDetails.getMatch().getHomeTeam();
             oppositeTeam = matchDetails.getMatch().getAwayTeam();
+            oppositeTeamId = matchDetails.getMatch().getAwayTeam().getAwayTeamId();
+            oppositeTeamName = matchDetails.getMatch().getAwayTeam().getAwayTeamName();
             goals = matchDetails.getMatch().getHomeTeam().getHomeGoals();
             enemyGoals = matchDetails.getMatch().getAwayTeam().getAwayGoals();
         } else {
             isHomeMatch = MatchDetails.IsHomeMatch.AWAY;
             oppositeTeam = matchDetails.getMatch().getHomeTeam();
+            oppositeTeamId = matchDetails.getMatch().getHomeTeam().getHomeTeamId();
+            oppositeTeamName = matchDetails.getMatch().getHomeTeam().getHomeTeamName();
             currentTeam = matchDetails.getMatch().getAwayTeam();
             goals = matchDetails.getMatch().getAwayTeam().getAwayGoals();
             enemyGoals = matchDetails.getMatch().getHomeTeam().getHomeGoals();
@@ -65,6 +71,8 @@ public class MatchDetailsConverter {
                 .ratingIndirectSetPiecesDef(currentTeam.getRatingIndirectSetPiecesDef())
                 .ratingIndirectSetPiecesAtt(currentTeam.getRatingIndirectSetPiecesAtt())
 
+                .oppositeTeamId(oppositeTeamId)
+                .oppositeTeamName(oppositeTeamName)
                 .oppositeFormation(oppositeTeam.getFormation())
                 .oppositeTacticType(oppositeTeam.getTacticType())
                 .oppositeTacticSkill(oppositeTeam.getTacticSkill())

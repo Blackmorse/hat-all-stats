@@ -91,7 +91,9 @@ public class CountriesLastLeagueMatchLoader {
                 log.info("There are {} league units in ({}, {})", allLeagueUnitIdsForCountry.size(), countryName, league.getLeagueId());
                 List<TeamWithMatchDetails> lastTeamWithMatchDetails = hattrickService.getLastMatchDetails(allLeagueUnitIdsForCountry);
 
-                List<MatchDetails> lastMatchDetails = lastTeamWithMatchDetails.stream().map(matchDetailsConverter::convert).collect(Collectors.toList());
+                List<MatchDetails> lastMatchDetails = lastTeamWithMatchDetails.stream()
+                        .map(matchDetailsConverter::convert)
+                        .collect(Collectors.toList());
 
                 List<PlayerEvents> playerEvents = lastTeamWithMatchDetails.stream()
                         .flatMap(playerEventsConverter::convert)
