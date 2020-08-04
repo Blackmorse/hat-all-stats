@@ -1,6 +1,9 @@
 package com.blackmorse.hattrick;
 
 import com.blackmorse.hattrick.api.AlltidLike;
+import com.blackmorse.hattrick.api.Hattrick;
+import com.blackmorse.hattrick.api.teamdetails.model.Team;
+import com.blackmorse.hattrick.api.teamdetails.model.Trophy;
 import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.clickhouse.ClickhouseWriter;
 import com.blackmorse.hattrick.clickhouse.PlayersJoiner;
@@ -10,12 +13,12 @@ import com.blackmorse.hattrick.clickhouse.model.PlayerEvents;
 import com.blackmorse.hattrick.clickhouse.model.PlayerInfo;
 import com.blackmorse.hattrick.clickhouse.model.TeamDetails;
 import com.blackmorse.hattrick.model.LeagueUnit;
-import com.blackmorse.hattrick.model.TeamWithMatchAndTeamDetails;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import com.blackmorse.hattrick.model.converters.MatchDetailsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerEventsConverter;
 import com.blackmorse.hattrick.model.converters.PlayerInfoConverter;
 import com.blackmorse.hattrick.model.converters.TeamDetailsConverter;
+import com.blackmorse.hattrick.model.enums.TrophyTypeId;
 import com.blackmorse.hattrick.telegram.Telegram;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Component
@@ -42,6 +46,7 @@ public class CountriesLastLeagueMatchLoader {
     private final Telegram telegram;
     private final AlltidLike alltidLike;
     private final PromotionsLoader promotionsLoader;
+    private final Hattrick hattrick;
     private Runnable callback;
 
     @Autowired
@@ -58,7 +63,7 @@ public class CountriesLastLeagueMatchLoader {
                                           TeamRankCalculator teamRankCalculator,
                                           AlltidLike alltidLike,
                                           Telegram telegram,
-                                          PromotionsLoader promotionsLoader) {
+                                          PromotionsLoader promotionsLoader, Hattrick hattrick) {
         this.hattrickService = hattrickService;
         this.matchDetailsWriter = matchDetailsWriter;
         this.playerEventsWriter = playerEventsWriter;
@@ -73,6 +78,7 @@ public class CountriesLastLeagueMatchLoader {
         this.alltidLike = alltidLike;
         this.telegram = telegram;
         this.promotionsLoader = promotionsLoader;
+        this.hattrick = hattrick;
     }
 
     public void load(List<String> countryNames) {
@@ -91,47 +97,26 @@ public class CountriesLastLeagueMatchLoader {
                 log.info("There are {} league units in ({}, {})", allLeagueUnitIdsForCountry.size(), countryName, league.getLeagueId());
                 List<TeamWithMatchDetails> lastTeamWithMatchDetails = hattrickService.getLastMatchDetails(allLeagueUnitIdsForCountry);
 
-                List<MatchDetails> lastMatchDetails = lastTeamWithMatchDetails.stream()
-                        .map(matchDetailsConverter::convert)
-                        .collect(Collectors.toList());
+                AtomicInteger newCounter = new AtomicInteger();
 
-                List<PlayerEvents> playerEvents = lastTeamWithMatchDetails.stream()
-                        .flatMap(playerEventsConverter::convert)
-                        .collect(Collectors.toList());
+                lastTeamWithMatchDetails.stream().parallel().forEach(lastTeamWithMatchDetail -> {
+                    Long team = lastTeamWithMatchDetail.getTeamWithMatch().getTeam().getId();
 
-                List<PlayerInfo> playerInfos = hattrickService.getPlayersFromTeam(lastTeamWithMatchDetails)
-                        .stream()
-                        .flatMap(playerInfoConverter::convert)
-                        .collect(Collectors.toList());
+                    com.blackmorse.hattrick.api.teamdetails.model.TeamDetails teamDetails = hattrick.getTeamDetails(team);
 
-                List<TeamDetails> teamDetails = hattrickService.getTeamDetails(lastTeamWithMatchDetails)
-                        .stream()
-                        .map(teamDetailsConverter::convert)
-                        .collect(Collectors.toList());
+                    Team team2 = teamDetails.getTeams().stream().filter(team1 -> team1.getTeamId() != null && team1.getTeamId().equals(team))
+                            .findAny().get();
+                    newCounter.incrementAndGet();
+                    log.info("new counter: {}", newCounter.get());
+                    if (team2.getTrophyList().stream().map(Trophy::getTrophyTypeId).collect(Collectors.toList()).contains(TrophyTypeId.UNKNOWN)) {
+                        for (int i = 0; i <100 ; i++) {
+                            log.info("!!!!!!!!!!!!!");
+                            log.info("{}", team2.getTeamId());
+                        }
+                        System.exit(0);
+                    }
+                });
 
-                writtenToClickhouse = true;
-                log.info("Writing match details for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), lastMatchDetails.size());
-                matchDetailsWriter.writeToClickhouse(lastMatchDetails);
-                log.info("Writing player events for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerEvents.size());
-                playerEventsWriter.writeToClickhouse(playerEvents);
-                log.info("Writing player info for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerInfos.size());
-                playerInfoWriter.writeToClickhouse(playerInfos);
-
-                log.info("Writing teams details for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), teamDetails.size());
-                teamDetailsWriter.writeToClickhouse(teamDetails);
-
-                log.info("Joining player_stats for ({}, {}) ", countryName, league.getLeagueId());
-                playersJoiner.join(league);
-                log.info("Calculating team ranks for ({}, {})", countryName, league.getLeagueId());
-                teamRankCalculator.calculate(league);
-                log.info("Send request to web about new round...");
-                alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
-
-                //Load promotions
-                if (league.getMatchRound() - 1 == 14) {
-                    log.info("It's last round of season. Time to load promotions!");
-                    promotionsLoader.load(countryName, allLeagueUnitIdsForCountry);
-                }
                 if (callback != null) {
                     callback.run();
                 }
