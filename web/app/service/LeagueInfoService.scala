@@ -29,6 +29,15 @@ class LeagueInfoService @Inject() (val hattrick: Hattrick,
     9 -> (1 to 2048)
   )
 
+  def lastFullRound(): Int = {
+    //Honduras has last league matches
+    leagueInfo.currentRound(99)
+  }
+
+  def lastFullSeason(): Int = {
+    leagueInfo.currentSeason(99)
+  }
+
   def divisionLevelLinks(leagueId: Int): Seq[(String, String)] = {
     val maxLevels = leagueInfo(leagueId).league.getNumberOfLevels
     (1 to maxLevels)
@@ -65,7 +74,7 @@ class LeagueInfoService @Inject() (val hattrick: Hattrick,
 }
 
 case class LeaguesInfo(leagueInfo: mutable.Map[Int, LeagueInfo]) {
-  def apply(leagueId: Int) = leagueInfo(leagueId)
+  def apply(leagueId: Int): LeagueInfo = leagueInfo(leagueId)
 
   def seasons(leagueId: Int): Seq[Int] = {
     leagueInfo(leagueId).seasonInfo.keys.toSeq

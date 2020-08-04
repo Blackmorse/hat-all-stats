@@ -42,8 +42,12 @@
     margin: 5px auto 10px;
 }
 
-.section_row_element {
+.section_row_half_element {
     width: 50%;
+}
+
+.section_row_one_third_element {
+    width: 33%;
 }
 
 .statistics_section {

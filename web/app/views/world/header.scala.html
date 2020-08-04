@@ -1,0 +1,13 @@
+@import service.LeaguesInfo
+
+@(leaguesInfo: LeaguesInfo)
+<select class="hrefSelect">
+    <option class="blank" value>Choose</option>
+    @for((leagueId, leagueInfo) <- leaguesInfo.leagueInfo.toIndexedSeq.sortBy(_._2.league.getEnglishName)){
+        <option value="@routes.LeagueController.bestTeams(leagueId)">@leagueInfo.league.getEnglishName</option>
+    }
+</select>
+
+<a class="logo_href" href="@routes.WorldController.overview()">
+    <img class="logo" src="@routes.Assets.versioned("images/logo.png")" >
+</a>

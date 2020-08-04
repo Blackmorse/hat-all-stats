@@ -1,0 +1,34 @@
+@import service.SummaryOverview
+@(summaryOverview: SummaryOverview)(implicit messages: Messages)
+
+<header class="statistics_header">
+    <span class="statistics_header_triangle">&#x25BC; @messages("overview.numbers")</span>
+</header>
+<div class="statistics_section_inner">
+    <table class="statistics_table">
+        <tr>
+            <td>@messages("overview.number_of_teams")</td>
+            <td>@summaryOverview.numberOfTeams</td>
+        </tr>
+        <tr>
+            <td>@messages("overview.number_of_players")</td>
+            <td>@summaryOverview.numberOfPlayers</td>
+        </tr>
+        <tr>
+            <td>@messages("overview.number_of_goals")</td>
+            <td>@summaryOverview.scoredGoals</td>
+        </tr>
+        <tr>
+            <td>@messages("overview.number_of_injuried")</td>
+            <td>@summaryOverview.injuriedPlayers</td>
+        </tr>
+        <tr>
+            <td>@messages("overview.number_of_yellow")</td>
+            <td>@summaryOverview.yellowCards</td>
+        </tr>
+        <tr>
+            <td>@messages("overview.number_of_red")</td>
+            <td>@summaryOverview.redCards</td>
+        </tr>
+    </table>
+</div>

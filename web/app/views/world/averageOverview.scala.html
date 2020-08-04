@@ -1,0 +1,36 @@
+@import service.AverageOverview
+@import com.blackmorse.hattrick.api.worlddetails.model.League
+@(averageOverview: AverageOverview, league: League)(implicit messages: Messages)
+
+<header class="statistics_header">
+    <span class="statistics_header_triangle">&#x25BC; @messages("overview.averages")</span>
+</header>
+<div class="statistics_section_inner">
+    <table class="statistics_table">
+        <tr>
+            <td class="value">@messages("overview.average_hatstats")</td>
+            <td>@averageOverview.averageMatchDetails.avgHatstats</td>
+        </tr>
+        <tr>
+            <td>@messages("overview.average_spectators")</td>
+            <td>@averageOverview.averageMatchDetails.avgSoldTickets</td>
+        </tr>
+        <tr>
+            <td>@messages("overview.average_team_goals")</td>
+            <td>@{f"${averageOverview.averageMatchDetails.avgScoredByTeam}%2.2f"}</td>
+        </tr>
+        <tr>
+            <td>@messages("overview.average_team_age")</td>
+            <td>@common.formatters.ageFormatter(averageOverview.averageTeamPlayers.averageAge)</td>
+        </tr>
+        <tr>
+            <td>@messages("overview.average_team_salary")</td>
+            <td>@common.formatters.salaryFormatter(averageOverview.averageTeamPlayers.averageSalary, league)
+                @if(league.getCountry.getCurrencyName == null) {$} else {@league.getCountry.getCurrencyName}</td>
+        </tr>
+        <tr>
+            <td>@messages("overview.average_team_stars")</td>
+            <td class="value">@common.formatters.ratingFormatter(math.ceil(averageOverview.averageTeamPlayers.averageRating).toInt)</td>
+        </tr>
+    </table>
+</div>

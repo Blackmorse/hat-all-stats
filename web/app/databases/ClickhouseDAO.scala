@@ -1,9 +1,8 @@
 package databases
 
 import akka.actor.ActorSystem
-import com.google.inject.Inject
 import databases.clickhouse.StatisticsCHRequest
-import javax.inject.Singleton
+import javax.inject.{Singleton, Inject}
 import models.clickhouse.{HistoryInfo, Promotion, TeamMatchInfo, TeamRankings}
 import models.web.{Accumulate, Desc, MultiplyRoundsType, Round, SortingDirection, StatsType}
 import play.api.db.DBApi

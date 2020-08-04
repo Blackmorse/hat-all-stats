@@ -29,6 +29,11 @@
 .statistics_table td {
     font-family: 'Baloo Thambi 2', cursive;
     font-size: 0.9em;
+    text-align: left;
+}
+
+.to_left {
+    text-align: left !important;
 }
 
 .statistics_table .value {

@@ -11,5 +11,14 @@
 .rating {
     display: flex;
     align-items: center;
-    /* flex-wrap: wrap; */
+    justify-content: center;
+    /*flex-wrap: wrap;*/
+}
+
+.rating_container {
+    display: flex;
+}
+
+.scrolled {
+    overflow: scroll;
 }

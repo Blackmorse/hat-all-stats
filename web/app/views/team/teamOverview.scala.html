@@ -33,7 +33,7 @@
 @main(details.teamName, header(details), leftBar(details), messages("menu.team_overview")) {
 
     <div class="section_row">
-        <div class="section_row_element">
+        <div class="section_row_half_element">
             <section class="statistics_section">
                 <header class="statistics_header">
                     <span class="statistics_header_triangle">&#x25BC; @messages("matches.played_matches")</span>
@@ -42,7 +42,7 @@
                 @common.matchesTable(playedMatches)
             </section>
         </div>
-        <div class="section_row_element">
+        <div class="section_row_half_element">
             <section class="statistics_section">
                 <header class="statistics_header">
                     <span class="statistics_header_triangle">&#x25BC; @messages("matches.upcoming_matches")</span>

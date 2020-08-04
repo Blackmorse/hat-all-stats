@@ -45,7 +45,15 @@
     margin: 0 5px;
 }
 
-.logo {
+.logo_href {
     height: 100%;
     margin-left: auto;
+}
+
+.logo {
+    height: 100%;
+}
+
+.logo:hover {
+    background: #00981e;
 }

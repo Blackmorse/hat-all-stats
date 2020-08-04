@@ -1,0 +1,58 @@
+@import models.clickhouse.overview.TeamOverviewModel
+@import service.LeaguesInfo
+@import models.web.StatisticsParameters
+@import models.web.{Desc, Round}
+
+@(teams: List[TeamOverviewModel],
+        valueHeader: String,
+        leaguesInfo: LeaguesInfo,
+        title: String,
+        formatter: Int => Html = i => Html(i.toString),
+        link: (Int, Option[StatisticsParameters]) => Call,
+        sortByLink: String,
+        pageSize: Int)(implicit messages: Messages)
+<header class="statistics_header">
+    <span class="statistics_header_triangle">&#x25BC; @title</span>
+</header>
+<div class="statistics_section_inner">
+    <table class="statistics_table">
+        <tr>
+            <th>team</th>
+            <th class="value">@messages("overview.country")</th>
+            <th class="value">@messages("table.league")</th>
+            <th class="value">@valueHeader</th>
+        </tr>
+        @for(team <- teams){
+            <tr>
+                <td class="to_left">
+                    <a class="table_link" href="@routes.TeamController.teamOverview(team.teamId)">
+                        @team.teamName
+                    </a>
+                </td>
+                <td class="value">
+                    <a class="table_link" href="@routes.LeagueController.bestTeams(team.leagueId)">
+                        @leaguesInfo(team.leagueId).league.getEnglishName
+                    </a>
+                </td>
+                <td class="value">
+                    <a class="table_link" href="@routes.LeagueUnitController.bestTeams(team.leagueUnitId)">
+                        @team.leagueUnitName
+                    </a>
+                </td>
+                <td class="value">
+                    <a class="table_link" href="@link(team.leagueId,
+                            Some(StatisticsParameters(
+                                season = team.season,
+                                page = 0,
+                                statsType = Round(team.round),
+                                sortBy = sortByLink,
+                                pageSize = pageSize,
+                                sortingDirection = Desc
+                            )))">
+                        @formatter(team.value)
+                    </a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>

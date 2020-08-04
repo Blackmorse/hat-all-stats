@@ -1,0 +1,16 @@
+@import models.clickhouse.overview.FormationsModel
+@(formations: List[FormationsModel])(implicit messages: Messages)
+
+<header class="statistics_header">
+    <span class="statistics_header_triangle">&#x25BC; @messages("overview.formations")</span>
+</header>
+<div class="statistics_section_inner">
+    <table class="statistics_table">
+        @for(formation <- formations) {
+        <tr>
+            <td>@formation.formation</td>
+            <td>@formation.count</td>
+        </tr>
+        }
+    </table>
+</div>

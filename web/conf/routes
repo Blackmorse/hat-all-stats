@@ -4,6 +4,8 @@
 # ~~~~
 GET     /lang                       controllers.HomeController.lang(lang: String)
 
+GET     /worldOverview              controllers.WorldController.overview()
+
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
 GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
