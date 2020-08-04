@@ -19,6 +19,7 @@ libraryDependencies += "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
 
 
 libraryDependencies += "org.playframework.anorm" %% "anorm" % "2.6.2"
+libraryDependencies += caffeine
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.blackmorse.hattrick.controllers._"

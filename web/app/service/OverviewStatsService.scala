@@ -3,6 +3,7 @@ package service
 import databases.OverviewClickhouseDAO
 import javax.inject.{Inject, Singleton}
 import models.clickhouse.overview.{AvgMatchDetailsModel, AvgTeamPlayersStats, FormationsModel, MatchOverviewModel, PlayerOverviewModel, TeamOverviewModel}
+import play.api.cache.AsyncCacheApi
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -24,8 +25,13 @@ case class OverviewStatistics(summaryOverview: SummaryOverview,
 
 @Singleton
 class OverviewStatsService @Inject()(leagueInfoService: LeagueInfoService,
-                                     overviewClickhouseDAO: OverviewClickhouseDAO) {
-  def overviewStatistics() = Future {
+                                     overviewClickhouseDAO: OverviewClickhouseDAO,
+                                     cache: AsyncCacheApi) {
+
+  def overviewStatistics(): Future[OverviewStatistics] =
+    cache.getOrElseUpdate[OverviewStatistics]("overview.world") (fetchOverviewStatistics())
+
+  private def fetchOverviewStatistics() = Future {
     val currentRound = leagueInfoService.lastFullRound()
     val currentSeason = leagueInfoService.lastFullSeason()
 
