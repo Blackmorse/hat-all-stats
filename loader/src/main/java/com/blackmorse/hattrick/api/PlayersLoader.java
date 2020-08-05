@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class PlayersLoader {
     private final Scheduler scheduler;
     private final Hattrick hattrick;
-    private final AtomicLong teamsWithPlayersCounter = new AtomicLong();
 
     public PlayersLoader(@Qualifier("apiExecutor") ExecutorService executorService,
                          Hattrick hattrick) {
@@ -26,6 +25,7 @@ public class PlayersLoader {
     }
 
     public List<TeamWithMatchAndPlayers> getPlayersFromTeam(List<TeamWithMatchDetails> teamWithMatchDetails) {
+        AtomicLong teamsWithPlayersCounter = new AtomicLong();
         return Flowable.fromIterable(teamWithMatchDetails)
                 .parallel()
                 .runOn(scheduler)

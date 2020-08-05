@@ -20,9 +20,6 @@ import java.util.stream.Collectors;
 public class MatchLoader {
     private final Scheduler scheduler;
     private final Hattrick hattrick;
-    private final AtomicLong leagueUnitCounter = new AtomicLong();
-    private final AtomicLong teamsCounter  = new AtomicLong();
-    private final AtomicLong matchDetailsCounter  = new AtomicLong();
 
     public MatchLoader(@Qualifier("apiExecutor") ExecutorService executorService,
                        Hattrick hattrick) {
@@ -31,6 +28,10 @@ public class MatchLoader {
     }
 
     public List<TeamWithMatchDetails> getLastMatchDetails(List<LeagueUnit> leagueUnits) {
+        AtomicLong leagueUnitCounter = new AtomicLong();
+        AtomicLong teamsCounter  = new AtomicLong();
+        AtomicLong matchDetailsCounter  = new AtomicLong();
+
         return Flowable.fromIterable(leagueUnits)
                 .parallel()
                 .runOn(scheduler)

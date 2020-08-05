@@ -26,7 +26,6 @@ import java.util.stream.Stream;
 public class PromoteTeamLoader {
     private final Scheduler scheduler;
     private final Hattrick hattrick;
-    private final AtomicLong pomotionsLeaguesCounter = new AtomicLong();
 
     public PromoteTeamLoader(@Qualifier("apiExecutor") ExecutorService executorService,
                              Hattrick hattrick) {
@@ -35,6 +34,7 @@ public class PromoteTeamLoader {
     }
 
     public List<PromoteTeam> getPromoteTeams(List<LeagueUnit> leagueUnits) {
+        AtomicLong pomotionsLeaguesCounter = new AtomicLong();
         return Flowable.fromIterable(leagueUnits)
                 .parallel()
                 .runOn(scheduler)

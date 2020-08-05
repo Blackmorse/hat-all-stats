@@ -27,8 +27,6 @@ import static com.blackmorse.hattrick.common.CommonData.higherLeagueMap;
 public class LeagueUnitsLoader {
     private final Hattrick hattrick;
     private final Scheduler scheduler;
-    private final AtomicLong leagueUnitIdCounter = new AtomicLong();
-
 
     @Autowired
     public LeagueUnitsLoader(Hattrick hattrick,
@@ -38,6 +36,7 @@ public class LeagueUnitsLoader {
     }
 
     public List<LeagueUnit> load(String countryName) {
+        AtomicLong leagueUnitIdCounter = new AtomicLong();
         return Flowable.fromIterable(
                 hattrick.getWorldDetails().getLeagueList()
                         .stream()
