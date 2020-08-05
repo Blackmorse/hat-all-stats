@@ -44,5 +44,5 @@ CREATE TABLE match_details
 )
 ENGINE = MergeTree()
 PARTITION BY season
-ORDER BY (season, league_id, division_level, league_unit_id, team_id, dt)
+ORDER BY (season, league_id, division_level, league_unit_id, round)
 SETTINGS index_granularity = 512
