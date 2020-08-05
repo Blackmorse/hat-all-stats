@@ -73,11 +73,13 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
           .sortBy(_.getMatchDate)
           .take(3)
 
+        val pageSize = request.cookies.get("hattid_page_size").map(_.value.toInt).getOrElse(DefaultService.PAGE_SIZE)
+
         teamRankingsFuture.map { teamRankings => {
           val divisionLevelTeamRankings = teamRankings.filter(_.rank_type == "division_level").sortBy(_.round).reverse
           val leagueTeamRankings = teamRankings.filter(_.rank_type == "league_id").sortBy(_.round).reverse
           Ok(views.html.team.teamOverview(leagueTeamRankings, divisionLevelTeamRankings,
-            webTeamDetails, playedMatches, upcomingMatches)(messages))
+            webTeamDetails, playedMatches, upcomingMatches, pageSize)(messages))
         }
         }
       }

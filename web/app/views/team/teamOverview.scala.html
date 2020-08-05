@@ -5,7 +5,7 @@
 @import com.blackmorse.hattrick.api.matches.model.Match
 
 @(leagueTeamRankings: List[TeamRankings], divisionLevelTeamRankings: List[TeamRankings],
-        details: WebTeamDetails, playedMatches: Seq[Match], upcomingMatches: Seq[Match])(implicit messages: Messages)
+        details: WebTeamDetails, playedMatches: Seq[Match], upcomingMatches: Seq[Match], pageSize: Int)(implicit messages: Messages)
 
 @bestTeamsLeagueLink(leagueId: Int, statisticsParameters: Option[StatisticsParameters], selectedTeamId: Option[Long]) = @{
         routes.LeagueController.bestTeams(leagueId, statisticsParameters, selectedTeamId)
@@ -61,19 +61,20 @@
         @if(lastDivisionTeamRanking.isDefined) {
             <div class="rankings_grid">
                 <div class="rankings_grid_row">
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
-                        lastDivisionTeamRanking.get,
-                        previousDivisionTeamRanking,
-                        messages("table.hatstats"),
-                        teamRankings => teamRankings.hatstats,
-                        teamRankings => teamRankings.hatstatsPosition,
-                        "hatstats",
-                        details,
-                        bestTeamsLeagueLink,
-                        bestTeamsDivisionLevelLink)
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
+
+                    @common.teamRanking(lastLeagueTeamRanking = lastLeagueTeamRanking.get, previousLeagueTeamRanking = previousLeagueTeamRanking,
+                        lastDivisionLevelTeamRanking = lastDivisionTeamRanking.get,
+                        previousDivisionLevelTeamRanking = previousDivisionTeamRanking,
+                        rankName = messages("table.hatstats"),
+                        valueFunc = teamRankings => teamRankings.hatstats,
+                        positionFunc = teamRankings => teamRankings.hatstatsPosition,
+                        sortingField = "hatstats",
+                        details = details,
+                        leagueLink = bestTeamsLeagueLink,
+                        divisionLevelLink = bestTeamsDivisionLevelLink,
+                        pageSize = pageSize,
+                        formatter = i => Html(i.toString))
+                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.attack"),
@@ -83,9 +84,9 @@
                         details,
                         bestTeamsLeagueLink,
                         bestTeamsDivisionLevelLink,
+                        pageSize,
                         attack => Html(attack.toString))
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
+                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.defense"),
@@ -95,9 +96,9 @@
                         details,
                         bestTeamsLeagueLink,
                         bestTeamsDivisionLevelLink,
+                        pageSize,
                         defense => Html(defense.toString))
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
+                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.midfield"),
@@ -106,11 +107,11 @@
                         "midfield",
                         details,
                         bestTeamsLeagueLink,
-                        bestTeamsDivisionLevelLink)
+                        bestTeamsDivisionLevelLink,
+                        pageSize)
                 </div>
                 <div class="rankings_grid_row">
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
+                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.salary") + ", " + details.leagueInfo.league.getCountry.getCurrencyName,
@@ -120,9 +121,9 @@
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
+                        pageSize,
                         salary => common.formatters.salaryFormatter(salary, details.leagueInfo.league))
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
+                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.rating"),
@@ -132,9 +133,9 @@
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
+                        pageSize,
                         rating => common.formatters.ratingFormatter(rating))
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
+                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.rating_end_of_match"),
@@ -144,11 +145,11 @@
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
+                        pageSize,
                         rating => common.formatters.ratingFormatter(rating))
                 </div>
                 <div class="rankings_grid_row">
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
+                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.tsi"),
@@ -158,10 +159,10 @@
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
+                        pageSize,
                         tsi => common.formatters.tsiFormatter(tsi)
                     )
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
+                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.age"),
@@ -171,9 +172,9 @@
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
+                        pageSize,
                         age => common.formatters.ageFormatter(age))
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
+                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.total_injury_weeks"),
@@ -183,9 +184,9 @@
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
+                        pageSize,
                         injury => common.formatters.injuryFormatter(injury))
-                    @common.teamRanking(lastLeagueTeamRanking.get,
-                        previousLeagueTeamRanking,
+                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
                         messages("table.total_injury_number"),
@@ -195,6 +196,7 @@
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
+                        pageSize,
                         injuryCount => Html(injuryCount.toString)
                     )
                 </div>
