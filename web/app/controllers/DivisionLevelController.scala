@@ -145,7 +145,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
 
   def leagueUnitLinks(leagueId: Int, divisionLevel: Int): Seq[(String, String)] = {
     if (divisionLevel == 1) {
-      Seq("1" -> routes.LeagueUnitController.bestTeams(higherLeagueMap.get(leagueId), None).url)
+      Seq("1" -> routes.LeagueUnitController.bestTeams(higherLeagueMap.get(leagueId).getLeagueUnitId, None).url)
     } else {
       leagueInfoService.leagueNumbersMap(divisionLevel).map(number =>
         number
