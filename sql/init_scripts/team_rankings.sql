@@ -31,7 +31,7 @@ CREATE TABLE team_rankings
     `injury` Int8,
     `injury_position` UInt32,
     `injury_count` Int8,
-    `injury_count_position` UInt32
+    `injury_count_position` UInt32,
     `power_rating` UInt16,
     `power_rating_position` UInt32
 )
