@@ -84,8 +84,7 @@ public class CountriesLastLeagueMatchLoader {
             try {
                 League league = hattrickService.getLeagueByCountryName(countryName);
 
-                log.info("Loading country {}, leagueId: {}...", countryName, league.getLeagueId());
-                log.info("There is {} active teams in ({}, {})", league.getActiveTeams(), countryName, league.getLeagueId());
+                log.info("Loading country {}, leagueId: {} with {} active teams...", countryName, league.getLeagueId(), league.getActiveTeams());
                 List<LeagueUnit> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(countryName);
 
                 log.info("There are {} league units in ({}, {})", allLeagueUnitIdsForCountry.size(), countryName, league.getLeagueId());
@@ -99,25 +98,31 @@ public class CountriesLastLeagueMatchLoader {
                         .flatMap(playerEventsConverter::convert)
                         .collect(Collectors.toList());
 
+                log.info("Loaded {} Match Details", lastTeamWithMatchDetails.size());
+
                 List<PlayerInfo> playerInfos = hattrickService.getPlayersFromTeam(lastTeamWithMatchDetails)
                         .stream()
                         .flatMap(playerInfoConverter::convert)
                         .collect(Collectors.toList());
+
+                log.info("Loaded {} player infos", playerInfos.size());
 
                 List<TeamDetails> teamDetails = hattrickService.getTeamDetails(lastTeamWithMatchDetails)
                         .stream()
                         .map(teamDetailsConverter::convert)
                         .collect(Collectors.toList());
 
+                log.info("Loaded {} Team Details", teamDetails.size());
+
                 writtenToClickhouse = true;
-                log.info("Writing match details for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), lastMatchDetails.size());
+                log.info("Writing match details to Clickhouse: {} rows", lastMatchDetails.size());
                 matchDetailsWriter.writeToClickhouse(lastMatchDetails);
-                log.info("Writing player events for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerEvents.size());
+                log.info("Writing player events to Clickhouse: {} rows", playerEvents.size());
                 playerEventsWriter.writeToClickhouse(playerEvents);
-                log.info("Writing player info for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), playerInfos.size());
+                log.info("Writing player info  to Clickhouse: {} rows", playerInfos.size());
                 playerInfoWriter.writeToClickhouse(playerInfos);
 
-                log.info("Writing teams details for ({}, {}) to Clickhouse: {} rows", countryName, league.getLeagueId(), teamDetails.size());
+                log.info("Writing teams details to Clickhouse: {} rows", teamDetails.size());
                 teamDetailsWriter.writeToClickhouse(teamDetails);
 
                 log.info("Joining player_stats for ({}, {}) ", countryName, league.getLeagueId());
@@ -126,7 +131,7 @@ public class CountriesLastLeagueMatchLoader {
                 teamRankCalculator.calculate(league);
                 log.info("Send request to web about new round...");
                 alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
-
+                log.info("Request successfully sent");
                 //Load promotions
                 if (league.getMatchRound() - 1 == 14) {
                     log.info("It's last round of season. Time to load promotions!");
