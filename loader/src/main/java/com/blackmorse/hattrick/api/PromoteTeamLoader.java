@@ -34,14 +34,14 @@ public class PromoteTeamLoader {
     }
 
     public List<PromoteTeam> getPromoteTeams(List<LeagueUnit> leagueUnits) {
-        AtomicLong pomotionsLeaguesCounter = new AtomicLong();
+        AtomicLong promotionsLeaguesCounter = new AtomicLong();
         return Flowable.fromIterable(leagueUnits)
                 .parallel()
                 .runOn(scheduler)
                 .flatMap(leagueUnit -> {
                     LeagueDetails leagueDetails = hattrick.getLeagueUnitById(leagueUnit.getId());
 
-                    log.debug("Loaded {} leagues for promotions", pomotionsLeaguesCounter.incrementAndGet());
+                    log.debug("Loaded {} leagues for promotions", promotionsLeaguesCounter.incrementAndGet());
 
                     return Flowable.fromIterable(leagueDetails.getTeams().stream()
                         .map(htTeam -> {
@@ -67,14 +67,14 @@ public class PromoteTeamLoader {
     }
 
     public List<PromoteTeam> getHistoryPromoteTeams(List<LeagueUnit> leagueUnits, Integer season) {
-
+        AtomicLong promotionsLeaguesCounter = new AtomicLong();
         return Flowable.fromIterable(leagueUnits)
                 .parallel()
                 .runOn(scheduler)
                 .flatMap(leagueUnit -> {
                     Integer ofsettedSeason = season + leagueUnit.getLeague().getSeasonOffset();
                     LeagueFixtures leagueFixture = hattrick.getLeagueFixture(leagueUnit.getId(), ofsettedSeason);
-                    log.debug("Loaded {} leagues for promotions", pomotionsLeaguesCounter.incrementAndGet());
+                    log.debug("Loaded {} leagues for promotions", promotionsLeaguesCounter.incrementAndGet());
 
                     return Flowable.fromIterable(getTeamsFromFixture(leagueFixture, leagueUnit, season));
                 })
