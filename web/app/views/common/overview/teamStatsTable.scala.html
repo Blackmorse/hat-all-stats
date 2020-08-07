@@ -5,7 +5,7 @@
 
 @(teams: List[TeamOverviewModel],
         valueHeader: String,
-        leaguesInfo: LeaguesInfo,
+        leaguesInfo: Option[LeaguesInfo],
         title: String,
         formatter: Int => Html = i => Html(i.toString),
         link: (Int, Option[StatisticsParameters]) => Call,
@@ -18,7 +18,7 @@
     <table class="statistics_table">
         <tr>
             <th>team</th>
-            <th class="value">@messages("overview.country")</th>
+            @if(leaguesInfo.isDefined){<th class="value">@messages("overview.country")</th>}
             <th class="value">@messages("table.league")</th>
             <th class="value">@valueHeader</th>
         </tr>
@@ -29,11 +29,11 @@
                         @team.teamName
                     </a>
                 </td>
-                <td class="value">
-                    <a class="table_link" href="@routes.LeagueController.bestTeams(team.leagueId)">
-                        @leaguesInfo(team.leagueId).league.getEnglishName
+                @if(leaguesInfo.isDefined){<td class="value">
+                    <a class="table_link" href="@routes.LeagueController.overview(team.leagueId)">
+                        @leaguesInfo.get.apply(team.leagueId).league.getEnglishName
                     </a>
-                </td>
+                </td>}
                 <td class="value">
                     <a class="table_link" href="@routes.LeagueUnitController.bestTeams(team.leagueUnitId)">
                         @team.leagueUnitName

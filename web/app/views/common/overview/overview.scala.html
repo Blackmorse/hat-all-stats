@@ -1,0 +1,98 @@
+@import service.OverviewStatistics
+@import service.LeaguesInfo
+@import com.blackmorse.hattrick.api.worlddetails.model.League
+
+@(overviewStatistics: OverviewStatistics,
+        league: League,
+        leaguesInfo: Option[LeaguesInfo],
+        pageSize: Int)(implicit messages: Messages)
+
+<div class="section_row">
+    <div class="section_row_one_third_element">
+        <section class="statistics_section">
+            @common.overview.summaryStats(overviewStatistics.summaryOverview)
+        </section>
+    </div>
+
+    <div class="section_row_one_third_element">
+        <section class="statistics_section">
+        @common.overview.formationsTable(overviewStatistics.formations)
+        </section>
+    </div>
+
+    <div class="section_row_one_third_element">
+        <section class="statistics_section">
+        @common.overview.averageOverview(overviewStatistics.averageOverview, league)
+        </section>
+    </div>
+</div>
+
+<div class="section_row">
+    <section class="statistics_section">
+    @common.overview.matchStatsTable(overviewStatistics.topRandomMatches, messages("table.hatstats"),
+        leaguesInfo, messages("overview.surprising_matches"))
+    </section>
+</div>
+
+<div class="section_row">
+    <div class="section_row_half_element">
+        <section class="statistics_section">
+        @common.overview.teamStatsTable(overviewStatistics.topHatstatsTeams,
+            messages("table.hatstats"),
+            leaguesInfo,
+            messages("overview.top_teams"),
+            i => Html(i.toString),
+            (leagueId, parameters) => routes.LeagueController.bestTeams(leagueId, parameters),
+            "hatstats",
+            pageSize)
+        </section>
+    </div>
+
+    <div class="section_row_half_element">
+        <section class="statistics_section">
+        @common.overview.teamStatsTable(overviewStatistics.topSalaryTeams,
+            messages("table.salary") + "," + (if(league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName),
+            leaguesInfo,
+            messages("overview.top_salary_teams"),
+            salary => common.formatters.salaryFormatter(salary, league),
+            (leagueId, parameters) => routes.LeagueController.teamState(leagueId, parameters),
+            "salary",
+            pageSize)
+        </section>
+    </div>
+</div>
+
+<div class="section_row">
+    <section class="statistics_section">
+    @common.overview.matchStatsTable(overviewStatistics.topHatstatsMatches, messages("table.hatstats"),
+        leaguesInfo, messages("overview.top_matches"))
+    </section>
+</div>
+
+<div class="section_row">
+    <div class="section_row_half_element">
+        <section class="statistics_section">
+        @common.overview.playersStatsTable(overviewStatistics.topSalaryPlayers,
+            messages("table.salary") + ","  + (if(league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName),
+            leaguesInfo,
+            messages("overview.top_salary_players"),
+            salary => common.formatters.salaryFormatter(salary, league),
+            (leagueId, statisticsParameters) => routes.LeagueController.playerState(leagueId, statisticsParameters),
+            "salary",
+            pageSize)
+        </section>
+    </div>
+
+    <div class="section_row_half_element">
+        <section class="statistics_section">
+        @common.overview.playersStatsTable(overviewStatistics.topRatingPlayers,
+            messages("table.rating"),
+            leaguesInfo,
+            messages("overview.top_rating_players"),
+            stars => common.formatters.ratingFormatter(stars),
+            (leagueId, statisticsParameters) => routes.LeagueController.playerState(leagueId, statisticsParameters),
+            "rating",
+            pageSize)
+        </section>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+@import controllers.WebLeagueDetails
+@import service.OverviewStatistics
+@import service.LeaguesInfo
+@import com.blackmorse.hattrick.api.worlddetails.model.League
+
+@(details: WebLeagueDetails,
+        overviewStatistics: OverviewStatistics,
+        leaguesInfo: Option[LeaguesInfo],
+        league: League,
+        pageSize: Int)(implicit messages: Messages)
+
+@main(league.getEnglishName, header(details), leftBar(details), league.getEnglishName) {
+    @common.overview.overview(overviewStatistics, league, leaguesInfo, pageSize)
+}

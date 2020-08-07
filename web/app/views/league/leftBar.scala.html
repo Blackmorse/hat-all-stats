@@ -4,6 +4,8 @@
 <div class="left_bar">
     <header class="left_bar_header">@messages("menu.statistics")</header>
 
+    <a class="left_bar_link" href="@routes.LeagueController.overview(details.leagueInfo.league.getLeagueId)">@messages("menu.team_overview")</a>
+
     <a class="left_bar_link" href="@routes.LeagueController.bestTeams(details.leagueInfo.league.getLeagueId)">@messages("menu.best_teams")</a>
 
     <a class="left_bar_link" href="@routes.LeagueController.bestLeagueUnits(details.leagueInfo.league.getLeagueId)">@messages("menu.best_league_units")</a>

@@ -7,7 +7,8 @@ GET     /lang                       controllers.HomeController.lang(lang: String
 GET     /worldOverview              controllers.WorldController.overview()
 
 GET     /                           controllers.HomeController.index
-GET     /league                     controllers.LeagueController.bestTeams(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
+GET     /league                     controllers.LeagueController.overview(leagueId: Int)
+GET     /league/bestTeams           controllers.LeagueController.bestTeams(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
 GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /league/playerStats         controllers.LeagueController.playerStats(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /league/teamState           controllers.LeagueController.teamState(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeam: Option[Long] ?= None)

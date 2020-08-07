@@ -4,7 +4,7 @@
 <select class="hrefSelect">
     <option class="blank" value>Choose</option>
     @for((leagueId, leagueInfo) <- leaguesInfo.leagueInfo.toIndexedSeq.sortBy(_._2.league.getEnglishName)){
-        <option value="@routes.LeagueController.bestTeams(leagueId)">@leagueInfo.league.getEnglishName</option>
+        <option value="@routes.LeagueController.overview(leagueId)">@leagueInfo.league.getEnglishName</option>
     }
 </select>
 

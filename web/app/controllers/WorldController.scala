@@ -19,7 +19,7 @@ class WorldController @Inject() (val controllerComponents: ControllerComponents,
     overviewStatsService.overviewStatistics().map(overviewStatistics => {
       Ok(views.html.world.worldOverview(overviewStatistics,
         leagueInfoService.leagueInfo(1000).league,
-        leagueInfoService.leagueInfo,
+        Some(leagueInfoService.leagueInfo),
         pageSize)(messages))
     })
   }

@@ -5,7 +5,7 @@
 
 @(players: List[PlayerOverviewModel],
         valueHeader: String,
-        leaguesInfo: LeaguesInfo,
+        leaguesInfo: Option[LeaguesInfo],
         title: String,
         formatter: Int => Html,
         link: (Int, Option[StatisticsParameters]) => Call,
@@ -17,7 +17,7 @@
 <div class="statistics_section_inner">
     <table class="statistics_table">
         <tr>
-            <th class="value">@messages("overview.country")</th>
+            @if(leaguesInfo.isDefined){<th class="value">@messages("overview.country")</th>}
             <th class="value">@messages("table.league")</th>
             <th class="value">@messages("table.team")</th>
             <th class="value">@messages("table.player")</th>
@@ -25,11 +25,11 @@
         </tr>
         @for(player <- players) {
         <tr>
-            <td class="value">
-                <a class="table_link" href="@routes.LeagueController.bestTeams(player.leagueId)">
-                    @leaguesInfo(player.leagueId).league.getEnglishName
+            @if(leaguesInfo.isDefined){<td class="value">
+                <a class="table_link" href="@routes.LeagueController.overview(player.leagueId)">
+                    @leaguesInfo.get.apply(player.leagueId).league.getEnglishName
                 </a>
-            </td>
+            </td>}
             <td class="value">
                 <a class="table_link" href="@routes.LeagueUnitController.bestTeams(player.leagueUnitId)">
                     @player.leagueUnitName

@@ -2,7 +2,10 @@
 @import java.text.SimpleDateFormat
 @import service.LeaguesInfo
 
-@(matches: List[MatchOverviewModel], valueHeader: String, leaguesInfo: LeaguesInfo, title: String)(implicit messages: Messages)
+@(matches: List[MatchOverviewModel],
+        valueHeader: String,
+        leaguesInfo: Option[LeaguesInfo],
+        title: String)(implicit messages: Messages)
 
 @simpleDateFormat = @{new SimpleDateFormat("dd.MM.yy")}
 
@@ -13,7 +16,7 @@
     <table class="statistics_table">
         <tr>
             <th class="value">@messages("matches.date")</th>
-            <th class="value">@messages("overview.country")</th>
+            @if(leaguesInfo.isDefined) {<th class="value">@messages("overview.country")</th>}
             <th class="value">@messages("table.league")</th>
             <th class="value">@messages("table.team")</th>
             <th class="value">@valueHeader</th>
@@ -26,11 +29,11 @@
         @for(matc <- matches){
         <tr>
             <td class="value">@simpleDateFormat.format(matc.date)</td>
-            <td class="value">
-                <a class="table_link" href="@routes.LeagueController.bestTeams(matc.leagueId)">
-                    @leaguesInfo(matc.leagueId).league.getEnglishName
+            @if(leaguesInfo.isDefined){<td class="value">
+                <a class="table_link" href="@routes.LeagueController.overview(matc.leagueId)">
+                    @leaguesInfo.get.apply(matc.leagueId).league.getEnglishName
                 </a>
-            </td>
+            </td>}
             <td class="value">
                 <a class="table_link" href="@routes.LeagueUnitController.bestTeams(matc.leagueUnitId)">
                     @matc.leagueUnitName

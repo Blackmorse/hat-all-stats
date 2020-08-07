@@ -6,6 +6,6 @@
 <div class="left_bar scrolled">
 
     @for((id, leagueInfo) <- leaguesInfo.leagueInfo.toIndexedSeq.sortBy(_._2.league.getEnglishName)) {
-        <a class="left_bar_link" href="@routes.LeagueController.bestTeams(id)">@leagueInfo.league.getEnglishName</a>
+        <a class="left_bar_link" href="@routes.LeagueController.overview(id)">@leagueInfo.league.getEnglishName</a>
     }
 </div><br>

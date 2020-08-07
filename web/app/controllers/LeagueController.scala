@@ -10,14 +10,14 @@ import models.web
 import models.web._
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Cookie, _}
-import service.{LeagueInfoService, LeagueInfo, DefaultService}
 import play.api.data.validation.Constraints._
+import play.api.i18n.{I18nSupport, Messages}
+import play.api.mvc._
+import service.{DefaultService, LeagueInfo, LeagueInfoService, OverviewStatsService}
 
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import collection.JavaConverters._
 
 case class WebLeagueDetails(leagueInfo: LeagueInfo,
                             divisionLevelsLinks: Seq[(String, String)]) extends AbstractWebDetails
@@ -30,6 +30,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
                                   val leagueInfoService: LeagueInfoService,
                                   val defaultService: DefaultService,
                                   val viewDataFactory: ViewDataFactory,
+                                  val overviewStatsService: OverviewStatsService,
                                   val hattrick: Hattrick) extends BaseController with I18nSupport with MessageSupport {
 
   private def stats[T](leagueId: Int,
@@ -134,8 +135,6 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       viewFunc = {viewData: web.ViewData[FormalTeamStats, WebLeagueDetails] => messages => views.html.league.formalTeamStats(viewData)(messages)}
     )
 
-
-
   def promotions(leagueId: Int) = Action.async { implicit request =>
     val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
       divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueId))
@@ -148,6 +147,17 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
       Ok(views.html.league.promotions(details, promotionsWithType)(messages))
     })
+  }
+
+  def overview(leagueId: Int) = Action.async { implicit request =>
+    val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
+      divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueId))
+
+    val pageSize = request.cookies.get("hattid_page_size").map(_.value.toInt).getOrElse(DefaultService.PAGE_SIZE)
+
+    overviewStatsService.overviewStatistics(Some(leagueId)).map(overviewStatistics =>
+      Ok(views.html.league.leagueOverview(details, overviewStatistics, None,
+        leagueInfoService.leagueInfo(leagueId).league, pageSize)))
   }
 
   def search(leagueId: Int) = Action.async { implicit request =>

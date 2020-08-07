@@ -28,34 +28,38 @@ class OverviewStatsService @Inject()(leagueInfoService: LeagueInfoService,
                                      overviewClickhouseDAO: OverviewClickhouseDAO,
                                      cache: AsyncCacheApi) {
 
-  def overviewStatistics(): Future[OverviewStatistics] =
-    cache.getOrElseUpdate[OverviewStatistics]("overview.world") (fetchOverviewStatistics())
+  def overviewStatistics(leagueId: Option[Int] = None): Future[OverviewStatistics] = {
+    val cacheName = leagueId.map(leagueId => s"overview.$leagueId").getOrElse("overview.world")
+    cache.getOrElseUpdate[OverviewStatistics](cacheName)(fetchOverviewStatistics(leagueId))
+  }
 
-  private def fetchOverviewStatistics() = Future {
-    val currentRound = leagueInfoService.lastFullRound()
-    val currentSeason = leagueInfoService.lastFullSeason()
 
-    val numberOfTeams = overviewClickhouseDAO.numberOfTeams(currentRound, currentSeason)
-    val overviewPlayerState = overviewClickhouseDAO.overviewPlayerState(currentRound, currentSeason)
+  private def fetchOverviewStatistics(leagueId: Option[Int]) = Future {
+    val (currentRound, currentSeason) = leagueId
+      .map(leagueId => (leagueInfoService.leagueInfo.currentRound(leagueId), leagueInfoService.leagueInfo.currentSeason(leagueId)))
+      .getOrElse(leagueInfoService.lastFullRound(), leagueInfoService.lastFullSeason())
+
+    val numberOfTeams = overviewClickhouseDAO.numberOfTeams(currentRound, currentSeason, leagueId)
+    val overviewPlayerState = overviewClickhouseDAO.overviewPlayerState(currentRound, currentSeason, leagueId)
 
     val numberOverview = SummaryOverview(numberOfTeams.count, overviewPlayerState.count,
       overviewPlayerState.goals, overviewPlayerState.injuried, overviewPlayerState.yellowCards, overviewPlayerState.redCards)
 
-    val avgMatchDetails = overviewClickhouseDAO.avgMatchDetails(currentRound, currentSeason)
-    val avgTeamPlayers = overviewClickhouseDAO.avgTeamPlayers(currentRound, currentSeason)
+    val avgMatchDetails = overviewClickhouseDAO.avgMatchDetails(currentRound, currentSeason, leagueId)
+    val avgTeamPlayers = overviewClickhouseDAO.avgTeamPlayers(currentRound, currentSeason, leagueId)
 
     val averageOverview = AverageOverview(avgMatchDetails, avgTeamPlayers)
 
-    val formations = overviewClickhouseDAO.formations(currentRound, currentSeason)
+    val formations = overviewClickhouseDAO.formations(currentRound, currentSeason, leagueId)
 
-    val topSalaryTeams = overviewClickhouseDAO.topSalaryTeams(currentRound, currentSeason)
-    val topHatstatsTeams = overviewClickhouseDAO.topHatstatsTeams(currentRound, currentSeason)
+    val topSalaryTeams = overviewClickhouseDAO.topSalaryTeams(currentRound, currentSeason, leagueId)
+    val topHatstatsTeams = overviewClickhouseDAO.topHatstatsTeams(currentRound, currentSeason, leagueId)
 
-    val topHatstatsMatches = overviewClickhouseDAO.topHatstatsMatches(currentRound, currentSeason)
-    val topRandomMatches = overviewClickhouseDAO.topRandomMatches(currentRound, currentSeason)
+    val topHatstatsMatches = overviewClickhouseDAO.topHatstatsMatches(currentRound, currentSeason, leagueId)
+    val topRandomMatches = overviewClickhouseDAO.topRandomMatches(currentRound, currentSeason, leagueId)
 
-    val topSalaryPlayers = overviewClickhouseDAO.topSalaryPlayers(currentRound, currentSeason)
-    val topRatingPlayers = overviewClickhouseDAO.topRatingPlayers(currentRound, currentSeason)
+    val topSalaryPlayers = overviewClickhouseDAO.topSalaryPlayers(currentRound, currentSeason, leagueId)
+    val topRatingPlayers = overviewClickhouseDAO.topRatingPlayers(currentRound, currentSeason, leagueId)
 
     OverviewStatistics(numberOverview,
       averageOverview,
