@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import {  Route, BrowserRouter as Router } from 'react-router-dom'
-import League from './league/League'
+import { League } from './league/League'
 
 
 

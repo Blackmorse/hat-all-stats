@@ -74,6 +74,7 @@
 
 .table_link:hover {
     text-decoration: none;
+    cursor: pointer;
 }
 
 .position {
