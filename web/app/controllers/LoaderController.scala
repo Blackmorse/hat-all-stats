@@ -22,6 +22,7 @@ class LoaderController @Inject()(val controllerComponents: ControllerComponents,
     if(leagueId == 99) {
       cache.remove("overview.world")
     }
+    cache.remove(s"overview.$leagueId")
     Ok("")
   }
 }
