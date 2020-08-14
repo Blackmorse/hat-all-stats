@@ -30,12 +30,12 @@ class LeagueInfoService @Inject() (val hattrick: Hattrick,
   )
 
   def lastFullRound(): Int = {
-    //Honduras has last league matches
-    leagueInfo.currentRound(99)
+    //Salvador has last league matches
+    leagueInfo.currentRound(100)
   }
 
   def lastFullSeason(): Int = {
-    leagueInfo.currentSeason(99)
+    leagueInfo.currentSeason(100)
   }
 
   def divisionLevelLinks(leagueId: Int): Seq[(String, String)] = {

@@ -18,8 +18,8 @@ class LoaderController @Inject()(val controllerComponents: ControllerComponents,
 
     leagueInfoService.leagueInfo.add(roundInfos)
 
-    //Honduras is last league
-    if(leagueId == 99) {
+    //Salvador is last league
+    if(leagueId == 100) {
       cache.remove("overview.world")
     }
     cache.remove(s"overview.$leagueId")
