@@ -111,7 +111,7 @@ cookies.accept=ОК
 #overview
 overview.world_overview=Обзор
 overview.surprising_matches=Неожиданные матчи
-overview.top_salary_teams=Команды с наибольшей зарпалтой
+overview.top_salary_teams=Команды с наибольшей зарплатой
 overview.top_matches=Лучшие матчи
 overview.top_teams=Лучшие команды
 overview.top_salary_players=Самые высооплачиваемые игроки
