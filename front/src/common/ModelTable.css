@@ -1,6 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Baloo+Thambi+2&display=swap');
 
+.statistics_section {
+    width: 98%;
+    margin: 5px auto 10px;
+    border: 1px solid green;
+}
+
 .statistics_table {
     width: 100%;
     border-spacing: 0px;
@@ -15,7 +21,7 @@
     padding: 0 5px;
 }
 
-.statistics_table > tbody > tr:nth-child(2n) {
+.statistics_table > tbody > tr:nth-child(2n+1) {
     background-color: #dce3de;
 }
 

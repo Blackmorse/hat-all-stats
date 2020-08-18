@@ -6,6 +6,8 @@ import { getLeagueUnits } from '../rest/Client'
 
 class LeagueUnits extends ModelTable<LeagueUnitRating> {
 
+    fetchEntities = getLeagueUnits
+
     columnHeaders(): JSX.Element {
         return <tr>
             <th className="position hint" popped-hint="table.position">table.position_abbr</th>
@@ -18,7 +20,7 @@ class LeagueUnits extends ModelTable<LeagueUnitRating> {
     }
 
     columnValues(index: number, leagueUnitRating: LeagueUnitRating): JSX.Element {
-        return <tr>
+        return <tr key={"league_unit_row_" + index}>
             <td>{index + 1}</td>
             <td className="value"><a className="table_link" href="/#">{leagueUnitRating.leagueUnitName}</a></td>
             <td className="value">{leagueUnitRating.hatStats}</td>
@@ -26,11 +28,7 @@ class LeagueUnits extends ModelTable<LeagueUnitRating> {
             <td className="value">{leagueUnitRating.defense}</td>
             <td className="value">{leagueUnitRating.attack}</td>
         </tr>
-    }
-
-    fetchEntities(leagueId: number, callback: (entities: Array<LeagueUnitRating>) => void): void {
-        getLeagueUnits(leagueId, callback)
-    }
+    }    
 }
 
 export default LeagueUnits;

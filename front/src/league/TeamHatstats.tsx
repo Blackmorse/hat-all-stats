@@ -20,7 +20,7 @@ class TeamHatstats extends ModelTable<TeamRating> {
     }
 
     columnValues(index: number, teamRating: TeamRating): JSX.Element {
-        return <tr>
+        return <tr key={"team_hatstats_row_" + index}>
             <td>{index + 1}</td>
             <td><a className="table_link" href="/#">{teamRating.teamName}</a></td>
             <td className="value"><a className="table_link" href="/#">{teamRating.leagueUnitName}</a></td>
