@@ -38,13 +38,13 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       Future(Ok(Json.toJson(RestLeagueData(leagueId, leagueName, divisionLevels))))
     }
 
-    def teamHatstats(leagueId: Int, restStatisticsParameters: Option[RestStatisticsParameters]) = Action.async { implicit request =>
+    def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
       val statisticsParameters =
           StatisticsParameters(season = leagueInfoService.leagueInfo.currentSeason(leagueId),
-            page = restStatisticsParameters.flatMap(_.page).getOrElse(0),
+            page = restStatisticsParameters.page,
             statsType = Avg,
             sortBy = "hatstats",
-            pageSize = DefaultService.PAGE_SIZE,
+            pageSize = restStatisticsParameters.pageSize,
             sortingDirection = Desc
           )
 
@@ -52,7 +52,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
         leagueId = Some(leagueId),
         statisticsParameters = statisticsParameters)
       .map(teamRatings => {
-        val isLastPage = teamRatings.size <= DefaultService.PAGE_SIZE
+        val isLastPage = teamRatings.size <= statisticsParameters.pageSize
 
         val entities = if(!isLastPage) teamRatings.dropRight(1) else teamRatings
         val restTableData = RestTableData(entities, isLastPage)
@@ -60,13 +60,13 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       })        
     }
 
-    def leagueUnits(leagueId: Int, restStatisticsParameters: Option[RestStatisticsParameters]) = Action.async { implicit request =>
+    def leagueUnits(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
       val statisticsParameters =
         StatisticsParameters(season = leagueInfoService.leagueInfo.currentSeason(leagueId),
-          page = restStatisticsParameters.flatMap(_.page).getOrElse(0),
+          page = restStatisticsParameters.page,
           statsType = Avg,
           sortBy = "hatstats",
-          pageSize = DefaultService.PAGE_SIZE,
+          pageSize = restStatisticsParameters.pageSize,
           sortingDirection = Desc
         )
 
@@ -76,7 +76,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
         statisticsParameters = statisticsParameters
       ).map(leagueUnits => {
 
-        val isLastPage = leagueUnits.size <= DefaultService.PAGE_SIZE
+        val isLastPage = leagueUnits.size <= statisticsParameters.pageSize
 
         val entities = if(!isLastPage) leagueUnits.dropRight(1) else leagueUnits
         val restTableData = RestTableData(entities, isLastPage)

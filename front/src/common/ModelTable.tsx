@@ -4,6 +4,8 @@ import './ModelTable.css'
 import StatisticsParameters from '../rest/StatisticsParameters'
 import RestTableData from '../rest/RestTableData'
 import PageNavigator from '../common/PageNavigator'
+import Cookies from 'js-cookie'
+import PageSize from './PageSize'
 
 interface ModelTableState<T> {
     entities?: Array<T>,
@@ -15,10 +17,18 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
 
     constructor(props: LeagueProps) {
         super(props)
+
+        let pageSizeString = Cookies.get('hattid_page_size')
+        let pageSize = (pageSizeString == null) ? 16 : Number(pageSizeString)
         this.state={
-            isLastPage: false,
-            statisticsParameters: {page: 0}
+            isLastPage: true,
+            statisticsParameters: {
+                page: 0,
+                pageSize: pageSize 
+            }
         }
+
+        this.pageSizeChanged=this.pageSizeChanged.bind(this);
     }
 
     abstract fetchEntities(leagueId: number, statisticsParameters: StatisticsParameters, callback: (restTableData: RestTableData<Model>) => void): void
@@ -27,27 +37,35 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
 
     abstract columnValues(index: number, model: Model): JSX.Element
 
+    update(statisticsParameters: StatisticsParameters) {
+        this.fetchEntities(this.props.leagueId,
+            statisticsParameters,
+            restTableData => this.setState({
+                entities: restTableData.entities,
+                statisticsParameters: statisticsParameters,
+                isLastPage: restTableData.isLastPage
+            }))
+    }
+
     componentDidMount() {
-        this.fetchEntities(this.props.leagueId, 
-            {page: this.state.statisticsParameters.page},
-            restTableData => {
-                this.setState({
-                                entities: restTableData.entities,
-                                statisticsParameters: this.state.statisticsParameters,
-                                isLastPage: restTableData.isLastPage
-                            })}
-                            )
+        this.update(this.state.statisticsParameters)
     }
 
     pageSelected(pageNumber: number) {
-        this.fetchEntities(this.props.leagueId, 
-                            {page: pageNumber}, 
-                            restTableData => {
-                                this.setState({
-                                entities: restTableData.entities,
-                                statisticsParameters: {page: pageNumber},
-                                isLastPage: restTableData.isLastPage
-                            })})
+        let newStatisticsParameters = Object.assign({}, this.state.statisticsParameters)
+        newStatisticsParameters.page = pageNumber
+
+        this.update(newStatisticsParameters)
+    }
+
+    pageSizeChanged(pageSize: number) {
+        let newStatisticsParameters = Object.assign({}, this.state.statisticsParameters)
+        newStatisticsParameters.pageSize = pageSize
+        newStatisticsParameters.page = 0
+
+        Cookies.set('hattid_page_size', pageSize.toString(), { sameSite: "Lax" })
+
+        this.update(newStatisticsParameters)
     }
 
     render() {
@@ -57,13 +75,16 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
         }
         return <section className="statistics_section">
             <header className="statistics_header"><span className="statistics_header_triangle">&#x25BC;</span></header>
+            <PageSize 
+                selectedSize={this.state.statisticsParameters.pageSize}
+                linkAction={this.pageSizeChanged}/>
             <table className="statistics_table">
                 <thead>
                     {this.columnHeaders()}
                 </thead>
                 <tbody>
                     {this.state.entities?.map((entity, index) => 
-                        this.columnValues(16 * this.state.statisticsParameters.page + index, entity))}
+                        this.columnValues(this.state.statisticsParameters.pageSize * this.state.statisticsParameters.page + index, entity))}
                 </tbody>
             </table>
 

@@ -1,3 +1,4 @@
 export default interface StatisticsParameters {
-    page: number
+    page: number,
+    pageSize: number
 }

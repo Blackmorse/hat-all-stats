@@ -6,8 +6,8 @@ GET     /lang                       controllers.HomeController.lang(lang: String
 
 GET     /worldOverview              controllers.WorldController.overview()
 GET     /api/league/:leagueId                 controllers.RestLeagueController.getLeagueData(leagueId: Int)
-GET     /api/league/:leagueId/teamHatstats      controllers.RestLeagueController.teamHatstats(leagueId: Int, restStatisticsParameters: Option[models.web.RestStatisticsParameters])
-GET     /api/league/:leagueId/leagueUnits       controllers.RestLeagueController.leagueUnits(leagueId: Int, restStatisticsParameters: Option[models.web.RestStatisticsParameters])
+GET     /api/league/:leagueId/teamHatstats      controllers.RestLeagueController.teamHatstats(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/leagueUnits       controllers.RestLeagueController.leagueUnits(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.overview(leagueId: Int)

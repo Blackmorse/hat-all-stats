@@ -5,8 +5,6 @@ import LeagueUnitRating from './models/LeagueUnitRating'
 import StatisticsParameters from './StatisticsParameters'
 import RestTableData from './RestTableData'
 
-
-
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
         .then(response => response.data)
@@ -16,6 +14,7 @@ export function getLeagueData(leagueId: number, callback: (leagueData: LeagueDat
 export function getTeamRatings(leagueId: number, statisticsParameters: StatisticsParameters, callback: (teamRatings: RestTableData<TeamRating>) => void) {
     let params = new URLSearchParams({
         "page": statisticsParameters.page.toString(),
+        "pageSize": statisticsParameters.pageSize.toString()
     }) 
 
     axios.get<RestTableData<TeamRating>>('/api/league/' + leagueId + '/teamHatstats?' + params.toString())
@@ -30,6 +29,7 @@ export function getTeamRatings(leagueId: number, statisticsParameters: Statistic
 export function getLeagueUnits(leagueId: number, statisticsParameters: StatisticsParameters, callback: (leagueUnits: RestTableData<LeagueUnitRating>) => void) {
     let params = new URLSearchParams({
         "page": statisticsParameters.page.toString(),
+        "pageSize": statisticsParameters.pageSize.toString()
     })
     
     axios.get<RestTableData<LeagueUnitRating>>('/api/league/' + leagueId + '/leagueUnits?' + params.toString())

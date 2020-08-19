@@ -1,0 +1,40 @@
+.page_size {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+}
+
+.page_size_title {
+    font-size: 0.8em;
+    margin-right: 5px;
+}
+
+.page_size_number {
+    font-size: 0.7em;
+
+    background-color: transparent;
+    border: none;
+    margin: 0;
+    padding: 2px;
+    
+}
+
+.page_size_number_link {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.page_size_number_link:hover {
+    text-decoration: none;
+}
+
+.page_size_number_link:visited,
+.page_size_number_link:active {
+    color: black;
+    text-decoration: none;
+}
+
+.page_size_number_selected {
+    font-weight: bold;
+}
