@@ -33,3 +33,11 @@
     ports:
       - 8123:8123
     state: started
+
+- name: cron for backuping clickhouse
+  become: true
+  cron:
+    weekday: "1"
+    hour: "18"
+    minute: "0"
+    job: "mkdir {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d-\\%H\\%M\\%S) && cp -r  {{ base_project_directory }}/clickhouse/ {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d-\\%H\\%M\\%S)"
