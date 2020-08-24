@@ -1,6 +1,21 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Baloo+Thambi+2&display=swap');
 
+.content_header {
+    padding: 5px 5px;
+    margin: 0 0 10px;
+    background: green;
+    border-radius: 3px;
+
+    font-family: 'Merriweather', serif;
+    font-size: 1.0em;
+    color: white;
+}
+
+.content_body {
+    margin: 5px;
+}
+
 .statistics_section {
     width: 98%;
     margin: 5px auto 10px;

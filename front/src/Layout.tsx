@@ -1,5 +1,8 @@
 import React from 'react';
 import './Layout.css'
+import { Translation } from 'react-i18next'
+import './i18n'
+// import i18n from 'i18next';
 
 
 abstract class Layout<Props, State> extends React.Component<Props, State> {
@@ -9,22 +12,28 @@ abstract class Layout<Props, State> extends React.Component<Props, State> {
     abstract content(): JSX.Element;
 
     abstract leftMenu(): JSX.Element
-    
+
     render() {
-        return <div className='main_frame'>
+        return <Translation>
+        { (t, { i18n }) => 
+        <div className='main_frame'>
+            <aside className="language_links">
+                <button className="language_link_button" onClick={(e) => i18n.changeLanguage("en")}>en</button>
+                <button className="language_link_button" onClick={(e) => i18n.changeLanguage("ru")}>ru</button>
+            </aside>
             <header className="header">{this.topMenu()}</header>
             <main className="main_content">
                 <aside className="left_side">
                     {this.leftMenu()}
                 </aside>
                 <section className="content">
-                    <header className="content_header"></header>
-                    <div className="content_body">
-                        {this.content()}
-                    </div>
+                    {this.content()}
+                  
                 </section>
             </main>
         </div>
+        }
+        </Translation>
     }
 }
 

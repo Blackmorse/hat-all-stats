@@ -6,6 +6,8 @@ import RestTableData from '../rest/RestTableData'
 import PageNavigator from '../common/PageNavigator'
 import Cookies from 'js-cookie'
 import PageSize from './PageSize'
+import { Translation } from 'react-i18next'
+import '../i18n'
 
 interface ModelTableState<T> {
     entities?: Array<T>,
@@ -36,6 +38,8 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
     abstract columnHeaders(): JSX.Element
 
     abstract columnValues(index: number, model: Model): JSX.Element
+
+    abstract sectionTitle(): string
 
     update(statisticsParameters: StatisticsParameters) {
         this.fetchEntities(this.props.leagueId,
@@ -73,26 +77,35 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
             pageNumber: this.state.statisticsParameters.page,
             isLastPage: this.state.isLastPage
         }
-        return <section className="statistics_section">
-            <header className="statistics_header"><span className="statistics_header_triangle">&#x25BC;</span></header>
-            <PageSize 
-                selectedSize={this.state.statisticsParameters.pageSize}
-                linkAction={this.pageSizeChanged}/>
-            <table className="statistics_table">
-                <thead>
-                    {this.columnHeaders()}
-                </thead>
-                <tbody>
-                    {this.state.entities?.map((entity, index) => 
-                        this.columnValues(this.state.statisticsParameters.pageSize * this.state.statisticsParameters.page + index, entity))}
-                </tbody>
-            </table>
+        return <Translation> 
+        { (t, { i18n }) =>
+        <>
+            <header className="content_header">{t(this.sectionTitle())}</header>
+            <div className="content_body">
+                <section className="statistics_section">               
+                    
+                    <header className="statistics_header"><span className="statistics_header_triangle">&#x25BC;</span></header>
+                    <PageSize 
+                        selectedSize={this.state.statisticsParameters.pageSize}
+                        linkAction={this.pageSizeChanged}/>
+                    <table className="statistics_table">
+                        <thead>
+                            {this.columnHeaders()}
+                        </thead>
+                        <tbody>
+                            {this.state.entities?.map((entity, index) => 
+                                this.columnValues(this.state.statisticsParameters.pageSize * this.state.statisticsParameters.page + index, entity))}
+                        </tbody>
+                    </table>
 
-            <PageNavigator 
-                pageNumber={navigatorProps.pageNumber} 
-                isLastPage={navigatorProps.isLastPage} 
-                linkAction={(pageNumber) => this.pageSelected(pageNumber)}/> 
-        </section>
+                    <PageNavigator 
+                        pageNumber={navigatorProps.pageNumber} 
+                        isLastPage={navigatorProps.isLastPage} 
+                        linkAction={(pageNumber) => this.pageSelected(pageNumber)}/> 
+                </section>
+            </div>
+        </>}
+        </Translation>
     }
 }
 

@@ -2,21 +2,29 @@ import React from 'react';
 import LeagueUnitRating from '../rest/models/LeagueUnitRating'
 import ModelTable from '../common/ModelTable'
 import { getLeagueUnits } from '../rest/Client'
-
+import { Translation } from 'react-i18next'
+import '../i18n'
 
 class LeagueUnits extends ModelTable<LeagueUnitRating> {
+
+    sectionTitle(): string  {
+        return 'menu.best_league_units'
+    }
 
     fetchEntities = getLeagueUnits
 
     columnHeaders(): JSX.Element {
-        return <tr>
-            <th className="position hint" popped-hint="table.position">table.position_abbr</th>
-            <th className="value">table.league</th>
-            <th className="value">table.hatstats</th>
-            <th className="value">table.midfield</th>
-            <th className="value">table.defense</th>
-            <th className="value">table.attack</th>
-        </tr>
+        return <Translation>{
+            (t, { i18n }) => <tr>
+                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="value">{t('table.league')}</th>
+                <th className="value">{t('table.hatstats')}</th>
+                <th className="value">{t('table.midfield')}</th>
+                <th className="value">{t('table.defense')}</th>
+                <th className="value">{t('table.attack')}</th>
+            </tr>
+            }
+            </Translation> 
     }
 
     columnValues(index: number, leagueUnitRating: LeagueUnitRating): JSX.Element {

@@ -6,8 +6,6 @@
     flex-direction: column;
 }
 
-
-
 .header {
     background: green;
     color: white;
@@ -47,21 +45,33 @@
     flex-direction: column;
 }
 
-
-.content_header {
-    padding: 5px 5px;
-    margin: 0 0 10px;
-    background: green;
-    border-radius: 3px;
-
-    font-family: 'Merriweather', serif;
-    font-size: 1.0em;
-    color: white;
+.language_links {
+    align-self: flex-end;
+    font-size: 0.7em;
+    margin-bottom: 0px;
 }
 
-.content_body {
-    margin: 5px;
+.language_link_button {
+    text-decoration: underline;
+    color: black;
+
+    border: none;
+
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+    margin: 0 3px -3px 0;
+    padding: 0;
+    text-align: left;
 }
 
+.language_link_button:hover {
+    text-decoration: none;
+    cursor: pointer;
+}
 
-
+.language_link_button:visited,
+.language_link_button:active {
+    color: black;
+}
