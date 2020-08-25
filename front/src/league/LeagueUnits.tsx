@@ -1,27 +1,34 @@
 import React from 'react';
 import LeagueUnitRating from '../rest/models/LeagueUnitRating'
 import ModelTable from '../common/ModelTable'
+import ModelTableTh from '../common/ModelTableTh'
 import { getLeagueUnits } from '../rest/Client'
 import { Translation } from 'react-i18next'
 import '../i18n'
+import { LeagueProps } from './League';
 
 class LeagueUnits extends ModelTable<LeagueUnitRating> {
 
-    sectionTitle(): string  {
-        return 'menu.best_league_units'
+    constructor(props: LeagueProps) {
+        super(props, 'menu.best_league_units', [ 'hatstats' ])
     }
 
     fetchEntities = getLeagueUnits
 
     columnHeaders(): JSX.Element {
+        const sortingState = {
+            callback: this.sortingChanged,
+            currentSorting: this.state.statisticsParameters.sortingField
+        }
+
         return <Translation>{
             (t, { i18n }) => <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>              
                 <th className="value">{t('table.league')}</th>
-                <th className="value">{t('table.hatstats')}</th>
-                <th className="value">{t('table.midfield')}</th>
-                <th className="value">{t('table.defense')}</th>
-                <th className="value">{t('table.attack')}</th>
+                <ModelTableTh title='table.hatstats' sortingField='hatstats'  sortingState={sortingState}/>
+                <ModelTableTh title='table.hatstats' sortingField='midfield' sortingState={sortingState}/>
+                <ModelTableTh title='table.defense' sortingField='defense' sortingState={sortingState}/>
+                <ModelTableTh title='table.attack' sortingField='attack' sortingState={sortingState}/>
             </tr>
             }
             </Translation> 

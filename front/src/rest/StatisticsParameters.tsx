@@ -1,4 +1,5 @@
 export default interface StatisticsParameters {
     page: number,
-    pageSize: number
+    pageSize: number,
+    sortingField: string
 }

@@ -43,7 +43,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
           StatisticsParameters(season = leagueInfoService.leagueInfo.currentSeason(leagueId),
             page = restStatisticsParameters.page,
             statsType = Avg,
-            sortBy = "hatstats",
+            sortBy = restStatisticsParameters.sortBy,
             pageSize = restStatisticsParameters.pageSize,
             sortingDirection = Desc
           )
@@ -65,7 +65,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
         StatisticsParameters(season = leagueInfoService.leagueInfo.currentSeason(leagueId),
           page = restStatisticsParameters.page,
           statsType = Avg,
-          sortBy = "hatstats",
+          sortBy = restStatisticsParameters.sortBy,
           pageSize = restStatisticsParameters.pageSize,
           sortingDirection = Desc
         )

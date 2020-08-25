@@ -12,25 +12,29 @@ import '../i18n'
 interface ModelTableState<T> {
     entities?: Array<T>,
     statisticsParameters: StatisticsParameters,
-    isLastPage: boolean
+    isLastPage: boolean,
 }
 
 abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTableState<Model>> {
+    private sectionTitle: string
 
-    constructor(props: LeagueProps) {
+    constructor(props: LeagueProps, sectionTitle: string, soringFields: Array<string>) {
         super(props)
-
+        this.sectionTitle = sectionTitle
+        
         let pageSizeString = Cookies.get('hattid_page_size')
         let pageSize = (pageSizeString == null) ? 16 : Number(pageSizeString)
         this.state={
             isLastPage: true,
             statisticsParameters: {
                 page: 0,
-                pageSize: pageSize 
+                pageSize: pageSize,
+                sortingField: soringFields[0]
             }
         }
 
         this.pageSizeChanged=this.pageSizeChanged.bind(this);
+        this.sortingChanged=this.sortingChanged.bind(this);
     }
 
     abstract fetchEntities(leagueId: number, statisticsParameters: StatisticsParameters, callback: (restTableData: RestTableData<Model>) => void): void
@@ -38,8 +42,6 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
     abstract columnHeaders(): JSX.Element
 
     abstract columnValues(index: number, model: Model): JSX.Element
-
-    abstract sectionTitle(): string
 
     update(statisticsParameters: StatisticsParameters) {
         this.fetchEntities(this.props.leagueId,
@@ -72,6 +74,12 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
         this.update(newStatisticsParameters)
     }
 
+    sortingChanged(sortBy: string) {
+        let newStatisticsParameters = Object.assign({}, this.state.statisticsParameters)
+        newStatisticsParameters.sortingField = sortBy
+        this.update(newStatisticsParameters)
+    }
+
     render() {
         let navigatorProps = {
             pageNumber: this.state.statisticsParameters.page,
@@ -80,7 +88,7 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
         return <Translation> 
         { (t, { i18n }) =>
         <>
-            <header className="content_header">{t(this.sectionTitle())}</header>
+            <header className="content_header">{t(this.sectionTitle)}</header>
             <div className="content_body">
                 <section className="statistics_section">               
                     

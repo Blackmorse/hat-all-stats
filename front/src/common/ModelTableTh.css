@@ -1,0 +1,8 @@
+.model_table_header {
+    text-decoration: underline;
+}
+
+.model_table_header:hover {
+    text-decoration: none;
+    cursor: pointer;
+}

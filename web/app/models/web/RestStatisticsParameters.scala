@@ -2,7 +2,7 @@ package models.web
 
 import play.api.mvc.QueryStringBindable
 
-case class RestStatisticsParameters(page: Int, pageSize: Int)
+case class RestStatisticsParameters(page: Int, pageSize: Int, sortBy: String)
 
 object RestStatisticsParameters {
   implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]) = new QueryStringBindable[RestStatisticsParameters] {
@@ -23,19 +23,24 @@ object RestStatisticsParameters {
         }
       }))
 
+      val sortByOptionEither = stringBinder.bind("sortBy", params)
+
 
       for(pageSizeEither <- pageSizeOptionEither;
-          pageEither <- pageOptionEither) yield {
+          pageEither <- pageOptionEither;
+          sortByEither <- sortByOptionEither) yield {
         for(pageSize <- pageSizeEither;
-            page <- pageEither) yield {
-          RestStatisticsParameters(page, pageSize)
+            page <- pageEither;
+            sortBy <- sortByEither) yield {
+          RestStatisticsParameters(page, pageSize, sortBy)
         }
       }
     }
 
     override def unbind(key: String, value: RestStatisticsParameters): String = {
       stringBinder.unbind("page", value.page.toString) + "&" +
-        stringBinder.unbind("pageSize", value.pageSize.toString)
+        stringBinder.unbind("pageSize", value.pageSize.toString) + "&" +
+        stringBinder.unbind("sortBy", value.sortBy)
     }
   }
 }
