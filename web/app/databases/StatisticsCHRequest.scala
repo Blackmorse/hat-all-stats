@@ -78,7 +78,7 @@ object StatisticsCHRequest {
                      |     from hattrick.match_details
                      |     __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
                      |     group by league_unit_id, league_unit_name, round)
-                     |group by league_unit_id, league_unit_name order by __sortBy__ desc, league_unit_id desc __limit__""".stripMargin,
+                     |group by league_unit_id, league_unit_name order by __sortBy__ __sortingDirection__, league_unit_id desc __limit__""".stripMargin,
     oneRoundSql = """select league_unit_id,
                     |     league_unit_name,
                     |     toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats,

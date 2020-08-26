@@ -1,7 +1,7 @@
 import React from 'react';
 import { LeagueProps } from '../league/League'
 import './ModelTable.css'
-import StatisticsParameters from '../rest/StatisticsParameters'
+import StatisticsParameters, { SortingDirection } from '../rest/StatisticsParameters'
 import RestTableData from '../rest/RestTableData'
 import PageNavigator from '../common/PageNavigator'
 import Cookies from 'js-cookie'
@@ -18,7 +18,7 @@ interface ModelTableState<T> {
 abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTableState<Model>> {
     private sectionTitle: string
 
-    constructor(props: LeagueProps, sectionTitle: string, soringFields: Array<string>) {
+    constructor(props: LeagueProps, sectionTitle: string, defaultSortingField: string) {
         super(props)
         this.sectionTitle = sectionTitle
         
@@ -29,7 +29,8 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
             statisticsParameters: {
                 page: 0,
                 pageSize: pageSize,
-                sortingField: soringFields[0]
+                sortingField: defaultSortingField,
+                sortingDirection: SortingDirection.DESC
             }
         }
 
@@ -74,9 +75,22 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
         this.update(newStatisticsParameters)
     }
 
-    sortingChanged(sortBy: string) {
+    sortingChanged(sortingField: string) {
         let newStatisticsParameters = Object.assign({}, this.state.statisticsParameters)
-        newStatisticsParameters.sortingField = sortBy
+        
+        let newSortingDirection: SortingDirection
+        if( this.state.statisticsParameters.sortingField === sortingField ) {
+            if ( this.state.statisticsParameters.sortingDirection === SortingDirection.DESC ) {
+                newSortingDirection = SortingDirection.ASC
+            } else {
+                newSortingDirection = SortingDirection.DESC
+            }
+        } else {
+            newSortingDirection = SortingDirection.DESC
+        }
+
+        newStatisticsParameters.sortingField = sortingField
+        newStatisticsParameters.sortingDirection = newSortingDirection
         this.update(newStatisticsParameters)
     }
 

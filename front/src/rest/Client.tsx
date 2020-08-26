@@ -15,7 +15,8 @@ export function getTeamRatings(leagueId: number, statisticsParameters: Statistic
     let params = new URLSearchParams({
         "page": statisticsParameters.page.toString(),
         "pageSize": statisticsParameters.pageSize.toString(),
-        "sortBy": statisticsParameters.sortingField
+        "sortBy": statisticsParameters.sortingField,
+        "sortDirection": statisticsParameters.sortingDirection
     }) 
 
     axios.get<RestTableData<TeamRating>>('/api/league/' + leagueId + '/teamHatstats?' + params.toString())
@@ -31,7 +32,8 @@ export function getLeagueUnits(leagueId: number, statisticsParameters: Statistic
     let params = new URLSearchParams({
         "page": statisticsParameters.page.toString(),
         "pageSize": statisticsParameters.pageSize.toString(),
-        "sortBy": statisticsParameters.sortingField
+        "sortBy": statisticsParameters.sortingField,
+        "sortDirection": statisticsParameters.sortingDirection
     })
     
     axios.get<RestTableData<LeagueUnitRating>>('/api/league/' + leagueId + '/leagueUnits?' + params.toString())

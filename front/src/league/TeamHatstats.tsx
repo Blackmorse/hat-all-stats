@@ -7,12 +7,10 @@ import '../i18n'
 import { Translation } from 'react-i18next'
 import { LeagueProps } from './League';
 
-
-
 class TeamHatstats extends ModelTable<TeamRating> {
 
     constructor(props: LeagueProps) {
-        super(props, 'menu.best_teams', [ 'hatstats' ])
+        super(props, 'menu.best_teams', 'hatstats')
     }
 
     fetchEntities = getTeamRatings
@@ -20,7 +18,8 @@ class TeamHatstats extends ModelTable<TeamRating> {
     columnHeaders(): JSX.Element {
         const sortingState = {
             callback: this.sortingChanged,
-            currentSorting: this.state.statisticsParameters.sortingField
+            currentSorting: this.state.statisticsParameters.sortingField,
+            sortingDirection: this.state.statisticsParameters.sortingDirection
         }
 
         return <Translation>

@@ -10,7 +10,7 @@ import { LeagueProps } from './League';
 class LeagueUnits extends ModelTable<LeagueUnitRating> {
 
     constructor(props: LeagueProps) {
-        super(props, 'menu.best_league_units', [ 'hatstats' ])
+        super(props, 'menu.best_league_units', 'hatstats')
     }
 
     fetchEntities = getLeagueUnits
@@ -18,7 +18,8 @@ class LeagueUnits extends ModelTable<LeagueUnitRating> {
     columnHeaders(): JSX.Element {
         const sortingState = {
             callback: this.sortingChanged,
-            currentSorting: this.state.statisticsParameters.sortingField
+            currentSorting: this.state.statisticsParameters.sortingField,
+            sortingDirection: this.state.statisticsParameters.sortingDirection
         }
 
         return <Translation>{
@@ -26,7 +27,7 @@ class LeagueUnits extends ModelTable<LeagueUnitRating> {
                 <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>              
                 <th className="value">{t('table.league')}</th>
                 <ModelTableTh title='table.hatstats' sortingField='hatstats'  sortingState={sortingState}/>
-                <ModelTableTh title='table.hatstats' sortingField='midfield' sortingState={sortingState}/>
+                <ModelTableTh title='table.midfield' sortingField='midfield' sortingState={sortingState}/>
                 <ModelTableTh title='table.defense' sortingField='defense' sortingState={sortingState}/>
                 <ModelTableTh title='table.attack' sortingField='attack' sortingState={sortingState}/>
             </tr>

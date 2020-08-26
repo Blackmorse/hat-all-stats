@@ -45,7 +45,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
             statsType = Avg,
             sortBy = restStatisticsParameters.sortBy,
             pageSize = restStatisticsParameters.pageSize,
-            sortingDirection = Desc
+            sortingDirection = restStatisticsParameters.sortingDirection
           )
 
       StatisticsCHRequest.bestHatstatsTeamRequest.execute(
@@ -67,7 +67,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
           statsType = Avg,
           sortBy = restStatisticsParameters.sortBy,
           pageSize = restStatisticsParameters.pageSize,
-          sortingDirection = Desc
+          sortingDirection = restStatisticsParameters.sortingDirection
         )
 
 
