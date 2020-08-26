@@ -157,7 +157,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
     overviewStatsService.overviewStatistics(Some(leagueId)).map(overviewStatistics =>
       Ok(views.html.league.leagueOverview(details, overviewStatistics, None,
-        leagueInfoService.leagueInfo(leagueId).league, pageSize)))
+        leagueInfoService.leagueInfo(leagueId).league, pageSize)(messages)))
   }
 
   def search(leagueId: Int) = Action.async { implicit request =>
