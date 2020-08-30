@@ -2,7 +2,8 @@ package models.web
 
 import play.api.mvc.QueryStringBindable
 
-case class RestStatisticsParameters(page: Int, pageSize: Int, sortBy: String, sortingDirection: SortingDirection)
+case class RestStatisticsParameters(page: Int, pageSize: Int, sortBy: String, sortingDirection: SortingDirection,
+                                    statsType: StatsType)
 
 object RestStatisticsParameters {
   implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]) = new QueryStringBindable[RestStatisticsParameters] {
@@ -37,24 +38,50 @@ object RestStatisticsParameters {
           }
         }))
 
+      val statsTypeOptionEither = stringBinder.bind("statType", params)
+        .map(typeEither => typeEither.flatMap{
+          case "avg" => Right(Avg)
+          case "max" => Right(Max)
+          case "accumulate" => Right(Accumulate)
+          case "statRound" =>
+            stringBinder.bind("statRoundNumber", params)
+              .map(statRoundNumberEither => statRoundNumberEither.flatMap(statRoundNumber => {
+                if(statRoundNumber forall Character.isDigit)
+                  Right(Round(statRoundNumber.toInt): StatsType)
+                else
+                  Left("Unable to parse")
+              })).getOrElse(Left("Unable to parse"))
+          case _ => Left("Unable to Parse")
+        })
+
       for(pageSizeEither <- pageSizeOptionEither;
           pageEither <- pageOptionEither;
           sortByEither <- sortByOptionEither;
-          directionEither <- directionOptionEither) yield {
+          directionEither <- directionOptionEither;
+          statsTypeEither <- statsTypeOptionEither) yield {
         for(pageSize <- pageSizeEither;
             page <- pageEither;
             sortBy <- sortByEither;
-            direction <- directionEither) yield {
-          RestStatisticsParameters(page, pageSize, sortBy, direction)
+            direction <- directionEither;
+            statsType <- statsTypeEither) yield {
+          RestStatisticsParameters(page, pageSize, sortBy, direction, statsType)
         }
       }
     }
 
     override def unbind(key: String, value: RestStatisticsParameters): String = {
+      val statsTypeStr = value.statsType match {
+        case Avg => stringBinder.unbind("statType", "avg")
+        case Max => stringBinder.unbind("statType", "max")
+        case Accumulate => stringBinder.unbind("statType", "accumulate")
+        case Round(num) => stringBinder.unbind("statType", "statRound") + "&" + stringBinder.unbind("statRoundNumber", num.toString)
+      }
+
       stringBinder.unbind("page", value.page.toString) + "&" +
         stringBinder.unbind("pageSize", value.pageSize.toString) + "&" +
         stringBinder.unbind("sortBy", value.sortBy) + "&" +
-        stringBinder.unbind("sortDirection",  if (value.sortingDirection == Asc)  "asc" else "desc" )
+        stringBinder.unbind("sortDirection",  if (value.sortingDirection == Asc)  "asc" else "desc" ) + "&" +
+        statsTypeStr
     }
   }
 }

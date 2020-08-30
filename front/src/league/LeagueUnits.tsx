@@ -6,11 +6,14 @@ import { getLeagueUnits } from '../rest/Client'
 import { Translation } from 'react-i18next'
 import '../i18n'
 import { LeagueProps } from './League';
+import { StatsTypeEnum } from '../rest/StatisticsParameters';
 
 class LeagueUnits extends ModelTable<LeagueUnitRating> {
 
     constructor(props: LeagueProps) {
-        super(props, 'menu.best_league_units', 'hatstats')
+        super(props, 'menu.best_league_units', 
+        'hatstats', {statType: StatsTypeEnum.AVG}, 
+        [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }
 
     fetchEntities = getLeagueUnits

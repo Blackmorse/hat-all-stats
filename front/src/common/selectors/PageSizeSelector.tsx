@@ -1,12 +1,12 @@
 import React from 'react';
-import './PageSize.css'
+import './PageSizeSelector.css'
 
 interface PageSizeProperties {
     selectedSize: number,
     linkAction: (pageSize: number) => void
 }
 
-class PageSize extends React.Component<PageSizeProperties> {
+class PageSizeSelector extends React.Component<PageSizeProperties> {
     sizes: Array<number> = [8, 16, 32, 64]
 
     render() {
@@ -25,4 +25,4 @@ class PageSize extends React.Component<PageSizeProperties> {
     }
 }
 
-export default PageSize
+export default PageSizeSelector

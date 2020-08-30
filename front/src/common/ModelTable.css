@@ -16,6 +16,11 @@
     margin: 5px;
 }
 
+.table_settings_div {
+    display: flex;
+    justify-content: space-between;
+}
+
 .statistics_section {
     width: 98%;
     margin: 5px auto 10px;

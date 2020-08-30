@@ -6,11 +6,14 @@ import ModelTableTh from '../common/ModelTableTh'
 import '../i18n'
 import { Translation } from 'react-i18next'
 import { LeagueProps } from './League';
+import { StatsTypeEnum } from '../rest/StatisticsParameters';
 
 class TeamHatstats extends ModelTable<TeamRating> {
 
     constructor(props: LeagueProps) {
-        super(props, 'menu.best_teams', 'hatstats')
+        super(props, 'menu.best_teams', 
+        'hatstats', {statType: StatsTypeEnum.AVG},
+        [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }
 
     fetchEntities = getTeamRatings
