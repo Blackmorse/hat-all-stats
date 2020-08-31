@@ -7,6 +7,7 @@ import PageNavigator from '../common/PageNavigator'
 import Cookies from 'js-cookie'
 import PageSizeSelector from './selectors/PageSizeSelector'
 import StatsTypeSelector from './selectors/StatsTypeSelector'
+import SeasonSelector from './selectors/SeasonSelector'
 import { Translation } from 'react-i18next'
 import '../i18n'
 
@@ -36,13 +37,15 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
                 pageSize: pageSize,
                 sortingField: defaultSortingField,
                 sortingDirection: SortingDirection.DESC,
-                statsType: defaultStatsType
+                statsType: defaultStatsType,
+                season: this.props.leagueData.currentSeason
             }
         }
 
         this.pageSizeChanged=this.pageSizeChanged.bind(this);
         this.sortingChanged=this.sortingChanged.bind(this);
         this.statTypeChanged=this.statTypeChanged.bind(this);
+        this.seasonChanged=this.seasonChanged.bind(this);
     }
 
     abstract fetchEntities(leagueId: number, statisticsParameters: StatisticsParameters, callback: (restTableData: RestTableData<Model>) => void): void
@@ -108,6 +111,13 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
         this.update(newStatisticsParameters)
     }
 
+    seasonChanged(season: number) {
+        let newStatisticsParameters = Object.assign({}, this.state.statisticsParameters)
+        newStatisticsParameters.season = season
+
+        this.update(newStatisticsParameters)
+    }
+
     render() {
         let navigatorProps = {
             pageNumber: this.state.statisticsParameters.page,
@@ -123,12 +133,16 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
                     <header className="statistics_header"><span className="statistics_header_triangle">&#x25BC;</span></header>
                     
                     <div className="table_settings_div">
+                        <SeasonSelector currentSeason={this.props.leagueData.currentSeason}
+                            seasons={this.props.leagueData.seasons}
+                            callback={this.seasonChanged}/>
                         <StatsTypeSelector  statsTypes={this.statsTypes}
                             currentRound={this.props.leagueData.currentRound}
                             rounds={this.props.leagueData.rounds}
                             selectedStatType={this.state.statisticsParameters.statsType}
                             onChanged={this.statTypeChanged}
                             />
+
                         <PageSizeSelector 
                             selectedSize={this.state.statisticsParameters.pageSize}
                             linkAction={this.pageSizeChanged}/>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatsTypeEnum, StatsType } from '../../rest/StatisticsParameters'
-import './StatsTypeSelector.css'
+import './Selector.css'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 
@@ -29,22 +29,21 @@ class StatsTypeSelector extends React.Component<StatsTypeSelectorProps> {
 
     render() {        
         const avgOption = (this.props.statsTypes.includes(StatsTypeEnum.AVG)) ?
-         <option //selected={(this.props.selectedStatType.statType === StatsTypeEnum.AVG)}
+         <option 
             value={StatsTypeEnum.AVG.toString()}>avg</option> : <></>
 
         const maxOption = (this.props.statsTypes.includes(StatsTypeEnum.MAX)) ?
-         <option  //selected={(this.props.selectedStatType.statType === StatsTypeEnum.MAX)}
+         <option
             value={StatsTypeEnum.MAX.toString()}>max</option> : <></>
 
         const accumulateOption = (this.props.statsTypes.includes(StatsTypeEnum.ACCUMULATE)) ?
-            <option  //selected={(this.props.selectedStatType.statType === StatsTypeEnum.MAX)}
+            <option 
                value={StatsTypeEnum.ACCUMULATE.toString()}>all</option> : <></>
 
         const roundOptions = (this.props.statsTypes.includes(StatsTypeEnum.ROUND)) ?
          <>
                 {this.props.rounds.map(round => {
                     return <option key={"select_round_" + round}
-                            // selected={(this.props.selectedStatType.statType === StatsTypeEnum.ACCUMULATE && this.props.selectedStatType.roundNumber === round)}
                             value={StatsTypeEnum.ROUND.toString() + ":" + round}>
                                 {round}
                             </option>
@@ -56,9 +55,9 @@ class StatsTypeSelector extends React.Component<StatsTypeSelectorProps> {
 
         return <Translation>
             { (t, { i18n }) =>
-            <div className="stats_type_selector">
-                <span className="stats_type_entry">{t('filter.round')}</span>
-                <select className="stats_type_entry" onChange={this.onChanged} 
+            <div className="selector_div">
+                <span className="selector_div_entry">{t('filter.round')}</span>
+                <select className="selector_div_entry" onChange={this.onChanged} 
                     defaultValue={this.props.selectedStatType.statType.toString() + (this.props.selectedStatType.roundNumber) ? ":" + this.props.selectedStatType.roundNumber : ""}>
                     {avgOption}
                     {maxOption}

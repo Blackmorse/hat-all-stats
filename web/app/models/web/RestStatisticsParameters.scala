@@ -3,7 +3,7 @@ package models.web
 import play.api.mvc.QueryStringBindable
 
 case class RestStatisticsParameters(page: Int, pageSize: Int, sortBy: String, sortingDirection: SortingDirection,
-                                    statsType: StatsType)
+                                    statsType: StatsType, season: Int)
 
 object RestStatisticsParameters {
   implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]) = new QueryStringBindable[RestStatisticsParameters] {
@@ -13,6 +13,14 @@ object RestStatisticsParameters {
           Right(page.toInt)
         } else {
           Left("Error while parsing page")
+        }
+      }))
+
+      val seasonOptionEither = stringBinder.bind("season", params).map(seasonEither => seasonEither.flatMap(season => {
+        if (season forall Character.isDigit) {
+          Right(season.toInt)
+        } else {
+          Left("Error while parsing season")
         }
       }))
 
@@ -58,13 +66,15 @@ object RestStatisticsParameters {
           pageEither <- pageOptionEither;
           sortByEither <- sortByOptionEither;
           directionEither <- directionOptionEither;
-          statsTypeEither <- statsTypeOptionEither) yield {
+          statsTypeEither <- statsTypeOptionEither;
+          seasonEither <- seasonOptionEither) yield {
         for(pageSize <- pageSizeEither;
             page <- pageEither;
             sortBy <- sortByEither;
             direction <- directionEither;
-            statsType <- statsTypeEither) yield {
-          RestStatisticsParameters(page, pageSize, sortBy, direction, statsType)
+            statsType <- statsTypeEither;
+            season <- seasonEither) yield {
+          RestStatisticsParameters(page, pageSize, sortBy, direction, statsType, season)
         }
       }
     }

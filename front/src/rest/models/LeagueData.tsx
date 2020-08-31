@@ -3,7 +3,9 @@ interface LeagueData {
     leagueName: string,
     divisionLevels: Array<string>,
     currentRound: number,
-    rounds: Array<number>
+    rounds: Array<number>,
+    currentSeason: number,
+    seasons: Array<number>
 }
 
 export default LeagueData

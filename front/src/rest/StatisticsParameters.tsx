@@ -21,5 +21,6 @@ export default interface StatisticsParameters {
     pageSize: number,
     sortingField: string,
     sortingDirection: SortingDirection,
-    statsType: StatsType
+    statsType: StatsType,
+    season: number
 }

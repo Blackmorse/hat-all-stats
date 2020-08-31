@@ -43,6 +43,7 @@ function createParameters(statisticsParameters: StatisticsParameters) {
     values.sortBy = statisticsParameters.sortingField
     values.sortDirection = statisticsParameters.sortingDirection
     values.statType = statisticsParameters.statsType.statType
+    values.season = statisticsParameters.season
 
     if(statisticsParameters.statsType.statType === StatsTypeEnum.ROUND) {
         values.statRoundNumber = statisticsParameters.statsType.roundNumber

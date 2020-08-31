@@ -1,10 +1,10 @@
-.stats_type_selector {
+.selector_div {
     font-size: 0.8em;
     display: flex;
     align-items: center;
     margin: 0 0 5px 5px;
 }
 
-.stats_type_entry {
+.selector_div_entry {
     margin: 0 2px;
 }

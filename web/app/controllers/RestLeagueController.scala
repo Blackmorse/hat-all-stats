@@ -17,7 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import databases.clickhouse.StatisticsCHRequest
 
 case class RestLeagueData(leagueId: Int, leagueName: String, divisionLevels: Seq[String],
-                          currentRound: Int, rounds: Seq[Int])
+                          currentRound: Int, rounds: Seq[Int], currentSeason: Int, seasons: Seq[Int])
 
 object RestLeagueData {
   implicit val writes = Json.writes[RestLeagueData]
@@ -37,13 +37,15 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       val divisionLevels = (1 to numberOfDivisions).map(Romans(_))
       val currentRound = leagueInfoService.leagueInfo.currentRound(leagueId)
       val rounds = leagueInfoService.leagueInfo.rounds(leagueId, leagueInfoService.leagueInfo.currentSeason(leagueId))
+      val currentSeason = leagueInfoService.leagueInfo.currentSeason(leagueId)
+      val seasons = leagueInfoService.leagueInfo.seasons(leagueId)
 
-      Future(Ok(Json.toJson(RestLeagueData(leagueId, leagueName, divisionLevels, currentRound, rounds))))
+      Future(Ok(Json.toJson(RestLeagueData(leagueId, leagueName, divisionLevels, currentRound, rounds, currentSeason, seasons))))
     }
 
     def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
       val statisticsParameters =
-          StatisticsParameters(season = leagueInfoService.leagueInfo.currentSeason(leagueId),
+          StatisticsParameters(season = restStatisticsParameters.season,
             page = restStatisticsParameters.page,
             statsType = restStatisticsParameters.statsType,
             sortBy = restStatisticsParameters.sortBy,
@@ -65,7 +67,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
 
     def leagueUnits(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
       val statisticsParameters =
-        StatisticsParameters(season = leagueInfoService.leagueInfo.currentSeason(leagueId),
+        StatisticsParameters(season = restStatisticsParameters.season,
           page = restStatisticsParameters.page,
           statsType = restStatisticsParameters.statsType,
           sortBy = restStatisticsParameters.sortBy,
