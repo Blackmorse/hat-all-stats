@@ -1,6 +1,5 @@
 package controllers
 
-import com.blackmorse.hattrick.api.worlddetails.model.League
 import com.blackmorse.hattrick.model.enums.SearchType
 import databases.ClickhouseDAO
 import databases.clickhouse.{Accumulated, AvgMax, OnlyRound, StatisticsCHRequest}

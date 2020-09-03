@@ -1,5 +1,6 @@
 import axios from 'axios';
 import LeagueData from './models/LeagueData'
+import DivisionLevelData from './models/DivisionLevelData'
 import TeamRating from './models/TeamRating'
 import LeagueUnitRating from './models/LeagueUnitRating'
 import StatisticsParameters, { StatsTypeEnum } from './StatisticsParameters'
@@ -9,6 +10,14 @@ export function getLeagueData(leagueId: number, callback: (leagueData: LeagueDat
     axios.get<LeagueData>('/api/league/' + leagueId)
         .then(response => response.data)
         .then(callback)
+}
+
+export function getDivisionLevelData(leagueId: number, divisionLevel: number, 
+        callback: (divisionLevelData: DivisionLevelData) => void): void {
+    axios.get<DivisionLevelData>('/api/league/' + leagueId + '/divisionLevel/' + divisionLevel)   
+    .then(response => {
+        return response.data
+    }).then(model => callback(model)) 
 }
 
 export function getTeamRatings(leagueId: number, statisticsParameters: StatisticsParameters, callback: (teamRatings: RestTableData<TeamRating>) => void) {

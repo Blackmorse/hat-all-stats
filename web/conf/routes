@@ -9,6 +9,8 @@ GET     /api/league/:leagueId                 controllers.RestLeagueController.g
 GET     /api/league/:leagueId/teamHatstats      controllers.RestLeagueController.teamHatstats(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/leagueUnits       controllers.RestLeagueController.leagueUnits(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 
+GET     /api/league/:leagueId/divisionLevel/:divisionLevel  controllers.RestDivisionLevelController.getDivisionLevelData(leagueId: Int, divisionLevel: Int)
+
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.overview(leagueId: Int)
 GET     /league/bestTeams           controllers.LeagueController.bestTeams(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)

@@ -1,23 +1,25 @@
 package controllers
 
-import hattrick.Hattrick
-import play.api.mvc.BaseController
-import models.web.{Avg, Desc, RestStatisticsParameters, RestTableData, StatisticsParameters, ViewDataFactory}
-import service.DefaultService
-import service.LeagueInfoService
-import databases.ClickhouseDAO
 import com.google.inject.{Inject, Singleton}
-import play.api.mvc.ControllerComponents
+import databases.ClickhouseDAO
+import databases.clickhouse.StatisticsCHRequest
+import hattrick.Hattrick
+import models.web.{RestStatisticsParameters, RestTableData, StatisticsParameters, ViewDataFactory}
+import play.api.libs.json.Json
+import play.api.mvc.{BaseController, ControllerComponents}
+import service.LeagueInfoService
 import utils.Romans
 
-import scala.concurrent.Future
-import play.api.libs.json.Json
-
 import scala.concurrent.ExecutionContext.Implicits.global
-import databases.clickhouse.StatisticsCHRequest
+import scala.concurrent.Future
 
-case class RestLeagueData(leagueId: Int, leagueName: String, divisionLevels: Seq[String],
-                          currentRound: Int, rounds: Seq[Int], currentSeason: Int, seasons: Seq[Int])
+case class RestLeagueData(leagueId: Int,
+                          leagueName: String,
+                          divisionLevels: Seq[String],
+                          currentRound: Int,
+                          rounds: Seq[Int],
+                          currentSeason: Int,
+                          seasons: Seq[Int])
 
 object RestLeagueData {
   implicit val writes = Json.writes[RestLeagueData]
@@ -27,7 +29,6 @@ object RestLeagueData {
 class RestLeagueController @Inject() (val controllerComponents: ControllerComponents,
                                   implicit val clickhouseDAO: ClickhouseDAO,
                                   val leagueInfoService: LeagueInfoService,
-                                  val defaultService: DefaultService,
                                   val viewDataFactory: ViewDataFactory,
                                   val hattrick: Hattrick) extends BaseController  {
     

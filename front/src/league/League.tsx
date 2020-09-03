@@ -2,7 +2,7 @@ import { RouteComponentProps } from 'react-router';
 
 import React from 'react';
 import Layout from '../Layout';
-import TopMenu from '../menu/TopMenu';
+import TopMenu from './LeagueTopMenu';
 import LeftMenu from '../menu/LeftMenu'
 import TeamHatstats from './TeamHatstats';
 import LeagueUnits from './LeagueUnits'
@@ -44,7 +44,8 @@ export class League extends Layout<Props, State> {
     }
     
     topMenu(): JSX.Element {
-        return <TopMenu leagueData={this.state.leagueData}/>
+        return <TopMenu leagueData={this.state.leagueData}
+            callback={divisionLevel => {this.props.history.push('/league/' + this.state.leagueData?.leagueId + '/divisionLevel/' + divisionLevel)}}/>
     }
 
     leftMenu() {
