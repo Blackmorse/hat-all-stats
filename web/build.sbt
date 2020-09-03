@@ -21,6 +21,8 @@ libraryDependencies += "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
 libraryDependencies += "org.playframework.anorm" %% "anorm" % "2.6.2"
 libraryDependencies += caffeine
 
+libraryDependencies += "io.swagger" %% "swagger-play2" % "1.7.1"
+libraryDependencies += "org.webjars" % "swagger-ui" % "2.2.0"
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.blackmorse.hattrick.controllers._"
 

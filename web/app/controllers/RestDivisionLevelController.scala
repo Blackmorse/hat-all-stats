@@ -1,6 +1,7 @@
 package controllers
 
-import javax.inject.Inject
+import io.swagger.annotations.Api
+import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
 import service.LeagueInfoService
@@ -23,6 +24,8 @@ object RestDivisionLevelData {
   implicit val writes = Json.writes[RestDivisionLevelData]
 }
 
+@Singleton
+@Api(produces = "application/json")
 class RestDivisionLevelController @Inject()(val controllerComponents: ControllerComponents,
                                             val leagueInfoService: LeagueInfoService) extends BaseController{
   def getDivisionLevelData(leagueId: Int, divisionLevel: Int) = Action.async { implicit request =>

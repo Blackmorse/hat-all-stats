@@ -4,6 +4,8 @@ import com.google.inject.{Inject, Singleton}
 import databases.ClickhouseDAO
 import databases.clickhouse.StatisticsCHRequest
 import hattrick.Hattrick
+import io.swagger.annotations.{Api, ApiModelProperty, ApiOperation, ApiParam}
+import io.swagger.models.parameters.Parameter
 import models.web.{RestStatisticsParameters, RestTableData, StatisticsParameters, ViewDataFactory}
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
@@ -26,12 +28,13 @@ object RestLeagueData {
 }
 
 @Singleton
+@Api(produces = "application/json")
 class RestLeagueController @Inject() (val controllerComponents: ControllerComponents,
                                   implicit val clickhouseDAO: ClickhouseDAO,
                                   val leagueInfoService: LeagueInfoService,
                                   val viewDataFactory: ViewDataFactory,
                                   val hattrick: Hattrick) extends BaseController  {
-    
+
     def getLeagueData(leagueId: Int) = Action.async {implicit request => 
       val leagueName = leagueInfoService.leagueInfo(leagueId).league.getEnglishName
       val numberOfDivisions = leagueInfoService.leagueInfo(leagueId).league.getNumberOfLevels
@@ -44,7 +47,8 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       Future(Ok(Json.toJson(RestLeagueData(leagueId, leagueName, divisionLevels, currentRound, rounds, currentSeason, seasons))))
     }
 
-    def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
+
+    def teamHatstats(leagueId: Int,  @ApiModelProperty(dataType = "models.web.RestStatisticsParameters")restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
       val statisticsParameters =
           StatisticsParameters(season = restStatisticsParameters.season,
             page = restStatisticsParameters.page,

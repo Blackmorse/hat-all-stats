@@ -4,6 +4,9 @@
 # ~~~~
 GET     /lang                       controllers.HomeController.lang(lang: String)
 
+GET     /swagger.json           controllers.ApiHelpController.getResources
+GET     /docs/swagger-ui/*file        controllers.Assets.at(path:String="/public/lib/swagger-ui", file:String)
+
 GET     /worldOverview              controllers.WorldController.overview()
 GET     /api/league/:leagueId                 controllers.RestLeagueController.getLeagueData(leagueId: Int)
 GET     /api/league/:leagueId/teamHatstats      controllers.RestLeagueController.teamHatstats(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
