@@ -16,6 +16,7 @@ class ErrorController @Inject() (val leagueInfoService: LeagueInfoService,
     val leagueInfo = leagueInfoService.leagueInfo.leagueInfo.getOrElse(leagueId, leagueInfoService.leagueInfo(1000))
 
     val details = WebLeagueDetails(leagueInfo = leagueInfo,
+      currentRound = leagueInfoService.leagueInfo.currentRound(leagueInfo.leagueId),
       divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueInfo.leagueId))
 
     Future(Ok(views.html.errors.errorForLeague(details)(messages)))
