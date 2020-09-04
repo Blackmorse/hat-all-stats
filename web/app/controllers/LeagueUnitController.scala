@@ -12,7 +12,7 @@ import service.{DefaultService, LeagueInfoService, LeagueInfo, LeagueUnitCalcula
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-case class WebLeagueUnitDetails(leagueInfo: LeagueInfo, divisionLevel: Int,
+case class WebLeagueUnitDetails(leagueInfo: LeagueInfo, currentRound: Int, divisionLevel: Int,
                                 leagueUnitName: String, leagueUnitId: Long,
                                 teamLinks: Seq[(String, String)])
     extends AbstractWebDetails
@@ -54,6 +54,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
 
       val details = WebLeagueUnitDetails(leagueInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId),
+        currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),
         divisionLevel = leagueDetails.getLeagueLevel,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
         leagueUnitId = leagueDetails.getLeagueLevelUnitId,
@@ -99,6 +100,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
 
       val details = WebLeagueUnitDetails(leagueInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId),
+        currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),
         divisionLevel = leagueDetails.getLeagueLevel,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
         leagueUnitId = leagueDetails.getLeagueLevelUnitId,
@@ -151,6 +153,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
           .map(teamState => {
             val details = WebLeagueUnitDetails(
               leagueInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId),
+              currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),
               divisionLevel = leagueDetails.getLeagueLevel,
               leagueUnitName =  leagueDetails.getLeagueLevelUnitName,
               leagueUnitId = leagueUnitId,
@@ -199,6 +202,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
           .map(playerStates => {
             val details = WebLeagueUnitDetails(
               leagueInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId),
+              currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),
               divisionLevel = leagueDetails.getLeagueLevel,
               leagueUnitName  = leagueDetails.getLeagueLevelUnitName,
               leagueUnitId = leagueUnitId,

@@ -20,6 +20,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 case class WebLeagueDetails(leagueInfo: LeagueInfo,
+                            currentRound: Int,
                             divisionLevelsLinks: Seq[(String, String)]) extends AbstractWebDetails
 
 case class PromotionWithType(upDivisionLevel: Int, promoteType: String, promotions: List[Promotion])
@@ -55,6 +56,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       sortColumn = sortColumn)
 
     val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
+      currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
       divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueId))
 
     statisticsCHRequest.execute(leagueId = Some(leagueId),
@@ -137,6 +139,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
   def promotions(leagueId: Int) = Action.async { implicit request =>
     val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
+      currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
       divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueId))
     clickhouseDAO.promotions(season = leagueInfoService.leagueInfo.currentSeason(leagueId),
       leagueId = leagueId).map(promotions => {
@@ -151,6 +154,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
   def overview(leagueId: Int) = Action.async { implicit request =>
     val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
+      currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
       divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueId))
 
     val pageSize = request.cookies.get("hattid_page_size").map(_.value.toInt).getOrElse(DefaultService.PAGE_SIZE)
@@ -162,6 +166,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
   def search(leagueId: Int) = Action.async { implicit request =>
     val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
+      currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
       divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueId))
     Future(Ok(views.html.league.searchPage(details, SearchForm.form, Seq())(messages)))
   }
@@ -170,6 +175,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     SearchForm.form.bindFromRequest().fold(
       formWithErrors => {
         val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
+          currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
           divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueId))
         Future(BadRequest(views.html.league.searchPage(details, formWithErrors, Seq())(messages)))
       },
@@ -181,6 +187,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
 
   def searchResult(leagueId: Int, teamName: String) = Action.async { implicit request =>
     val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
+      currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
       divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueId))
 
     val teamsFuture = Future(hattrick.api.search()

@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 
 
-case class WebTeamDetails(teamId: Long, teamName: String, leagueInfo: LeagueInfo, season: Int,
+case class WebTeamDetails(teamId: Long, teamName: String, leagueInfo: LeagueInfo, currentRound: Int, season: Int,
                           divisionLevel: Int, leagueUnitId: Long, leagueUnitName: String) extends AbstractWebDetails
 
 @Singleton
@@ -32,6 +32,7 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
     WebTeamDetails(teamId = team.getTeamId,
       teamName = team.getTeamName,
       leagueInfo = leagueInfoService.leagueInfo(team.getLeague.getLeagueId),
+      currentRound = leagueInfoService.leagueInfo.currentRound(team.getLeague.getLeagueId),
       season = season,
       divisionLevel = team.getLeagueLevelUnit.getLeagueLevel,
       leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId,

@@ -14,7 +14,7 @@ import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-case class WebDivisionLevelDetails(leagueInfo: LeagueInfo, divisionLevel: Int, divisionLevelRoman: String,
+case class WebDivisionLevelDetails(leagueInfo: LeagueInfo, currentRound: Int, divisionLevel: Int, divisionLevelRoman: String,
                                    leagueUnitLinks: Seq[(String, String)]) extends AbstractWebDetails
 
 @Singleton
@@ -52,6 +52,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       statisticsParameters = statisticsParameters)
       .map{ entities =>
         val details = WebDivisionLevelDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
+          currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
           divisionLevel = divisionLevel,
           divisionLevelRoman = Romans(divisionLevel),
           leagueUnitLinks = leagueUnitLinks(leagueId, divisionLevel))
