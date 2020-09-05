@@ -1,22 +1,19 @@
 import React from 'react';
-import LeagueUnitRating from '../rest/models/LeagueUnitRating'
-import ModelTable from '../common/ModelTable'
-import ModelTableTh from '../common/ModelTableTh'
-import { getLeagueUnits } from '../rest/Client'
+import LeagueUnitRating from '../../rest/models/LeagueUnitRating'
+import ModelTable, { ModelTablePropsWrapper, ModelTableProps } from '../ModelTable'
+import ModelTableTh from '../ModelTableTh'
 import { Translation } from 'react-i18next'
-import '../i18n'
-import { LeagueProps } from './League';
-import { StatsTypeEnum } from '../rest/StatisticsParameters';
+import '../../i18n'
+import { StatsTypeEnum } from '../../rest/StatisticsParameters';
+import LevelData from '../../rest/models/LevelData';
 
-class LeagueUnits extends ModelTable<LeagueUnitRating> {
+abstract class LeagueUnits<Data extends LevelData> extends ModelTable<Data, LeagueUnitRating> {
 
-    constructor(props: LeagueProps) {
+    constructor(props: ModelTablePropsWrapper<Data, ModelTableProps<Data>>) {
         super(props, 'menu.best_league_units', 
-        'hatstats', {statType: StatsTypeEnum.AVG}, 
-        [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
+            'hatstats', {statType: StatsTypeEnum.AVG}, 
+            [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }
-
-    fetchEntities = getLeagueUnits
 
     columnHeaders(): JSX.Element {
         const sortingState = {

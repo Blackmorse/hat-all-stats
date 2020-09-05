@@ -5,6 +5,9 @@ import TeamRating from './models/TeamRating'
 import LeagueUnitRating from './models/LeagueUnitRating'
 import StatisticsParameters, { StatsTypeEnum } from './StatisticsParameters'
 import RestTableData from './RestTableData'
+import DivisionLevelRequest from './models/request/DivisionLevelRequest';
+import LeagueRequest from './models/request/LeagueRequest'
+import LevelRequest from './models/request/LevelRequest';
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -20,10 +23,12 @@ export function getDivisionLevelData(leagueId: number, divisionLevel: number,
     }).then(model => callback(model)) 
 }
 
-export function getTeamRatings(leagueId: number, statisticsParameters: StatisticsParameters, callback: (teamRatings: RestTableData<TeamRating>) => void) {
+export function getTeamRatings(request: LevelRequest, 
+        statisticsParameters: StatisticsParameters, 
+        callback: (teamRatings: RestTableData<TeamRating>) => void) {
     let params = createParameters(statisticsParameters)    
 
-    axios.get<RestTableData<TeamRating>>('/api/league/' + leagueId + '/teamHatstats?' + params.toString())
+    axios.get<RestTableData<TeamRating>>(startUrl(request) + '/teamHatstats?' + params.toString())
     .then(response => {
         return response.data
     })
@@ -32,16 +37,29 @@ export function getTeamRatings(leagueId: number, statisticsParameters: Statistic
     })
 }
 
-export function getLeagueUnits(leagueId: number, statisticsParameters: StatisticsParameters, callback: (leagueUnits: RestTableData<LeagueUnitRating>) => void) {
+export function getLeagueUnits(request: LevelRequest,
+        statisticsParameters: StatisticsParameters, 
+        callback: (leagueUnits: RestTableData<LeagueUnitRating>) => void) {
     let params = createParameters(statisticsParameters) 
     
-    axios.get<RestTableData<LeagueUnitRating>>('/api/league/' + leagueId + '/leagueUnits?' + params.toString())
+    axios.get<RestTableData<LeagueUnitRating>>(startUrl(request) + '/leagueUnits?' + params.toString())
     .then(response => {
         return response.data
     })
     .then(model => {
         return callback(model)
     })
+}
+
+function startUrl(request: LevelRequest): string {
+    if (request.type === 'LeagueRequest') {
+        return '/api/league/' + (request as LeagueRequest).leagueId 
+    } else if (request.type === 'DivisionLevelRequest') {
+        return '/api/league/' + (request as DivisionLevelRequest).leagueId + '/divisionLevel/' 
+            + (request as DivisionLevelRequest).divisionLevel
+    } else {
+        return ''
+    }
 }
 
 function createParameters(statisticsParameters: StatisticsParameters) {

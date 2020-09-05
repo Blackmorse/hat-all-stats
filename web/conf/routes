@@ -13,6 +13,8 @@ GET     /api/league/:leagueId/teamHatstats      controllers.RestLeagueController
 GET     /api/league/:leagueId/leagueUnits       controllers.RestLeagueController.leagueUnits(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel  controllers.RestDivisionLevelController.getDivisionLevelData(leagueId: Int, divisionLevel: Int)
+GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamHatstats controllers.RestDivisionLevelController.teamHatstats(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/divisionLevel/:divisionLevel/leagueUnits  controllers.RestDivisionLevelController.leagueUnits(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.overview(leagueId: Int)

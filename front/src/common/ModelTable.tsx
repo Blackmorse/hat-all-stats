@@ -1,5 +1,4 @@
 import React from 'react';
-import { LeagueProps } from '../league/League'
 import './ModelTable.css'
 import StatisticsParameters, { SortingDirection, StatsTypeEnum, StatsType } from '../rest/StatisticsParameters'
 import RestTableData from '../rest/RestTableData'
@@ -10,6 +9,7 @@ import StatsTypeSelector from './selectors/StatsTypeSelector'
 import SeasonSelector from './selectors/SeasonSelector'
 import { Translation } from 'react-i18next'
 import '../i18n'
+import LevelData from '../rest/models/LevelData';
 
 interface ModelTableState<T> {
     entities?: Array<T>,
@@ -17,11 +17,23 @@ interface ModelTableState<T> {
     isLastPage: boolean,
 }
 
-abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTableState<Model>> {
+export interface ModelTablePropsWrapper<LevelData, TableProps extends ModelTableProps<LevelData>> {
+    modelTableProps: TableProps
+}
+
+export interface ModelTableProps<Data extends LevelData> {
+    leagueId(): number,
+    currentSeason(): number,
+    seasons(): Array<number>,
+    currentRound(): number,
+    rounds(): Array<number>
+}
+
+abstract class ModelTable<LevelData, Model> extends React.Component<ModelTablePropsWrapper<LevelData, ModelTableProps<LevelData>>, ModelTableState<Model>> {
     private sectionTitle: string;
     private statsTypes: Array<StatsTypeEnum>
 
-    constructor(props: LeagueProps, sectionTitle: string, 
+    constructor(props: ModelTablePropsWrapper<LevelData, ModelTableProps<LevelData>>, sectionTitle: string, 
             defaultSortingField: string, defaultStatsType: StatsType,
             statsTypes: Array<StatsTypeEnum>) {
         super(props)
@@ -38,7 +50,7 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
                 sortingField: defaultSortingField,
                 sortingDirection: SortingDirection.DESC,
                 statsType: defaultStatsType,
-                season: this.props.leagueData.currentSeason
+                season: this.props.modelTableProps.currentSeason()
             }
         }
 
@@ -48,14 +60,14 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
         this.seasonChanged=this.seasonChanged.bind(this);
     }
 
-    abstract fetchEntities(leagueId: number, statisticsParameters: StatisticsParameters, callback: (restTableData: RestTableData<Model>) => void): void
+    abstract fetchEntities(tableProps: ModelTableProps<LevelData>, statisticsParameters: StatisticsParameters, callback: (restTableData: RestTableData<Model>) => void): void
 
     abstract columnHeaders(): JSX.Element
 
     abstract columnValues(index: number, model: Model): JSX.Element
 
     update(statisticsParameters: StatisticsParameters) {
-        this.fetchEntities(this.props.leagueData.leagueId,
+        this.fetchEntities(this.props.modelTableProps,
             statisticsParameters,
             restTableData => this.setState({
                 entities: restTableData.entities,
@@ -133,12 +145,12 @@ abstract class ModelTable<Model> extends React.Component<LeagueProps, ModelTable
                     <header className="statistics_header"><span className="statistics_header_triangle">&#x25BC;</span></header>
                     
                     <div className="table_settings_div">
-                        <SeasonSelector currentSeason={this.props.leagueData.currentSeason}
-                            seasons={this.props.leagueData.seasons}
+                        <SeasonSelector currentSeason={this.props.modelTableProps.currentSeason()}
+                            seasons={this.props.modelTableProps.seasons()}
                             callback={this.seasonChanged}/>
                         <StatsTypeSelector  statsTypes={this.statsTypes}
-                            currentRound={this.props.leagueData.currentRound}
-                            rounds={this.props.leagueData.rounds}
+                            currentRound={this.props.modelTableProps.currentRound()}
+                            rounds={this.props.modelTableProps.rounds()}
                             selectedStatType={this.state.statisticsParameters.statsType}
                             onChanged={this.statTypeChanged}
                             />

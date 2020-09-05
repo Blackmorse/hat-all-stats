@@ -48,7 +48,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
     }
 
 
-    def teamHatstats(leagueId: Int,  @ApiModelProperty(dataType = "models.web.RestStatisticsParameters")restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
+    def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
       val statisticsParameters =
           StatisticsParameters(season = restStatisticsParameters.season,
             page = restStatisticsParameters.page,
@@ -79,7 +79,6 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
           pageSize = restStatisticsParameters.pageSize,
           sortingDirection = restStatisticsParameters.sortingDirection
         )
-
 
       StatisticsCHRequest.bestHatstatsLeagueRequest.execute(
         leagueId = Some(leagueId),
