@@ -1,0 +1,135 @@
+#Menu
+menu.statistics=Statistika
+menu.best_teams=Klupski poredak
+menu.best_league_units=Ligaška usporedbe
+menu.player_stats=Statistika igrača
+menu.team_state=Statistika klubova
+menu.player_state=Statistika igrača po kolima
+menu.formal_team_stats=Sjedinjena ligaška tablica
+menu.matches=Utakmice
+menu.team_rankings=Klupski ranking
+menu.search=Pretraga
+menu.team_search=Pretraga klubova
+menu.team_overview=Pregled
+
+#Table
+table.position_abbr=P
+table.position=Pozicija
+table.league=Liga
+table.hatstats=HatStats
+table.midfield=Veza
+table.defense=Obrana
+table.attack=Napad
+table.team=Klub
+table.win_abbr=P
+table.win=Pobjeda
+table.lose_abbr=I
+table.lose=Izgubljenih
+table.draw_abbr=N
+table.draw=Neodlučenih
+table.goals_for_abbr=PoP
+table.goals_for=Postignutih pogodaka
+table.goals_against_abbr=PrP
+table.goals_against=Primljenih pogodaka
+table.points_abbr=B
+table.points=Bodova
+table.player=Igrač
+table.age=Dob
+table.tsi=TSI
+table.salary=Plaća
+table.rating_abbr=Ocj
+table.rating=Ocjena
+table.rating_end_of_match_abbr=OKU
+table.rating_end_of_match=Ocjena na kraju utakmice
+table.injury_abbr=Ozlj
+table.injury=Ozljeda
+table.red_cards_abbr=CK
+table.red_cards=Crveni kartoni
+table.yellow_cards_abbr=ŽK
+table.yellow_cards=Žuti kartoni
+table.games=Utakmice
+table.games_abbr=U
+table.minutes_abbr=Min
+table.minutes=Minutaža
+table.scored_abbr=P
+table.scored=Pogotci
+table.minutes_per_goal_abbr=Min/P
+table.minutes_per_goal=Odigranih minuta po pogotku
+table.total_injury_weeks_abbr=Traj.ozlj.
+table.total_injury_weeks=Trajanje ozljeda u tjednima
+table.total_injury_number_abbr=Br.ozlj.
+table.total_injury_number=Broj ozljeđenih
+table.average_age_abbr=PD
+table.average_age=Prosječna dob
+
+#team_rankings
+team_rankings.ranking=Rangiranje na
+
+#matches
+matches.played_matches=Odigrane utakmice
+matches.upcoming_matches=Nadolazeće utakmice
+matches.result=Rezultat
+matches.home_team=Domaćin
+matches.away_team=Gost
+matches.ratings=Ocjene
+matches.defense_lmr=Obrana L/S/D
+matches.midfield=Veza
+matches.attack_lmr=Napad L/S/D
+matches.summary=Sažetak
+matches.date=Datum
+matches.formation=Formacija
+matches.hatstats=HatStats
+
+#filter
+filter.page_size=Stranica:
+filter.sorting_direction=Sortiranje
+filter.asc=uzlazno
+filter.desc=silazno
+filter.season=Sezona:
+filter.round=Kolo:
+filter.sort_by=Sortiranje po:
+
+#bot
+bot.header=Ups, ovo je bot
+bot.description=Čini se kako je ovaj klub bot. Statistike za botove nisu moguće :(
+
+#error
+error.header=Greška
+error.description=Izgleda kako stranica ne postoji ili se dogodila interna greška na serveru. Kontaktiraj me direktno ako se ovo učestalo događa (HT login: Blackmorse)
+error.empty_field=Obavezno polje
+
+#promotions
+menu.promotions=Promocije i kvalifikacije
+promotions.auto_promotions=Automatske promocije
+promotions.qualifications=Kvalifikacije
+
+#cookies
+cookies.header=Ova stranica koristi kolačiće.
+cookies.content=Koristimo kolačiće tvog preglednika kako bismo poboljšali tvoje korisničko iskustvo. Nastavkom korištenja stranice prihvaćaš korištenje kolačića.
+cookies.accept=Prihvati
+
+#overview
+overview.world_overview=Pregled svijeta
+overview.surprising_matches=Iznenađujući rezultati
+overview.top_salary_teams=Klubovi s najvećim plaćama
+overview.top_matches=Najbolje utakmice
+overview.top_teams=Najbolji klubovi
+overview.top_salary_players=Najbolje plaćeni igrači
+overview.top_rating_players=Najbolje ocijenjeni igrači
+overview.average_hatstats=HatStats ocjena:
+overview.average_spectators=Gledatelji:
+overview.average_team_goals=Pogotci:
+overview.average_team_age=Starost:
+overview.average_team_salary=Plaće:
+overview.average_team_stars=Zvjezdice:
+overview.formations=Formacije
+overview.country=Država
+overview.goals=Pogotci
+overview.number_of_teams=Broj klubova:
+overview.number_of_players=Broj igrača:
+overview.number_of_goals=Broj pogodaka:
+overview.number_of_injuried=Broj ozljeđenih igrača:
+overview.number_of_yellow=Broj opomena:
+overview.number_of_red=Broj isključenja:
+overview.numbers=Brojevi
+overview.averages=Klupski prosjeci
