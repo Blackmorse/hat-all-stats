@@ -95,7 +95,7 @@ public class LeagueUnitsLoader {
                             IntStream.range(0, 4).mapToObj(i -> LeagueUnit.builder()
                                         .league(leagueWithLevel.league)
                                         .level(leagueWithLevel.level)
-                                        .name(String.valueOf('a' + i))
+                                        .name("I" + (char) ('a' + i))
                                         .id(baseNumber + i)
                                     .build())
                                 .forEach(leagueUnitId -> {
@@ -110,7 +110,7 @@ public class LeagueUnitsLoader {
                             IntStream.range(0, 16).mapToObj(i -> LeagueUnit.builder()
                                             .level(leagueWithLevel.level)
                                             .league(leagueWithLevel.league)
-                                            .name(String.valueOf('a' + i))
+                                            .name("II" + (char) ('a' + i))
                                             .id(baseNumber + i)
                                         .build())
                                     .forEach(leagueUnitId -> {
