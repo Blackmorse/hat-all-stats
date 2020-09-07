@@ -4,7 +4,7 @@ CREATE TABLE match_details
     `league_id` UInt16,
     `division_level` UInt8,
     `league_unit_id` UInt32,
-    `league_unit_name` LowCardinality(String),
+    `league_unit_name` String,
     `team_id` UInt64,
     `team_name` String,
     `time` DateTime,
