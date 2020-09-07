@@ -1,0 +1,135 @@
+#Menu
+menu.statistics=Statistiken
+menu.best_teams=Mannschaftsbewertungen
+menu.best_league_units=Ligenbewertungen
+menu.player_stats=Spieler - Saisonstatistiken
+menu.team_state=Mannschaften - Spieltagsstatistiken
+menu.player_state=Spieler - Spieltagsstatistiken
+menu.formal_team_stats=Mannschaften - Saisonstatistiken
+menu.matches=Spiele
+menu.team_rankings=Mannschaftsrankings
+menu.search=Suche
+menu.team_search=Suche nach Mannschaften
+menu.team_overview=Übersicht
+
+#Table
+table.position_abbr=P
+table.position=Platz
+table.league=Liga
+table.hatstats=HatStats
+table.midfield=Mittelfeld
+table.defense=Abwehr
+table.attack=Angriff
+table.team=Mannschaft
+table.win_abbr=S
+table.win=Sieg
+table.lose_abbr=N
+table.lose=Niederlage
+table.draw_abbr=U
+table.draw=Unentschieden
+table.goals_for_abbr=T
+table.goals_for=Tore
+table.goals_against_abbr=G
+table.goals_against=Gegentore
+table.points_abbr=Pkt
+table.points=Punkte
+table.player=Spieler
+table.age=Alter
+table.tsi=TSI
+table.salary=Gehalt
+table.rating_abbr=Bew
+table.rating=Bewertung
+table.rating_end_of_match_abbr=BS
+table.rating_end_of_match=Bewertungen Spielende
+table.injury_abbr=Ver
+table.injury=Verletzung
+table.red_cards_abbr=RK
+table.red_cards=Rote Karten
+table.yellow_cards_abbr=GK
+table.yellow_cards=Gelbe Karten
+table.games=Spiele
+table.games_abbr=Sp
+table.minutes_abbr=Min
+table.minutes=gespielte Minuten
+table.scored_abbr=Tore
+table.scored=Tore
+table.minutes_per_goal_abbr=MPT
+table.minutes_per_goal=Minuten pro Tore
+table.total_injury_weeks_abbr=GVW
+table.total_injury_weeks=Gesamte Verletzungswochen
+table.total_injury_number_abbr=GVS
+table.total_injury_number=gesamte verletzte Spieler
+table.average_age_abbr=Da
+table.average_age=Durchschnittsalter
+
+#team_rankings
+team_rankings.ranking=Ranking at 
+
+#matches
+matches.played_matches=gespielte Spiele
+matches.upcoming_matches=kommende Spiele
+matches.result=Ergebnis
+matches.home_team=Heim
+matches.away_team=Auswärts
+matches.ratings=Bewertungen
+matches.defense_lmr=Abwehr L/M/R
+matches.midfield=Mittelfeld
+matches.attack_lmr=Angriff L/M/R
+matches.summary=Zusammenfassung
+matches.date=Datum
+matches.formation=Formation
+matches.hatstats=HatStats
+
+#filter
+filter.page_size=Seite:
+filter.sorting_direction=Sortierung
+filter.asc=aufsteigend
+filter.desc=absteigend
+filter.season=Saison:
+filter.round=Spieltag:
+filter.sort_by=sortiert nach:
+
+#bot
+bot.header=Ups, dies ist ein Bot.
+bot.description=Aktuell scheint dieses Team ein Bot zu sein. Es gibt keine Statistiken für Bots.
+
+#error
+error.header=Fehler
+error.description=Es scheint so, als würde die Seite nicht existieren oder es ist ein internes Serverproblem. Kontaktiere mich gerne (auf englisch) (HT login: Blackmorse)
+error.empty_field=Erforderliches Feld
+
+#promotions
+menu.promotions=Aufstieg und Relegation
+promotions.auto_promotions=Direktaufstieg
+promotions.qualifications=Relegationsspiele
+
+#cookies
+cookies.header=Diese Seite verwendet Cookies.
+cookies.content=Diese Seite verwendet Cookies, um dein Nutzererlebnis zu verbessern. Beim weiteren Benutzen dieser Website stimmst du der Nutzung von Cookies zu.
+cookies.accept=Akzeptieren
+
+#overview
+overview.world_overview=weltweite Übersicht
+overview.surprising_matches=überraschende Spiele
+overview.top_salary_teams=Mannschaften mit höchstem Gehalt
+overview.top_matches=Top-Spiele
+overview.top_teams=Top-Teams
+overview.top_salary_players=Spieler mit höchstem Gehalt
+overview.top_rating_players=Spieler mit höchster Bewertung
+overview.average_hatstats=durchschnittliche Hatstats:
+overview.average_spectators=durchschnittliche Zuschaueranzahl:
+overview.average_team_goals=durchschnittliche Tore pro Mannschaft:
+overview.average_team_age=durchschnittliches Mannschaftsalter:
+overview.average_team_salary=durchschnittliches Mannschaftsgehalt:
+overview.average_team_stars=durchschnittliche Sterne:
+overview.formations=Formationen
+overview.country=Land
+overview.goals=Tore
+overview.number_of_teams=Anzahl Mannschaften
+overview.number_of_players=Anzahl Spieler
+overview.number_of_goals=Anzahl Tore
+overview.number_of_injuried=Anzahl verletzter Spieler
+overview.number_of_yellow=Anzahl gelber Karten
+overview.number_of_red=Anzahl roter Karten
+overview.numbers=Nummer
+overview.averages=Durchschnitt

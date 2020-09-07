@@ -1,0 +1,135 @@
+#Menu
+menu.statistics=Statistiche
+menu.best_teams=Valutazioni Squadre
+menu.best_league_units=Valutazioni Leghe
+menu.player_stats=Statistiche Stagionali Giocatore
+menu.team_state=Statistiche Squadra Turno
+menu.player_state=Statistiche Giocatore Turno
+menu.formal_team_stats=Statistiche Squadra Stagione
+menu.matches=Partite
+menu.team_rankings=Classifica Squadra
+menu.search=Cerca
+menu.team_search=Ricerca Squadra
+menu.team_overview=Panoramica
+
+#Table
+table.position_abbr=P
+table.position=Posizione
+table.league=Lega
+table.hatstats=HatStats
+table.midfield=Centrocampo
+table.defense=Difesa
+table.attack=Attacco
+table.team=Squadra
+table.win_abbr=V
+table.win=Vittorie
+table.lose_abbr=S
+table.lose=Sconfitte
+table.draw_abbr=P
+table.draw=Pareggi
+table.goals_for_abbr=GF
+table.goals_for=Goal Fatti
+table.goals_against_abbr=GS
+table.goals_against=Goal Subiti
+table.points_abbr=Pti
+table.points=Punti
+table.player=Giocatore
+table.age=Eta'
+table.tsi=TSI
+table.salary=Stipendio
+table.rating_abbr=Val
+table.rating=Valutazione
+table.rating_end_of_match_abbr=VFP
+table.rating_end_of_match=Valutazione Fine Partita
+table.injury_abbr=Inf
+table.injury=Infortuni
+table.red_cards_abbr=CR
+table.red_cards=Cartellini Rossi
+table.yellow_cards_abbr=CG
+table.yellow_cards=Cartellini Gialli
+table.games=Partite
+table.games_abbr=P
+table.minutes_abbr=Min
+table.minutes=Played Minuti
+table.scored_abbr=Sc
+table.scored=Segnati
+table.minutes_per_goal_abbr=MPG
+table.minutes_per_goal=Minuti Per Goal
+table.total_injury_weeks_abbr=InfS
+table.total_injury_weeks=Totale Settimane Infortunio
+table.total_injury_number_abbr=InfN
+table.total_injury_number=Numero Totale Infortuni
+table.average_age_abbr=EM
+table.average_age=Eta' Media
+
+#team_rankings
+team_rankings.ranking=Valutazione al 
+
+#matches
+matches.played_matches=Partite Giocate
+matches.upcoming_matches=Prossime Partite
+matches.result=Risultato
+matches.home_team=Squadra Casa
+matches.away_team=Squadra Trasferta
+matches.ratings=Valutazioni
+matches.defense_lmr=Difesa S/C/D
+matches.midfield=Centrocampo
+matches.attack_lmr=Attacco S/C/D
+matches.summary=Riepilogo
+matches.date=Data
+matches.formation=Formazione
+matches.hatstats=HatStats
+
+#filter
+filter.page_size=Pagina:
+filter.sorting_direction=Ordinamento
+filter.asc=ascendente
+filter.desc=discendente
+filter.season=Stagione:
+filter.round=Giornata:
+filter.sort_by=Ordina per:
+
+#bot
+bot.header=Oops, questo e' un bot
+bot.description=In questo momento questa squadra sembra essere un BOT. Le statistiche per i BOT non sono supportate :(
+
+#error
+error.header=Errore
+error.description=Sembra che la pagina non esista o che ci sia un errore interno del server. Sentiti libero di contattarmi (HT login: Blackmorse)
+error.empty_field=Campo necessario
+
+#promotions
+menu.promotions=Promozioni e Qualificazioni
+promotions.auto_promotions=Auto-promozioni
+promotions.qualifications=Qualificazioni
+
+#cookies
+cookies.header=Questo sito usa i cookies.
+cookies.content=Ti informiamo che questo sito usa i propri cookies per migliorare la tua esperienza di utente. Continuando ad utilizzare questo sito, dichiari di accettare l'uso dei cookies.
+cookies.accept=Accetta
+
+#overview
+overview.world_overview=Panoramica Mondo
+overview.surprising_matches=Partite Sorprendenti
+overview.top_salary_teams=Squadre con gli stipendi piu' alti
+overview.top_matches=Migliori Partite
+overview.top_teams=Migliori Squadre
+overview.top_salary_players=Giocatori con lo stipendio maggiore
+overview.top_rating_players=Giocatori con la valutazione maggiore
+overview.average_hatstats=HatStats medie:
+overview.average_spectators=Numero Medio Spettatori:
+overview.average_team_goals=Goal medi per Squadra:
+overview.average_team_age=Eta' media Squadra:
+overview.average_team_salary=Stipendio medio Squadra:
+overview.average_team_stars=Media Stelle Squadra:
+overview.formations=Formazioni
+overview.country=Paese
+overview.goals=Goal
+overview.number_of_teams=Numero di squadre:
+overview.number_of_players=Numero di giocatori:
+overview.number_of_goals=Numero di goal:
+overview.number_of_injuried=Numero di giocatori infortunati:
+overview.number_of_yellow=Numero di cartellini gialli:
+overview.number_of_red=Numero di cartellini rossi:
+overview.numbers=Numero
+overview.averages=Media
