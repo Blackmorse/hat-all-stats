@@ -19,17 +19,20 @@
     background: #fffbdc;
 }
 
-.rankings_grid_row:nth-child(1) > .ranking {
-    width: 25%;
-}
-
-.rankings_grid_row:nth-child(2) > .ranking {
+.rankings_grid_row > .ranking {
     width: 33%;
 }
+/*.rankings_grid_row:nth-child(1) > .ranking {*/
+/*    width: 25%;*/
+/*}*/
 
-.rankings_grid_row:nth-child(3) > .ranking {
-    width: 25%;
-}
+/*.rankings_grid_row:nth-child(2) > .ranking {*/
+/*    width: 33%;*/
+/*}*/
+
+/*.rankings_grid_row:nth-child(3) > .ranking {*/
+/*    width: 25%;*/
+/*}*/
 
 .ranking {
     display: flex;

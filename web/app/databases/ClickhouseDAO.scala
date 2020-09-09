@@ -146,7 +146,9 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
         |    injury,
         |    injury_position,
         |    injury_count,
-        |    injury_count_position
+        |    injury_count_position,
+        |    power_rating,
+        |    power_rating_position
         |FROM hattrick.team_rankings
         | __where__
         |ORDER BY

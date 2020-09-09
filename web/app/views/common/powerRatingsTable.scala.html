@@ -1,0 +1,23 @@
+@import models.web.WebPagedEntities
+@import models.clickhouse.PowerRating
+
+@(powerRatings: WebPagedEntities[PowerRating])(implicit messages: Messages)
+
+<table class="statistics_table">
+    <tr>
+        <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>
+        <th>@messages("table.team")</th>
+        <th class="value">@messages("table.league")</th>
+        <th class="value">@messages("table.power_rating")</th>
+    </tr>
+    @for((powerRating, index) <- powerRatings.entities.zipWithIndex) {
+    <tr @{if(powerRatings.selectedId.contains(powerRating.teamId)) "class=selected_row"}>
+        <td>@{powerRatings.pageInfo.pageSize * powerRatings.pageInfo.page + index + 1}</td>
+        <td><a class="table_link" href="@routes.TeamController.teamOverview(powerRating.teamId)">@powerRating.teamName</a></td>
+        <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(powerRating.leagueUnitId)">@powerRating.leagueUnitName</a></td>
+        <td class="value">@powerRating.powerRating</td>
+    </tr>
+    }
+</table>
+
+@pageNav(powerRatings.pageInfo)

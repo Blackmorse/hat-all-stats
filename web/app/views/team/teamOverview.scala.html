@@ -23,6 +23,14 @@
     routes.DivisionLevelController.teamState(leagueId, divisionLevel, statisticsParameters, selectedTeamId)
 }
 
+@powerRatingsLeagueLink(leagueId: Int, statisticsParameters: Option[StatisticsParameters], selectedTeamId: Option[Long]) = @{
+    routes.LeagueController.powerRatings(leagueId, statisticsParameters, selectedTeamId)
+}
+
+@powerRatingsDivisionLevelLink(leagueId: Int, divisionLevel: Int, statisticsParameters: Option[StatisticsParameters], selectedTeamId: Option[Long]) = @{
+    routes.DivisionLevelController.powerRatings(leagueId, divisionLevel, statisticsParameters, selectedTeamId)
+}
+
 
 @lastLeagueTeamRanking = @{leagueTeamRankings.headOption}
 @previousLeagueTeamRanking = @{leagueTeamRankings.lift(1)}
@@ -61,19 +69,48 @@
         @if(lastDivisionTeamRanking.isDefined) {
             <div class="rankings_grid">
                 <div class="rankings_grid_row">
+                @common.teamRanking(lastLeagueTeamRanking = lastLeagueTeamRanking.get, previousLeagueTeamRanking = previousLeagueTeamRanking,
+                    lastDivisionLevelTeamRanking = lastDivisionTeamRanking.get,
+                    previousDivisionLevelTeamRanking = previousDivisionTeamRanking,
+                    rankName = messages("table.hatstats"),
+                    valueFunc = teamRankings => teamRankings.hatstats,
+                    positionFunc = teamRankings => teamRankings.hatstatsPosition,
+                    sortingField = "hatstats",
+                    details = details,
+                    leagueLink = bestTeamsLeagueLink,
+                    divisionLevelLink = bestTeamsDivisionLevelLink,
+                    pageSize = pageSize,
+                    formatter = i => Html(i.toString))
 
-                    @common.teamRanking(lastLeagueTeamRanking = lastLeagueTeamRanking.get, previousLeagueTeamRanking = previousLeagueTeamRanking,
-                        lastDivisionLevelTeamRanking = lastDivisionTeamRanking.get,
-                        previousDivisionLevelTeamRanking = previousDivisionTeamRanking,
-                        rankName = messages("table.hatstats"),
-                        valueFunc = teamRankings => teamRankings.hatstats,
-                        positionFunc = teamRankings => teamRankings.hatstatsPosition,
-                        sortingField = "hatstats",
-                        details = details,
-                        leagueLink = bestTeamsLeagueLink,
-                        divisionLevelLink = bestTeamsDivisionLevelLink,
-                        pageSize = pageSize,
-                        formatter = i => Html(i.toString))
+                @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
+                    lastDivisionTeamRanking.get,
+                    previousDivisionTeamRanking,
+                    messages("table.salary") + ", " + details.leagueInfo.league.getCountry.getCurrencyName,
+                    teamRankings => teamRankings.salary,
+                    teamRankings => teamRankings.salaryPosition,
+                    "salary",
+                    details,
+                    playerStateLeagueLink,
+                    playerStateDivisionLevelLink,
+                    pageSize,
+                    salary => common.formatters.salaryFormatter(salary, details.leagueInfo.league))
+
+                @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
+                    lastDivisionTeamRanking.get,
+                    previousDivisionTeamRanking,
+                    messages("table.tsi"),
+                    teamRankings => teamRankings.tsi,
+                    teamRankings => teamRankings.tsiPosition,
+                    "tsi",
+                    details,
+                    playerStateLeagueLink,
+                    playerStateDivisionLevelLink,
+                    pageSize,
+                    tsi => common.formatters.tsiFormatter(tsi)
+                    )
+                </div>
+
+                <div class="rankings_grid_row">
                     @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
@@ -114,15 +151,15 @@
                     @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
-                        messages("table.salary") + ", " + details.leagueInfo.league.getCountry.getCurrencyName,
-                        teamRankings => teamRankings.salary,
-                        teamRankings => teamRankings.salaryPosition,
-                        "salary",
+                        messages("table.age"),
+                        teamRankings => teamRankings.age,
+                        teamRankings => teamRankings.agePosition,
+                        "age",
                         details,
                         playerStateLeagueLink,
                         playerStateDivisionLevelLink,
                         pageSize,
-                        salary => common.formatters.salaryFormatter(salary, details.leagueInfo.league))
+                        age => common.formatters.ageFormatter(age))
                     @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
@@ -152,28 +189,16 @@
                     @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,
-                        messages("table.tsi"),
-                        teamRankings => teamRankings.tsi,
-                        teamRankings => teamRankings.tsiPosition,
-                        "tsi",
+                        messages("table.power_rating"),
+                        teamRankings => teamRankings.powerRating,
+                        teamRankings => teamRankings.powerRatingPosition,
+                        "power_rating",
                         details,
-                        playerStateLeagueLink,
-                        playerStateDivisionLevelLink,
+                        powerRatingsLeagueLink,
+                        powerRatingsDivisionLevelLink,
                         pageSize,
-                        tsi => common.formatters.tsiFormatter(tsi)
+                        powerRating => Html(powerRating.toString)
                     )
-                    @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
-                        lastDivisionTeamRanking.get,
-                        previousDivisionTeamRanking,
-                        messages("table.age"),
-                        teamRankings => teamRankings.age,
-                        teamRankings => teamRankings.agePosition,
-                        "age",
-                        details,
-                        playerStateLeagueLink,
-                        playerStateDivisionLevelLink,
-                        pageSize,
-                        age => common.formatters.ageFormatter(age))
                     @common.teamRanking(lastLeagueTeamRanking.get, previousLeagueTeamRanking,
                         lastDivisionTeamRanking.get,
                         previousDivisionTeamRanking,

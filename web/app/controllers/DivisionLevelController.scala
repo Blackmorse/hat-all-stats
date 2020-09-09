@@ -144,6 +144,38 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       viewFunc = {viewData: ViewData[FormalTeamStats, WebDivisionLevelDetails] => messages => views.html.divisionlevel.formalTeamStats(viewData)(messages)}
     )
 
+  def fanclubFlags(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueId = leagueId,
+      divisionLevel = divisionLevel,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "fanclub_size",
+      statisticsType = OnlyRound,
+      func = sp => routes.DivisionLevelController.fanclubFlags(leagueId, divisionLevel, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.fanclubFlagsRequest,
+      viewFunc = {viewData: ViewData[FanclubFlags, WebDivisionLevelDetails] => messages => views.html.divisionlevel.fanclubFlags(viewData)(messages)})
+
+  def streakTrophies(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueId = leagueId,
+      divisionLevel = divisionLevel,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "trophies_number",
+      statisticsType = OnlyRound,
+      func = sp => routes.DivisionLevelController.streakTrophies(leagueId, divisionLevel, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.streakTrophyRequest,
+      viewFunc = {viewData: ViewData[StreakTrophy, WebDivisionLevelDetails] => messages => views.html.divisionlevel.streakTrophies(viewData)(messages)})
+
+  def powerRatings(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[StatisticsParameters], selectedTeamId: Option[Long] = None) =
+    stats(leagueId = leagueId,
+      divisionLevel = divisionLevel,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "power_rating",
+      statisticsType = OnlyRound,
+      func = sp => routes.DivisionLevelController.powerRatings(leagueId, divisionLevel, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.powerRatingRequest,
+      viewFunc = {viewData: ViewData[PowerRating, WebDivisionLevelDetails] => messages => views.html.divisionlevel.powerRatings(viewData)(messages)},
+      selectedId = selectedTeamId
+    )
+
   def leagueUnitLinks(leagueId: Int, divisionLevel: Int): Seq[(String, String)] = {
     if (divisionLevel == 1) {
       Seq("1" -> routes.LeagueUnitController.bestTeams(higherLeagueMap.get(leagueId).getLeagueUnitId, None).url)

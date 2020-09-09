@@ -241,4 +241,62 @@ object StatisticsCHRequest {
     statisticsType = OnlyRound,
     parser = FormalTeamStats.formalTeamStatsMapper
   )
+
+  val fanclubFlagsRequest = StatisticsCHRequest(aggregateSql = "",
+    oneRoundSql = """SELECT
+                    |    team_id,
+                    |    team_name,
+                    |    league_unit_id,
+                    |    league_unit_name,
+                    |    fanclub_size,
+                    |    home_flags,
+                    |    away_flags,
+                    |    home_flags + away_flags AS all_flags
+                    |FROM hattrick.team_details
+                    | __where__ AND (round = __round__)
+                    |ORDER BY
+                    |   __sortBy__ __sortingDirection__,
+                    |   team_id __sortingDirection__
+                    |__limit__
+                    |""".stripMargin,
+    sortingColumns = Seq(("fanclub_size", "table.fanclub_size"), ("home_flags", "table.home_flags"), ("away_flags", "table.away_flags"), ("all_flags", "table.all_flags")),
+    statisticsType = OnlyRound,
+    parser = FanclubFlags.fanclubFlagsMapper)
+
+  val streakTrophyRequest = StatisticsCHRequest(aggregateSql = "",
+    oneRoundSql = """SELECT
+                    |    team_id,
+                    |    team_name,
+                    |    league_unit_id,
+                    |    league_unit_name,
+                    |    trophies_number,
+                    |    number_of_victories,
+                    |    number_of_undefeated
+                    |FROM hattrick.team_details
+                    | __where__ AND (round = __round__)
+                    |ORDER BY
+                    |   __sortBy__ __sortingDirection__,
+                    |   team_id __sortingDirection__
+                    |__limit__""".stripMargin,
+    sortingColumns = Seq(("trophies_number", "table.trophies"), ("number_of_victories", "table.victories"), ("number_of_undefeated", "table.undefeated")),
+    statisticsType = OnlyRound,
+    parser = StreakTrophy.streakTrophyMapper)
+
+  val powerRatingRequest = StatisticsCHRequest(aggregateSql = "",
+    oneRoundSql = """SELECT
+                    |    team_id,
+                    |    team_name,
+                    |    league_unit_id,
+                    |    league_unit_name,
+                    |    power_rating
+                    |FROM hattrick.team_details
+                    | __where__ AND (round = __round__)
+                    |ORDER BY
+                    |   __sortBy__ __sortingDirection__,
+                    |   team_id __sortingDirection__
+                    |__limit__""".stripMargin,
+    sortingColumns = Seq(("power_rating", "table.power_rating")),
+    statisticsType = OnlyRound,
+    parser = PowerRating.powerRatingMapper
+  )
 }

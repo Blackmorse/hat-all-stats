@@ -133,3 +133,16 @@ overview.number_of_yellow=Количество желтых карточек:
 overview.number_of_red=Количество красных карточек:
 overview.numbers=Сводка
 overview.averages=Средние
+
+table.power_rating=Power rating
+table.fanclub_size=Фанклуб
+table.home_flags=Домашние флаги
+table.away_flags=Гостевые флаги
+table.all_flags=Все флаги
+table.trophies=Трофеи
+table.victories=Побед подряд
+table.undefeated=Без поражений
+
+menu.power_ratings=Power Ratings
+menu.fanclub_flags=Фанклуб/Флаги
+menu.streak_trophies=Победные серии/Трофеи

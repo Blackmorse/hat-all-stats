@@ -17,6 +17,12 @@
     <a class="left_bar_link" href="@routes.LeagueController.playerState(details.leagueInfo.league.getLeagueId)">@messages("menu.player_state")</a>
 
     <a class="left_bar_link" href="@routes.LeagueController.formalTeamStats(details.leagueInfo.league.getLeagueId)">@messages("menu.formal_team_stats")</a>
+
+    <a class="left_bar_link" href="@routes.LeagueController.powerRatings(details.leagueInfo.league.getLeagueId)">@messages("menu.power_ratings")</a>
+
+    <a class="left_bar_link" href="@routes.LeagueController.fanclubFlags(details.leagueInfo.league.getLeagueId)">@messages("menu.fanclub_flags")</a>
+
+    <a class="left_bar_link" href="@routes.LeagueController.streakTrophies(details.leagueInfo.league.getLeagueId)">@messages("menu.streak_trophies")</a>
 </div>
 <div class="left_bar">
     @common.searchBar(details.leagueInfo.leagueId)

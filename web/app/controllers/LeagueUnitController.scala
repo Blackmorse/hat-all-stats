@@ -2,12 +2,14 @@ package controllers
 
 import com.blackmorse.hattrick.model.enums.SearchType
 import databases.ClickhouseDAO
-import databases.clickhouse.{Accumulated, AvgMax, OnlyRound, StatisticsCHRequest}
+import databases.clickhouse.{Accumulated, AvgMax, OnlyRound, StatisticsCHRequest, StatisticsType}
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
+import models.clickhouse.{FanclubFlags, PlayerStats, PlayersState, PowerRating, StreakTrophy, TeamRating, TeamState}
 import models.web._
+import play.api.i18n.Messages
 import play.api.mvc.{BaseController, Call, ControllerComponents}
-import service.{DefaultService, LeagueInfoService, LeagueInfo, LeagueUnitCalculatorService,  LeagueUnitTeamStat}
+import service.{DefaultService, LeagueInfo, LeagueInfoService, LeagueUnitCalculatorService, LeagueUnitTeamStat}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -26,6 +28,63 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
                                      val leagueUnitCalculatorService: LeagueUnitCalculatorService,
                                      val viewDataFactory: ViewDataFactory) extends BaseController with MessageSupport {
 
+  def stats[T](leagueUnitId: Long,
+            statisticsParametersOpt: Option[StatisticsParameters],
+            sortColumn: String,
+            statisticsType: StatisticsType,
+            func: StatisticsParameters => Call,
+            statisticsCHRequest: StatisticsCHRequest[T],
+            viewFunc: (ViewData[T, WebLeagueUnitDetails], Seq[LeagueUnitTeamStat]) => Messages => play.twirl.api.HtmlFormat.Appendable) = Action.async { implicit request =>
+
+    val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
+
+    leagueDetailsFuture.flatMap( leagueDetails => {
+      val statsType = statisticsType match {
+        case AvgMax => Avg
+        case Accumulated => Accumulate
+        case OnlyRound =>
+          val currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId)
+          Round(currentRound)
+      }
+
+      val (statisticsParameters, cookies) = defaultService.statisticsParameters(statisticsParametersOpt,
+        leagueId = leagueDetails.getLeagueId(),
+        statsType = statsType,
+        sortColumn = sortColumn)
+
+      val leagueFixture = hattrick.api.leagueFixtures().season(leagueInfoService.getAbsoluteSeasonFromRelative(statisticsParameters.season, leagueDetails.getLeagueId))
+        .leagueLevelUnitId(leagueUnitId).execute()
+
+      val tillRound = statisticsParameters.statsType match {
+        case Round(round) => Some(round)
+        case _ => None
+      }
+      val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
+
+      val details = WebLeagueUnitDetails(leagueInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId),
+        currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),
+        divisionLevel = leagueDetails.getLeagueLevel,
+        leagueUnitName = leagueDetails.getLeagueLevelUnitName,
+        leagueUnitId = leagueDetails.getLeagueLevelUnitId,
+        teamLinks = teamLinks(leagueUnitTeamStats))
+
+      statisticsCHRequest.execute(leagueId = Some(leagueDetails.getLeagueId),
+        divisionLevel = Some(leagueDetails.getLeagueLevel),
+        leagueUnitId = Some(leagueDetails.getLeagueLevelUnitId),
+        statisticsParameters = statisticsParameters)
+        .map(entities => {
+          val viewData = viewDataFactory.create(details = details,
+            func = func,
+            statisticsType = Accumulated,
+            statisticsParameters = statisticsParameters,
+            statisticsCHRequest =  statisticsCHRequest,
+            entities = entities)
+
+          Ok(viewFunc(viewData, leagueUnitTeamStats).apply(messages)).withCookies(cookies: _*)
+        })
+    })
+  }
+
   def bestTeamsByName(leagueUnitName: String, leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) = {
     val search = hattrick.api.search().searchType(SearchType.SERIES).searchLeagueId(leagueId).searchString(leagueUnitName).execute()
     val leagueUnitId = search.getSearchResults.get(0).getResultId
@@ -33,191 +92,72 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
     bestTeams(leagueUnitId, statisticsParametersOpt)
   }
 
-  def bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async{ implicit request =>
-    val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
-
-    leagueDetailsFuture.flatMap ( leagueDetails => {
-      val (statisticsParameters, cookies) = defaultService.statisticsParameters(statisticsParametersOpt,
-          leagueId = leagueDetails.getLeagueId(),
-          statsType = Avg,
-          sortColumn = "hatstats")
-
-      val leagueFixture = hattrick.api.leagueFixtures().season(leagueInfoService.getAbsoluteSeasonFromRelative(statisticsParameters.season, leagueDetails.getLeagueId))
-        .leagueLevelUnitId(leagueUnitId).execute()
-
-      val tillRound = statisticsParameters.statsType match {
-        case Round(round) => Some(round)
-        case _ => None
-      }
-
-      val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.bestTeams(leagueUnitId, Some(sp))
-      val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
-
-      val details = WebLeagueUnitDetails(leagueInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId),
-        currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),
-        divisionLevel = leagueDetails.getLeagueLevel,
-        leagueUnitName = leagueDetails.getLeagueLevelUnitName,
-        leagueUnitId = leagueDetails.getLeagueLevelUnitId,
-        teamLinks = teamLinks(leagueUnitTeamStats))
-
-      StatisticsCHRequest.bestHatstatsTeamRequest.execute(leagueId = Some(leagueDetails.getLeagueId),
-        divisionLevel = Some(leagueDetails.getLeagueLevel),
-        leagueUnitId = Some(leagueDetails.getLeagueLevelUnitId),
-        statisticsParameters = statisticsParameters)
-        .map(bestTeams => {
-            val viewData = viewDataFactory.create(details = details,
-              func = func,
-              statisticsType = AvgMax,
-              statisticsParameters = statisticsParameters,
-              statisticsCHRequest = StatisticsCHRequest.bestHatstatsTeamRequest,
-              entities = bestTeams)
-
-            Ok(views.html.leagueunit.bestTeams(viewData, leagueUnitTeamStats)(messages)).withCookies(cookies: _*)
-          })
-    } )
-  }
-
-  def playerStats(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async {implicit  request =>
-    val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
-
-    val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.playerStats(leagueUnitId, Some(sp))
-
-    leagueDetailsFuture.flatMap ( leagueDetails => {
-      val (statisticsParameters, cookies) = defaultService.statisticsParameters(statisticsParametersOpt, 
-          leagueId = leagueDetails.getLeagueId(),
-          statsType = Accumulate,
-          sortColumn = "scored")
-
-      val leagueFixture = hattrick.api.leagueFixtures().season(leagueInfoService.getAbsoluteSeasonFromRelative(statisticsParameters.season, leagueDetails.getLeagueId))
-        .leagueLevelUnitId(leagueUnitId).execute()
-
-      val tillRound = statisticsParameters.statsType match {
-        case Round(round) => Some(round)
-        case _ => None
-      }
-
-      //TODO not neccesary to calculate team stats
-      val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
-
-      val details = WebLeagueUnitDetails(leagueInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId),
-        currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),
-        divisionLevel = leagueDetails.getLeagueLevel,
-        leagueUnitName = leagueDetails.getLeagueLevelUnitName,
-        leagueUnitId = leagueDetails.getLeagueLevelUnitId,
-        teamLinks = teamLinks(leagueUnitTeamStats))
-
-      StatisticsCHRequest.playerStatsRequest.execute(leagueId = Some(leagueDetails.getLeagueId),
-        divisionLevel = Some(leagueDetails.getLeagueLevel),
-        leagueUnitId = Some(leagueDetails.getLeagueLevelUnitId),
-        statisticsParameters = statisticsParameters)
-        .map(playerStats => {
-          val viewData = viewDataFactory.create(details = details,
-            func = func,
-            statisticsType = Accumulated,
-            statisticsParameters = statisticsParameters,
-            statisticsCHRequest =  StatisticsCHRequest.playerStatsRequest,
-            entities = playerStats)
-
-          Ok(views.html.leagueunit.playerStats(viewData)(messages)).withCookies(cookies: _*)
-        })
-    })
-  }
-
-  def teamState(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async{ implicit request =>
-    val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
-
-    leagueDetailsFuture.flatMap ( leagueDetails => {
-      val currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId)
-
-      val (statisticsParameters, cookies) = defaultService.statisticsParameters(statisticsParametersOpt, 
-          leagueId = leagueDetails.getLeagueId,
-          statsType = Round(currentRound),
-          "rating")
-
-      val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.teamState(leagueUnitId, Some(sp))
-
-      val leagueFixture = hattrick.api.leagueFixtures().season(leagueInfoService.getAbsoluteSeasonFromRelative(statisticsParameters.season, leagueDetails.getLeagueId))
-        .leagueLevelUnitId(leagueUnitId).execute()
-
-      val tillRound = statisticsParameters.statsType match {
-        case Round(round) => Some(round)
-        case _ => None
-      }
-
-      val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
-
-      StatisticsCHRequest.teamStateRequest.execute(leagueId = Some(leagueDetails.getLeagueId),
-        divisionLevel = Some(leagueDetails.getLeagueLevel),
-        leagueUnitId = Some(leagueUnitId),
-        statisticsParameters = statisticsParameters)
-          .map(teamState => {
-            val details = WebLeagueUnitDetails(
-              leagueInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId),
-              currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),
-              divisionLevel = leagueDetails.getLeagueLevel,
-              leagueUnitName =  leagueDetails.getLeagueLevelUnitName,
-              leagueUnitId = leagueUnitId,
-              teamLinks = teamLinks(leagueUnitTeamStats))
-
-            val viewData = viewDataFactory.create(details = details,
-              func = func,
-              statisticsType = OnlyRound,
-              statisticsParameters = statisticsParameters,
-              statisticsCHRequest = StatisticsCHRequest.teamStateRequest,
-              entities = teamState)
-
-            Ok(views.html.leagueunit.teamState(viewData)(messages)).withCookies(cookies: _*)
-          })
-    })
-  }
+  def bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueUnitId = leagueUnitId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "hatstats",
+      statisticsType = AvgMax,
+      func = sp => routes.LeagueUnitController.bestTeams(leagueUnitId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.bestHatstatsTeamRequest,
+      viewFunc = {(viewData: ViewData[TeamRating, WebLeagueUnitDetails], leagueUnitTeamStats: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.bestTeams(viewData, leagueUnitTeamStats)(messages)})
 
 
-  def playerState(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) = Action.async { implicit request =>
-    val leagueDetailsFuture = Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
+  def playerStats(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueUnitId = leagueUnitId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "scored",
+      statisticsType = Accumulated,
+      func = sp => routes.LeagueUnitController.playerStats(leagueUnitId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.playerStatsRequest,
+      viewFunc = {(viewData: ViewData[PlayerStats, WebLeagueUnitDetails], _: Seq[LeagueUnitTeamStat])  => messages => views.html.leagueunit.playerStats(viewData)(messages)})
 
-    leagueDetailsFuture.flatMap ( leagueDetails => {
-      val currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId)
-   
-      val (statisticsParameters, cookies) = defaultService.statisticsParameters(statisticsParametersOpt,
-          leagueId = leagueDetails.getLeagueId(),
-          statsType = Round(currentRound),
-          sortColumn = "rating")
+  def teamState(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueUnitId = leagueUnitId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "rating",
+      statisticsType = OnlyRound,
+      func = sp => routes.LeagueUnitController.teamState(leagueUnitId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.teamStateRequest,
+      viewFunc = {(viewData: ViewData[TeamState, WebLeagueUnitDetails], _: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.teamState(viewData)(messages)})
 
-      val func: StatisticsParameters => Call = sp => routes.LeagueUnitController.playerState(leagueUnitId, Some(sp))
 
-      val leagueFixture = hattrick.api.leagueFixtures().season(leagueInfoService.getAbsoluteSeasonFromRelative(statisticsParameters.season, leagueDetails.getLeagueId))
-        .leagueLevelUnitId(leagueUnitId).execute()
+  def playerState(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueUnitId = leagueUnitId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "rating",
+      statisticsType = OnlyRound,
+      func = sp => routes.LeagueUnitController.playerState(leagueUnitId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.playerStateRequest,
+      viewFunc = {(viewData: ViewData[PlayersState, WebLeagueUnitDetails], _: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.playerState(viewData)(messages)})
 
-      val tillRound = statisticsParameters.statsType match {
-        case Round(round) => Some(round)
-        case _ => None
-      }
+  def fanclubFlags(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueUnitId = leagueUnitId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "fanclub_size",
+      statisticsType = OnlyRound,
+      func = sp => routes.LeagueUnitController.fanclubFlags(leagueUnitId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.fanclubFlagsRequest,
+      viewFunc = {(viewData: ViewData[FanclubFlags, WebLeagueUnitDetails], _: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.fanclubFlags(viewData)(messages)}
+    )
 
-      val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
+  def streakTrophies(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueUnitId = leagueUnitId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "trophies_number",
+      statisticsType = OnlyRound,
+      func = sp => routes.LeagueUnitController.streakTrophies(leagueUnitId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.streakTrophyRequest,
+      viewFunc = {(viewData: ViewData[StreakTrophy, WebLeagueUnitDetails], _: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.streakTrophies(viewData)(messages)}
+    )
 
-     StatisticsCHRequest.playerStateRequest.execute(leagueId = Some(leagueDetails.getLeagueId),
-        divisionLevel = Some(leagueDetails.getLeagueLevel),
-        leagueUnitId = Some(leagueUnitId),
-        statisticsParameters = statisticsParameters)
-          .map(playerStates => {
-            val details = WebLeagueUnitDetails(
-              leagueInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId),
-              currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),
-              divisionLevel = leagueDetails.getLeagueLevel,
-              leagueUnitName  = leagueDetails.getLeagueLevelUnitName,
-              leagueUnitId = leagueUnitId,
-              teamLinks = teamLinks(leagueUnitTeamStats))
-
-            viewDataFactory.create(details = details,
-              func = func,
-              statisticsType = OnlyRound,
-              statisticsParameters = statisticsParameters,
-              statisticsCHRequest = StatisticsCHRequest.playerStateRequest,
-              entities = playerStates)
-          }).map(viewData => Ok(views.html.leagueunit.playerState(viewData)(messages)))
-    } )
-  }
-
+  def powerRatings(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueUnitId = leagueUnitId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "power_rating",
+      statisticsType = OnlyRound,
+      func = sp => routes.LeagueUnitController.powerRatings(leagueUnitId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.powerRatingRequest,
+      viewFunc = {(viewData: ViewData[PowerRating, WebLeagueUnitDetails], _: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.powerRatings(viewData)(messages)})
 
   private def teamLinks(leagueTeamStats: Seq[LeagueUnitTeamStat]): Seq[(String, String)] = {
     leagueTeamStats.map(stat => stat.teamName -> routes.TeamController.teamOverview(stat.teamId).url)

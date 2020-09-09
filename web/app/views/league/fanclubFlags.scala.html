@@ -1,0 +1,7 @@
+@import models.web.ViewData
+@import models.clickhouse.FanclubFlags
+@(viewData: ViewData[FanclubFlags, WebLeagueDetails])(implicit messages: Messages)
+
+@main(viewData.details.leagueInfo.league.getEnglishName, header(viewData.details), leftBar(viewData.details), messages("menu.fanclub_flags")) {
+    @stats(viewData.links)(common.fanclubFlagsTable(viewData.webPagedEntities))
+}

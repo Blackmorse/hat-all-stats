@@ -11,6 +11,9 @@ menu.team_rankings=Clasificación por equipos
 menu.search=Buscar
 menu.team_search=Buscar equipo
 menu.team_overview=Resumen
+menu.power_ratings=Power Ratings
+menu.fanclub_flags=Fanclub/Banderas
+menu.streak_trophies=Rachas ganadoras/Trofeos
 
 
 #Table
@@ -62,6 +65,14 @@ table.total_injury_number_abbr=InjN
 table.total_injury_number=Número total de lesiones
 table.average_age_abbr=AA
 table.average_age=Edad Promedio
+table.power_rating=Power rating
+table.fanclub_size=Fanclub
+table.home_flags=Banderas Local
+table.away_flags=Banderas Visita
+table.all_flags=Todas las banderas
+table.trophies=Trofeos
+table.victories=Victorias
+table.undefeated=Invicto
 
 #team_rankings
 team_rankings.ranking=Clasificación en

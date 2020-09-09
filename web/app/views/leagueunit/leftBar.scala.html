@@ -11,6 +11,12 @@
     <a class="left_bar_link" href="@routes.LeagueUnitController.teamState(details.leagueUnitId)">@messages("menu.team_state")</a>
 
     <a class="left_bar_link" href="@routes.LeagueUnitController.playerState(details.leagueUnitId)">@messages("menu.player_state")</a>
+
+    <a class="left_bar_link" href="@routes.LeagueUnitController.powerRatings(details.leagueUnitId)">@messages("menu.power_ratings")</a>
+
+    <a class="left_bar_link" href="@routes.LeagueUnitController.fanclubFlags(details.leagueUnitId)">@messages("menu.fanclub_flags")</a>
+
+    <a class="left_bar_link" href="@routes.LeagueUnitController.streakTrophies(details.leagueUnitId)">@messages("menu.streak_trophies")</a>
 </div>
 <div class="left_bar">
     @common.searchBar(details.leagueInfo.leagueId)

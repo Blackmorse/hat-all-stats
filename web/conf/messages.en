@@ -133,3 +133,16 @@ overview.number_of_yellow=Number of yellow cards:
 overview.number_of_red=Number of red cards:
 overview.numbers=Number
 overview.averages=Averages
+
+table.power_rating=Power rating
+table.fanclub_size=Fanclub
+table.home_flags=Home flags
+table.away_flags=Away flags
+table.all_flags=All flags
+table.trophies=Trophies
+table.victories=Victories
+table.undefeated=Undefeated
+
+menu.power_ratings=Power Ratings
+menu.fanclub_flags=Fanclub/Flags
+menu.streak_trophies=Winning streaks/Trophies

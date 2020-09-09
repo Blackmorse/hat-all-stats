@@ -28,7 +28,9 @@ case class TeamRankings(teamId: Long,
                         injury: Int,
                         injuryPosition: Int,
                         injuryCount: Int,
-                        injuryCountPosition: Int
+                        injuryCountPosition: Int,
+                        powerRating: Int,
+                        powerRatingPosition: Int
                        )
 
 object TeamRankings {
@@ -58,17 +60,21 @@ object TeamRankings {
     get[Int]("injury") ~
     get[Int]("injury_position") ~
     get[Int]("injury_count") ~
-    get[Int]("injury_count_position") map {
+    get[Int]("injury_count_position") ~
+    get[Int]("power_rating") ~
+    get[Int]("power_rating_position") map {
       case teamId ~ teamName ~ round ~ rankType ~ hatstats ~ hatstatsPosition ~ attack ~
         attackPosition ~ midfield ~ midfieldPosition ~
         defense ~ defensePosition ~ tsi ~ tsiPosition ~ salary ~ salaryPosition ~
         rating ~ ratingPosition ~ ratingEndOfMatch ~ ratingEndOfMatchPosition ~
-        age ~ agePosition ~ injury ~ injuryPosition ~ injuryCount ~ injuryCountPosition =>
+        age ~ agePosition ~ injury ~ injuryPosition ~ injuryCount ~ injuryCountPosition  ~
+        powerRating ~ powerRatingPosition =>
         TeamRankings(teamId, teamName, round, rankType, hatstats, hatstatsPosition, attack,
           attackPosition, midfield, midfieldPosition, defense, defensePosition,
           tsi, tsiPosition, salary, salaryPosition, rating, ratingPosition,
           ratingEndOfMatch, ratingEndOfMatchPosition, age, agePosition,
-          injury, injuryPosition, injuryCount, injuryCountPosition
+          injury, injuryPosition, injuryCount, injuryCountPosition,
+          powerRating, powerRatingPosition
         )
     }
   }

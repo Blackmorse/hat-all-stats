@@ -11,6 +11,9 @@ menu.team_rankings=Classifica Squadra
 menu.search=Cerca
 menu.team_search=Ricerca Squadra
 menu.team_overview=Panoramica
+menu.power_ratings=Power Ratings
+menu.fanclub_flags=Tifosi/Bandiere
+menu.streak_trophies=Vittorie consecutive/Trofei
 
 #Table
 table.position_abbr=P
@@ -61,6 +64,14 @@ table.total_injury_number_abbr=InfN
 table.total_injury_number=Numero Totale Infortuni
 table.average_age_abbr=EM
 table.average_age=Eta' Media
+table.power_rating=Power rating
+table.fanclub_size=Tifosi
+table.home_flags=Bandiere casa
+table.away_flags=Bandiere trasferta
+table.all_flags=Tutte le bandiere
+table.trophies=Trofei
+table.victories=Vittorie
+table.undefeated=Imbattuti
 
 #team_rankings
 team_rankings.ranking=Valutazione al 

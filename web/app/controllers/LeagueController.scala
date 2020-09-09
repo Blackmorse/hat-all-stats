@@ -137,6 +137,37 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       viewFunc = {viewData: web.ViewData[FormalTeamStats, WebLeagueDetails] => messages => views.html.league.formalTeamStats(viewData)(messages)}
     )
 
+  def fanclubFlags(leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueId = leagueId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "fanclub_size",
+      statisticsType = OnlyRound,
+      func = sp => routes.LeagueController.fanclubFlags(leagueId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.fanclubFlagsRequest,
+      viewFunc = {viewData: web.ViewData[FanclubFlags, WebLeagueDetails] => messages => views.html.league.fanclubFlags(viewData)(messages)}
+    )
+
+  def streakTrophies(leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueId = leagueId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "trophies_number",
+      statisticsType = OnlyRound,
+      func = sp => routes.LeagueController.streakTrophies(leagueId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.streakTrophyRequest,
+      viewFunc = {viewData: web.ViewData[StreakTrophy, WebLeagueDetails] => messages => views.html.league.streakTrophies(viewData)(messages)}
+    )
+
+  def powerRatings(leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters], selectedTeam: Option[Long] = None) =
+    stats(leagueId = leagueId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "power_rating",
+      statisticsType = OnlyRound,
+      func = sp => routes.LeagueController.powerRatings(leagueId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.powerRatingRequest,
+      viewFunc = {viewData: web.ViewData[PowerRating, WebLeagueDetails] => messages => views.html.league.powerRatings(viewData)(messages)},
+      selectedId = selectedTeam
+    )
+
   def promotions(leagueId: Int) = Action.async { implicit request =>
     val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
       currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
