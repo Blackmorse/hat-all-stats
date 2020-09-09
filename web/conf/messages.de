@@ -11,6 +11,9 @@ menu.team_rankings=Mannschaftsrankings
 menu.search=Suche
 menu.team_search=Suche nach Mannschaften
 menu.team_overview=Übersicht
+menu.power_ratings=Power-Ratings
+menu.fanclub_flags=Fanklub/Flaggen
+menu.streak_trophies=Siegesserien/Trophäen 
 
 #Table
 table.position_abbr=P
@@ -61,6 +64,14 @@ table.total_injury_number_abbr=GVS
 table.total_injury_number=gesamte verletzte Spieler
 table.average_age_abbr=Da
 table.average_age=Durchschnittsalter
+table.power_rating=Power-Rating
+table.fanclub_size=Fanklub
+table.home_flags=Heim-Flaggen
+table.away_flags=Auswärts-Flaggen
+table.all_flags=alle Flaggen
+table.trophies=Trophäen
+table.victories=Siege
+table.undefeated=unbesiegt
 
 #team_rankings
 team_rankings.ranking=Ranking at 
