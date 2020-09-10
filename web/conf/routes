@@ -31,6 +31,8 @@ GET     /league/promotions          controllers.LeagueController.promotions(leag
 GET     /league/fanclubFlags        controllers.LeagueController.fanclubFlags(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /league/streakTrophies      controllers.LeagueController.streakTrophies(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /league/powerRatings        controllers.LeagueController.powerRatings(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
+GET     /league/bestMatches         controllers.LeagueController.bestMatches(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /league/surprisingMatches   controllers.LeagueController.surprisingMatches(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
 GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
 GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
@@ -41,6 +43,8 @@ GET     /divisionlevel/formalTeamStats  controllers.DivisionLevelController.form
 GET     /divisionlevel/fanclubFlags controllers.DivisionLevelController.fanclubFlags(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /divisionlevel/streakTrophies   controllers.DivisionLevelController.streakTrophies(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /divisionlevel/powerRatings     controllers.DivisionLevelController.powerRatings(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
+GET     /divisionLevel/bestMatches      controllers.DivisionLevelController.bestMatches(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /divisionLevel/surprisingMatches    controllers.DivisionLevelController.surprisingMatches(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
 GET     /leagueLevelUnitByName        controllers.LeagueUnitController.bestTeamsByName(leagueUnitName: String, leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /leagueLevelUnit        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
@@ -50,6 +54,8 @@ GET     /leagueLevelUnit/playerState    controllers.LeagueUnitController.playerS
 GET     /leagueLevelUnit/fanclubFlags   controllers.LeagueUnitController.fanclubFlags(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /leagueLevelUnit/streakTrophies controllers.LeagueUnitController.streakTrophies(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 GET     /leagueLevelUnit/powerRatings   controllers.LeagueUnitController.powerRatings(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /leagueLevelUnit/bestMatches    controllers.LeagueUnitController.bestMatches(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
+GET     /leagueLevelUnit/surprisingMatches  controllers.LeagueUnitController.surprisingMatches(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
 
 GET     /team/teamOverview          controllers.TeamController.teamOverview(teamId: Long)
 GET     /team/matches               controllers.TeamController.matches(teamId: Long)

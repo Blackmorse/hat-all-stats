@@ -1,0 +1,41 @@
+@import models.web.WebPagedEntities
+@import models.clickhouse.BestMatch
+
+@(bestMatches: WebPagedEntities[BestMatch])(implicit messages: Messages)
+
+<table class="statistics_table">
+    <tr>
+        <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>
+        <th class="value">@messages("table.league")</th>
+        <th class="value">@messages("table.spectators")</th>
+        <th class="value">@messages("table.team")</th>
+        <th class="value">@messages("table.hatstats")</th>
+        <th class="value"></th>
+        <th class="value">@messages("table.hatstats")</th>
+        <th class="value">@messages("table.team")</th>
+    </tr>
+    @for((bestMatch, index) <- bestMatches.entities.zipWithIndex) {
+    <tr>
+        <td>@{bestMatches.pageInfo.pageSize * bestMatches.pageInfo.page + index + 1}</td>
+        <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(bestMatch.leagueUnitId)">@bestMatch.leagueUnitName</a></td>
+        <td class="value">@common.formatters.tsiFormatter(bestMatch.soldTotal)</td>
+        <td class="value">
+            @if(bestMatch.isHomeMatch) {<a class="table_link" href="@routes.TeamController.teamOverview(bestMatch.teamId)">@bestMatch.teamName</a>} else {<a class="table_link" href="@routes.TeamController.teamOverview(bestMatch.oppositeTeamId)">@bestMatch.oppositeTeamName</a>}
+        </td>
+        <td class="value">
+            @if(bestMatch.isHomeMatch) @{bestMatch.hatstats} else @{bestMatch.oppositeHatstats}
+        </td>
+        <td class="value">
+            @if(bestMatch.isHomeMatch) @{bestMatch.goals + " : " + bestMatch.enemyGoals} else @{bestMatch.enemyGoals + " : " + bestMatch.goals}
+        </td>
+        <td class="value">
+            @if(!bestMatch.isHomeMatch) @{bestMatch.hatstats} else @{bestMatch.oppositeHatstats}
+        </td>
+        <td class="value">
+            @if(!bestMatch.isHomeMatch) {<a class="table_link" href="@routes.TeamController.teamOverview(bestMatch.teamId)">@bestMatch.teamName</a>} else {<a class="table_link" href="@routes.TeamController.teamOverview(bestMatch.oppositeTeamId)">@bestMatch.oppositeTeamName</a>}
+        </td>
+    </tr>
+    }
+</table>
+
+@pageNav(bestMatches.pageInfo)

@@ -66,13 +66,14 @@ table.total_injury_number=Número total de lesiones
 table.average_age_abbr=AA
 table.average_age=Edad Promedio
 table.power_rating=Power rating
-table.fanclub_size=Fanclub
+table.fanclub_size=Fans
 table.home_flags=Banderas Local
 table.away_flags=Banderas Visita
 table.all_flags=Todas las banderas
 table.trophies=Trofeos
 table.victories=Victorias
 table.undefeated=Invicto
+table.spectators=Público
 
 #team_rankings
 team_rankings.ranking=Clasificación en

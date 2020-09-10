@@ -5,7 +5,7 @@ import databases.ClickhouseDAO
 import databases.clickhouse.{Accumulated, AvgMax, OnlyRound, StatisticsCHRequest, StatisticsType}
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
-import models.clickhouse.{FanclubFlags, PlayerStats, PlayersState, PowerRating, StreakTrophy, TeamRating, TeamState}
+import models.clickhouse.{BestMatch, FanclubFlags, PlayerStats, PlayersState, PowerRating, StreakTrophy, SurprisingMatch, TeamRating, TeamState}
 import models.web._
 import play.api.i18n.Messages
 import play.api.mvc.{BaseController, Call, ControllerComponents}
@@ -158,6 +158,26 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       func = sp => routes.LeagueUnitController.powerRatings(leagueUnitId, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.powerRatingRequest,
       viewFunc = {(viewData: ViewData[PowerRating, WebLeagueUnitDetails], _: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.powerRatings(viewData)(messages)})
+
+  def bestMatches(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueUnitId = leagueUnitId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "sum_hatstats",
+      statisticsType = Accumulated,
+      func = sp => routes.LeagueUnitController.bestMatches(leagueUnitId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.bestMatchesRequest,
+      viewFunc = {(viewData: ViewData[BestMatch, WebLeagueUnitDetails], _: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.bestMatches(viewData)(messages)}
+    )
+
+  def surprisingMatches(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueUnitId = leagueUnitId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "abs_hatstats_difference",
+      statisticsType = Accumulated,
+      func = sp => routes.LeagueUnitController.surprisingMatches(leagueUnitId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.surprisingMatchesRequest,
+      viewFunc = {(viewData: ViewData[SurprisingMatch, WebLeagueUnitDetails], _: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.surprisingMatches(viewData)(messages)}
+    )
 
   private def teamLinks(leagueTeamStats: Seq[LeagueUnitTeamStat]): Seq[(String, String)] = {
     leagueTeamStats.map(stat => stat.teamName -> routes.TeamController.teamOverview(stat.teamId).url)

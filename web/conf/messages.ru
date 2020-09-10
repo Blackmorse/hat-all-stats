@@ -61,6 +61,7 @@ table.total_injury_number_abbr=Кол-во травм
 table.total_injury_number=Общее количество травм
 table.average_age_abbr=СВ
 table.average_age=Средний возраст
+table.spectators=Зрители
 
 #team_rankings
 team_rankings.ranking=Рейтинг в

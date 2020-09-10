@@ -8,6 +8,10 @@
 
     <a class="left_bar_link" href="@routes.DivisionLevelController.bestLeagueUnits(details.leagueInfo.league.getLeagueId, details.divisionLevel)">@messages("menu.best_league_units")</a>
 
+    <a class="left_bar_link" href="@routes.DivisionLevelController.bestMatches(details.leagueInfo.league.getLeagueId, details.divisionLevel)">@messages("overview.top_matches")</a>
+
+    <a class="left_bar_link" href="@routes.DivisionLevelController.surprisingMatches(details.leagueInfo.league.getLeagueId, details.divisionLevel)">@messages("overview.surprising_matches")</a>
+
     <a class="left_bar_link" href="@routes.DivisionLevelController.playerStats(details.leagueInfo.league.getLeagueId, details.divisionLevel)">@messages("menu.player_stats")</a>
 
     <a class="left_bar_link" href="@routes.DivisionLevelController.teamState(details.leagueInfo.league.getLeagueId, details.divisionLevel)">@messages("menu.team_state")</a>

@@ -168,6 +168,26 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       selectedId = selectedTeam
     )
 
+  def bestMatches(leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueId = leagueId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "sum_hatstats",
+      statisticsType = Accumulated,
+      func = sp => routes.LeagueController.bestMatches(leagueId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.bestMatchesRequest,
+      viewFunc = {viewData: web.ViewData[BestMatch, WebLeagueDetails] => messages => views.html.league.bestMatches(viewData)(messages)}
+    )
+
+  def surprisingMatches(leagueId: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueId = leagueId,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "abs_hatstats_difference",
+      statisticsType = Accumulated,
+      func = sp => routes.LeagueController.surprisingMatches(leagueId, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.surprisingMatchesRequest,
+      viewFunc = {viewData: web.ViewData[SurprisingMatch, WebLeagueDetails] => messages => views.html.league.surprisingMatches(viewData)(messages)}
+    )
+
   def promotions(leagueId: Int) = Action.async { implicit request =>
     val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
       currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),

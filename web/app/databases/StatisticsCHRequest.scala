@@ -299,4 +299,110 @@ object StatisticsCHRequest {
     statisticsType = OnlyRound,
     parser = PowerRating.powerRatingMapper
   )
+
+  val bestMatchesRequest = StatisticsCHRequest(aggregateSql = """SELECT
+                    |    league_unit_id,
+                    |    league_unit_name,
+                    |    team_id,
+                    |    team_name,
+                    |    opposite_team_id,
+                    |    opposite_team_name,
+                    |    match_id,
+                    |    is_home_match,
+                    |    sold_total,
+                    |    goals,
+                    |    enemy_goals,
+                    |    goals + enemy_goals as sum_goals,
+                    |    ((((((rating_midfield * 3) + rating_left_att) + rating_mid_att) + rating_right_att) + rating_left_def) + rating_right_def) + rating_mid_def AS hatstats,
+                    |    ((((((opposite_rating_midfield * 3) + opposite_rating_left_att) + opposite_rating_right_att) + opposite_rating_mid_att) + opposite_rating_left_def) + opposite_rating_right_def) + opposite_rating_mid_def AS opposite_hatstats,
+                    |    hatstats + opposite_hatstats AS sum_hatstats
+                    |FROM hattrick.match_details
+                    |__where__
+                    |ORDER BY
+                    |   __sortBy__ __sortingDirection__,
+                    |   team_id __sortingDirection__
+                    |LIMIT 1 BY match_id
+                    |__limit__
+                    |""".stripMargin,
+    oneRoundSql = """SELECT
+                    |    league_unit_id,
+                    |    league_unit_name,
+                    |    team_id,
+                    |    team_name,
+                    |    opposite_team_id,
+                    |    opposite_team_name,
+                    |    match_id,
+                    |    is_home_match,
+                    |    sold_total,
+                    |    goals,
+                    |    enemy_goals,
+                    |    goals + enemy_goals as sum_goals,
+                    |    ((((((rating_midfield * 3) + rating_left_att) + rating_mid_att) + rating_right_att) + rating_left_def) + rating_right_def) + rating_mid_def AS hatstats,
+                    |    ((((((opposite_rating_midfield * 3) + opposite_rating_left_att) + opposite_rating_right_att) + opposite_rating_mid_att) + opposite_rating_left_def) + opposite_rating_right_def) + opposite_rating_mid_def AS opposite_hatstats,
+                    |    hatstats + opposite_hatstats AS sum_hatstats
+                    |FROM hattrick.match_details
+                    |__where__ AND (round = __round__)
+                    |ORDER BY
+                    |   __sortBy__ __sortingDirection__,
+                    |   team_id __sortingDirection__
+                    |LIMIT 1 BY match_id
+                    |__limit__
+                    |""".stripMargin,
+    sortingColumns = Seq(("sum_hatstats", "table.hatstats"), ("sold_total", "table.spectators")),
+    statisticsType = Accumulated,
+    parser = BestMatch.bestMatchMapper
+    )
+
+  val surprisingMatchesRequest = StatisticsCHRequest(aggregateSql = """SELECT
+                   |    league_unit_id,
+                   |    league_unit_name,
+                   |    team_id,
+                   |    team_name,
+                   |    opposite_team_id,
+                   |    opposite_team_name,
+                   |    match_id,
+                   |    is_home_match,
+                   |    goals,
+                   |    enemy_goals,
+                   |    abs(goals - enemy_goals) as abs_goals_difference,
+                   |    ((((((rating_midfield * 3) + rating_left_att) + rating_mid_att) + rating_right_att) + rating_left_def) + rating_right_def) + rating_mid_def AS hatstats,
+                   |    ((((((opposite_rating_midfield * 3) + opposite_rating_left_att) + opposite_rating_right_att) + opposite_rating_mid_att) + opposite_rating_left_def) + opposite_rating_right_def) + opposite_rating_mid_def AS opposite_hatstats,
+                   |    hatstats - opposite_hatstats as hatstats_difference,
+                   |    abs(hatstats_difference) as abs_hatstats_difference
+                   |FROM hattrick.match_details
+                   |__where__ AND (((goals - enemy_goals) * hatstats_difference) < 0) AND (opposite_team_id != 0)
+                   |ORDER BY
+                   |   __sortBy__ __sortingDirection__,
+                   |   team_id __sortingDirection__
+                   |LIMIT 1 BY match_id
+                   |__limit__
+                   |""".stripMargin,
+    oneRoundSql = """SELECT
+                    |    league_unit_id,
+                    |    league_unit_name,
+                    |    team_id,
+                    |    team_name,
+                    |    opposite_team_id,
+                    |    opposite_team_name,
+                    |    match_id,
+                    |    is_home_match,
+                    |    goals,
+                    |    enemy_goals,
+                    |    abs(goals - enemy_goals) as abs_goals_difference,
+                    |    ((((((rating_midfield * 3) + rating_left_att) + rating_mid_att) + rating_right_att) + rating_left_def) + rating_right_def) + rating_mid_def AS hatstats,
+                    |    ((((((opposite_rating_midfield * 3) + opposite_rating_left_att) + opposite_rating_right_att) + opposite_rating_mid_att) + opposite_rating_left_def) + opposite_rating_right_def) + opposite_rating_mid_def AS opposite_hatstats,
+                    |    hatstats - opposite_hatstats as hatstats_difference,
+                    |    abs(hatstats_difference) as abs_hatstats_difference
+                    |FROM hattrick.match_details
+                    |__where__ AND (((goals - enemy_goals) * hatstats_difference) < 0) AND (round = __round__) AND (opposite_team_id != 0)
+                    |ORDER BY
+                    |   __sortBy__ __sortingDirection__,
+                    |   team_id __sortingDirection__
+                    |LIMIT 1 BY match_id
+                    |__limit__
+                    |""".stripMargin,
+    sortingColumns = Seq(("abs_hatstats_difference", "table.hatstats"), ("abs_goals_difference", "overview.goals")),
+    statisticsType = Accumulated,
+    parser = SurprisingMatch.surprisingMatchMapper
+  )
 }

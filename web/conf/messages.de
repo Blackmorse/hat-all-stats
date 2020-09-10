@@ -72,6 +72,7 @@ table.all_flags=alle Flaggen
 table.trophies=Trophäen
 table.victories=Siege
 table.undefeated=unbesiegt
+table.spectators=Zuschauer
 
 #team_rankings
 team_rankings.ranking=Ranking at 

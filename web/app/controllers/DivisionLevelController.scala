@@ -176,6 +176,28 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       selectedId = selectedTeamId
     )
 
+  def bestMatches(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueId = leagueId,
+      divisionLevel = divisionLevel,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "sum_hatstats",
+      statisticsType = Accumulated,
+      func = sp => routes.DivisionLevelController.bestMatches(leagueId, divisionLevel, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.bestMatchesRequest,
+      viewFunc = {viewData: ViewData[BestMatch, WebDivisionLevelDetails] => messages => views.html.divisionlevel.bestMatches(viewData)(messages)}
+    )
+
+  def surprisingMatches(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[StatisticsParameters]) =
+    stats(leagueId = leagueId,
+      divisionLevel = divisionLevel,
+      statisticsParametersOpt = statisticsParametersOpt,
+      sortColumn = "abs_hatstats_difference",
+      statisticsType = Accumulated,
+      func = sp => routes.DivisionLevelController.surprisingMatches(leagueId, divisionLevel, Some(sp)),
+      statisticsCHRequest = StatisticsCHRequest.surprisingMatchesRequest,
+      viewFunc = {viewData: ViewData[SurprisingMatch, WebDivisionLevelDetails] => messages => views.html.divisionlevel.surprisingMatches(viewData)(messages)}
+    )
+
   def leagueUnitLinks(leagueId: Int, divisionLevel: Int): Seq[(String, String)] = {
     if (divisionLevel == 1) {
       Seq("1" -> routes.LeagueUnitController.bestTeams(higherLeagueMap.get(leagueId).getLeagueUnitId, None).url)

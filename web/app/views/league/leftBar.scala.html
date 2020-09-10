@@ -8,6 +8,10 @@
 
     <a class="left_bar_link" href="@routes.LeagueController.bestTeams(details.leagueInfo.league.getLeagueId)">@messages("menu.best_teams")</a>
 
+    <a class="left_bar_link" href="@routes.LeagueController.bestMatches(details.leagueInfo.league.getLeagueId)">@messages("overview.top_matches")</a>
+
+    <a class="left_bar_link" href="@routes.LeagueController.surprisingMatches(details.leagueInfo.league.getLeagueId)">@messages("overview.surprising_matches")</a>
+
     <a class="left_bar_link" href="@routes.LeagueController.bestLeagueUnits(details.leagueInfo.league.getLeagueId)">@messages("menu.best_league_units")</a>
 
     <a class="left_bar_link" href="@routes.LeagueController.playerStats(details.leagueInfo.league.getLeagueId)">@messages("menu.player_stats")</a>

@@ -1,0 +1,7 @@
+@import models.clickhouse.SurprisingMatch
+@import models.web.ViewData
+@(viewData: ViewData[SurprisingMatch, WebLeagueUnitDetails])(implicit messages: Messages)
+
+@main(viewData.details.leagueUnitName, header(viewData.details), leftBar(viewData.details), messages("overview.surprising_matches")) {
+    @stats(viewData.links)(common.surprisingMatchesTable(viewData.webPagedEntities))
+}

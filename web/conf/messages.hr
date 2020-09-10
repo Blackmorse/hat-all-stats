@@ -11,6 +11,9 @@ menu.team_rankings=Klupski ranking
 menu.search=Pretraga
 menu.team_search=Pretraga klubova
 menu.team_overview=Pregled
+menu.power_ratings=Jakosne ocjene
+menu.fanclub_flags=Navijači i zastavice
+menu.streak_trophies=Nizovi i trofeji
 
 #Table
 table.position_abbr=P
@@ -61,6 +64,15 @@ table.total_injury_number_abbr=Br.ozlj.
 table.total_injury_number=Broj ozljeđenih
 table.average_age_abbr=PD
 table.average_age=Prosječna dob
+table.power_rating=Ocjena
+table.fanclub_size=Udruga navijača
+table.home_flags=Kao domaćin
+table.away_flags=Kao gost
+table.all_flags=Ukupno
+table.trophies=Trofeji
+table.victories=Niz pobjeda
+table.undefeated=Neporaženi niz
+table.spectators=Gledatelji
 
 #team_rankings
 team_rankings.ranking=Rangiranje na
@@ -133,16 +145,3 @@ overview.number_of_yellow=Broj opomena:
 overview.number_of_red=Broj isključenja:
 overview.numbers=Brojevi
 overview.averages=Klupski prosjeci
-
-table.power_rating=Ocjena
-table.fanclub_size=Udruga navijača
-table.home_flags=Kao domaćin
-table.away_flags=Kao gost
-table.all_flags=Ukupno
-table.trophies=Trofeji
-table.victories=Niz pobjeda
-table.undefeated=Neporaženi niz
-
-menu.power_ratings=Jakosne ocjene
-menu.fanclub_flags=Navijači i zastavice
-menu.streak_trophies=Nizovi i trofeji
