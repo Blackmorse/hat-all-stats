@@ -1,4 +1,4 @@
-CREATE TABLE promotions
+CREATE TABLE hattrick.promotions
 (
     `season` UInt8,
     `league_id` UInt16,

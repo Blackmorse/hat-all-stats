@@ -16,8 +16,6 @@ import scala.collection.mutable
 class LeagueInfoService @Inject() (val hattrick: Hattrick,
                                 val clickhouseDAO: ClickhouseDAO,
                                 val configuration: Configuration) {
-  lazy val defaultLeagueId: Int = configuration.get[Int]("hattrick.defaultLeagueId")
-
   lazy val leagueNumbersMap = Map(1 -> Seq(1),
     2 -> (1 to 4),
     3 -> (1 to 16),
