@@ -75,7 +75,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         .map(entities => {
           val viewData = viewDataFactory.create(details = details,
             func = func,
-            statisticsType = Accumulated,
+            statisticsType = statisticsType,
             statisticsParameters = statisticsParameters,
             statisticsCHRequest =  statisticsCHRequest,
             entities = entities)
