@@ -116,8 +116,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
     }
   )
 
-  def teamRankings(season: Int, leagueId: Int, divisionLevel: Int,
-                   leagueUnitId: Long, teamId: Long) = Future(
+  def teamRankings(season: Int, leagueId: Int, teamId: Long) = Future(
     db.withConnection { implicit  connection =>
       val teamRankingsSql = SqlBuilder("""SELECT
         |    team_id,
@@ -155,7 +154,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
         |    rank_type ASC,
         |    round ASC
         |    """.stripMargin)
-        .season(season).leagueId(leagueId).divisionLevel(divisionLevel).leagueUnitId(leagueUnitId).teamId(teamId)
+        .season(season).leagueId(leagueId).teamId(teamId)
         .build
 
         teamRankingsSql.as(TeamRankings.teamRankingsMapper.*)

@@ -61,8 +61,6 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
           .filter(_.getMatchType == MatchType.LEAGUE_MATCH)
         val teamRankingsFuture = clickhouseDAO.teamRankings(season = webTeamDetails.season,
           leagueId = webTeamDetails.leagueInfo.leagueId,
-          divisionLevel = webTeamDetails.divisionLevel,
-          leagueUnitId = webTeamDetails.leagueUnitId,
           teamId = teamId)
 
         val playedMatches = matches
