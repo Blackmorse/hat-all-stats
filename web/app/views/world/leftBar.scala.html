@@ -1,11 +1,14 @@
 @import service.LeaguesInfo
 
 @import service.LeagueInfo
-@(leaguesInfo: LeaguesInfo)
+@(leaguesInfo: LeaguesInfo)(implicit messages: Messages)
 <header class="left_bar_header" style="margin-bottom: 0px">Countries</header>
 <div class="left_bar scrolled">
 
     @for((id, leagueInfo) <- leaguesInfo.leagueInfo.toIndexedSeq.sortBy(_._2.league.getEnglishName)) {
         <a class="left_bar_link" href="@routes.LeagueController.overview(id)">@leagueInfo.league.getEnglishName</a>
     }
-</div><br>
+</div>
+<div class="left_bar">
+    @common.searchBar(1000)
+</div>
