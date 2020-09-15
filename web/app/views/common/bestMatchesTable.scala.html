@@ -27,6 +27,10 @@
         </td>
         <td class="value">
             @if(bestMatch.isHomeMatch) @{bestMatch.goals + " : " + bestMatch.enemyGoals} else @{bestMatch.enemyGoals + " : " + bestMatch.goals}
+            <a class="external_table_link" target="_tab"
+                    href=@{"https://www.hattrick.org/goto.ashx?path=//Club/Matches/Match.aspx?matchID=" + bestMatch.matchId}>
+                <img class="external_table_img" src="@routes.Assets.versioned("images/external-link.svg")"/>
+            </a>
         </td>
         <td class="value">
             @if(!bestMatch.isHomeMatch) @{bestMatch.hatstats} else @{bestMatch.oppositeHatstats}

@@ -18,6 +18,10 @@
 <a class="header_link" href="@routes.TeamController.teamOverview(details.teamId)">
     <span class="header_link_text">@details.teamName</span>
 </a>
+<a class="header_link external" target="_tab"
+        href=@{"https://www.hattrick.org/goto.ashx?path=/Club/?TeamID=" + details.teamId}>
+    <img class="external_header_img" src="@routes.Assets.versioned("images/external-link-white.svg")"/>
+</a>
 <a class="logo_href" href="@routes.WorldController.overview()">
     <img class="logo" src="@routes.Assets.versioned("images/logo.png")" >
 </a>

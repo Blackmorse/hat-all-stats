@@ -24,6 +24,10 @@
         </td>
         <td class="value">
             @if(surprisingMatch.isHomeMatch) @{surprisingMatch.goals + " : " + surprisingMatch.enemyGoals} else @{surprisingMatch.enemyGoals + " : " + surprisingMatch.goals}
+            <a class="external_table_link" target="_tab"
+                    href=@{"https://www.hattrick.org/goto.ashx?path=//Club/Matches/Match.aspx?matchID=" + surprisingMatch.matchId}>
+                <img class="external_table_img" src="@routes.Assets.versioned("images/external-link.svg")"/>
+            </a>
         </td>
         <td class="value">
             @if(!surprisingMatch.isHomeMatch) @{surprisingMatch.hatstats} else @{surprisingMatch.oppositeHatstats}

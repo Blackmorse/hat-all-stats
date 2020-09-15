@@ -49,6 +49,10 @@
                     <span class="match_rating_entry">
                         <span class="match_rating_entry_text">
                             @webTeamMatch.homeTeamGoals : @webTeamMatch.awayTeamGoals
+                            <a class="external_table_link" target="_tab"
+                                    href=@{"https://www.hattrick.org/goto.ashx?path=//Club/Matches/Match.aspx?matchID=" + webTeamMatch.teamMatchInfo.matchId}>
+                                <img class="external_table_img" src="@routes.Assets.versioned("images/external-link.svg")"/>
+                            </a>
                         </span>
                     </span>
                 </div>

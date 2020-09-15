@@ -31,6 +31,10 @@
     text-decoration: none;
 }
 
+.external {
+    margin: 0 0 0 -5px !important;
+}
+
 .header_link:hover {
     background: #224d14;
 }
@@ -56,4 +60,10 @@
 
 .logo:hover {
     background: #00981e;
+}
+
+.external_header_img {
+    transform: translateY(5px);
+    width: 10px;
+    height: 10px;
 }

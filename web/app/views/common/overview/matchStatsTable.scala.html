@@ -20,9 +20,9 @@
             <th class="value">@messages("table.league")</th>
             <th class="value">@messages("table.team")</th>
             <th class="value">@valueHeader</th>
-            <th class="value">@messages("overview.goals")</th>
+@*            <th class="value">@messages("overview.goals")</th>*@
             <th></th>
-            <th class="value">@messages("overview.goals")</th>
+@*            <th class="value">@messages("overview.goals")</th>*@
             <th class="value">@valueHeader</th>
             <th class="value">@messages("table.team")</th>
         </tr>
@@ -45,9 +45,13 @@
                     @if(matc.isHomeMatch) {@matc.value} else {@matc.oppositeValue}
                 </a>
             </td>
-            <td class="value">@if(matc.isHomeMatch) {@matc.goals} else {@matc.enemyGoals}</td>
-            <td class="value">:</td>
-            <td class="value">@if(matc.isHomeMatch) {@matc.enemyGoals} else {@matc.goals}</td>
+            <td class="value">
+                @if(matc.isHomeMatch) @{matc.goals + " : " + matc.enemyGoals} else @{matc.enemyGoals + " : " + matc.goals}
+                <a class="external_table_link" target="_tab"
+                        href=@{"https://www.hattrick.org/goto.ashx?path=//Club/Matches/Match.aspx?matchID=" + matc.matchId}>
+                    <img class="external_table_img" src="@routes.Assets.versioned("images/external-link.svg")"/>
+                </a>
+            </td>
             <td class="value">
                 <a class="table_link" href="@routes.TeamController.matches(if(matc.isHomeMatch) matc.oppositeTeamId else matc.teamId)">
                     @if(matc.isHomeMatch) {@matc.oppositeValue} else {@matc.value}

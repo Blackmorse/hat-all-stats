@@ -14,6 +14,9 @@
 <a class="header_link" href="@routes.LeagueUnitController.bestTeams(details.leagueUnitId)">
     <span class="header_link_text">@details.leagueUnitName</span>
 </a>
+<a class="header_link external" target="_tab" href=@{"https://www.hattrick.org/goto.ashx?path=/World/Series/Default.aspx?LeagueLevelUnitID=" + details.leagueUnitId}>
+    <img class="external_header_img" src="@routes.Assets.versioned("images/external-link-white.svg")"/>
+</a>
 &#8674;
 <select class="hrefSelect">
     <option class="blank" value>Choose</option>

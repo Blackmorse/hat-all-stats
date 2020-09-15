@@ -5,6 +5,10 @@
 <a class="header_link" href="@routes.LeagueController.overview(details.leagueInfo.league.getLeagueId)">
   <span class="header_link_text">@details.leagueInfo.league.getEnglishName</span>
 </a>
+<a class="header_link external" target="_tab"
+    href=@{"https://www.hattrick.org/goto.ashx?path=/World/Leagues/League.aspx?LeagueID=" + details.leagueInfo.leagueId}>
+  <img class="external_header_img" src="@routes.Assets.versioned("images/external-link-white.svg")"/>
+</a>
 &#8674;
 <select class="hrefSelect">
   <option class="blank" value>Choose</option>
