@@ -2,8 +2,8 @@ package databases
 
 import akka.actor.ActorSystem
 import databases.clickhouse.StatisticsCHRequest
-import javax.inject.{Singleton, Inject}
-import models.clickhouse.{HistoryInfo, Promotion, TeamMatchInfo, TeamRankings}
+import javax.inject.{Inject, Singleton}
+import models.clickhouse.{HistoryInfo, HistoryTeamLeagueUnitInfo, Promotion, TeamMatchInfo, TeamRankings}
 import models.web.{Accumulate, Desc, MultiplyRoundsType, Round, SortingDirection, StatsType}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
@@ -187,6 +187,22 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
         round.foreach(builder.round)
 
         builder.build.as(HistoryInfo.mapper.*)
+    }
+  }
+
+  def historyTeamLeagueUnitInfo(season: Int, leagueId: Int, teamId: Long): Option[HistoryTeamLeagueUnitInfo] = {
+    db.withConnection{ implicit  connection =>
+      val builder = SqlBuilder("""
+           |SELECT
+           |    division_level,
+           |    league_unit_id
+           |FROM hattrick.team_rankings
+           |__where__
+           |LIMIT 1
+           |""".stripMargin)
+        .season(season).leagueId(leagueId).teamId(teamId)
+
+      builder.build.as(HistoryTeamLeagueUnitInfo.historyTeamLeagueUnitInfoMapper.singleOpt)
     }
   }
 

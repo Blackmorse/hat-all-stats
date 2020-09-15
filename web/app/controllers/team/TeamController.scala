@@ -108,21 +108,27 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
     if(teamDetails.getUser.getUserId == 0L) {
       Future(Ok(views.html.team.bot(webDetails)(messages)))
     } else {
-
       val (statisticsParameters, cookies) = defaultService.statisticsParameters(statisticsParametersOpt,
           leagueId = webDetails.leagueInfo.league.getLeagueId,
           statsType = Accumulate,
           sortColumn = "scored")
 
-      val details = fetchWebTeamDetails(teamDetails, teamId)
+      val htRound = hattrick.api.worldDetails().leagueId(webDetails.leagueInfo.leagueId).execute().getLeagueList.get(0).getMatchRound
+
+      val (divisionLevel, leagueUnitId) = if(htRound == 16 || leagueInfoService.leagueInfo.currentSeason(webDetails.leagueInfo.leagueId) > statisticsParameters.season) {
+        val infoOpt = clickhouseDAO.historyTeamLeagueUnitInfo(statisticsParameters.season, webDetails.leagueInfo.leagueId, teamId)
+        infoOpt.map(info => (info.divisionLevel, info.leagueUnitId)).getOrElse((webDetails.divisionLevel, webDetails.leagueUnitId))
+      } else {
+        (webDetails.divisionLevel, webDetails.leagueUnitId)
+      }
 
       StatisticsCHRequest.playerStatsRequest.execute(leagueId = Some(webDetails.leagueInfo.league.getLeagueId),
-        divisionLevel = Some(webDetails.divisionLevel),
-        leagueUnitId = Some(webDetails.leagueUnitId),
+        divisionLevel = Some(divisionLevel),
+        leagueUnitId = Some(leagueUnitId),
         teamId = Some(teamId),
         statisticsParameters = statisticsParameters)
         .map(playerStats => {
-          val viewData = viewDataFactory.create(details = details,
+          val viewData = viewDataFactory.create(details = webDetails,
             func = func,
             statisticsType = Accumulated,
             statisticsParameters = statisticsParameters,
@@ -142,8 +148,6 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
     val team = teamDetails.getTeams.asScala.filter(_.getTeamId == teamId).head
 
     val leagueId = team.getLeague.getLeagueId
-    val divisionLevel = team.getLeagueLevelUnit.getLeagueLevel
-    val leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId
 
     val currentRound = leagueInfoService.leagueInfo.currentRound(leagueId)
 
@@ -153,6 +157,15 @@ class TeamController @Inject()(val controllerComponents: ControllerComponents,
         sortColumn = "rating")
 
     val details = fetchWebTeamDetails(team, statisticsParameters.season)
+
+    val htRound = hattrick.api.worldDetails().leagueId(details.leagueInfo.leagueId).execute().getLeagueList.get(0).getMatchRound
+
+    val (divisionLevel, leagueUnitId) = if(htRound == 16 || leagueInfoService.leagueInfo.currentSeason(details.leagueInfo.leagueId) > statisticsParameters.season) {
+      val infoOpt = clickhouseDAO.historyTeamLeagueUnitInfo(statisticsParameters.season, details.leagueInfo.leagueId, teamId)
+      infoOpt.map(info => (info.divisionLevel, info.leagueUnitId)).getOrElse((details.divisionLevel, details.leagueUnitId))
+    } else {
+      (details.divisionLevel, details.leagueUnitId)
+    }
 
     if (teamDetails.getUser.getUserId == 0L) {
       Future(Ok(views.html.team.bot(details)(messages)))
