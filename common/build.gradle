@@ -15,7 +15,7 @@ publishing {
 }
 
 group = 'com.blackmorse.hattrick'
-version = '0.0.2'
+version = '0.0.3'
 sourceCompatibility = '1.9'
 
 // In this section you declare the dependencies for your production and test code
