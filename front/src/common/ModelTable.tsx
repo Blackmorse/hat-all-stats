@@ -7,8 +7,6 @@ import Cookies from 'js-cookie'
 import PageSizeSelector from './selectors/PageSizeSelector'
 import StatsTypeSelector from './selectors/StatsTypeSelector'
 import SeasonSelector from './selectors/SeasonSelector'
-import { Translation } from 'react-i18next'
-import '../i18n'
 import LevelData from '../rest/models/LevelData';
 
 interface ModelTableState<T> {
@@ -135,12 +133,7 @@ abstract class ModelTable<LevelData, Model> extends React.Component<ModelTablePr
             pageNumber: this.state.statisticsParameters.page,
             isLastPage: this.state.isLastPage
         }
-        return <Translation> 
-        { (t, { i18n }) =>
-        <>
-            <header className="content_header">{t(this.sectionTitle)}</header>
-            <div className="content_body">
-                <section className="statistics_section">               
+        return <section className="statistics_section">               
                     
                     <header className="statistics_header"><span className="statistics_header_triangle">&#x25BC;</span></header>
                     
@@ -174,9 +167,6 @@ abstract class ModelTable<LevelData, Model> extends React.Component<ModelTablePr
                         isLastPage={navigatorProps.isLastPage} 
                         linkAction={(pageNumber) => this.pageSelected(pageNumber)}/> 
                 </section>
-            </div>
-        </>}
-        </Translation>
     }
 }
 

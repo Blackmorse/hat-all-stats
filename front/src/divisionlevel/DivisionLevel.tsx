@@ -3,7 +3,6 @@ import { RouteComponentProps } from 'react-router';
 import { getDivisionLevelData } from '../rest/Client' 
 import DivisionLevelData from '../rest/models/DivisionLevelData';
 import DivisionLevelTopMenu from './DivisionLevelTopMenu'
-import LeftMenu from '../menu/LeftMenu'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import ModelTableDivisionLevelProps from './ModelTableDivisionLevelProps'
 import DivisionLevelTeamHatstats from './DivisionLevelTeamHatstats';
@@ -26,7 +25,6 @@ class DivisionLevel extends PageLayout<Props, DivisionLevelData> {
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
             props => <DivisionLevelLeagueUnits modelTableProps={props}/>)
         super(props, pagesMap)
-        this.state = {leaguePage: PagesEnum.TEAM_HATSTATS}
     }
 
     makeModelProps(levelData: DivisionLevelData): ModelTableProps<DivisionLevelData> {
@@ -45,11 +43,6 @@ class DivisionLevel extends PageLayout<Props, DivisionLevelData> {
     topMenu(): JSX.Element {
         return <DivisionLevelTopMenu divisionLevelData={this.state.levelData} />
     }
-
-    leftMenu(): JSX.Element {
-        return <LeftMenu callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}/>
-    }
-
 }
 
 export default DivisionLevel

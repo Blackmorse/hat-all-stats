@@ -3,7 +3,6 @@ import { RouteComponentProps } from 'react-router';
 import React from 'react';
 import PageLayout from '../common/PageLayout'
 import TopMenu from './LeagueTopMenu';
-import LeftMenu from '../menu/LeftMenu'
 import LeagueLeagueUnits from './LeagueLeagueUnits'
 import { getLeagueData } from '../rest/Client';
 import LeagueData from '../rest/models/LeagueData';
@@ -26,7 +25,6 @@ export class League extends PageLayout<Props, LeagueData> {
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
             props => <LeagueLeagueUnits modelTableProps={props} />)
         super(props, pagesMap)
-        this.state = {leaguePage: PagesEnum.TEAM_HATSTATS}
     }    
 
     makeModelProps(pageData: LeagueData): ModelTableProps<LeagueData> {
@@ -45,9 +43,5 @@ export class League extends PageLayout<Props, LeagueData> {
     topMenu(): JSX.Element {
         return <TopMenu leagueData={this.state.levelData}
             callback={divisionLevel => {this.props.history.push('/league/' + this.state.levelData?.leagueId + '/divisionLevel/' + divisionLevel)}}/>
-    }
-
-    leftMenu() {
-        return <LeftMenu callback={(leaguePage) => this.setState({leaguePage: leaguePage})}/>
     }
 }

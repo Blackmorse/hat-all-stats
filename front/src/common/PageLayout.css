@@ -1,0 +1,14 @@
+.content_header {
+    padding: 5px 5px;
+    margin: 0 0 10px;
+    background: green;
+    border-radius: 3px;
+
+    font-family: 'Merriweather', serif;
+    font-size: 1.0em;
+    color: white;
+}
+
+.content_body {
+    margin: 5px;
+}

@@ -3,6 +3,10 @@ import { PagesEnum } from './enums/PagesEnum'
 import { ModelTableProps } from './ModelTable'
 import React from 'react'
 import LevelData from '../rest/models/LevelData'
+import { Translation } from 'react-i18next'
+import LeftMenu from '../common/menu/LeftMenu'
+import '../i18n'
+import './PageLayout.css'
 
 interface PageLayoutState<Data extends LevelData> {
     leaguePage: PagesEnum,
@@ -16,9 +20,15 @@ abstract class PageLayout<Props, Data extends LevelData> extends Layout<Props, P
         pagesMap: Map<PagesEnum, (props:  ModelTableProps<LevelData>) => JSX.Element>) {
         super(props)
         this.pagesMap = pagesMap
+        this.state = {leaguePage: Array.from(pagesMap)[0][0]}
     }
 
     abstract makeModelProps(levelData: LevelData):  ModelTableProps<LevelData>
+
+    leftMenu(): JSX.Element {
+        return <LeftMenu pages={Array.from(this.pagesMap.keys())} 
+            callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}/>
+    }
 
     content() {
         let res: JSX.Element
@@ -28,7 +38,15 @@ abstract class PageLayout<Props, Data extends LevelData> extends Layout<Props, P
         } else {
             res = <></>
         }
-        return res
+        return <Translation>{
+            (t, { i18n }) => <>
+                <header className="content_header">{t(this.state.leaguePage)}</header>
+                <div className="content_body">
+                    {res}
+                </div>
+            </>
+            }
+            </Translation>
     }
 }
 
