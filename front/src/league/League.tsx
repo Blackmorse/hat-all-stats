@@ -17,7 +17,7 @@ interface MatchParams {
 
 interface Props extends RouteComponentProps<MatchParams> {}
 
-export class League extends PageLayout<Props, LeagueData> {
+class League extends PageLayout<Props, LeagueData> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: ModelTableProps<LeagueData>) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_HATSTATS, 
@@ -27,17 +27,12 @@ export class League extends PageLayout<Props, LeagueData> {
         super(props, pagesMap)
     }    
 
-    makeModelProps(pageData: LeagueData): ModelTableProps<LeagueData> {
-        return new ModelTableLeagueProps(pageData)
+    makeModelProps(levelData: LeagueData): ModelTableProps<LeagueData> {
+        return new ModelTableLeagueProps(levelData)
     }
 
-    componentDidMount() {
-        const oldState = this.state
-        getLeagueData(Number(this.props.match.params.leagueId), leagueData => 
-            this.setState({
-                leaguePage: oldState.leaguePage,
-                levelData: leagueData
-            }))
+    fetchLevelData(props: Props, callback: (data: LeagueData) => void): void {
+        getLeagueData(Number(this.props.match.params.leagueId), callback)
     }
     
     topMenu(): JSX.Element {
@@ -45,3 +40,5 @@ export class League extends PageLayout<Props, LeagueData> {
             callback={divisionLevel => {this.props.history.push('/league/' + this.state.levelData?.leagueId + '/divisionLevel/' + divisionLevel)}}/>
     }
 }
+
+export default League

@@ -7,7 +7,7 @@ class ModelTableDivisionLevelProps implements ModelTableProps<DivisionLevelData>
     constructor(divisionLevelData: DivisionLevelData) {
         this.divisionLevelData = divisionLevelData
     }
-    
+
     leagueId(): number{return this.divisionLevelData.leagueId;}
     currentSeason(): number {return this.divisionLevelData.currentSeason;}
     seasons(): number[] {return this.divisionLevelData.seasons;}

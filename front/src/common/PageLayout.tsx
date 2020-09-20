@@ -8,7 +8,7 @@ import LeftMenu from '../common/menu/LeftMenu'
 import '../i18n'
 import './PageLayout.css'
 
-interface PageLayoutState<Data extends LevelData> {
+export interface PageLayoutState<Data extends LevelData> {
     leaguePage: PagesEnum,
     levelData?: Data
 }
@@ -24,6 +24,18 @@ abstract class PageLayout<Props, Data extends LevelData> extends Layout<Props, P
     }
 
     abstract makeModelProps(levelData: LevelData):  ModelTableProps<LevelData>
+
+    abstract fetchLevelData(props: Props, callback: (data: Data) => void): void
+
+    componentDidMount() {
+        const oldState = this.state
+        this.fetchLevelData(this.props, data => {
+            this.setState({
+                leaguePage: oldState.leaguePage,
+                levelData: data
+            })
+        })
+    }
 
     leftMenu(): JSX.Element {
         return <LeftMenu pages={Array.from(this.pagesMap.keys())} 

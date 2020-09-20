@@ -5,10 +5,16 @@ import '../common/menu/TopMenu.css'
 
 
 interface Props {
-    divisionLevelData?: DivisionLevelData
+    divisionLevelData?: DivisionLevelData,
+    callback: (leagueUnitName: string) => void
 }
 
 class DivisionLevelTopMenu extends React.Component<Props> {
+
+    onChanged = (event: React.FormEvent<HTMLSelectElement>) => {
+        this.props.callback(this.props.divisionLevelData?.divisionLevelName + '.' + event.currentTarget.value)
+      }
+
     render() {
         return <div className="header_inner">
           <Link to={"/league/" + this.props.divisionLevelData?.leagueId} className="header_link">{this.props.divisionLevelData?.leagueName}</Link>
@@ -19,10 +25,10 @@ class DivisionLevelTopMenu extends React.Component<Props> {
           </Link>
           &#8674;
 
-          <select className="href_select">
-              <option>Select...</option>
+          <select className="href_select" onChange={this.onChanged}>
+              <option value={undefined}>Select...</option>
               {Array.from(Array(this.props.divisionLevelData?.leagueUnitsNumber), (_, i) => i + 1).map(leagueUnit => {
-                  return <option>{leagueUnit}</option>
+                  return <option value={leagueUnit}>{leagueUnit}</option>
               })}
           </select>
 

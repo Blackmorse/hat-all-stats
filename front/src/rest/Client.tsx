@@ -5,9 +5,11 @@ import TeamRating from './models/TeamRating'
 import LeagueUnitRating from './models/LeagueUnitRating'
 import StatisticsParameters, { StatsTypeEnum } from './StatisticsParameters'
 import RestTableData from './RestTableData'
+import LeagueUnitRequest from './models/request/LeagueUnitRequest'
 import DivisionLevelRequest from './models/request/DivisionLevelRequest';
 import LeagueRequest from './models/request/LeagueRequest'
 import LevelRequest from './models/request/LevelRequest';
+import LeagueUnitData from './models/LeagueUnitData';
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -21,6 +23,13 @@ export function getDivisionLevelData(leagueId: number, divisionLevel: number,
     .then(response => {
         return response.data
     }).then(model => callback(model)) 
+}
+
+export function getLeagueUnitData(leagueUnitId: number, callback: (leagueUnitData: LeagueUnitData) => void): void {
+    axios.get<LeagueUnitData>('/api/leagueUnit/' + leagueUnitId)
+    .then(response => {
+        return response.data
+    }).then(model => callback(model))
 }
 
 export function getTeamRatings(request: LevelRequest, 
@@ -51,12 +60,24 @@ export function getLeagueUnits(request: LevelRequest,
     })
 }
 
+interface LeagueUnitId {
+    id: number
+}
+
+export function getLeagueUnitIdByName(leagueId: number, leagueUnitName: string, callback: (id: number) => void) {
+    axios.get<LeagueUnitId>('/api/league/' + leagueId + '/leagueUnitName/' + leagueUnitName)
+        .then(response => response.data)
+        .then(leagueUnitId => callback(leagueUnitId.id))
+}
+
 function startUrl(request: LevelRequest): string {
     if (request.type === 'LeagueRequest') {
         return '/api/league/' + (request as LeagueRequest).leagueId 
     } else if (request.type === 'DivisionLevelRequest') {
         return '/api/league/' + (request as DivisionLevelRequest).leagueId + '/divisionLevel/' 
             + (request as DivisionLevelRequest).divisionLevel
+    } else if (request.type === 'LeagueUnitRequest') {
+        return '/api/leagueUnit/' + (request as LeagueUnitRequest).leagueUnitId
     } else {
         return ''
     }

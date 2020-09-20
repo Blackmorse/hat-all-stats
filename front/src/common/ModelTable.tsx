@@ -20,6 +20,7 @@ export interface ModelTablePropsWrapper<LevelData, TableProps extends ModelTable
 }
 
 export interface ModelTableProps<Data extends LevelData> {
+
     leagueId(): number,
     currentSeason(): number,
     seasons(): Array<number>,
@@ -28,14 +29,12 @@ export interface ModelTableProps<Data extends LevelData> {
 }
 
 abstract class ModelTable<LevelData, Model> extends React.Component<ModelTablePropsWrapper<LevelData, ModelTableProps<LevelData>>, ModelTableState<Model>> {
-    private sectionTitle: string;
     private statsTypes: Array<StatsTypeEnum>
 
     constructor(props: ModelTablePropsWrapper<LevelData, ModelTableProps<LevelData>>, sectionTitle: string, 
             defaultSortingField: string, defaultStatsType: StatsType,
             statsTypes: Array<StatsTypeEnum>) {
         super(props)
-        this.sectionTitle = sectionTitle
         this.statsTypes = statsTypes
         
         let pageSizeString = Cookies.get('hattid_page_size')

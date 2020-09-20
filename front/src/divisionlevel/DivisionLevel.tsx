@@ -1,6 +1,6 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { getDivisionLevelData } from '../rest/Client' 
+import { getDivisionLevelData, getLeagueUnitIdByName } from '../rest/Client' 
 import DivisionLevelData from '../rest/models/DivisionLevelData';
 import DivisionLevelTopMenu from './DivisionLevelTopMenu'
 import { PagesEnum } from '../common/enums/PagesEnum';
@@ -25,23 +25,28 @@ class DivisionLevel extends PageLayout<Props, DivisionLevelData> {
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
             props => <DivisionLevelLeagueUnits modelTableProps={props}/>)
         super(props, pagesMap)
+
+        this.leagueUnitSelected=this.leagueUnitSelected.bind(this)
+    }
+
+    fetchLevelData(props: Props, callback: (data: DivisionLevelData) => void): void {
+        getDivisionLevelData(Number(this.props.match.params.leagueId), Number(this.props.match.params.divisionLevel) ,
+        callback)
     }
 
     makeModelProps(levelData: DivisionLevelData): ModelTableProps<DivisionLevelData> {
         return new ModelTableDivisionLevelProps(levelData);
     }
 
-    componentDidMount() {
-        const oldState = this.state
-        getDivisionLevelData(Number(this.props.match.params.leagueId), Number(this.props.match.params.divisionLevel),
-            divisionLevelData => this.setState({
-                levelData: divisionLevelData,
-                leaguePage: oldState.leaguePage
-            }))
+    leagueUnitSelected(leagueUnitName: string) {
+        getLeagueUnitIdByName(Number(this.props.match.params.leagueId), leagueUnitName, id => {
+            this.props.history.push('/leagueUnit/' + id)
+        })
     }
 
     topMenu(): JSX.Element {
-        return <DivisionLevelTopMenu divisionLevelData={this.state.levelData} />
+        return <DivisionLevelTopMenu divisionLevelData={this.state.levelData} 
+            callback={this.leagueUnitSelected}/>
     }
 }
 
