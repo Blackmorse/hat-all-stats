@@ -6,11 +6,7 @@ interface LeagueUnitData extends LevelData {
     divisionLevel: number,
     divisionLevelName: string,
     leagueUnitId: number,
-    leagueUnitName: string,
-    currentRound: number,
-    rounds: Array<number>,
-    currentSeason: number,
-    seasons: Array<number>,
+    leagueUnitName: string
     teams: Array<[number, string]>
 }
 

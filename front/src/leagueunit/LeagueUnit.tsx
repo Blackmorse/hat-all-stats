@@ -2,7 +2,6 @@ import React from 'react'
 import { RouteComponentProps } from 'react-router';
 import LeagueUnitData from '../rest/models/LeagueUnitData';
 import PageLayout from '../common/PageLayout';
-import LevelData from '../rest/models/LevelData';
 import { ModelTableProps } from '../common/ModelTable';
 import ModelTableLeagueUnitProps from './ModelTableLeagueUnitProps'
 import LeagueUnitTopMenu from './LeagueUnitTopMenu';
@@ -32,7 +31,7 @@ class LeagueUnit extends PageLayout<Props, LeagueUnitData> {
         getLeagueUnitData(Number(this.props.match.params.leagueUnitId), callback)
     }
 
-    makeModelProps(levelData: LeagueUnitData): ModelTableProps<LevelData> {
+    makeModelProps(levelData: LeagueUnitData): ModelTableProps<LeagueUnitData> {
         return new ModelTableLeagueUnitProps(levelData)
     }
 

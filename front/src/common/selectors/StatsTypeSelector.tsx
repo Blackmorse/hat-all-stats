@@ -5,7 +5,6 @@ import '../../i18n'
 import { Translation } from 'react-i18next'
 
 interface StatsTypeSelectorProps {
-    currentRound: number
     rounds: Array<number>
     statsTypes: Array<StatsTypeEnum>
     selectedStatType: StatsType

@@ -15,17 +15,36 @@ interface ModelTableState<T> {
     isLastPage: boolean,
 }
 
-export interface ModelTablePropsWrapper<LevelData, TableProps extends ModelTableProps<LevelData>> {
+export interface ModelTablePropsWrapper<Data extends LevelData, TableProps extends ModelTableProps<Data>> {
     modelTableProps: TableProps
 }
 
-export interface ModelTableProps<Data extends LevelData> {
+export abstract class ModelTableProps<Data extends LevelData> {
+    levelData: Data
 
-    leagueId(): number,
-    currentSeason(): number,
-    seasons(): Array<number>,
-    currentRound(): number,
-    rounds(): Array<number>
+    constructor(levelData: Data) {
+        this.levelData = levelData
+    }
+
+    abstract leagueId(): number
+
+    currentSeason(): number {
+        return this.seasonRoundInfo()[this.seasonRoundInfo().length - 1][0]
+    }
+    seasons(): Array<number> {
+        return this.seasonRoundInfo().map(seasonInfo => seasonInfo[0])
+    }
+    currentRound(): number {
+        let rounds = this.seasonRoundInfo()[this.seasonRoundInfo().length - 1][1]
+        return rounds[rounds.length - 1]
+    }
+
+    rounds(seas: number): Array<number> {
+        let r = this.seasonRoundInfo().filter(season => season[0] === seas )
+        return r[0][1]
+    }
+
+    abstract seasonRoundInfo(): Array<[number, Array<number>]>
 }
 
 export interface SortingState {
@@ -34,10 +53,10 @@ export interface SortingState {
     sortingDirection: SortingDirection
 }
 
-abstract class ModelTable<LevelData, Model> extends React.Component<ModelTablePropsWrapper<LevelData, ModelTableProps<LevelData>>, ModelTableState<Model>> {
+abstract class ModelTable<Data extends LevelData, Model> extends React.Component<ModelTablePropsWrapper<Data, ModelTableProps<Data>>, ModelTableState<Model>> {
     private statsTypes: Array<StatsTypeEnum>
 
-    constructor(props: ModelTablePropsWrapper<LevelData, ModelTableProps<LevelData>>, 
+    constructor(props: ModelTablePropsWrapper<Data, ModelTableProps<Data>>, 
             defaultSortingField: string, defaultStatsType: StatsType,
             statsTypes: Array<StatsTypeEnum>) {
         super(props)
@@ -63,7 +82,7 @@ abstract class ModelTable<LevelData, Model> extends React.Component<ModelTablePr
         this.seasonChanged=this.seasonChanged.bind(this);
     }
 
-    abstract fetchEntities(tableProps: ModelTableProps<LevelData>, statisticsParameters: StatisticsParameters, callback: (restTableData: RestTableData<Model>) => void): void
+    abstract fetchEntities(tableProps: ModelTableProps<Data>, statisticsParameters: StatisticsParameters, callback: (restTableData: RestTableData<Model>) => void): void
 
     createColumnHeaders(): JSX.Element {
         const sortingState = {
@@ -156,8 +175,7 @@ abstract class ModelTable<LevelData, Model> extends React.Component<ModelTablePr
                             seasons={this.props.modelTableProps.seasons()}
                             callback={this.seasonChanged}/>
                         <StatsTypeSelector  statsTypes={this.statsTypes}
-                            currentRound={this.props.modelTableProps.currentRound()}
-                            rounds={this.props.modelTableProps.rounds()}
+                            rounds={this.props.modelTableProps.rounds(this.state.statisticsParameters.season)}
                             selectedStatType={this.state.statisticsParameters.statsType}
                             onChanged={this.statTypeChanged}
                             />

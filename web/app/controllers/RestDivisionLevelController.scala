@@ -4,6 +4,8 @@ import databases.ClickhouseDAO
 import databases.clickhouse.StatisticsCHRequest
 import io.swagger.annotations.Api
 import javax.inject.{Inject, Singleton}
+import models.web.rest.LevelData.Rounds
+import models.web.rest.LevelData
 import models.web.{RestStatisticsParameters, RestTableData, StatisticsParameters}
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
@@ -18,10 +20,7 @@ case class RestDivisionLevelData(leagueId: Int,
                                  divisionLevel: Int,
                                  divisionLevelName: String,
                                  leagueUnitsNumber: Int,
-                                 currentRound: Int,
-                                 rounds: Seq[Int],
-                                 currentSeason: Int,
-                                 seasons: Seq[Int])
+                                 seasonRoundInfo: Seq[(Int, Rounds)]) extends LevelData
 
 object RestDivisionLevelData {
   implicit val writes = Json.writes[RestDivisionLevelData]
@@ -35,13 +34,16 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
   def getDivisionLevelData(leagueId: Int, divisionLevel: Int) = Action.async { implicit request =>
     val leagueName = leagueInfoService.leagueInfo(leagueId).league.getEnglishName
     val leagueUnitsNumber = leagueInfoService.leagueNumbersMap(divisionLevel).max
-    val currentRound = leagueInfoService.leagueInfo.currentRound(leagueId)
-    val rounds = leagueInfoService.leagueInfo.rounds(leagueId, leagueInfoService.leagueInfo.currentSeason(leagueId))
-    val currentSeason = leagueInfoService.leagueInfo.currentSeason(leagueId)
-    val seasons = leagueInfoService.leagueInfo.seasons(leagueId)
+    val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId)
 
-    Future(Ok(Json.toJson(RestDivisionLevelData(leagueId, leagueName, divisionLevel, Romans(divisionLevel),
-      leagueUnitsNumber, currentRound, rounds, currentSeason, seasons))))
+    val restDivisionLevelData = RestDivisionLevelData(
+      leagueId = leagueId,
+      leagueName = leagueName,
+      divisionLevel = divisionLevel,
+      divisionLevelName = Romans(divisionLevel),
+      leagueUnitsNumber = leagueUnitsNumber,
+      seasonRoundInfo = seasonRoundInfo)
+    Future(Ok(Json.toJson(restDivisionLevelData)))
   }
 
   def teamHatstats(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>

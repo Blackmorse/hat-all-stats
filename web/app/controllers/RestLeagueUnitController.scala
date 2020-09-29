@@ -6,6 +6,8 @@ import databases.clickhouse.StatisticsCHRequest
 import hattrick.Hattrick
 import io.swagger.annotations.Api
 import javax.inject.Inject
+import models.web.rest.LevelData
+import models.web.rest.LevelData.Rounds
 import models.web.{RestStatisticsParameters, RestTableData, Round, StatisticsParameters}
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
@@ -16,19 +18,14 @@ import collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-case class LeagueUnitData()
-
 case class RestLeagueUnitData(leagueId: Int,
                               leagueName: String,
                               divisionLevel: Int,
                               divisionLevelName: String,
                               leagueUnitId: Long,
                               leagueUnitName: String,
-                              currentRound: Int,
-                              rounds: Seq[Int],
-                              currentSeason: Int,
-                              seasons: Seq[Int],
-                              teams: Seq[(Long, String)])
+                              teams: Seq[(Long, String)],
+                              seasonRoundInfo: Seq[(Int, Rounds)]) extends LevelData
 
 object RestLeagueUnitData {
   implicit val writes = Json.writes[RestLeagueUnitData]
@@ -58,11 +55,8 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
         divisionLevelName = Romans(leagueDetails.getLeagueLevel),
         leagueUnitId = leagueUnitId,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
-        currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),
-        rounds = leagueInfoService.leagueInfo.rounds(leagueDetails.getLeagueId, leagueInfoService.leagueInfo.currentSeason(leagueDetails.getLeagueId)),
-        currentSeason = leagueInfoService.leagueInfo.currentSeason(leagueDetails.getLeagueId),
-        seasons = leagueInfoService.leagueInfo.seasons(leagueDetails.getLeagueId),
-        teams = leagueDetails.getTeams.asScala.map(team => (team.getTeamId.toLong, team.getTeamName)))
+        teams = leagueDetails.getTeams.asScala.map(team => (team.getTeamId.toLong, team.getTeamName)),
+        seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueDetails.getLeagueId))
       )
 
   def getLeagueUnitData(leagueUnitId: Long) = Action.async {implicit request =>

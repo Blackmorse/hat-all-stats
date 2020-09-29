@@ -4,8 +4,9 @@ import com.google.inject.{Inject, Singleton}
 import databases.ClickhouseDAO
 import databases.clickhouse.StatisticsCHRequest
 import hattrick.Hattrick
-import io.swagger.annotations.{Api, ApiModelProperty, ApiOperation, ApiParam}
-import io.swagger.models.parameters.Parameter
+import io.swagger.annotations.Api
+import models.web.rest.LevelData
+import models.web.rest.LevelData.Rounds
 import models.web.{RestStatisticsParameters, RestTableData, StatisticsParameters, ViewDataFactory}
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
@@ -18,10 +19,7 @@ import scala.concurrent.Future
 case class RestLeagueData(leagueId: Int,
                           leagueName: String,
                           divisionLevels: Seq[String],
-                          currentRound: Int,
-                          rounds: Seq[Int],
-                          currentSeason: Int,
-                          seasons: Seq[Int])
+                          seasonRoundInfo: Seq[(Int, Rounds)]) extends LevelData
 
 object RestLeagueData {
   implicit val writes = Json.writes[RestLeagueData]
@@ -43,8 +41,14 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       val rounds = leagueInfoService.leagueInfo.rounds(leagueId, leagueInfoService.leagueInfo.currentSeason(leagueId))
       val currentSeason = leagueInfoService.leagueInfo.currentSeason(leagueId)
       val seasons = leagueInfoService.leagueInfo.seasons(leagueId)
+      val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId)
 
-      Future(Ok(Json.toJson(RestLeagueData(leagueId, leagueName, divisionLevels, currentRound, rounds, currentSeason, seasons))))
+      val restLeagueData = RestLeagueData(
+        leagueId = leagueId,
+        leagueName = leagueName,
+        divisionLevels = divisionLevels,
+        seasonRoundInfo = seasonRoundInfo)
+      Future(Ok(Json.toJson(restLeagueData)))
     }
 
 

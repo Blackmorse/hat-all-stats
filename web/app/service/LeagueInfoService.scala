@@ -74,6 +74,13 @@ class LeagueInfoService @Inject() (val hattrick: Hattrick,
 case class LeaguesInfo(leagueInfo: mutable.Map[Int, LeagueInfo]) {
   def apply(leagueId: Int): LeagueInfo = leagueInfo(leagueId)
 
+  def seasonRoundInfo(leagueId: Int) = {
+    leagueInfo(leagueId).seasonInfo
+      .map{case(season, seasonInfo) => (season, seasonInfo.roundInfo.keys.toSeq.sorted)}
+      .toSeq
+      .sortBy(_._1)
+  }
+
   def seasons(leagueId: Int): Seq[Int] = {
     leagueInfo(leagueId).seasonInfo.keys.toSeq
   }
