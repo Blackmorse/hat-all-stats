@@ -52,7 +52,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         statsType = statsType,
         sortColumn = sortColumn)
 
-      val leagueFixture = hattrick.api.leagueFixtures().season(leagueInfoService.getAbsoluteSeasonFromRelative(statisticsParameters.season, leagueDetails.getLeagueId))
+      val leagueFixture = hattrick.api.leagueFixtures().season(leagueInfoService.getRelativeSeasonFromAbsolute(statisticsParameters.season, leagueDetails.getLeagueId))
         .leagueLevelUnitId(leagueUnitId).execute()
 
       val tillRound = statisticsParameters.statsType match {

@@ -9,6 +9,7 @@ import LeagueUnitTopMenu from './LeagueUnitTopMenu';
 import { getLeagueUnitData } from '../rest/Client'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import LeagueUnitTeamHatstats from './LeagueUnitTeamHatstats'
+import TeamPositionsTable from './TeamPositionsTable';
 
 interface MatchParams {
     leagueUnitId: string
@@ -20,7 +21,10 @@ class LeagueUnit extends PageLayout<Props, LeagueUnitData> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: ModelTableProps<LeagueUnitData>) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_HATSTATS, 
-            props => <LeagueUnitTeamHatstats modelTableProps={props}/>)
+            props => <>
+                <TeamPositionsTable modelTableProps={props} />
+                <LeagueUnitTeamHatstats modelTableProps={props}/>
+                </>)
         super(props, pagesMap)
     }
 

@@ -28,10 +28,16 @@ export interface ModelTableProps<Data extends LevelData> {
     rounds(): Array<number>
 }
 
+export interface SortingState {
+    callback: (sortingField: string) => void,
+    currentSorting: string,
+    sortingDirection: SortingDirection
+}
+
 abstract class ModelTable<LevelData, Model> extends React.Component<ModelTablePropsWrapper<LevelData, ModelTableProps<LevelData>>, ModelTableState<Model>> {
     private statsTypes: Array<StatsTypeEnum>
 
-    constructor(props: ModelTablePropsWrapper<LevelData, ModelTableProps<LevelData>>, sectionTitle: string, 
+    constructor(props: ModelTablePropsWrapper<LevelData, ModelTableProps<LevelData>>, 
             defaultSortingField: string, defaultStatsType: StatsType,
             statsTypes: Array<StatsTypeEnum>) {
         super(props)
@@ -59,7 +65,16 @@ abstract class ModelTable<LevelData, Model> extends React.Component<ModelTablePr
 
     abstract fetchEntities(tableProps: ModelTableProps<LevelData>, statisticsParameters: StatisticsParameters, callback: (restTableData: RestTableData<Model>) => void): void
 
-    abstract columnHeaders(): JSX.Element
+    createColumnHeaders(): JSX.Element {
+        const sortingState = {
+            callback: this.sortingChanged,
+            currentSorting: this.state.statisticsParameters.sortingField,
+            sortingDirection: this.state.statisticsParameters.sortingDirection
+        }
+        return this.columnHeaders(sortingState)
+    }
+
+    abstract columnHeaders(sortingState: SortingState): JSX.Element
 
     abstract columnValues(index: number, model: Model): JSX.Element
 
@@ -153,7 +168,7 @@ abstract class ModelTable<LevelData, Model> extends React.Component<ModelTablePr
                     </div>
                     <table className="statistics_table">
                         <thead>
-                            {this.columnHeaders()}
+                            {this.createColumnHeaders()}
                         </thead>
                         <tbody>
                             {this.state.entities?.map((entity, index) => 

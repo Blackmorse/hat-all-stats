@@ -10,6 +10,7 @@ class DivisionLevelTeamHatstats extends TeamHatstats<ModelTableDivisionLevelProp
     fetchEntities(tableProps: ModelTableDivisionLevelProps, 
             statisticsParameters: StatisticsParameters, 
             callback: (restTableData: RestTableData<TeamRating>) => void): void {
+                
         const divisionLevelRequest: DivisionLevelRequest = {
             type: 'DivisionLevelRequest',
             leagueId: tableProps.leagueId(),

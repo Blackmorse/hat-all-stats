@@ -1,6 +1,5 @@
 import TeamHatstats from '../common/tables/TeamHatstats'
 import ModelTableLeagueUnitProps from './ModelTableLeagueUnitProps'
-import { ModelTableProps } from '../common/ModelTable'
 import StatisticsParameters from '../rest/StatisticsParameters'
 import RestTableData from '../rest/RestTableData'
 import TeamRating from '../rest/models/TeamRating'

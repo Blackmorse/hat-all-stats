@@ -13,14 +13,15 @@ interface SortingState {
 interface ThProps {
     title: string,
     sortingField: string,
-    sortingState: SortingState
+    sortingState: SortingState,
+    poppedHint?: string
 }
 
 class ModelTableTh extends React.Component<ThProps> {
     render() {
         return <Translation>
             {(t, { i18n }) =>
-                <th className="model_table_header value" onClick={() => this.props.sortingState.callback(this.props.sortingField)}>
+                <th className={(this.props.poppedHint) ? "model_table_header value hint" : "model_table_header value"} popped-hint={this.props.poppedHint} onClick={() => this.props.sortingState.callback(this.props.sortingField)}>
                     {t(this.props.title)}
                     {(this.props.sortingField === this.props.sortingState.currentSorting && this.props.sortingState.sortingDirection === SortingDirection.DESC) ? "↓" : ""}
                     {(this.props.sortingField === this.props.sortingState.currentSorting && this.props.sortingState.sortingDirection === SortingDirection.ASC) ? "↑" : ""}

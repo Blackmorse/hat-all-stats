@@ -42,7 +42,7 @@ class LeagueInfoService @Inject() (val hattrick: Hattrick,
       .map(i => Romans(i) -> routes.DivisionLevelController.bestTeams(leagueId, i).url )
   }
 
-  def getAbsoluteSeasonFromRelative(season: Int, leagueId: Int) = leagueInfo(leagueId).league.getSeasonOffset + season
+  def getRelativeSeasonFromAbsolute(season: Int, leagueId: Int) = leagueInfo(leagueId).league.getSeasonOffset + season
 
   val leagueInfo: LeaguesInfo = {
     val leagueIdToCountryNameMap = hattrick.api.worldDetails().execute()

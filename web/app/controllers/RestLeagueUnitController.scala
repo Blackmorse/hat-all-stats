@@ -6,10 +6,10 @@ import databases.clickhouse.StatisticsCHRequest
 import hattrick.Hattrick
 import io.swagger.annotations.Api
 import javax.inject.Inject
-import models.web.{RestStatisticsParameters, RestTableData, StatisticsParameters}
+import models.web.{RestStatisticsParameters, RestTableData, Round, StatisticsParameters}
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
-import service.LeagueInfoService
+import service.{LeagueInfoService, LeagueUnitCalculatorService}
 import utils.Romans
 
 import collection.JavaConverters._
@@ -38,7 +38,8 @@ object RestLeagueUnitData {
 class RestLeagueUnitController @Inject() (val controllerComponents: ControllerComponents,
                                           val leagueInfoService: LeagueInfoService,
                                           val hattrick: Hattrick,
-                                          implicit val clickhouseDAO: ClickhouseDAO) extends BaseController {
+                                          implicit val clickhouseDAO: ClickhouseDAO,
+                                          val leagueUnitCalculatorService: LeagueUnitCalculatorService) extends BaseController {
   case class LongWrapper(id: Long)
   implicit val writes = Json.writes[LongWrapper]
 
@@ -94,5 +95,22 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
       val restTableData = RestTableData(entities, isLastPage)
       Ok(Json.toJson(restTableData))
     })
+  }
+
+  def teamPositions(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>
+    Future{
+      val leagueDetails = hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute()
+
+      val offsettedSeason = leagueInfoService.getRelativeSeasonFromAbsolute(restStatisticsParameters.season, leagueDetails.getLeagueId)
+
+      val leagueFixture = hattrick.api.leagueFixtures().season(offsettedSeason).leagueLevelUnitId(leagueUnitId).execute()
+
+      val round = restStatisticsParameters.statsType.asInstanceOf[Round].round
+
+      val teams = leagueUnitCalculatorService.calculate(leagueFixture, Some(round),
+        restStatisticsParameters.sortBy, restStatisticsParameters.sortingDirection)
+
+      Ok(Json.toJson(RestTableData(teams, true)))
+    }
   }
 }

@@ -3,22 +3,26 @@ package service
 import com.blackmorse.hattrick.api.leaguefixtures.model.{LeagueFixtures, Match}
 import com.blackmorse.hattrick.model.common.{AwayTeam, HomeTeam}
 import javax.inject.Singleton
+import models.web.{Asc, Desc, SortingDirection}
+import play.api.libs.json.Json
 
 import scala.collection.mutable
 import collection.JavaConverters._
+import Ordering.Implicits._
 
 @Singleton
 class LeagueUnitCalculatorService  {
-
-  private implicit val ord = new Ordering[LeagueTeamStatAccumulator] {
-    override def compare(x: LeagueTeamStatAccumulator, y: LeagueTeamStatAccumulator): Int = {
-      if (x.points != y.points) return x.points.compareTo(y.points)
-      if((x.scored - x.missed) != (y.scored - y.missed)) return (x.scored - x.missed).compareTo(y.scored - y.missed)
-      0
+  def orderingFactory[T : Ordering](compField: LeagueTeamStatAccumulator => T): Ordering[LeagueTeamStatAccumulator] =
+    new Ordering[LeagueTeamStatAccumulator] {
+      override def compare(x: LeagueTeamStatAccumulator, y: LeagueTeamStatAccumulator): Int = {
+        if(compField(x) > compField(y)) return -1
+        if(compField(x) < compField(y)) return 1
+        if((x.scored - x.missed) != (y.scored - y.missed)) return (x.scored - x.missed).compareTo(y.scored - y.missed)
+        0
+      }
     }
-  }
 
-  def calculate(leagueFixture: LeagueFixtures, tillRound: Option[Int] = None) = {
+  def calculate(leagueFixture: LeagueFixtures, tillRound: Option[Int] = None, sortingField: String = "points", sortingDirection: SortingDirection = Desc) = {
     val accumulatorMap = mutable.HashMap[Long, LeagueTeamStatAccumulator]()
 
     for (matc <- leagueFixture.getMatches.asScala) {
@@ -30,7 +34,24 @@ class LeagueUnitCalculatorService  {
       }
     }
 
-    accumulatorMap.toSeq.map(_._2).sorted.reverse.zipWithIndex
+    val ordering = sortingField match {
+      case "points" => orderingFactory(_.points)
+      case "teamName" => orderingFactory(_.teamName)
+      case "scored" => orderingFactory(_.scored)
+      case "missed" => orderingFactory(_.missed)
+      case "win" => orderingFactory(_.win)
+      case "draw" => orderingFactory(_.draw)
+      case "lost" => orderingFactory(_.lost)
+    }
+
+    val accumulators = accumulatorMap.toSeq.map(_._2).sorted(ordering)
+
+    val accumulatorDirection = sortingDirection match {
+      case Desc => accumulators.reverse
+      case Asc => accumulators
+    }
+
+    accumulatorDirection.reverse.zipWithIndex
       .map{case (accumulator, index) =>
         LeagueUnitTeamStat(index + 1, accumulator.teamId, accumulator.teamName, accumulator.games, accumulator.scored, accumulator. missed,
           accumulator.win, accumulator.draw, accumulator.lost, accumulator.points)
@@ -67,10 +88,10 @@ class LeagueUnitCalculatorService  {
   }
 }
 
-private case class LeagueTeamStatAccumulator(var teamId: Long, var teamName: String, var games: Int, var scored: Int, var missed: Int,
+case class LeagueTeamStatAccumulator(var teamId: Long, var teamName: String, var games: Int, var scored: Int, var missed: Int,
                                              var win: Int, var draw: Int, var lost: Int, var points: Int)
 
-private object LeagueTeamStatAccumulator {
+object LeagueTeamStatAccumulator {
   def apply(homeTeam: HomeTeam): LeagueTeamStatAccumulator =
     LeagueTeamStatAccumulator(homeTeam.getHomeTeamId, homeTeam.getHomeTeamName, 0 ,0 ,0 ,
       0, 0 ,0 ,0)
@@ -82,3 +103,7 @@ private object LeagueTeamStatAccumulator {
 
 case class LeagueUnitTeamStat(position: Int, teamId: Long, teamName: String, games: Int, scored: Int, missed: Int,
                               win: Int, draw: Int, lost: Int, points: Int)
+
+object LeagueUnitTeamStat {
+  implicit val writes = Json.writes[LeagueUnitTeamStat]
+}

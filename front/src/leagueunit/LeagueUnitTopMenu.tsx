@@ -2,6 +2,7 @@ import React from 'react'
 import LeagueUnitData from '../rest/models/LeagueUnitData'
 import '../common/menu/TopMenu.css'
 import { Link } from 'react-router-dom';
+import '../common/menu/TopMenu.css'
 
 interface Props {
     leagueUnitData?: LeagueUnitData

@@ -20,7 +20,7 @@ class ErrorHandler @Inject()() extends HttpErrorHandler  {
 
   def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     exception.printStackTrace()
-   process(request)
+    process(request)
   }
 
   private def process(request: RequestHeader): Future[Result] = {

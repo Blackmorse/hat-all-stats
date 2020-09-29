@@ -1,6 +1,6 @@
 import React from 'react';
 import TeamRating from '../../rest/models/TeamRating';
-import ModelTable, { ModelTablePropsWrapper, ModelTableProps } from '../../common/ModelTable';
+import ModelTable, { ModelTablePropsWrapper, ModelTableProps, SortingState } from '../../common/ModelTable';
 import ModelTableTh from '../../common/ModelTableTh'
 import '../../i18n'
 import { Translation } from 'react-i18next'
@@ -9,18 +9,11 @@ import LevelData from '../../rest/models/LevelData';
 
 abstract class TeamHatstats<Data extends LevelData> extends ModelTable<Data, TeamRating> {
     constructor(props: ModelTablePropsWrapper<Data, ModelTableProps<Data>>) {
-        super(props, 'menu.best_teams', 
-            'hatstats', {statType: StatsTypeEnum.AVG},
+        super(props, 'hatstats', {statType: StatsTypeEnum.AVG},
             [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }
     
-    columnHeaders(): JSX.Element {
-        const sortingState = {
-            callback: this.sortingChanged,
-            currentSorting: this.state.statisticsParameters.sortingField,
-            sortingDirection: this.state.statisticsParameters.sortingDirection
-        }
-
+    columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
             {
             (t, { i18n }) =>
