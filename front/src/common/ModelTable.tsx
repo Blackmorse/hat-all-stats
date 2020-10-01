@@ -8,11 +8,13 @@ import PageSizeSelector from './selectors/PageSizeSelector'
 import StatsTypeSelector from './selectors/StatsTypeSelector'
 import SeasonSelector from './selectors/SeasonSelector'
 import LevelData from '../rest/models/LevelData';
+import {ClipLoader} from "react-spinners";
 
 interface ModelTableState<T> {
     entities?: Array<T>,
     statisticsParameters: StatisticsParameters,
     isLastPage: boolean,
+    dataLoading: boolean
 }
 
 export interface ModelTablePropsWrapper<Data extends LevelData, TableProps extends ModelTableProps<Data>> {
@@ -73,7 +75,8 @@ abstract class ModelTable<Data extends LevelData, Model> extends React.Component
                 sortingDirection: SortingDirection.DESC,
                 statsType: defaultStatsType,
                 season: this.props.modelTableProps.currentSeason()
-            }
+            },
+            dataLoading: false
         }
 
         this.pageSizeChanged=this.pageSizeChanged.bind(this);
@@ -98,12 +101,21 @@ abstract class ModelTable<Data extends LevelData, Model> extends React.Component
     abstract columnValues(index: number, model: Model): JSX.Element
 
     update(statisticsParameters: StatisticsParameters) {
+        
+        this.setState({
+            entities: this.state.entities,
+            statisticsParameters: this.state.statisticsParameters,
+            isLastPage: this.state.isLastPage,
+            dataLoading: true
+        })
+
         this.fetchEntities(this.props.modelTableProps,
             statisticsParameters,
             restTableData => this.setState({
                 entities: restTableData.entities,
                 statisticsParameters: statisticsParameters,
-                isLastPage: restTableData.isLastPage
+                isLastPage: restTableData.isLastPage,
+                dataLoading: false
             }))
     }
 
@@ -166,8 +178,24 @@ abstract class ModelTable<Data extends LevelData, Model> extends React.Component
             pageNumber: this.state.statisticsParameters.page,
             isLastPage: this.state.isLastPage
         }
+
+        let loadingBlur: JSX.Element
+        if (this.state.dataLoading) {
+            loadingBlur = <div className="blur">
+                <div className="blur_loader">
+                    <ClipLoader
+                        size={"100px"}
+                        color={"#123abc"}
+                        loading={true}
+                    />
+                </div>
+            </div>
+        } else {
+            loadingBlur = <></>
+        }
+
         return <section className="statistics_section">               
-                    
+                    {loadingBlur}
                     <header className="statistics_header"><span className="statistics_header_triangle">&#x25BC;</span></header>
                     
                     <div className="table_settings_div">
