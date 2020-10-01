@@ -1,6 +1,8 @@
 @import controllers.WebTeamDetails
 @import controllers.WebTeamDetails
 @(details: WebTeamDetails)(implicit messages: Messages)
+
+@common.roundInfoBar(details.leagueInfo)
 <div class="left_bar">
     <header class="left_bar_header">@messages("menu.statistics")</header>
     <a class="left_bar_link" href="@routes.TeamController.teamOverview(details.teamId)">@messages("menu.team_overview")</a>

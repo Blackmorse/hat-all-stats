@@ -1,6 +1,8 @@
 @import controllers.WebLeagueUnitDetails
 
 @(details: WebLeagueUnitDetails)(implicit messages: Messages)
+
+@common.roundInfoBar(details.leagueInfo)
 <div class="left_bar">
     <header class="left_bar_header">@messages("menu.statistics")</header>
 

@@ -1,0 +1,10 @@
+@import service.LeagueInfo
+@(leagueInfo: LeagueInfo)(implicit messages: Messages)
+
+<div class="left_bar">
+    <header class="left_bar_header">@leagueInfo.league.getEnglishName</header>
+    <span class="left_bar_link">@messages("filter.season")
+        @{leagueInfo.currentSeason().toLong + leagueInfo.league.getSeasonOffset.toLong} <br>
+            @messages("filter.round") @leagueInfo.currentRound()
+    </span>
+</div>

@@ -9,7 +9,7 @@ import models.web.rest.LevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{RestStatisticsParameters, RestTableData, StatisticsParameters, ViewDataFactory}
 import play.api.libs.json.Json
-import play.api.mvc.{BaseController, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import service.LeagueInfoService
 import utils.Romans
 
@@ -33,22 +33,25 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
                                   val viewDataFactory: ViewDataFactory,
                                   val hattrick: Hattrick) extends BaseController  {
 
-    def getLeagueData(leagueId: Int) = Action.async {implicit request => 
-      val leagueName = leagueInfoService.leagueInfo(leagueId).league.getEnglishName
-      val numberOfDivisions = leagueInfoService.leagueInfo(leagueId).league.getNumberOfLevels
-      val divisionLevels = (1 to numberOfDivisions).map(Romans(_))
-      val currentRound = leagueInfoService.leagueInfo.currentRound(leagueId)
-      val rounds = leagueInfoService.leagueInfo.rounds(leagueId, leagueInfoService.leagueInfo.currentSeason(leagueId))
-      val currentSeason = leagueInfoService.leagueInfo.currentSeason(leagueId)
-      val seasons = leagueInfoService.leagueInfo.seasons(leagueId)
-      val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId)
+    def getLeagueData(leagueId: Int): Action[AnyContent] = {
+      val v = Action.async { implicit request =>
+        val leagueName = leagueInfoService.leagueInfo(leagueId).league.getEnglishName
+        val numberOfDivisions = leagueInfoService.leagueInfo(leagueId).league.getNumberOfLevels
+        val divisionLevels = (1 to numberOfDivisions).map(Romans(_))
+        val currentRound = leagueInfoService.leagueInfo.currentRound(leagueId)
+        val rounds = leagueInfoService.leagueInfo.rounds(leagueId, leagueInfoService.leagueInfo.currentSeason(leagueId))
+        val currentSeason = leagueInfoService.leagueInfo.currentSeason(leagueId)
+        val seasons = leagueInfoService.leagueInfo.seasons(leagueId)
+        val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId)
 
-      val restLeagueData = RestLeagueData(
-        leagueId = leagueId,
-        leagueName = leagueName,
-        divisionLevels = divisionLevels,
-        seasonRoundInfo = seasonRoundInfo)
-      Future(Ok(Json.toJson(restLeagueData)))
+        val restLeagueData = RestLeagueData(
+          leagueId = leagueId,
+          leagueName = leagueName,
+          divisionLevels = divisionLevels,
+          seasonRoundInfo = seasonRoundInfo)
+        Future(Ok(Json.toJson(restLeagueData)))
+      }
+      v
     }
 
 

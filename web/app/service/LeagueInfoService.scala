@@ -86,11 +86,11 @@ case class LeaguesInfo(leagueInfo: mutable.Map[Int, LeagueInfo]) {
   }
 
   def currentSeason(leagueId: Int): Int = {
-    leagueInfo(leagueId).seasonInfo.maxBy(_._1)._1
+    leagueInfo(leagueId).currentSeason()
   }
 
   def currentRound(leagueId: Int): Int = {
-    leagueInfo(leagueId).seasonInfo.maxBy(_._1)._2.roundInfo.maxBy(_._1)._1
+    leagueInfo(leagueId).currentRound()
   }
 
   def rounds(leagueId: Int, season: Int): Seq[Int] = {
@@ -112,7 +112,12 @@ case class LeaguesInfo(leagueInfo: mutable.Map[Int, LeagueInfo]) {
   }
 }
 
-case class LeagueInfo(leagueId: Int, seasonInfo: mutable.Map[Int, SeasonInfo], league: League)
+case class LeagueInfo(leagueId: Int, seasonInfo: mutable.Map[Int, SeasonInfo], league: League) {
+  def currentRound(): Int =
+    seasonInfo.maxBy(_._1)._2.roundInfo.maxBy(_._1)._1
+
+  def currentSeason(): Int = seasonInfo.maxBy(_._1)._1
+}
 
 case class SeasonInfo(season: Int, roundInfo: mutable.Map[Int, RoundInfo])
 
