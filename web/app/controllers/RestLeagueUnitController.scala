@@ -12,11 +12,12 @@ import models.web.{RestStatisticsParameters, RestTableData, Round, StatisticsPar
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents}
 import service.{LeagueInfoService, LeagueUnitCalculatorService}
-import utils.Romans
+import utils.{LeagueNameParser, Romans}
 
 import collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 
 case class RestLeagueUnitData(leagueId: Int,
                               leagueName: String,
@@ -41,9 +42,33 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
   implicit val writes = Json.writes[LongWrapper]
 
   def leagueUnitIdByName(leagueUnitName: String, leagueId: Int) = Action.async{implicit request =>
-    Future(hattrick.api.search().searchLeagueId(leagueId).searchString(leagueUnitName).searchType(SearchType.SERIES).execute())
-      .map(result => result.getSearchResults.get(0).getResultId)
+    Future(findLeagueUnitIdByName(leagueUnitName, leagueId))
       .map(id => Ok(Json.toJson(LongWrapper(id))))
+  }
+
+  private def findLeagueUnitIdByName(leagueUnitName: String, leagueId: Int) = {
+    if(leagueUnitName == "I.1") {
+      higherLeagueMap.get(leagueId).getLeagueUnitId
+    } else {
+      if(leagueId == 1) { //Sweden
+        val (division, number) = LeagueNameParser.getLeagueUnitNumberByName(leagueUnitName)
+        val actualDivision = Romans(Romans(division) - 1)
+        val actualNumber = if (division == "II" || division == "III") {
+          ('a' + number - 1).toChar.toString
+        } else {
+          "." + number.toString
+        }
+        hattrick.api.search()
+          .searchLeagueId(leagueId).searchString(actualDivision + actualNumber).searchType(SearchType.SERIES)
+          .execute()
+          .getSearchResults.get(0).getResultId
+      } else {
+        hattrick.api.search()
+          .searchLeagueId(leagueId).searchString(leagueUnitName).searchType(SearchType.SERIES)
+          .execute()
+          .getSearchResults.get(0).getResultId
+      }
+    }
   }
 
   private def leagueUnitDataFromId(leagueUnitId: Long): Future[RestLeagueUnitData] =
