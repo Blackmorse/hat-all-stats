@@ -36,15 +36,6 @@ class MatchController @Inject()(val controllerComponents: ControllerComponents,
 
       chMatches.map(chMatch => {
         val htMatch = htMatchesMap(chMatch.matchId)
-
-//        val (teamGoals, enemyGoals, enemyTeamName, enemyTeamId) = if (htMatch.getHomeTeam.getHomeTeamId == chMatch.teamId) {
-//          (htMatch.getHomeGoals, htMatch.getAwayGoals, htMatch.getAwayTeam.getAwayTeamName, htMatch.getAwayTeam.getAwayTeamId)
-//        } else {
-//          (htMatch.getAwayGoals, htMatch.getHomeGoals, htMatch.getHomeTeam.getHomeTeamName, htMatch.getHomeTeam.getHomeTeamId)
-//        }
-
-//        WebTeamMatch(chMatch, enemyTeamId, enemyTeamName, teamGoals, enemyGoals)
-
           WebTeamMatch(chMatch, htMatch.getMatchDate,
             htMatch.getHomeTeam.getHomeTeamId, htMatch.getHomeTeam.getHomeTeamName, htMatch.getHomeGoals,
             htMatch.getAwayTeam.getAwayTeamId, htMatch.getAwayTeam.getAwayTeamName, htMatch.getAwayGoals

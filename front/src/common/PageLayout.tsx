@@ -23,7 +23,7 @@ abstract class PageLayout<Props, Data extends LevelData> extends Layout<Props, P
         this.state = {leaguePage: Array.from(pagesMap)[0][0]}
     }
 
-    abstract makeModelProps(levelData: LevelData):  ModelTableProps<Data>
+    abstract makeModelProps(levelData: Data):  ModelTableProps<Data>
 
     abstract fetchLevelData(props: Props, callback: (data: Data) => void): void
 

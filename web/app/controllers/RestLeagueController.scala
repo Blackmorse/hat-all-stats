@@ -33,15 +33,10 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
                                   val viewDataFactory: ViewDataFactory,
                                   val hattrick: Hattrick) extends BaseController  {
 
-    def getLeagueData(leagueId: Int): Action[AnyContent] = {
-      val v = Action.async { implicit request =>
+    def getLeagueData(leagueId: Int): Action[AnyContent] =  Action.async { implicit request =>
         val leagueName = leagueInfoService.leagueInfo(leagueId).league.getEnglishName
         val numberOfDivisions = leagueInfoService.leagueInfo(leagueId).league.getNumberOfLevels
         val divisionLevels = (1 to numberOfDivisions).map(Romans(_))
-        val currentRound = leagueInfoService.leagueInfo.currentRound(leagueId)
-        val rounds = leagueInfoService.leagueInfo.rounds(leagueId, leagueInfoService.leagueInfo.currentSeason(leagueId))
-        val currentSeason = leagueInfoService.leagueInfo.currentSeason(leagueId)
-        val seasons = leagueInfoService.leagueInfo.seasons(leagueId)
         val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId)
 
         val restLeagueData = RestLeagueData(
@@ -51,8 +46,6 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
           seasonRoundInfo = seasonRoundInfo)
         Future(Ok(Json.toJson(restLeagueData)))
       }
-      v
-    }
 
 
     def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>

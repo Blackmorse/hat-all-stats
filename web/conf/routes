@@ -21,6 +21,8 @@ GET     /api/leagueUnit/:leagueUnitId   controllers.RestLeagueUnitController.get
 GET     /api/leagueUnit/:leagueUnitId/teamHatstats  controllers.RestLeagueUnitController.teamHatstats(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/teamPositions controllers.RestLeagueUnitController.teamPositions(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 
+GET     /api/team/:teamId           controllers.RestTeamController.getTeamData(teamId: Long)
+
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.overview(leagueId: Int)
 GET     /league/bestTeams           controllers.LeagueController.bestTeams(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)

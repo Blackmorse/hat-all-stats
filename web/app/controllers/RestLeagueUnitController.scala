@@ -46,7 +46,7 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
       .map(id => Ok(Json.toJson(LongWrapper(id))))
   }
 
-  private def leagueUnitDataFromId(leagueUnitId: Long) =
+  private def leagueUnitDataFromId(leagueUnitId: Long): Future[RestLeagueUnitData] =
     Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
     .map(leagueDetails =>
       RestLeagueUnitData(leagueId = leagueDetails.getLeagueId,

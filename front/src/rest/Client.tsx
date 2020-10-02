@@ -11,6 +11,7 @@ import LeagueRequest from './models/request/LeagueRequest'
 import LevelRequest from './models/request/LevelRequest';
 import LeagueUnitData from './models/LeagueUnitData';
 import TeamPosition from './models/TeamPosition';
+import TeamData from './models/TeamData'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -68,6 +69,12 @@ export function getTeamPositions(request: LeagueUnitRequest, statisticsParameter
     axios.get<RestTableData<TeamPosition>>(startUrl(request) + '/teamPositions?' + params.toString())
         .then(response => response.data)
         .then(model => callback(model))
+}
+
+export function getTeamData(leagueId: number, callback: (teamData: TeamData) => void): void {
+    axios.get<TeamData>('/api/team/' + leagueId)
+        .then(response => response.data)
+        .then(callback)
 }
 
 interface LeagueUnitId {

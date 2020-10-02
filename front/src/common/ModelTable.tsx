@@ -46,7 +46,7 @@ export abstract class ModelTableProps<Data extends LevelData> {
         return r[0][1]
     }
 
-    abstract seasonRoundInfo(): Array<[number, Array<number>]>
+    seasonRoundInfo(): Array<[number, Array<number>]> {return this.levelData.seasonRoundInfo}
 }
 
 export interface SortingState {

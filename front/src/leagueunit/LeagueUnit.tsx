@@ -25,6 +25,8 @@ class LeagueUnit extends PageLayout<Props, LeagueUnitData> {
                 <LeagueUnitTeamHatstats modelTableProps={props}/>
                 </>)
         super(props, pagesMap)
+
+        this.teamIdSelected=this.teamIdSelected.bind(this)
     }
 
     fetchLevelData(props: Props, callback: (data: LeagueUnitData) => void): void {
@@ -35,8 +37,13 @@ class LeagueUnit extends PageLayout<Props, LeagueUnitData> {
         return new ModelTableLeagueUnitProps(levelData)
     }
 
+    teamIdSelected(teamId: number) {
+        this.props.history.push('/team/' + teamId)
+    }
+
     topMenu(): JSX.Element {
-        return <LeagueUnitTopMenu leagueUnitData={this.state.levelData}/>
+        return <LeagueUnitTopMenu leagueUnitData={this.state.levelData}
+          callback={this.teamIdSelected} />
     }
 
 }
