@@ -73,12 +73,14 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
       )
 
     getTeamById(teamId).flatMap(team => {
-      val htRound = hattrick.api.worldDetails().leagueId(team.getLeague.getLeagueId)
+      val league = hattrick.api.worldDetails().leagueId(team.getLeague.getLeagueId)
         .execute()
-        .getLeagueList.get(0).getMatchRound
+        .getLeagueList.get(0)
+      val htRound = league.getMatchRound
 
-      val (divisionLevel: Int, leagueUnitId: Long) = if(htRound == 16 ||
-                leagueInfoService.leagueInfo.currentSeason(team.getLeague.getLeagueId) > statisticsParameters.season) {
+      val (divisionLevel: Int, leagueUnitId: Long) = if(htRound == 16
+                || leagueInfoService.leagueInfo.currentSeason(team.getLeague.getLeagueId) > statisticsParameters.season
+                || league.getSeason - league.getSeasonOffset > statisticsParameters.season) {
         val infoOpt = clickhouseDAO.historyTeamLeagueUnitInfo(statisticsParameters.season, team.getLeague.getLeagueId, teamId)
         infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
           .getOrElse((team.getLeagueLevelUnit.getLeagueLevel, team.getLeagueLevelUnit.getLeagueLevelUnitId))

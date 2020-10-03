@@ -57,7 +57,7 @@ class StatsTypeSelector extends React.Component<StatsTypeSelectorProps> {
             <div className="selector_div">
                 <span className="selector_div_entry">{t('filter.round')}</span>
                 <select className="selector_div_entry" onChange={this.onChanged} 
-                    defaultValue={this.props.selectedStatType.statType.toString() + (this.props.selectedStatType.roundNumber) ? ":" + this.props.selectedStatType.roundNumber : ""}>
+                    defaultValue={this.props.selectedStatType.statType.toString() + ((this.props.selectedStatType.roundNumber) ? ":" + this.props.selectedStatType.roundNumber : "")}>
                     {avgOption}
                     {maxOption}
                     {accumulateOption}
