@@ -1,6 +1,6 @@
 import React from 'react';
 import TeamRating from '../../rest/models/TeamRating';
-import ModelTable, { ModelTablePropsWrapper, ModelTableProps, SortingState } from '../../common/ModelTable';
+import ModelTable, { ModelTablePropsWrapper, SortingState } from '../../common/ModelTable';
 import ModelTableTh from '../../common/ModelTableTh'
 import '../../i18n'
 import { Translation } from 'react-i18next'
@@ -8,7 +8,7 @@ import { StatsTypeEnum } from '../../rest/StatisticsParameters';
 import LevelData from '../../rest/models/LevelData';
 
 abstract class TeamHatstats<Data extends LevelData> extends ModelTable<Data, TeamRating> {
-    constructor(props: ModelTablePropsWrapper<Data, ModelTableProps<Data>>) {
+    constructor(props: ModelTablePropsWrapper<Data>) {
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG},
             [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }

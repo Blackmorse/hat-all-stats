@@ -48,7 +48,7 @@
     background: red;
 }
 
-.statistics_table .card {
+.card {
     display: inline-block;
     width: 8px;
     height: 15px;

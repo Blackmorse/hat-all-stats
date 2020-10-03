@@ -7,6 +7,7 @@ import ModelTableTeamProps from './ModelTableTeamProps';
 import { getTeamData } from '../rest/Client'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import TeamTopMenu from './TeamTopMenu'
+import TeamPlayerStats from './TeamPlayerStats'
 
 interface MatchParams {
     teamId: string
@@ -18,6 +19,7 @@ class Team extends PageLayout<Props, TeamData> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: ModelTableProps<TeamData>) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_OVERVIEW, props => <></>)
+        pagesMap.set(PagesEnum.PLAYER_STATS, props => <TeamPlayerStats modelTableProps={props}/>)
 
         super(props, pagesMap)
     }

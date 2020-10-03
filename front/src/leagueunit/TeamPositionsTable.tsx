@@ -1,6 +1,6 @@
 import React from 'react';
 import LeagueUnitData from '../rest/models/LeagueUnitData'
-import ModelTable, { ModelTableProps, SortingState, ModelTablePropsWrapper } from '../common/ModelTable'
+import ModelTable, { SortingState, ModelTablePropsWrapper } from '../common/ModelTable'
 import StatisticsParameters, { StatsTypeEnum } from '../rest/StatisticsParameters';
 import TeamPosition from '../rest/models/TeamPosition';
 import RestTableData from '../rest/RestTableData';
@@ -13,7 +13,7 @@ import ModelTableTh from '../common/ModelTableTh';
 
 class TeamPositionsTable extends ModelTable<LeagueUnitData, TeamPosition> {
 
-    constructor(props: ModelTablePropsWrapper<LeagueUnitData, ModelTableProps<LeagueUnitData>>) {
+    constructor(props: ModelTablePropsWrapper<LeagueUnitData>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }

@@ -8,10 +8,12 @@ import RestTableData from './RestTableData'
 import LeagueUnitRequest from './models/request/LeagueUnitRequest'
 import DivisionLevelRequest from './models/request/DivisionLevelRequest';
 import LeagueRequest from './models/request/LeagueRequest'
+import TeamRequest from './models/request/TeamRequest'
 import LevelRequest from './models/request/LevelRequest';
 import LeagueUnitData from './models/LeagueUnitData';
 import TeamPosition from './models/TeamPosition';
 import TeamData from './models/TeamData'
+import PlayerStats from './models/PlayerStat'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -77,6 +79,14 @@ export function getTeamData(leagueId: number, callback: (teamData: TeamData) => 
         .then(callback)
 }
 
+export function getPlayerStats(request: LevelRequest, statisticsParameters: StatisticsParameters,
+    callback: (playerStats: RestTableData<PlayerStats>) => void)  {
+        let params = createParameters(statisticsParameters)
+        axios.get<RestTableData<PlayerStats>>(startUrl(request) + '/playerStats?' + params.toString())
+            .then(response => response.data)
+            .then(model => callback(model))
+    }
+
 interface LeagueUnitId {
     id: number
 }
@@ -95,6 +105,8 @@ function startUrl(request: LevelRequest): string {
             + (request as DivisionLevelRequest).divisionLevel
     } else if (request.type === 'LeagueUnitRequest') {
         return '/api/leagueUnit/' + (request as LeagueUnitRequest).leagueUnitId
+    } else if(request.type === 'TeamRequest') { 
+        return '/api/team/' + (request as TeamRequest).teamId
     } else {
         return ''
     }
