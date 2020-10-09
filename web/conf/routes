@@ -23,6 +23,8 @@ GET     /api/leagueUnit/:leagueUnitId/teamPositions controllers.RestLeagueUnitCo
 
 GET     /api/team/:teamId           controllers.RestTeamController.getTeamData(teamId: Long)
 GET     /api/team/:teamId/playerStats    controllers.RestTeamController.playerStats(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/team/:teamId/teamRankings      controllers.RestTeamController.teamRankings(teamId: Long)
+GET     /api/team/:teamId/nearestMatches    controllers.RestTeamController.nearestMatches(teamId: Long)
 
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.overview(leagueId: Int)

@@ -1,4 +1,4 @@
-interface PlayerStats {
+interface PlayerStat {
     playerId: number,
     firstName: string,
     lastName: string,
@@ -16,4 +16,4 @@ interface PlayerStats {
     goalRate: number
 }
 
-export default PlayerStats
+export default PlayerStat

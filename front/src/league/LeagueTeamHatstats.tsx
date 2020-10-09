@@ -7,7 +7,7 @@ import { getTeamRatings } from '../rest/Client';
 import LeagueRequest from '../rest/models/request/LeagueRequest'
 import LeagueData from '../rest/models/LeagueData'
 
-class LeagueTeamHatstats extends TeamHatstats<LeagueData> {
+class LeagueTeamHatstats extends TeamHatstats<LeagueData, ModelTableLeagueProps> {
     fetchEntities(tableProps: ModelTableLeagueProps, statisticsParameters: StatisticsParameters, 
             callback: (restTableData: RestTableData<TeamRating>) => void): void {
         const leagueRequest: LeagueRequest = {type: 'LeagueRequest', leagueId: tableProps.leagueId()}

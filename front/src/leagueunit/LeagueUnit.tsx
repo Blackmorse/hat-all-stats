@@ -2,7 +2,6 @@ import React from 'react'
 import { RouteComponentProps } from 'react-router';
 import LeagueUnitData from '../rest/models/LeagueUnitData';
 import PageLayout from '../common/PageLayout';
-import { ModelTableProps } from '../common/ModelTable';
 import ModelTableLeagueUnitProps from './ModelTableLeagueUnitProps'
 import LeagueUnitTopMenu from './LeagueUnitTopMenu';
 import { getLeagueUnitData } from '../rest/Client'
@@ -16,9 +15,9 @@ interface MatchParams {
 
 interface Props extends RouteComponentProps<MatchParams> {}
 
-class LeagueUnit extends PageLayout<Props, LeagueUnitData> {
+class LeagueUnit extends PageLayout<Props, LeagueUnitData, ModelTableLeagueUnitProps> {
     constructor(props: Props) {
-        const pagesMap = new Map<PagesEnum, (props: ModelTableProps<LeagueUnitData>) => JSX.Element>()
+        const pagesMap = new Map<PagesEnum, (props: ModelTableLeagueUnitProps) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_HATSTATS, 
             props => <>
                 <TeamPositionsTable modelTableProps={props} />
@@ -33,7 +32,7 @@ class LeagueUnit extends PageLayout<Props, LeagueUnitData> {
         getLeagueUnitData(Number(this.props.match.params.leagueUnitId), callback)
     }
 
-    makeModelProps(levelData: LeagueUnitData): ModelTableProps<LeagueUnitData> {
+    makeModelProps(levelData: LeagueUnitData): ModelTableLeagueUnitProps {
         return new ModelTableLeagueUnitProps(levelData)
     }
 

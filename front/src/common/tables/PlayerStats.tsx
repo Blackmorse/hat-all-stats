@@ -1,14 +1,15 @@
 import React from 'react';
 import LevelData from '../../rest/models/LevelData';
-import ModelTable, { ModelTablePropsWrapper, SortingState } from '../ModelTable'
+import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../ModelTable'
 import { StatsTypeEnum } from '../../rest/StatisticsParameters';
 import PlayerStat from '../../rest/models/PlayerStat'
 import { Translation } from 'react-i18next'
 import '../../i18n'
 import ModelTableTh from '../ModelTableTh'
+import { ageFormatter } from '../../common/Formatters'
 
-abstract class PlayerStats<Data extends LevelData> extends ModelTable<Data, PlayerStat> {
-    constructor(props: ModelTablePropsWrapper<Data>) {
+abstract class PlayerStats<Data extends LevelData, TableProps extends ModelTableProps<Data>> extends ModelTable<Data, TableProps, PlayerStat> {
+    constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
         super(props, 'scored', {statType: StatsTypeEnum.ACCUMULATE},
             [StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }
@@ -39,7 +40,7 @@ abstract class PlayerStats<Data extends LevelData> extends ModelTable<Data, Play
             <td>{playerStat.firstName + ' ' + playerStat.lastName}</td>
             <td><a className="table_link" href='/#'>{playerStat.teamName}</a></td>
             <td><a className="table_link" href='/#'>{playerStat.leagueUnitName}</a></td>
-            <td className="value">{Math.floor(playerStat.age / 112)},{playerStat.age % 112}</td>
+            <td className="value">{ageFormatter(playerStat.age)}</td>
             <td className="value">{playerStat.games}</td>
             <td className="value">{playerStat.played}</td>
             <td className="value">{playerStat.scored}</td>

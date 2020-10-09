@@ -8,7 +8,6 @@ import ModelTableDivisionLevelProps from './ModelTableDivisionLevelProps'
 import DivisionLevelTeamHatstats from './DivisionLevelTeamHatstats';
 import DivisionLevelLeagueUnits from './DivisionLevelLeagueUnits'
 import PageLayout from '../common/PageLayout';
-import { ModelTableProps } from '../common/ModelTable';
 
 interface MatchParams {
     leagueId: string,
@@ -17,9 +16,9 @@ interface MatchParams {
 
 interface Props extends RouteComponentProps<MatchParams>{}
 
-class DivisionLevel extends PageLayout<Props, DivisionLevelData> {
+class DivisionLevel extends PageLayout<Props, DivisionLevelData, ModelTableDivisionLevelProps> {
     constructor(props: Props) {
-        const pagesMap = new Map<PagesEnum, (props: ModelTableProps<DivisionLevelData>) => JSX.Element>()
+        const pagesMap = new Map<PagesEnum, (props: ModelTableDivisionLevelProps) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_HATSTATS,
             props => <DivisionLevelTeamHatstats modelTableProps={props}/>)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
@@ -34,7 +33,7 @@ class DivisionLevel extends PageLayout<Props, DivisionLevelData> {
         callback)
     }
 
-    makeModelProps(levelData: DivisionLevelData): ModelTableProps<DivisionLevelData> {
+    makeModelProps(levelData: DivisionLevelData): ModelTableDivisionLevelProps {
         return new ModelTableDivisionLevelProps(levelData);
     }
 

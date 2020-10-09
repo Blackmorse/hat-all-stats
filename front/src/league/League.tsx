@@ -17,9 +17,9 @@ interface MatchParams {
 
 interface Props extends RouteComponentProps<MatchParams> {}
 
-class League extends PageLayout<Props, LeagueData> {
+class League extends PageLayout<Props, LeagueData, ModelTableLeagueProps> {
     constructor(props: Props) {
-        const pagesMap = new Map<PagesEnum, (props: ModelTableProps<LeagueData>) => JSX.Element>()
+        const pagesMap = new Map<PagesEnum, (props: ModelTableLeagueProps) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_HATSTATS, 
             props => <LeagueTeamHatstats modelTableProps={props} />)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,

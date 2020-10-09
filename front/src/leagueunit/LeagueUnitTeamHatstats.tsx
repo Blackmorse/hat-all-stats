@@ -8,7 +8,7 @@ import LeagueUnitRequest from '../rest/models/request/LeagueUnitRequest'
 import LeagueUnitData from '../rest/models/LeagueUnitData'
 
 
-class LeagueUnitTeamHatstats extends TeamHatstats<LeagueUnitData> {
+class LeagueUnitTeamHatstats extends TeamHatstats<LeagueUnitData, ModelTableLeagueUnitProps> {
     fetchEntities(tableProps: ModelTableLeagueUnitProps, 
             statisticsParameters: StatisticsParameters,     
             callback: (restTableData: RestTableData<TeamRating>) => void): void {

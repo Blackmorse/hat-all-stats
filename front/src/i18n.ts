@@ -70,6 +70,7 @@ const resources = {
       "table.total_injury_number": "Total Injury Number",
       "table.average_age_abbr": "AA",
       "table.average_age": "Average age",
+      "table.power_rating": "Power rating",
 
       //team_rankings
       "team_rankings.ranking": "Ranking at ",
@@ -209,6 +210,7 @@ const resources = {
       "table.total_injury_number": "Общее количество травм",
       "table.average_age_abbr": "СВ",
       "table.average_age": "Средний возраст",
+      "table.power_rating": "Power rating",
 
       //team_rankings
       "team_rankings.ranking": "Рейтинг в ",

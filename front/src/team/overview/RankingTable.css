@@ -1,0 +1,87 @@
+.rankings_grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.rankings_grid_row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    height: 160px;
+}
+
+.ranking {
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    border: 1px solid black;
+    margin: 5px;
+    border-radius: 3px;
+    background: #fffbdc;
+}
+
+.rankings_grid_row > .ranking {
+    width: 33%;
+}
+
+.ranking {
+    display: flex;
+    flex-direction: column;
+}
+
+.ranking_name {
+    font-family: 'Merriweather', serif;
+    font-weight: bold;
+    color: white;
+    margin: 0 0 2px 0;
+    height: 20px;
+    border-bottom: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: green;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.ranking_table {
+    height: 120px;
+    width: 100%;
+}
+
+.ranking_row_name {
+    font-family: 'Merriweather', serif;
+    width: 30%;
+    text-align: right;
+    font-size: 0.7em;
+}
+
+.ranking_row_value {
+    width: 35%;
+    text-align: center;
+}
+
+.ranking_row_diff {
+    font-family: 'Merriweather', serif;
+    width: 35%;
+    text-align: left;
+    font-size: 0.7em;
+}
+
+.ranking_row_diff_value {
+    display: flex;
+    align-items: center;
+}
+
+.trend_down {
+    transform: rotate(45deg);
+}
+
+.trend_up {
+    transform: rotate(-45deg);
+}
+
+.max_ranking_teams {
+    font-size: 0.7em;
+}

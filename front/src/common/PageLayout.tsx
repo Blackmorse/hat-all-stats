@@ -13,17 +13,17 @@ export interface PageLayoutState<Data extends LevelData> {
     levelData?: Data
 }
 
-abstract class PageLayout<Props, Data extends LevelData> extends Layout<Props, PageLayoutState<Data>> {
-    pagesMap = new Map<PagesEnum, (props: ModelTableProps<Data>) => JSX.Element>()
+abstract class PageLayout<Props, Data extends LevelData, TableProps extends ModelTableProps<Data>> extends Layout<Props, PageLayoutState<Data>> {
+    pagesMap = new Map<PagesEnum, (props: TableProps) => JSX.Element>()
 
     constructor(props: Props,
-        pagesMap: Map<PagesEnum, (props:  ModelTableProps<Data>) => JSX.Element>) {
+        pagesMap: Map<PagesEnum, (props:  TableProps) => JSX.Element>) {
         super(props)
         this.pagesMap = pagesMap
         this.state = {leaguePage: Array.from(pagesMap)[0][0]}
     }
 
-    abstract makeModelProps(levelData: Data):  ModelTableProps<Data>
+    abstract makeModelProps(levelData: Data): TableProps
 
     abstract fetchLevelData(props: Props, callback: (data: Data) => void): void
 

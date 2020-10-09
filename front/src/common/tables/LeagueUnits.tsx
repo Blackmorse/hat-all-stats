@@ -1,15 +1,15 @@
 import React from 'react';
 import LeagueUnitRating from '../../rest/models/LeagueUnitRating'
-import ModelTable, { ModelTablePropsWrapper, SortingState } from '../ModelTable'
+import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../ModelTable'
 import ModelTableTh from '../ModelTableTh'
 import { Translation } from 'react-i18next'
 import '../../i18n'
 import { StatsTypeEnum } from '../../rest/StatisticsParameters';
 import LevelData from '../../rest/models/LevelData';
 
-abstract class LeagueUnits<Data extends LevelData> extends ModelTable<Data, LeagueUnitRating> {
+abstract class LeagueUnits<Data extends LevelData, TableProps extends ModelTableProps<Data>> extends ModelTable<Data, TableProps ,LeagueUnitRating> {
 
-    constructor(props: ModelTablePropsWrapper<Data>) {
+    constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG}, 
             [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }

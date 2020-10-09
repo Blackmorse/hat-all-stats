@@ -7,7 +7,7 @@ import PlayerStat from "../rest/models/PlayerStat"
 import TeamRequest from '../rest/models/request/TeamRequest'
 import { getPlayerStats } from '../rest/Client'
 
-class TeamPlayerStats extends PlayerStats<TeamData> {
+class TeamPlayerStats extends PlayerStats<TeamData, ModelTableTeamProps> {
     fetchEntities(tableProps: ModelTableTeamProps, 
             statisticsParameters: StatisticsParameters, 
             callback: (restTableData: RestTableData<PlayerStat>) => void): void {

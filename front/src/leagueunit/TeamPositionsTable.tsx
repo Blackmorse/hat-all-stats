@@ -11,9 +11,9 @@ import '../i18n'
 import { Translation } from 'react-i18next'
 import ModelTableTh from '../common/ModelTableTh';
 
-class TeamPositionsTable extends ModelTable<LeagueUnitData, TeamPosition> {
+class TeamPositionsTable extends ModelTable<LeagueUnitData, ModelTableLeagueUnitProps, TeamPosition> {
 
-    constructor(props: ModelTablePropsWrapper<LeagueUnitData>) {
+    constructor(props: ModelTablePropsWrapper<LeagueUnitData, ModelTableLeagueUnitProps>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }

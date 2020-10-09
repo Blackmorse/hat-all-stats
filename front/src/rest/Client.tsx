@@ -14,6 +14,8 @@ import LeagueUnitData from './models/LeagueUnitData';
 import TeamPosition from './models/TeamPosition';
 import TeamData from './models/TeamData'
 import PlayerStats from './models/PlayerStat'
+import TeamRankingsStats from './models/TeamRankingsStats'
+import { NearestMatches } from './models/NearestMatch';
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -87,6 +89,12 @@ export function getPlayerStats(request: LevelRequest, statisticsParameters: Stat
             .then(model => callback(model))
     }
 
+export function getTeamRankings(request: LevelRequest, callback: (teamRankingsStats: TeamRankingsStats) => void) {
+    axios.get<TeamRankingsStats>(startUrl(request) + '/teamRankings')
+        .then(response => response.data)
+        .then(entities => callback(entities))
+}
+
 interface LeagueUnitId {
     id: number
 }
@@ -95,6 +103,12 @@ export function getLeagueUnitIdByName(leagueId: number, leagueUnitName: string, 
     axios.get<LeagueUnitId>('/api/league/' + leagueId + '/leagueUnitName/' + leagueUnitName)
         .then(response => response.data)
         .then(leagueUnitId => callback(leagueUnitId.id))
+}
+
+export function getNearestMatches(request: TeamRequest, callback: (nearestMatches: NearestMatches) => void) {
+    axios.get<NearestMatches>('/api/team/' + request.teamId + "/nearestMatches")
+        .then(response => response.data)
+        .then(nearestMatches => callback(nearestMatches))
 }
 
 function startUrl(request: LevelRequest): string {

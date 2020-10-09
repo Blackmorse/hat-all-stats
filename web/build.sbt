@@ -17,6 +17,8 @@ libraryDependencies += "com.blackmorse.hattrick" % "hattrick-common" % "0.0.3"
 libraryDependencies += jdbc
 libraryDependencies += "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
 
+libraryDependencies += "ai.x" %% "play-json-extensions" % "0.42.0"
+
 
 libraryDependencies += "org.playframework.anorm" %% "anorm" % "2.6.2"
 libraryDependencies += caffeine

@@ -11,7 +11,6 @@ interface Props {
 
 class DivisionLevelTopMenu extends TopMenu<Props> {
     
-
     onChanged = (event: React.FormEvent<HTMLSelectElement>) => {
         this.props.callback(this.props.divisionLevelData?.divisionLevelName + '.' + event.currentTarget.value)
       }

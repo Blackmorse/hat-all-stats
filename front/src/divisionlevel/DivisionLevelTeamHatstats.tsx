@@ -7,7 +7,7 @@ import RestTableData from '../rest/RestTableData'
 import TeamRating from '../rest/models/TeamRating';
 import DivisionLevelData from '../rest/models/DivisionLevelData';
 
-class DivisionLevelTeamHatstats extends TeamHatstats<DivisionLevelData> {
+class DivisionLevelTeamHatstats extends TeamHatstats<DivisionLevelData, ModelTableDivisionLevelProps> {
     fetchEntities(tableProps: ModelTableDivisionLevelProps, 
             statisticsParameters: StatisticsParameters, 
             callback: (restTableData: RestTableData<TeamRating>) => void): void {

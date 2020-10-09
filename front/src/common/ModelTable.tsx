@@ -17,8 +17,8 @@ interface ModelTableState<T> {
     dataLoading: boolean
 }
 
-export interface ModelTablePropsWrapper<Data extends LevelData> {
-    modelTableProps: ModelTableProps<Data>
+export interface ModelTablePropsWrapper<Data extends LevelData, TableProps extends ModelTableProps<Data>> {
+    modelTableProps: TableProps
 }
 
 export abstract class ModelTableProps<Data extends LevelData> {
@@ -55,10 +55,10 @@ export interface SortingState {
     sortingDirection: SortingDirection
 }
 
-abstract class ModelTable<Data extends LevelData, Model> extends React.Component<ModelTablePropsWrapper<Data>, ModelTableState<Model>> {
+abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableProps<Data>, Model> extends React.Component<ModelTablePropsWrapper<Data, TableProps>, ModelTableState<Model>> {
     private statsTypes: Array<StatsTypeEnum>
 
-    constructor(props: ModelTablePropsWrapper<Data>, 
+    constructor(props: ModelTablePropsWrapper<Data, TableProps>, 
             defaultSortingField: string, defaultStatsType: StatsType,
             statsTypes: Array<StatsTypeEnum>) {
         super(props)

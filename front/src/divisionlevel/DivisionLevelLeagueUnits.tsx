@@ -7,7 +7,7 @@ import { getLeagueUnits } from '../rest/Client'
 import DivisionLevelRequest from '../rest/models/request/DivisionLevelRequest'
 import DivisionLevelData from '../rest/models/DivisionLevelData'
 
-class DivisionLevelLeagueUnits extends LeagueUnits<DivisionLevelData> {
+class DivisionLevelLeagueUnits extends LeagueUnits<DivisionLevelData, ModelTableDivisionLevelProps> {
     fetchEntities(tableProps: ModelTableDivisionLevelProps, 
             statisticsParameters: StatisticsParameters, 
             callback: (restTableData: RestTableData<LeagueUnitRating>) => void): void {

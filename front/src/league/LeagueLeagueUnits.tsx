@@ -4,9 +4,11 @@ import LeagueRequest from '../rest/models/request/LeagueRequest'
 import { getLeagueUnits } from '../rest/Client'
 import ModelTableLeagueProps from './ModelTableLeagueProps'
 import LeagueData from '../rest/models/LeagueData'
+import RestTableData from '../rest/RestTableData'
+import LeagueUnitRating from '../rest/models/LeagueUnitRating'
 
-class LeagueLeagueUnits extends LeagueUnits<LeagueData> {
-    fetchEntities(tableProps: ModelTableLeagueProps, statisticsParameters: StatisticsParameters, callback: (restTableData: import("../rest/RestTableData").default<import("../rest/models/LeagueUnitRating").default>) => void): void {
+class LeagueLeagueUnits extends LeagueUnits<LeagueData, ModelTableLeagueProps> {
+    fetchEntities(tableProps: ModelTableLeagueProps, statisticsParameters: StatisticsParameters, callback: (restTableData: RestTableData<LeagueUnitRating>) => void): void {
         const leagueRequest: LeagueRequest = {type: 'LeagueRequest', leagueId: tableProps.leagueId()}
         getLeagueUnits(leagueRequest, statisticsParameters, callback)
     }
