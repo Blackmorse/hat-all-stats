@@ -7,7 +7,9 @@
 }
 
 .section_row_half_element {
+    position: relative;
     width: 50%;
+    min-height: 100px;
 }
 
 .statistics_section_inner {

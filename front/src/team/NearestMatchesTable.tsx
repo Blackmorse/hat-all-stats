@@ -9,15 +9,18 @@ import ModelTableTeamProps from './ModelTableTeamProps';
 import TeamRequest from '../rest/models/request/TeamRequest';
 import { getNearestMatches } from '../rest/Client'
 import moment from 'moment'
+import Blur from '../common/widgets/Blur'
+
 interface State {
     nearestMatches?: NearestMatches
+    dataLoading: boolean
 }
 
 class NearestMatchesTable extends React.Component<ModelTablePropsWrapper<TeamData, ModelTableTeamProps>, State> {
 
     constructor(props: ModelTablePropsWrapper<TeamData, ModelTableTeamProps>) {
         super(props)
-        this.state= {}
+        this.state = {dataLoading: false}
     }
 
     componentDidMount() {
@@ -25,7 +28,9 @@ class NearestMatchesTable extends React.Component<ModelTablePropsWrapper<TeamDat
             type: 'TeamRequest',
             teamId: this.props.modelTableProps.teamId()
         }
-        getNearestMatches(request, nearestMatches => this.setState({nearestMatches: nearestMatches}))
+        this.setState({nearestMatches: this.state.nearestMatches,
+                dataLoading: true})
+        getNearestMatches(request, nearestMatches => this.setState({nearestMatches: nearestMatches, dataLoading: false}))
     }
 
     matchTableRow(nearestMatch: NearestMatch): JSX.Element {
@@ -47,8 +52,8 @@ class NearestMatchesTable extends React.Component<ModelTablePropsWrapper<TeamDat
         let playedMatches: JSX.Element
         let upcomingMatches: JSX.Element
         if(!this.state.nearestMatches) {
-            playedMatches = <></>
-            upcomingMatches = <></>
+            playedMatches = <Blur dataLoading={true}/>
+            upcomingMatches = <Blur dataLoading={true} />
         } else {
             playedMatches = <>{this.state.nearestMatches?.playedMatches.map(this.matchTableRow)}</>
             upcomingMatches = <>{this.state.nearestMatches?.upcomingMatches.map(this.matchTableRow)}</>

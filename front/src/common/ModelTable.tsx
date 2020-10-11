@@ -8,7 +8,7 @@ import PageSizeSelector from './selectors/PageSizeSelector'
 import StatsTypeSelector from './selectors/StatsTypeSelector'
 import SeasonSelector from './selectors/SeasonSelector'
 import LevelData from '../rest/models/LevelData';
-import {ClipLoader} from "react-spinners";
+import Blur from '../common/widgets/Blur'
 
 interface ModelTableState<T> {
     entities?: Array<T>,
@@ -179,23 +179,8 @@ abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableP
             isLastPage: this.state.isLastPage
         }
 
-        let loadingBlur: JSX.Element
-        if (this.state.dataLoading) {
-            loadingBlur = <div className="blur">
-                <div className="blur_loader">
-                    <ClipLoader
-                        size={"100px"}
-                        color={"#123abc"}
-                        loading={true}
-                    />
-                </div>
-            </div>
-        } else {
-            loadingBlur = <></>
-        }
-
         return <section className="statistics_section">               
-                    {loadingBlur}
+                    <Blur dataLoading={this.state.dataLoading} />
                     <header className="statistics_header"><span className="statistics_header_triangle">&#x25BC;</span></header>
                     
                     <div className="table_settings_div">

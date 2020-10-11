@@ -9,6 +9,7 @@ import '../i18n'
 import RankingTable from './overview/RankingTable'
 import TeamRankingsStats from '../rest/models/TeamRankingsStats';
 import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter } from '../common/Formatters'
+import Blur from '../common/widgets/Blur'
 
 interface State {
     teamRankingsStats?: TeamRankingsStats
@@ -35,8 +36,10 @@ class TeamRankingsTable extends React.Component<ModelTablePropsWrapper<TeamData,
 
     render() {
         
-        if(!this.state.teamRankingsStats) {
-            return <></>
+        if(this.state.dataLoading || !this.state.teamRankingsStats) {
+            return <section className="statistics_section">
+                <Blur dataLoading={true}/>
+            </section>
         }
 
         let leagueTeamsCount = this.state.teamRankingsStats.leagueTeamsCount
@@ -65,6 +68,7 @@ class TeamRankingsTable extends React.Component<ModelTablePropsWrapper<TeamData,
 
         return <Translation>{
             (t, { i18n }) => <section className="statistics_section">
+                <Blur dataLoading={this.state.dataLoading}/>
                 <header className="statistics_header">
                     <span className="statistics_header_triangle">&#x25BC; {t('menu.team_rankings')}</span>
                 </header>
