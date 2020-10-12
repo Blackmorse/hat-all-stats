@@ -77,18 +77,6 @@
     margin-left: 10px;
 }
 
-.table_link:visited,
-.table_link:active,
-.table_link {
-    color: black;
-    text-decoration: underline;
-}
-
-.table_link:hover {
-    text-decoration: none;
-    cursor: pointer;
-}
-
 .position {
     width: 20px;
 }

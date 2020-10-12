@@ -3,7 +3,7 @@ interface PlayerStat {
     firstName: string,
     lastName: string,
     teamId: number,
-    teamName: String,
+    teamName: string,
     leagueUnitId: number,
     leagueUnitName: string,
     age: number,

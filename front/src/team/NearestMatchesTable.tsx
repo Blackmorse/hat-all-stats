@@ -10,6 +10,7 @@ import TeamRequest from '../rest/models/request/TeamRequest';
 import { getNearestMatches } from '../rest/Client'
 import moment from 'moment'
 import Blur from '../common/widgets/Blur'
+import TeamLink from '../common/links/TeamLink'
 
 interface State {
     nearestMatches?: NearestMatches
@@ -33,6 +34,10 @@ class NearestMatchesTable extends React.Component<ModelTablePropsWrapper<TeamDat
         getNearestMatches(request, nearestMatches => this.setState({nearestMatches: nearestMatches, dataLoading: false}))
     }
 
+    refresh() {
+        setTimeout( () => {window.location.reload()}, 100)
+    }
+
     matchTableRow(nearestMatch: NearestMatch): JSX.Element {
         let result: string
         if(nearestMatch.status === "FINISHED") {
@@ -40,11 +45,16 @@ class NearestMatchesTable extends React.Component<ModelTablePropsWrapper<TeamDat
         } else {
             result = "-:-"
         }
+
+        //**cking workaround. Can't update the page.... 
+        let refresh = () => {
+            setTimeout( () => {window.location.reload()}, 100)
+        }
         return <tr key={"nearest_match_" + nearestMatch.matchId}>
             <td className="matches_date">{moment(nearestMatch.matchDate).format('DD.MM.YYYY')}</td>
-            <td className="matches_team">{nearestMatch.homeTeamName}</td>
+            <td className="matches_team"><TeamLink name={nearestMatch.homeTeamName} id={nearestMatch.homeTeamId} callback={() => refresh()}/></td>
             <td className="matches_result">{result}</td>
-            <td className="matches_team">{nearestMatch.awayTeamName}</td>
+            <td className="matches_team"><TeamLink name={nearestMatch.awayTeamName} id={nearestMatch.awayTeamId} callback={() => refresh()}/></td>
         </tr>
     }
 

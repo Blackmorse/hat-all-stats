@@ -7,6 +7,8 @@ import { Translation } from 'react-i18next'
 import '../../i18n'
 import ModelTableTh from '../ModelTableTh'
 import { ageFormatter } from '../../common/Formatters'
+import LeagueUnitLink from '../links/LeagueUnitLink'
+import TeamLink from '../links/TeamLink'
 
 abstract class PlayerStats<Data extends LevelData, TableProps extends ModelTableProps<Data>> extends ModelTable<Data, TableProps, PlayerStat> {
     constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
@@ -38,8 +40,8 @@ abstract class PlayerStats<Data extends LevelData, TableProps extends ModelTable
         return <tr key={"player_stats_row" + index}>
             <td>{index + 1}</td>
             <td>{playerStat.firstName + ' ' + playerStat.lastName}</td>
-            <td><a className="table_link" href='/#'>{playerStat.teamName}</a></td>
-            <td><a className="table_link" href='/#'>{playerStat.leagueUnitName}</a></td>
+            <td><TeamLink id={playerStat.teamId} name={playerStat.teamName} /></td>
+            <td><LeagueUnitLink id={playerStat.leagueUnitId} name={playerStat.leagueUnitName} /></td>
             <td className="value">{ageFormatter(playerStat.age)}</td>
             <td className="value">{playerStat.games}</td>
             <td className="value">{playerStat.played}</td>

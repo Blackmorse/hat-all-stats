@@ -10,6 +10,7 @@ import { getTeamPositions } from '../rest/Client'
 import '../i18n'
 import { Translation } from 'react-i18next'
 import ModelTableTh from '../common/ModelTableTh';
+import TeamLink from '../common/links/TeamLink'
 
 class TeamPositionsTable extends ModelTable<LeagueUnitData, ModelTableLeagueUnitProps, TeamPosition> {
 
@@ -48,7 +49,7 @@ class TeamPositionsTable extends ModelTable<LeagueUnitData, ModelTableLeagueUnit
     columnValues(index: number, teamPosition: TeamPosition): JSX.Element {
         return <tr key={"team_positions_row" + index}>
             <td>{index + 1}</td>
-            <td><a className="table_link" href="/#">{teamPosition.teamName}</a></td>
+            <td><TeamLink id={teamPosition.teamId} name={teamPosition.teamName} /></td>
             <td className="value">{teamPosition.games}</td>
             <td className="value">{teamPosition.win}</td>
             <td className="value">{teamPosition.draw}</td>

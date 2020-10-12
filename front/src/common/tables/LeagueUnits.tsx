@@ -6,6 +6,7 @@ import { Translation } from 'react-i18next'
 import '../../i18n'
 import { StatsTypeEnum } from '../../rest/StatisticsParameters';
 import LevelData from '../../rest/models/LevelData';
+import LeagueUnitLink from '../links/LeagueUnitLink'
 
 abstract class LeagueUnits<Data extends LevelData, TableProps extends ModelTableProps<Data>> extends ModelTable<Data, TableProps ,LeagueUnitRating> {
 
@@ -31,7 +32,7 @@ abstract class LeagueUnits<Data extends LevelData, TableProps extends ModelTable
     columnValues(index: number, leagueUnitRating: LeagueUnitRating): JSX.Element {
         return <tr key={"league_unit_row_" + index}>
             <td>{index + 1}</td>
-            <td className="value"><a className="table_link" href="/#">{leagueUnitRating.leagueUnitName}</a></td>
+            <td className="value"><LeagueUnitLink id={leagueUnitRating.leagueUnitId} name={leagueUnitRating.leagueUnitName}/></td>
             <td className="value">{leagueUnitRating.hatStats}</td>
             <td className="value">{leagueUnitRating.midfield * 3}</td>
             <td className="value">{leagueUnitRating.defense}</td>

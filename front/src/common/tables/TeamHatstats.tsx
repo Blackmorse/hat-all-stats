@@ -6,6 +6,8 @@ import '../../i18n'
 import { Translation } from 'react-i18next'
 import { StatsTypeEnum } from '../../rest/StatisticsParameters';
 import LevelData from '../../rest/models/LevelData';
+import LeagueUnitLink from '../links/LeagueUnitLink';
+import TeamLink from '../links/TeamLink'
 
 abstract class TeamHatstats<Data extends LevelData, TableProps extends ModelTableProps<Data>> extends ModelTable<Data, TableProps, TeamRating> {
     constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
@@ -33,8 +35,8 @@ abstract class TeamHatstats<Data extends LevelData, TableProps extends ModelTabl
     columnValues(index: number, teamRating: TeamRating): JSX.Element {
         return <tr key={"team_hatstats_row_" + index}>
             <td>{index + 1}</td>
-            <td><a className="table_link" href="/#">{teamRating.teamName}</a></td>
-            <td className="value"><a className="table_link" href="/#">{teamRating.leagueUnitName}</a></td>
+            <td><TeamLink id={teamRating.teamId} name={teamRating.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={teamRating.leagueUnitId} name={teamRating.leagueUnitName}/></td>
             <td className="value">{teamRating.hatStats}</td>
             <td className="value">{teamRating.midfield * 3}</td>
             <td className="value">{teamRating.defense}</td>
