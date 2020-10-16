@@ -9,37 +9,52 @@ import '../i18n'
 import RankingTable from './overview/RankingTable'
 import TeamRankingsStats from '../rest/models/TeamRankingsStats';
 import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter } from '../common/Formatters'
-import Blur from '../common/widgets/Blur'
+import StatisticsSection from '../common/StatisticsSection'
 
 interface State {
     teamRankingsStats?: TeamRankingsStats
-    dataLoading: boolean
+    dataLoading: boolean,
+    isError: boolean
 }
 
-class TeamRankingsTable extends React.Component<ModelTablePropsWrapper<TeamData, ModelTableTeamProps>, State> {
+class TeamRankingsTable extends StatisticsSection<ModelTablePropsWrapper<TeamData, ModelTableTeamProps>, State> {
     constructor(props: ModelTablePropsWrapper<TeamData, ModelTableTeamProps>) {
-        super(props)
-        this.state = {dataLoading: false}
+        super(props, "menu.team_rankings")
+        this.state = {
+            dataLoading: false,
+            isError: false
+        }
+        this.updateCurrent=this.updateCurrent.bind(this);
+    }
+
+
+    updateCurrent(): void {
+        this.componentDidMount()
     }
 
     componentDidMount() {
         const teamRequest: TeamRequest = {type: 'TeamRequest', teamId: this.props.modelTableProps.teamId()}
         this.setState({
             teamRankingsStats: this.state.teamRankingsStats,
-            dataLoading: true
+            dataLoading: true,
+            isError: false
         })
 
 
         getTeamRankings(teamRequest, 
-            teamRankingsStats => this.setState({teamRankingsStats: teamRankingsStats, dataLoading: false}))
+            teamRankingsStats => this.setState({teamRankingsStats: teamRankingsStats, 
+                dataLoading: false,
+                isError: false}),
+                () => this.setState({
+                    teamRankingsStats: this.state.teamRankingsStats,
+                    dataLoading: false,
+                    isError: true
+                }))
     }
 
-    render() {
-        
-        if(this.state.dataLoading || !this.state.teamRankingsStats) {
-            return <section className="statistics_section">
-                <Blur dataLoading={true}/>
-            </section>
+    renderSection(): JSX.Element {
+        if(this.state.dataLoading || !this.state.teamRankingsStats || this.state.isError) {
+                return <></>
         }
 
         let leagueTeamsCount = this.state.teamRankingsStats.leagueTeamsCount
@@ -67,11 +82,7 @@ class TeamRankingsTable extends React.Component<ModelTablePropsWrapper<TeamData,
         }
 
         return <Translation>{
-            (t, { i18n }) => <section className="statistics_section">
-                <Blur dataLoading={this.state.dataLoading}/>
-                <header className="statistics_header">
-                    <span className="statistics_header_triangle">&#x25BC; {t('menu.team_rankings')}</span>
-                </header>
+            (t, { i18n }) => <>
                 <div className="rankings_grid">
                     <div className="rankings_grid_row">
                         <RankingTable 
@@ -166,7 +177,7 @@ class TeamRankingsTable extends React.Component<ModelTablePropsWrapper<TeamData,
                         />
                     </div>
                 </div>
-            </section>
+            </>
             }
         </Translation>
     }

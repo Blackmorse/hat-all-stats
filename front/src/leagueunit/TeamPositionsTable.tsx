@@ -21,9 +21,10 @@ class TeamPositionsTable extends ModelTable<LeagueUnitData, ModelTableLeagueUnit
 
     fetchEntities(tableProps: ModelTableLeagueUnitProps, 
             statisticsParameters: StatisticsParameters, 
-            callback: (restTableData: RestTableData<TeamPosition>) => void): void {
+            callback: (restTableData: RestTableData<TeamPosition>) => void,
+            onError: () => void): void {
         const leagueUnitRequest: LeagueUnitRequest = {type: 'LeagueUnitRequest', leagueUnitId: tableProps.leagueUnitId()}
-        getTeamPositions(leagueUnitRequest, statisticsParameters, callback)
+        getTeamPositions(leagueUnitRequest, statisticsParameters, callback, onError)
     }
     
     columnHeaders(sortingState: SortingState): JSX.Element {
@@ -32,7 +33,7 @@ class TeamPositionsTable extends ModelTable<LeagueUnitData, ModelTableLeagueUnit
                 <tr>
                     <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                     <th>{t('table.team')}</th>
-                    <th className="value hint" popped-hint={('table.games')}>{t('table.games_abbr')}</th>
+                    <th className="value hint" popped-hint={t('table.games')}>{t('table.games_abbr')}</th>
                     <ModelTableTh poppedHint={t('table.win')} title='table.win_abbr' sortingField='win' sortingState={sortingState}/>
                     <ModelTableTh poppedHint={t('table.draw')} title='table.draw_abbr' sortingField='draw' sortingState={sortingState} />
                     <ModelTableTh poppedHint={t('table.lose')} title='table.lose_abbr' sortingField='lost' sortingState={sortingState} />

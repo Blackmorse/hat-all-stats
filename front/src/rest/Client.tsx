@@ -40,39 +40,38 @@ export function getLeagueUnitData(leagueUnitId: number, callback: (leagueUnitDat
 
 export function getTeamRatings(request: LevelRequest, 
         statisticsParameters: StatisticsParameters, 
-        callback: (teamRatings: RestTableData<TeamRating>) => void) {
+        callback: (teamRatings: RestTableData<TeamRating>) => void,
+        onError: () => void) {
     let params = createParameters(statisticsParameters)    
 
     axios.get<RestTableData<TeamRating>>(startUrl(request) + '/teamHatstats?' + params.toString())
-    .then(response => {
-        return response.data
-    })
-    .then(model => {
-        return callback(model)
-    })
+    .then(response => response.data)
+    .then(model => callback(model))
+    .catch(e => onError())
 }
 
 export function getLeagueUnits(request: LevelRequest,
         statisticsParameters: StatisticsParameters, 
-        callback: (leagueUnits: RestTableData<LeagueUnitRating>) => void) {
+        callback: (leagueUnits: RestTableData<LeagueUnitRating>) => void,
+        onError: () => void) {
     let params = createParameters(statisticsParameters) 
     
     axios.get<RestTableData<LeagueUnitRating>>(startUrl(request) + '/leagueUnits?' + params.toString())
-    .then(response => {
-        return response.data
-    })
-    .then(model => {
-        return callback(model)
-    })
+    .then(response => response.data)
+    .then(model =>  callback(model))
+    .then(e => onError())
 }
 
-export function getTeamPositions(request: LeagueUnitRequest, statisticsParameters: StatisticsParameters,
-        callback: (teamPositions: RestTableData<TeamPosition>) => void) {
+export function getTeamPositions(request: LeagueUnitRequest, 
+        statisticsParameters: StatisticsParameters,
+        callback: (teamPositions: RestTableData<TeamPosition>) => void,
+        onError: () => void) {
     let params = createParameters(statisticsParameters)
 
     axios.get<RestTableData<TeamPosition>>(startUrl(request) + '/teamPositions?' + params.toString())
         .then(response => response.data)
         .then(model => callback(model))
+        .catch(e => onError())
 }
 
 export function getTeamData(leagueId: number, callback: (teamData: TeamData) => void): void {
@@ -81,18 +80,24 @@ export function getTeamData(leagueId: number, callback: (teamData: TeamData) => 
         .then(callback)
 }
 
-export function getPlayerStats(request: LevelRequest, statisticsParameters: StatisticsParameters,
-    callback: (playerStats: RestTableData<PlayerStats>) => void)  {
-        let params = createParameters(statisticsParameters)
-        axios.get<RestTableData<PlayerStats>>(startUrl(request) + '/playerStats?' + params.toString())
-            .then(response => response.data)
-            .then(model => callback(model))
+export function getPlayerStats(request: LevelRequest, 
+        statisticsParameters: StatisticsParameters,
+        callback: (playerStats: RestTableData<PlayerStats>) => void,
+        onError: () => void)  {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<PlayerStats>>(startUrl(request) + '/playerStats?' + params.toString())
+        .then(response => response.data)
+        .then(model => callback(model))
+        .catch(e => onError())
     }
 
-export function getTeamRankings(request: LevelRequest, callback: (teamRankingsStats: TeamRankingsStats) => void) {
+export function getTeamRankings(request: LevelRequest, 
+        callback: (teamRankingsStats: TeamRankingsStats) => void,
+        onError: () => void) {
     axios.get<TeamRankingsStats>(startUrl(request) + '/teamRankings')
         .then(response => response.data)
         .then(entities => callback(entities))
+        .catch(e => onError())
 }
 
 interface LeagueUnitId {
@@ -105,10 +110,13 @@ export function getLeagueUnitIdByName(leagueId: number, leagueUnitName: string, 
         .then(leagueUnitId => callback(leagueUnitId.id))
 }
 
-export function getNearestMatches(request: TeamRequest, callback: (nearestMatches: NearestMatches) => void) {
+export function getNearestMatches(request: TeamRequest, 
+        callback: (nearestMatches: NearestMatches) => void,
+        onError: () => void) {
     axios.get<NearestMatches>('/api/team/' + request.teamId + "/nearestMatches")
         .then(response => response.data)
         .then(nearestMatches => callback(nearestMatches))
+        .catch(e => onError())
 }
 
 function startUrl(request: LevelRequest): string {

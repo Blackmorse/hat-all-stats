@@ -142,7 +142,9 @@ const resources = {
       "overview.number_of_yellow": "Number of yellow cards:",
       "overview.number_of_red": "Number of red cards:",
       "overview.numbers": "Number",
-      "overview.averages": "Averages"
+      "overview.averages": "Averages",
+
+      "error.loading": "Error while loading..."
     }
   },
   ru: {
@@ -282,7 +284,9 @@ const resources = {
       "overview.number_of_yellow": "Количество желтых карточек:",
       "overview.number_of_red": "Количество красных карточек:",
       "overview.numbers": "Сводка",
-      "overview.averages": "Средние"
+      "overview.averages": "Средние",
+
+      "error.loading": "Ошибка загрузки..."
     }
   }
 };

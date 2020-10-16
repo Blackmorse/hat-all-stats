@@ -10,14 +10,15 @@ import { getPlayerStats } from '../rest/Client'
 class TeamPlayerStats extends PlayerStats<TeamData, ModelTableTeamProps> {
     fetchEntities(tableProps: ModelTableTeamProps, 
             statisticsParameters: StatisticsParameters, 
-            callback: (restTableData: RestTableData<PlayerStat>) => void): void {
+            callback: (restTableData: RestTableData<PlayerStat>) => void,
+            onError: () => void): void {
         
         const teamRequest: TeamRequest = {
             type: 'TeamRequest',
             teamId: tableProps.teamId()
         }
 
-        getPlayerStats(teamRequest, statisticsParameters, callback)
+        getPlayerStats(teamRequest, statisticsParameters, callback, onError)
     }
 }
 

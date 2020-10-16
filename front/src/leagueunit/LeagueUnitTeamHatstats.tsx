@@ -11,14 +11,15 @@ import LeagueUnitData from '../rest/models/LeagueUnitData'
 class LeagueUnitTeamHatstats extends TeamHatstats<LeagueUnitData, ModelTableLeagueUnitProps> {
     fetchEntities(tableProps: ModelTableLeagueUnitProps, 
             statisticsParameters: StatisticsParameters,     
-            callback: (restTableData: RestTableData<TeamRating>) => void): void {
+            callback: (restTableData: RestTableData<TeamRating>) => void,
+            onError: () => void): void {
         
         const leagueUnitRequest: LeagueUnitRequest = {
             type: 'LeagueUnitRequest',
             leagueUnitId: tableProps.leagueUnitId()
         }
 
-        getTeamRatings(leagueUnitRequest, statisticsParameters, callback)
+        getTeamRatings(leagueUnitRequest, statisticsParameters, callback, onError)
     }
 
 }

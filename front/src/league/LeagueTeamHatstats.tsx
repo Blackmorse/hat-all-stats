@@ -9,9 +9,10 @@ import LeagueData from '../rest/models/LeagueData'
 
 class LeagueTeamHatstats extends TeamHatstats<LeagueData, ModelTableLeagueProps> {
     fetchEntities(tableProps: ModelTableLeagueProps, statisticsParameters: StatisticsParameters, 
-            callback: (restTableData: RestTableData<TeamRating>) => void): void {
+            callback: (restTableData: RestTableData<TeamRating>) => void,
+            onError: () => void): void {
         const leagueRequest: LeagueRequest = {type: 'LeagueRequest', leagueId: tableProps.leagueId()}
-        getTeamRatings(leagueRequest, statisticsParameters, callback)
+        getTeamRatings(leagueRequest, statisticsParameters, callback, onError)
     }
 }
 

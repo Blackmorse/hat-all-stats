@@ -10,7 +10,8 @@ import DivisionLevelData from '../rest/models/DivisionLevelData';
 class DivisionLevelTeamHatstats extends TeamHatstats<DivisionLevelData, ModelTableDivisionLevelProps> {
     fetchEntities(tableProps: ModelTableDivisionLevelProps, 
             statisticsParameters: StatisticsParameters, 
-            callback: (restTableData: RestTableData<TeamRating>) => void): void {
+            callback: (restTableData: RestTableData<TeamRating>) => void,
+            onError: () => void): void {
                 
         const divisionLevelRequest: DivisionLevelRequest = {
             type: 'DivisionLevelRequest',
@@ -18,7 +19,7 @@ class DivisionLevelTeamHatstats extends TeamHatstats<DivisionLevelData, ModelTab
             divisionLevel: tableProps.divisionLevel()
         } 
 
-        getTeamRatings(divisionLevelRequest, statisticsParameters, callback)
+        getTeamRatings(divisionLevelRequest, statisticsParameters, callback, onError)
     }
 
 }

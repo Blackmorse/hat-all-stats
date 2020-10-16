@@ -10,13 +10,14 @@ import DivisionLevelData from '../rest/models/DivisionLevelData'
 class DivisionLevelLeagueUnits extends LeagueUnits<DivisionLevelData, ModelTableDivisionLevelProps> {
     fetchEntities(tableProps: ModelTableDivisionLevelProps, 
             statisticsParameters: StatisticsParameters, 
-            callback: (restTableData: RestTableData<LeagueUnitRating>) => void): void {
+            callback: (restTableData: RestTableData<LeagueUnitRating>) => void,
+            onError: () => void): void {
         const divisionLevelRequest: DivisionLevelRequest = {
             type: 'DivisionLevelRequest',
             leagueId: tableProps.leagueId(),
             divisionLevel: tableProps.divisionLevel()
         }
-        getLeagueUnits(divisionLevelRequest, statisticsParameters, callback)
+        getLeagueUnits(divisionLevelRequest, statisticsParameters, callback, onError)
     }
 }
 

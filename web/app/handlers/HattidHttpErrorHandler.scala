@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 
 @Singleton
-class ErrorHandler @Inject()() extends HttpErrorHandler  {
+class HattidHttpErrorHandler @Inject()() extends HttpErrorHandler  {
   def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     process(request)
   }

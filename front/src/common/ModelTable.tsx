@@ -8,10 +8,11 @@ import PageSizeSelector from './selectors/PageSizeSelector'
 import StatsTypeSelector from './selectors/StatsTypeSelector'
 import SeasonSelector from './selectors/SeasonSelector'
 import LevelData from '../rest/models/LevelData';
-import Blur from '../common/widgets/Blur'
+import StatisticsSection from './StatisticsSection'
 
 interface ModelTableState<T> {
     entities?: Array<T>,
+    isError: boolean, 
     statisticsParameters: StatisticsParameters,
     isLastPage: boolean,
     dataLoading: boolean
@@ -55,13 +56,14 @@ export interface SortingState {
     sortingDirection: SortingDirection
 }
 
-abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableProps<Data>, Model> extends React.Component<ModelTablePropsWrapper<Data, TableProps>, ModelTableState<Model>> {
+abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableProps<Data>, Model> 
+        extends StatisticsSection<ModelTablePropsWrapper<Data, TableProps>, ModelTableState<Model>> {
     private statsTypes: Array<StatsTypeEnum>
 
     constructor(props: ModelTablePropsWrapper<Data, TableProps>, 
             defaultSortingField: string, defaultStatsType: StatsType,
             statsTypes: Array<StatsTypeEnum>) {
-        super(props)
+        super(props, '')
         this.statsTypes = statsTypes
         
         let pageSizeString = Cookies.get('hattid_page_size')
@@ -76,16 +78,19 @@ abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableP
                 statsType: defaultStatsType,
                 season: this.props.modelTableProps.currentSeason()
             },
-            dataLoading: false
+            dataLoading: false,
+            isError: false
         }
 
         this.pageSizeChanged=this.pageSizeChanged.bind(this);
         this.sortingChanged=this.sortingChanged.bind(this);
         this.statTypeChanged=this.statTypeChanged.bind(this);
         this.seasonChanged=this.seasonChanged.bind(this);
+        this.updateCurrent=this.updateCurrent.bind(this);
     }
 
-    abstract fetchEntities(tableProps: ModelTableProps<Data>, statisticsParameters: StatisticsParameters, callback: (restTableData: RestTableData<Model>) => void): void
+    abstract fetchEntities(tableProps: ModelTableProps<Data>, statisticsParameters: StatisticsParameters, 
+        callback: (restTableData: RestTableData<Model>) => void, onError: () => void): void
 
     createColumnHeaders(): JSX.Element {
         const sortingState = {
@@ -100,13 +105,22 @@ abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableP
 
     abstract columnValues(index: number, model: Model): JSX.Element
 
+    componentDidMount() {
+        this.updateCurrent()
+    }
+
+    updateCurrent(): void {
+        this.update(this.state.statisticsParameters)
+    }
+
     update(statisticsParameters: StatisticsParameters) {
         
         this.setState({
             entities: this.state.entities,
             statisticsParameters: this.state.statisticsParameters,
             isLastPage: this.state.isLastPage,
-            dataLoading: true
+            dataLoading: true,
+            isError: false
         })
 
         this.fetchEntities(this.props.modelTableProps,
@@ -115,12 +129,18 @@ abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableP
                 entities: restTableData.entities,
                 statisticsParameters: statisticsParameters,
                 isLastPage: restTableData.isLastPage,
-                dataLoading: false
-            }))
-    }
-
-    componentDidMount() {
-        this.update(this.state.statisticsParameters)
+                dataLoading: false,
+                isError: false
+            }), 
+            () => {
+                this.setState({
+                    entities: this.state.entities,
+                    statisticsParameters: this.state.statisticsParameters,
+                    isLastPage: this.state.isLastPage,
+                    dataLoading: false,
+                    isError: true
+                })
+            })
     }
 
     pageSelected(pageNumber: number) {
@@ -173,45 +193,42 @@ abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableP
         this.update(newStatisticsParameters)
     }
 
-    render() {
+    renderSection(): JSX.Element {
         let navigatorProps = {
             pageNumber: this.state.statisticsParameters.page,
             isLastPage: this.state.isLastPage
         }
 
-        return <section className="statistics_section">               
-                    <Blur dataLoading={this.state.dataLoading} />
-                    <header className="statistics_header"><span className="statistics_header_triangle">&#x25BC;</span></header>
-                    
-                    <div className="table_settings_div">
-                        <SeasonSelector currentSeason={this.props.modelTableProps.currentSeason()}
-                            seasons={this.props.modelTableProps.seasons()}
-                            callback={this.seasonChanged}/>
-                        <StatsTypeSelector  statsTypes={this.statsTypes}
-                            rounds={this.props.modelTableProps.rounds(this.state.statisticsParameters.season)}
-                            selectedStatType={this.state.statisticsParameters.statsType}
-                            onChanged={this.statTypeChanged}
-                            />
+        return <>
+                <div className="table_settings_div">
+                    <SeasonSelector currentSeason={this.props.modelTableProps.currentSeason()}
+                        seasons={this.props.modelTableProps.seasons()}
+                        callback={this.seasonChanged}/>
+                    <StatsTypeSelector  statsTypes={this.statsTypes}
+                        rounds={this.props.modelTableProps.rounds(this.state.statisticsParameters.season)}
+                        selectedStatType={this.state.statisticsParameters.statsType}
+                        onChanged={this.statTypeChanged}
+                        />
 
-                        <PageSizeSelector 
-                            selectedSize={this.state.statisticsParameters.pageSize}
-                            linkAction={this.pageSizeChanged}/>
-                    </div>
-                    <table className="statistics_table">
-                        <thead>
-                            {this.createColumnHeaders()}
-                        </thead>
-                        <tbody>
-                            {this.state.entities?.map((entity, index) => 
-                                this.columnValues(this.state.statisticsParameters.pageSize * this.state.statisticsParameters.page + index, entity))}
-                        </tbody>
-                    </table>
+                    <PageSizeSelector 
+                        selectedSize={this.state.statisticsParameters.pageSize}
+                        linkAction={this.pageSizeChanged}/>
+                </div>
+                <table className="statistics_table">
+                    <thead>
+                        {this.createColumnHeaders()}
+                    </thead>
+                    <tbody>
+                        {this.state.entities?.map((entity, index) => 
+                            this.columnValues(this.state.statisticsParameters.pageSize * this.state.statisticsParameters.page + index, entity))}
+                    </tbody>
+                </table>
 
-                    <PageNavigator 
-                        pageNumber={navigatorProps.pageNumber} 
-                        isLastPage={navigatorProps.isLastPage} 
-                        linkAction={(pageNumber) => this.pageSelected(pageNumber)}/> 
-                </section>
+                <PageNavigator 
+                    pageNumber={navigatorProps.pageNumber} 
+                    isLastPage={navigatorProps.isLastPage} 
+                    linkAction={(pageNumber) => this.pageSelected(pageNumber)}/> 
+                </>
     }
 }
 
