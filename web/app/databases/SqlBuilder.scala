@@ -1,7 +1,8 @@
 package databases
 
 import anorm.{NamedParameter, ParameterValue, Row, SQL, SimpleSql}
-import models.web.{Asc, Desc, SortingDirection}
+import databases.requests.OrderingKeyPath
+import models.web.{Asc, Desc, RestStatisticsParameters, Round, SortingDirection}
 import service.DefaultService
 
 import scala.collection.mutable
@@ -12,6 +13,26 @@ case class SqlBuilder(baseSql: String) {
   private var page = 0
   private var pageSize = DefaultService.PAGE_SIZE
   private var sortingDirection: String = "desc"
+
+  def applyParameters(orderingKeyPath: OrderingKeyPath,
+                      parameters: RestStatisticsParameters): SqlBuilder = {
+    orderingKeyPath.leagueId.foreach(leagueId)
+    orderingKeyPath.divisionLevel.foreach(this.divisionLevel)
+    orderingKeyPath.leagueUnitId.foreach(this.leagueUnitId)
+    orderingKeyPath.teamId.foreach(this.teamId)
+
+    parameters.statsType match {
+      case Round(r) => round(r)
+      case _ =>
+    }
+
+    season(parameters.season)
+    page(parameters.page)
+    pageSize(parameters.pageSize)
+    sortingDirection(parameters.sortingDirection)
+
+    this
+  }
 
   def season(season: Int): SqlBuilder = {
     params += (("season", season))

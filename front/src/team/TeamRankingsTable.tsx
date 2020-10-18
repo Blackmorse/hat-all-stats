@@ -40,7 +40,6 @@ class TeamRankingsTable extends StatisticsSection<ModelTablePropsWrapper<TeamDat
             isError: false
         })
 
-
         getTeamRankings(teamRequest, 
             teamRankingsStats => this.setState({teamRankingsStats: teamRankingsStats, 
                 dataLoading: false,

@@ -59,7 +59,7 @@ export function getLeagueUnits(request: LevelRequest,
     axios.get<RestTableData<LeagueUnitRating>>(startUrl(request) + '/leagueUnits?' + params.toString())
     .then(response => response.data)
     .then(model =>  callback(model))
-    .then(e => onError())
+    .catch(e => onError())
 }
 
 export function getTeamPositions(request: LeagueUnitRequest, 

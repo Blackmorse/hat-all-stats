@@ -2,8 +2,11 @@ package models.web
 
 import play.api.mvc.QueryStringBindable
 
-case class RestStatisticsParameters(page: Int, pageSize: Int, sortBy: String, sortingDirection: SortingDirection,
-                                    statsType: StatsType, season: Int)
+case class RestStatisticsParameters(page: Int,
+                                    pageSize: Int,
+                                    sortBy: String, sortingDirection: SortingDirection,
+                                    statsType: StatsType,
+                                    season: Int)
 
 object RestStatisticsParameters {
   implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]) = new QueryStringBindable[RestStatisticsParameters] {

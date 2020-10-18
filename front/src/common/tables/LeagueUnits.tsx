@@ -8,7 +8,8 @@ import { StatsTypeEnum } from '../../rest/StatisticsParameters';
 import LevelData from '../../rest/models/LevelData';
 import LeagueUnitLink from '../links/LeagueUnitLink'
 
-abstract class LeagueUnits<Data extends LevelData, TableProps extends ModelTableProps<Data>> extends ModelTable<Data, TableProps ,LeagueUnitRating> {
+abstract class LeagueUnits<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
+        extends ModelTable<Data, TableProps ,LeagueUnitRating> {
 
     constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG}, 
