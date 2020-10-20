@@ -48,7 +48,7 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
   }
 
   def teamHatstats(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>
-    restClickhouseDAO.execute(clickhouseRequest = TeamHatstatsRequest,
+    restClickhouseDAO.executeStatisticsRequest(clickhouseRequest = TeamHatstatsRequest,
       parameters = restStatisticsParameters,
       OrderingKeyPath(leagueId = Some(leagueId),
         divisionLevel = Some(divisionLevel)))
@@ -56,7 +56,7 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
   }
 
   def leagueUnits(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
-    restClickhouseDAO.execute(clickhouseRequest = LeagueUnitHatstatsRequest,
+    restClickhouseDAO.executeStatisticsRequest(clickhouseRequest = LeagueUnitHatstatsRequest,
       parameters = restStatisticsParameters,
       OrderingKeyPath(leagueId = Some(leagueId),
         divisionLevel = Some(divisionLevel)))

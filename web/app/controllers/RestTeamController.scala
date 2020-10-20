@@ -2,8 +2,9 @@ package controllers
 
 import com.blackmorse.hattrick.api.teamdetails.model.Team
 import com.blackmorse.hattrick.model.enums.MatchType
-import databases.ClickhouseDAO
+import databases.{ClickhouseDAO, RestClickhouseDAO}
 import databases.clickhouse.StatisticsCHRequest
+import databases.requests.OrderingKeyPath
 import hattrick.Hattrick
 import io.swagger.annotations.Api
 import javax.inject.Inject
@@ -54,7 +55,8 @@ object NearestMatches {
 class RestTeamController @Inject() (val controllerComponents: ControllerComponents,
                                     val hattrick: Hattrick,
                                     val leagueInfoService: LeagueInfoService,
-                                    implicit val clickhouseDAO: ClickhouseDAO) extends BaseController {
+                                    implicit val clickhouseDAO: ClickhouseDAO,
+                                    val restClickhouseDAO: RestClickhouseDAO) extends BaseController {
   private def getTeamById(teamId: Long): Future[Team] = Future {
     hattrick.api.teamDetails().teamID(teamId).execute()
       .getTeams.asScala.filter(_.getTeamId == teamId).head
@@ -125,9 +127,10 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
     getTeamById(teamId).flatMap(team => {
       val leagueId = team.getLeague.getLeagueId
       val season = leagueInfoService.leagueInfo.currentSeason(leagueId)
-      clickhouseDAO.teamRankings(season = season,
-        leagueId = leagueId,
-        teamId = teamId)
+
+      restClickhouseDAO.executeTeamRankingsRequest(OrderingKeyPath(season = Some(season),
+        leagueId = Some(leagueId),
+        teamId = Some(teamId)))
         .map(teamRankings => {
           val round = teamRankings.maxBy(_.round).round
           val leagueInfo = leagueInfoService.leagueInfo(leagueId)

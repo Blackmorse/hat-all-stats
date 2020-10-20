@@ -1,6 +1,7 @@
 package databases
 
-import databases.requests.{AllRequest, AvgMaxRequest, ClickhouseRequest, OrderingKeyPath, RoundRequest}
+import databases.requests.teamrankings.TeamRankingsRequest
+import databases.requests.{AllRequest, AvgMaxRequest, ClickhouseRequest, ClickhouseStatisticsRequest, OrderingKeyPath, RoundRequest}
 import javax.inject.{Inject, Singleton}
 import models.web.{Accumulate, MultiplyRoundsType, RestStatisticsParameters, RestTableData, Round}
 import play.api.db.DBApi
@@ -12,9 +13,9 @@ import scala.concurrent.Future
 class RestClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContext) {
   private val db = dbApi.database("default")
 
-  def execute[T](clickhouseRequest: ClickhouseRequest[T],
-                 parameters: RestStatisticsParameters,
-                 orderingKeyPath: OrderingKeyPath)(implicit tjs: Writes[T]) = Future {
+  def executeStatisticsRequest[T](clickhouseRequest: ClickhouseStatisticsRequest[T],
+                                  parameters: RestStatisticsParameters,
+                                  orderingKeyPath: OrderingKeyPath)(implicit tjs: Writes[T]) = Future {
     db.withConnection { implicit connection =>
       val sql = parameters.statsType match {
         case st@MultiplyRoundsType(_) =>
@@ -38,4 +39,9 @@ class RestClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionCo
       Json.toJson(restTableData)
     })
 
+  def executeTeamRankingsRequest(orderingKeyPath: OrderingKeyPath) = Future {
+    db.withConnection { implicit connection =>
+      TeamRankingsRequest.execute(orderingKeyPath).as(TeamRankingsRequest.rowParser.*)
+    }
+  }
 }

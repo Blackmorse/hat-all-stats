@@ -92,7 +92,7 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
 
   def teamHatstats(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{ implicit request =>
     leagueUnitDataFromId(leagueUnitId).flatMap(leagueUnitData =>
-      restClickhouseDAO.execute(clickhouseRequest = TeamHatstatsRequest,
+      restClickhouseDAO.executeStatisticsRequest(clickhouseRequest = TeamHatstatsRequest,
         parameters = restStatisticsParameters,
         OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
