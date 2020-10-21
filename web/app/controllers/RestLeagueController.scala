@@ -10,7 +10,7 @@ import models.web.rest.LevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{RestStatisticsParameters, ViewDataFactory}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.LeagueInfoService
 import utils.Romans
 
@@ -29,10 +29,10 @@ object RestLeagueData {
 @Singleton
 @Api(produces = "application/json")
 class RestLeagueController @Inject() (val controllerComponents: ControllerComponents,
-                                  val restClickhouseDAO: RestClickhouseDAO,
+                                      implicit val restClickhouseDAO: RestClickhouseDAO,
                                   val leagueInfoService: LeagueInfoService,
                                   val viewDataFactory: ViewDataFactory,
-                                  val hattrick: Hattrick) extends BaseController  {
+                                  val hattrick: Hattrick) extends RestController  {
 
     def getLeagueData(leagueId: Int): Action[AnyContent] =  Action.async { implicit request =>
         val leagueName = leagueInfoService.leagueInfo(leagueId).league.getEnglishName
@@ -50,15 +50,13 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
 
 
     def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
-      restClickhouseDAO.executeStatisticsRequest(clickhouseRequest = TeamHatstatsRequest,
-        parameters = restStatisticsParameters,
-        OrderingKeyPath(leagueId = Some(leagueId))).map(Ok(_))
+      TeamHatstatsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), restStatisticsParameters)
+        .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
     }
 
     def leagueUnits(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
-      restClickhouseDAO.executeStatisticsRequest(clickhouseRequest = LeagueUnitHatstatsRequest,
-        parameters = restStatisticsParameters,
-        OrderingKeyPath(leagueId = Some(leagueId))).map(Ok(_))
+      LeagueUnitHatstatsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), restStatisticsParameters)
+        .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
     }
 }
 

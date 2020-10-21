@@ -1,8 +1,10 @@
 package databases.requests
 
-import anorm.{Row, RowParser, SimpleSql}
-import databases.SqlBuilder
-import models.web.{MultiplyRoundsType, RestStatisticsParameters}
+import anorm.RowParser
+import databases.{RestClickhouseDAO, SqlBuilder}
+import models.web.{Accumulate, MultiplyRoundsType, RestStatisticsParameters, Round}
+
+import scala.concurrent.Future
 
 trait ClickhouseRequest[T] {
   val rowParser: RowParser[T]
@@ -11,55 +13,25 @@ trait ClickhouseRequest[T] {
 trait ClickhouseStatisticsRequest[T] extends ClickhouseRequest[T] {
   val sortingColumns: Seq[String]
 
-  protected def formRequest(baseSql: String,
-                            formSql: String => String,
-                            orderingKeyPath: OrderingKeyPath,
-                            parameters: RestStatisticsParameters): SimpleSql[Row] = {
-    if(!sortingColumns.contains(parameters.sortBy))
+  val aggregateSql: String
+
+  val oneRoundSql: String
+
+  def execute(orderingKeyPath: OrderingKeyPath,
+                 parameters: RestStatisticsParameters)
+             (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[T]] = {
+    val sortBy = parameters.sortBy
+    if(!sortingColumns.contains(sortBy))
       throw new Exception("Looks like SQL injection")
 
-    val sql = formSql(baseSql
-      .replace("__sortBy__", parameters.sortBy))
+    val sql = parameters.statsType match {
+      case MultiplyRoundsType(func) => aggregateSql.replace("__func__", func).replace("__sortBy__", sortBy)
+      case Accumulate => aggregateSql.replace("__sortBy__", sortBy)
+      case Round(round) => oneRoundSql.replace("__round__", round.toString).replace("__sortBy__", sortBy)
+    }
 
-    SqlBuilder(sql)
+    restClickhouseDAO.execute(SqlBuilder(sql)
       .applyParameters(orderingKeyPath, parameters)
-      .build
-  }
-}
-
-trait AvgMaxRequest[T] extends ClickhouseStatisticsRequest[T] {
-  val requestForAvgMax: String
-
-  def avgMaxRequest(orderingKeyPath: OrderingKeyPath,
-                    avgMaxType: MultiplyRoundsType,
-                    parameters: RestStatisticsParameters): SimpleSql[Row] = {
-    formRequest(requestForAvgMax,
-      sql => sql.replace("__func__", avgMaxType.function),
-      orderingKeyPath,
-      parameters)
-  }
-}
-
-trait AllRequest[T] extends ClickhouseStatisticsRequest[T] {
-  val requestForAll: String
-
-  def allRequest(orderingKeyPath: OrderingKeyPath,
-                 parameters: RestStatisticsParameters): SimpleSql[Row] = {
-    formRequest(requestForAll,
-      identity,
-      orderingKeyPath,
-      parameters)
-  }
-}
-
-trait RoundRequest[T] extends ClickhouseStatisticsRequest[T] {
-  val requestForRound: String
-
-  def roundRequest(orderingKeyPath: OrderingKeyPath,
-                   parameters: RestStatisticsParameters): SimpleSql[Row] = {
-    formRequest(requestForRound,
-      identity,
-      orderingKeyPath,
-      parameters)
+      .build, rowParser)
   }
 }

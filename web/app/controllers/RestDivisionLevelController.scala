@@ -31,7 +31,7 @@ object RestDivisionLevelData {
 @Api(produces = "application/json")
 class RestDivisionLevelController @Inject()(val controllerComponents: ControllerComponents,
                                             val leagueInfoService: LeagueInfoService,
-                                            val restClickhouseDAO: RestClickhouseDAO) extends BaseController{
+                                            implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
   def getDivisionLevelData(leagueId: Int, divisionLevel: Int) = Action.async { implicit request =>
     val leagueName = leagueInfoService.leagueInfo(leagueId).league.getEnglishName
     val leagueUnitsNumber = leagueInfoService.leagueNumbersMap(divisionLevel).max
@@ -48,18 +48,18 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
   }
 
   def teamHatstats(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>
-    restClickhouseDAO.executeStatisticsRequest(clickhouseRequest = TeamHatstatsRequest,
-      parameters = restStatisticsParameters,
+    TeamHatstatsRequest.execute(
       OrderingKeyPath(leagueId = Some(leagueId),
-        divisionLevel = Some(divisionLevel)))
-        .map(Ok(_))
+        divisionLevel = Some(divisionLevel)),
+      restStatisticsParameters)
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
   def leagueUnits(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
-    restClickhouseDAO.executeStatisticsRequest(clickhouseRequest = LeagueUnitHatstatsRequest,
-      parameters = restStatisticsParameters,
+    LeagueUnitHatstatsRequest.execute(
       OrderingKeyPath(leagueId = Some(leagueId),
-        divisionLevel = Some(divisionLevel)))
-        .map(Ok(_))
+        divisionLevel = Some(divisionLevel)),
+      restStatisticsParameters)
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 }

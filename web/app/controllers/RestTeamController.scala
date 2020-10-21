@@ -5,6 +5,7 @@ import com.blackmorse.hattrick.model.enums.MatchType
 import databases.{ClickhouseDAO, RestClickhouseDAO}
 import databases.clickhouse.StatisticsCHRequest
 import databases.requests.OrderingKeyPath
+import databases.requests.teamrankings.TeamRankingsRequest
 import hattrick.Hattrick
 import io.swagger.annotations.Api
 import javax.inject.Inject
@@ -56,7 +57,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
                                     val hattrick: Hattrick,
                                     val leagueInfoService: LeagueInfoService,
                                     implicit val clickhouseDAO: ClickhouseDAO,
-                                    val restClickhouseDAO: RestClickhouseDAO) extends BaseController {
+                                    implicit val restClickhouseDAO: RestClickhouseDAO) extends BaseController {
   private def getTeamById(teamId: Long): Future[Team] = Future {
     hattrick.api.teamDetails().teamID(teamId).execute()
       .getTeams.asScala.filter(_.getTeamId == teamId).head
@@ -128,10 +129,11 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
       val leagueId = team.getLeague.getLeagueId
       val season = leagueInfoService.leagueInfo.currentSeason(leagueId)
 
-      restClickhouseDAO.executeTeamRankingsRequest(OrderingKeyPath(season = Some(season),
+      TeamRankingsRequest.execute(OrderingKeyPath(
+        season = Some(season),
         leagueId = Some(leagueId),
-        teamId = Some(teamId)))
-        .map(teamRankings => {
+        teamId = Some(teamId),
+      )).map(teamRankings => {
           val round = teamRankings.maxBy(_.round).round
           val leagueInfo = leagueInfoService.leagueInfo(leagueId)
           val leagueTeamsCount = leagueInfo.seasonInfo(season).roundInfo(round).divisionLevelInfo.values.map(_.count).sum

@@ -1,11 +1,11 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
-import databases.requests.{AvgMaxRequest, RoundRequest}
+import databases.requests.ClickhouseStatisticsRequest
 import models.clickhouse.TeamRating
 
-object TeamHatstatsRequest extends RoundRequest[TeamRating] with AvgMaxRequest[TeamRating] {
-  override val requestForAvgMax: String =
+object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamRating]{
+  override val aggregateSql: String =
     """select team_id,
           |argMax(team_name, round) as team_name,
           |league_unit_id,
@@ -17,7 +17,7 @@ object TeamHatstatsRequest extends RoundRequest[TeamRating] with AvgMaxRequest[T
       |from hattrick.match_details __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
       |group by team_id, league_unit_id, league_unit_name order by __sortBy__ __sortingDirection__, team_id asc __limit__""".stripMargin
 
-  override val requestForRound: String =
+  override val oneRoundSql: String =
     """select team_id,
           |team_name,
           |league_unit_id,

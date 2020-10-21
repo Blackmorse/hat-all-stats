@@ -37,8 +37,8 @@ object RestLeagueUnitData {
 class RestLeagueUnitController @Inject() (val controllerComponents: ControllerComponents,
                                           val leagueInfoService: LeagueInfoService,
                                           val hattrick: Hattrick,
-                                          val restClickhouseDAO: RestClickhouseDAO,
-                                          val leagueUnitCalculatorService: LeagueUnitCalculatorService) extends BaseController {
+                                          implicit val restClickhouseDAO: RestClickhouseDAO,
+                                          val leagueUnitCalculatorService: LeagueUnitCalculatorService) extends RestController {
   case class LongWrapper(id: Long)
   implicit val writes = Json.writes[LongWrapper]
 
@@ -92,12 +92,13 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
 
   def teamHatstats(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{ implicit request =>
     leagueUnitDataFromId(leagueUnitId).flatMap(leagueUnitData =>
-      restClickhouseDAO.executeStatisticsRequest(clickhouseRequest = TeamHatstatsRequest,
-        parameters = restStatisticsParameters,
+      TeamHatstatsRequest.execute(
         OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
-          leagueUnitId = Some(leagueUnitId)))
-        .map(Ok(_)))
+          leagueUnitId = Some(leagueUnitId)),
+        restStatisticsParameters)
+        .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+    )
   }
 
   def teamPositions(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>

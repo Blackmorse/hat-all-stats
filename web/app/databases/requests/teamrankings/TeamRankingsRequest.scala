@@ -1,9 +1,11 @@
 package databases.requests.teamrankings
 
 import anorm.RowParser
-import databases.SqlBuilder
+import databases.{RestClickhouseDAO, SqlBuilder}
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import models.clickhouse.TeamRankings
+
+import scala.concurrent.Future
 
 object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
   val request: String = """
@@ -45,11 +47,11 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
 
   override val rowParser: RowParser[TeamRankings] = TeamRankings.teamRankingsMapper
 
-  def execute(orderingKeyPath: OrderingKeyPath)= {
-    SqlBuilder(request)
+  def execute(orderingKeyPath: OrderingKeyPath)
+             (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamRankings]] =
+    restClickhouseDAO.execute(SqlBuilder(request)
       .season(orderingKeyPath.season.get)
       .leagueId(orderingKeyPath.leagueId.get)
       .teamId(orderingKeyPath.teamId.get)
-      .build
-  }
+      .build, rowParser)
 }
