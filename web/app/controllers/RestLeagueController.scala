@@ -2,7 +2,7 @@ package controllers
 
 import com.google.inject.{Inject, Singleton}
 import databases.RestClickhouseDAO
-import databases.requests.OrderingKeyPath
+import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest}
 import hattrick.Hattrick
@@ -10,7 +10,7 @@ import io.swagger.annotations.Api
 import models.web.rest.LevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{RestStatisticsParameters, ViewDataFactory}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.LeagueInfoService
 import utils.Romans
@@ -49,25 +49,24 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       Future(Ok(Json.toJson(restLeagueData)))
     }
 
-
-  def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
-    TeamHatstatsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), restStatisticsParameters)
+  private def stats[T](chRequest: ClickhouseStatisticsRequest[T],
+                       leagueId: Int,
+                       restStatisticsParameters: RestStatisticsParameters)
+                      (implicit writes: Writes[T])= Action.async { implicit request =>
+    chRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), restStatisticsParameters)
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
-  def leagueUnits(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
-    LeagueUnitHatstatsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), restStatisticsParameters)
-      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
-  }
+  def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamHatstatsRequest, leagueId, restStatisticsParameters)
 
-  def playerGoalGames(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async{ implicit request =>
-    PlayerGamesGoalsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), restStatisticsParameters)
-      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
-  }
+  def leagueUnits(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(LeagueUnitHatstatsRequest, leagueId, restStatisticsParameters)
 
-  def playerCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async{ implicit request =>
-    PlayerCardsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), restStatisticsParameters)
-      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
-  }
+  def playerGoalGames(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerGamesGoalsRequest, leagueId, restStatisticsParameters)
+
+  def playerCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerCardsRequest, leagueId, restStatisticsParameters)
 }
 
