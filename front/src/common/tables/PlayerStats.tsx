@@ -6,7 +6,7 @@ import PlayerStat from '../../rest/models/PlayerStat'
 import { Translation } from 'react-i18next'
 import '../../i18n'
 import ModelTableTh from '../ModelTableTh'
-import { ageFormatter } from '../../common/Formatters'
+import { ageFormatter, yellowCards, redCards } from '../../common/Formatters'
 import LeagueUnitLink from '../links/LeagueUnitLink'
 import TeamLink from '../links/TeamLink'
 
@@ -46,12 +46,8 @@ abstract class PlayerStats<Data extends LevelData, TableProps extends ModelTable
             <td className="value">{playerStat.games}</td>
             <td className="value">{playerStat.played}</td>
             <td className="value">{playerStat.scored}</td>
-            <td className="value">
-                <span className="yellow card"></span><span className="mult">x</span>{playerStat.yellowCards}
-            </td>
-            <td className="value">
-                <span className="red card"></span><span className="mult">x</span>{playerStat.redCards}
-            </td>
+            <td className="value">{yellowCards(playerStat.yellowCards)}</td>
+            <td className="value">{redCards(playerStat.redCards)}</td>
             <td className="value">{playerStat.totalInjuries}</td>
             <td className="value">{Math.floor(playerStat.goalRate)}</td>
         </tr>

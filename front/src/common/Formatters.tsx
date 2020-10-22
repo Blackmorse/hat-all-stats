@@ -1,4 +1,5 @@
 import React from 'react';
+import './Formatters.css'
 
 export function commasSeparated(value: number): JSX.Element {
     return <>{value.toLocaleString()}</>
@@ -27,4 +28,19 @@ export function injuryFormatter(value: number): JSX.Element {
             </svg>
             {(value === -1) ? 0 : value}
         </>
+}
+
+export function yellowCards(value: number): JSX.Element {
+    return <><span className="yellow card"></span>
+        <span className="mult">x</span>
+        {value}
+        </>
+}
+
+export function redCards(value: number): JSX.Element {
+    return <>
+        <span className="red card"></span>
+        <span className="mult">x</span>
+        {value}
+    </>
 }

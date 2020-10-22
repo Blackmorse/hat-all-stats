@@ -1,5 +1,4 @@
 import { RouteComponentProps } from 'react-router';
-
 import React from 'react';
 import PageLayout from '../common/PageLayout'
 import TopMenu from './LeagueTopMenu';
@@ -10,6 +9,8 @@ import { PagesEnum } from '../common/enums/PagesEnum'
 import LeagueTeamHatstats from './LeagueTeamHatstats'
 import ModelTableLeagueProps from './ModelTableLeagueProps'
 import { ModelTableProps } from '../common/ModelTable';
+import LeaguePlayerGoalGames from './LeaguePlayerGoalGames'
+import LeaguePlayerCards from './LeaguePlayerCards'
 
 interface MatchParams {
     leagueId: string;
@@ -24,6 +25,10 @@ class League extends PageLayout<Props, LeagueData, ModelTableLeagueProps> {
             props => <LeagueTeamHatstats modelTableProps={props} />)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
             props => <LeagueLeagueUnits modelTableProps={props} />)
+        pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES,
+            props => <LeaguePlayerGoalGames modelTableProps={props}/>)
+        pagesMap.set(PagesEnum.PLAYER_CARDS,
+            props => <LeaguePlayerCards modelTableProps={props} />)
         super(props, pagesMap)
     }    
 

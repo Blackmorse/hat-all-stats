@@ -9,7 +9,8 @@ import LevelData from '../../rest/models/LevelData';
 import LeagueUnitLink from '../links/LeagueUnitLink';
 import TeamLink from '../links/TeamLink'
 
-abstract class TeamHatstats<Data extends LevelData, TableProps extends ModelTableProps<Data>> extends ModelTable<Data, TableProps, TeamRating> {
+abstract class TeamHatstats<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
+    extends ModelTable<Data, TableProps, TeamRating> {
     constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG},
             [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])

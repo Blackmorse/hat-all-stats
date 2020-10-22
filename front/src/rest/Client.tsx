@@ -16,6 +16,8 @@ import TeamData from './models/TeamData'
 import PlayerStats from './models/PlayerStat'
 import TeamRankingsStats from './models/TeamRankingsStats'
 import { NearestMatches } from './models/NearestMatch';
+import PlayerGoalGames from './models/player/PlayerGoalsGames'
+import PlayerCards from './models/player/PlayerCards'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -116,6 +118,28 @@ export function getNearestMatches(request: TeamRequest,
     axios.get<NearestMatches>('/api/team/' + request.teamId + "/nearestMatches")
         .then(response => response.data)
         .then(nearestMatches => callback(nearestMatches))
+        .catch(e => onError())
+}
+
+export function getPlayerGoalsGames(request: LevelRequest, 
+        statisticsParameters: StatisticsParameters,
+        callback: (playerStats: RestTableData<PlayerGoalGames>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<PlayerGoalGames>>(startUrl(request) + '/playerGoalGames?' + params.toString())
+        .then(response => response.data)
+        .then(playerGoalGames => callback(playerGoalGames))
+        .catch(e => onError())
+}
+
+export function getPlayerCards(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (playerCards: RestTableData<PlayerCards>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<PlayerCards>>(startUrl(request) + '/playerCards?' + params.toString())
+        .then(response => response.data)
+        .then(playerCards => callback(playerCards))
         .catch(e => onError())
 }
 

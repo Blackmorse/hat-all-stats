@@ -3,6 +3,7 @@ package controllers
 import databases.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
 import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamHatstatsRequest}
+import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest}
 import io.swagger.annotations.Api
 import javax.inject.{Inject, Singleton}
 import models.web.rest.LevelData.Rounds
@@ -61,5 +62,21 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
         divisionLevel = Some(divisionLevel)),
       restStatisticsParameters)
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
+
+  def playerGoalGames(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async{ implicit request =>
+    PlayerGamesGoalsRequest.execute(
+      OrderingKeyPath(leagueId = Some(leagueId),
+        divisionLevel = Some(divisionLevel)),
+      restStatisticsParameters
+    ).map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
+
+  def playerCards(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async{ implicit request =>
+    PlayerCardsRequest.execute(
+      OrderingKeyPath(leagueId = Some(leagueId),
+        divisionLevel = Some(divisionLevel)),
+      restStatisticsParameters
+    ).map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 }

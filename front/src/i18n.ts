@@ -20,6 +20,8 @@ const resources = {
       "menu.search": "Search",
       "menu.team_search": "Team search",
       "menu.team_overview": "Overview",
+      "menu.player_goal_games": "Goals/Games",
+      "menu.player_cards": "Yellow/Red cards",
 
       //Table
       "table.position_abbr": "P",
@@ -162,6 +164,8 @@ const resources = {
       "menu.search": "Поиск",
       "menu.team_search": "Поиск команд",
       "menu.team_overview": "Обзор",
+      "menu.player_goal_games": "Игры/Голы",
+      "menu.player_cards": "Желтые/Красные карточки",
 
       //Table
       "table.position_abbr": "П",

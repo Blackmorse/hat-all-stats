@@ -21,11 +21,6 @@ case class SqlBuilder(baseSql: String) {
     orderingKeyPath.leagueUnitId.foreach(this.leagueUnitId)
     orderingKeyPath.teamId.foreach(this.teamId)
 
-    parameters.statsType match {
-      case Round(r) => round(r)
-      case _ =>
-    }
-
     season(parameters.season)
     page(parameters.page)
     pageSize(parameters.pageSize)

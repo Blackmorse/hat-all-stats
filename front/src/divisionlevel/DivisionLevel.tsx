@@ -8,6 +8,8 @@ import ModelTableDivisionLevelProps from './ModelTableDivisionLevelProps'
 import DivisionLevelTeamHatstats from './DivisionLevelTeamHatstats';
 import DivisionLevelLeagueUnits from './DivisionLevelLeagueUnits'
 import PageLayout from '../common/PageLayout';
+import DivisionLevelPlayerGoalGames from './DivisionLevelPlayerGoalGames'
+import DivisionLevelPlayerCards from './DivisionLevelPlayerCards'
 
 interface MatchParams {
     leagueId: string,
@@ -23,6 +25,10 @@ class DivisionLevel extends PageLayout<Props, DivisionLevelData, ModelTableDivis
             props => <DivisionLevelTeamHatstats modelTableProps={props}/>)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
             props => <DivisionLevelLeagueUnits modelTableProps={props}/>)
+        pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES,
+            props => <DivisionLevelPlayerGoalGames modelTableProps={props}/>) 
+        pagesMap.set(PagesEnum.PLAYER_CARDS,
+            props => <DivisionLevelPlayerCards modelTableProps={props} />)
         super(props, pagesMap)
 
         this.leagueUnitSelected=this.leagueUnitSelected.bind(this)

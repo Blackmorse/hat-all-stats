@@ -26,7 +26,7 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamRating]{
           |rating_midfield as midfield,
           |toInt32((rating_right_def + rating_left_def + rating_mid_def) ) as defense,
           |toInt32( (rating_right_att + rating_mid_att + rating_left_att) ) as attack
-      |from hattrick.match_details __where__
+      |from hattrick.match_details __where__ AND round = __round__
       | order by __sortBy__ __sortingDirection__,  team_id asc __limit__
       |""".stripMargin
 

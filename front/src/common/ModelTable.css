@@ -40,14 +40,6 @@
     text-align: center;
 }
 
-.statistics_table .yellow {
-    background: yellow;
-}
-
- .statistics_table .red {
-    background: red;
-}
-
 .card {
     display: inline-block;
     width: 8px;
