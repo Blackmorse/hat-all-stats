@@ -8,6 +8,7 @@ import { Translation } from 'react-i18next'
 import ModelTableTh from '../../common/ModelTableTh'
 import TeamLink from '../links/TeamLink'
 import LeagueUnitLink from '../links/LeagueUnitLink'
+import { getPlayerGoalsGames } from '../../rest/Client';
 
 abstract class PlayerGoalsGamesTable<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
     extends ModelTable<Data, TableProps, PlayerGoalsGames> {
@@ -16,6 +17,8 @@ abstract class PlayerGoalsGamesTable<Data extends LevelData, TableProps extends 
         super(props, 'scored', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()}, 
             [StatsTypeEnum.ROUND])
     }
+        
+    fetchDataFunction = getPlayerGoalsGames
 
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>

@@ -1,11 +1,9 @@
 import React from 'react';
 import LeagueUnitData from '../rest/models/LeagueUnitData'
 import ModelTable, { SortingState, ModelTablePropsWrapper } from '../common/ModelTable'
-import StatisticsParameters, { StatsTypeEnum } from '../rest/StatisticsParameters';
+import { StatsTypeEnum } from '../rest/StatisticsParameters';
 import TeamPosition from '../rest/models/TeamPosition';
-import RestTableData from '../rest/RestTableData';
 import ModelTableLeagueUnitProps from './ModelTableLeagueUnitProps';
-import LeagueUnitRequest from '../rest/models/request/LeagueUnitRequest';
 import { getTeamPositions } from '../rest/Client'
 import '../i18n'
 import { Translation } from 'react-i18next'
@@ -13,19 +11,13 @@ import ModelTableTh from '../common/ModelTableTh';
 import TeamLink from '../common/links/TeamLink'
 
 class TeamPositionsTable extends ModelTable<LeagueUnitData, ModelTableLeagueUnitProps, TeamPosition> {
-
+    
     constructor(props: ModelTablePropsWrapper<LeagueUnitData, ModelTableLeagueUnitProps>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
 
-    fetchEntities(tableProps: ModelTableLeagueUnitProps, 
-            statisticsParameters: StatisticsParameters, 
-            callback: (restTableData: RestTableData<TeamPosition>) => void,
-            onError: () => void): void {
-        const leagueUnitRequest: LeagueUnitRequest = {type: 'LeagueUnitRequest', leagueUnitId: tableProps.leagueUnitId()}
-        getTeamPositions(leagueUnitRequest, statisticsParameters, callback, onError)
-    }
+    fetchDataFunction = getTeamPositions
     
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>

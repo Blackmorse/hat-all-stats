@@ -7,6 +7,7 @@ import '../../i18n'
 import { StatsTypeEnum } from '../../rest/StatisticsParameters';
 import LevelData from '../../rest/models/LevelData';
 import LeagueUnitLink from '../links/LeagueUnitLink'
+import { getLeagueUnits } from '../../rest/Client'
 
 abstract class LeagueUnits<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
         extends ModelTable<Data, TableProps ,LeagueUnitRating> {
@@ -15,6 +16,8 @@ abstract class LeagueUnits<Data extends LevelData, TableProps extends ModelTable
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG}, 
             [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }
+
+    fetchDataFunction = getLeagueUnits
 
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>{

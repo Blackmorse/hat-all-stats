@@ -9,6 +9,7 @@ import StatsTypeSelector from './selectors/StatsTypeSelector'
 import SeasonSelector from './selectors/SeasonSelector'
 import LevelData from '../rest/models/LevelData';
 import StatisticsSection from './StatisticsSection'
+import LevelRequest from '../rest/models/request/LevelRequest';
 
 interface ModelTableState<T> {
     entities?: Array<T>,
@@ -48,6 +49,8 @@ export abstract class ModelTableProps<Data extends LevelData> {
     }
 
     seasonRoundInfo(): Array<[number, Array<number>]> {return this.levelData.seasonRoundInfo}
+
+    abstract createLevelRequest(): LevelRequest
 }
 
 export interface SortingState {
@@ -89,8 +92,18 @@ abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableP
         this.updateCurrent=this.updateCurrent.bind(this);
     }
 
-    abstract fetchEntities(tableProps: ModelTableProps<Data>, statisticsParameters: StatisticsParameters, 
-        callback: (restTableData: RestTableData<Model>) => void, onError: () => void): void
+    fetchEntities(tableProps: TableProps, 
+            statisticsParameters: StatisticsParameters, 
+            callback: (restTableData: RestTableData<Model>) => void, 
+            onError: () => void): void {
+        const leveRequest = tableProps.createLevelRequest()
+        this.fetchDataFunction(leveRequest, statisticsParameters, callback, onError)
+    }
+
+    abstract fetchDataFunction(levelRequest: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (restTableData: RestTableData<Model>) => void,
+        onError: () => void): void
 
     createColumnHeaders(): JSX.Element {
         const sortingState = {

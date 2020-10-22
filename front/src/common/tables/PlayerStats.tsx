@@ -9,12 +9,15 @@ import ModelTableTh from '../ModelTableTh'
 import { ageFormatter, yellowCards, redCards } from '../../common/Formatters'
 import LeagueUnitLink from '../links/LeagueUnitLink'
 import TeamLink from '../links/TeamLink'
+import { getPlayerStats } from '../../rest/Client'
 
 abstract class PlayerStats<Data extends LevelData, TableProps extends ModelTableProps<Data>> extends ModelTable<Data, TableProps, PlayerStat> {
     constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
         super(props, 'scored', {statType: StatsTypeEnum.ACCUMULATE},
             [StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }
+
+    fetchDataFunction = getPlayerStats
 
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>{

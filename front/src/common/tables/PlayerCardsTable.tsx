@@ -9,6 +9,7 @@ import ModelTableTh from '../../common/ModelTableTh'
 import TeamLink from '../links/TeamLink'
 import LeagueUnitLink from '../links/LeagueUnitLink'
 import { yellowCards, redCards } from '../Formatters'
+import { getPlayerCards } from '../../rest/Client';
 
 abstract class PlayerCardsTable<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
     extends ModelTable<Data, TableProps, PlayerCards> {
@@ -17,6 +18,8 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Model
         super(props, 'yellow_cards', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
+
+    fetchDataFunction = getPlayerCards
 
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
