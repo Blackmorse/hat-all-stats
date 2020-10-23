@@ -8,7 +8,7 @@ play.filters.enabled += play.filters.hosts.AllowedHostsFilter
 play.filters.hosts.routeModifiers.whiteList = []
 play.filters.hosts.routeModifiers.blackList = ["{{ loader.loader_url }}"]
 
-play.http.errorHandler = "handlers.ErrorHandler"
+play.http.errorHandler = "handlers.HattidErrorHandler"
 
 hattrick {
   customerKey = "{{ hattrick.customerKey }}"
