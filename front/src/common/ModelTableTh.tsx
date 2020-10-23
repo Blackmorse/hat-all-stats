@@ -12,6 +12,7 @@ interface SortingState {
 
 interface ThProps {
     title: string,
+    titlePostfix?: string,
     sortingField: string,
     sortingState: SortingState,
     poppedHint?: string
@@ -22,7 +23,7 @@ class ModelTableTh extends React.Component<ThProps> {
         return <Translation>
             {(t, { i18n }) =>
                 <th className={(this.props.poppedHint) ? "model_table_header value hint" : "model_table_header value"} popped-hint={this.props.poppedHint} onClick={() => this.props.sortingState.callback(this.props.sortingField)}>
-                    {t(this.props.title)}
+                    {t(this.props.title) + ((this.props.titlePostfix) ? this.props.titlePostfix : '')}
                     {(this.props.sortingField === this.props.sortingState.currentSorting && this.props.sortingState.sortingDirection === SortingDirection.DESC) ? "↓" : ""}
                     {(this.props.sortingField === this.props.sortingState.currentSorting && this.props.sortingState.sortingDirection === SortingDirection.ASC) ? "↑" : ""}
                 </th>

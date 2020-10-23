@@ -50,6 +50,10 @@ export abstract class ModelTableProps<Data extends LevelData> {
 
     seasonRoundInfo(): Array<[number, Array<number>]> {return this.levelData.seasonRoundInfo}
 
+    currency(): string {return this.levelData.currency}
+
+    currencyRate(): number {return this.levelData.currencyRate}
+
     abstract createLevelRequest(): LevelRequest
 }
 

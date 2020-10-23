@@ -2,27 +2,26 @@ package controllers
 
 import com.blackmorse.hattrick.api.teamdetails.model.Team
 import com.blackmorse.hattrick.model.enums.MatchType
-import databases.{ClickhouseDAO, RestClickhouseDAO}
 import databases.clickhouse.StatisticsCHRequest
-import databases.requests.model.player.PlayerCards
-import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest}
-import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
+import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerSalaryTSIRequest}
 import databases.requests.teamrankings.TeamRankingsRequest
+import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
+import databases.{ClickhouseDAO, RestClickhouseDAO}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
 import javax.inject.Inject
 import models.clickhouse.{NearestMatch, TeamRankings}
-import models.web.{RestStatisticsParameters, RestTableData, StatisticsParameters}
 import models.web.rest.LevelData
 import models.web.rest.LevelData.Rounds
+import models.web.{RestStatisticsParameters, RestTableData, StatisticsParameters}
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{BaseController, ControllerComponents}
+import play.api.mvc.ControllerComponents
 import service.LeagueInfoService
 import utils.Romans
 
-import scala.concurrent.Future
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
-import collection.JavaConverters._
+import scala.concurrent.Future
 
 case class RestTeamData(leagueId: Int,
                         leagueName: String,
@@ -32,7 +31,9 @@ case class RestTeamData(leagueId: Int,
                         leagueUnitName: String,
                         teamId: Long,
                         teamName: String,
-                        seasonRoundInfo: Seq[(Int, Rounds)]) extends LevelData
+                        seasonRoundInfo: Seq[(Int, Rounds)],
+                        currency: String,
+                        currencyRate: Double) extends LevelData
 
 object RestTeamData {
   implicit val writes = Json.writes[RestTeamData]
@@ -68,17 +69,20 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   def getTeamData(teamId: Long) = Action.async {
     getTeamById(teamId)
       .map(team => {
+        val league = leagueInfoService.leagueInfo(team.getLeague.getLeagueId).league
         Ok(Json.toJson(
           RestTeamData(
             leagueId = team.getLeague.getLeagueId,
-            leagueName = leagueInfoService.leagueInfo(team.getLeague.getLeagueId).league.getEnglishName,
+            leagueName = league.getEnglishName,
             divisionLevel = team.getLeagueLevelUnit.getLeagueLevel,
             divisionLevelName = Romans(team.getLeagueLevelUnit.getLeagueLevel),
             leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId,
             leagueUnitName = team.getLeagueLevelUnit.getLeagueLevelUnitName,
             teamId = teamId,
             teamName = team.getTeamName,
-            seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(team.getLeague.getLeagueId)
+            seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(team.getLeague.getLeagueId),
+            currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
+            currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate
           )
         ))
       })
@@ -120,6 +124,9 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
   def playerCards(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerCardsRequest, teamId, restStatisticsParameters)
+
+  def playerTsiSalary(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerSalaryTSIRequest, teamId, restStatisticsParameters)
 
   def playerStats(teamId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
     val statisticsParameters =

@@ -18,6 +18,7 @@ import TeamRankingsStats from './models/TeamRankingsStats'
 import { NearestMatches } from './models/NearestMatch';
 import PlayerGoalGames from './models/player/PlayerGoalsGames'
 import PlayerCards from './models/player/PlayerCards'
+import PlayerSalaryTSI from './models/player/PlayerSalaryTSI'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -142,6 +143,17 @@ export function getPlayerCards(request: LevelRequest,
         .then(playerCards => callback(playerCards))
         .catch(e => onError())
 }
+
+export function getPlayerSalaryTsi(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (playerSalaryTsis: RestTableData<PlayerSalaryTSI>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<PlayerSalaryTSI>>(startUrl(request) + '/playerTsiSalary?' + params.toString())
+    .then(response => response.data)
+    .then(playerSalaryTsis => callback(playerSalaryTsis))
+    .catch(e => onError())
+    }
 
 function startUrl(request: LevelRequest): string {
     if (request.type === 'LeagueRequest') {

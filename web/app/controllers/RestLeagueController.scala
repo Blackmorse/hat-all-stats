@@ -4,7 +4,7 @@ import com.google.inject.{Inject, Singleton}
 import databases.RestClickhouseDAO
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamHatstatsRequest}
-import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest}
+import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerSalaryTSIRequest}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
 import models.web.rest.LevelData
@@ -21,7 +21,9 @@ import scala.concurrent.Future
 case class RestLeagueData(leagueId: Int,
                           leagueName: String,
                           divisionLevels: Seq[String],
-                          seasonRoundInfo: Seq[(Int, Rounds)]) extends LevelData
+                          seasonRoundInfo: Seq[(Int, Rounds)],
+                          currency: String,
+                          currencyRate: Double) extends LevelData
 
 object RestLeagueData {
   implicit val writes = Json.writes[RestLeagueData]
@@ -36,8 +38,9 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
                                   val hattrick: Hattrick) extends RestController  {
 
   def getLeagueData(leagueId: Int): Action[AnyContent] =  Action.async { implicit request =>
-      val leagueName = leagueInfoService.leagueInfo(leagueId).league.getEnglishName
-      val numberOfDivisions = leagueInfoService.leagueInfo(leagueId).league.getNumberOfLevels
+      val league = leagueInfoService.leagueInfo(leagueId).league
+      val leagueName = league.getEnglishName
+      val numberOfDivisions = league.getNumberOfLevels
       val divisionLevels = (1 to numberOfDivisions).map(Romans(_))
       val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId)
 
@@ -45,7 +48,9 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
         leagueId = leagueId,
         leagueName = leagueName,
         divisionLevels = divisionLevels,
-        seasonRoundInfo = seasonRoundInfo)
+        seasonRoundInfo = seasonRoundInfo,
+        currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
+        currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate)
       Future(Ok(Json.toJson(restLeagueData)))
     }
 
@@ -68,5 +73,8 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
 
   def playerCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerCardsRequest, leagueId, restStatisticsParameters)
+
+  def playerTsiSalary(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerSalaryTSIRequest, leagueId, restStatisticsParameters)
 }
 

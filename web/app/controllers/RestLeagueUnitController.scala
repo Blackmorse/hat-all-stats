@@ -19,7 +19,7 @@ import scala.concurrent.Future
 import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.matchdetails.TeamHatstatsRequest
-import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest}
+import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerSalaryTSIRequest}
 
 case class RestLeagueUnitData(leagueId: Int,
                               leagueName: String,
@@ -28,7 +28,9 @@ case class RestLeagueUnitData(leagueId: Int,
                               leagueUnitId: Long,
                               leagueUnitName: String,
                               teams: Seq[(Long, String)],
-                              seasonRoundInfo: Seq[(Int, Rounds)]) extends LevelData
+                              seasonRoundInfo: Seq[(Int, Rounds)],
+                              currency: String,
+                              currencyRate: Double) extends LevelData
 
 object RestLeagueUnitData {
   implicit val writes = Json.writes[RestLeagueUnitData]
@@ -75,15 +77,19 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
 
   private def leagueUnitDataFromId(leagueUnitId: Long): Future[RestLeagueUnitData] =
     Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
-    .map(leagueDetails =>
+    .map(leagueDetails => {
+      val league = leagueInfoService.leagueInfo(leagueDetails.getLeagueId).league
       RestLeagueUnitData(leagueId = leagueDetails.getLeagueId,
-        leagueName = leagueInfoService.leagueInfo(leagueDetails.getLeagueId).league.getEnglishName,
+        leagueName = league.getEnglishName,
         divisionLevel = leagueDetails.getLeagueLevel,
         divisionLevelName = Romans(leagueDetails.getLeagueLevel),
         leagueUnitId = leagueUnitId,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
         teams = leagueDetails.getTeams.asScala.map(team => (team.getTeamId.toLong, team.getTeamName)),
-        seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueDetails.getLeagueId))
+        seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueDetails.getLeagueId),
+        currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
+        currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate)
+    }
       )
 
   def getLeagueUnitData(leagueUnitId: Long) = Action.async {implicit request =>
@@ -113,6 +119,9 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
 
   def playerCards(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerCardsRequest, leagueUnitId, restStatisticsParameters)
+
+  def playerTsiSalary(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerSalaryTSIRequest, leagueUnitId, restStatisticsParameters)
 
   def teamPositions(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>
     Future{

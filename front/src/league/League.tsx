@@ -11,6 +11,7 @@ import ModelTableLeagueProps from './ModelTableLeagueProps'
 import { ModelTableProps } from '../common/ModelTable';
 import LeaguePlayerGoalGames from './LeaguePlayerGoalGames'
 import LeaguePlayerCards from './LeaguePlayerCards'
+import LeaguePlayerSalaryTsiTable from './LeaguePlayerSalaryTsiTable'
 
 interface MatchParams {
     leagueId: string;
@@ -29,6 +30,8 @@ class League extends PageLayout<Props, LeagueData, ModelTableLeagueProps> {
             props => <LeaguePlayerGoalGames modelTableProps={props}/>)
         pagesMap.set(PagesEnum.PLAYER_CARDS,
             props => <LeaguePlayerCards modelTableProps={props} />)
+        pagesMap.set(PagesEnum.PLAYER_SALARY_TSI,
+            props => <LeaguePlayerSalaryTsiTable modelTableProps={props} />)
         super(props, pagesMap)
     }    
 
