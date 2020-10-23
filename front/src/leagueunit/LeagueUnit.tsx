@@ -8,6 +8,8 @@ import { getLeagueUnitData } from '../rest/Client'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import LeagueUnitTeamHatstats from './LeagueUnitTeamHatstats'
 import TeamPositionsTable from './TeamPositionsTable';
+import LeagueUnitPlayerGoalGames from './LeagueUnitPlayerGoalGames'
+import LeagueUnitPlayerCards from './LeagueUnitPlayerCards'
 
 interface MatchParams {
     leagueUnitId: string
@@ -23,6 +25,10 @@ class LeagueUnit extends PageLayout<Props, LeagueUnitData, ModelTableLeagueUnitP
                 <TeamPositionsTable modelTableProps={props} />
                 <LeagueUnitTeamHatstats modelTableProps={props}/>
                 </>)
+        pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES,
+            props => <LeagueUnitPlayerGoalGames modelTableProps={props}/>)
+        pagesMap.set(PagesEnum.PLAYER_CARDS,
+            props => <LeagueUnitPlayerCards modelTableProps={props} />)
         super(props, pagesMap)
 
         this.teamIdSelected=this.teamIdSelected.bind(this)

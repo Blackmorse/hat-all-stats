@@ -8,7 +8,7 @@ import { StatsTypeEnum } from '../../rest/StatisticsParameters';
 import LevelData from '../../rest/models/LevelData';
 import LeagueUnitLink from '../links/LeagueUnitLink';
 import TeamLink from '../links/TeamLink'
-import { getTeamRatings } from '../../rest/Client'
+import { getTeamRatings } from '../../rest/Client';
 
 abstract class TeamHatstats<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
     extends ModelTable<Data, TableProps, TeamRating> {

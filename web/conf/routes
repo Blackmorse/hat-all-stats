@@ -24,11 +24,15 @@ GET     /api/league/:leagueId/divisionLevel/:divisionLevel/playerCards  controll
 GET     /api/leagueUnit/:leagueUnitId   controllers.RestLeagueUnitController.getLeagueUnitData(leagueUnitId: Long)
 GET     /api/leagueUnit/:leagueUnitId/teamHatstats  controllers.RestLeagueUnitController.teamHatstats(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/teamPositions controllers.RestLeagueUnitController.teamPositions(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/leagueUnit/:leagueUnitId/playerGoalGames   controllers.RestLeagueUnitController.playerGoalGames(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/leagueUnit/:leagueUnitId/playerCards   controllers.RestLeagueUnitController.playerCards(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 
 GET     /api/team/:teamId           controllers.RestTeamController.getTeamData(teamId: Long)
 GET     /api/team/:teamId/playerStats    controllers.RestTeamController.playerStats(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/team/:teamId/teamRankings      controllers.RestTeamController.teamRankings(teamId: Long)
 GET     /api/team/:teamId/nearestMatches    controllers.RestTeamController.nearestMatches(teamId: Long)
+GET     /api/team/:teamId/playerGoalGames   controllers.RestTeamController.playerGoalGames(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/team/:teamId/playerCards   controllers.RestTeamController.playerCards(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.overview(leagueId: Int)

@@ -4,7 +4,9 @@ import com.blackmorse.hattrick.api.teamdetails.model.Team
 import com.blackmorse.hattrick.model.enums.MatchType
 import databases.{ClickhouseDAO, RestClickhouseDAO}
 import databases.clickhouse.StatisticsCHRequest
-import databases.requests.OrderingKeyPath
+import databases.requests.model.player.PlayerCards
+import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest}
+import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.teamrankings.TeamRankingsRequest
 import hattrick.Hattrick
 import io.swagger.annotations.Api
@@ -13,7 +15,7 @@ import models.clickhouse.{NearestMatch, TeamRankings}
 import models.web.{RestStatisticsParameters, RestTableData, StatisticsParameters}
 import models.web.rest.LevelData
 import models.web.rest.LevelData.Rounds
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{BaseController, ControllerComponents}
 import service.LeagueInfoService
 import utils.Romans
@@ -57,7 +59,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
                                     val hattrick: Hattrick,
                                     val leagueInfoService: LeagueInfoService,
                                     implicit val clickhouseDAO: ClickhouseDAO,
-                                    implicit val restClickhouseDAO: RestClickhouseDAO) extends BaseController {
+                                    implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
   private def getTeamById(teamId: Long): Future[Team] = Future {
     hattrick.api.teamDetails().teamID(teamId).execute()
       .getTeams.asScala.filter(_.getTeamId == teamId).head
@@ -81,6 +83,43 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
         ))
       })
   }
+
+  def stats[T](chRequest: ClickhouseStatisticsRequest[T],
+               teamId: Long,
+               restStatisticsParameters: RestStatisticsParameters)
+              (implicit writes: Writes[T]) = Action.async{ implicit request =>
+    getTeamById(teamId).flatMap(team => {
+      val league = hattrick.api.worldDetails().leagueId(team.getLeague.getLeagueId)
+        .execute()
+        .getLeagueList.get(0)
+
+      val htRound = league.getMatchRound
+
+      val (divisionLevel: Int, leagueUnitId: Long) = if(htRound == 16
+        || leagueInfoService.leagueInfo.currentSeason(team.getLeague.getLeagueId) > restStatisticsParameters.season
+        || league.getSeason - league.getSeasonOffset > restStatisticsParameters.season) {
+        val infoOpt = clickhouseDAO.historyTeamLeagueUnitInfo(restStatisticsParameters.season, team.getLeague.getLeagueId, teamId)
+        infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
+          .getOrElse((team.getLeagueLevelUnit.getLeagueLevel, team.getLeagueLevelUnit.getLeagueLevelUnitId))
+      } else {
+        (team.getLeagueLevelUnit.getLeagueLevel.toInt, team.getLeagueLevelUnit.getLeagueLevelUnitId.toLong)
+      }
+
+      chRequest.execute(
+        OrderingKeyPath(
+          leagueId = Some(team.getLeague.getLeagueId),
+          divisionLevel = Some(divisionLevel),
+          leagueUnitId = Some(leagueUnitId),
+          teamId = Some(teamId)
+        ), restStatisticsParameters)
+    }.map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize)))
+  }
+
+  def playerGoalGames(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerGamesGoalsRequest, teamId, restStatisticsParameters)
+
+  def playerCards(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerCardsRequest, teamId, restStatisticsParameters)
 
   def playerStats(teamId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
     val statisticsParameters =

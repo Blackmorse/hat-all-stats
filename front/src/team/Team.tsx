@@ -9,6 +9,8 @@ import TeamTopMenu from './TeamTopMenu'
 import TeamPlayerStats from './TeamPlayerStats'
 import TeamRankingsTable from './TeamRankingsTable'
 import NearestMatchesTable from './NearestMatchesTable'
+import TeamPlayerCards from './TeamPlayerCards'
+import TeamPlayerGoalGames from './TeamPlayerGoalGames'
 
 interface MatchParams {
     teamId: string
@@ -24,6 +26,10 @@ class Team extends PageLayout<Props, TeamData, ModelTableTeamProps> {
                     <TeamRankingsTable modelTableProps={props}/>
                 </>)
         pagesMap.set(PagesEnum.PLAYER_STATS, props => <TeamPlayerStats modelTableProps={props}/>)
+        pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES, 
+            props => <TeamPlayerGoalGames modelTableProps={props}/>)
+        pagesMap.set(PagesEnum.PLAYER_CARDS, 
+            props => <TeamPlayerCards modelTableProps={props}/>)
 
         super(props, pagesMap)
     }

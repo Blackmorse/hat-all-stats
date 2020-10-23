@@ -8,7 +8,7 @@ import javax.inject.Inject
 import models.web.rest.LevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{RestStatisticsParameters, RestTableData, Round}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{BaseController, ControllerComponents}
 import service.{LeagueInfoService, LeagueUnitCalculatorService}
 import utils.{LeagueNameParser, Romans}
@@ -17,8 +17,9 @@ import collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
-import databases.requests.OrderingKeyPath
+import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.matchdetails.TeamHatstatsRequest
+import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest}
 
 case class RestLeagueUnitData(leagueId: Int,
                               leagueName: String,
@@ -90,16 +91,28 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
       .map(rlud =>  Ok(Json.toJson(rlud)))
   }
 
-  def teamHatstats(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{ implicit request =>
+  def stats[T](chRequest: ClickhouseStatisticsRequest[T],
+               leagueUnitId: Long,
+               restStatisticsParameters: RestStatisticsParameters)
+              (implicit writes: Writes[T]) = Action.async{ implicit request =>
     leagueUnitDataFromId(leagueUnitId).flatMap(leagueUnitData =>
-      TeamHatstatsRequest.execute(
+      chRequest.execute(
         OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
           leagueUnitId = Some(leagueUnitId)),
-        restStatisticsParameters)
-        .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+        restStatisticsParameters
+      ) .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
     )
   }
+
+  def teamHatstats(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamHatstatsRequest, leagueUnitId, restStatisticsParameters)
+
+  def playerGoalGames(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerGamesGoalsRequest, leagueUnitId, restStatisticsParameters)
+
+  def playerCards(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerCardsRequest, leagueUnitId, restStatisticsParameters)
 
   def teamPositions(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>
     Future{
