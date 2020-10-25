@@ -1,4 +1,4 @@
-import PlayerSalaryTsiTable from "../common/tables/PlayerSalaryTsiTable";
+import PlayerSalaryTsiTable from "../common/tables/player/PlayerSalaryTsiTable";
 import TeamData from '../rest/models/TeamData'
 import ModelTableTeamProps from './ModelTableTeamProps'
 

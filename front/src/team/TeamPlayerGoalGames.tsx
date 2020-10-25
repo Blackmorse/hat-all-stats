@@ -1,4 +1,4 @@
-import PlayerGoalsGamesTable from "../common/tables/PlayerGoalsGamesTable";
+import PlayerGoalsGamesTable from "../common/tables/player/PlayerGoalsGamesTable";
 import TeamData from '../rest/models/TeamData'
 import ModelTableTeamProps from './ModelTableTeamProps'
 

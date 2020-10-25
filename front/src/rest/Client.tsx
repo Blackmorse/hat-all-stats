@@ -19,6 +19,7 @@ import { NearestMatches } from './models/NearestMatch';
 import PlayerGoalGames from './models/player/PlayerGoalsGames'
 import PlayerCards from './models/player/PlayerCards'
 import PlayerSalaryTSI from './models/player/PlayerSalaryTSI'
+import PlayerRating from './models/player/PlayerRating'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -150,9 +151,20 @@ export function getPlayerSalaryTsi(request: LevelRequest,
         onError: () => void) {
     let params = createParameters(statisticsParameters)
     axios.get<RestTableData<PlayerSalaryTSI>>(startUrl(request) + '/playerTsiSalary?' + params.toString())
-    .then(response => response.data)
-    .then(playerSalaryTsis => callback(playerSalaryTsis))
-    .catch(e => onError())
+        .then(response => response.data)
+        .then(playerSalaryTsis => callback(playerSalaryTsis))
+        .catch(e => onError())
+}
+
+export function getPlayerRatings(request: LevelRequest,
+            statisticsParameters: StatisticsParameters,
+            callback: (playerRatings: RestTableData<PlayerRating>) => void,
+            onError: () => void) {
+        let params = createParameters(statisticsParameters)
+        axios.get<RestTableData<PlayerRating>>(startUrl(request) + '/playerRatings?' + params.toString())
+            .then(response => response.data)
+            .then(playerRatings => callback(playerRatings))
+            .catch(e => onError())
     }
 
 function startUrl(request: LevelRequest): string {

@@ -11,6 +11,7 @@ import PageLayout from '../common/PageLayout';
 import DivisionLevelPlayerGoalGames from './DivisionLevelPlayerGoalGames'
 import DivisionLevelPlayerCards from './DivisionLevelPlayerCards'
 import DivisionLevelPlayerSalaryTsi from './DivisionLevelPlayerSalaryTsi'
+import DivisionLevelPlayerRatings from './DivisionLevelPlayerRatings'
 
 interface MatchParams {
     leagueId: string,
@@ -32,6 +33,8 @@ class DivisionLevel extends PageLayout<Props, DivisionLevelData, ModelTableDivis
             props => <DivisionLevelPlayerCards modelTableProps={props} />)
         pagesMap.set(PagesEnum.PLAYER_SALARY_TSI,
             props => <DivisionLevelPlayerSalaryTsi modelTableProps={props} />)
+        pagesMap.set(PagesEnum.PLAYER_RATINGS,
+            props => <DivisionLevelPlayerRatings modelTableProps={props} />)
         super(props, pagesMap)
 
         this.leagueUnitSelected=this.leagueUnitSelected.bind(this)

@@ -23,6 +23,7 @@ const resources = {
       "menu.player_goal_games": "Goals/Games",
       "menu.player_cards": "Yellow/Red cards",
       "menu.player_salary_tsi": "Salary/TSI",
+      "menu.ratings": "Ratings",
 
       //Table
       "table.position_abbr": "P",
@@ -168,6 +169,7 @@ const resources = {
       "menu.player_goal_games": "Игры/Голы",
       "menu.player_cards": "Желтые/Красные карточки",
       "menu.player_salary_tsi": "Зарплата/TSI",
+      "menu.ratings": "Рейтинги",
 
       //Table
       "table.position_abbr": "П",

@@ -1,14 +1,14 @@
 import React from 'react';
-import LevelData from "../../rest/models/LevelData";
-import ModelTable, { ModelTableProps, ModelTablePropsWrapper, SortingState } from "../ModelTable";
-import PlayerSalaryTSI from "../../rest/models/player/PlayerSalaryTSI";
-import { StatsTypeEnum } from "../../rest/StatisticsParameters";
-import { getPlayerSalaryTsi } from '../../rest/Client';
+import LevelData from "../../../rest/models/LevelData";
+import ModelTable, { ModelTableProps, ModelTablePropsWrapper, SortingState } from "../../ModelTable";
+import PlayerSalaryTSI from "../../../rest/models/player/PlayerSalaryTSI";
+import { StatsTypeEnum } from "../../../rest/StatisticsParameters";
+import { getPlayerSalaryTsi } from '../../../rest/Client';
 import { Translation } from "react-i18next";
-import ModelTableTh from "../ModelTableTh";
-import TeamLink from "../links/TeamLink";
-import LeagueUnitLink from "../links/LeagueUnitLink";
-import { ageFormatter, commasSeparated } from '../Formatters'
+import ModelTableTh from "../../ModelTableTh";
+import TeamLink from "../../links/TeamLink";
+import LeagueUnitLink from "../../links/LeagueUnitLink";
+import { ageFormatter, commasSeparated } from '../../Formatters'
 
 abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
     extends ModelTable<Data, TableProps, PlayerSalaryTSI> {

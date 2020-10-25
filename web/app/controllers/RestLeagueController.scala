@@ -4,7 +4,7 @@ import com.google.inject.{Inject, Singleton}
 import databases.RestClickhouseDAO
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamHatstatsRequest}
-import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerSalaryTSIRequest}
+import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
 import models.web.rest.LevelData
@@ -76,5 +76,8 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
 
   def playerTsiSalary(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerSalaryTSIRequest, leagueId, restStatisticsParameters)
+
+  def playerRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerRatingsRequest, leagueId, restStatisticsParameters)
 }
 

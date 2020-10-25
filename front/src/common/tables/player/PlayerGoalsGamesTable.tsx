@@ -1,14 +1,14 @@
-import LevelData from '../../rest/models/LevelData';
+import LevelData from '../../../rest/models/LevelData';
 import React from 'react';
-import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../ModelTable';
-import PlayerGoalsGames from '../../rest/models/player/PlayerGoalsGames'
-import { StatsTypeEnum } from '../../rest/StatisticsParameters';
-import '../../i18n'
+import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable';
+import PlayerGoalsGames from '../../../rest/models/player/PlayerGoalsGames'
+import { StatsTypeEnum } from '../../../rest/StatisticsParameters';
+import '../../../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../../common/ModelTableTh'
-import TeamLink from '../links/TeamLink'
-import LeagueUnitLink from '../links/LeagueUnitLink'
-import { getPlayerGoalsGames } from '../../rest/Client';
+import ModelTableTh from '../../../common/ModelTableTh'
+import TeamLink from '../../links/TeamLink'
+import LeagueUnitLink from '../../links/LeagueUnitLink'
+import { getPlayerGoalsGames } from '../../../rest/Client';
 
 abstract class PlayerGoalsGamesTable<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
     extends ModelTable<Data, TableProps, PlayerGoalsGames> {
