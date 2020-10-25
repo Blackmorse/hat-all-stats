@@ -3,7 +3,7 @@ package controllers
 import databases.RestClickhouseDAO
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamHatstatsRequest}
-import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
+import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import io.swagger.annotations.Api
 import javax.inject.{Inject, Singleton}
 import models.web.rest.LevelData.Rounds
@@ -83,4 +83,7 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
 
   def playerRatings(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerRatingsRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def playerInjuries(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerInjuryRequest, leagueId, divisionLevel, restStatisticsParameters)
 }

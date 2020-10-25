@@ -20,6 +20,7 @@ import PlayerGoalGames from './models/player/PlayerGoalsGames'
 import PlayerCards from './models/player/PlayerCards'
 import PlayerSalaryTSI from './models/player/PlayerSalaryTSI'
 import PlayerRating from './models/player/PlayerRating'
+import PlayerInjury from './models/player/PlayerInjury'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -166,6 +167,17 @@ export function getPlayerRatings(request: LevelRequest,
             .then(playerRatings => callback(playerRatings))
             .catch(e => onError())
     }
+
+export function getPlayerInjuries(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (playerInjuries: RestTableData<PlayerInjury>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<PlayerInjury>>(startUrl(request) + '/playerInjuries?' + params.toString())
+        .then(response => response.data)
+        .then(playerRatings => callback(playerRatings))
+        .catch(e => onError())
+}
 
 function startUrl(request: LevelRequest): string {
     if (request.type === 'LeagueRequest') {

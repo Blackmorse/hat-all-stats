@@ -13,6 +13,7 @@ import LeaguePlayerGoalGames from './LeaguePlayerGoalGames'
 import LeaguePlayerCards from './LeaguePlayerCards'
 import LeaguePlayerSalaryTsiTable from './LeaguePlayerSalaryTsiTable'
 import LeaguePlayerRatings from './LeaguePlayerRatings'
+import LeaguePlayerInjuries from './LeaguePlayerInjuries'
 
 interface MatchParams {
     leagueId: string;
@@ -35,6 +36,8 @@ class League extends PageLayout<Props, LeagueData, ModelTableLeagueProps> {
             props => <LeaguePlayerSalaryTsiTable modelTableProps={props} />)
         pagesMap.set(PagesEnum.PLAYER_RATINGS, 
             props => <LeaguePlayerRatings modelTableProps={props} />)
+        pagesMap.set(PagesEnum.PLAYER_INJURIES,
+            props => <LeaguePlayerInjuries modelTableProps={props} />)
         super(props, pagesMap)
     }    
 

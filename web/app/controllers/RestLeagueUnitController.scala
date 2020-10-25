@@ -19,7 +19,7 @@ import scala.concurrent.Future
 import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.matchdetails.TeamHatstatsRequest
-import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
+import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 
 case class RestLeagueUnitData(leagueId: Int,
                               leagueName: String,
@@ -125,6 +125,9 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
 
   def playerRatings(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerRatingsRequest, leagueUnitId, restStatisticsParameters)
+
+  def playerInjuries(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(PlayerInjuryRequest, leagueUnitId, restStatisticsParameters)
 
   def teamPositions(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>
     Future{
