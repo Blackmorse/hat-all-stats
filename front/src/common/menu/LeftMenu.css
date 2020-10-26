@@ -10,7 +10,6 @@
 
     display: flex;
     flex-direction: column;
-    align-self: flex-start;
 
     margin: 0 10px 10px 0;
     padding: 0 0 10px;
@@ -31,10 +30,27 @@
     color: white;
 }
 
-.left_bar_link {
-    margin: 5px 10px;
-    font-family: 'Merriweather', serif;
+.left_bar_links {
+    display: flex;
+    flex-direction: column;
+    margin: 0 0 0 5px;
+}
+
+.group {
+    margin-top: 8px;
+    margin-left: 0px;
+    font-size: 1em;
+}
+
+.page {
+    margin-left: 15px;
     font-size: 0.8em;
+}
+
+
+.left_bar_link {
+    font-family: 'Merriweather', serif;
+    
     text-decoration: none;
     color: black;
 
@@ -42,8 +58,6 @@
     border: none;
     cursor: pointer;
 
-    margin: 0;
-    padding: 0;
     text-align: left;
 }
 

@@ -25,6 +25,9 @@ const resources = {
       "menu.player_salary_tsi": "Salary/TSI",
       "menu.ratings": "Ratings",
       "menu.injuries": "Injuries",
+      "menu.teams": "Teams",
+      "menu.players": "Players",
+      "menu.leagues": "Leagues",
 
       //Table
       "table.position_abbr": "P",
@@ -172,6 +175,9 @@ const resources = {
       "menu.player_salary_tsi": "Зарплата/TSI",
       "menu.ratings": "Рейтинги",
       "menu.injuries": "Травмы",
+      "menu.teams": "Команды",
+      "menu.players": "Игроки",
+      "menu.leagues": "Лиги",
 
       //Table
       "table.position_abbr": "П",
