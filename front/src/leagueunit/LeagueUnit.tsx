@@ -13,6 +13,13 @@ import LeagueUnitPlayerCards from './LeagueUnitPlayerCards'
 import LeagueUnitPlayerSalaryTsi from './LeagueUnitPlayerSalaryTsi'
 import LeagueUnitPlayerRatings from './LeagueUnitPlayerRatings'
 import LeagueUnitPlayerInjuries from './LeagueUnitPlayerInjuries'
+import LeagueUnitTeamSalaryTSI from './LeagueUnitTeamSalaryTSI'
+import LeagueUnitTeamCards from './LeagueUnitTeamCards'
+import LeagueUnitTeamRatings from './LeagueUnitTeamRatings'
+import LeagueUnitTeamAgeInjury from './LeagueUnitTeamAgeInjury'
+import LeagueUnitTeamPowerRatings from './LeagueUnitTeamPowerRatings'
+import LeagueUnitTeamFanclubFlags from './LeagueUnitTeamFanclubFlags'
+import LeagueUnitTeamStreakTrophies from './LeagueUnitTeamStreakTrophies'
 
 interface MatchParams {
     leagueUnitId: string
@@ -38,6 +45,20 @@ class LeagueUnit extends PageLayout<Props, LeagueUnitData, ModelTableLeagueUnitP
             props => <LeagueUnitPlayerRatings modelTableProps={props} />)
         pagesMap.set(PagesEnum.PLAYER_INJURIES,
             props => <LeagueUnitPlayerInjuries modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_SALARY_TSI,
+            props => <LeagueUnitTeamSalaryTSI modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_CARDS,
+            props => <LeagueUnitTeamCards modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_RATINGS,
+            props => <LeagueUnitTeamRatings modelTableProps={props} />)  
+        pagesMap.set(PagesEnum.TEAM_AGE_INJURY,
+            props => <LeagueUnitTeamAgeInjury modelTableProps={props} />) 
+        pagesMap.set(PagesEnum.TEAM_POWER_RATINGS,
+            props => <LeagueUnitTeamPowerRatings modelTableProps={props} />) 
+        pagesMap.set(PagesEnum.TEAM_FANCLUB_FLAGS,
+            props => <LeagueUnitTeamFanclubFlags modelTableProps={props} />) 
+        pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES,
+            props => <LeagueUnitTeamStreakTrophies modelTableProps={props} />) 
         super(props, pagesMap)
 
         this.teamIdSelected=this.teamIdSelected.bind(this)

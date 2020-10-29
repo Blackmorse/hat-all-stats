@@ -1,7 +1,7 @@
 @import models.web.WebPagedEntities
-@import models.clickhouse.TeamRating
+@import models.clickhouse.TeamHatstats
 
-@(bestTeams: WebPagedEntities[TeamRating])(implicit messages: Messages)
+@(bestTeams: WebPagedEntities[TeamHatstats])(implicit messages: Messages)
 <table class="statistics_table">
     <tr>
         <th class="position hint" popped-hint="@messages("table.position")">@messages("table.position_abbr")</th>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import LeagueData from './models/LeagueData'
 import DivisionLevelData from './models/DivisionLevelData'
-import TeamRating from './models/TeamRating'
+import TeamHatstats from './models/team/TeamHatstats'
 import LeagueUnitRating from './models/LeagueUnitRating'
 import StatisticsParameters, { StatsTypeEnum } from './StatisticsParameters'
 import RestTableData from './RestTableData'
@@ -21,6 +21,14 @@ import PlayerCards from './models/player/PlayerCards'
 import PlayerSalaryTSI from './models/player/PlayerSalaryTSI'
 import PlayerRating from './models/player/PlayerRating'
 import PlayerInjury from './models/player/PlayerInjury'
+import TeamSalaryTSI from './models/team/TeamSalaryTSI'
+import TeamCards from './models/team/TeamCards'
+import TeamRating from './models/team/TeamRating'
+import TeamAgeInjury from './models/team/TeamAgeInjury'
+import TeamGoalPoints from './models/team/TeamGoalPoints'
+import TeamPowerRating from './models/team/TeamPowerRating'
+import TeamFanclubFlags from './models/team/TeamFanclubFlags'
+import TeamStreakTrophies from './models/team/TeamStreakTrophies'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -43,13 +51,13 @@ export function getLeagueUnitData(leagueUnitId: number, callback: (leagueUnitDat
     }).then(model => callback(model))
 }
 
-export function getTeamRatings(request: LevelRequest, 
+export function getTeamHatstats(request: LevelRequest, 
         statisticsParameters: StatisticsParameters, 
-        callback: (teamRatings: RestTableData<TeamRating>) => void,
+        callback: (teamHatstats: RestTableData<TeamHatstats>) => void,
         onError: () => void) {
     let params = createParameters(statisticsParameters)    
 
-    axios.get<RestTableData<TeamRating>>(startUrl(request) + '/teamHatstats?' + params.toString())
+    axios.get<RestTableData<TeamHatstats>>(startUrl(request) + '/teamHatstats?' + params.toString())
     .then(response => response.data)
     .then(model => callback(model))
     .catch(e => onError())
@@ -176,6 +184,94 @@ export function getPlayerInjuries(request: LevelRequest,
     axios.get<RestTableData<PlayerInjury>>(startUrl(request) + '/playerInjuries?' + params.toString())
         .then(response => response.data)
         .then(playerRatings => callback(playerRatings))
+        .catch(e => onError())
+}
+
+export function getTeamSalaryTSI(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (teamSalaryTSIs: RestTableData<TeamSalaryTSI>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<TeamSalaryTSI>>(startUrl(request) + '/teamSalaryTsi?' + params.toString())
+        .then(response => response.data)
+        .then(teamSalaryTSIs => callback(teamSalaryTSIs))
+        .catch(e => onError())
+}
+
+export function getTeamCards(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (teamCards: RestTableData<TeamCards>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<TeamCards>>(startUrl(request) + '/teamCards?' + params.toString())
+        .then(response => response.data)
+        .then(teamCards => callback(teamCards))
+        .catch(e => onError())
+}
+
+export function getTeamRatings(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (teamRatings: RestTableData<TeamRating>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<TeamRating>>(startUrl(request) + '/teamRatings?' + params.toString())
+        .then(response => response.data)
+        .then(teamRatings => callback(teamRatings))
+        .catch(e => onError())
+}
+
+export function getTeamAgeInjuries(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (teamAgeInjuries: RestTableData<TeamAgeInjury>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<TeamAgeInjury>>(startUrl(request) + '/teamAgeInjuries?' + params.toString())
+        .then(response => response.data)
+        .then(teamAgeInjuries => callback(teamAgeInjuries))
+        .catch(e => onError())
+}
+
+export function getTeamGoalPoints(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (teamGoalPoints: RestTableData<TeamGoalPoints>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<TeamGoalPoints>>(startUrl(request) + '/teamGoalPoints?' + params.toString())
+        .then(response => response.data)
+        .then(teamGoalPoints => callback(teamGoalPoints))
+        .catch(e => onError())
+}
+
+export function getTeamPowerRatings(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (teamPowerRatings: RestTableData<TeamPowerRating>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<TeamPowerRating>>(startUrl(request) + '/teamPowerRatings?' + params.toString())
+        .then(response => response.data)
+        .then(teamPowerRatings => callback(teamPowerRatings))
+        .catch(e => onError())
+}
+
+export function getTeamFanclubFlags(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (teamFanclubFlags: RestTableData<TeamFanclubFlags>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<TeamFanclubFlags>>(startUrl(request) + '/teamFanclubFlags?' + params.toString())
+        .then(response => response.data)
+        .then(teamFanclubFlags => callback(teamFanclubFlags))
+        .catch(e => onError())
+}
+
+export function getTeamStreakTrophies(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (teamStreakTrophies: RestTableData<TeamStreakTrophies>) => void,
+        onError: () => void) {
+    let params = createParameters(statisticsParameters)
+    axios.get<RestTableData<TeamStreakTrophies>>(startUrl(request) + '/teamStreakTrophies?' + params.toString())
+        .then(response => response.data)
+        .then(teamStreakTrophies => callback(teamStreakTrophies))
         .catch(e => onError())
 }
 

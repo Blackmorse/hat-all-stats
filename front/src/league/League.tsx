@@ -14,6 +14,14 @@ import LeaguePlayerCards from './LeaguePlayerCards'
 import LeaguePlayerSalaryTsiTable from './LeaguePlayerSalaryTsiTable'
 import LeaguePlayerRatings from './LeaguePlayerRatings'
 import LeaguePlayerInjuries from './LeaguePlayerInjuries'
+import LeagueTeamSalaryTSI from './LeagueTeamSalaryTSI'
+import LeagueTeamCards from './LeagueTeamCards'
+import LeagueTeamRatings from './LeagueTeamRatings'
+import LeagueTeamAgeInjury from './LeagueTeamAgeInjury'
+import LeagueTeamGoalPoints from './LeagueTeamGoalPoints'
+import LeagueTeamPowerRatings from './LeagueTeamPowerRatings'
+import LeagueTeamFanclubFlags from './LeagueTeamFanclubFlags'
+import LeagueTeamStreakTrophies from './LeagueTeamStreakTrophies'
 
 interface MatchParams {
     leagueId: string;
@@ -38,6 +46,22 @@ class League extends PageLayout<Props, LeagueData, ModelTableLeagueProps> {
             props => <LeaguePlayerRatings modelTableProps={props} />)
         pagesMap.set(PagesEnum.PLAYER_INJURIES,
             props => <LeaguePlayerInjuries modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_SALARY_TSI,
+            props => <LeagueTeamSalaryTSI modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_CARDS,
+            props => <LeagueTeamCards modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_RATINGS,
+            props => <LeagueTeamRatings modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_AGE_INJURY,
+            props => <LeagueTeamAgeInjury modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_GOAL_POINTS,
+            props => <LeagueTeamGoalPoints modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_POWER_RATINGS,
+            props => <LeagueTeamPowerRatings modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_FANCLUB_FLAGS,
+            props => <LeagueTeamFanclubFlags modelTableProps={props} />)
+        pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES,
+            props => <LeagueTeamStreakTrophies modelTableProps={props} />)
         super(props, pagesMap)
     }    
 

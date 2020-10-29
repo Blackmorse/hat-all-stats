@@ -57,7 +57,7 @@ object StatisticsCHRequest {
     sortingColumns = Seq(("hatstats", "table.hatstats"), ("midfield", "table.midfield"),
       ("defense", "table.defense"), ("attack", "table.attack")),
     statisticsType = AvgMax,
-    parser = TeamRating.teamRatingMapper
+    parser = TeamHatstats.teamRatingMapper
   )
 
   val bestHatstatsLeagueRequest = StatisticsCHRequest(

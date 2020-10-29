@@ -2,9 +2,9 @@ package databases.requests.matchdetails
 
 import anorm.RowParser
 import databases.requests.ClickhouseStatisticsRequest
-import models.clickhouse.TeamRating
+import models.clickhouse.TeamHatstats
 
-object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamRating]{
+object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
   override val aggregateSql: String =
     """select team_id,
           |argMax(team_name, round) as team_name,
@@ -31,5 +31,5 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamRating]{
       |""".stripMargin
 
   override val sortingColumns: Seq[String] = Seq("hatstats", "midfield", "defense", "attack")
-  override val rowParser: RowParser[TeamRating] = TeamRating.teamRatingMapper.asInstanceOf[RowParser[TeamRating]]
+  override val rowParser: RowParser[TeamHatstats] = TeamHatstats.teamRatingMapper.asInstanceOf[RowParser[TeamHatstats]]
 }

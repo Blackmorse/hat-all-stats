@@ -3,8 +3,10 @@ package controllers
 import com.google.inject.{Inject, Singleton}
 import databases.RestClickhouseDAO
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamHatstatsRequest}
+import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
+import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
+import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
 import models.web.rest.LevelData
@@ -82,5 +84,29 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
 
   def playerInjuries(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerInjuryRequest, leagueId, restStatisticsParameters)
+
+  def teamSalaryTsi(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamSalaryTSIRequest, leagueId, restStatisticsParameters)
+
+  def teamCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamCardsRequest, leagueId, restStatisticsParameters)
+
+  def teamRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamRatingsRequest, leagueId, restStatisticsParameters)
+
+  def teamAgeInjuries(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamAgeInjuryRequest, leagueId, restStatisticsParameters)
+
+  def teamGoalPoints(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamGoalPointsRequest, leagueId, restStatisticsParameters)
+
+  def teamPowerRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamPowerRatingsRequest, leagueId, restStatisticsParameters)
+
+  def teamFanclubFlags(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamFanclubFlagsRequest, leagueId, restStatisticsParameters)
+
+  def teamStreakTrophies(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamStreakTrophiesRequest, leagueId, restStatisticsParameters)
 }
 

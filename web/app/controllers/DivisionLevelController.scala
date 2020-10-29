@@ -78,7 +78,7 @@ class DivisionLevelController@Inject() (val controllerComponents: ControllerComp
       statisticsType = AvgMax,
       func = sp => routes.DivisionLevelController.bestTeams(leagueId, divisionLevel, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.bestHatstatsTeamRequest,
-      viewFunc = {viewData: ViewData[TeamRating, WebDivisionLevelDetails] => messages => views.html.divisionlevel.bestTeams(viewData)(messages)},
+      viewFunc = {viewData: ViewData[TeamHatstats, WebDivisionLevelDetails] => messages => views.html.divisionlevel.bestTeams(viewData)(messages)},
       selectedId = selectedTeamId
     )
 

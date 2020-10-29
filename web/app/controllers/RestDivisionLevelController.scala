@@ -1,16 +1,18 @@
 package controllers
 
 import databases.RestClickhouseDAO
+import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
+import databases.requests.playerstats.player._
+import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
+import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamHatstatsRequest}
-import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import io.swagger.annotations.Api
 import javax.inject.{Inject, Singleton}
-import models.web.rest.LevelData.Rounds
-import models.web.rest.LevelData
 import models.web.RestStatisticsParameters
+import models.web.rest.LevelData
+import models.web.rest.LevelData.Rounds
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{BaseController, ControllerComponents}
+import play.api.mvc.ControllerComponents
 import service.LeagueInfoService
 import utils.Romans
 
@@ -86,4 +88,28 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
 
   def playerInjuries(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerInjuryRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def teamSalaryTsi(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamSalaryTSIRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def teamCards(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamCardsRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def teamRatings(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamRatingsRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def teamAgeInjuries(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamAgeInjuryRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def teamGoalPoints(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamGoalPointsRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def teamPowerRatings(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamPowerRatingsRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def teamFanclubFlags(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamFanclubFlagsRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def teamStreakTrophies(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamStreakTrophiesRequest, leagueId, divisionLevel, restStatisticsParameters)
 }

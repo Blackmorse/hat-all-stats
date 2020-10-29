@@ -5,7 +5,7 @@ import databases.ClickhouseDAO
 import databases.clickhouse.{Accumulated, AvgMax, OnlyRound, StatisticsCHRequest, StatisticsType}
 import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
-import models.clickhouse.{BestMatch, FanclubFlags, PlayerStats, PlayersState, PowerRating, StreakTrophy, SurprisingMatch, TeamRating, TeamState}
+import models.clickhouse.{BestMatch, FanclubFlags, PlayerStats, PlayersState, PowerRating, StreakTrophy, SurprisingMatch, TeamHatstats, TeamState}
 import models.web._
 import play.api.i18n.Messages
 import play.api.mvc.{BaseController, Call, ControllerComponents}
@@ -99,7 +99,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
       statisticsType = AvgMax,
       func = sp => routes.LeagueUnitController.bestTeams(leagueUnitId, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.bestHatstatsTeamRequest,
-      viewFunc = {(viewData: ViewData[TeamRating, WebLeagueUnitDetails], leagueUnitTeamStats: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.bestTeams(viewData, leagueUnitTeamStats)(messages)})
+      viewFunc = {(viewData: ViewData[TeamHatstats, WebLeagueUnitDetails], leagueUnitTeamStats: Seq[LeagueUnitTeamStat]) => messages => views.html.leagueunit.bestTeams(viewData, leagueUnitTeamStats)(messages)})
 
 
   def playerStats(leagueUnitId: Long, statisticsParametersOpt: Option[StatisticsParameters]) =

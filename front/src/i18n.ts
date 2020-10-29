@@ -28,6 +28,10 @@ const resources = {
       "menu.teams": "Teams",
       "menu.players": "Players",
       "menu.leagues": "Leagues",
+      "menu.age_injury": "Age/Injuries",
+      "menu.goals_points": "Points/goals",
+      "menu.fanclub_flags": "Fanclub/flags",
+      "menu.streak_trophies": "Winning streaks/Trophies",
 
       //Table
       "table.position_abbr": "P",
@@ -79,6 +83,14 @@ const resources = {
       "table.average_age_abbr": "AA",
       "table.average_age": "Average age",
       "table.power_rating": "Power rating",
+      "table.goals_difference": "+/-",
+      "table.fanclub_size": "Fanclub",
+      "table.home_flags": "Home flags",
+      "table.away_flags": "Away flags",
+      "table.all_flags": "All flags",
+      "table.trophies": "Trophies",
+      "table.victories": "Victories",
+      "table.undefeated": "Undefeated",
 
       //team_rankings
       "team_rankings.ranking": "Ranking at ",
@@ -178,6 +190,10 @@ const resources = {
       "menu.teams": "Команды",
       "menu.players": "Игроки",
       "menu.leagues": "Лиги",
+      "menu.age_injury": "Возраст/Травмы",
+      "menu.goals_points": "Очки/голы",
+      "menu.fanclub_flags": "Фанклуб/флаги",
+      "menu.streak_trophies": "Победные серии/Трофеи",
 
       //Table
       "table.position_abbr": "П",
@@ -229,6 +245,14 @@ const resources = {
       "table.average_age_abbr": "СВ",
       "table.average_age": "Средний возраст",
       "table.power_rating": "Power rating",
+      "table.goals_difference": "+/-",
+      "table.fanclub_size": "Фанклуб",
+      "table.home_flags": "Домашние флаги",
+      "table.away_flags": "Гостевые флаги",
+      "table.all_flags": "Все флаги",
+      "table.trophies": "Трофеи",
+      "table.victories": "Побед подряд",
+      "table.undefeated": "Без поражений",
 
       //team_rankings
       "team_rankings.ranking": "Рейтинг в ",

@@ -20,6 +20,8 @@ import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.matchdetails.TeamHatstatsRequest
 import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
+import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
+import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 
 case class RestLeagueUnitData(leagueId: Int,
                               leagueName: String,
@@ -128,6 +130,27 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
 
   def playerInjuries(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerInjuryRequest, leagueUnitId, restStatisticsParameters)
+
+  def teamSalaryTsi(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamSalaryTSIRequest, leagueUnitId, restStatisticsParameters)
+
+  def teamCards(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamCardsRequest, leagueUnitId, restStatisticsParameters)
+
+  def teamRatings(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamRatingsRequest, leagueUnitId, restStatisticsParameters)
+
+  def teamAgeInjuries(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamAgeInjuryRequest, leagueUnitId, restStatisticsParameters)
+
+  def teamPowerRatings(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamPowerRatingsRequest, leagueUnitId, restStatisticsParameters)
+
+  def teamFanclubFlags(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamFanclubFlagsRequest, leagueUnitId, restStatisticsParameters)
+
+  def teamStreakTrophies(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(TeamStreakTrophiesRequest, leagueUnitId, restStatisticsParameters)
 
   def teamPositions(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>
     Future{

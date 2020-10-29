@@ -80,7 +80,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       statisticsType = AvgMax,
       func = sp => routes.LeagueController.bestTeams(leagueId, Some(sp)),
       statisticsCHRequest = StatisticsCHRequest.bestHatstatsTeamRequest,
-      viewFunc = { viewData: web.ViewData[TeamRating, WebLeagueDetails] => messages => views.html.league.bestTeams(viewData)(messages) },
+      viewFunc = { viewData: web.ViewData[TeamHatstats, WebLeagueDetails] => messages => views.html.league.bestTeams(viewData)(messages) },
       selectedId = selectedTeamId
     )
   }
