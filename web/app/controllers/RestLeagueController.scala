@@ -3,7 +3,7 @@ package controllers
 import com.google.inject.{Inject, Singleton}
 import databases.RestClickhouseDAO
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
+import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
@@ -108,5 +108,14 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
 
   def teamStreakTrophies(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamStreakTrophiesRequest, leagueId, restStatisticsParameters)
+
+  def topMatches(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchTopHatstatsRequest, leagueId, restStatisticsParameters)
+
+  def surprisingMatches(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchSurprisingRequest, leagueId, restStatisticsParameters)
+
+  def matchSpectators(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchSpectatorsRequest, leagueId, restStatisticsParameters)
 }
 

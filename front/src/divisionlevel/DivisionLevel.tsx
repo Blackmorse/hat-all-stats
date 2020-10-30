@@ -21,6 +21,9 @@ import DivisionLevelTeamGoalPoints from './DivisionLevelTeamGoalPoints'
 import DivisionLevelTeamPowerRatings from './DivisionLevelTeamPowerRatings'
 import DivisionLevelTeamFanclubFlags from './DivisionLevelTeamFanclubFlags'
 import DivisionLevelTeamStreakTrophies from './DivisionLevelTeamStreakTrophies'
+import DivisionLevelMatchTopHatstats from './DivisionLevelMatchTopHatstats'
+import DivisionLevelMatchSurprising from './DivisionLevelMatchSurprising'
+import DivisionLevelMatchSpectators from './DivisionLevelMatchSpectators'
 
 interface MatchParams {
     leagueId: string,
@@ -62,6 +65,12 @@ class DivisionLevel extends PageLayout<Props, DivisionLevelData, ModelTableDivis
             props => <DivisionLevelTeamFanclubFlags modelTableProps={props} />)
         pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES,
             props => <DivisionLevelTeamStreakTrophies modelTableProps={props} />)
+        pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS,
+            props => <DivisionLevelMatchTopHatstats modelTableProps={props} />)
+        pagesMap.set(PagesEnum.MATCH_SURPRISING,
+            props => <DivisionLevelMatchSurprising modelTableProps={props} />)
+        pagesMap.set(PagesEnum.MATCH_SPECTATORS,
+            props => <DivisionLevelMatchSpectators modelTableProps={props} />)
         super(props, pagesMap)
 
         this.leagueUnitSelected=this.leagueUnitSelected.bind(this)

@@ -20,6 +20,9 @@ import LeagueUnitTeamAgeInjury from './LeagueUnitTeamAgeInjury'
 import LeagueUnitTeamPowerRatings from './LeagueUnitTeamPowerRatings'
 import LeagueUnitTeamFanclubFlags from './LeagueUnitTeamFanclubFlags'
 import LeagueUnitTeamStreakTrophies from './LeagueUnitTeamStreakTrophies'
+import LeagueUnitMatchTopHatstats from './LeagueUnitMatchTopHatstats'
+import LeagueUnitMatchSurprising from './LeagueUnitMatchSurprising'
+import LeagueUnitMatchSpectators from './LeagueUnitMatchSpectators'
 
 interface MatchParams {
     leagueUnitId: string
@@ -59,6 +62,12 @@ class LeagueUnit extends PageLayout<Props, LeagueUnitData, ModelTableLeagueUnitP
             props => <LeagueUnitTeamFanclubFlags modelTableProps={props} />) 
         pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES,
             props => <LeagueUnitTeamStreakTrophies modelTableProps={props} />) 
+        pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS,
+            props => <LeagueUnitMatchTopHatstats modelTableProps={props} />) 
+        pagesMap.set(PagesEnum.MATCH_SURPRISING,
+            props => <LeagueUnitMatchSurprising modelTableProps={props} />) 
+        pagesMap.set(PagesEnum.MATCH_SPECTATORS,
+            props => <LeagueUnitMatchSpectators modelTableProps={props} />) 
         super(props, pagesMap)
 
         this.teamIdSelected=this.teamIdSelected.bind(this)

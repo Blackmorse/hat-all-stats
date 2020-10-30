@@ -22,6 +22,9 @@ import LeagueTeamGoalPoints from './LeagueTeamGoalPoints'
 import LeagueTeamPowerRatings from './LeagueTeamPowerRatings'
 import LeagueTeamFanclubFlags from './LeagueTeamFanclubFlags'
 import LeagueTeamStreakTrophies from './LeagueTeamStreakTrophies'
+import LeagueMatchTopHatstats from './LeagueMatchTopHatstats'
+import LeagueMatchSurprising from './LeagueMatchSurprising'
+import LeagueMatchSpectators from './LeagueMatchSpectators'
 
 interface MatchParams {
     leagueId: string;
@@ -62,6 +65,12 @@ class League extends PageLayout<Props, LeagueData, ModelTableLeagueProps> {
             props => <LeagueTeamFanclubFlags modelTableProps={props} />)
         pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES,
             props => <LeagueTeamStreakTrophies modelTableProps={props} />)
+        pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS,
+            props => <LeagueMatchTopHatstats modelTableProps={props} />)
+        pagesMap.set(PagesEnum.MATCH_SURPRISING,
+            props => <LeagueMatchSurprising modelTableProps={props} />)
+        pagesMap.set(PagesEnum.MATCH_SPECTATORS,
+            props => <LeagueMatchSpectators modelTableProps={props} />)
         super(props, pagesMap)
     }    
 

@@ -14,6 +14,9 @@ import TeamPlayerGoalGames from './TeamPlayerGoalGames'
 import TeamPlayerSalaryTsi from './TeamPlayerSalaryTsi'
 import TeamPlayerRatings from './TeamPlayerRatings'
 import TeamPlayerInjuries from './TeamPlayerInjuries'
+import TeamMatchTopHatstats from './TeamMatchTopHatstats'
+import TeamMatchSurprising from './TeamMatchSurprising'
+import TeamMatchSpectators from './TeamMatchSpectators'
 
 interface MatchParams {
     teamId: string
@@ -40,6 +43,12 @@ class Team extends PageLayout<Props, TeamData, ModelTableTeamProps> {
             props => <TeamPlayerRatings modelTableProps={props} />)
         pagesMap.set(PagesEnum.PLAYER_INJURIES, 
             props => <TeamPlayerInjuries modelTableProps={props} />)
+        pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS, 
+            props => <TeamMatchTopHatstats modelTableProps={props} />)
+        pagesMap.set(PagesEnum.MATCH_SURPRISING, 
+            props => <TeamMatchSurprising modelTableProps={props} />)
+        pagesMap.set(PagesEnum.MATCH_SPECTATORS, 
+            props => <TeamMatchSpectators modelTableProps={props} />)
 
         super(props, pagesMap)
     }

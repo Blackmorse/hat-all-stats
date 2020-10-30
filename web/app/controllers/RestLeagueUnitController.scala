@@ -1,7 +1,13 @@
 package controllers
 
+import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 import com.blackmorse.hattrick.model.enums.SearchType
 import databases.RestClickhouseDAO
+import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
+import databases.requests.playerstats.player._
+import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
+import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
+import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
 import javax.inject.Inject
@@ -9,19 +15,13 @@ import models.web.rest.LevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{RestStatisticsParameters, RestTableData, Round}
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{BaseController, ControllerComponents}
+import play.api.mvc.ControllerComponents
 import service.{LeagueInfoService, LeagueUnitCalculatorService}
 import utils.{LeagueNameParser, Romans}
 
-import collection.JavaConverters._
+import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
-import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.requests.matchdetails.TeamHatstatsRequest
-import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
-import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
-import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 
 case class RestLeagueUnitData(leagueId: Int,
                               leagueName: String,
@@ -151,6 +151,15 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
 
   def teamStreakTrophies(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamStreakTrophiesRequest, leagueUnitId, restStatisticsParameters)
+
+  def topMatches(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchTopHatstatsRequest, leagueUnitId, restStatisticsParameters)
+
+  def surprisingMatches(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchSurprisingRequest, leagueUnitId, restStatisticsParameters)
+
+  def matchSpectators(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchSpectatorsRequest, leagueUnitId, restStatisticsParameters)
 
   def teamPositions(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>
     Future{

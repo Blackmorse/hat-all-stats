@@ -29,6 +29,8 @@ import TeamGoalPoints from './models/team/TeamGoalPoints'
 import TeamPowerRating from './models/team/TeamPowerRating'
 import TeamFanclubFlags from './models/team/TeamFanclubFlags'
 import TeamStreakTrophies from './models/team/TeamStreakTrophies'
+import MatchTopHatstats from './models/match/MatchTopHatstats'
+import MatchSpectators from './models/match/MatchSpectators'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -137,6 +139,12 @@ export let getTeamPowerRatings = statisticsRequest<TeamPowerRating>('teamPowerRa
 export let getTeamFanclubFlags = statisticsRequest<TeamFanclubFlags>('teamFanclubFlags')
 
 export let getTeamStreakTrophies = statisticsRequest<TeamStreakTrophies>('teamStreakTrophies')
+
+export let getMatchesTopHatstats = statisticsRequest<MatchTopHatstats>('topMatches')
+
+export let getSurprisingMatches = statisticsRequest<MatchTopHatstats>('surprisingMatches')
+
+export let getMatchSpectators = statisticsRequest<MatchSpectators>('matchSpectators')
 
 function startUrl(request: LevelRequest): string {
     if (request.type === 'LeagueRequest') {

@@ -15,5 +15,8 @@ export enum PagesEnum {
     TEAM_GOAL_POINTS = "menu.goals_points",
     TEAM_POWER_RATINGS = "table.power_rating",
     TEAM_FANCLUB_FLAGS = "menu.fanclub_flags",
-    TEAM_STREAK_TROPHIES = "menu.streak_trophies"
+    TEAM_STREAK_TROPHIES = "menu.streak_trophies",
+    MATCH_TOP_HATSTATS = "overview.top_matches",
+    MATCH_SURPRISING = "overview.surprising_matches",
+    MATCH_SPECTATORS = "matches.spectatos"
 }

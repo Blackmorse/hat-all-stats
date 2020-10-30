@@ -3,6 +3,7 @@ package controllers
 import com.blackmorse.hattrick.api.teamdetails.model.Team
 import com.blackmorse.hattrick.model.enums.MatchType
 import databases.clickhouse.StatisticsCHRequest
+import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest}
 import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import databases.requests.teamrankings.TeamRankingsRequest
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
@@ -133,6 +134,15 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
   def playerInjuries(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerInjuryRequest, teamId, restStatisticsParameters)
+
+  def topMatches(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchTopHatstatsRequest, teamId, restStatisticsParameters)
+
+  def surprisingMatches(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchSurprisingRequest, teamId, restStatisticsParameters)
+
+  def matchSpectators(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchSpectatorsRequest, teamId, restStatisticsParameters)
 
   def playerStats(teamId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
     val statisticsParameters =

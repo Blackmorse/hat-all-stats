@@ -25,6 +25,9 @@ GET     /api/league/:leagueId/teamGoalPoints       controllers.RestLeagueControl
 GET     /api/league/:leagueId/teamPowerRatings       controllers.RestLeagueController.teamPowerRatings(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/teamFanclubFlags       controllers.RestLeagueController.teamFanclubFlags(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/teamStreakTrophies       controllers.RestLeagueController.teamStreakTrophies(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/topMatches       controllers.RestLeagueController.topMatches(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/surprisingMatches       controllers.RestLeagueController.surprisingMatches(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/matchSpectators       controllers.RestLeagueController.matchSpectators(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel  controllers.RestDivisionLevelController.getDivisionLevelData(leagueId: Int, divisionLevel: Int)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamHatstats controllers.RestDivisionLevelController.teamHatstats(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
@@ -42,6 +45,9 @@ GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamGoalPoints  contr
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamPowerRatings  controllers.RestDivisionLevelController.teamPowerRatings(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamFanclubFlags  controllers.RestDivisionLevelController.teamFanclubFlags(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamStreakTrophies  controllers.RestDivisionLevelController.teamStreakTrophies(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/divisionLevel/:divisionLevel/topMatches  controllers.RestDivisionLevelController.topMatches(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/divisionLevel/:divisionLevel/surprisingMatches  controllers.RestDivisionLevelController.surprisingMatches(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/divisionLevel/:divisionLevel/matchSpectators  controllers.RestDivisionLevelController.matchSpectators(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 
 GET     /api/leagueUnit/:leagueUnitId   controllers.RestLeagueUnitController.getLeagueUnitData(leagueUnitId: Long)
 GET     /api/leagueUnit/:leagueUnitId/teamHatstats  controllers.RestLeagueUnitController.teamHatstats(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
@@ -58,6 +64,9 @@ GET     /api/leagueUnit/:leagueUnitId/teamAgeInjuries   controllers.RestLeagueUn
 GET     /api/leagueUnit/:leagueUnitId/teamPowerRatings   controllers.RestLeagueUnitController.teamPowerRatings(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/teamFanclubFlags   controllers.RestLeagueUnitController.teamFanclubFlags(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/teamStreakTrophies   controllers.RestLeagueUnitController.teamStreakTrophies(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/leagueUnit/:leagueUnitId/topMatches   controllers.RestLeagueUnitController.topMatches(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/leagueUnit/:leagueUnitId/surprisingMatches   controllers.RestLeagueUnitController.surprisingMatches(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/leagueUnit/:leagueUnitId/matchSpectators   controllers.RestLeagueUnitController.matchSpectators(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 
 GET     /api/team/:teamId           controllers.RestTeamController.getTeamData(teamId: Long)
 GET     /api/team/:teamId/playerStats    controllers.RestTeamController.playerStats(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
@@ -68,6 +77,9 @@ GET     /api/team/:teamId/playerCards   controllers.RestTeamController.playerCar
 GET     /api/team/:teamId/playerTsiSalary   controllers.RestTeamController.playerTsiSalary(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/team/:teamId/playerRatings   controllers.RestTeamController.playerRatings(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/team/:teamId/playerInjuries   controllers.RestTeamController.playerInjuries(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/team/:teamId/topMatches   controllers.RestTeamController.topMatches(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/team/:teamId/surprisingMatches   controllers.RestTeamController.surprisingMatches(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/team/:teamId/matchSpectators   controllers.RestTeamController.matchSpectators(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.overview(leagueId: Int)

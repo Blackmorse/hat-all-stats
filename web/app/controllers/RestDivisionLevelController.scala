@@ -1,7 +1,7 @@
 package controllers
 
 import databases.RestClickhouseDAO
-import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
+import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
@@ -112,4 +112,13 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
 
   def teamStreakTrophies(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamStreakTrophiesRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def topMatches(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchTopHatstatsRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def surprisingMatches(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchSurprisingRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def matchSpectators(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
+    stats(MatchSpectatorsRequest, leagueId, divisionLevel, restStatisticsParameters)
 }

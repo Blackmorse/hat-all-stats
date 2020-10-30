@@ -109,6 +109,7 @@ const resources = {
       "matches.date": "Date",
       "matches.formation": "Formation",
       "matches.hatstats": "HatStats",
+      "matches.spectatos": "Spectators",
 
       //filter
       "filter.page_size": "Page:",
@@ -271,6 +272,7 @@ const resources = {
       "matches.date": "Дата",
       "matches.formation": "Расстановка",
       "matches.hatstats": "HatStats",
+      "matches.spectatos": "Зрители",
 
       //filter
       "filter.page_size": "Размер страницы:",
