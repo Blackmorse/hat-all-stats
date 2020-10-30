@@ -291,7 +291,7 @@ object StatisticsCHRequest {
                     | __where__ AND (round = __round__)
                     |ORDER BY
                     |   __sortBy__ __sortingDirection__,
-                    |   team_id __sortingDirection__
+                    |   team_id asc
                     |__limit__""".stripMargin,
     sortingColumns = Seq(("power_rating", "table.power_rating")),
     statisticsType = OnlyRound,
