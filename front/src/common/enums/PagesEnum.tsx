@@ -8,7 +8,7 @@ export enum PagesEnum {
     PLAYER_SALARY_TSI = "menu.player_salary_tsi",
     PLAYER_RATINGS = "menu.player_ratings",
     PLAYER_INJURIES = "menu.player_injuries",
-    TEAM_SALARY_TSI = "menu.player_salary_tsi",
+    TEAM_SALARY_TSI = "menu.team_salary_tsi",
     TEAM_CARDS = "menu.team_cards",
     TEAM_RATINGS = "menu.team_ratings",
     TEAM_AGE_INJURY = "menu.team_age_injury",

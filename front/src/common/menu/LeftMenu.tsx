@@ -26,7 +26,7 @@ class LeftMenu extends React.Component<Props, State> {
          [PagesEnum.PLAYER_SALARY_TSI, MenuGroupsEnum.PLAYER],
          [PagesEnum.PLAYER_RATINGS, MenuGroupsEnum.PLAYER],
          [PagesEnum.PLAYER_INJURIES, MenuGroupsEnum.PLAYER],
-         [PagesEnum.TEAM_SALARY_TSI, MenuGroupsEnum.PLAYER],
+         [PagesEnum.TEAM_SALARY_TSI, MenuGroupsEnum.TEAM],
          [PagesEnum.TEAM_CARDS, MenuGroupsEnum.TEAM],
          [PagesEnum.TEAM_RATINGS, MenuGroupsEnum.TEAM],
          [PagesEnum.TEAM_AGE_INJURY, MenuGroupsEnum.TEAM],
