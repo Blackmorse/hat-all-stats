@@ -1,9 +1,7 @@
 import React from 'react';
 import './Layout.css'
 import { Translation } from 'react-i18next'
-import './i18n'
-// import i18n from 'i18next';
-
+import '../../i18n'
 
 abstract class Layout<Props, State> extends React.Component<Props, State> {
     

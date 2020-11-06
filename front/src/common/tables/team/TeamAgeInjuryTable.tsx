@@ -1,21 +1,22 @@
 import React from 'react';
 import TeamAgeInjury from "../../../rest/models/team/TeamAgeInjury";
 import LevelData from '../../../rest/models/leveldata/LevelData';
-import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../../common/ModelTable';
+import TableSection, { SortingState } from '../../../common/sections/TableSection';
+import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import '../../../i18n'
 import { Translation } from 'react-i18next'
 import { StatsTypeEnum } from "../../../rest/models/StatisticsParameters";
 import { getTeamAgeInjuries } from '../../../rest/Client';
-import ModelTableTh from '../../../common/elements/ModelTableTh'
+import ModelTableTh from '../../../common/elements/SortingTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { injuryFormatter, ageFormatter } from '../../Formatters'
 
-abstract class TeamAgeInjuryTable<Data extends LevelData, TableProps extends ModelTableProps<Data>>
-    extends ModelTable<Data, TableProps, TeamAgeInjury> {
+abstract class TeamAgeInjuryTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
+    extends TableSection<Data, TableProps, TeamAgeInjury> {
 
-    constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
-        super(props, 'age', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()},
+    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+        super(props, 'age', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
 

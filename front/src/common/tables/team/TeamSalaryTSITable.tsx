@@ -1,21 +1,22 @@
 import React from 'react';
-import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../../common/ModelTable';
+import TableSection, { SortingState } from '../../../common/sections/TableSection';
+import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import LevelData from '../../../rest/models/leveldata/LevelData';
 import TeamSalaryTSI from '../../../rest/models/team/TeamSalaryTSI';
 import { getTeamSalaryTSI } from '../../../rest/Client';
 import '../../../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../../../common/elements/ModelTableTh'
+import ModelTableTh from '../../../common/elements/SortingTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { commasSeparated } from '../../Formatters'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 
-abstract class TeamSalaryTSITable<Data extends LevelData, TableProps extends ModelTableProps<Data>>
-    extends ModelTable<Data, TableProps, TeamSalaryTSI> {
+abstract class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
+    extends TableSection<Data, TableProps, TeamSalaryTSI> {
 
-    constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
-        super(props, 'salary', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()},
+    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+        super(props, 'salary', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
 
@@ -30,7 +31,7 @@ abstract class TeamSalaryTSITable<Data extends LevelData, TableProps extends Mod
                 <th>{t('table.team')}</th>
                 <th className="value">{t('table.league')}</th>
                 <ModelTableTh title='table.tsi' sortingField='tsi' sortingState={sortingState} />
-                <ModelTableTh title='table.salary' sortingField='salary' titlePostfix={', ' + this.props.modelTableProps.currency()}
+                <ModelTableTh title='table.salary' sortingField='salary' titlePostfix={', ' + this.props.levelDataProps.currency()}
                      sortingState={sortingState} />
             </tr>
         }
@@ -44,7 +45,7 @@ abstract class TeamSalaryTSITable<Data extends LevelData, TableProps extends Mod
             <td><TeamLink id={teamSortingKey.teamId} name={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} name={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{commasSeparated(teamSalaryTSI.tsi)}</td>
-            <td className="value">{commasSeparated(teamSalaryTSI.salary / this.props.modelTableProps.currencyRate())}</td>
+            <td className="value">{commasSeparated(teamSalaryTSI.salary / this.props.levelDataProps.currencyRate())}</td>
         </tr>
     }
 }

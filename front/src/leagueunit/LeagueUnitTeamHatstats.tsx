@@ -1,8 +1,8 @@
 import TeamHatstats from '../common/tables/team/TeamHatstatsTable'
-import ModelTableLeagueUnitProps from './ModelTableLeagueUnitProps'
+import LeagueUnitLevelDataProps from './LeagueUnitLevelDataProps'
 import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
 
-class LeagueUnitTeamHatstats extends TeamHatstats<LeagueUnitData, ModelTableLeagueUnitProps> {
+class LeagueUnitTeamHatstats extends TeamHatstats<LeagueUnitData, LeagueUnitLevelDataProps> {
 }
 
 export default LeagueUnitTeamHatstats

@@ -1,9 +1,9 @@
-import { ModelTableProps } from "../common/ModelTable";
+import LevelDataProps from "../common/LevelDataProps";
 import LeagueUnitData from "../rest/models/leveldata/LeagueUnitData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 import LeagueUnitRequest from "../rest/models/request/LeagueUnitRequest";
 
-class ModelTableLeagueUnitProps extends ModelTableProps<LeagueUnitData> {  
+class LeagueUnitLevelDataProps extends LevelDataProps<LeagueUnitData> {  
     
     leagueId() {return this.levelData.leagueId}
 
@@ -19,4 +19,4 @@ class ModelTableLeagueUnitProps extends ModelTableProps<LeagueUnitData> {
     }
 }
 
-export default ModelTableLeagueUnitProps
+export default LeagueUnitLevelDataProps

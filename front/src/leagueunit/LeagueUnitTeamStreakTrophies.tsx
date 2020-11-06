@@ -1,8 +1,8 @@
 import TeamStreakTrophiesTable from '../common/tables/team/TeamStreakTrophiesTable'
-import ModelTableLeagueUnitProps from './ModelTableLeagueUnitProps'
+import LeagueUnitLevelDataProps from './LeagueUnitLevelDataProps'
 import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
 
-class LeagueUnitTeamStreakTrophies extends TeamStreakTrophiesTable<LeagueUnitData, ModelTableLeagueUnitProps> {
+class LeagueUnitTeamStreakTrophies extends TeamStreakTrophiesTable<LeagueUnitData, LeagueUnitLevelDataProps> {
 }
 
 export default LeagueUnitTeamStreakTrophies

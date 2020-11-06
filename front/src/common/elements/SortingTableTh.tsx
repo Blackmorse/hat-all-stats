@@ -1,7 +1,7 @@
 import React from 'react';
 import { Translation } from 'react-i18next'
 import '../../i18n'
-import './ModelTableTh.css'
+import './SortingTableTh.css'
 import { SortingDirection } from '../../rest/models/StatisticsParameters';
 
 interface SortingState {
@@ -18,7 +18,7 @@ interface ThProps {
     poppedHint?: string
 }
 
-class ModelTableTh extends React.Component<ThProps> {
+class SortingTableTh extends React.Component<ThProps> {
     render() {
         return <Translation>
             {(t, { i18n }) =>
@@ -32,4 +32,4 @@ class ModelTableTh extends React.Component<ThProps> {
     }
 }
 
-export default ModelTableTh;
+export default SortingTableTh;

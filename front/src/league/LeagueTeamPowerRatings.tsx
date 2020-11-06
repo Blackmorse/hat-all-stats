@@ -1,9 +1,9 @@
-import ModelTableLeagueProps from './ModelTableLeagueProps'
+import LeagueLevelDataProps from './LeagueLevelDataProps'
 import LeagueData from '../rest/models/leveldata/LeagueData'
 
 import TeamPowerRatingsTable from '../common/tables/team/TeamPowerRatingsTable'
 
-class LeagueTeamPowerRatings extends TeamPowerRatingsTable<LeagueData, ModelTableLeagueProps> {
+class LeagueTeamPowerRatings extends TeamPowerRatingsTable<LeagueData, LeagueLevelDataProps> {
 }
 
 export default LeagueTeamPowerRatings

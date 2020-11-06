@@ -1,14 +1,14 @@
 import React from 'react';
 import LevelData from '../../rest/models/leveldata/LevelData';
-import { ModelTableProps } from '../../common/ModelTable';
-import StatisticsSection from '../../common/StatisticsSection';
+import LevelDataProps from '../../common/LevelDataProps';
+import StatisticsSection from '../../common/sections/StatisticsSection';
 import OverviewRequest from '../../rest/models/request/OverviewRequest';
-import '../../common/StatisticsSection.css'
+import '../../common/sections/StatisticsSection.css'
 import SeasonRoundSelector from './SeasonRoundSelector'
 
 export interface OverviewSectionProps<Data extends LevelData, OverviewEntity> {
     initialData?: OverviewEntity,
-    modelTableProps: ModelTableProps<Data>
+    levelDataProps: LevelDataProps<Data>
 }
 
 interface State<OverviewEntity> {
@@ -28,8 +28,8 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity>
             dataLoading: false,
             isError: false,
             data: props.initialData,
-            selectedSeason: props.modelTableProps.currentSeason(),
-            selectedRound: props.modelTableProps.currentRound()
+            selectedSeason: props.levelDataProps.currentSeason(),
+            selectedRound: props.levelDataProps.currentRound()
         }
 
         this.loadRound=this.loadRound.bind(this)
@@ -85,7 +85,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity>
                 <SeasonRoundSelector 
                     season={this.state.selectedSeason}
                     round={this.state.selectedRound}
-                    seasonRoundInfo={this.props.modelTableProps.seasonRoundInfo()}
+                    seasonRoundInfo={this.props.levelDataProps.seasonRoundInfo()}
                     callback={this.loadRound} />
             </div>
         } else {

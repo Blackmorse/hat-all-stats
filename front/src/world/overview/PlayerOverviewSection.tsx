@@ -20,7 +20,7 @@ abstract class PlayerOverviewSection extends OverviewSection<WorldData, Array<Pl
     abstract valueFormatter(value: number): JSX.Element
 
     renderOverviewSection(playerStats: Array<PlayerStatOverview>): JSX.Element {
-        let map = new Map(this.props.modelTableProps.levelData.countries)
+        let map = new Map(this.props.levelDataProps.levelData.countries)
         return <Translation>
         {(t, { i18n}) => <table className="statistics_table">
             <thead>

@@ -1,8 +1,8 @@
 import MatchSurprisingTable from "../common/tables/match/MatchSurprisingTable";
 import TeamData from '../rest/models/leveldata/TeamData'
-import ModelTableTeamProps from './ModelTableTeamProps'
+import TeamLevelDataProps from './TeamLevelDataProps'
 
-class TeamMatchSurprising extends MatchSurprisingTable<TeamData, ModelTableTeamProps> {
+class TeamMatchSurprising extends MatchSurprisingTable<TeamData, TeamLevelDataProps> {
 }
 
 export default TeamMatchSurprising

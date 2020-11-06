@@ -1,20 +1,21 @@
 import React from 'react';
 import LevelData from '../../../rest/models/leveldata/LevelData';
-import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../../common/ModelTable';
+import TableSection, { SortingState } from '../../../common/sections/TableSection';
+import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import '../../../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../../../common/elements/ModelTableTh'
+import ModelTableTh from '../../../common/elements/SortingTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { getTeamPowerRatings } from '../../../rest/Client';
 import TeamPowerRating from '../../../rest/models/team/TeamPowerRating';
 
-abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends ModelTableProps<Data>>
-    extends ModelTable<Data, TableProps, TeamPowerRating> {
+abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
+    extends TableSection<Data, TableProps, TeamPowerRating> {
 
-    constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
-        super(props, 'power_rating', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()},
+    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+        super(props, 'power_rating', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
 

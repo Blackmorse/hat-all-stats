@@ -10,7 +10,7 @@ import TeamLink from '../../common/links/TeamLink'
 
 abstract class MatchesOverviewSection extends OverviewSection<WorldData, Array<MatchTopHatstatsOverview>> {
     renderOverviewSection(matches: Array<MatchTopHatstatsOverview>): JSX.Element {
-        let nameMap = new Map(this.props.modelTableProps.levelData.countries)
+        let nameMap = new Map(this.props.levelDataProps.levelData.countries)
         return <Translation>
             {(t, { i18n}) => <table className="statistics_table">
                 <thead>

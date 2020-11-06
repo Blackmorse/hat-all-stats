@@ -1,21 +1,22 @@
 import LevelData from '../../../rest/models/leveldata/LevelData';
-import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable';
+import TableSection, { SortingState } from '../../sections/TableSection';
+import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import React from 'react';
 import PlayerCards from '../../../rest/models/player/PlayerCards';
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import '../../../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../../elements/ModelTableTh'
+import ModelTableTh from '../../elements/SortingTableTh'
 import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { yellowCards, redCards } from '../../Formatters'
 import { getPlayerCards } from '../../../rest/Client';
 
-abstract class PlayerCardsTable<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
-    extends ModelTable<Data, TableProps, PlayerCards> {
+abstract class PlayerCardsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
+    extends TableSection<Data, TableProps, PlayerCards> {
 
-    constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
-        super(props, 'yellow_cards', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()},
+    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+        super(props, 'yellow_cards', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
 

@@ -10,7 +10,7 @@ import { commasSeparated } from '../../common/Formatters'
 class SalaryTeamOverviewSection extends TeamOverviewSection {
     constructor(props: OverviewSectionProps<WorldData, Array<TeamStatOverview>>) {
         super(props, 'overview.top_salary_teams', 
-            i18n.t('table.salary') + ',' + props.modelTableProps.currency())
+            i18n.t('table.salary') + ',' + props.levelDataProps.currency())
     }
 
     loadOverviewEntity = getTopSalaryTeamsOverview

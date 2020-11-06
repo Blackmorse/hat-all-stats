@@ -1,8 +1,8 @@
 import PlayerRatingsTable from "../common/tables/player/PlayerRatingsTable";
 import TeamData from '../rest/models/leveldata/TeamData'
-import ModelTableTeamProps from './ModelTableTeamProps'
+import TeamLevelDataProps from './TeamLevelDataProps'
 
-class TeamPlayerRatings extends PlayerRatingsTable<TeamData, ModelTableTeamProps> {
+class TeamPlayerRatings extends PlayerRatingsTable<TeamData, TeamLevelDataProps> {
 }
 
 export default TeamPlayerRatings

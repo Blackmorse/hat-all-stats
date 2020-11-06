@@ -1,11 +1,11 @@
-import Layout from '../Layout'
-import { PagesEnum } from './enums/PagesEnum'
-import { ModelTableProps } from './ModelTable'
+import Layout from './Layout'
+import { PagesEnum } from '../enums/PagesEnum'
+import LevelDataProps from '../LevelDataProps'
 import React from 'react'
-import LevelData from '../rest/models/leveldata/LevelData'
+import LevelData from '../../rest/models/leveldata/LevelData'
 import { Translation } from 'react-i18next'
-import LeftMenu from '../common/menu/LeftMenu'
-import '../i18n'
+import LeftMenu from '../../common/menu/LeftMenu'
+import '../../i18n'
 import './CountryLevelLayout.css'
 
 export interface CountryLevelLayoutState<Data extends LevelData> {
@@ -13,7 +13,7 @@ export interface CountryLevelLayoutState<Data extends LevelData> {
     levelData?: Data
 }
 
-abstract class CountryLevelLayout<Props, Data extends LevelData, TableProps extends ModelTableProps<Data>> extends Layout<Props, CountryLevelLayoutState<Data>> {
+abstract class CountryLevelLayout<Props, Data extends LevelData, TableProps extends LevelDataProps<Data>> extends Layout<Props, CountryLevelLayoutState<Data>> {
     pagesMap = new Map<PagesEnum, (props: TableProps) => JSX.Element>()
 
     constructor(props: Props,

@@ -1,9 +1,9 @@
-import { ModelTableProps } from "../common/ModelTable";
+import LevelDataProps from "../common/LevelDataProps";
 import DivisionLevelData from "../rest/models/leveldata/DivisionLevelData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 import DivisionLevelRequest from "../rest/models/request/DivisionLevelRequest";
 
-class ModelTableDivisionLevelProps extends ModelTableProps<DivisionLevelData> {
+class DivisionLevelDataProps extends LevelDataProps<DivisionLevelData> {
     leagueId(): number{return this.levelData.leagueId;}
 
     divisionLevel(): number {return this.levelData.divisionLevel}
@@ -18,4 +18,4 @@ class ModelTableDivisionLevelProps extends ModelTableProps<DivisionLevelData> {
     }
 }
 
-export default ModelTableDivisionLevelProps
+export default DivisionLevelDataProps

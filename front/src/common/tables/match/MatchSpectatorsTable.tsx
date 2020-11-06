@@ -1,20 +1,21 @@
 import LevelData from '../../../rest/models/leveldata/LevelData';
-import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable';
+import TableSection, { SortingState } from '../../sections/TableSection';
+import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps' 
 import React from 'react';
 import MatchSpectators from '../../../rest/models/match/MatchSpectators';
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import '../../../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../../elements/ModelTableTh'
+import ModelTableTh from '../../elements/SortingTableTh'
 import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getMatchSpectators } from '../../../rest/Client';
 import { commasSeparated } from '../../Formatters'
 
-abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends ModelTableProps<Data>>
-    extends ModelTable<Data, TableProps, MatchSpectators> {
+abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
+    extends TableSection<Data, TableProps, MatchSpectators> {
 
-    constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
+    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'sold_total', {statType: StatsTypeEnum.ACCUMULATE},
             [StatsTypeEnum.ACCUMULATE, StatsTypeEnum.ROUND])
     }

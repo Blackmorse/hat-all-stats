@@ -3,14 +3,14 @@ import TeamRanking from '../../rest/models/team/TeamRanking'
 import { Translation } from 'react-i18next'
 import '../../i18n'
 import './RankingTable.css'
-import ModelTableTeamProps from '../ModelTableTeamProps';
+import TeamLevelDataProps from '../TeamLevelDataProps';
 
-interface RankingData {
+export interface RankingData {
     lastLeagueRanking: TeamRanking,
     previousLeagueRanking?: TeamRanking,
     lastDivisionLevelRanking: TeamRanking,
     previousDivisionLevelRanking?: TeamRanking,
-    modelTableTeamProps: ModelTableTeamProps,
+    teamLevelDataProps: TeamLevelDataProps,
     leagueTeamsCount: number,
     divisionLevelTeamsCount: number
 }
@@ -111,7 +111,7 @@ class RankingTable extends React.Component<Props> {
                 <tr className="ranking_row">
                     <td className="ranking_row_name">
                         <a className="table_link" href="/#">
-                            {this.props.rankingData.modelTableTeamProps.levelData.leagueName}
+                            {this.props.rankingData.teamLevelDataProps.levelData.leagueName}
                         </a>
                     </td>
                     <td className="ranking_row_value">
@@ -128,7 +128,7 @@ class RankingTable extends React.Component<Props> {
                 <tr className="ranking_row">
                     <td className="ranking_row_name">
                         <a className="table_link" href="/#">
-                            {this.props.rankingData.modelTableTeamProps.levelData.divisionLevelName}
+                            {this.props.rankingData.teamLevelDataProps.levelData.divisionLevelName}
                         </a>
                     </td>
                     <td className="ranking_row_value">

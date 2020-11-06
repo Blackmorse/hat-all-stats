@@ -1,16 +1,17 @@
 import React from 'react';
-import './ModelTable.css'
+import './TableSection.css'
 import './StatisticsSection.css'
-import StatisticsParameters, { SortingDirection, StatsTypeEnum, StatsType } from '../rest/models/StatisticsParameters'
-import RestTableData from '../rest/models/RestTableData'
-import PageNavigator from '../common/elements/PageNavigator'
+import StatisticsParameters, { SortingDirection, StatsTypeEnum, StatsType } from '../../rest/models/StatisticsParameters'
+import RestTableData from '../../rest/models/RestTableData'
+import PageNavigator from '../elements/PageNavigator'
 import Cookies from 'js-cookie'
-import PageSizeSelector from './selectors/PageSizeSelector'
-import StatsTypeSelector from './selectors/StatsTypeSelector'
-import SeasonSelector from './selectors/SeasonSelector'
-import LevelData from '../rest/models/leveldata/LevelData';
+import PageSizeSelector from '../selectors/PageSizeSelector'
+import StatsTypeSelector from '../selectors/StatsTypeSelector'
+import SeasonSelector from '../selectors/SeasonSelector'
+import LevelData from '../../rest/models/leveldata/LevelData';
 import StatisticsSection from './StatisticsSection'
-import LevelRequest from '../rest/models/request/LevelRequest';
+import LevelRequest from '../../rest/models/request/LevelRequest';
+import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
 
 interface ModelTableState<T> {
     entities?: Array<T>,
@@ -20,55 +21,17 @@ interface ModelTableState<T> {
     dataLoading: boolean
 }
 
-export interface ModelTablePropsWrapper<Data extends LevelData, TableProps extends ModelTableProps<Data>> {
-    modelTableProps: TableProps
-}
-
-export abstract class ModelTableProps<Data extends LevelData> {
-    levelData: Data
-
-    constructor(levelData: Data) {
-        this.levelData = levelData
-    }
-
-    abstract leagueId(): number
-
-    currentSeason(): number {
-        return this.seasonRoundInfo()[this.seasonRoundInfo().length - 1][0]
-    }
-    seasons(): Array<number> {
-        return this.seasonRoundInfo().map(seasonInfo => seasonInfo[0])
-    }
-    currentRound(): number {
-        let rounds = this.seasonRoundInfo()[this.seasonRoundInfo().length - 1][1]
-        return rounds[rounds.length - 1]
-    }
-
-    rounds(seas: number): Array<number> {
-        let r = this.seasonRoundInfo().filter(season => season[0] === seas )
-        return r[0][1]
-    }
-
-    seasonRoundInfo(): Array<[number, Array<number>]> {return this.levelData.seasonRoundInfo}
-
-    currency(): string {return this.levelData.currency}
-
-    currencyRate(): number {return this.levelData.currencyRate}
-
-    abstract createLevelRequest(): LevelRequest
-}
-
 export interface SortingState {
     callback: (sortingField: string) => void,
     currentSorting: string,
     sortingDirection: SortingDirection
 }
 
-abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableProps<Data>, Model> 
-        extends StatisticsSection<ModelTablePropsWrapper<Data, TableProps>, ModelTableState<Model>> {
+abstract class TableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, Model> 
+        extends StatisticsSection<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<Model>> {
     private statsTypes: Array<StatsTypeEnum>
 
-    constructor(props: ModelTablePropsWrapper<Data, TableProps>, 
+    constructor(props: LevelDataPropsWrapper<Data, TableProps>, 
             defaultSortingField: string, defaultStatsType: StatsType,
             statsTypes: Array<StatsTypeEnum>) {
         super(props, '')
@@ -84,7 +47,7 @@ abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableP
                 sortingField: defaultSortingField,
                 sortingDirection: SortingDirection.DESC,
                 statsType: defaultStatsType,
-                season: this.props.modelTableProps.currentSeason()
+                season: this.props.levelDataProps.currentSeason()
             },
             dataLoading: false,
             isError: false
@@ -141,7 +104,7 @@ abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableP
             isError: false
         })
 
-        this.fetchEntities(this.props.modelTableProps,
+        this.fetchEntities(this.props.levelDataProps,
             statisticsParameters,
             restTableData => this.setState({
                 entities: restTableData.entities,
@@ -219,11 +182,11 @@ abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableP
 
         return <>
                 <div className="table_settings_div">
-                    <SeasonSelector currentSeason={this.props.modelTableProps.currentSeason()}
-                        seasons={this.props.modelTableProps.seasons()}
+                    <SeasonSelector currentSeason={this.props.levelDataProps.currentSeason()}
+                        seasons={this.props.levelDataProps.seasons()}
                         callback={this.seasonChanged}/>
                     <StatsTypeSelector  statsTypes={this.statsTypes}
-                        rounds={this.props.modelTableProps.rounds(this.state.statisticsParameters.season)}
+                        rounds={this.props.levelDataProps.rounds(this.state.statisticsParameters.season)}
                         selectedStatType={this.state.statisticsParameters.statsType}
                         onChanged={this.statTypeChanged}
                         />
@@ -250,4 +213,4 @@ abstract class ModelTable<Data extends LevelData, TableProps extends ModelTableP
     }
 }
 
-export default ModelTable;
+export default TableSection;

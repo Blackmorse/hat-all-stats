@@ -1,19 +1,20 @@
 import React from 'react';
 import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
-import ModelTable, { SortingState, ModelTablePropsWrapper } from '../common/ModelTable'
+import ModelTable, { SortingState } from '../common/sections/TableSection'
+import { LevelDataPropsWrapper } from '../common/LevelDataProps'
 import { StatsTypeEnum } from '../rest/models/StatisticsParameters';
 import TeamPosition from '../rest/models/team/TeamPosition';
-import ModelTableLeagueUnitProps from './ModelTableLeagueUnitProps';
+import LeagueUnitLevelDataProps from './LeagueUnitLevelDataProps';
 import { getTeamPositions } from '../rest/Client'
 import '../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../common/elements/ModelTableTh';
+import ModelTableTh from '../common/elements/SortingTableTh';
 import TeamLink from '../common/links/TeamLink'
 
-class TeamPositionsTable extends ModelTable<LeagueUnitData, ModelTableLeagueUnitProps, TeamPosition> {
+class TeamPositionsTable extends ModelTable<LeagueUnitData, LeagueUnitLevelDataProps, TeamPosition> {
     
-    constructor(props: ModelTablePropsWrapper<LeagueUnitData, ModelTableLeagueUnitProps>) {
-        super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()},
+    constructor(props: LevelDataPropsWrapper<LeagueUnitData, LeagueUnitLevelDataProps>) {
+        super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
 

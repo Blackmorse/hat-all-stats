@@ -1,8 +1,8 @@
 import LeagueData from '../rest/models/leveldata/LeagueData'
-import ModelTableLeagueProps from './ModelTableLeagueProps'
+import LeagueLevelDataProps from './LeagueLevelDataProps'
 import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 
-class LeagueMatchSurprising extends MatchSurprisingTable<LeagueData, ModelTableLeagueProps> {
+class LeagueMatchSurprising extends MatchSurprisingTable<LeagueData, LeagueLevelDataProps> {
 }
 
 export default LeagueMatchSurprising

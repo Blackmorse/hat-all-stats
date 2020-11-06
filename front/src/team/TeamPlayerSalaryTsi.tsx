@@ -1,8 +1,8 @@
 import PlayerSalaryTsiTable from "../common/tables/player/PlayerSalaryTsiTable";
 import TeamData from '../rest/models/leveldata/TeamData'
-import ModelTableTeamProps from './ModelTableTeamProps'
+import TeamLevelDataProps from './TeamLevelDataProps'
 
-class TeamPlayerSalaryTsi extends PlayerSalaryTsiTable<TeamData, ModelTableTeamProps>{
+class TeamPlayerSalaryTsi extends PlayerSalaryTsiTable<TeamData, TeamLevelDataProps>{
 }
 
 export default TeamPlayerSalaryTsi

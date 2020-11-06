@@ -1,7 +1,7 @@
 import React from 'react';
-import Blur from '../common/widgets/Blur'
+import Blur from '../widgets/Blur'
 import { Translation } from 'react-i18next'
-import '../i18n'
+import '../../i18n'
 
 interface LoadableState {
     dataLoading: boolean,

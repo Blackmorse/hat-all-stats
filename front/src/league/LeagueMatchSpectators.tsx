@@ -1,8 +1,8 @@
 import LeagueData from '../rest/models/leveldata/LeagueData'
-import ModelTableLeagueProps from './ModelTableLeagueProps'
+import LeagueLevelDataProps from './LeagueLevelDataProps'
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
 
-class LeagueMatchSpectators extends MatchSpectatorsTable<LeagueData, ModelTableLeagueProps> {
+class LeagueMatchSpectators extends MatchSpectatorsTable<LeagueData, LeagueLevelDataProps> {
 }
 
 export default LeagueMatchSpectators

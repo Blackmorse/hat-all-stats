@@ -21,7 +21,7 @@ abstract class TeamOverviewSection extends OverviewSection<WorldData, Array<Team
     abstract valueFormatter(value: number): JSX.Element
 
     renderOverviewSection(data: Array<TeamStatOverview>): JSX.Element {
-        let map = new Map(this.props.modelTableProps.levelData.countries)
+        let map = new Map(this.props.levelDataProps.levelData.countries)
         return <Translation>
         {(t, { i18n}) => <table className="statistics_table">
             <thead>

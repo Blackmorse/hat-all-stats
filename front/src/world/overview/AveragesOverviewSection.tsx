@@ -37,7 +37,7 @@ class AveragesOverviewSection extends OverviewSection<WorldData, AveragesOvervie
                     </tr>
                     <tr>
                         <td>{t('overview.average_team_salary')}</td>
-                        <td>{commasSeparated(averageOverview.teamPlayerAverages.salary / this.props.modelTableProps.currencyRate())} {this.props.modelTableProps.currency()}</td>
+                        <td>{commasSeparated(averageOverview.teamPlayerAverages.salary / this.props.levelDataProps.currencyRate())} {this.props.levelDataProps.currency()}</td>
                     </tr>
                     <tr>
                         <td>{t('overview.average_team_stars')}</td>

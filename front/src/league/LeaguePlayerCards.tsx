@@ -1,8 +1,8 @@
 import PlayerCardsTable from "../common/tables/player/PlayerCardsTable";
 import LeagueData from '../rest/models/leveldata/LeagueData'
-import ModelTableLeagueProps from './ModelTableLeagueProps'
+import LeagueLevelDataProps from './LeagueLevelDataProps'
 
-class LeaguePlayerCards extends PlayerCardsTable<LeagueData, ModelTableLeagueProps> {
+class LeaguePlayerCards extends PlayerCardsTable<LeagueData, LeagueLevelDataProps> {
 }
 
 export default LeaguePlayerCards

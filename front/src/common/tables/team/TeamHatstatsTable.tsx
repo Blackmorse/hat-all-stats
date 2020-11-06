@@ -1,7 +1,8 @@
 import React from 'react';
 import TeamHatstats from '../../../rest/models/team/TeamHatstats';
-import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable';
-import ModelTableTh from '../../elements/ModelTableTh'
+import TableSection, { SortingState } from '../../sections/TableSection';
+import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
+import ModelTableTh from '../../elements/SortingTableTh'
 import '../../../i18n'
 import { Translation } from 'react-i18next'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
@@ -10,9 +11,9 @@ import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { getTeamHatstats } from '../../../rest/Client';
 
-abstract class TeamHatstatsTable<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
-    extends ModelTable<Data, TableProps, TeamHatstats> {
-    constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
+abstract class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
+    extends TableSection<Data, TableProps, TeamHatstats> {
+    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG},
             [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }

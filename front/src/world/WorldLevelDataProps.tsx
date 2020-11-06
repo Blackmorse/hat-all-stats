@@ -1,8 +1,8 @@
-import { ModelTableProps } from "../common/ModelTable";
+import LevelDataProps from "../common/LevelDataProps";
 import WorldData from "../rest/models/leveldata/WorldData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 
-class ModelTableWorldProps extends ModelTableProps<WorldData> {
+class WorldLevelDataProps extends LevelDataProps<WorldData> {
     leagueId(): number {
         throw new Error("Method not implemented.");
     }
@@ -12,4 +12,4 @@ class ModelTableWorldProps extends ModelTableProps<WorldData> {
 
 }
 
-export default ModelTableWorldProps
+export default WorldLevelDataProps

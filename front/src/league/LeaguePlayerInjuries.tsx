@@ -1,8 +1,8 @@
 import PlayerInjuriesTable from "../common/tables/player/PlayerInjuriesTable";
 import LeagueData from '../rest/models/leveldata/LeagueData'
-import ModelTableLeagueProps from './ModelTableLeagueProps'
+import LeagueLevelDataProps from './LeagueLevelDataProps'
 
-class LeaguePlayerInjuries extends PlayerInjuriesTable<LeagueData, ModelTableLeagueProps> {
+class LeaguePlayerInjuries extends PlayerInjuriesTable<LeagueData, LeagueLevelDataProps> {
 }
 
 export default LeaguePlayerInjuries

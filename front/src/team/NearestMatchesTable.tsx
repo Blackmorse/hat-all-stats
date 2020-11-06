@@ -1,12 +1,12 @@
 import React from 'react';
 import NearestMatch, { NearestMatches } from '../rest/models/match/NearestMatch'
 import './NearestMatchesTable.css'
-import '../common/StatisticsSection.css'
+import '../common/sections/StatisticsSection.css'
 import '../i18n'
 import { Translation } from 'react-i18next'
-import { ModelTablePropsWrapper } from '../common/ModelTable'
+import { LevelDataPropsWrapper } from '../common/LevelDataProps'
 import TeamData from '../rest/models/leveldata/TeamData';
-import ModelTableTeamProps from './ModelTableTeamProps';
+import TeamLevelDataProps from './TeamLevelDataProps';
 import TeamRequest from '../rest/models/request/TeamRequest';
 import { getNearestMatches } from '../rest/Client'
 import moment from 'moment'
@@ -19,9 +19,9 @@ interface State {
     isError: boolean
 }
 
-class NearestMatchesTable extends React.Component<ModelTablePropsWrapper<TeamData, ModelTableTeamProps>, State> {
+class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State> {
 
-    constructor(props: ModelTablePropsWrapper<TeamData, ModelTableTeamProps>) {
+    constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props)
         this.state = {dataLoading: false, isError: false}
         this.componentDidMount=this.componentDidMount.bind(this)
@@ -29,7 +29,7 @@ class NearestMatchesTable extends React.Component<ModelTablePropsWrapper<TeamDat
     }
 
     updateCurrent() {
-        let teamId = this.props.modelTableProps.teamId()
+        let teamId = this.props.levelDataProps.teamId()
         let request: TeamRequest = {
             type: 'TeamRequest',
             teamId: teamId,

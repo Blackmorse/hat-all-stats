@@ -1,15 +1,15 @@
 import React from 'react';
 import { getTeamRankings } from '../rest/Client'
-import ModelTableTeamProps from './ModelTableTeamProps'
+import TeamLevelDataProps from './TeamLevelDataProps'
 import TeamRequest from '../rest/models/request/TeamRequest';
-import { ModelTablePropsWrapper } from '../common/ModelTable';
+import { LevelDataPropsWrapper } from '../common/LevelDataProps';
 import TeamData from '../rest/models/leveldata/TeamData';
 import { Translation } from 'react-i18next'
 import '../i18n'
-import RankingTable from './overview/RankingTable'
+import RankingTable, { RankingData } from './overview/RankingTable'
 import TeamRankingsStats from '../rest/models/team/TeamRankingsStats';
 import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter } from '../common/Formatters'
-import StatisticsSection from '../common/StatisticsSection'
+import StatisticsSection from '../common/sections/StatisticsSection'
 
 interface State {
     teamRankingsStats?: TeamRankingsStats
@@ -17,8 +17,8 @@ interface State {
     isError: boolean
 }
 
-class TeamRankingsTable extends StatisticsSection<ModelTablePropsWrapper<TeamData, ModelTableTeamProps>, State> {
-    constructor(props: ModelTablePropsWrapper<TeamData, ModelTableTeamProps>) {
+class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State> {
+    constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props, "menu.team_rankings")
         this.state = {
             dataLoading: false,
@@ -33,7 +33,7 @@ class TeamRankingsTable extends StatisticsSection<ModelTablePropsWrapper<TeamDat
     }
 
     componentDidMount() {
-        const teamRequest: TeamRequest = {type: 'TeamRequest', teamId: this.props.modelTableProps.teamId()}
+        const teamRequest: TeamRequest = {type: 'TeamRequest', teamId: this.props.levelDataProps.teamId()}
         this.setState({
             teamRankingsStats: this.state.teamRankingsStats,
             dataLoading: true,
@@ -70,12 +70,12 @@ class TeamRankingsTable extends StatisticsSection<ModelTablePropsWrapper<TeamDat
         let lastDivisionLevelRanking = divisionLevelRankings[divisionLevelRankings.length - 1]
         let previousDivisionLevelRanking = (divisionLevelRankings.length > 1) ? divisionLevelRankings[divisionLevelRankings.length - 2] : undefined;
 
-        let rankingData = {
+        let rankingData: RankingData = {
             lastLeagueRanking: lastLeagueRanking, 
             previousLeagueRanking: previousLeagueRanking,
             lastDivisionLevelRanking: lastDivisionLevelRanking,
             previousDivisionLevelRanking: previousDivisionLevelRanking,
-            modelTableTeamProps: this.props.modelTableProps,
+            teamLevelDataProps: this.props.levelDataProps,
             leagueTeamsCount: leagueTeamsCount,
             divisionLevelTeamsCount: divisionLevelTeamsCount,
         }

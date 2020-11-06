@@ -1,20 +1,21 @@
 import React from 'react';
 import LevelData from "../../../rest/models/leveldata/LevelData";
-import ModelTable, { ModelTableProps, ModelTablePropsWrapper, SortingState } from "../../ModelTable";
+import TableSection, { SortingState } from "../../sections/TableSection";
+import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import { Translation } from "react-i18next";
 import '../../../i18n'
 import PlayerInjury from '../../../rest/models/player/PlayerInjury';
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { getPlayerInjuries } from '../../../rest/Client';
-import ModelTableTh from "../../elements/ModelTableTh";
+import ModelTableTh from "../../elements/SortingTableTh";
 import LeagueUnitLink from "../../links/LeagueUnitLink";
 import TeamLink from "../../links/TeamLink";
 import { injuryFormatter, ageFormatter } from '../../Formatters'
 
-abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends ModelTableProps<Data>>
-        extends ModelTable<Data, TableProps, PlayerInjury>{
-    constructor(props: ModelTablePropsWrapper<Data, TableProps>) {
-        super(props, 'injury', {statType: StatsTypeEnum.ROUND, roundNumber: props.modelTableProps.currentRound()},
+abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
+        extends TableSection<Data, TableProps, PlayerInjury>{
+    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+        super(props, 'injury', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
 
