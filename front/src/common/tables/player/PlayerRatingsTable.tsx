@@ -1,12 +1,12 @@
 import React from 'react';
 import LevelData from "../../../rest/models/leveldata/LevelData";
 import ModelTable, { ModelTableProps, ModelTablePropsWrapper, SortingState } from "../../ModelTable";
-import { StatsTypeEnum } from "../../../rest/StatisticsParameters";
+import { StatsTypeEnum } from "../../../rest/models/StatisticsParameters";
 import { getPlayerRatings } from '../../../rest/Client';
 import PlayerRating from "../../../rest/models/player/PlayerRating";
 import { Translation } from "react-i18next";
 import '../../../i18n'
-import ModelTableTh from "../../ModelTableTh";
+import ModelTableTh from "../../elements/ModelTableTh";
 import TeamLink from "../../links/TeamLink";
 import LeagueUnitLink from "../../links/LeagueUnitLink";
 import { ageFormatter, ratingFormatter } from '../../Formatters'

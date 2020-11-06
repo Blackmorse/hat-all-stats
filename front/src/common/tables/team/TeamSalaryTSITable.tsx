@@ -5,11 +5,11 @@ import TeamSalaryTSI from '../../../rest/models/team/TeamSalaryTSI';
 import { getTeamSalaryTSI } from '../../../rest/Client';
 import '../../../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../../../common/ModelTableTh'
+import ModelTableTh from '../../../common/elements/ModelTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { commasSeparated } from '../../Formatters'
-import { StatsTypeEnum } from '../../../rest/StatisticsParameters';
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 
 abstract class TeamSalaryTSITable<Data extends LevelData, TableProps extends ModelTableProps<Data>>
     extends ModelTable<Data, TableProps, TeamSalaryTSI> {

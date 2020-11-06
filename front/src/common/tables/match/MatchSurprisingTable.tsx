@@ -2,10 +2,10 @@ import LevelData from '../../../rest/models/leveldata/LevelData';
 import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable';
 import React from 'react';
 import MatchTopHatstats from '../../../rest/models/match/MatchTopHatstats';
-import { StatsTypeEnum } from '../../../rest/StatisticsParameters';
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import '../../../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../../ModelTableTh'
+import ModelTableTh from '../../elements/ModelTableTh'
 import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getSurprisingMatches } from '../../../rest/Client';

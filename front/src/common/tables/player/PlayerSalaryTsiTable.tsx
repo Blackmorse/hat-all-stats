@@ -2,10 +2,10 @@ import React from 'react';
 import LevelData from "../../../rest/models/leveldata/LevelData";
 import ModelTable, { ModelTableProps, ModelTablePropsWrapper, SortingState } from "../../ModelTable";
 import PlayerSalaryTSI from "../../../rest/models/player/PlayerSalaryTSI";
-import { StatsTypeEnum } from "../../../rest/StatisticsParameters";
+import { StatsTypeEnum } from "../../../rest/models/StatisticsParameters";
 import { getPlayerSalaryTsi } from '../../../rest/Client';
 import { Translation } from "react-i18next";
-import ModelTableTh from "../../ModelTableTh";
+import ModelTableTh from "../../elements/ModelTableTh";
 import TeamLink from "../../links/TeamLink";
 import LeagueUnitLink from "../../links/LeagueUnitLink";
 import { ageFormatter, commasSeparated } from '../../Formatters'

@@ -144,47 +144,6 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   def matchSpectators(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
     stats(MatchSpectatorsRequest, teamId, restStatisticsParameters)
 
-  def playerStats(teamId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
-    val statisticsParameters =
-      StatisticsParameters(season = restStatisticsParameters.season,
-        page = restStatisticsParameters.page,
-        statsType = restStatisticsParameters.statsType,
-        sortBy = restStatisticsParameters.sortBy,
-        pageSize = restStatisticsParameters.pageSize,
-        sortingDirection = restStatisticsParameters.sortingDirection
-      )
-
-    getTeamById(teamId).flatMap(team => {
-      val league = hattrick.api.worldDetails().leagueId(team.getLeague.getLeagueId)
-        .execute()
-        .getLeagueList.get(0)
-      val htRound = league.getMatchRound
-
-      val (divisionLevel: Int, leagueUnitId: Long) = if(htRound == 16
-                || leagueInfoService.leagueInfo.currentSeason(team.getLeague.getLeagueId) > statisticsParameters.season
-                || league.getSeason - league.getSeasonOffset > statisticsParameters.season) {
-        val infoOpt = clickhouseDAO.historyTeamLeagueUnitInfo(statisticsParameters.season, team.getLeague.getLeagueId, teamId)
-        infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
-          .getOrElse((team.getLeagueLevelUnit.getLeagueLevel, team.getLeagueLevelUnit.getLeagueLevelUnitId))
-      } else {
-        (team.getLeagueLevelUnit.getLeagueLevel.toInt, team.getLeagueLevelUnit.getLeagueLevelUnitId.toLong)
-      }
-
-      StatisticsCHRequest.playerStatsRequest.execute(
-        leagueId = Some(team.getLeague.getLeagueId),
-        divisionLevel = Some(divisionLevel),
-        leagueUnitId = Some(leagueUnitId),
-        teamId = Some(teamId),
-        statisticsParameters = statisticsParameters
-      ).map(playerStats => {
-        val isLastPage = playerStats.size <= statisticsParameters.pageSize
-
-        val entities = if(!isLastPage) playerStats.dropRight(1) else playerStats
-        val restTableData = RestTableData(entities, isLastPage)
-        Ok(Json.toJson(restTableData))
-      })
-    })
-  }
 
   def teamRankings(teamId: Long) = Action.async { implicit request =>
     getTeamById(teamId).flatMap(team => {

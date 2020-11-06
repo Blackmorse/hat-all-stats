@@ -3,10 +3,10 @@ import LevelData from '../../../rest/models/leveldata/LevelData';
 import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../../common/ModelTable';
 import '../../../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../../../common/ModelTableTh'
+import ModelTableTh from '../../../common/elements/ModelTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
-import { StatsTypeEnum } from '../../../rest/StatisticsParameters';
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { getTeamPowerRatings } from '../../../rest/Client';
 import TeamPowerRating from '../../../rest/models/team/TeamPowerRating';
 

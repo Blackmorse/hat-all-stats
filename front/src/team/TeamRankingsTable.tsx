@@ -7,7 +7,7 @@ import TeamData from '../rest/models/leveldata/TeamData';
 import { Translation } from 'react-i18next'
 import '../i18n'
 import RankingTable from './overview/RankingTable'
-import TeamRankingsStats from '../rest/models/TeamRankingsStats';
+import TeamRankingsStats from '../rest/models/team/TeamRankingsStats';
 import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter } from '../common/Formatters'
 import StatisticsSection from '../common/StatisticsSection'
 

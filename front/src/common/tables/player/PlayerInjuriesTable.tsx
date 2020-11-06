@@ -4,9 +4,9 @@ import ModelTable, { ModelTableProps, ModelTablePropsWrapper, SortingState } fro
 import { Translation } from "react-i18next";
 import '../../../i18n'
 import PlayerInjury from '../../../rest/models/player/PlayerInjury';
-import { StatsTypeEnum } from '../../../rest/StatisticsParameters';
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { getPlayerInjuries } from '../../../rest/Client';
-import ModelTableTh from "../../ModelTableTh";
+import ModelTableTh from "../../elements/ModelTableTh";
 import LeagueUnitLink from "../../links/LeagueUnitLink";
 import TeamLink from "../../links/TeamLink";
 import { injuryFormatter, ageFormatter } from '../../Formatters'

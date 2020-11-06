@@ -1,8 +1,8 @@
 import React from 'react';
 import { Translation } from 'react-i18next'
-import '../i18n'
+import '../../i18n'
 import './ModelTableTh.css'
-import { SortingDirection } from '../rest/StatisticsParameters';
+import { SortingDirection } from '../../rest/models/StatisticsParameters';
 
 interface SortingState {
     callback: (sortBy: string) => void,

@@ -1,5 +1,5 @@
 import React from 'react';
-import TeamRanking from '../../rest/models/TeamRanking'
+import TeamRanking from '../../rest/models/team/TeamRanking'
 import { Translation } from 'react-i18next'
 import '../../i18n'
 import './RankingTable.css'

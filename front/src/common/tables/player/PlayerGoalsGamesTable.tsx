@@ -2,10 +2,10 @@ import LevelData from '../../../rest/models/leveldata/LevelData';
 import React from 'react';
 import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable';
 import PlayerGoalsGames from '../../../rest/models/player/PlayerGoalsGames'
-import { StatsTypeEnum } from '../../../rest/StatisticsParameters';
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import '../../../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../../../common/ModelTableTh'
+import ModelTableTh from '../../../common/elements/ModelTableTh'
 import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getPlayerGoalsGames } from '../../../rest/Client';

@@ -20,7 +20,6 @@ class LeftMenu extends React.Component<Props, State> {
         new Map([[PagesEnum.LEAGUE_UNITS, MenuGroupsEnum.LEAGUE],
          [PagesEnum.TEAM_HATSTATS, MenuGroupsEnum.TEAM],
          [PagesEnum.TEAM_OVERVIEW, MenuGroupsEnum.TEAM],
-         [PagesEnum.PLAYER_STATS, MenuGroupsEnum.PLAYER],
          [PagesEnum.PLAYER_GOAL_GAMES, MenuGroupsEnum.PLAYER],
          [PagesEnum.PLAYER_CARDS, MenuGroupsEnum.PLAYER],
          [PagesEnum.PLAYER_SALARY_TSI, MenuGroupsEnum.PLAYER],

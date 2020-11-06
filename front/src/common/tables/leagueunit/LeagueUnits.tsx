@@ -1,13 +1,13 @@
 import React from 'react';
-import LeagueUnitRating from '../../rest/models/LeagueUnitRating'
-import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../ModelTable'
-import ModelTableTh from '../ModelTableTh'
+import LeagueUnitRating from '../../../rest/models/leagueunit/LeagueUnitRating'
+import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable'
+import ModelTableTh from '../../elements/ModelTableTh'
 import { Translation } from 'react-i18next'
-import '../../i18n'
-import { StatsTypeEnum } from '../../rest/StatisticsParameters';
-import LevelData from '../../rest/models/leveldata/LevelData';
-import LeagueUnitLink from '../links/LeagueUnitLink'
-import { getLeagueUnits } from '../../rest/Client'
+import '../../../i18n'
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
+import LevelData from '../../../rest/models/leveldata/LevelData';
+import LeagueUnitLink from '../../links/LeagueUnitLink'
+import { getLeagueUnits } from '../../../rest/Client'
 
 abstract class LeagueUnits<Data extends LevelData, TableProps extends ModelTableProps<Data>> 
         extends ModelTable<Data, TableProps ,LeagueUnitRating> {

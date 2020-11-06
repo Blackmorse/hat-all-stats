@@ -4,11 +4,11 @@ import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } fro
 import '../../../i18n'
 import { Translation } from 'react-i18next'
 import TeamCards from '../../../rest/models/team/TeamCards';
-import ModelTableTh from '../../../common/ModelTableTh'
+import ModelTableTh from '../../../common/elements/ModelTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { yellowCards, redCards } from '../../Formatters'
-import { StatsTypeEnum } from '../../../rest/StatisticsParameters';
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { getTeamCards } from '../../../rest/Client';
 
 

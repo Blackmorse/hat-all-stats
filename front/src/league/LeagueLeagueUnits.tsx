@@ -1,4 +1,4 @@
-import LeagueUnits from '../common/tables/LeagueUnits'
+import LeagueUnits from '../common/tables/leagueunit/LeagueUnits'
 import ModelTableLeagueProps from './ModelTableLeagueProps'
 import LeagueData from '../rest/models/leveldata/LeagueData'
 

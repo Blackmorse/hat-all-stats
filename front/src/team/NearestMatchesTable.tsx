@@ -1,5 +1,5 @@
 import React from 'react';
-import NearestMatch, { NearestMatches } from '../rest/models/NearestMatch'
+import NearestMatch, { NearestMatches } from '../rest/models/match/NearestMatch'
 import './NearestMatchesTable.css'
 import '../common/StatisticsSection.css'
 import '../i18n'

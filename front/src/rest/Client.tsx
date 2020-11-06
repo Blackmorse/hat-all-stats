@@ -2,20 +2,19 @@ import axios from 'axios';
 import LeagueData from './models/leveldata/LeagueData'
 import DivisionLevelData from './models/leveldata/DivisionLevelData'
 import TeamHatstats from './models/team/TeamHatstats'
-import LeagueUnitRating from './models/LeagueUnitRating'
-import StatisticsParameters, { StatsTypeEnum } from './StatisticsParameters'
-import RestTableData from './RestTableData'
+import LeagueUnitRating from './models/leagueunit/LeagueUnitRating'
+import StatisticsParameters, { StatsTypeEnum } from './models/StatisticsParameters'
+import RestTableData from './models/RestTableData'
 import LeagueUnitRequest from './models/request/LeagueUnitRequest'
 import DivisionLevelRequest from './models/request/DivisionLevelRequest';
 import LeagueRequest from './models/request/LeagueRequest'
 import TeamRequest from './models/request/TeamRequest'
 import LevelRequest from './models/request/LevelRequest';
 import LeagueUnitData from './models/leveldata/LeagueUnitData';
-import TeamPosition from './models/TeamPosition';
+import TeamPosition from './models/team/TeamPosition';
 import TeamData from './models/leveldata/TeamData'
-import PlayerStats from './models/PlayerStat'
-import TeamRankingsStats from './models/TeamRankingsStats'
-import { NearestMatches } from './models/NearestMatch';
+import TeamRankingsStats from './models/team/TeamRankingsStats'
+import { NearestMatches } from './models/match/NearestMatch';
 import PlayerGoalGames from './models/player/PlayerGoalsGames'
 import PlayerCards from './models/player/PlayerCards'
 import PlayerSalaryTSI from './models/player/PlayerSalaryTSI'
@@ -125,8 +124,6 @@ export let getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')
 export let getLeagueUnits = statisticsRequest<LeagueUnitRating>('leagueUnits')
 
 export let getTeamPositions = statisticsRequest<TeamPosition>('teamPositions')
-
-export let getPlayerStats = statisticsRequest<PlayerStats>('playerStats')
 
 export let getPlayerGoalsGames = statisticsRequest<PlayerGoalGames>('playerGoalGames')
 

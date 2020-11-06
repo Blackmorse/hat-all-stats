@@ -1,9 +1,9 @@
 import React from 'react';
 import './ModelTable.css'
 import './StatisticsSection.css'
-import StatisticsParameters, { SortingDirection, StatsTypeEnum, StatsType } from '../rest/StatisticsParameters'
-import RestTableData from '../rest/RestTableData'
-import PageNavigator from '../common/PageNavigator'
+import StatisticsParameters, { SortingDirection, StatsTypeEnum, StatsType } from '../rest/models/StatisticsParameters'
+import RestTableData from '../rest/models/RestTableData'
+import PageNavigator from '../common/elements/PageNavigator'
 import Cookies from 'js-cookie'
 import PageSizeSelector from './selectors/PageSizeSelector'
 import StatsTypeSelector from './selectors/StatsTypeSelector'

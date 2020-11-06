@@ -6,7 +6,6 @@ import ModelTableTeamProps from './ModelTableTeamProps';
 import { getTeamData } from '../rest/Client'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import TeamTopMenu from './TeamTopMenu'
-import TeamPlayerStats from './TeamPlayerStats'
 import TeamRankingsTable from './TeamRankingsTable'
 import NearestMatchesTable from './NearestMatchesTable'
 import TeamPlayerCards from './TeamPlayerCards'
@@ -31,8 +30,6 @@ class Team extends CountryLevelLayout<Props, TeamData, ModelTableTeamProps> {
                     <NearestMatchesTable modelTableProps={props}/>
                     <TeamRankingsTable modelTableProps={props}/>
                 </>)
-        pagesMap.set(PagesEnum.PLAYER_STATS, 
-            props => <TeamPlayerStats modelTableProps={props}/>)
         pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES, 
             props => <TeamPlayerGoalGames modelTableProps={props}/>)
         pagesMap.set(PagesEnum.PLAYER_CARDS, 

@@ -2,11 +2,11 @@ import React from 'react'
 import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable';
 import LevelData from '../../../rest/models/leveldata/LevelData';
 import TeamRating from '../../../rest/models/team/TeamRating';
-import { StatsTypeEnum } from '../../../rest/StatisticsParameters';
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { getTeamRatings } from '../../../rest/Client';
 import '../../../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../../ModelTableTh'
+import ModelTableTh from '../../elements/ModelTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { ratingFormatter } from '../../Formatters'

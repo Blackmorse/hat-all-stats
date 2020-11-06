@@ -1,13 +1,13 @@
 import React from 'react';
 import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
 import ModelTable, { SortingState, ModelTablePropsWrapper } from '../common/ModelTable'
-import { StatsTypeEnum } from '../rest/StatisticsParameters';
-import TeamPosition from '../rest/models/TeamPosition';
+import { StatsTypeEnum } from '../rest/models/StatisticsParameters';
+import TeamPosition from '../rest/models/team/TeamPosition';
 import ModelTableLeagueUnitProps from './ModelTableLeagueUnitProps';
 import { getTeamPositions } from '../rest/Client'
 import '../i18n'
 import { Translation } from 'react-i18next'
-import ModelTableTh from '../common/ModelTableTh';
+import ModelTableTh from '../common/elements/ModelTableTh';
 import TeamLink from '../common/links/TeamLink'
 
 class TeamPositionsTable extends ModelTable<LeagueUnitData, ModelTableLeagueUnitProps, TeamPosition> {
