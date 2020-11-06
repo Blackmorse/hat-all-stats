@@ -1,0 +1,4 @@
+.scrolled {
+    overflow: scroll;
+    max-height: 600px;
+}

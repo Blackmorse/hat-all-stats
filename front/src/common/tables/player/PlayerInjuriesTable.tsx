@@ -1,5 +1,5 @@
 import React from 'react';
-import LevelData from "../../../rest/models/LevelData";
+import LevelData from "../../../rest/models/leveldata/LevelData";
 import ModelTable, { ModelTableProps, ModelTablePropsWrapper, SortingState } from "../../ModelTable";
 import { Translation } from "react-i18next";
 import '../../../i18n'

@@ -1,4 +1,4 @@
-import LevelData from '../../../rest/models/LevelData';
+import LevelData from '../../../rest/models/leveldata/LevelData';
 import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable';
 import React from 'react';
 import MatchTopHatstats from '../../../rest/models/match/MatchTopHatstats';

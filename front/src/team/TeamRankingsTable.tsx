@@ -3,7 +3,7 @@ import { getTeamRankings } from '../rest/Client'
 import ModelTableTeamProps from './ModelTableTeamProps'
 import TeamRequest from '../rest/models/request/TeamRequest';
 import { ModelTablePropsWrapper } from '../common/ModelTable';
-import TeamData from '../rest/models/TeamData';
+import TeamData from '../rest/models/leveldata/TeamData';
 import { Translation } from 'react-i18next'
 import '../i18n'
 import RankingTable from './overview/RankingTable'

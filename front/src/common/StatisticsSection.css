@@ -1,0 +1,30 @@
+.section_row {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 99%;
+    margin: 5px auto 10px;
+}
+
+.section_row_half_element {
+    position: relative;
+    width: 50%;
+    min-height: 100px;
+}
+
+.statistics_section_inner {
+    margin: 7px;
+    display: flex;
+    flex-direction: column;
+}
+
+.statistics_section_inner td {
+    text-align: center;
+}
+
+.statistics_section {
+    width: 98%;
+    margin: 5px auto 10px;
+    border: 1px solid green;
+    position: relative;
+}

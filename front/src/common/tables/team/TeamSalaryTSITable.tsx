@@ -1,6 +1,6 @@
 import React from 'react';
 import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../../common/ModelTable';
-import LevelData from '../../../rest/models/LevelData';
+import LevelData from '../../../rest/models/leveldata/LevelData';
 import TeamSalaryTSI from '../../../rest/models/team/TeamSalaryTSI';
 import { getTeamSalaryTSI } from '../../../rest/Client';
 import '../../../i18n'

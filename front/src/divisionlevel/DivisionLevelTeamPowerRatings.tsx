@@ -1,5 +1,5 @@
 import ModelTableDivisionLevelProps from './ModelTableDivisionLevelProps'
-import DivisionLevelData from '../rest/models/DivisionLevelData';
+import DivisionLevelData from '../rest/models/leveldata/DivisionLevelData';
 import TeamPowerRatingsTable from '../common/tables/team/TeamPowerRatingsTable';
 
 class DivisionLevelTeamPowerRatings extends TeamPowerRatingsTable<DivisionLevelData, ModelTableDivisionLevelProps> {

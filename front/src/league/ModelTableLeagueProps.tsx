@@ -1,5 +1,5 @@
 import { ModelTableProps } from "../common/ModelTable";
-import LeagueData from "../rest/models/LeagueData";
+import LeagueData from "../rest/models/leveldata/LeagueData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 import LeagueRequest from "../rest/models/request/LeagueRequest";
 

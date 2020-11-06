@@ -1,13 +1,13 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { getDivisionLevelData, getLeagueUnitIdByName } from '../rest/Client' 
-import DivisionLevelData from '../rest/models/DivisionLevelData';
+import DivisionLevelData from '../rest/models/leveldata/DivisionLevelData';
 import DivisionLevelTopMenu from './DivisionLevelTopMenu'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import ModelTableDivisionLevelProps from './ModelTableDivisionLevelProps'
 import DivisionLevelTeamHatstats from './DivisionLevelTeamHatstats';
 import DivisionLevelLeagueUnits from './DivisionLevelLeagueUnits'
-import PageLayout from '../common/PageLayout';
+import CountryLevelLayout from '../common/CountryLevelLayout';
 import DivisionLevelPlayerGoalGames from './DivisionLevelPlayerGoalGames'
 import DivisionLevelPlayerCards from './DivisionLevelPlayerCards'
 import DivisionLevelPlayerSalaryTsi from './DivisionLevelPlayerSalaryTsi'
@@ -32,7 +32,7 @@ interface MatchParams {
 
 interface Props extends RouteComponentProps<MatchParams>{}
 
-class DivisionLevel extends PageLayout<Props, DivisionLevelData, ModelTableDivisionLevelProps> {
+class DivisionLevel extends CountryLevelLayout<Props, DivisionLevelData, ModelTableDivisionLevelProps> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: ModelTableDivisionLevelProps) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_HATSTATS,

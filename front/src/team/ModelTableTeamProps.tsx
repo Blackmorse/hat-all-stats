@@ -1,5 +1,5 @@
 import { ModelTableProps } from "../common/ModelTable";
-import TeamData from "../rest/models/TeamData";
+import TeamData from "../rest/models/leveldata/TeamData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 import TeamRequest from "../rest/models/request/TeamRequest";
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import DivisionLevelData from '../rest/models/DivisionLevelData'
+import DivisionLevelData from '../rest/models/leveldata/DivisionLevelData'
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu';
 

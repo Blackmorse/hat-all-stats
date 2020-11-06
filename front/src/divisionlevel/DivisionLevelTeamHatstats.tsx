@@ -1,6 +1,6 @@
 import TeamHatstatsTable from '../common/tables/team/TeamHatstatsTable'
 import ModelTableDivisionLevelProps from './ModelTableDivisionLevelProps'
-import DivisionLevelData from '../rest/models/DivisionLevelData';
+import DivisionLevelData from '../rest/models/leveldata/DivisionLevelData';
 
 class DivisionLevelTeamHatstats extends TeamHatstatsTable<DivisionLevelData, ModelTableDivisionLevelProps> {
 }

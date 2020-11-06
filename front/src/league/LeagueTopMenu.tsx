@@ -1,5 +1,5 @@
 import React from 'react';
-import LeagueData from '../rest/models/LeagueData'
+import LeagueData from '../rest/models/leveldata/LeagueData'
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu'
 import { toArabian } from "../common/Utils"

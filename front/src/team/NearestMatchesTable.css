@@ -1,25 +1,3 @@
-.section_row {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    width: 99%;
-    margin: 5px auto 10px;
-}
-
-.section_row_half_element {
-    position: relative;
-    width: 50%;
-    min-height: 100px;
-}
-
-.statistics_section_inner {
-    margin: 7px;
-}
-
-.statistics_section_inner td {
-    text-align: center;
-}
-
 .matches_date {
     width: 10%;
     font-size: 0.8em !important;

@@ -34,20 +34,28 @@ object MatchTopHatstats {
         ~ oppositeTeamName ~ matchId ~ isHomeMatch ~ goals ~ enemyGoals
         ~ hatstats ~ oppositeHatstats =>
 
-        val (homeTeam, awayTeam, homeHatstats, awayHatstats, homeGoals, awayGoals) =
-          if (isHomeMatch == "home") {
-            (TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName),
-              TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName),
-              hatstats, oppositeHatstats,
-              goals, enemyGoals)
-          } else {
-            (TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName),
-              TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName),
-              oppositeHatstats, hatstats,
-              enemyGoals, goals)
-          }
-
-        MatchTopHatstats(homeTeam, awayTeam, homeHatstats, homeGoals, awayHatstats, awayGoals, matchId)
+        MatchTopHatstats(leagueUnitId, leagueUnitName, teamId, teamName, oppositeTeamId,
+          oppositeTeamName, matchId, isHomeMatch, goals, enemyGoals,
+          hatstats, oppositeHatstats)
     }
+  }
+
+  def apply(leagueUnitId: Long, leagueUnitName: String, teamId: Long, teamName: String, oppositeTeamId: Long,
+    oppositeTeamName: String, matchId: Long, isHomeMatch: String, goals: Int, enemyGoals: Int,
+    hatstats: Int, oppositeHatstats: Int): MatchTopHatstats = {
+    val (homeTeam, awayTeam, homeHatstats, awayHatstats, homeGoals, awayGoals) =
+      if (isHomeMatch == "home") {
+        (TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName),
+          TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName),
+          hatstats, oppositeHatstats,
+          goals, enemyGoals)
+      } else {
+        (TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName),
+          TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName),
+          oppositeHatstats, hatstats,
+          enemyGoals, goals)
+      }
+
+    MatchTopHatstats(homeTeam, awayTeam, homeHatstats, homeGoals, awayHatstats, awayGoals, matchId)
   }
 }

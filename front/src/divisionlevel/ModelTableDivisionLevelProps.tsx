@@ -1,5 +1,5 @@
 import { ModelTableProps } from "../common/ModelTable";
-import DivisionLevelData from "../rest/models/DivisionLevelData";
+import DivisionLevelData from "../rest/models/leveldata/DivisionLevelData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 import DivisionLevelRequest from "../rest/models/request/DivisionLevelRequest";
 

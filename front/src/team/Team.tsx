@@ -1,7 +1,7 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router';
-import PageLayout from '../common/PageLayout';
-import TeamData from '../rest/models/TeamData';
+import CountryLevelLayout from '../common/CountryLevelLayout';
+import TeamData from '../rest/models/leveldata/TeamData';
 import ModelTableTeamProps from './ModelTableTeamProps';
 import { getTeamData } from '../rest/Client'
 import { PagesEnum } from '../common/enums/PagesEnum';
@@ -24,7 +24,7 @@ interface MatchParams {
 
 interface Props extends RouteComponentProps<MatchParams> {}
 
-class Team extends PageLayout<Props, TeamData, ModelTableTeamProps> {
+class Team extends CountryLevelLayout<Props, TeamData, ModelTableTeamProps> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: ModelTableTeamProps) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_OVERVIEW, props => <>

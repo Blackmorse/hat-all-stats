@@ -168,6 +168,7 @@ const resources = {
       "overview.numbers": "Number",
       "overview.averages": "Averages",
 
+      "world.countries": "Countries",
       "error.loading": "Error while loading..."
     }
   },
@@ -334,6 +335,7 @@ const resources = {
       "overview.numbers": "Сводка",
       "overview.averages": "Средние",
 
+      "world.countries": "Страны",
       "error.loading": "Ошибка загрузки..."
     }
   }

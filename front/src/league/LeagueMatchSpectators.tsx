@@ -1,4 +1,4 @@
-import LeagueData from '../rest/models/LeagueData'
+import LeagueData from '../rest/models/leveldata/LeagueData'
 import ModelTableLeagueProps from './ModelTableLeagueProps'
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
 

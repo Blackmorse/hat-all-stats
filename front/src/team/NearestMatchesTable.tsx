@@ -1,10 +1,11 @@
 import React from 'react';
 import NearestMatch, { NearestMatches } from '../rest/models/NearestMatch'
 import './NearestMatchesTable.css'
+import '../common/StatisticsSection.css'
 import '../i18n'
 import { Translation } from 'react-i18next'
 import { ModelTablePropsWrapper } from '../common/ModelTable'
-import TeamData from '../rest/models/TeamData';
+import TeamData from '../rest/models/leveldata/TeamData';
 import ModelTableTeamProps from './ModelTableTeamProps';
 import TeamRequest from '../rest/models/request/TeamRequest';
 import { getNearestMatches } from '../rest/Client'

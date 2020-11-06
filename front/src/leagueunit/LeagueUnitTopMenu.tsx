@@ -1,5 +1,5 @@
 import React from 'react'
-import LeagueUnitData from '../rest/models/LeagueUnitData'
+import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu';
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import './ModelTable.css'
+import './StatisticsSection.css'
 import StatisticsParameters, { SortingDirection, StatsTypeEnum, StatsType } from '../rest/StatisticsParameters'
 import RestTableData from '../rest/RestTableData'
 import PageNavigator from '../common/PageNavigator'
@@ -7,7 +8,7 @@ import Cookies from 'js-cookie'
 import PageSizeSelector from './selectors/PageSizeSelector'
 import StatsTypeSelector from './selectors/StatsTypeSelector'
 import SeasonSelector from './selectors/SeasonSelector'
-import LevelData from '../rest/models/LevelData';
+import LevelData from '../rest/models/leveldata/LevelData';
 import StatisticsSection from './StatisticsSection'
 import LevelRequest from '../rest/models/request/LevelRequest';
 

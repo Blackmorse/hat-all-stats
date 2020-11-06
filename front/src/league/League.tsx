@@ -1,10 +1,10 @@
 import { RouteComponentProps } from 'react-router';
 import React from 'react';
-import PageLayout from '../common/PageLayout'
+import CountryLevelLayout from '../common/CountryLevelLayout'
 import TopMenu from './LeagueTopMenu';
 import LeagueLeagueUnits from './LeagueLeagueUnits'
 import { getLeagueData } from '../rest/Client';
-import LeagueData from '../rest/models/LeagueData';
+import LeagueData from '../rest/models/leveldata/LeagueData';
 import { PagesEnum } from '../common/enums/PagesEnum'
 import LeagueTeamHatstats from './LeagueTeamHatstats'
 import ModelTableLeagueProps from './ModelTableLeagueProps'
@@ -32,7 +32,7 @@ interface MatchParams {
 
 interface Props extends RouteComponentProps<MatchParams> {}
 
-class League extends PageLayout<Props, LeagueData, ModelTableLeagueProps> {
+class League extends CountryLevelLayout<Props, LeagueData, ModelTableLeagueProps> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: ModelTableLeagueProps) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_HATSTATS, 

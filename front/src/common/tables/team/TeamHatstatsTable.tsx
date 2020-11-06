@@ -5,7 +5,7 @@ import ModelTableTh from '../../ModelTableTh'
 import '../../../i18n'
 import { Translation } from 'react-i18next'
 import { StatsTypeEnum } from '../../../rest/StatisticsParameters';
-import LevelData from '../../../rest/models/LevelData';
+import LevelData from '../../../rest/models/leveldata/LevelData';
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { getTeamHatstats } from '../../../rest/Client';

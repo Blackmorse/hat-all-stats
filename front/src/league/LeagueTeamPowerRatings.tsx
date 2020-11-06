@@ -1,5 +1,5 @@
 import ModelTableLeagueProps from './ModelTableLeagueProps'
-import LeagueData from '../rest/models/LeagueData'
+import LeagueData from '../rest/models/leveldata/LeagueData'
 
 import TeamPowerRatingsTable from '../common/tables/team/TeamPowerRatingsTable'
 

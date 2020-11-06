@@ -1,6 +1,6 @@
 import React from 'react';
 import TeamAgeInjury from "../../../rest/models/team/TeamAgeInjury";
-import LevelData from '../../../rest/models/LevelData';
+import LevelData from '../../../rest/models/leveldata/LevelData';
 import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../../common/ModelTable';
 import '../../../i18n'
 import { Translation } from 'react-i18next'

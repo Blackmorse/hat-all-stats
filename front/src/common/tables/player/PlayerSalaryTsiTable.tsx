@@ -1,5 +1,5 @@
 import React from 'react';
-import LevelData from "../../../rest/models/LevelData";
+import LevelData from "../../../rest/models/leveldata/LevelData";
 import ModelTable, { ModelTableProps, ModelTablePropsWrapper, SortingState } from "../../ModelTable";
 import PlayerSalaryTSI from "../../../rest/models/player/PlayerSalaryTSI";
 import { StatsTypeEnum } from "../../../rest/StatisticsParameters";

@@ -1,6 +1,6 @@
 import React from 'react'
 import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable';
-import LevelData from '../../../rest/models/LevelData';
+import LevelData from '../../../rest/models/leveldata/LevelData';
 import TeamRating from '../../../rest/models/team/TeamRating';
 import { StatsTypeEnum } from '../../../rest/StatisticsParameters';
 import { getTeamRatings } from '../../../rest/Client';

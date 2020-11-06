@@ -1,5 +1,5 @@
 import React from 'react';
-import LeagueUnitData from '../rest/models/LeagueUnitData'
+import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
 import ModelTable, { SortingState, ModelTablePropsWrapper } from '../common/ModelTable'
 import { StatsTypeEnum } from '../rest/StatisticsParameters';
 import TeamPosition from '../rest/models/TeamPosition';

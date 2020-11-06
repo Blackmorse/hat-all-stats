@@ -6,13 +6,6 @@
     justify-content: space-between;
 }
 
-.statistics_section {
-    width: 98%;
-    margin: 5px auto 10px;
-    border: 1px solid green;
-    position: relative;
-}
-
 .statistics_table {
     width: 100%;
     border-spacing: 0px;
@@ -27,7 +20,7 @@
     padding: 0 5px;
 }
 
-.statistics_table > tbody > tr:nth-child(2n+1) {
+.statistics_table > tbody > tr:nth-child(2n) {
     background-color: #dce3de;
 }
 

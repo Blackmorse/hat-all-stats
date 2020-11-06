@@ -1,5 +1,5 @@
 import ModelTableLeagueProps from './ModelTableLeagueProps'
-import LeagueData from '../rest/models/LeagueData'
+import LeagueData from '../rest/models/leveldata/LeagueData'
 import TeamCardsTable from '../common/tables/team/TeamCardsTable'
 
 class LeagueTeamCards extends TeamCardsTable<LeagueData, ModelTableLeagueProps> {

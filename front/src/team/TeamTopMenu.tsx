@@ -1,4 +1,4 @@
-import TeamData from '../rest/models/TeamData'
+import TeamData from '../rest/models/leveldata/TeamData'
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu';
 

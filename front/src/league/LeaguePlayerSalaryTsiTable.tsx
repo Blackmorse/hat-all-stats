@@ -1,5 +1,5 @@
 import PlayerSalaryTsiTable from '../common/tables/player/PlayerSalaryTsiTable'
-import LeagueData from '../rest/models/LeagueData'
+import LeagueData from '../rest/models/leveldata/LeagueData'
 import ModelTableLeagueProps from './ModelTableLeagueProps'
 
 class LeaguePlayerSalaryTsiTable extends PlayerSalaryTsiTable<LeagueData, ModelTableLeagueProps> {

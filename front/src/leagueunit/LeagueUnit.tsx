@@ -1,7 +1,7 @@
 import React from 'react'
 import { RouteComponentProps } from 'react-router';
-import LeagueUnitData from '../rest/models/LeagueUnitData';
-import PageLayout from '../common/PageLayout';
+import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData';
+import CountryLevelLayout from '../common/CountryLevelLayout';
 import ModelTableLeagueUnitProps from './ModelTableLeagueUnitProps'
 import LeagueUnitTopMenu from './LeagueUnitTopMenu';
 import { getLeagueUnitData } from '../rest/Client'
@@ -30,7 +30,7 @@ interface MatchParams {
 
 interface Props extends RouteComponentProps<MatchParams> {}
 
-class LeagueUnit extends PageLayout<Props, LeagueUnitData, ModelTableLeagueUnitProps> {
+class LeagueUnit extends CountryLevelLayout<Props, LeagueUnitData, ModelTableLeagueUnitProps> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: ModelTableLeagueUnitProps) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_HATSTATS, 

@@ -1,4 +1,4 @@
-import LevelData from '../../../rest/models/LevelData';
+import LevelData from '../../../rest/models/leveldata/LevelData';
 import React from 'react';
 import ModelTable, { ModelTablePropsWrapper, SortingState, ModelTableProps } from '../../ModelTable';
 import PlayerGoalsGames from '../../../rest/models/player/PlayerGoalsGames'

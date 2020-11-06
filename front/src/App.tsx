@@ -5,16 +5,18 @@ import League from './league/League'
 import DivisionLevel from './divisionlevel/DivisionLevel'
 import LeagueUnit from './leagueunit/LeagueUnit'
 import Team from './team/Team'
+import World from './world/World';
 
 class App extends React.Component{
 
   render() {
     return (
       <Router>
+        <Route exact path="/" component={World} />
         <Route exact path="/league/:leagueId" component={League} />
         <Route exact path="/league/:leagueId/divisionLevel/:divisionLevel"  component={DivisionLevel}/>
         <Route exact path="/leagueUnit/:leagueUnitId" component={LeagueUnit}/>
-        <Route exace path="/team/:teamId" component={Team}/>
+        <Route exact path="/team/:teamId" component={Team}/>
       </Router>
     );
   }

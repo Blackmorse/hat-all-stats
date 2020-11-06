@@ -1,5 +1,5 @@
 import PlayerCardsTable from "../common/tables/player/PlayerCardsTable";
-import TeamData from '../rest/models/TeamData'
+import TeamData from '../rest/models/leveldata/TeamData'
 import ModelTableTeamProps from './ModelTableTeamProps'
 
 class TeamPlayerCards extends PlayerCardsTable<TeamData, ModelTableTeamProps> {
