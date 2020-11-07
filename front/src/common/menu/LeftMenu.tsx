@@ -35,7 +35,8 @@ class LeftMenu extends React.Component<Props, State> {
          [PagesEnum.TEAM_STREAK_TROPHIES, MenuGroupsEnum.TEAM],
          [PagesEnum.MATCH_TOP_HATSTATS, MenuGroupsEnum.MATCH],
          [PagesEnum.MATCH_SURPRISING, MenuGroupsEnum.MATCH],
-         [PagesEnum.MATCH_SPECTATORS, MenuGroupsEnum.MATCH]
+         [PagesEnum.MATCH_SPECTATORS, MenuGroupsEnum.MATCH],
+         [PagesEnum.OVERVIEW, MenuGroupsEnum.OVERVIEW]
         ])
 
     constructor(props: Props) {

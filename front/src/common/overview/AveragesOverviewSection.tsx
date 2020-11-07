@@ -2,19 +2,19 @@ import React from 'react';
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import { commasSeparated, ageFormatter, ratingFormatter } from '../../common/Formatters'
-import WorldData from '../../rest/models/leveldata/WorldData';
 import { getAveragesOverview } from '../../rest/Client'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import AveragesOverview from '../../rest/models/overview/AveragesOverview'
+import LevelData from '../../rest/models/leveldata/LevelData';
 
-class AveragesOverviewSection extends OverviewSection<WorldData, AveragesOverview> {
-    constructor(props: OverviewSectionProps<WorldData, AveragesOverview>) {
+class AveragesOverviewSection<Data extends LevelData> extends OverviewSection<Data, AveragesOverview> {
+    constructor(props: OverviewSectionProps<Data, AveragesOverview>) {
         super(props, 'overview.averages')
     }
 
     loadOverviewEntity = getAveragesOverview
 
-    renderOverviewSection(averageOverview: AveragesOverview): JSX.Element {
+    renderOverviewSection(averageOverview: AveragesOverview, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
         return <Translation>
         {(t, { i18n}) =>
             <table className="statistics_table">

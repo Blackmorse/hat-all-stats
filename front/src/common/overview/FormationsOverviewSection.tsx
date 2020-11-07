@@ -1,20 +1,20 @@
 import React from 'react';
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
-import WorldData from '../../rest/models/leveldata/WorldData';
 import FormationsOverview from '../../rest/models/overview/FormationsOverview'
 import { getFormationsOverview } from '../../rest/Client'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import { commasSeparated } from '../../common/Formatters'
+import LevelData from '../../rest/models/leveldata/LevelData';
 
-class FormationsOverviewSection extends OverviewSection<WorldData, Array<FormationsOverview>> {
-    constructor(props: OverviewSectionProps<WorldData, Array<FormationsOverview>>) {
+class FormationsOverviewSection<Data extends LevelData> extends OverviewSection<Data, Array<FormationsOverview>> {
+    constructor(props: OverviewSectionProps<Data, Array<FormationsOverview>>) {
         super(props, 'overview.formations')
     }
     
     loadOverviewEntity = getFormationsOverview
 
-    renderOverviewSection(data: Array<FormationsOverview>): JSX.Element {
+    renderOverviewSection(data: Array<FormationsOverview>, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
         let totalFormations = data.map(fo => fo.count)
             .reduce((sum, current) => sum + current, 0);
 

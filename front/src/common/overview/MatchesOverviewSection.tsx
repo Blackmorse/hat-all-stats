@@ -2,20 +2,19 @@ import React from 'react';
 import MatchTopHatstatsOverview from '../../rest/models/overview/MatchTopHatstatsOverview'
 import '../../i18n'
 import { Translation } from 'react-i18next'
-import WorldData from '../../rest/models/leveldata/WorldData';
 import OverviewSection from './OverviewSection'
-import LeagueLink from '../../common/links/LeagueLink'
 import LeagueUnitLink from '../../common/links/LeagueUnitLink'
 import TeamLink from '../../common/links/TeamLink'
+import LevelData from '../../rest/models/leveldata/LevelData';
 
-abstract class MatchesOverviewSection extends OverviewSection<WorldData, Array<MatchTopHatstatsOverview>> {
-    renderOverviewSection(matches: Array<MatchTopHatstatsOverview>): JSX.Element {
-        let nameMap = new Map(this.props.levelDataProps.levelData.countries)
+abstract class MatchesOverviewSection<Data extends LevelData> extends OverviewSection<Data, Array<MatchTopHatstatsOverview>> {
+    renderOverviewSection(matches: Array<MatchTopHatstatsOverview>, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
+       
         return <Translation>
             {(t, { i18n}) => <table className="statistics_table">
                 <thead>
                     <tr>
-                        <th className="value">{t('overview.country')}</th>
+                        {(this.isWorldData)  ? <th className="value">{t('overview.country')}</th> : <></>}
                         <th className="value">{t('table.league')}</th>
                         <th className="value">{t('table.team')}</th>
                         <th className="value">{t('table.hatstats')}</th>
@@ -27,9 +26,7 @@ abstract class MatchesOverviewSection extends OverviewSection<WorldData, Array<M
                 <tbody>
                 {matches.map(matc => {
                 return <tr>
-                    <td className="value">
-                        <LeagueLink tableLink={true} id={matc.leagueId} name={nameMap.get(matc.leagueId) || ''}/>
-                    </td>
+                    {leagueNameFunc(matc.leagueId)}
                     <td className="value">
                         <LeagueUnitLink id={matc.matchTopHatstats.homeTeam.leagueUnitId} name={matc.matchTopHatstats.homeTeam.leagueUnitName} />
                     </td>

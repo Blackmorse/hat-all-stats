@@ -3,19 +3,19 @@ import NumberOverview from '../../rest/models/overview/NumberOverview'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import { commasSeparated } from '../../common/Formatters'
-import WorldData from '../../rest/models/leveldata/WorldData';
 import { getNumberOverview } from '../../rest/Client'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
+import LevelData from '../../rest/models/leveldata/LevelData';
 
 
-class NumberOverviewSection extends OverviewSection<WorldData, NumberOverview> {
-    constructor(props: OverviewSectionProps<WorldData, NumberOverview>) {
+class NumberOverviewSection<Data extends LevelData> extends OverviewSection<Data, NumberOverview> {
+    constructor(props: OverviewSectionProps<Data, NumberOverview>) {
         super(props, 'overview.numbers')
     }
 
     loadOverviewEntity = getNumberOverview
 
-    renderOverviewSection(data: NumberOverview): JSX.Element {   
+    renderOverviewSection(data: NumberOverview, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {   
         return <Translation>
             {(t, { i18n}) => <table className="statistics_table">
                 <tbody>

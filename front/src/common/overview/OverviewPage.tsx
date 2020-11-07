@@ -1,22 +1,21 @@
 import React from 'react';
-import StatisticsSection from "../common/sections/StatisticsSection";
-import TotalOverview from "../rest/models/overview/TotalOverview";
-import { getTotalOverview } from '../rest/Client'
-import WorldData from '../rest/models/leveldata/WorldData';
-import OverviewRequest from '../rest/models/request/OverviewRequest';
-import WorldLevelDataProps from './WorldLevelDataProps';
-import { LevelDataPropsWrapper } from '../common/LevelDataProps';
+import StatisticsSection from "../sections/StatisticsSection";
+import TotalOverview from "../../rest/models/overview/TotalOverview";
+import { getTotalOverview } from '../../rest/Client'
+import LevelDataProps from '../LevelDataProps';
 import './OverviewPage.css'
-import '../common/sections/StatisticsSection.css'
-import NumberOverviewSection from './overview/NumberOverviewSection'
-import FormationsOverviewSection from './overview/FormationsOverviewSection'
-import AveragesOverviewSection from './overview/AveragesOverviewSection'
-import SurprisingMatchesOverviewSection from './overview/SurprisingMatchesOverviewSection'
-import HatstatsTeamOverviewSection from './overview/HatstatsTeamOverviewSection'
-import SalaryTeamOverviewSection from './overview/SalaryTeamOverviewSection'
-import TopMatchesOverviewSection from './overview/TopMatchesOverviewSection'
-import SalaryPlayerOverviewSection from './overview/SalaryPlayerOverviewSection'
-import RatingPlayerOverviewSection from './overview/RatingPlayerOverviewSection'
+import '../sections/StatisticsSection.css'
+import NumberOverviewSection from './NumberOverviewSection'
+import FormationsOverviewSection from './FormationsOverviewSection'
+import AveragesOverviewSection from './AveragesOverviewSection'
+import SurprisingMatchesOverviewSection from './SurprisingMatchesOverviewSection'
+import HatstatsTeamOverviewSection from './HatstatsTeamOverviewSection'
+import SalaryTeamOverviewSection from './SalaryTeamOverviewSection'
+import TopMatchesOverviewSection from './TopMatchesOverviewSection'
+import SalaryPlayerOverviewSection from './SalaryPlayerOverviewSection'
+import RatingPlayerOverviewSection from './RatingPlayerOverviewSection'
+import LevelData from '../../rest/models/leveldata/LevelData';
+
 
 interface State {
     dataLoading: boolean,
@@ -24,9 +23,15 @@ interface State {
     totalOverview?: TotalOverview
 }
 
-class OverviewPage extends StatisticsSection<LevelDataPropsWrapper<WorldData, WorldLevelDataProps>, State> {
-    constructor(props: LevelDataPropsWrapper<WorldData, WorldLevelDataProps>) {
-        super(props, 'overview.world_overview')
+interface OverviewPageProps<Data extends LevelData, LevelProps extends LevelDataProps<Data>> {
+    levelDataProps: LevelProps,
+    title: string
+}
+
+class OverviewPage<Data extends LevelData, LevelProps extends LevelDataProps<Data>> 
+        extends StatisticsSection<OverviewPageProps<Data, LevelProps>, State> {
+    constructor(props: OverviewPageProps<Data, LevelProps>) {
+        super(props, props.title)
         this.state = {
             dataLoading: false,
             isError: false
@@ -45,10 +50,8 @@ class OverviewPage extends StatisticsSection<LevelDataPropsWrapper<WorldData, Wo
             isError: false,
             totalOverview: this.state.totalOverview
         })
-        let request: OverviewRequest = {
-            season: this.props.levelDataProps.currentSeason(),
-            round: this.props.levelDataProps.currentRound()
-        } 
+        
+        let request = this.props.levelDataProps.createOverviewRequest()
 
         getTotalOverview(request, totalOverview => this.setState({
             dataLoading: false,
@@ -68,51 +71,51 @@ class OverviewPage extends StatisticsSection<LevelDataPropsWrapper<WorldData, Wo
             return <>
             <div className="section_row"> 
                 <div className="section_row_one_third_element">
-                    <NumberOverviewSection 
+                    <NumberOverviewSection<Data> 
                         initialData={this.state.totalOverview?.numberOverview} 
                         levelDataProps={this.props.levelDataProps}/>
                 </div>
                 <div className="section_row_one_third_element">
-                    <FormationsOverviewSection 
+                    <FormationsOverviewSection<Data> 
                         initialData={this.state.totalOverview?.formations} 
                         levelDataProps={this.props.levelDataProps}/>
                 </div>
                 <div className="section_row_one_third_element">
-                    <AveragesOverviewSection 
+                    <AveragesOverviewSection<Data>  
                         initialData={this.state.totalOverview?.averageOverview} 
                         levelDataProps={this.props.levelDataProps}/>
                 </div>
             </div>
             <div className="section_row"> 
-                <SurprisingMatchesOverviewSection 
+                <SurprisingMatchesOverviewSection<Data>  
                     initialData={this.state.totalOverview?.surprisingMatches} 
                     levelDataProps={this.props.levelDataProps}/>
             </div>
             <div className="section_row"> 
                 <div className="section_row_half_element">
-                    <HatstatsTeamOverviewSection 
+                    <HatstatsTeamOverviewSection<Data>  
                         initialData={this.state.totalOverview?.topHatstatsTeams} 
                         levelDataProps={this.props.levelDataProps}/>
                 </div>
                 <div className="section_row_half_element">
-                    <SalaryTeamOverviewSection 
+                    <SalaryTeamOverviewSection<Data>  
                         initialData={this.state.totalOverview?.topSalaryTeams} 
                         levelDataProps={this.props.levelDataProps}/>
                 </div>
             </div>
             <div className="section_row"> 
-                <TopMatchesOverviewSection 
+                <TopMatchesOverviewSection<Data>  
                     initialData={this.state.totalOverview?.topMatches} 
                     levelDataProps={this.props.levelDataProps}/>
             </div>
             <div className="section_row"> 
                 <div className="section_row_half_element">
-                    <SalaryPlayerOverviewSection 
+                    <SalaryPlayerOverviewSection<Data>  
                         initialData={this.state.totalOverview?.topSalaryPlayers} 
                         levelDataProps={this.props.levelDataProps}/>
                 </div>
                 <div className="section_row_half_element">
-                    <RatingPlayerOverviewSection 
+                    <RatingPlayerOverviewSection<Data>  
                         initialData={this.state.totalOverview?.topRatingPlayers} 
                         levelDataProps={this.props.levelDataProps}/>
                 </div>

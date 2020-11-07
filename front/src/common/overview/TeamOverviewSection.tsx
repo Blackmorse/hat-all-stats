@@ -2,16 +2,15 @@ import React from 'react'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import '../../i18n'
 import { Translation } from 'react-i18next'
-import WorldData from '../../rest/models/leveldata/WorldData';
 import TeamStatOverview from '../../rest/models/overview/TeamStatOverview'
-import LeagueLink from '../../common/links/LeagueLink'
 import LeagueUnitLink from '../../common/links/LeagueUnitLink'
 import TeamLink from '../../common/links/TeamLink'
+import LevelData from '../../rest/models/leveldata/LevelData';
 
-abstract class TeamOverviewSection extends OverviewSection<WorldData, Array<TeamStatOverview>> {
+abstract class TeamOverviewSection<Data extends LevelData> extends OverviewSection<Data, Array<TeamStatOverview>> {
     valueTitle: string
     
-    constructor(props: OverviewSectionProps<WorldData, Array<TeamStatOverview>>, 
+    constructor(props: OverviewSectionProps<Data, Array<TeamStatOverview>>, 
             title: string,
             valueTitle: string) {
         super(props, title)
@@ -20,14 +19,13 @@ abstract class TeamOverviewSection extends OverviewSection<WorldData, Array<Team
 
     abstract valueFormatter(value: number): JSX.Element
 
-    renderOverviewSection(data: Array<TeamStatOverview>): JSX.Element {
-        let map = new Map(this.props.levelDataProps.levelData.countries)
+    renderOverviewSection(data: Array<TeamStatOverview>, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
         return <Translation>
         {(t, { i18n}) => <table className="statistics_table">
             <thead>
             <tr>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('overview.country')}</th>
+                {(this.isWorldData) ? <th className="value">{t('overview.country')}</th> : <></>}
                 <th className="value">{t('table.league')}</th>
                 <th className="value">{this.valueTitle}</th>
             </tr>
@@ -38,9 +36,7 @@ abstract class TeamOverviewSection extends OverviewSection<WorldData, Array<Team
                         <td className="to_left">
                             <TeamLink name={teamStat.teamSortingKey.teamName} id={teamStat.teamSortingKey.teamId}/>
                         </td>
-                        <td className="value">
-                            <LeagueLink tableLink={true} id={teamStat.leagueId} name={map.get(teamStat.leagueId) || ''} />
-                        </td>
+                        {leagueNameFunc(teamStat.leagueId)}
                         <td className="value">
                             <LeagueUnitLink id={teamStat.teamSortingKey.leagueUnitId} name={teamStat.teamSortingKey.leagueUnitName} />
                         </td>

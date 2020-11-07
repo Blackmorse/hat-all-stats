@@ -25,6 +25,7 @@ import LeagueTeamStreakTrophies from './LeagueTeamStreakTrophies'
 import LeagueMatchTopHatstats from './LeagueMatchTopHatstats'
 import LeagueMatchSurprising from './LeagueMatchSurprising'
 import LeagueMatchSpectators from './LeagueMatchSpectators'
+import OverviewPage from '../common/overview/OverviewPage';
 
 interface MatchParams {
     leagueId: string;
@@ -35,6 +36,8 @@ interface Props extends RouteComponentProps<MatchParams> {}
 class League extends CountryLevelLayout<Props, LeagueData, LeagueLevelDataProps> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: LeagueLevelDataProps) => JSX.Element>()
+        pagesMap.set(PagesEnum.OVERVIEW, 
+            props => <OverviewPage<LeagueData, LeagueLevelDataProps> levelDataProps={props} title='' />)
         pagesMap.set(PagesEnum.TEAM_HATSTATS, 
             props => <LeagueTeamHatstats levelDataProps={props} />)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
@@ -71,6 +74,7 @@ class League extends CountryLevelLayout<Props, LeagueData, LeagueLevelDataProps>
             props => <LeagueMatchSurprising levelDataProps={props} />)
         pagesMap.set(PagesEnum.MATCH_SPECTATORS,
             props => <LeagueMatchSpectators levelDataProps={props} />)
+        
         super(props, pagesMap)
     }    
 

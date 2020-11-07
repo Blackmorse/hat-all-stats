@@ -1,5 +1,6 @@
 import LevelData from '../rest/models/leveldata/LevelData';
 import LevelRequest from '../rest/models/request/LevelRequest';
+import OverviewRequest from '../rest/models/request/OverviewRequest';
 
 export interface LevelDataPropsWrapper<Data extends LevelData, TableProps extends LevelDataProps<Data>> {
     levelDataProps: TableProps
@@ -37,6 +38,8 @@ abstract class LevelDataProps<Data extends LevelData> {
     currencyRate(): number {return this.levelData.currencyRate}
 
     abstract createLevelRequest(): LevelRequest
+
+    abstract createOverviewRequest(): OverviewRequest
 }
 
 export default LevelDataProps

@@ -232,6 +232,9 @@ function createOverviewParameters(overviewRequest: OverviewRequest) {
     values.round = overviewRequest.round
     if(overviewRequest.leagueId) {
         values.leagueId = overviewRequest.leagueId
+        if(overviewRequest.divisionLevel) {
+            values.divisionLevel = overviewRequest.divisionLevel
+        }
     }
 
     return new URLSearchParams(values).toString()

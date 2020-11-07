@@ -2,6 +2,7 @@ import LevelDataProps from "../common/LevelDataProps";
 import LeagueUnitData from "../rest/models/leveldata/LeagueUnitData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 import LeagueUnitRequest from "../rest/models/request/LeagueUnitRequest";
+import OverviewRequest from "../rest/models/request/OverviewRequest";
 
 class LeagueUnitLevelDataProps extends LevelDataProps<LeagueUnitData> {  
     
@@ -16,6 +17,10 @@ class LeagueUnitLevelDataProps extends LevelDataProps<LeagueUnitData> {
         }
 
         return leagueUnitRequest
+    }
+
+    createOverviewRequest(): OverviewRequest {
+        throw new Error("Not supported")
     }
 }
 

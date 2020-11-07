@@ -1,16 +1,15 @@
 import React from 'react'
-import WorldData from '../../rest/models/leveldata/WorldData';
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import PlayerStatOverview from '../../rest/models/overview/PlayerStatOverview'
-import LeagueLink from '../../common/links/LeagueLink'
 import LeagueUnitLink from '../../common/links/LeagueUnitLink'
 import TeamLink from '../../common/links/TeamLink'
+import LevelData from '../../rest/models/leveldata/LevelData';
 
-abstract class PlayerOverviewSection extends OverviewSection<WorldData, Array<PlayerStatOverview>> {
+abstract class PlayerOverviewSection<Data extends LevelData> extends OverviewSection<Data, Array<PlayerStatOverview>> {
     valueTitle: string
-    constructor(props: OverviewSectionProps<WorldData, Array<PlayerStatOverview>>, 
+    constructor(props: OverviewSectionProps<Data, Array<PlayerStatOverview>>, 
             title: string,
             valueTitle: string) {
         super(props, title)
@@ -19,13 +18,12 @@ abstract class PlayerOverviewSection extends OverviewSection<WorldData, Array<Pl
 
     abstract valueFormatter(value: number): JSX.Element
 
-    renderOverviewSection(playerStats: Array<PlayerStatOverview>): JSX.Element {
-        let map = new Map(this.props.levelDataProps.levelData.countries)
+    renderOverviewSection(playerStats: Array<PlayerStatOverview>, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
         return <Translation>
         {(t, { i18n}) => <table className="statistics_table">
             <thead>
                 <tr>
-                    <th className="value">{t('overview.country')}</th>
+                    {(this.isWorldData) ? <th className="value">{t('overview.country')}</th> : <></>}
                     <th className="value">{t('table.league')}</th>
                     <th className="value">{t('table.team')}</th>
                     <th className="value">{t('table.player')}</th>
@@ -35,9 +33,7 @@ abstract class PlayerOverviewSection extends OverviewSection<WorldData, Array<Pl
             <tbody>
                 {playerStats.map(playerStat =>{
                     return <tr>
-                    <td className="value">
-                        <LeagueLink tableLink={true} id={playerStat.leagueId} name={map.get(playerStat.leagueId) || ''} />
-                    </td>
+                    {leagueNameFunc(playerStat.leagueId)}
                     <td className="value">
                         <LeagueUnitLink id={playerStat.playerSortingKey.leagueUnitId} name={playerStat.playerSortingKey.leagueUnitName} />
                     </td>

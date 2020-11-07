@@ -2,6 +2,7 @@ import LevelDataProps from "../common/LevelDataProps";
 import TeamData from "../rest/models/leveldata/TeamData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 import TeamRequest from "../rest/models/request/TeamRequest";
+import OverviewRequest from "../rest/models/request/OverviewRequest";
 
 class TeamLevelDataProps extends LevelDataProps<TeamData> {
     
@@ -19,6 +20,10 @@ class TeamLevelDataProps extends LevelDataProps<TeamData> {
             teamId: this.teamId()
         }
         return teamRequest
+    }
+
+    createOverviewRequest(): OverviewRequest {
+        throw new Error("Not supported")
     }
 }
 

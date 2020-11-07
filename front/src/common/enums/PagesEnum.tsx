@@ -17,5 +17,6 @@ export enum PagesEnum {
     TEAM_STREAK_TROPHIES = "menu.streak_trophies",
     MATCH_TOP_HATSTATS = "overview.top_matches",
     MATCH_SURPRISING = "overview.surprising_matches",
-    MATCH_SPECTATORS = "matches.spectatos"
+    MATCH_SPECTATORS = "matches.spectatos",
+    OVERVIEW = "menu.team_overview"
 }

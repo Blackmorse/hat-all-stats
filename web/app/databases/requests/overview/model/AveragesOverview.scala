@@ -13,10 +13,10 @@ object OverviewMatchAverages {
 
   val mapper = {
     get[Int]("avg_hatstats") ~
-      get[Int]("avg_sold_total") ~
-      get[Double]("avg_goals") map {
+    get[Int]("avg_sold_total") ~
+    get[Double]("avg_goals") map {
       case avgHatstats ~ avgSoldTickets ~ avgScoredByTeam =>
-        OverviewMatchAverages(avgHatstats, avgSoldTickets, avgScoredByTeam)
+        OverviewMatchAverages(avgHatstats, avgSoldTickets, if(avgScoredByTeam.isNaN || avgScoredByTeam.isInfinite) null.asInstanceOf[Double] else avgScoredByTeam)
     }
   }
 }
@@ -30,10 +30,13 @@ object OverviewTeamPlayerAverages {
 
   val mapper = {
     get[Int]("avg_age") ~
-      get[Int]("avg_salary") ~
-      get[Double]("avg_rating") map {
+    get[Int]("avg_salary") ~
+    get[Double]("avg_rating") map {
       case averageAge ~ averageSalary ~ averateRating =>
-        OverviewTeamPlayerAverages(averageAge, averageSalary, averateRating)
+        println(averageAge)
+        println(averageSalary)
+        println(averageSalary)
+        OverviewTeamPlayerAverages(averageAge, averageSalary, if(averateRating.isNaN || averateRating.isInfinite) null.asInstanceOf[Double] else averateRating)
     }
   }
 }

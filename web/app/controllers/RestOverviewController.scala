@@ -42,53 +42,53 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
     Future(Ok(Json.toJson(worldData)))
   }
 
-  def numberOverview(season: Int, round: Int, leagueId: Option[Int]) = Action.async { implicit request =>
-    restOverviewStatsService.numberOverview(season, round, leagueId)
+  def numberOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async { implicit request =>
+    restOverviewStatsService.numberOverview(season, round, leagueId, divisionLevel)
       .map(numberOverview => Ok(Json.toJson(numberOverview)))
   }
 
-  def formations(season: Int, round: Int, leagueId: Option[Int]) = Action.async{ implicit request =>
-    restOverviewStatsService.formations(season, round, leagueId)
+  def formations(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async{ implicit request =>
+    restOverviewStatsService.formations(season, round, leagueId, divisionLevel)
       .map(formations => Ok(Json.toJson(formations)))
   }
 
-  def averagesOverview(season: Int, round: Int, leagueId: Option[Int]) = Action.async { implicit request =>
-    restOverviewStatsService.averageOverview(season, round, leagueId)
+  def averagesOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async { implicit request =>
+    restOverviewStatsService.averageOverview(season, round, leagueId, divisionLevel)
       .map(averages => Ok(Json.toJson(averages)))
   }
 
-  def surprisingMatches(season: Int, round: Int, leagueId: Option[Int]) = Action.async {implicit request =>
-    restOverviewStatsService.surprisingMatches(season, round, leagueId)
+  def surprisingMatches(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async {implicit request =>
+    restOverviewStatsService.surprisingMatches(season, round, leagueId, divisionLevel)
       .map(matches => Ok(Json.toJson(matches)))
   }
 
-  def topHatstatsTeams(season: Int, round: Int, leagueId: Option[Int]) = Action.async {implicit request =>
-    restOverviewStatsService.topHatstatsTeams(season, round, leagueId)
+  def topHatstatsTeams(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async {implicit request =>
+    restOverviewStatsService.topHatstatsTeams(season, round, leagueId, divisionLevel)
       .map(teams => Ok(Json.toJson(teams)))
   }
 
-  def topSalaryTeams(season: Int, round: Int, leagueId: Option[Int]) = Action.async{implicit request =>
-    restOverviewStatsService.topSalaryTeams(season, round, leagueId)
+  def topSalaryTeams(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async{implicit request =>
+    restOverviewStatsService.topSalaryTeams(season, round, leagueId, divisionLevel)
       .map(teams => Ok(Json.toJson(teams)))
   }
 
-  def topMatches(season: Int, round: Int, leagueId: Option[Int]) = Action.async{implicit request =>
-    restOverviewStatsService.topMatches(season, round, leagueId)
+  def topMatches(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async{implicit request =>
+    restOverviewStatsService.topMatches(season, round, leagueId, divisionLevel)
       .map(matches => Ok(Json.toJson(matches)))
   }
 
-  def topSalaryPlayers(season: Int, round: Int, leagueId: Option[Int]) = Action.async{implicit request =>
-    restOverviewStatsService.topSalaryPlayers(season, round, leagueId)
+  def topSalaryPlayers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async{implicit request =>
+    restOverviewStatsService.topSalaryPlayers(season, round, leagueId, divisionLevel)
       .map(players => Ok(Json.toJson(players)))
   }
 
-  def topRatingPlayers(season: Int, round: Int, leagueId: Option[Int]) = Action.async { implicit request =>
-    restOverviewStatsService.topRatingPlayers(season, round, leagueId)
+  def topRatingPlayers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async { implicit request =>
+    restOverviewStatsService.topRatingPlayers(season, round, leagueId, divisionLevel)
       .map(players => Ok(Json.toJson(players)))
   }
 
-  def totalOverview(season: Int, round: Int, leagueId: Option[Int]) = Action.async { implicit request =>
-    restOverviewStatsService.totalOverview(season, round, leagueId)
+  def totalOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async { implicit request =>
+    restOverviewStatsService.totalOverview(season, round, leagueId, divisionLevel)
       .map(totalOverview => Ok(Json.toJson(totalOverview)))
   }
 }
