@@ -1,54 +1,47 @@
 import React from 'react'
-import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import TeamStatOverview from '../../rest/models/overview/TeamStatOverview'
 import LeagueUnitLink from '../../common/links/LeagueUnitLink'
 import TeamLink from '../../common/links/TeamLink'
 import LevelData from '../../rest/models/leveldata/LevelData';
+import OverviewTableSection, { OverviewTableSectionProps } from './OverviewTableSection'
 
-abstract class TeamOverviewSection<Data extends LevelData> extends OverviewSection<Data, Array<TeamStatOverview>> {
+abstract class TeamOverviewSection<Data extends LevelData> extends OverviewTableSection<Data, TeamStatOverview> {
     valueTitle: string
     
-    constructor(props: OverviewSectionProps<Data, Array<TeamStatOverview>>, 
+    constructor(props: OverviewTableSectionProps<Data, TeamStatOverview>, 
             title: string,
             valueTitle: string) {
         super(props, title)
         this.valueTitle = valueTitle
     }
 
-    abstract valueFormatter(value: number): JSX.Element
-
-    renderOverviewSection(data: Array<TeamStatOverview>, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
+    tableheader(): JSX.Element {
         return <Translation>
-        {(t, { i18n}) => <table className="statistics_table">
-            <thead>
-            <tr>
+        {(t, { i18n}) =>  <tr>
                 <th>{t('table.team')}</th>
                 {(this.isWorldData) ? <th className="value">{t('overview.country')}</th> : <></>}
                 <th className="value">{t('table.league')}</th>
                 <th className="value">{this.valueTitle}</th>
             </tr>
-            </thead>
-            <tbody>
-                {data.map(teamStat => {
-                    return <tr>
-                        <td className="to_left">
-                            <TeamLink text={teamStat.teamSortingKey.teamName} id={teamStat.teamSortingKey.teamId}/>
-                        </td>
-                        {leagueNameFunc(teamStat.leagueId)}
-                        <td className="value">
-                            <LeagueUnitLink id={teamStat.teamSortingKey.leagueUnitId} text={teamStat.teamSortingKey.leagueUnitName} />
-                        </td>
-                        <td className="value">
-                            {this.valueFormatter(teamStat.value)}
-                        </td>
-                    </tr>
-                })}
-            </tbody>
-        </table>
-        }
-    </Translation>
+            }
+        </Translation>
+    }
+
+    tableRow(teamStat: TeamStatOverview, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
+        return <tr>
+            <td className="to_left">
+                <TeamLink text={teamStat.teamSortingKey.teamName} id={teamStat.teamSortingKey.teamId}/>
+            </td>
+            {leagueNameFunc(teamStat.leagueId)}
+            <td className="value">
+                <LeagueUnitLink id={teamStat.teamSortingKey.leagueUnitId} text={teamStat.teamSortingKey.leagueUnitName} />
+            </td>
+            <td className="value">
+                {this.props.linkProvider(this.valueFormatter(teamStat.value), teamStat).render()}
+            </td>
+        </tr>
     }
 }
 

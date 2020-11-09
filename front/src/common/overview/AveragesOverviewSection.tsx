@@ -7,14 +7,14 @@ import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import AveragesOverview from '../../rest/models/overview/AveragesOverview'
 import LevelData from '../../rest/models/leveldata/LevelData';
 
-class AveragesOverviewSection<Data extends LevelData> extends OverviewSection<Data, AveragesOverview> {
+class AveragesOverviewSection<Data extends LevelData> extends OverviewSection<Data, AveragesOverview, OverviewSectionProps<Data, AveragesOverview>> {
     constructor(props: OverviewSectionProps<Data, AveragesOverview>) {
         super(props, 'overview.averages')
     }
 
     loadOverviewEntity = getAveragesOverview
 
-    renderOverviewSection(averageOverview: AveragesOverview, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
+    renderOverviewSection(averageOverview: AveragesOverview): JSX.Element {
         return <Translation>
         {(t, { i18n}) =>
             <table className="statistics_table">

@@ -5,8 +5,6 @@ import StatisticsSection from '../../common/sections/StatisticsSection';
 import OverviewRequest from '../../rest/models/request/OverviewRequest';
 import '../../common/sections/StatisticsSection.css'
 import SeasonRoundSelector from './SeasonRoundSelector'
-import WorldData from '../../rest/models/leveldata/WorldData';
-import LeagueLink from '../../common/links/LeagueLink';
 
 export interface OverviewSectionProps<Data extends LevelData, OverviewEntity> {
     initialData?: OverviewEntity,
@@ -21,11 +19,11 @@ interface State<OverviewEntity> {
     selectedRound: number
 }
 
-abstract class OverviewSection<Data extends LevelData, OverviewEntity> 
-    extends StatisticsSection<OverviewSectionProps<Data, OverviewEntity>, State<OverviewEntity>> {
+abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewProps extends OverviewSectionProps<Data, OverviewEntity>> 
+    extends StatisticsSection<OverviewProps, State<OverviewEntity>> {
     isWorldData: boolean
 
-    constructor(props: OverviewSectionProps<Data, OverviewEntity>, title: string) {
+    constructor(props: OverviewProps, title: string) {
         super(props, title)
         this.state = {
             dataLoading: false,
@@ -79,22 +77,12 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity>
     }
 
     renderSection(): JSX.Element {
-        let leagueNameFunc: (id: number) => JSX.Element
-
-        if (this.isWorldData) {
-            let nameMap = new Map(((this.props.levelDataProps.levelData as any) as WorldData).countries)
-            leagueNameFunc = (id) => <td className="value">
-                    <LeagueLink tableLink={true} id={id} text={nameMap.get(id) || ''}/>
-                </td>
-        } else {
-            leagueNameFunc = (id) => <></>
-        }
         let data = this.state.data
         if (data) {
             let dataDefined = data
             return <div className="statistics_section_inner">
                 
-                {this.renderOverviewSection(dataDefined, leagueNameFunc)}
+                {this.renderOverviewSection(dataDefined)}
                 <SeasonRoundSelector 
                     season={this.state.selectedSeason}
                     round={this.state.selectedRound}
@@ -106,7 +94,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity>
         }
     }
 
-    abstract renderOverviewSection(data: OverviewEntity, leagueNameFunc: (id: number) => JSX.Element): JSX.Element
+    abstract renderOverviewSection(data: OverviewEntity): JSX.Element
 }
 
 export default OverviewSection

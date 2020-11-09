@@ -5,7 +5,7 @@ import Layout from '../common/layouts/Layout';
 import WorldLeftMenu from './WorldLeftMenu'
 import WorldTopMenu from './WorldTopMenu'
 import { RouteComponentProps } from 'react-router';
-import OverviewPage from '../common/overview/OverviewPage';
+import WorldOverviewPage from './WorldOverviewPage'
 import WorldLevelDataProps from './WorldLevelDataProps'
 
 
@@ -41,7 +41,7 @@ class World extends Layout<Props, State> {
     content(): JSX.Element {
         if(this.state.levelData) {
             let props = new WorldLevelDataProps(this.state.levelData)
-            return <OverviewPage<WorldData, WorldLevelDataProps> levelDataProps={props} title='overview.world_overview'/>
+            return <WorldOverviewPage levelDataProps={props} title='overview.world_overview'/>
         } else {
             return <></>
         }

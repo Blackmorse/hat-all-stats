@@ -7,14 +7,14 @@ import { Translation } from 'react-i18next'
 import { commasSeparated } from '../../common/Formatters'
 import LevelData from '../../rest/models/leveldata/LevelData';
 
-class FormationsOverviewSection<Data extends LevelData> extends OverviewSection<Data, Array<FormationsOverview>> {
+class FormationsOverviewSection<Data extends LevelData> extends OverviewSection<Data, Array<FormationsOverview>, OverviewSectionProps<Data, Array<FormationsOverview>>> {
     constructor(props: OverviewSectionProps<Data, Array<FormationsOverview>>) {
         super(props, 'overview.formations')
     }
     
     loadOverviewEntity = getFormationsOverview
 
-    renderOverviewSection(data: Array<FormationsOverview>, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
+    renderOverviewSection(data: Array<FormationsOverview>): JSX.Element {
         let totalFormations = data.map(fo => fo.count)
             .reduce((sum, current) => sum + current, 0);
 

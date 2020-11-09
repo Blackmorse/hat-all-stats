@@ -24,7 +24,7 @@ import DivisionLevelTeamStreakTrophies from './DivisionLevelTeamStreakTrophies'
 import DivisionLevelMatchTopHatstats from './DivisionLevelMatchTopHatstats'
 import DivisionLevelMatchSurprising from './DivisionLevelMatchSurprising'
 import DivisionLevelMatchSpectators from './DivisionLevelMatchSpectators'
-import OverviewPage from '../common/overview/OverviewPage';
+import DivisionLevelOverviewPage from './DivisionLevelOverviewPage';
 
 interface MatchParams {
     leagueId: string,
@@ -37,7 +37,7 @@ class DivisionLevel extends CountryLevelLayout<Props, DivisionLevelData, Divisio
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: DivisionLevelDataProps) => JSX.Element>()
         pagesMap.set(PagesEnum.OVERVIEW, 
-            props => <OverviewPage<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} title='' />)
+            props => <DivisionLevelOverviewPage levelDataProps={props} title='' />)
         pagesMap.set(PagesEnum.TEAM_HATSTATS,
             props => <DivisionLevelTeamHatstats levelDataProps={props}/>)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
