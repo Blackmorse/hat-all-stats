@@ -16,7 +16,6 @@ import SalaryPlayerOverviewSection from './SalaryPlayerOverviewSection'
 import RatingPlayerOverviewSection from './RatingPlayerOverviewSection'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import { PagesEnum } from '../enums/PagesEnum';
-import LeagueLink from '../links/LeagueLink';
 import HattidLink from '../links/HattidLink';
 
 
@@ -71,19 +70,7 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
         }))
     }
 
-    // abstract linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): (text: string | JSX.Element, entity: Entity) => HattidLink<any>
-
-    linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): (text: string | JSX.Element, entity: Entity) => HattidLink<any> {       
-        return (text: string | JSX.Element, entity: Entity) => {
-            return new LeagueLink({
-                id: entity.leagueId,
-                text: text,
-                page: page,
-                sortingField: sortingField,
-                round: this.props.levelDataProps.currentRound()
-            })
-        }        
-    }
+    abstract linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): (text: string | JSX.Element, entity: Entity) => HattidLink<any>
 
     renderSection(): JSX.Element {
         if (!this.state.totalOverview) {
