@@ -10,6 +10,7 @@ import RankingTable, { RankingData } from './overview/RankingTable'
 import TeamRankingsStats from '../rest/models/team/TeamRankingsStats';
 import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter } from '../common/Formatters'
 import StatisticsSection from '../common/sections/StatisticsSection'
+import { PagesEnum } from '../common/enums/PagesEnum';
 
 interface State {
     teamRankingsStats?: TeamRankingsStats
@@ -85,6 +86,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                 <div className="rankings_grid">
                     <div className="rankings_grid_row">
                         <RankingTable 
+                            page={PagesEnum.TEAM_HATSTATS}
+                            sortingField='hatstats'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.hatstats}
                             positionFunc={teamRanking => teamRanking.hatstatsPosition} 
@@ -92,6 +95,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             title={t('table.hatstats')}   
                         />
                         <RankingTable 
+                            page={PagesEnum.TEAM_SALARY_TSI}
+                            sortingField='salary'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.salary}
                             positionFunc={teamRanking => teamRanking.salaryPosition} 
@@ -99,6 +104,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             title={t('table.salary') + ', ' + this.state.teamRankingsStats?.currencyName}   
                         />
                         <RankingTable 
+                            page={PagesEnum.TEAM_SALARY_TSI}
+                            sortingField='tsi'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.tsi}
                             positionFunc={teamRanking => teamRanking.tsiPosition} 
@@ -108,6 +115,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                     </div>
                     <div className="rankings_grid_row">
                         <RankingTable 
+                            page={PagesEnum.TEAM_HATSTATS}
+                            sortingField='attack'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.attack}
                             positionFunc={teamRanking => teamRanking.attackPosition} 
@@ -115,6 +124,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             title={t('table.attack')}   
                         />
                         <RankingTable 
+                            page={PagesEnum.TEAM_HATSTATS}
+                            sortingField='defense'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.defense}
                             positionFunc={teamRanking => teamRanking.defensePosition} 
@@ -122,6 +133,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             title={t('table.defense')}   
                         />
                         <RankingTable 
+                            page={PagesEnum.TEAM_HATSTATS}
+                            sortingField='midfield'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.midfield}
                             positionFunc={teamRanking => teamRanking.midfieldPosition} 
@@ -131,6 +144,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                     </div>
                     <div className="rankings_grid_row">
                         <RankingTable 
+                            page={PagesEnum.TEAM_AGE_INJURY}
+                            sortingField='age'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.age}
                             positionFunc={teamRanking => teamRanking.agePosition} 
@@ -138,6 +153,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             title={t('table.age')}   
                         />
                         <RankingTable 
+                            page={PagesEnum.TEAM_RATINGS}
+                            sortingField='rating'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.rating}
                             positionFunc={teamRanking => teamRanking.ratingPosition} 
@@ -145,6 +162,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             title={t('table.rating')}   
                         />
                         <RankingTable 
+                            page={PagesEnum.TEAM_RATINGS}
+                            sortingField='rating_end_of_match'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.ratingEndOfMatch}
                             positionFunc={teamRanking => teamRanking.ratingEndOfMatchPosition} 
@@ -154,6 +173,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                     </div>
                     <div className="rankings_grid_row">
                         <RankingTable 
+                            page={PagesEnum.TEAM_POWER_RATINGS}
+                            sortingField='power_rating'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.powerRating}
                             positionFunc={teamRanking => teamRanking.powerRatingPosition} 
@@ -161,6 +182,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             title={t('table.power_rating')}   
                         />
                         <RankingTable 
+                            page={PagesEnum.TEAM_AGE_INJURY}
+                            sortingField='injury'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.injury}
                             positionFunc={teamRanking => teamRanking.injuryPosition} 
@@ -168,6 +191,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             title={t('table.total_injury_weeks')}   
                         />
                         <RankingTable 
+                            page={PagesEnum.TEAM_AGE_INJURY}
+                            sortingField='injury_count'
                             rankingData={rankingData}
                             valueFunc={teamRanking => teamRanking.injuryCount}
                             positionFunc={teamRanking => teamRanking.injuryCountPosition} 

@@ -43,8 +43,8 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
         return <tr key={"player_cards_row" + index}>
             <td>{index + 1}</td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName}</td>
-            <td><TeamLink id={playerSortingKey.teamId} name={playerSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} name={playerSortingKey.leagueUnitName} /></td>
+            <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{ageFormatter(playerSalaryTSI.age)}</td>
             <td className="value">{commasSeparated(playerSalaryTSI.tsi)}</td>
             <td className="value">{commasSeparated(playerSalaryTSI.salary / this.props.levelDataProps.currencyRate())}</td>

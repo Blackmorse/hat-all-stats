@@ -1,19 +1,13 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './TableLink.css'
+import HattidLink, { LinkProps } from './HattidLink';
 
-interface Props {
-    id: number,
-    name: string,
-    tableLink: boolean
+interface Props extends LinkProps {
+    id: number
 }
 
 
-class LeagueLink extends React.Component<Props> {
-    render() {
-        return <Link className={(this.props.tableLink) ? "table_link" : "left_bar_link page"} to={"/league/" + this.props.id}>
-            {this.props.name}
-        </Link>
+class LeagueLink extends HattidLink<Props> {
+    baseString(): string {
+        return "/league/" + this.props.id
     }
 }
 

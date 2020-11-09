@@ -1,19 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './TableLink.css'
+import HattidLink, { LinkProps } from './HattidLink';
 
 
-interface Props {
+interface Props extends LinkProps {
     id: number,
-    name: string,
     callback?: () => void
 }
 
-class TeamLink extends React.Component<Props> {
-    render() {
-        return <Link className="table_link" to={"/team/" + this.props.id} onClick={this.props.callback}>
-            {this.props.name}
-        </Link>
+class TeamLink extends HattidLink<Props> {
+    baseString(): string {
+        return "/team/" + this.props.id
     }
 }
 

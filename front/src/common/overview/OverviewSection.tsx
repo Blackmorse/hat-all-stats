@@ -84,7 +84,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity>
         if (this.isWorldData) {
             let nameMap = new Map(((this.props.levelDataProps.levelData as any) as WorldData).countries)
             leagueNameFunc = (id) => <td className="value">
-                    <LeagueLink tableLink={true} id={id} name={nameMap.get(id) || ''}/>
+                    <LeagueLink tableLink={true} id={id} text={nameMap.get(id) || ''}/>
                 </td>
         } else {
             leagueNameFunc = (id) => <></>

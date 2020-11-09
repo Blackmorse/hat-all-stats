@@ -43,7 +43,7 @@ class TeamPositionsTable extends ModelTable<LeagueUnitData, LeagueUnitLevelDataP
     columnValues(index: number, teamPosition: TeamPosition): JSX.Element {
         return <tr key={"team_positions_row" + index}>
             <td>{index + 1}</td>
-            <td><TeamLink id={teamPosition.teamId} name={teamPosition.teamName} /></td>
+            <td><TeamLink id={teamPosition.teamId} text={teamPosition.teamName} /></td>
             <td className="value">{teamPosition.games}</td>
             <td className="value">{teamPosition.win}</td>
             <td className="value">{teamPosition.draw}</td>

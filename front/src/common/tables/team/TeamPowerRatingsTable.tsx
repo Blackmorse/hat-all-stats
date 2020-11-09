@@ -39,8 +39,8 @@ abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends 
         let teamSortingKey = teamPowerRating.teamSortingKey
         return <tr key={"team_power_rating_row_" + index}>
             <td>{index + 1}</td>
-            <td><TeamLink id={teamSortingKey.teamId} name={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} name={teamSortingKey.leagueUnitName}/></td>
+            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{teamPowerRating.powerRating}</td>
         </tr>
     }

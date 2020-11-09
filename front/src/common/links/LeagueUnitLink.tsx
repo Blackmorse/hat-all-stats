@@ -1,17 +1,13 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import './TableLink.css'
+import HattidLink, { LinkProps } from './HattidLink';
 
-interface Props {
-    id: number,
-    name: string
+interface Props extends LinkProps {
+    id: number
 }
 
-class LeagueUnitLink extends React.Component<Props> {
-    render() {
-        return <Link className="table_link" to={"/leagueUnit/" + this.props.id} >
-                {this.props.name}
-            </Link>
+class LeagueUnitLink extends HattidLink<Props> {
+    baseString(): string {
+        return "/leagueUnit/" + this.props.id
     }
 }
 

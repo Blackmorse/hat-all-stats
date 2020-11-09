@@ -4,6 +4,7 @@ import { PagesEnum } from '../enums/PagesEnum'
 import { MenuGroupsEnum } from '../enums/MenuGroupsEnum'
 import { Translation } from 'react-i18next'
 import '../../i18n'
+import Mappings from '../enums/Mappings'
 
 interface Props {
     callback: (page: PagesEnum) => void;
@@ -16,29 +17,6 @@ interface State {
 }
 
 class LeftMenu extends React.Component<Props, State> {
-    static groupMap: Map<PagesEnum, MenuGroupsEnum> = 
-        new Map([[PagesEnum.LEAGUE_UNITS, MenuGroupsEnum.LEAGUE],
-         [PagesEnum.TEAM_HATSTATS, MenuGroupsEnum.TEAM],
-         [PagesEnum.TEAM_OVERVIEW, MenuGroupsEnum.TEAM],
-         [PagesEnum.PLAYER_GOAL_GAMES, MenuGroupsEnum.PLAYER],
-         [PagesEnum.PLAYER_CARDS, MenuGroupsEnum.PLAYER],
-         [PagesEnum.PLAYER_SALARY_TSI, MenuGroupsEnum.PLAYER],
-         [PagesEnum.PLAYER_RATINGS, MenuGroupsEnum.PLAYER],
-         [PagesEnum.PLAYER_INJURIES, MenuGroupsEnum.PLAYER],
-         [PagesEnum.TEAM_SALARY_TSI, MenuGroupsEnum.TEAM],
-         [PagesEnum.TEAM_CARDS, MenuGroupsEnum.TEAM],
-         [PagesEnum.TEAM_RATINGS, MenuGroupsEnum.TEAM],
-         [PagesEnum.TEAM_AGE_INJURY, MenuGroupsEnum.TEAM],
-         [PagesEnum.TEAM_GOAL_POINTS, MenuGroupsEnum.TEAM],
-         [PagesEnum.TEAM_POWER_RATINGS, MenuGroupsEnum.TEAM],
-         [PagesEnum.TEAM_FANCLUB_FLAGS, MenuGroupsEnum.TEAM],
-         [PagesEnum.TEAM_STREAK_TROPHIES, MenuGroupsEnum.TEAM],
-         [PagesEnum.MATCH_TOP_HATSTATS, MenuGroupsEnum.MATCH],
-         [PagesEnum.MATCH_SURPRISING, MenuGroupsEnum.MATCH],
-         [PagesEnum.MATCH_SPECTATORS, MenuGroupsEnum.MATCH],
-         [PagesEnum.OVERVIEW, MenuGroupsEnum.OVERVIEW]
-        ])
-
     constructor(props: Props) {
         super(props)
         let groupsMap = this.groupBy(props.pages)
@@ -57,7 +35,7 @@ class LeftMenu extends React.Component<Props, State> {
         for(i = 0; i < pages.length; i++) {
             let page = pages[i]
             if (pages.indexOf(page) > -1) {
-                let group = LeftMenu.groupMap.get(page)
+                let group = Mappings.groupMap.get(page)
                 if (!group) {
                     continue
                 }

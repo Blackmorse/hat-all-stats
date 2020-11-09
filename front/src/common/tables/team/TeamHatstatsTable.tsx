@@ -40,8 +40,8 @@ abstract class TeamHatstatsTable<Data extends LevelData, TableProps extends Leve
     columnValues(index: number, teamHatstats: TeamHatstats): JSX.Element {
         return <tr key={"team_hatstats_row_" + index}>
             <td>{index + 1}</td>
-            <td><TeamLink id={teamHatstats.teamId} name={teamHatstats.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamHatstats.leagueUnitId} name={teamHatstats.leagueUnitName}/></td>
+            <td><TeamLink id={teamHatstats.teamId} text={teamHatstats.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={teamHatstats.leagueUnitId} text={teamHatstats.leagueUnitName}/></td>
             <td className="value">{teamHatstats.hatStats}</td>
             <td className="value">{teamHatstats.midfield * 3}</td>
             <td className="value">{teamHatstats.defense}</td>

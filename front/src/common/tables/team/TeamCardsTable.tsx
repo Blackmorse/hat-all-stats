@@ -42,8 +42,8 @@ abstract class TeamCardsTable<Data extends LevelData, TableProps extends LevelDa
         let teamSortingKey = teamCards.teamSortingKey
         return <tr key={"team_salary_tsi_row_" + index}>
             <td>{index + 1}</td>
-            <td><TeamLink id={teamSortingKey.teamId} name={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} name={teamSortingKey.leagueUnitName}/></td>
+            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{yellowCards(teamCards.yellowCards)}</td>
             <td className="value">{redCards(teamCards.redCards)}</td>
         </tr>

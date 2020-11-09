@@ -42,8 +42,8 @@ abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends Le
         return <tr key={"player_ratings_row" + index}>
             <td>{index + 1}</td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName}</td>
-            <td><TeamLink id={playerSortingKey.teamId} name={playerSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} name={playerSortingKey.leagueUnitName} /></td>
+            <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{ageFormatter(playerInjury.age)}</td>
             <td className="value">{injuryFormatter(playerInjury.injury)}</td>
         </tr>

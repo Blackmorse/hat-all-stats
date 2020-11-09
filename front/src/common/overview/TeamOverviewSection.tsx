@@ -34,11 +34,11 @@ abstract class TeamOverviewSection<Data extends LevelData> extends OverviewSecti
                 {data.map(teamStat => {
                     return <tr>
                         <td className="to_left">
-                            <TeamLink name={teamStat.teamSortingKey.teamName} id={teamStat.teamSortingKey.teamId}/>
+                            <TeamLink text={teamStat.teamSortingKey.teamName} id={teamStat.teamSortingKey.teamId}/>
                         </td>
                         {leagueNameFunc(teamStat.leagueId)}
                         <td className="value">
-                            <LeagueUnitLink id={teamStat.teamSortingKey.leagueUnitId} name={teamStat.teamSortingKey.leagueUnitName} />
+                            <LeagueUnitLink id={teamStat.teamSortingKey.leagueUnitId} text={teamStat.teamSortingKey.leagueUnitName} />
                         </td>
                         <td className="value">
                             {this.valueFormatter(teamStat.value)}

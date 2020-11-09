@@ -44,8 +44,8 @@ abstract class PlayerGoalsGamesTable<Data extends LevelData, TableProps extends 
         return <tr key={"player_goal_games_row" + index}>
             <td>{index + 1}</td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName}</td>
-            <td><TeamLink id={playerSortingKey.teamId} name={playerSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} name={playerSortingKey.leagueUnitName} /></td>
+            <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{playerGoalsGames.games}</td>
             <td className="value">{playerGoalsGames.playedMinutes}</td>
             <td className="value">{playerGoalsGames.scored}</td>

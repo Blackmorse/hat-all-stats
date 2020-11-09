@@ -35,10 +35,10 @@ abstract class PlayerOverviewSection<Data extends LevelData> extends OverviewSec
                     return <tr>
                     {leagueNameFunc(playerStat.leagueId)}
                     <td className="value">
-                        <LeagueUnitLink id={playerStat.playerSortingKey.leagueUnitId} name={playerStat.playerSortingKey.leagueUnitName} />
+                        <LeagueUnitLink id={playerStat.playerSortingKey.leagueUnitId} text={playerStat.playerSortingKey.leagueUnitName} />
                     </td>
                     <td className="value">
-                        <TeamLink id={playerStat.playerSortingKey.teamId} name={playerStat.playerSortingKey.teamName} />
+                        <TeamLink id={playerStat.playerSortingKey.teamId} text={playerStat.playerSortingKey.teamName} />
                     </td>
                     <td className="value">{playerStat.playerSortingKey.firstName} {playerStat.playerSortingKey.lastName}</td>
                     <td className="value">

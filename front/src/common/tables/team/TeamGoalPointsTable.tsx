@@ -45,8 +45,8 @@ abstract class TeamGoalPointsTable<Data extends LevelData, TableProps extends Le
         let teamSortingKey = teamRating.teamSortingKey
         return <tr key={"team_ratings_row_" + index}>
             <td>{index + 1}</td>
-            <td><TeamLink id={teamSortingKey.teamId} name={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} name={teamSortingKey.leagueUnitName}/></td>
+            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{teamRating.won}</td>
             <td className="value">{teamRating.lost}</td>
             <td className="value">{teamRating.draw}</td>

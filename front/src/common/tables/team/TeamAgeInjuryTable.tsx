@@ -42,8 +42,8 @@ abstract class TeamAgeInjuryTable<Data extends LevelData, TableProps extends Lev
         let teamSortingKey = teamAgeInjury.teamSortingKey
         return <tr key={"team_salary_tsi_row_" + index}>
             <td>{index + 1}</td>
-            <td><TeamLink id={teamSortingKey.teamId} name={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} name={teamSortingKey.leagueUnitName}/></td>
+            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{ageFormatter(teamAgeInjury.age)}</td>
             <td className="value">{injuryFormatter(teamAgeInjury.injury)}</td>
             <td className="value">{teamAgeInjury.injuryCount}</td>

@@ -28,10 +28,10 @@ abstract class MatchesOverviewSection<Data extends LevelData> extends OverviewSe
                 return <tr>
                     {leagueNameFunc(matc.leagueId)}
                     <td className="value">
-                        <LeagueUnitLink id={matc.matchTopHatstats.homeTeam.leagueUnitId} name={matc.matchTopHatstats.homeTeam.leagueUnitName} />
+                        <LeagueUnitLink id={matc.matchTopHatstats.homeTeam.leagueUnitId} text={matc.matchTopHatstats.homeTeam.leagueUnitName} />
                     </td>
                     <td className="value">
-                        <TeamLink id={matc.matchTopHatstats.homeTeam.teamId} name={matc.matchTopHatstats.homeTeam.teamName}/>
+                        <TeamLink id={matc.matchTopHatstats.homeTeam.teamId} text={matc.matchTopHatstats.homeTeam.teamName}/>
                         </td>
                     <td className="value">
                         {matc.matchTopHatstats.homeHatstats}
@@ -42,7 +42,7 @@ abstract class MatchesOverviewSection<Data extends LevelData> extends OverviewSe
                     <td className="value">
                         {matc.matchTopHatstats.awayHatstats}
                     </td>
-                    <td className="value"><TeamLink id={matc.matchTopHatstats.awayTeam.teamId} name={matc.matchTopHatstats.awayTeam.teamName}/></td>
+                    <td className="value"><TeamLink id={matc.matchTopHatstats.awayTeam.teamId} text={matc.matchTopHatstats.awayTeam.teamName}/></td>
                 </tr>
                 })}
                 </tbody>

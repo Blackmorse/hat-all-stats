@@ -66,9 +66,9 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
         }
         return <tr key={"nearest_match_" + nearestMatch.matchId}>
             <td className="matches_date">{moment(nearestMatch.matchDate).format('DD.MM.YYYY')}</td>
-            <td className="matches_team"><TeamLink name={nearestMatch.homeTeamName} id={nearestMatch.homeTeamId} callback={() => refresh()}/></td>
+            <td className="matches_team"><TeamLink text={nearestMatch.homeTeamName} id={nearestMatch.homeTeamId} callback={() => refresh()}/></td>
             <td className="matches_result">{result}</td>
-            <td className="matches_team"><TeamLink name={nearestMatch.awayTeamName} id={nearestMatch.awayTeamId} callback={() => refresh()}/></td>
+            <td className="matches_team"><TeamLink text={nearestMatch.awayTeamName} id={nearestMatch.awayTeamId} callback={() => refresh()}/></td>
         </tr>
     }
 

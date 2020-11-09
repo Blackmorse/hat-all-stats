@@ -7,6 +7,7 @@ import { Translation } from 'react-i18next'
 import LeftMenu from '../../common/menu/LeftMenu'
 import '../../i18n'
 import './CountryLevelLayout.css'
+import Mappings from '../enums/Mappings'
 
 export interface CountryLevelLayoutState<Data extends LevelData> {
     leaguePage: PagesEnum,
@@ -20,7 +21,19 @@ abstract class CountryLevelLayout<Props, Data extends LevelData, TableProps exte
         pagesMap: Map<PagesEnum, (props:  TableProps) => JSX.Element>) {
         super(props)
         this.pagesMap = pagesMap
-        this.state = {leaguePage: Array.from(pagesMap)[0][0]}
+
+        let params = new URLSearchParams(window.location.search);        
+        let pageString = params.get(Mappings.PAGE)
+        if (pageString === null) {
+            this.state = {leaguePage: Array.from(pagesMap)[0][0]}
+        } else {
+            let page = Mappings.queryParamToPageMap.getValue(pageString)
+            if (page) {
+                this.state = {leaguePage: page}
+            } else {
+                this.state = {leaguePage: Array.from(pagesMap)[0][0]}
+            }
+        }       
     }
 
     abstract makeModelProps(levelData: Data): TableProps

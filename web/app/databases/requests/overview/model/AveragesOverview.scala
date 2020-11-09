@@ -33,9 +33,6 @@ object OverviewTeamPlayerAverages {
     get[Int]("avg_salary") ~
     get[Double]("avg_rating") map {
       case averageAge ~ averageSalary ~ averateRating =>
-        println(averageAge)
-        println(averageSalary)
-        println(averageSalary)
         OverviewTeamPlayerAverages(averageAge, averageSalary, if(averateRating.isNaN || averateRating.isInfinite) null.asInstanceOf[Double] else averateRating)
     }
   }

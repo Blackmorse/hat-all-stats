@@ -41,10 +41,10 @@ abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends L
     columnValues(index: number, matchSpectators: MatchSpectators): JSX.Element {
         return <tr key={"top_matches_row" + index}>
             <td>{index + 1}</td>
-            <td className="value"><LeagueUnitLink id={matchSpectators.homeTeam.leagueUnitId} name={matchSpectators.homeTeam.leagueUnitName} /></td>
-            <td className="value"><TeamLink id={matchSpectators.homeTeam.teamId} name={matchSpectators.homeTeam.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={matchSpectators.homeTeam.leagueUnitId} text={matchSpectators.homeTeam.leagueUnitName} /></td>
+            <td className="value"><TeamLink id={matchSpectators.homeTeam.teamId} text={matchSpectators.homeTeam.teamName} /></td>
             <td className="value">{matchSpectators.homeGoals} : {matchSpectators.awayGoals}</td>
-            <td className="value"><TeamLink id={matchSpectators.awayTeam.teamId} name={matchSpectators.awayTeam.teamName} /></td>           
+            <td className="value"><TeamLink id={matchSpectators.awayTeam.teamId} text={matchSpectators.awayTeam.teamName} /></td>           
             <td className="value">{commasSeparated(matchSpectators.spectators)}</td>
         </tr>
     }

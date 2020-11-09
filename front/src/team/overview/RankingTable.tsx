@@ -4,6 +4,9 @@ import { Translation } from 'react-i18next'
 import '../../i18n'
 import './RankingTable.css'
 import TeamLevelDataProps from '../TeamLevelDataProps';
+import { PagesEnum } from '../../common/enums/PagesEnum';
+import LeagueLink from '../../common/links/LeagueLink';
+import DivisionLevelLink from '../../common/links/DivisionLevelLink';
 
 export interface RankingData {
     lastLeagueRanking: TeamRanking,
@@ -20,6 +23,8 @@ interface Props {
     valueFunc: (teamRanking: TeamRanking) => number,
     positionFunc: (teamRanking: TeamRanking) => number,
     formatter: (value: number) => JSX.Element,
+    page: PagesEnum,
+    sortingField: string,
     title: string
 }
 
@@ -111,35 +116,67 @@ class RankingTable extends React.Component<Props> {
                 <tr className="ranking_row">
                     <td className="ranking_row_name">
                         <a className="table_link" href="/#">
-                            {this.props.rankingData.teamLevelDataProps.levelData.leagueName}
+                            <LeagueLink  tableLink={true}
+                                id={this.props.rankingData.teamLevelDataProps.leagueId()}
+                                text={this.props.rankingData.teamLevelDataProps.levelData.leagueName}
+                                />
                         </a>
                     </td>
                     <td className="ranking_row_value">
-                        <a className="table_link" href="/#">
-                            {positionFunc(lastLeagueRanking) + 1}
-                        </a>/{this.props.rankingData.leagueTeamsCount}
+                        <LeagueLink id={this.props.rankingData.teamLevelDataProps.leagueId()} 
+                            tableLink={true}
+                            text={(positionFunc(lastLeagueRanking) + 1).toString()} 
+                            page={this.props.page} 
+                            sortingField={this.props.sortingField} 
+                            rowNumber={positionFunc(lastLeagueRanking)}
+                            round={this.props.rankingData.teamLevelDataProps.currentRound()}
+                        />
+                        /{this.props.rankingData.leagueTeamsCount}
                     </td>
                     <td className="ranking_row_diff">
-                        <a className="table_link" href="/#">
-                            {leagueDiffPositionContent}
-                        </a>
+                        {(previousLeagueRanking) ? <LeagueLink id={this.props.rankingData.teamLevelDataProps.leagueId()} 
+                            tableLink={true}
+                            text={leagueDiffPositionContent} 
+                            page={this.props.page}
+                            sortingField={this.props.sortingField}  
+                            rowNumber={positionFunc(previousLeagueRanking)} 
+                            round={this.props.rankingData.teamLevelDataProps.currentRound() - 1}    
+                        /> : <></>
+                        }
                     </td>
                 </tr>
                 <tr className="ranking_row">
                     <td className="ranking_row_name">
                         <a className="table_link" href="/#">
-                            {this.props.rankingData.teamLevelDataProps.levelData.divisionLevelName}
+                            <DivisionLevelLink
+                                leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
+                                divisionLevel={this.props.rankingData.teamLevelDataProps.levelData.divisionLevel}
+                                text={this.props.rankingData.teamLevelDataProps.levelData.divisionLevelName}
+                                />
                         </a>
                     </td>
                     <td className="ranking_row_value">
-                        <a className="table_link" href="/#">
-                            {positionFunc(lastDivisionLevelRanking)}
-                        </a>/{this.props.rankingData.divisionLevelTeamsCount}
+                        <DivisionLevelLink 
+                            leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
+                            divisionLevel={this.props.rankingData.teamLevelDataProps.levelData.divisionLevel}
+                            text={(positionFunc(lastDivisionLevelRanking) + 1).toString()}
+                            page={this.props.page}
+                            sortingField={this.props.sortingField} 
+                            rowNumber={positionFunc(lastDivisionLevelRanking)}
+                            round={this.props.rankingData.teamLevelDataProps.currentRound()}
+                        />/{this.props.rankingData.divisionLevelTeamsCount}
                     </td>
                     <td className="ranking_row_diff">
-                        <a className="table_link" href="/#">
-                            {divisionLevelDiffPositionContent}
-                        </a>
+                    {(previousDivisionLevelRanking) ? <DivisionLevelLink 
+                            leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
+                            divisionLevel={this.props.rankingData.teamLevelDataProps.levelData.divisionLevel}
+                            text={divisionLevelDiffPositionContent}
+                            page={this.props.page}
+                            sortingField={this.props.sortingField} 
+                            rowNumber={positionFunc(previousDivisionLevelRanking)}
+                            round={this.props.rankingData.teamLevelDataProps.currentRound() - 1}
+                        /> : <></>
+                    }
                     </td>
                 </tr>
             </table>

@@ -44,8 +44,8 @@ abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends Lev
         return <tr key={"player_ratings_row" + index}>
             <td>{index + 1}</td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName}</td>
-            <td><TeamLink id={playerSortingKey.teamId} name={playerSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} name={playerSortingKey.leagueUnitName} /></td>
+            <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
+            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{ageFormatter(playerRating.age)}</td>
             <td className="value">{ratingFormatter(playerRating.rating)}</td>
             <td className="value">{ratingFormatter(playerRating.ratingEndOfMatch)}</td>
