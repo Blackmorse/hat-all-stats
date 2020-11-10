@@ -10,7 +10,7 @@ import LevelData from '../../../rest/models/leveldata/LevelData';
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getLeagueUnits } from '../../../rest/Client'
 
-abstract class LeagueUnits<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
+class LeagueUnitsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
         extends TableSection<Data, TableProps ,LeagueUnitRating> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
@@ -46,4 +46,4 @@ abstract class LeagueUnits<Data extends LevelData, TableProps extends LevelDataP
     }    
 }
 
-export default LeagueUnits;
+export default LeagueUnitsTable;

@@ -5,26 +5,26 @@ import DivisionLevelData from '../rest/models/leveldata/DivisionLevelData';
 import DivisionLevelTopMenu from './DivisionLevelTopMenu'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import DivisionLevelDataProps from './DivisionLevelDataProps'
-import DivisionLevelTeamHatstats from './DivisionLevelTeamHatstats';
-import DivisionLevelLeagueUnits from './DivisionLevelLeagueUnits'
 import CountryLevelLayout from '../common/layouts/CountryLevelLayout';
-import DivisionLevelPlayerGoalGames from './DivisionLevelPlayerGoalGames'
-import DivisionLevelPlayerCards from './DivisionLevelPlayerCards'
-import DivisionLevelPlayerSalaryTsi from './DivisionLevelPlayerSalaryTsi'
-import DivisionLevelPlayerRatings from './DivisionLevelPlayerRatings'
-import DivisionLevelPlayerInjuries from './DivisionLevelPlayerInjuries'
-import DivisionLevelTeamSalaryTSI from './DivisionLevelTeamSalaryTSI'
-import DivisionLevelTeamCards from './DivisionLevelTeamCards'
-import DivisionLevelTeamRatings from './DivisionLevelTeamRatings'
-import DivisionLevelTeamAgeInjury from './DivisionLevelTeamAgeInjury'
-import DivisionLevelTeamGoalPoints from './DivisionLevelTeamGoalPoints'
-import DivisionLevelTeamPowerRatings from './DivisionLevelTeamPowerRatings'
-import DivisionLevelTeamFanclubFlags from './DivisionLevelTeamFanclubFlags'
-import DivisionLevelTeamStreakTrophies from './DivisionLevelTeamStreakTrophies'
-import DivisionLevelMatchTopHatstats from './DivisionLevelMatchTopHatstats'
-import DivisionLevelMatchSurprising from './DivisionLevelMatchSurprising'
-import DivisionLevelMatchSpectators from './DivisionLevelMatchSpectators'
 import DivisionLevelOverviewPage from './DivisionLevelOverviewPage';
+import TeamHatstatsTable from '../common/tables/team/TeamHatstatsTable';
+import LeagueUnitsTable from '../common/tables/leagueunit/LeagueUnitsTable';
+import PlayerGoalsGamesTable from '../common/tables/player/PlayerGoalsGamesTable';
+import PlayerCardsTable from '../common/tables/player/PlayerCardsTable';
+import PlayerSalaryTsiTable from '../common/tables/player/PlayerSalaryTsiTable';
+import PlayerRatingsTable from '../common/tables/player/PlayerRatingsTable';
+import PlayerInjuriesTable from '../common/tables/player/PlayerInjuriesTable';
+import TeamSalaryTSITable from '../common/tables/team/TeamSalaryTSITable';
+import TeamCardsTable from '../common/tables/team/TeamCardsTable';
+import TeamRatingsTable from '../common/tables/team/TeamRatingsTable';
+import TeamAgeInjuryTable from '../common/tables/team/TeamAgeInjuryTable';
+import TeamGoalPointsTable from '../common/tables/team/TeamGoalPointsTable';
+import TeamPowerRatingsTable from '../common/tables/team/TeamPowerRatingsTable';
+import TeamFanclubFlagsTable from '../common/tables/team/TeamFanclubFlagsTable';
+import TeamStreakTrophiesTable from '../common/tables/team/TeamStreakTrophiesTable';
+import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable';
+import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
+import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
 
 interface MatchParams {
     leagueId: string,
@@ -39,41 +39,41 @@ class DivisionLevel extends CountryLevelLayout<Props, DivisionLevelData, Divisio
         pagesMap.set(PagesEnum.OVERVIEW, 
             props => <DivisionLevelOverviewPage levelDataProps={props} title='' />)
         pagesMap.set(PagesEnum.TEAM_HATSTATS,
-            props => <DivisionLevelTeamHatstats levelDataProps={props}/>)
+            props => <TeamHatstatsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props}/>)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
-            props => <DivisionLevelLeagueUnits levelDataProps={props}/>)
+            props => <LeagueUnitsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props}/>)
         pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES,
-            props => <DivisionLevelPlayerGoalGames levelDataProps={props}/>) 
+            props => <PlayerGoalsGamesTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props}/>) 
         pagesMap.set(PagesEnum.PLAYER_CARDS,
-            props => <DivisionLevelPlayerCards levelDataProps={props} />)
+            props => <PlayerCardsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.PLAYER_SALARY_TSI,
-            props => <DivisionLevelPlayerSalaryTsi levelDataProps={props} />)
+            props => <PlayerSalaryTsiTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.PLAYER_RATINGS,
-            props => <DivisionLevelPlayerRatings levelDataProps={props} />)
+            props => <PlayerRatingsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.PLAYER_INJURIES,
-            props => <DivisionLevelPlayerInjuries levelDataProps={props} />)
+            props => <PlayerInjuriesTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_SALARY_TSI,
-            props => <DivisionLevelTeamSalaryTSI levelDataProps={props} />)
+            props => <TeamSalaryTSITable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_CARDS,
-            props => <DivisionLevelTeamCards levelDataProps={props} />)
+            props => <TeamCardsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_RATINGS,
-            props => <DivisionLevelTeamRatings levelDataProps={props} />)
+            props => <TeamRatingsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_AGE_INJURY,
-            props => <DivisionLevelTeamAgeInjury levelDataProps={props} />)
+            props => <TeamAgeInjuryTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_GOAL_POINTS,
-            props => <DivisionLevelTeamGoalPoints levelDataProps={props} />)
+            props => <TeamGoalPointsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_POWER_RATINGS,
-            props => <DivisionLevelTeamPowerRatings levelDataProps={props} />)
+            props => <TeamPowerRatingsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_FANCLUB_FLAGS,
-            props => <DivisionLevelTeamFanclubFlags levelDataProps={props} />)
+            props => <TeamFanclubFlagsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES,
-            props => <DivisionLevelTeamStreakTrophies levelDataProps={props} />)
+            props => <TeamStreakTrophiesTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS,
-            props => <DivisionLevelMatchTopHatstats levelDataProps={props} />)
+            props => <MatchTopHatstatsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.MATCH_SURPRISING,
-            props => <DivisionLevelMatchSurprising levelDataProps={props} />)
+            props => <MatchSurprisingTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.MATCH_SPECTATORS,
-            props => <DivisionLevelMatchSpectators levelDataProps={props} />)
+            props => <MatchSpectatorsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
         super(props, pagesMap)
 
         this.leagueUnitSelected=this.leagueUnitSelected.bind(this)

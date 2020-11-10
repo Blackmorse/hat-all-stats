@@ -11,7 +11,7 @@ import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { getTeamHatstats } from '../../../rest/Client';
 
-abstract class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
+class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends TableSection<Data, TableProps, TeamHatstats> {
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG},

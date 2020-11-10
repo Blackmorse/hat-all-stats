@@ -8,14 +8,14 @@ import { PagesEnum } from '../common/enums/PagesEnum';
 import TeamTopMenu from './TeamTopMenu'
 import TeamRankingsTable from './TeamRankingsTable'
 import NearestMatchesTable from './NearestMatchesTable'
-import TeamPlayerCards from './TeamPlayerCards'
-import TeamPlayerGoalGames from './TeamPlayerGoalGames'
-import TeamPlayerSalaryTsi from './TeamPlayerSalaryTsi'
-import TeamPlayerRatings from './TeamPlayerRatings'
-import TeamPlayerInjuries from './TeamPlayerInjuries'
-import TeamMatchTopHatstats from './TeamMatchTopHatstats'
-import TeamMatchSurprising from './TeamMatchSurprising'
-import TeamMatchSpectators from './TeamMatchSpectators'
+import PlayerGoalsGamesTable from '../common/tables/player/PlayerGoalsGamesTable';
+import PlayerCardsTable from '../common/tables/player/PlayerCardsTable';
+import PlayerSalaryTsiTable from '../common/tables/player/PlayerSalaryTsiTable';
+import PlayerRatingsTable from '../common/tables/player/PlayerRatingsTable';
+import PlayerInjuriesTable from '../common/tables/player/PlayerInjuriesTable';
+import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable';
+import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
+import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
 
 interface MatchParams {
     teamId: string
@@ -31,21 +31,21 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
                     <TeamRankingsTable levelDataProps={props}/>
                 </>)
         pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES, 
-            props => <TeamPlayerGoalGames levelDataProps={props}/>)
+            props => <PlayerGoalsGamesTable<TeamData, TeamLevelDataProps> levelDataProps={props}/>)
         pagesMap.set(PagesEnum.PLAYER_CARDS, 
-            props => <TeamPlayerCards levelDataProps={props}/>)
+            props => <PlayerCardsTable<TeamData, TeamLevelDataProps> levelDataProps={props}/>)
         pagesMap.set(PagesEnum.PLAYER_SALARY_TSI, 
-            props => <TeamPlayerSalaryTsi levelDataProps={props}/>)
+            props => <PlayerSalaryTsiTable<TeamData, TeamLevelDataProps> levelDataProps={props}/>)
         pagesMap.set(PagesEnum.PLAYER_RATINGS,
-            props => <TeamPlayerRatings levelDataProps={props} />)
+            props => <PlayerRatingsTable<TeamData, TeamLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.PLAYER_INJURIES, 
-            props => <TeamPlayerInjuries levelDataProps={props} />)
+            props => <PlayerInjuriesTable<TeamData, TeamLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS, 
-            props => <TeamMatchTopHatstats levelDataProps={props} />)
+            props => <MatchTopHatstatsTable<TeamData, TeamLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.MATCH_SURPRISING, 
-            props => <TeamMatchSurprising levelDataProps={props} />)
+            props => <MatchSurprisingTable<TeamData, TeamLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.MATCH_SPECTATORS, 
-            props => <TeamMatchSpectators levelDataProps={props} />)
+            props => <MatchSpectatorsTable<TeamData, TeamLevelDataProps> levelDataProps={props} />)
 
         super(props, pagesMap)
     }
