@@ -51,8 +51,21 @@ abstract class CountryLevelLayout<Props, Data extends LevelData, TableProps exte
     }
 
     leftMenu(): JSX.Element {
-        return <LeftMenu pages={Array.from(this.pagesMap.keys())} 
-            callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}/>
+        let promotionsMenu: JSX.Element
+        if(this.state.levelData && this.makeModelProps(this.state.levelData).currentRound() >= 14) {
+            promotionsMenu = <LeftMenu pages={[PagesEnum.PROMOTIONS]}
+                callback={leaguePage => {this.setState({leaguePage: leaguePage})}} 
+                title='menu.promotions' />
+        } else {
+            promotionsMenu = <></>
+        }
+
+        return <>
+                {promotionsMenu}
+                <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => p !== PagesEnum.PROMOTIONS)} 
+                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
+                    title='menu.statistics'/>
+            </>
     }
 
     content() {

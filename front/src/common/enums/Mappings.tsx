@@ -23,7 +23,8 @@ class Mappings {
         [PagesEnum.MATCH_TOP_HATSTATS, MenuGroupsEnum.MATCH],
         [PagesEnum.MATCH_SURPRISING, MenuGroupsEnum.MATCH],
         [PagesEnum.MATCH_SPECTATORS, MenuGroupsEnum.MATCH],
-        [PagesEnum.OVERVIEW, MenuGroupsEnum.OVERVIEW]
+        [PagesEnum.OVERVIEW, MenuGroupsEnum.OVERVIEW],
+        [PagesEnum.PROMOTIONS, MenuGroupsEnum.PROMOTIONS]
         ])
 
     static PAGE = 'page'

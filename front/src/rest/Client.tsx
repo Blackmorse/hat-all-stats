@@ -39,6 +39,7 @@ import FormationsOverview from './models/overview/FormationsOverview';
 import TeamStatOverview from './models/overview/TeamStatOverview';
 import PlayerStatOverview from './models/overview/PlayerStatOverview';
 import MatchTopHatstatsOverview from './models/overview/MatchTopHatstatsOverview';
+import PromotionWithType from './models/promotions/Promotion'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -116,6 +117,15 @@ export function getNearestMatches(request: TeamRequest,
     axios.get<NearestMatches>('/api/team/' + request.teamId + "/nearestMatches")
         .then(response => response.data)
         .then(nearestMatches => callback(nearestMatches))
+        .catch(e => onError())
+}
+
+export function getPromotions(leagueId: number, 
+        callback: (promotions: Array<PromotionWithType>) => void,
+        onError: () => void) {
+    axios.get<Array<PromotionWithType>>('/api/league/' + leagueId + '/promotions')
+        .then(response => response.data)
+        .then(promotions => callback(promotions))
         .catch(e => onError())
 }
 

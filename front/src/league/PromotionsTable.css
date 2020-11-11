@@ -1,0 +1,60 @@
+.promotions_content {
+    display: flex;
+    flex-direction: column;
+}
+
+.promotions_table {
+    width: 90%;
+    font-size: 0.8em;
+    font-family: 'Merriweather', serif;
+    border-collapse: collapse;
+    margin: 20px;
+}
+
+.promotions_table > tbody > tr:nth-child(2n) {
+    background-color: #dce3de;
+}
+
+.promotions_table th {
+    background: green;
+    color: white;
+}
+
+.promotion_row {
+    border: 1px solid black;
+}
+
+.promotion_entry_table {
+    width: 100%;
+    height: 100%;
+}
+
+.promotion_entry_table td{
+    height: 100%;
+}
+
+.promotion_teams {
+    width: 46%;
+}
+
+.promotions_separator {
+    width: 8%;
+    text-align: center;
+}
+
+.promotion_type {
+    height: 40px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.promotion_team_name {
+    width: 70%;
+    text-align: center;
+}
+
+.promotion_league_unit_name {
+    width: 30%;
+    text-align: center;
+}

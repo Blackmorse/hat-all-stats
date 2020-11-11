@@ -26,6 +26,7 @@ import TeamStreakTrophiesTable from '../common/tables/team/TeamStreakTrophiesTab
 import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable';
 import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
+import PromotionsTable from './PromotionsTable'
 
 interface MatchParams {
     leagueId: string;
@@ -74,6 +75,9 @@ class League extends CountryLevelLayout<Props, LeagueData, LeagueLevelDataProps>
             props => <MatchSurprisingTable<LeagueData, LeagueLevelDataProps> levelDataProps={props} />)
         pagesMap.set(PagesEnum.MATCH_SPECTATORS,
             props => <MatchSpectatorsTable<LeagueData, LeagueLevelDataProps> levelDataProps={props} />)
+
+        pagesMap.set(PagesEnum.PROMOTIONS,
+            props => <PromotionsTable<LeagueData, LeagueLevelDataProps> levelDataProps={props} />)
         
         super(props, pagesMap)
     }    

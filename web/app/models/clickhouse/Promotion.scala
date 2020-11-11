@@ -2,6 +2,7 @@ package models.clickhouse
 
 import anorm.SqlParser.get
 import anorm.~
+import play.api.libs.json.Json
 
 case class PromoteTeam(teamId: Long, teamName: String, divisionLevel: Int, leagueUnitId: Long,
                        leagueUnitName: String, position: Int, points: Int, diff: Int, scored: Int)
@@ -10,6 +11,9 @@ case class Promotion (season: Int, leagueId: Int, upDivisionLevel: Int, promoteT
                       downTeams: Array[PromoteTeam], upTeams: Array[PromoteTeam])
 
 object Promotion {
+  implicit val promoteTeamWrites = Json.writes[PromoteTeam]
+  implicit val writes = Json.writes[Promotion]
+
   val promotionMapper = {
     get[Int]("season") ~
     get[Int]("league_id") ~

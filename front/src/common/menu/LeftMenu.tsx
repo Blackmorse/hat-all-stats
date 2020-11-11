@@ -8,7 +8,8 @@ import Mappings from '../enums/Mappings'
 
 interface Props {
     callback: (page: PagesEnum) => void;
-    pages: Array<PagesEnum>
+    pages: Array<PagesEnum>,
+    title: string
 }
 
 interface State {
@@ -76,7 +77,7 @@ class LeftMenu extends React.Component<Props, State> {
             (t, { i18n }) =>
             <div className="left_side_inner">
                 <div className="left_bar">
-                    <header className="left_bar_header">{t('menu.statistics')}</header>
+                    <header className="left_bar_header">{t(this.props.title)}</header>
                     <section className="left_bar_links">
                         {Array.from(groups.keys()).map(group => {
                             return <>

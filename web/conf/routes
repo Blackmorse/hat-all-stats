@@ -28,6 +28,7 @@ GET     /api/league/:leagueId/teamStreakTrophies       controllers.RestLeagueCon
 GET     /api/league/:leagueId/topMatches       controllers.RestLeagueController.topMatches(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/surprisingMatches       controllers.RestLeagueController.surprisingMatches(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/matchSpectators       controllers.RestLeagueController.matchSpectators(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/promotions        controllers.RestLeagueController.promotions(leagueId: Int)
 
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel  controllers.RestDivisionLevelController.getDivisionLevelData(leagueId: Int, divisionLevel: Int)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamHatstats controllers.RestDivisionLevelController.teamHatstats(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)

@@ -16,7 +16,7 @@ class SalaryPlayerOverviewSection<Data extends LevelData> extends PlayerOverview
     loadOverviewEntity = getTopSalaryPlayersOverview
 
     valueFormatter(value: number): JSX.Element {
-        return commasSeparated(value)
+        return commasSeparated(value / this.props.levelDataProps.levelData.currencyRate)
     }
 }
 

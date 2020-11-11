@@ -1,11 +1,13 @@
 package controllers
 
+import com.blackmorse.hattrick.common.CommonData
 import com.google.inject.{Inject, Singleton}
 import databases.RestClickhouseDAO
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
+import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
@@ -117,5 +119,19 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
 
   def matchSpectators(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(MatchSpectatorsRequest, leagueId, restStatisticsParameters)
+
+  def promotions(leagueId: Int) = Action.async { implicit request =>
+    PromotionsRequest.execute(leagueId, leagueInfoService.leagueInfo.currentSeason(leagueId))
+      .map(promotions =>
+        promotions.groupBy(promotion => (promotion.upDivisionLevel, promotion.promoteType))
+        .toSeq.sortBy(_._1)
+        .map{case((upDivisionLevel, promoteType), promotions) =>
+          PromotionWithType(upDivisionLevel,
+            if(upDivisionLevel == 1) CommonData.higherLeagueMap.get(leagueId).getLeagueUnitName else Romans(upDivisionLevel),
+            Romans(upDivisionLevel + 1),
+            promoteType,
+            promotions)
+      }).map(result => Ok(Json.toJson(result)))
+  }
 }
 

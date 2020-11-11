@@ -12,8 +12,10 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.data.validation.Constraints._
 import play.api.i18n.{I18nSupport, Messages}
+import play.api.libs.json.Json
 import play.api.mvc._
 import service.{DefaultService, LeagueInfo, LeagueInfoService, OverviewStatsService}
+import utils.Romans
 
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,7 +25,16 @@ case class WebLeagueDetails(leagueInfo: LeagueInfo,
                             currentRound: Int,
                             divisionLevelsLinks: Seq[(String, String)]) extends AbstractWebDetails
 
-case class PromotionWithType(upDivisionLevel: Int, promoteType: String, promotions: List[Promotion])
+case class PromotionWithType(upDivisionLevel: Int,
+                             upDivisionLevelName: String,
+                             downDivisionLevelName: String,
+                             promoteType: String,
+                             promotions: List[Promotion])
+
+
+object PromotionWithType {
+  implicit val writes = Json.writes[PromotionWithType]
+}
 
 @Singleton
 class LeagueController @Inject() (val controllerComponents: ControllerComponents,
@@ -196,7 +207,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
       leagueId = leagueId).map(promotions => {
       val promotionsWithType = promotions.groupBy(promotion => (promotion.upDivisionLevel, promotion.promoteType))
         .toSeq.sortBy(_._1)
-        .map{case((upDivisionLevel, promoteType), promotions) => PromotionWithType(upDivisionLevel, promoteType, promotions)
+        .map{case((upDivisionLevel, promoteType), promotions) => PromotionWithType(upDivisionLevel, Romans(upDivisionLevel), Romans(upDivisionLevel + 1), promoteType, promotions)
         }
 
       Ok(views.html.league.promotions(details, promotionsWithType)(messages))
