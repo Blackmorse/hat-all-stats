@@ -55,6 +55,14 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
             statsType = {statType: StatsTypeEnum.ROUND, roundNumber: Number(round)}
         }
 
+        let season: number 
+        let seasonParams = params.get('season')
+        if(seasonParams !== null) {
+            season = Number(seasonParams)
+        } else {
+            season = this.props.levelDataProps.currentSeason()
+        }
+
         this.state={
             isLastPage: true,
             statisticsParameters: {
@@ -63,7 +71,7 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
                 sortingField: sortingField,
                 sortingDirection: SortingDirection.DESC,
                 statsType: statsType,
-                season: this.props.levelDataProps.currentSeason()
+                season: season
             },
             dataLoading: false,
             isError: false
@@ -198,7 +206,7 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
 
         return <>
                 <div className="table_settings_div">
-                    <SeasonSelector currentSeason={this.props.levelDataProps.currentSeason()}
+                    <SeasonSelector currentSeason={this.state.statisticsParameters.season}
                         seasons={this.props.levelDataProps.seasons()}
                         callback={this.seasonChanged}/>
                     <StatsTypeSelector  statsTypes={this.statsTypes}

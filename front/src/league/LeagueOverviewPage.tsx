@@ -8,14 +8,15 @@ import LeagueData from '../rest/models/leveldata/LeagueData';
 
 class LeagueOverviewPage extends OverviewPage<LeagueData, LeagueLevelDataProps> {
     linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): 
-            (text: string | JSX.Element, entity: Entity) => HattidLink<any> {       
-        return (text: string | JSX.Element, entity: Entity) => {
+            (text: string | JSX.Element, season: number, round: number, entity: Entity) => HattidLink<any> {       
+        return (text: string | JSX.Element, season: number, round: number, entity: Entity) => {
             return new LeagueLink({
                 id: this.props.levelDataProps.leagueId(),
                 text: text,
                 page: page,
                 sortingField: sortingField,
-                round: this.props.levelDataProps.currentRound(),
+                season: season,
+                round: round,
                 callback: () => setTimeout( () => {window.location.reload()}, 100)
             })
         }        

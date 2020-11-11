@@ -10,6 +10,7 @@ export interface LinkProps {
     page?: PagesEnum,
     sortingField?: string,
     rowNumber?: number,
+    season?: number,
     round?: number,
     callback?: () => void
 }
@@ -31,6 +32,9 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
         }
         if(this.props.round) {
             parameters.round = this.props.round || 0
+        }
+        if(this.props.season) {
+            parameters.season = this.props.season || 0
         }
 
         let queryParams = new URLSearchParams(parameters).toString()

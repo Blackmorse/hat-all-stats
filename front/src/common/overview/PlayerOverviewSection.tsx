@@ -39,7 +39,7 @@ abstract class PlayerOverviewSection<Data extends LevelData> extends OverviewTab
             </td>
             <td className="value">{playerStat.playerSortingKey.firstName} {playerStat.playerSortingKey.lastName}</td>
             <td className="value">
-                {this.props.linkProvider(this.valueFormatter(playerStat.value), playerStat).render()}
+                {this.props.linkProvider(this.valueFormatter(playerStat.value), this.state.selectedSeason, this.state.selectedRound, playerStat).render()}
             </td>
         </tr>
     }

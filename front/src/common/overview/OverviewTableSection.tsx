@@ -7,7 +7,7 @@ import HattidLink from '../links/HattidLink';
 
 export interface OverviewTableSectionProps<Data extends LevelData, Entity> 
     extends OverviewSectionProps<Data, Array<Entity>> {
-    linkProvider: (text: string | JSX.Element, entity: Entity) => HattidLink<any>
+    linkProvider: (text: string | JSX.Element, season: number, round: number, entity: Entity) => HattidLink<any>
 }
 
 abstract class OverviewTableSection<Data extends LevelData, Entity> 

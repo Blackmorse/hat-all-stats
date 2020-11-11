@@ -8,15 +8,16 @@ import DivisionLevelData from '../rest/models/leveldata/DivisionLevelData';
 
 class DivisionLevelOverviewPage extends OverviewPage<DivisionLevelData, DivisionLevelDataProps> {
     linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): 
-            (text: string | JSX.Element, entity: Entity) => HattidLink<any> {       
-        return (text: string | JSX.Element, entity: Entity) => {
+            (text: string | JSX.Element, season: number, round: number, entity: Entity) => HattidLink<any> {       
+        return (text: string | JSX.Element, season:number, round: number, entity: Entity) => {
             return new DivisionLevelLink({
                 leagueId: this.props.levelDataProps.leagueId(),
                 divisionLevel: this.props.levelDataProps.divisionLevel(),
                 text: text,
                 page: page,
                 sortingField: sortingField,
-                round: this.props.levelDataProps.currentRound(),
+                season: season,
+                round: round,
                 callback: () => setTimeout( () => {window.location.reload()}, 100)
             })
         }        

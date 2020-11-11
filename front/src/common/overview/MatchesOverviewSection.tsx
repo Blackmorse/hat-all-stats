@@ -34,13 +34,13 @@ abstract class MatchesOverviewSection<Data extends LevelData> extends OverviewTa
                 <TeamLink id={matc.matchTopHatstats.homeTeam.teamId} text={matc.matchTopHatstats.homeTeam.teamName}/>
                 </td>
             <td className="value">
-                {this.props.linkProvider(matc.matchTopHatstats.homeHatstats.toString(), matc).render()}
+                {this.props.linkProvider(matc.matchTopHatstats.homeHatstats.toString(), this.state.selectedSeason, this.state.selectedRound, matc).render()}
             </td>
             <td className="value">
                 {matc.matchTopHatstats.homeGoals} : {matc.matchTopHatstats.awayGoals}
             </td>
             <td className="value">
-            {this.props.linkProvider(matc.matchTopHatstats.awayHatstats.toString(), matc).render()}
+            {this.props.linkProvider(matc.matchTopHatstats.awayHatstats.toString(), this.state.selectedSeason, this.state.selectedRound, matc).render()}
             </td>
             <td className="value"><TeamLink id={matc.matchTopHatstats.awayTeam.teamId} text={matc.matchTopHatstats.awayTeam.teamName}/></td>
         </tr>

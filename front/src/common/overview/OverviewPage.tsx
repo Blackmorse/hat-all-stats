@@ -70,7 +70,7 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
         }))
     }
 
-    abstract linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): (text: string | JSX.Element, entity: Entity) => HattidLink<any>
+    abstract linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): (text: string | JSX.Element, season: number, round: number, entity: Entity) => HattidLink<any>
 
     renderSection(): JSX.Element {
         if (!this.state.totalOverview) {

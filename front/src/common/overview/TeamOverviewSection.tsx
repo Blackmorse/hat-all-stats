@@ -39,7 +39,7 @@ abstract class TeamOverviewSection<Data extends LevelData> extends OverviewTable
                 <LeagueUnitLink id={teamStat.teamSortingKey.leagueUnitId} text={teamStat.teamSortingKey.leagueUnitName} />
             </td>
             <td className="value">
-                {this.props.linkProvider(this.valueFormatter(teamStat.value), teamStat).render()}
+                {this.props.linkProvider(this.valueFormatter(teamStat.value), this.state.selectedSeason, this.state.selectedRound, teamStat).render()}
             </td>
         </tr>
     }
