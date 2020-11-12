@@ -26,7 +26,7 @@ class LeagueUnitTopMenu extends TopMenu<Props> {
         return <select className="href_select" onChange={this.onChanged}>
                 <option value={undefined}>Select...</option>
                 {this.props.leagueUnitData?.teams.map(([teamId, teamName]) => {
-                    return <option value={teamId}>{teamName}</option>
+                    return <option key={'league_unit_top_option_' + teamId} value={teamId}>{teamName}</option>
                 })}
             </select>
     }

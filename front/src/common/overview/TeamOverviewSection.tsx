@@ -30,7 +30,7 @@ abstract class TeamOverviewSection<Data extends LevelData> extends OverviewTable
     }
 
     tableRow(teamStat: TeamStatOverview, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
-        return <tr>
+        return <tr key={'team_overview_section_' + teamStat.teamSortingKey.teamId}>
             <td className="to_left">
                 <TeamLink text={teamStat.teamSortingKey.teamName} id={teamStat.teamSortingKey.teamId}/>
             </td>

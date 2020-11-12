@@ -79,8 +79,12 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
             playedMatches = <Blur dataLoading={true} isError={this.state.isError} updateCallback={this.updateCurrent}/>
             upcomingMatches = <Blur dataLoading={true} isError={this.state.isError} updateCallback={this.updateCurrent}/>
         } else {
-            playedMatches = <>{this.state.nearestMatches?.playedMatches.map(this.matchTableRow)}</>
-            upcomingMatches = <>{this.state.nearestMatches?.upcomingMatches.map(this.matchTableRow)}</>
+            playedMatches =  <table className="statistics_table">
+            <tbody>{this.state.nearestMatches?.playedMatches.map(this.matchTableRow)}
+            </tbody></table>
+            upcomingMatches = <table className="statistics_table">
+            <tbody>{this.state.nearestMatches?.upcomingMatches.map(this.matchTableRow)}
+            </tbody></table>
         }        
 
 
@@ -93,11 +97,7 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
                     </header>
 
                     <div className="statistics_section_inner">
-                        <table className="statistics_table">
-                            <tbody>
-                                {playedMatches}
-                            </tbody>
-                        </table>
+                        {playedMatches}
                     </div>
                 </section>
             </div>
@@ -108,11 +108,7 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
                     </header>
 
                     <div className="statistics_section_inner">
-                        <table className="statistics_table">
-                            <tbody>
-                                {upcomingMatches}
-                            </tbody>
-                        </table>
+                        {upcomingMatches}
                     </div>
                 </section>
             </div>

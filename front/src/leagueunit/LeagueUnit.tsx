@@ -23,6 +23,7 @@ import TeamStreakTrophiesTable from '../common/tables/team/TeamStreakTrophiesTab
 import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable';
 import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
+import QueryParams from '../common/QueryParams';
 
 
 interface MatchParams {
@@ -33,42 +34,42 @@ interface Props extends RouteComponentProps<MatchParams> {}
 
 class LeagueUnit extends CountryLevelLayout<Props, LeagueUnitData, LeagueUnitLevelDataProps> {
     constructor(props: Props) {
-        const pagesMap = new Map<PagesEnum, (props: LeagueUnitLevelDataProps) => JSX.Element>()
+        const pagesMap = new Map<PagesEnum, (props: LeagueUnitLevelDataProps, queryParams: QueryParams) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_HATSTATS, 
-            props => <>
-                <TeamPositionsTable levelDataProps={props} />
-                <TeamHatstatsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props}/>
+            (props, queryParams) => <>
+                <TeamPositionsTable levelDataProps={props} queryParams={queryParams} />
+                <TeamHatstatsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams}/>
                 </>)
         pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES,
-            props => <PlayerGoalGamesTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props}/>)
+            (props, queryParams) => <PlayerGoalGamesTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
         pagesMap.set(PagesEnum.PLAYER_CARDS,
-            props => <PlayerCardsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <PlayerCardsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.PLAYER_SALARY_TSI,
-            props => <PlayerSalaryTsiTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <PlayerSalaryTsiTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.PLAYER_RATINGS,
-            props => <PlayerRatingsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <PlayerRatingsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.PLAYER_INJURIES,
-            props => <PlayerInjuriesTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <PlayerInjuriesTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_SALARY_TSI,
-            props => <TeamSalaryTSITable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <TeamSalaryTSITable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_CARDS,
-            props => <TeamCardsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <TeamCardsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_RATINGS,
-            props => <TeamRatingsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />)  
+            (props, queryParams) => <TeamRatingsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />)  
         pagesMap.set(PagesEnum.TEAM_AGE_INJURY,
-            props => <TeamAgeInjuryTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />) 
+            (props, queryParams) => <TeamAgeInjuryTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         pagesMap.set(PagesEnum.TEAM_POWER_RATINGS,
-            props => <TeamPowerRatingsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />) 
+            (props, queryParams) => <TeamPowerRatingsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         pagesMap.set(PagesEnum.TEAM_FANCLUB_FLAGS,
-            props => <TeamFanclubFlagsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />) 
+            (props, queryParams) => <TeamFanclubFlagsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES,
-            props => <TeamStreakTrophiesTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />) 
+            (props, queryParams) => <TeamStreakTrophiesTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS,
-            props => <MatchTopHatstatsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />) 
+            (props, queryParams) => <MatchTopHatstatsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         pagesMap.set(PagesEnum.MATCH_SURPRISING,
-            props => <MatchSurprisingTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />) 
+            (props, queryParams) => <MatchSurprisingTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         pagesMap.set(PagesEnum.MATCH_SPECTATORS,
-            props => <MatchSpectatorsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} />) 
+            (props, queryParams) => <MatchSpectatorsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         super(props, pagesMap)
 
         this.teamIdSelected=this.teamIdSelected.bind(this)

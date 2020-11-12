@@ -15,12 +15,15 @@ abstract class TopMenu<Props> extends React.Component<Props> {
        let arrow = <>&#8674;</>
        return <div className="header_inner">
            {this.links().map((link, index) => {
-               return <>
+               return <React.Fragment key={'top_menu_link_' + index}>
                     <Link className="header_link" to={link[0]} >{link[1]}</Link>
                     {(index !== links.length - 1 || selectBox) ? arrow : <></>}
-               </>
+                </React.Fragment>
            })}
             {selectBox}
+            <Link className="logo_href" to="/">
+                <img className="logo" src="/logo.png" alt="AlltidLike"/>
+            </Link>
         </div>
    }
 }

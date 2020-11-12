@@ -18,7 +18,7 @@ abstract class PlayerOverviewSection<Data extends LevelData> extends OverviewTab
 
     tableheader(): JSX.Element {
         return  <Translation>
-            {(t, { i18n }) => <tr> {(this.isWorldData) ? <th className="value">{t('overview.country')}</th> : <></>}
+            {(t, { i18n }) => <tr>{(this.isWorldData) ? <th className="value">{t('overview.country')}</th> : <></>}
                     <th className="value">{t('table.league')}</th>
                     <th className="value">{t('table.team')}</th>
                     <th className="value">{t('table.player')}</th>
@@ -28,8 +28,8 @@ abstract class PlayerOverviewSection<Data extends LevelData> extends OverviewTab
             </Translation>
     }
 
-    tableRow(playerStat: PlayerStatOverview, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
-        return <tr>
+    tableRow(playerStat: PlayerStatOverview, leagueNameFunc: (id: number) => JSX.Element | undefined): JSX.Element {
+        return <tr key={'player_overview_' + playerStat.playerSortingKey.playerId}>
             {leagueNameFunc(playerStat.leagueId)}
             <td className="value">
                 <LeagueUnitLink id={playerStat.playerSortingKey.leagueUnitId} text={playerStat.playerSortingKey.leagueUnitName} />

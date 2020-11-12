@@ -104,6 +104,7 @@ class RankingTable extends React.Component<Props> {
         <span className="ranking">
             <span className="ranking_name">{this.props.title}</span>
             <table className="ranking_table">
+                <tbody>
                 <tr className="ranking_row">
                     <td className="ranking_row_name">{this.props.title}</td>
                     <td className="ranking_row_value">{formatter(valueFunc(lastDivisionLevelRanking))}</td>
@@ -115,12 +116,10 @@ class RankingTable extends React.Component<Props> {
                 </tr>
                 <tr className="ranking_row">
                     <td className="ranking_row_name">
-                        <a className="table_link" href="/#">
-                            <LeagueLink  tableLink={true}
-                                id={this.props.rankingData.teamLevelDataProps.leagueId()}
-                                text={this.props.rankingData.teamLevelDataProps.levelData.leagueName}
-                                />
-                        </a>
+                        <LeagueLink  tableLink={true}
+                            id={this.props.rankingData.teamLevelDataProps.leagueId()}
+                            text={this.props.rankingData.teamLevelDataProps.levelData.leagueName}
+                            />
                     </td>
                     <td className="ranking_row_value">
                         <LeagueLink id={this.props.rankingData.teamLevelDataProps.leagueId()} 
@@ -147,13 +146,11 @@ class RankingTable extends React.Component<Props> {
                 </tr>
                 <tr className="ranking_row">
                     <td className="ranking_row_name">
-                        <a className="table_link" href="/#">
-                            <DivisionLevelLink
-                                leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
-                                divisionLevel={this.props.rankingData.teamLevelDataProps.levelData.divisionLevel}
-                                text={this.props.rankingData.teamLevelDataProps.levelData.divisionLevelName}
-                                />
-                        </a>
+                        <DivisionLevelLink
+                            leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
+                            divisionLevel={this.props.rankingData.teamLevelDataProps.levelData.divisionLevel}
+                            text={this.props.rankingData.teamLevelDataProps.levelData.divisionLevelName}
+                            />
                     </td>
                     <td className="ranking_row_value">
                         <DivisionLevelLink 
@@ -179,6 +176,7 @@ class RankingTable extends React.Component<Props> {
                     }
                     </td>
                 </tr>
+                </tbody>
             </table>
         </span>
         }

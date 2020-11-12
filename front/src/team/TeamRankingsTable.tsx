@@ -98,7 +98,7 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             page={PagesEnum.TEAM_SALARY_TSI}
                             sortingField='salary'
                             rankingData={rankingData}
-                            valueFunc={teamRanking => teamRanking.salary}
+                            valueFunc={teamRanking => teamRanking.salary / (this.state.teamRankingsStats?.currencyRate as number) }
                             positionFunc={teamRanking => teamRanking.salaryPosition} 
                             formatter={commasSeparated}
                             title={t('table.salary') + ', ' + this.state.teamRankingsStats?.currencyName}   

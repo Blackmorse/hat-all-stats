@@ -80,14 +80,14 @@ class LeftMenu extends React.Component<Props, State> {
                     <header className="left_bar_header">{t(this.props.title)}</header>
                     <section className="left_bar_links">
                         {Array.from(groups.keys()).map(group => {
-                            return <>
+                            return <React.Fragment key={'left_menu_group_button' + group}>
                                 <button className="left_bar_link group" onClick={() => this.showHide(group)}>
                                     {(stateMap.get(group) ? down : right)} {t(group)}
                                 </button>
                                 {(stateMap.get(group)) ? groups.get(group)?.map(page => {
-                                    return <button className="left_bar_link page" onClick={() => this.props.callback(page)}>{t(page)}</button>
+                                    return <button key={'left_menu_button_' + page} className="left_bar_link page" onClick={() => this.props.callback(page)}>{t(page)}</button>
                                 }) : <></>}
-                            </>
+                            </React.Fragment>
                         })}
                     </section>
                 </div>

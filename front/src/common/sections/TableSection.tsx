@@ -37,31 +37,26 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
         super(props, '')
         this.statsTypes = statsTypes
         
-        let params = new URLSearchParams(window.location.search); 
-        let sortingField = params.get('sortingField')
-        if (sortingField === null) {
+        let queryParams = props.queryParams
+        let sortingField = queryParams.sortingField
+        if (!sortingField) {
             sortingField = defaultSortingField
         }
 
         let pageSizeString = Cookies.get('hattid_page_size')
         let pageSize = (pageSizeString == null) ? 16 : Number(pageSizeString)
 
-        let selectedRow = params.get('row')
-        let page = (selectedRow === null) ? 0 : Math.floor(Number(selectedRow)/ pageSize)
+        let selectedRow = queryParams.selectedRow
+        let page = (selectedRow) ? Math.floor(Number(selectedRow)/ pageSize) : 0
 
         let statsType = defaultStatsType
-        let round = params.get('round')
-        if (round !== null) {
-            statsType = {statType: StatsTypeEnum.ROUND, roundNumber: Number(round)}
+        let round = queryParams.round
+        if (round) {
+            statsType = {statType: StatsTypeEnum.ROUND, roundNumber: round}
         }
 
-        let season: number 
-        let seasonParams = params.get('season')
-        if(seasonParams !== null) {
-            season = Number(seasonParams)
-        } else {
-            season = this.props.levelDataProps.currentSeason()
-        }
+        let seasonQp = queryParams.season
+        let season = (seasonQp) ? seasonQp : this.props.levelDataProps.currentSeason()
 
         this.state={
             isLastPage: true,

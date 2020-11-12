@@ -23,7 +23,7 @@ class FormationsOverviewSection<Data extends LevelData> extends OverviewSection<
         {(t, { i18n}) => <table className="statistics_table">
             <tbody>
                 {top6.map(formation => {
-                return <tr>
+                return <tr key={'overview_formation_' + formation.formation}>
                     <td>{formation.formation}</td>
                     <td>{commasSeparated(formation.count)} ({Math.floor((formation.count / totalFormations) * 100)}%)</td>
                 </tr>})}

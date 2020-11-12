@@ -17,10 +17,10 @@ abstract class OverviewTableSection<Data extends LevelData, Entity>
 
     abstract tableheader(): JSX.Element
 
-    abstract tableRow(entity: Entity, leagueNameFunc: (id: number) => JSX.Element): JSX.Element
+    abstract tableRow(entity: Entity, leagueNameFunc: (id: number) => (JSX.Element | undefined)): JSX.Element
 
     renderOverviewSection(entities: Array<Entity>) : JSX.Element {
-        let leagueNameFunc: (id: number) => JSX.Element
+        let leagueNameFunc: (id: number) => JSX.Element | undefined
 
         if (this.isWorldData) {
             let nameMap = new Map(((this.props.levelDataProps.levelData as any) as WorldData).countries)
@@ -28,7 +28,7 @@ abstract class OverviewTableSection<Data extends LevelData, Entity>
                     <LeagueLink tableLink={true} id={id} text={nameMap.get(id) || ''}/>
                 </td>
         } else {
-            leagueNameFunc = (id) => <></>
+            leagueNameFunc = (id) => undefined
         }
         
         return <table className="statistics_table">

@@ -1,9 +1,11 @@
 import LevelData from '../rest/models/leveldata/LevelData';
 import LevelRequest from '../rest/models/request/LevelRequest';
 import OverviewRequest from '../rest/models/request/OverviewRequest';
+import QueryParams from './QueryParams';
 
 export interface LevelDataPropsWrapper<Data extends LevelData, TableProps extends LevelDataProps<Data>> {
-    levelDataProps: TableProps
+    levelDataProps: TableProps,
+    queryParams: QueryParams
 }
 
 abstract class LevelDataProps<Data extends LevelData> {

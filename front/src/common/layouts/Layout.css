@@ -45,8 +45,17 @@
     flex-direction: column;
 }
 
+.top_links {
+    /* align-self: flex-end; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 0.7em;
+    margin-bottom: 0px;
+}
+
 .language_links {
-    align-self: flex-end;
+    /* align-self: flex-end; */
     font-size: 0.7em;
     margin-bottom: 0px;
 }
@@ -74,4 +83,24 @@
 .language_link_button:visited,
 .language_link_button:active {
     color: black;
+}
+
+.credentials {
+    position: relative;
+    bottom: -15px;
+    right: 0;
+    text-align: right;
+    font-size: 0.8em;
+    color: #779dff;
+}
+
+.aside_link:visited,
+.aside_link:active,
+.aside_link {
+    color: #779dff;
+    text-decoration: underline;
+}
+
+.aside_link:hover {
+    text-decoration: none;
 }

@@ -25,6 +25,7 @@ import TeamStreakTrophiesTable from '../common/tables/team/TeamStreakTrophiesTab
 import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable';
 import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
+import QueryParams from '../common/QueryParams';
 
 interface MatchParams {
     leagueId: string,
@@ -35,45 +36,45 @@ interface Props extends RouteComponentProps<MatchParams>{}
 
 class DivisionLevel extends CountryLevelLayout<Props, DivisionLevelData, DivisionLevelDataProps> {
     constructor(props: Props) {
-        const pagesMap = new Map<PagesEnum, (props: DivisionLevelDataProps) => JSX.Element>()
+        const pagesMap = new Map<PagesEnum, (props: DivisionLevelDataProps, queryParams: QueryParams) => JSX.Element>()
         pagesMap.set(PagesEnum.OVERVIEW, 
-            props => <DivisionLevelOverviewPage levelDataProps={props} title='' />)
+            (props, queryParams) => <DivisionLevelOverviewPage levelDataProps={props} title='' />)
         pagesMap.set(PagesEnum.TEAM_HATSTATS,
-            props => <TeamHatstatsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props}/>)
+            (props, queryParams) => <TeamHatstatsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
-            props => <LeagueUnitsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props}/>)
+            (props, queryParams) => <LeagueUnitsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
         pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES,
-            props => <PlayerGoalsGamesTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props}/>) 
+            (props, queryParams) => <PlayerGoalsGamesTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams}/>) 
         pagesMap.set(PagesEnum.PLAYER_CARDS,
-            props => <PlayerCardsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <PlayerCardsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.PLAYER_SALARY_TSI,
-            props => <PlayerSalaryTsiTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <PlayerSalaryTsiTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.PLAYER_RATINGS,
-            props => <PlayerRatingsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <PlayerRatingsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.PLAYER_INJURIES,
-            props => <PlayerInjuriesTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <PlayerInjuriesTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_SALARY_TSI,
-            props => <TeamSalaryTSITable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <TeamSalaryTSITable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_CARDS,
-            props => <TeamCardsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <TeamCardsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_RATINGS,
-            props => <TeamRatingsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <TeamRatingsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_AGE_INJURY,
-            props => <TeamAgeInjuryTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <TeamAgeInjuryTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_GOAL_POINTS,
-            props => <TeamGoalPointsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <TeamGoalPointsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_POWER_RATINGS,
-            props => <TeamPowerRatingsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <TeamPowerRatingsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_FANCLUB_FLAGS,
-            props => <TeamFanclubFlagsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <TeamFanclubFlagsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES,
-            props => <TeamStreakTrophiesTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <TeamStreakTrophiesTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS,
-            props => <MatchTopHatstatsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <MatchTopHatstatsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.MATCH_SURPRISING,
-            props => <MatchSurprisingTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <MatchSurprisingTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.MATCH_SPECTATORS,
-            props => <MatchSpectatorsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} />)
+            (props, queryParams) => <MatchSpectatorsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         super(props, pagesMap)
 
         this.leagueUnitSelected=this.leagueUnitSelected.bind(this)

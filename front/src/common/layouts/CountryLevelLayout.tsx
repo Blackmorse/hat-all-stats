@@ -8,33 +8,78 @@ import LeftMenu from '../../common/menu/LeftMenu'
 import '../../i18n'
 import './CountryLevelLayout.css'
 import Mappings from '../enums/Mappings'
+import QueryParams from '../QueryParams'
 
 export interface CountryLevelLayoutState<Data extends LevelData> {
     leaguePage: PagesEnum,
-    levelData?: Data
+    levelData?: Data,
+    queryParams: QueryParams
 }
 
 abstract class CountryLevelLayout<Props, Data extends LevelData, TableProps extends LevelDataProps<Data>> extends Layout<Props, CountryLevelLayoutState<Data>> {
-    pagesMap = new Map<PagesEnum, (props: TableProps) => JSX.Element>()
+    private firstTime: boolean = true
+    
+    pagesMap = new Map<PagesEnum, (props: TableProps, queryParams: QueryParams) => JSX.Element>()
+
+    parseQueryParams: (paramss: URLSearchParams) =>  QueryParams = function(paramss: URLSearchParams) {
+
+        let params = new URLSearchParams(window.location.search);
+
+        let sortingFieldParams = params.get('sortingField')
+        let sortingField: string | undefined = undefined
+        if (sortingFieldParams !== null) {
+            sortingField = sortingFieldParams
+        }
+
+        let selectedRowParams = params.get('row')
+        let selectedRow: number | undefined = undefined
+        if (selectedRowParams !== null) {
+            selectedRow = Number(selectedRowParams)
+        }
+       
+        let roundParams = params.get('round')
+        let round: number | undefined = undefined
+        if(roundParams !== null) {
+            round = Number(roundParams)
+        }
+
+        let seasonParams = params.get('season')
+        let season: number | undefined = undefined
+        if(seasonParams !== null) {
+            season = Number(seasonParams)
+        }
+
+        return {
+            sortingField: sortingField,
+            selectedRow: selectedRow,
+            round: round,
+            season: season
+        }
+    }
 
     constructor(props: Props,
-        pagesMap: Map<PagesEnum, (props:  TableProps) => JSX.Element>) {
+        pagesMap: Map<PagesEnum, (props: TableProps, queryParams: QueryParams) => JSX.Element>) {
         super(props)
         this.pagesMap = pagesMap
 
-        let params = new URLSearchParams(window.location.search);        
-        let pageString = params.get(Mappings.PAGE)
+        let params = new URLSearchParams(window.location.search);    
+        let queryParams = this.parseQueryParams(params)
+        
+        let pageString = params.get('page')
+
         if (pageString === null) {
-            this.state = {leaguePage: Array.from(pagesMap)[0][0]}
+            this.state = {leaguePage: Array.from(pagesMap)[0][0], queryParams: queryParams}
         } else {
             let page = Mappings.queryParamToPageMap.getValue(pageString)
             if (page) {
-                this.state = {leaguePage: page}
+                this.state = {leaguePage: page, queryParams: queryParams}
             } else {
-                this.state = {leaguePage: Array.from(pagesMap)[0][0]}
+                this.state = {leaguePage: Array.from(pagesMap)[0][0], queryParams: queryParams}
             }
         }       
     }
+
+    
 
     abstract makeModelProps(levelData: Data): TableProps
 
@@ -72,7 +117,9 @@ abstract class CountryLevelLayout<Props, Data extends LevelData, TableProps exte
         let res: JSX.Element
         let jsxFunction = this.pagesMap.get(this.state.leaguePage)
         if (this.state.levelData && jsxFunction) {
-            res = jsxFunction(this.makeModelProps(this.state.levelData))
+            let queryParams = (this.firstTime) ? this.state.queryParams : {}
+            res = jsxFunction(this.makeModelProps(this.state.levelData), queryParams)
+            this.firstTime = false
         } else {
             res = <></>
         }

@@ -24,7 +24,7 @@ class WorldLeftMenu extends React.Component<Props, {}> {
                 <header className="left_bar_header">{t('world.countries')}</header>
                 <section className="left_bar_links scrolled">
                     {this.props.worldData?.countries.map(leagueInfo => {
-                        return <LeagueLink tableLink={false} id={leagueInfo[0]} text={leagueInfo[1]} />
+                        return <LeagueLink key={'world_country_' + leagueInfo[0]} tableLink={false} id={leagueInfo[0]} text={leagueInfo[1]} />
                     })}
                 </section>
             </div>

@@ -25,7 +25,7 @@ abstract class MatchesOverviewSection<Data extends LevelData> extends OverviewTa
     }
     
     tableRow(matc: MatchTopHatstatsOverview, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
-        return <tr>
+        return <tr key={'match_overview_section_' + matc.matchTopHatstats.matchId}>
             {leagueNameFunc(matc.leagueId)}
             <td className="value">
                 <LeagueUnitLink id={matc.matchTopHatstats.homeTeam.leagueUnitId} text={matc.matchTopHatstats.homeTeam.leagueUnitName} />

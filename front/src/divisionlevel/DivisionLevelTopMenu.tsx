@@ -25,7 +25,7 @@ class DivisionLevelTopMenu extends TopMenu<Props> {
       return <select className="href_select" onChange={this.onChanged}>
                 <option value={undefined}>Select...</option>
                 {Array.from(Array(this.props.divisionLevelData?.leagueUnitsNumber), (_, i) => i + 1).map(leagueUnit => {
-                    return <option value={leagueUnit}>{leagueUnit}</option>
+                    return <option key={'division_leve_top_menu_' + leagueUnit} value={leagueUnit}>{leagueUnit}</option>
                 })}
             </select>
     }
