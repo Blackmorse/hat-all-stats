@@ -121,17 +121,8 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
     stats(MatchSpectatorsRequest, leagueId, restStatisticsParameters)
 
   def promotions(leagueId: Int) = Action.async { implicit request =>
-    PromotionsRequest.execute(leagueId, leagueInfoService.leagueInfo.currentSeason(leagueId))
-      .map(promotions =>
-        promotions.groupBy(promotion => (promotion.upDivisionLevel, promotion.promoteType))
-        .toSeq.sortBy(_._1)
-        .map{case((upDivisionLevel, promoteType), promotions) =>
-          PromotionWithType(upDivisionLevel,
-            if(upDivisionLevel == 1) CommonData.higherLeagueMap.get(leagueId).getLeagueUnitName else Romans(upDivisionLevel),
-            Romans(upDivisionLevel + 1),
-            promoteType,
-            promotions)
-      }).map(result => Ok(Json.toJson(result)))
+    PromotionsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), leagueInfoService.leagueInfo.currentSeason(leagueId))
+      .map(PromotionWithType.convert).map(result => Ok(Json.toJson(result)))
   }
 }
 

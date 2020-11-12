@@ -1,10 +1,12 @@
 package controllers
 
 import com.blackmorse.hattrick.api.teamdetails.model.Team
+import com.blackmorse.hattrick.api.worlddetails.model.League
 import com.blackmorse.hattrick.model.enums.MatchType
 import databases.clickhouse.StatisticsCHRequest
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest}
 import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
+import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamrankings.TeamRankingsRequest
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.{ClickhouseDAO, RestClickhouseDAO}
@@ -89,26 +91,31 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
       })
   }
 
+  private def getDivisionLevelAndLeagueUnit(team: Team, season: Int): (Int, Long) = {
+    val league = hattrick.api.worldDetails().leagueId(team.getLeague.getLeagueId)
+      .execute()
+      .getLeagueList.get(0)
+
+    val htRound = league.getMatchRound
+
+     if(htRound == 16
+      || leagueInfoService.leagueInfo.currentSeason(team.getLeague.getLeagueId) > season
+      || league.getSeason - league.getSeasonOffset > season) {
+      val infoOpt = clickhouseDAO.historyTeamLeagueUnitInfo(season, team.getLeague.getLeagueId, team.getTeamId)
+      infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
+        .getOrElse((team.getLeagueLevelUnit.getLeagueLevel, team.getLeagueLevelUnit.getLeagueLevelUnitId))
+    } else {
+      (team.getLeagueLevelUnit.getLeagueLevel.toInt, team.getLeagueLevelUnit.getLeagueLevelUnitId.toLong)
+    }
+  }
+
   def stats[T](chRequest: ClickhouseStatisticsRequest[T],
                teamId: Long,
                restStatisticsParameters: RestStatisticsParameters)
               (implicit writes: Writes[T]) = Action.async{ implicit request =>
     getTeamById(teamId).flatMap(team => {
-      val league = hattrick.api.worldDetails().leagueId(team.getLeague.getLeagueId)
-        .execute()
-        .getLeagueList.get(0)
 
-      val htRound = league.getMatchRound
-
-      val (divisionLevel: Int, leagueUnitId: Long) = if(htRound == 16
-        || leagueInfoService.leagueInfo.currentSeason(team.getLeague.getLeagueId) > restStatisticsParameters.season
-        || league.getSeason - league.getSeasonOffset > restStatisticsParameters.season) {
-        val infoOpt = clickhouseDAO.historyTeamLeagueUnitInfo(restStatisticsParameters.season, team.getLeague.getLeagueId, teamId)
-        infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
-          .getOrElse((team.getLeagueLevelUnit.getLeagueLevel, team.getLeagueLevelUnit.getLeagueLevelUnitId))
-      } else {
-        (team.getLeagueLevelUnit.getLeagueLevel.toInt, team.getLeagueLevelUnit.getLeagueLevelUnitId.toLong)
-      }
+      val (divisionLevel: Int, leagueUnitId: Long) = getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
 
       chRequest.execute(
         OrderingKeyPath(
@@ -195,5 +202,21 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
         .take(3)
       Ok(Json.toJson(NearestMatches(playedMatches, upcomingMatches)))
     })
+  }
+
+  def promotions(teamId: Long) = Action.async{implicit request =>
+    getTeamById(teamId).flatMap(team => {
+      val season = leagueInfoService.leagueInfo.currentSeason(team.getLeague.getLeagueId)
+
+      val (divisionLevel: Int, leagueUnitId: Long) = getDivisionLevelAndLeagueUnit(team, season)
+
+      PromotionsRequest.execute(
+        OrderingKeyPath(leagueId = Some(team.getLeague.getLeagueId),
+          divisionLevel = Some(divisionLevel),
+          leagueUnitId = Some(leagueUnitId),
+          teamId = Some(teamId)), season
+      )
+    }).map(PromotionWithType.convert)
+      .map(result => Ok(Json.toJson(result)))
   }
 }

@@ -24,6 +24,7 @@ import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable'
 import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
 import QueryParams from '../common/QueryParams';
+import PromotionsTable from '../league/PromotionsTable';
 
 
 interface MatchParams {
@@ -70,6 +71,11 @@ class LeagueUnit extends CountryLevelLayout<Props, LeagueUnitData, LeagueUnitLev
             (props, queryParams) => <MatchSurprisingTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         pagesMap.set(PagesEnum.MATCH_SPECTATORS,
             (props, queryParams) => <MatchSpectatorsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
+        
+        pagesMap.set(PagesEnum.PROMOTIONS,
+            (props, queryParams) => <PromotionsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+           
+        
         super(props, pagesMap)
 
         this.teamIdSelected=this.teamIdSelected.bind(this)

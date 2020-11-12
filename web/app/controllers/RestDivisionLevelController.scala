@@ -4,6 +4,7 @@ import databases.RestClickhouseDAO
 import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
+import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import io.swagger.annotations.Api
@@ -121,4 +122,13 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
 
   def matchSpectators(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(MatchSpectatorsRequest, leagueId, divisionLevel, restStatisticsParameters)
+
+  def promotions(leagueId: Int, divisionLevel: Int) = Action.async { implicit request =>
+    PromotionsRequest.execute(
+        OrderingKeyPath(leagueId = Some(leagueId),
+            divisionLevel = Some(divisionLevel)),
+          leagueInfoService.leagueInfo.currentSeason(leagueId))
+      .map(PromotionWithType.convert)
+      .map(result => Ok(Json.toJson(result)))
+  }
 }

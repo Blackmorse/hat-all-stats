@@ -24,6 +24,7 @@ class PromotionsTable<Data extends LevelData, Props extends LevelDataProps<Data>
             dataLoading: false,
             isError: false
         }
+        this.updateCurrent=this.updateCurrent.bind(this)
     }
 
 
@@ -34,7 +35,7 @@ class PromotionsTable<Data extends LevelData, Props extends LevelDataProps<Data>
             isError: false
         })
 
-        getPromotions(this.props.levelDataProps.leagueId(),
+        getPromotions(this.props.levelDataProps.createLevelRequest(),
             promotions => this.setState({
                 promotions: promotions,
                 dataLoading: false,

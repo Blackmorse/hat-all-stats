@@ -14,6 +14,8 @@ abstract class StatisticsSection<Props, State extends LoadableState> extends Rea
     constructor(props: Props, title: string) {
         super(props)
         this.title = title
+
+        this.updateCurrent=this.updateCurrent.bind(this)
     }
 
     abstract renderSection(): JSX.Element

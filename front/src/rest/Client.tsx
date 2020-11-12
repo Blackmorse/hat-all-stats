@@ -120,10 +120,10 @@ export function getNearestMatches(request: TeamRequest,
         .catch(e => onError())
 }
 
-export function getPromotions(leagueId: number, 
+export function getPromotions(levelRequest: LevelRequest, 
         callback: (promotions: Array<PromotionWithType>) => void,
         onError: () => void) {
-    axios.get<Array<PromotionWithType>>('/api/league/' + leagueId + '/promotions')
+    axios.get<Array<PromotionWithType>>(startUrl(levelRequest) + '/promotions')
         .then(response => response.data)
         .then(promotions => callback(promotions))
         .catch(e => onError())

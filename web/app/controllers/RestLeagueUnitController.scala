@@ -6,6 +6,7 @@ import databases.RestClickhouseDAO
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
+import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattrick.Hattrick
@@ -176,5 +177,15 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
 
       Ok(Json.toJson(RestTableData(teams, true)))
     }
+  }
+
+  def promotions(leagueUnitId: Long) = Action.async{ implicit request =>
+    leagueUnitDataFromId(leagueUnitId).flatMap(leagueUnitData =>
+      PromotionsRequest.execute(OrderingKeyPath(
+          leagueId = Some(leagueUnitData.leagueId),
+          divisionLevel = Some(leagueUnitData.divisionLevel),
+          leagueUnitId = Some(leagueUnitData.leagueUnitId)), leagueInfoService.leagueInfo.currentSeason(leagueUnitData.leagueId)))
+      .map(PromotionWithType.convert)
+      .map(result => Ok(Json.toJson(result)))
   }
 }

@@ -2,7 +2,8 @@ package databases.requests.promotions
 
 import anorm.RowParser
 import databases.{RestClickhouseDAO, SqlBuilder}
-import databases.requests.ClickhouseRequest
+import databases.requests.{ClickhouseRequest, OrderingKeyPath}
+import databases.requests.model.team.TeamSortingKey
 import models.clickhouse.Promotion
 
 import scala.concurrent.Future
@@ -35,12 +36,22 @@ object PromotionsRequest extends ClickhouseRequest[Promotion] {
       |`going_up_teams.diff`,
       |`going_up_teams.scored`
       |FROM hattrick.promotions
-      |__where__""".stripMargin
+      |__where__ __AND__""".stripMargin
 
-  def execute(leagueId: Int, season: Int)
+  def execute(orderingKeyPath: OrderingKeyPath, season: Int)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[Promotion]] = {
-    restClickhouseDAO.execute(SqlBuilder(sql)
-      .leagueId(leagueId)
-      .season(season).build, rowParser)
+
+    val divisionLevelWhere = orderingKeyPath.divisionLevel.map(level => s"AND (up_division_level = $level or up_division_level = ${level - 1})").getOrElse("")
+    val hasLeagueUnitId = orderingKeyPath.leagueUnitId.map(id => s"AND (has(`going_down_teams.league_unit_id`, $id) OR has(`going_up_teams.league_unit_id`, $id))").getOrElse("")
+    val hasTeamId = orderingKeyPath.teamId.map(id => s"AND (has(`going_down_teams.team_id`, $id) OR has(`going_up_teams.team_id`, $id) )").getOrElse("")
+
+    val whereHas = s"$divisionLevelWhere $hasLeagueUnitId $hasTeamId"
+
+    val builder = SqlBuilder(sql.replace("__AND__", whereHas))
+    orderingKeyPath.leagueId.foreach(builder.leagueId)
+    builder.season(season)
+
+    restClickhouseDAO.execute(builder
+      .build, rowParser)
   }
 }

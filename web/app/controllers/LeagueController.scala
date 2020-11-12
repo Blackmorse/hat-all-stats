@@ -1,5 +1,6 @@
 package controllers
 
+import com.blackmorse.hattrick.common.CommonData
 import com.blackmorse.hattrick.model.enums.SearchType
 import databases.ClickhouseDAO
 import databases.clickhouse._
@@ -34,6 +35,18 @@ case class PromotionWithType(upDivisionLevel: Int,
 
 object PromotionWithType {
   implicit val writes = Json.writes[PromotionWithType]
+
+  def convert(promotions: List[Promotion]): Seq[PromotionWithType] = {
+    promotions.groupBy(promotion => (promotion.upDivisionLevel, promotion.promoteType))
+      .toSeq.sortBy(_._1)
+      .map{case((upDivisionLevel, promoteType), promotions) =>
+        PromotionWithType(upDivisionLevel,
+          if(upDivisionLevel == 1) CommonData.higherLeagueMap.get(promotions.head.leagueId).getLeagueUnitName else Romans(upDivisionLevel),
+          Romans(upDivisionLevel + 1),
+          promoteType,
+          promotions)
+      }
+  }
 }
 
 @Singleton
