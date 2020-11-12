@@ -9,6 +9,7 @@ import '../../i18n'
 import './CountryLevelLayout.css'
 import Mappings from '../enums/Mappings'
 import QueryParams from '../QueryParams'
+import TeamSearchPage from '../pages/TeamSearchPage'
 
 export interface CountryLevelLayoutState<Data extends LevelData> {
     leaguePage: PagesEnum,
@@ -60,6 +61,7 @@ abstract class CountryLevelLayout<Props, Data extends LevelData, TableProps exte
     constructor(props: Props,
         pagesMap: Map<PagesEnum, (props: TableProps, queryParams: QueryParams) => JSX.Element>) {
         super(props)
+        pagesMap.set(PagesEnum.TEAM_SEARCH, (props, queryParams) => <TeamSearchPage />)
         this.pagesMap = pagesMap
 
         let params = new URLSearchParams(window.location.search);    
@@ -107,9 +109,12 @@ abstract class CountryLevelLayout<Props, Data extends LevelData, TableProps exte
 
         return <>
                 {promotionsMenu}
-                <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => p !== PagesEnum.PROMOTIONS)} 
+                <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH))} 
                     callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
                     title='menu.statistics'/>
+                <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
+                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
+                    title='menu.team_search' />
             </>
     }
 

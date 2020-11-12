@@ -17,7 +17,7 @@ class LeagueOverviewPage extends OverviewPage<LeagueData, LeagueLevelDataProps> 
                 sortingField: sortingField,
                 season: season,
                 round: round,
-                callback: () => setTimeout( () => {window.location.reload()}, 100)
+                forceRefresh: true
             })
         }        
     }

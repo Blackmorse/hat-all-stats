@@ -19,5 +19,6 @@ export enum PagesEnum {
     MATCH_SURPRISING = "overview.surprising_matches",
     MATCH_SPECTATORS = "matches.spectatos",
     OVERVIEW = "menu.team_overview",
-    PROMOTIONS = "menu.promotions"
+    PROMOTIONS = "menu.promotions",
+    TEAM_SEARCH = "menu.team_search"
 }

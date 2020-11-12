@@ -24,7 +24,7 @@ import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable'
 import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
 import QueryParams from '../common/QueryParams';
-import PromotionsTable from '../league/PromotionsTable';
+import PromotionsTable from '../common/pages/PromotionsTable';
 
 
 interface MatchParams {

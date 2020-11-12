@@ -12,7 +12,7 @@ export interface LinkProps {
     rowNumber?: number,
     season?: number,
     round?: number,
-    callback?: () => void
+    forceRefresh?: boolean
 }
 
 abstract class HattidLink<Props extends LinkProps> extends React.Component<Props, {}> {
@@ -46,9 +46,16 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
             className = "table_link"
         }
 
+        //**cking workaround. Can't update the page.... 
+        //TODO
+        let cback: () => void = () => {}
+        if(this.props.forceRefresh !== undefined && this.props.forceRefresh) {
+            cback = () => {setTimeout( () => {window.location.reload()}, 100)}
+        } 
+
         return <Link className={className} 
             to={this.baseString() + '?' + queryParams}
-            onClick={this.props.callback} >
+            onClick={cback} >
                 {this.props.text}
             </Link>
     }

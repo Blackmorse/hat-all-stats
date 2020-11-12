@@ -60,15 +60,11 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
             result = "-:-"
         }
 
-        //**cking workaround. Can't update the page.... 
-        let refresh = () => {
-            setTimeout( () => {window.location.reload()}, 100)
-        }
         return <tr key={"nearest_match_" + nearestMatch.matchId}>
             <td className="matches_date">{moment(nearestMatch.matchDate).format('DD.MM.YYYY')}</td>
-            <td className="matches_team"><TeamLink text={nearestMatch.homeTeamName} id={nearestMatch.homeTeamId} callback={() => refresh()}/></td>
+            <td className="matches_team"><TeamLink text={nearestMatch.homeTeamName} id={nearestMatch.homeTeamId} forceRefresh={true}/></td>
             <td className="matches_result">{result}</td>
-            <td className="matches_team"><TeamLink text={nearestMatch.awayTeamName} id={nearestMatch.awayTeamId} callback={() => refresh()}/></td>
+            <td className="matches_team"><TeamLink text={nearestMatch.awayTeamName} id={nearestMatch.awayTeamId} forceRefresh={true}/></td>
         </tr>
     }
 

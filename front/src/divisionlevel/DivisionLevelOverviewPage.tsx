@@ -18,7 +18,7 @@ class DivisionLevelOverviewPage extends OverviewPage<DivisionLevelData, Division
                 sortingField: sortingField,
                 season: season,
                 round: round,
-                callback: () => setTimeout( () => {window.location.reload()}, 100)
+                forceRefresh: true
             })
         }        
     }

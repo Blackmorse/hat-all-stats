@@ -40,6 +40,7 @@ import TeamStatOverview from './models/overview/TeamStatOverview';
 import PlayerStatOverview from './models/overview/PlayerStatOverview';
 import MatchTopHatstatsOverview from './models/overview/MatchTopHatstatsOverview';
 import PromotionWithType from './models/promotions/Promotion'
+import TeamSearchResult from './models/TeamSearchResult'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -126,6 +127,15 @@ export function getPromotions(levelRequest: LevelRequest,
     axios.get<Array<PromotionWithType>>(startUrl(levelRequest) + '/promotions')
         .then(response => response.data)
         .then(promotions => callback(promotions))
+        .catch(e => onError())
+}
+
+export function searchTeam(name: string, 
+        callback: (results: Array<TeamSearchResult>) => void,
+        onError: () => void): void {
+    axios.get<Array<TeamSearchResult>>('/api/teamSearchByName?name=' + name)
+        .then(response => response.data)
+        .then(results => callback(results))
         .catch(e => onError())
 }
 

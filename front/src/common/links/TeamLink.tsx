@@ -2,8 +2,7 @@ import HattidLink, { LinkProps } from './HattidLink';
 
 
 interface Props extends LinkProps {
-    id: number,
-    callback?: () => void
+    id: number
 }
 
 class TeamLink extends HattidLink<Props> {

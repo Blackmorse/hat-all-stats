@@ -4,5 +4,6 @@ export enum MenuGroupsEnum {
     TEAM = "menu.teams",
     PLAYER = "menu.players",
     MATCH = "menu.matches",
-    OVERVIEW = "menu.team_overview"
+    OVERVIEW = "menu.team_overview",
+    TEAM_SEARCH = "menu.team_search"
 }
