@@ -94,20 +94,6 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
     getTeamById(teamId)
       .map(teamEither => teamEither.map(team => {
         getRestTeamData(team)
-//        val league = leagueInfoService.leagueInfo(team.getLeague.getLeagueId).league
-//        RestTeamData(
-//          leagueId = team.getLeague.getLeagueId,
-//          leagueName = league.getEnglishName,
-//          divisionLevel = team.getLeagueLevelUnit.getLeagueLevel,
-//          divisionLevelName = Romans(team.getLeagueLevelUnit.getLeagueLevel),
-//          leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId,
-//          leagueUnitName = team.getLeagueLevelUnit.getLeagueLevelUnitName,
-//          teamId = teamId,
-//          teamName = team.getTeamName,
-//          seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(team.getLeague.getLeagueId),
-//          currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
-//          currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate
-//        )
       })).map( {
       case Right(data) => Ok(Json.toJson(data))
       case Left(data) => Ok(Json.toJson(getRestTeamData(data)))
