@@ -141,7 +141,7 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
         newStatisticsParameters.pageSize = pageSize
         newStatisticsParameters.page = 0
 
-        Cookies.set('hattid_page_size', pageSize.toString(), { sameSite: "Lax" })
+        Cookies.set('hattid_page_size', pageSize.toString(), { sameSite: "Lax", expires: 180 })
 
         this.update(newStatisticsParameters)
     }
