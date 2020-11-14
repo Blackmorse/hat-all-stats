@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import LeagueData from './models/leveldata/LeagueData'
 import DivisionLevelData from './models/leveldata/DivisionLevelData'
 import TeamHatstats from './models/team/TeamHatstats'
@@ -41,6 +41,7 @@ import PlayerStatOverview from './models/overview/PlayerStatOverview';
 import MatchTopHatstatsOverview from './models/overview/MatchTopHatstatsOverview';
 import PromotionWithType from './models/promotions/Promotion'
 import TeamSearchResult from './models/TeamSearchResult'
+import { LoadingEnum } from '../common/enums/LoadingEnum';
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -85,31 +86,35 @@ export function getLeagueUnitIdByName(leagueId: number, leagueUnitName: string, 
         .then(leagueUnitId => callback(leagueUnitId.id))
 }
 
+function parseAxiosResponse<T>(response: AxiosResponse<T>,
+    callback: (loadingEnum: LoadingEnum, entities?: T) => void) {
+    if (response.status === 204) {
+        callback(LoadingEnum.BOT)
+    } else {
+        callback(LoadingEnum.OK, response.data)
+    }
+} 
+
 function statisticsRequest<T>(path: string): 
     (request: LevelRequest,
         statisticsParameters: StatisticsParameters,
-        callback: (entities: RestTableData<T>) => void,
-        onError: () => void) => void {
+        callback: (loadingEnum: LoadingEnum, entities?: RestTableData<T>) => void) => void {
             
             return function(request: LevelRequest,
                 statisticsParameters: StatisticsParameters,
-                callback: (entities: RestTableData<T>) => void,
-                onError: () => void): void {
+                callback: (loadingEnum: LoadingEnum, entities?: RestTableData<T>) => void): void {
                     let params = createStatisticsParameters(statisticsParameters)
                     axios.get<RestTableData<T>>(startUrl(request) + '/' + path + '?' + params.toString())
-                        .then(response => response.data)
-                        .then(entities => callback(entities))
-                        .catch(e => onError())
+                        .then(response => parseAxiosResponse(response, callback))
+                        .catch(e => callback(LoadingEnum.ERROR))
                 }
 }
 
 export function getTeamRankings(request: LevelRequest, 
-        callback: (teamRankingsStats: TeamRankingsStats) => void,
-        onError: () => void) {
+        callback: (loadingEnum: LoadingEnum, teamRankingsStats?: TeamRankingsStats) => void) {
     axios.get<TeamRankingsStats>(startUrl(request) + '/teamRankings')
-        .then(response => response.data)
-        .then(entities => callback(entities))
-        .catch(e => onError())
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
 }
 
 export function getNearestMatches(request: TeamRequest, 
@@ -122,21 +127,17 @@ export function getNearestMatches(request: TeamRequest,
 }
 
 export function getPromotions(levelRequest: LevelRequest, 
-        callback: (promotions: Array<PromotionWithType>) => void,
-        onError: () => void) {
+        callback: (loadingEnum: LoadingEnum, promotions?: Array<PromotionWithType>) => void) {
     axios.get<Array<PromotionWithType>>(startUrl(levelRequest) + '/promotions')
-        .then(response => response.data)
-        .then(promotions => callback(promotions))
-        .catch(e => onError())
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
 }
 
 export function searchTeam(name: string, 
-        callback: (results: Array<TeamSearchResult>) => void,
-        onError: () => void): void {
+        callback: (loadingEnum: LoadingEnum, results?: Array<TeamSearchResult>) => void): void {
     axios.get<Array<TeamSearchResult>>('/api/teamSearchByName?name=' + name)
-        .then(response => response.data)
-        .then(results => callback(results))
-        .catch(e => onError())
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
 }
 
 export let getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')
@@ -179,17 +180,14 @@ export let getMatchSpectators = statisticsRequest<MatchSpectators>('matchSpectat
 
 function requestOverview<T>(path: string):
     (overviewRequest: OverviewRequest, 
-    callback: (data: T) => void,
-    onError: () => void) => void {
+    callback: (loadingEnum: LoadingEnum, data?: T) => void) => void {
 
         return function(overviewRequest: OverviewRequest, 
-            callback: (data: T) => void,
-            onError: () => void) {
+            callback: (loadingEnum: LoadingEnum, data?: T) => void) {
                 let params = createOverviewParameters(overviewRequest)
                 axios.get<T>('/api/overview/' + path + '?' + params)
-                    .then(response => response.data)
-                    .then(data => callback(data))
-                    .catch(e => onError())
+                    .then(response => parseAxiosResponse(response, callback))
+                    .catch(e => callback(LoadingEnum.ERROR))
             }
     }
 

@@ -2,10 +2,11 @@ import React from 'react';
 import Blur from '../widgets/Blur'
 import { Translation } from 'react-i18next'
 import '../../i18n'
+import { LoadingEnum } from '../enums/LoadingEnum'
+import Bot from '../widgets/Bot'
 
 interface LoadableState {
-    dataLoading: boolean,
-    isError: boolean
+    loadingState: LoadingEnum
 }
 
 abstract class StatisticsSection<Props, State extends LoadableState> extends React.Component<Props, State> {
@@ -23,9 +24,13 @@ abstract class StatisticsSection<Props, State extends LoadableState> extends Rea
     abstract updateCurrent(): void
 
     render() {
+        if(this.state.loadingState === LoadingEnum.BOT) {
+            return <Bot />
+        }
+
         return <Translation>{
             (t, { i18n }) => <section className="statistics_section">
-                <Blur dataLoading={this.state.dataLoading} isError={this.state.isError} 
+                <Blur loadingState={this.state.loadingState}
                     updateCallback={this.updateCurrent} />
                 <header className="statistics_header">
                     <span className="statistics_header_triangle">&#x25BC; {t(this.title)}</span>

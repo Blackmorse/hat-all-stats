@@ -3,17 +3,17 @@ import {ClipLoader} from "react-spinners";
 import './Blur.css'
 import { Translation } from 'react-i18next'
 import '../../i18n'
+import { LoadingEnum } from '../enums/LoadingEnum';
 
 interface Props {
-    dataLoading: boolean,
-    isError: boolean,
+    loadingState: LoadingEnum,
     updateCallback: () => void
 }
 
 class Blur extends React.Component<Props> {
     render() {
         let content: JSX.Element
-        if (this.props.isError) {
+        if (this.props.loadingState === LoadingEnum.ERROR) {
             content = <Translation>{
                 (t, { i18n }) =>
                     <span className="blur_error">{t('error.loading')} 
@@ -23,7 +23,7 @@ class Blur extends React.Component<Props> {
                     </span>
                 }
                 </Translation>
-        } else if(this.props.dataLoading) {
+        } else if(this.props.loadingState === LoadingEnum.LOADING) {
             content = <ClipLoader
                 size={"100px"}
                 color={"#123abc"}
@@ -33,7 +33,7 @@ class Blur extends React.Component<Props> {
             return <></>
         }
 
-        if(this.props.dataLoading || this.props.isError) {
+        if(this.props.loadingState === LoadingEnum.ERROR || this.props.loadingState === LoadingEnum.LOADING) {
                 return <div className="blur">
                 <div className="blur_loader">
                     {content}

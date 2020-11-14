@@ -12,13 +12,13 @@ import LevelData from '../../rest/models/leveldata/LevelData';
 import StatisticsSection from './StatisticsSection'
 import LevelRequest from '../../rest/models/request/LevelRequest';
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
+import { LoadingEnum } from '../enums/LoadingEnum';
 
 interface ModelTableState<T> {
+    loadingState: LoadingEnum,
     entities?: Array<T>,
-    isError: boolean, 
     statisticsParameters: StatisticsParameters,
     isLastPage: boolean,
-    dataLoading: boolean
 }
 
 export interface SortingState {
@@ -68,8 +68,7 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
                 statsType: statsType,
                 season: season
             },
-            dataLoading: false,
-            isError: false
+            loadingState: LoadingEnum.OK
         }
 
         this.pageSizeChanged=this.pageSizeChanged.bind(this);
@@ -81,16 +80,14 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
 
     fetchEntities(tableProps: TableProps, 
             statisticsParameters: StatisticsParameters, 
-            callback: (restTableData: RestTableData<Model>) => void, 
-            onError: () => void): void {
+            callback: (loadingEnum: LoadingEnum, restTableData?: RestTableData<Model>) => void): void {
         const leveRequest = tableProps.createLevelRequest()
-        this.fetchDataFunction(leveRequest, statisticsParameters, callback, onError)
+        this.fetchDataFunction(leveRequest, statisticsParameters, callback)
     }
 
     abstract fetchDataFunction(levelRequest: LevelRequest,
         statisticsParameters: StatisticsParameters,
-        callback: (restTableData: RestTableData<Model>) => void,
-        onError: () => void): void
+        callback: (loadingEnum: LoadingEnum, restTableData?: RestTableData<Model>) => void): void
 
     createColumnHeaders(): JSX.Element {
         const sortingState = {
@@ -119,28 +116,17 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
             entities: this.state.entities,
             statisticsParameters: this.state.statisticsParameters,
             isLastPage: this.state.isLastPage,
-            dataLoading: true,
-            isError: false
+            loadingState: LoadingEnum.LOADING,
         })
 
         this.fetchEntities(this.props.levelDataProps,
             statisticsParameters,
-            restTableData => this.setState({
-                entities: restTableData.entities,
+            (loadingStatus, restTableData) => this.setState({
+                entities: (restTableData) ? restTableData.entities : this.state.entities,
                 statisticsParameters: statisticsParameters,
-                isLastPage: restTableData.isLastPage,
-                dataLoading: false,
-                isError: false
-            }), 
-            () => {
-                this.setState({
-                    entities: this.state.entities,
-                    statisticsParameters: this.state.statisticsParameters,
-                    isLastPage: this.state.isLastPage,
-                    dataLoading: false,
-                    isError: true
-                })
-            })
+                isLastPage: (restTableData) ? restTableData.isLastPage : this.state.isLastPage,
+                loadingState: loadingStatus
+            }))
     }
 
     pageSelected(pageNumber: number) {

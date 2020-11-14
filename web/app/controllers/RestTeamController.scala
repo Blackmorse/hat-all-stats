@@ -64,31 +64,54 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
                                     val leagueInfoService: LeagueInfoService,
                                     implicit val clickhouseDAO: ClickhouseDAO,
                                     implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
-  private def getTeamById(teamId: Long): Future[Team] = Future {
-    hattrick.api.teamDetails().teamID(teamId).execute()
-      .getTeams.asScala.filter(_.getTeamId == teamId).head
+  private def getTeamById(teamId: Long): Future[Either[Team, Team]] = Future {
+    val user = hattrick.api.teamDetails().teamID(teamId).execute()
+    val team = user.getTeams.asScala.filter(_.getTeamId == teamId).head
+    if(user.getUser.getUserId == 0L) Left(team)
+    else {
+      Right(team)
+    }
+  }
+
+  private def getRestTeamData(team: Team) = {
+    val league = leagueInfoService.leagueInfo(team.getLeague.getLeagueId).league
+    RestTeamData(
+      leagueId = team.getLeague.getLeagueId,
+      leagueName = league.getEnglishName,
+      divisionLevel = team.getLeagueLevelUnit.getLeagueLevel,
+      divisionLevelName = Romans(team.getLeagueLevelUnit.getLeagueLevel),
+      leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId,
+      leagueUnitName = team.getLeagueLevelUnit.getLeagueLevelUnitName,
+      teamId = team.getTeamId,
+      teamName = team.getTeamName,
+      seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(team.getLeague.getLeagueId),
+      currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
+      currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate
+    )
   }
 
   def getTeamData(teamId: Long) = Action.async {
     getTeamById(teamId)
-      .map(team => {
-        val league = leagueInfoService.leagueInfo(team.getLeague.getLeagueId).league
-        Ok(Json.toJson(
-          RestTeamData(
-            leagueId = team.getLeague.getLeagueId,
-            leagueName = league.getEnglishName,
-            divisionLevel = team.getLeagueLevelUnit.getLeagueLevel,
-            divisionLevelName = Romans(team.getLeagueLevelUnit.getLeagueLevel),
-            leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId,
-            leagueUnitName = team.getLeagueLevelUnit.getLeagueLevelUnitName,
-            teamId = teamId,
-            teamName = team.getTeamName,
-            seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(team.getLeague.getLeagueId),
-            currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
-            currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate
-          )
-        ))
-      })
+      .map(teamEither => teamEither.map(team => {
+        getRestTeamData(team)
+//        val league = leagueInfoService.leagueInfo(team.getLeague.getLeagueId).league
+//        RestTeamData(
+//          leagueId = team.getLeague.getLeagueId,
+//          leagueName = league.getEnglishName,
+//          divisionLevel = team.getLeagueLevelUnit.getLeagueLevel,
+//          divisionLevelName = Romans(team.getLeagueLevelUnit.getLeagueLevel),
+//          leagueUnitId = team.getLeagueLevelUnit.getLeagueLevelUnitId,
+//          leagueUnitName = team.getLeagueLevelUnit.getLeagueLevelUnitName,
+//          teamId = teamId,
+//          teamName = team.getTeamName,
+//          seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(team.getLeague.getLeagueId),
+//          currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
+//          currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate
+//        )
+      })).map( {
+      case Right(data) => Ok(Json.toJson(data))
+      case Left(data) => Ok(Json.toJson(getRestTeamData(data)))
+    })
   }
 
   private def getDivisionLevelAndLeagueUnit(team: Team, season: Int): (Int, Long) = {
@@ -113,7 +136,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
                teamId: Long,
                restStatisticsParameters: RestStatisticsParameters)
               (implicit writes: Writes[T]) = Action.async{ implicit request =>
-    getTeamById(teamId).flatMap(team => {
+    getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
 
       val (divisionLevel: Int, leagueUnitId: Long) = getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
 
@@ -124,7 +147,10 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
           leagueUnitId = Some(leagueUnitId),
           teamId = Some(teamId)
         ), restStatisticsParameters)
-    }.map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize)))
+    }) match {
+      case Right(statList) => statList.map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+      case Left(t) => Future(NoContent)
+    })
   }
 
   def playerGoalGames(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
@@ -153,7 +179,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
 
   def teamRankings(teamId: Long) = Action.async { implicit request =>
-    getTeamById(teamId).flatMap(team => {
+    getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
       val leagueId = team.getLeague.getLeagueId
       val season = leagueInfoService.leagueInfo.currentSeason(leagueId)
 
@@ -169,13 +195,16 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
           val currencyRate = leagueInfo.league.getCountry.getCurrencyRate
           val currencyName = leagueInfo.league.getCountry.getCurrencyName
 
-          val restTeamRankings = RestTeamRankings(teamRankings = teamRankings,
+          RestTeamRankings(teamRankings = teamRankings,
             leagueTeamsCount = leagueTeamsCount,
             divisionLevelTeamsCount = divisionLevelTeamsCount,
             currencyRate = if(currencyRate == null) 10.0d else currencyRate,
             currencyName = currencyName)
-          Ok(Json.toJson(restTeamRankings))
+
         })
+    }) match {
+      case Right(rankings) => rankings.map(r => Ok(Json.toJson(r)))
+      case Left(_) => Future(NoContent)
     })
   }
 
@@ -205,7 +234,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   }
 
   def promotions(teamId: Long) = Action.async{implicit request =>
-    getTeamById(teamId).flatMap(team => {
+    getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
       val season = leagueInfoService.leagueInfo.currentSeason(team.getLeague.getLeagueId)
 
       val (divisionLevel: Int, leagueUnitId: Long) = getDivisionLevelAndLeagueUnit(team, season)
@@ -216,7 +245,9 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
           leagueUnitId = Some(leagueUnitId),
           teamId = Some(teamId)), season
       )
-    }).map(PromotionWithType.convert)
-      .map(result => Ok(Json.toJson(result)))
+    }) match {
+      case Right(promotions) => promotions.map(PromotionWithType.convert).map(result => Ok(Json.toJson(result)))
+      case Left(_) => Future(NoContent)
+    })
   }
 }

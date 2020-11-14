@@ -1,0 +1,20 @@
+.info_div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /*width: 100%;*/
+}
+
+.info_text {
+    text-align: center;
+    font-family: 'Merriweather', serif;
+}
+
+.info_image {
+    height: 500px;
+}
+
+.info_image > img {
+    height: 100%;
+}

@@ -17,11 +17,11 @@ import RatingPlayerOverviewSection from './RatingPlayerOverviewSection'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import { PagesEnum } from '../enums/PagesEnum';
 import HattidLink from '../links/HattidLink';
+import { LoadingEnum } from '../enums/LoadingEnum';
 
 
 interface State {
-    dataLoading: boolean,
-    isError: boolean,
+    loadingState: LoadingEnum
     totalOverview?: TotalOverview
 }
 
@@ -39,8 +39,7 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
     constructor(props: OverviewPageProps<Data, LevelProps>) {
         super(props, props.title)
         this.state = {
-            dataLoading: false,
-            isError: false
+            loadingState: LoadingEnum.OK
         }
 
         this.updateCurrent=this.updateCurrent.bind(this)
@@ -52,21 +51,15 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
 
     componentDidMount() {
         this.setState({
-            dataLoading: true,
-            isError: false,
+            loadingState: LoadingEnum.LOADING,
             totalOverview: this.state.totalOverview
         })
         
         let request = this.props.levelDataProps.createOverviewRequest()
 
-        getTotalOverview(request, totalOverview => this.setState({
-            dataLoading: false,
-            isError: false,
-            totalOverview: totalOverview
-        }), () => this.setState({
-            dataLoading: false,
-            isError: true,
-            totalOverview: this.state.totalOverview
+        getTotalOverview(request, (loadingStatus, totalOverview) => this.setState({
+            loadingState: loadingStatus,
+            totalOverview: (totalOverview) ? totalOverview : this.state.totalOverview
         }))
     }
 

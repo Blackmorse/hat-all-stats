@@ -7,10 +7,10 @@ import { searchTeam } from '../../rest/Client'
 import i18n from '../../i18n'
 import TeamLink from '../links/TeamLink'
 import './TeamSearchPage.css'
+import { LoadingEnum } from '../enums/LoadingEnum'
 
 interface State {
-    dataLoading: boolean,
-    isError: boolean,
+    loadingState: LoadingEnum,
     results?: Array<TeamSearchResult>,
     currentSearch: string
 }
@@ -19,8 +19,7 @@ class TeamSearchPage extends StatisticsSection<{}, State> {
     constructor(props: {}) {
         super(props, 'menu.team_search')
         this.state = {
-            dataLoading: false,
-            isError: false,
+            loadingState: LoadingEnum.OK,
             currentSearch: ""
         }
 
@@ -35,22 +34,14 @@ class TeamSearchPage extends StatisticsSection<{}, State> {
     updateCurrent(): void {
         this.setState({
             results: this.state.results,
-            dataLoading: true,
-            isError: false,
+            loadingState: LoadingEnum.LOADING,
             currentSearch: this.state.currentSearch
         })
 
         searchTeam(this.state.currentSearch,
-            results => this.setState({
-                results: results,
-                dataLoading: false,
-                isError: false,
-                currentSearch: this.state.currentSearch
-            }),
-            () => this.setState({
-                results:  this.state.results,
-                dataLoading: false,
-                isError: true,
+            (loadingStatus, results) => this.setState({
+                results: (results) ? results : this.state.results,
+                loadingState: loadingStatus,
                 currentSearch: this.state.currentSearch
             }))
     }
@@ -58,8 +49,7 @@ class TeamSearchPage extends StatisticsSection<{}, State> {
     changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             currentSearch: event.currentTarget.value,
-            dataLoading: false,
-            isError: false,
+            loadingState: LoadingEnum.OK,
             results: this.state.results
         })
       }

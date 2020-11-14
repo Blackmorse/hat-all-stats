@@ -11,19 +11,18 @@ import TeamRankingsStats from '../rest/models/team/TeamRankingsStats';
 import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter } from '../common/Formatters'
 import StatisticsSection from '../common/sections/StatisticsSection'
 import { PagesEnum } from '../common/enums/PagesEnum';
+import { LoadingEnum } from '../common/enums/LoadingEnum';
 
 interface State {
     teamRankingsStats?: TeamRankingsStats
-    dataLoading: boolean,
-    isError: boolean
+    loadingState: LoadingEnum
 }
 
 class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State> {
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props, "menu.team_rankings")
         this.state = {
-            dataLoading: false,
-            isError: false
+            loadingState: LoadingEnum.OK
         }
         this.updateCurrent=this.updateCurrent.bind(this);
     }
@@ -37,23 +36,18 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
         const teamRequest: TeamRequest = {type: 'TeamRequest', teamId: this.props.levelDataProps.teamId()}
         this.setState({
             teamRankingsStats: this.state.teamRankingsStats,
-            dataLoading: true,
-            isError: false
+            loadingState: LoadingEnum.LOADING
         })
 
         getTeamRankings(teamRequest, 
-            teamRankingsStats => this.setState({teamRankingsStats: teamRankingsStats, 
-                dataLoading: false,
-                isError: false}),
-                () => this.setState({
-                    teamRankingsStats: this.state.teamRankingsStats,
-                    dataLoading: false,
-                    isError: true
-                }))
+            (loadingStatus, teamRankingsStats) => this.setState({
+                teamRankingsStats: (teamRankingsStats) ? teamRankingsStats : this.state.teamRankingsStats, 
+                loadingState: loadingStatus})
+            )
     }
 
     renderSection(): JSX.Element {
-        if(this.state.dataLoading || !this.state.teamRankingsStats || this.state.isError) {
+        if(this.state.loadingState === LoadingEnum.LOADING || !this.state.teamRankingsStats || this.state.loadingState === LoadingEnum.ERROR) {
                 return <></>
         }
 

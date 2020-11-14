@@ -12,18 +12,18 @@ import { getNearestMatches } from '../rest/Client'
 import moment from 'moment'
 import Blur from '../common/widgets/Blur'
 import TeamLink from '../common/links/TeamLink'
+import { LoadingEnum } from '../common/enums/LoadingEnum';
 
 interface State {
     nearestMatches?: NearestMatches,
-    dataLoading: boolean,
-    isError: boolean
+    loadingState: LoadingEnum
 }
 
 class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State> {
 
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props)
-        this.state = {dataLoading: false, isError: false}
+        this.state = {loadingState: LoadingEnum.OK}
         this.componentDidMount=this.componentDidMount.bind(this)
         this.updateCurrent=this.updateCurrent.bind(this)
     }
@@ -35,15 +35,13 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
             teamId: teamId,
         }
         this.setState({nearestMatches: this.state.nearestMatches,
-                dataLoading: true,
-                isError: false})
+            loadingState: LoadingEnum.LOADING})
         getNearestMatches(request, 
             nearestMatches => this.setState({nearestMatches: nearestMatches, 
-                dataLoading: false,
-                isError: false}),
+                loadingState: LoadingEnum.OK
+            }),
             () => this.setState({
-                dataLoading: false,
-                isError: true
+                loadingState: LoadingEnum.ERROR
             }))
     }
 
@@ -71,9 +69,9 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
     render() {
         let playedMatches: JSX.Element
         let upcomingMatches: JSX.Element
-        if(!this.state.nearestMatches || this.state.isError) {
-            playedMatches = <Blur dataLoading={true} isError={this.state.isError} updateCallback={this.updateCurrent}/>
-            upcomingMatches = <Blur dataLoading={true} isError={this.state.isError} updateCallback={this.updateCurrent}/>
+        if(!this.state.nearestMatches || this.state.loadingState === LoadingEnum.ERROR) {
+            playedMatches = <Blur loadingState={this.state.loadingState} updateCallback={this.updateCurrent}/>
+            upcomingMatches = <Blur loadingState={this.state.loadingState} updateCallback={this.updateCurrent}/>
         } else {
             playedMatches =  <table className="statistics_table">
             <tbody>{this.state.nearestMatches?.playedMatches.map(this.matchTableRow)}

@@ -10,10 +10,10 @@ import './PromotionsTable.css'
 import DivisionLevelLink from '../links/DivisionLevelLink';
 import TeamLink from '../links/TeamLink';
 import LeagueUnitLink from '../links/LeagueUnitLink';
+import { LoadingEnum } from '../enums/LoadingEnum';
 
 interface State {
-    dataLoading: boolean,
-    isError: boolean,
+    loadingState: LoadingEnum,
     promotions?: Array<PromotionWithType>
 }
 
@@ -21,8 +21,7 @@ class PromotionsTable<Data extends LevelData, Props extends LevelDataProps<Data>
     constructor(props: LevelDataPropsWrapper<Data, Props>) {
         super(props, 'menu.promotions')
         this.state = {
-            dataLoading: false,
-            isError: false
+            loadingState: LoadingEnum.OK
         }
         this.updateCurrent=this.updateCurrent.bind(this)
     }
@@ -31,20 +30,13 @@ class PromotionsTable<Data extends LevelData, Props extends LevelDataProps<Data>
     componentDidMount() {
         this.setState({
             promotions: this.state.promotions,
-            dataLoading: true,
-            isError: false
+            loadingState: LoadingEnum.LOADING,
         })
 
         getPromotions(this.props.levelDataProps.createLevelRequest(),
-            promotions => this.setState({
-                promotions: promotions,
-                dataLoading: false,
-                isError: false
-            }),
-            () => this.setState({
-                promotions: this.state.promotions,
-                dataLoading: false,
-                isError: true
+            (loadingStatus, promotions) => this.setState({
+                promotions: (promotions) ? promotions : this.state.promotions,
+                loadingState: loadingStatus
             }))
     }
 

@@ -5,6 +5,7 @@ import StatisticsSection from '../../common/sections/StatisticsSection';
 import OverviewRequest from '../../rest/models/request/OverviewRequest';
 import '../../common/sections/StatisticsSection.css'
 import SeasonRoundSelector from './SeasonRoundSelector'
+import { LoadingEnum } from '../enums/LoadingEnum';
 
 export interface OverviewSectionProps<Data extends LevelData, OverviewEntity> {
     initialData?: OverviewEntity,
@@ -12,8 +13,7 @@ export interface OverviewSectionProps<Data extends LevelData, OverviewEntity> {
 }
 
 interface State<OverviewEntity> {
-    dataLoading: boolean,
-    isError: boolean,
+    loadingState: LoadingEnum,
     data?: OverviewEntity,
     selectedSeason: number,
     selectedRound: number
@@ -26,8 +26,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
     constructor(props: OverviewProps, title: string) {
         super(props, title)
         this.state = {
-            dataLoading: false,
-            isError: false,
+            loadingState: LoadingEnum.OK,
             data: props.initialData,
             selectedSeason: props.levelDataProps.currentSeason(),
             selectedRound: props.levelDataProps.currentRound()
@@ -39,13 +38,11 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
     }
 
     abstract loadOverviewEntity(overviewRequest: OverviewRequest,
-            callback: (entities: OverviewEntity) => void,
-            onError: () => void): void
+            callback: (loadingEnum: LoadingEnum, entities?: OverviewEntity) => void): void
 
     loadRound(season: number, round: number) {
         this.setState({
-            dataLoading: true,
-            isError: false,
+            loadingState: LoadingEnum.LOADING,
             data: this.state.data,
             selectedSeason: this.state.selectedSeason,
             selectedRound: this.state.selectedRound
@@ -56,19 +53,11 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
         request.round = round
 
         this.loadOverviewEntity(request,
-            overviewEntity => this.setState({
-                dataLoading: false,
-                isError: false,
-                data: overviewEntity,
+            (loadingStatus, overviewEntity) => this.setState({
+                loadingState: loadingStatus,
+                data: (overviewEntity) ? overviewEntity : this.state.data,
                 selectedSeason: season,
                 selectedRound: round
-            }),
-            () => this.setState({
-                dataLoading: false,
-                isError: true,
-                data: this.state.data,
-                selectedSeason: this.state.selectedSeason,
-                selectedRound: this.state.selectedRound
             }))
     }
 
