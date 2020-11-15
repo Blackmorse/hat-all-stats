@@ -6,11 +6,12 @@ import DivisionLevel from './divisionlevel/DivisionLevel'
 import LeagueUnit from './leagueunit/LeagueUnit'
 import Team from './team/Team'
 import World from './world/World';
+import CookieWidget from './CookieWidget'
 
 class App extends React.Component{
 
   render() {
-    return (
+    return (<>
       <Router>
         <Route exact path="/" component={World} />
         <Route exact path="/league/:leagueId" component={League} />
@@ -18,6 +19,8 @@ class App extends React.Component{
         <Route exact path="/leagueUnit/:leagueUnitId" component={LeagueUnit}/>
         <Route exact path="/team/:teamId" component={Team}/>
       </Router>
+      <CookieWidget />
+      </>
     );
   }
 }
