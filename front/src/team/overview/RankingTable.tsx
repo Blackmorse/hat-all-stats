@@ -7,12 +7,10 @@ import TeamLevelDataProps from '../TeamLevelDataProps';
 import { PagesEnum } from '../../common/enums/PagesEnum';
 import LeagueLink from '../../common/links/LeagueLink';
 import DivisionLevelLink from '../../common/links/DivisionLevelLink';
+import ChartWindow from './ChartWindow'
 
 export interface RankingData {
-    lastLeagueRanking: TeamRanking,
-    previousLeagueRanking?: TeamRanking,
-    lastDivisionLevelRanking: TeamRanking,
-    previousDivisionLevelRanking?: TeamRanking,
+    teamRankings: Array<TeamRanking>,
     teamLevelDataProps: TeamLevelDataProps,
     leagueTeamsCount: number,
     divisionLevelTeamsCount: number
@@ -28,18 +26,38 @@ interface Props {
     title: string
 }
 
-class RankingTable extends React.Component<Props> {
+interface State {
+    chart: boolean
+}
+
+class RankingTable extends React.Component<Props, State> {
     
+    constructor(props: Props) {
+        super(props)
+        this.state = {chart: false}
+        this.closeWindow=this.closeWindow.bind(this)
+    }
+
+    closeWindow() {
+        this.setState({
+            chart: false
+        })
+        console.log()
+    }
+
     render() {
         let formatter = this.props.formatter
         let valueFunc = this.props.valueFunc
         let positionFunc = this.props.positionFunc
 
-        let lastLeagueRanking = this.props.rankingData.lastLeagueRanking
-        let previousLeagueRanking = this.props.rankingData.previousLeagueRanking
-        let lastDivisionLevelRanking = this.props.rankingData.lastDivisionLevelRanking
-        let previousDivisionLevelRanking = this.props.rankingData.previousDivisionLevelRanking
+        let divisionLevelRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rank_type === "division_level")
+        let leagueRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rank_type === "league_id")
 
+        let lastLeagueRanking = leagueRankings[leagueRankings.length - 1]
+        let previousLeagueRanking = (leagueRankings.length > 1) ? leagueRankings[leagueRankings.length - 2] : undefined
+
+        let lastDivisionLevelRanking = divisionLevelRankings[divisionLevelRankings.length - 1]
+        let previousDivisionLevelRanking = (divisionLevelRankings.length > 1) ? divisionLevelRankings[divisionLevelRankings.length - 2] : undefined;
 
         let diffValueContent: JSX.Element
         let divisionLevelDiffPositionContent: JSX.Element
@@ -102,7 +120,19 @@ class RankingTable extends React.Component<Props> {
             return <Translation>{
                 (t, { i18n }) => 
         <span className="ranking">
-            <span className="ranking_name">{this.props.title}</span>
+            <span className="ranking_name">
+                {this.props.title}
+                <img className="chart_img" src='/chart.svg' onClick={() => this.setState({chart: !this.state.chart})} alt=" chart"/>
+            </span>
+            {(this.state.chart) ? 
+                <ChartWindow callback={this.closeWindow}
+                    divisionLevelRankings={divisionLevelRankings}
+                    leagueRankings={leagueRankings}
+                    valueFunc={this.props.valueFunc}
+                    positionFunc={this.props.positionFunc}
+                    title={this.props.title} 
+                    teamLevelDataProps={this.props.rankingData.teamLevelDataProps}/> 
+                : <></>}
             <table className="ranking_table">
                 <tbody>
                 <tr className="ranking_row">

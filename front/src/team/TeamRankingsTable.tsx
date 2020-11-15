@@ -56,20 +56,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
 
         let teamRankings = this.state.teamRankingsStats.teamRankings
 
-        let divisionLevelRankings = teamRankings.filter(teamRanking => teamRanking.rank_type === "division_level")
-        let leagueRankings = teamRankings.filter(teamRanking => teamRanking.rank_type === "league_id")
-
-        let lastLeagueRanking = leagueRankings[leagueRankings.length - 1]
-        let previousLeagueRanking = (leagueRankings.length > 1) ? leagueRankings[leagueRankings.length - 2] : undefined
-
-        let lastDivisionLevelRanking = divisionLevelRankings[divisionLevelRankings.length - 1]
-        let previousDivisionLevelRanking = (divisionLevelRankings.length > 1) ? divisionLevelRankings[divisionLevelRankings.length - 2] : undefined;
-
         let rankingData: RankingData = {
-            lastLeagueRanking: lastLeagueRanking, 
-            previousLeagueRanking: previousLeagueRanking,
-            lastDivisionLevelRanking: lastDivisionLevelRanking,
-            previousDivisionLevelRanking: previousDivisionLevelRanking,
+            teamRankings: teamRankings,
             teamLevelDataProps: this.props.levelDataProps,
             leagueTeamsCount: leagueTeamsCount,
             divisionLevelTeamsCount: divisionLevelTeamsCount,

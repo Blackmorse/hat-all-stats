@@ -17,10 +17,12 @@
     "i18next": "^19.7.0",
     "js-cookie": "^2.2.1",
     "moment": "^2.29.1",
+    "plotly.js": "^1.57.1",
     "react": "^16.13.1",
     "react-content-loader": "^5.1.4",
     "react-dom": "^16.13.1",
     "react-i18next": "^11.7.0",
+    "react-plotlyjs-ts": "^2.2.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
@@ -48,5 +50,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/plotly.js": "^1.54.2"
   }
 }

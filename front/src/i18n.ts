@@ -169,7 +169,8 @@ const resources = {
       "overview.averages": "Averages",
 
       "world.countries": "Countries",
-      "error.loading": "Error while loading..."
+      "error.loading": "Error while loading...",
+      "chart.round": "Round"
     }
   },
   ru: {
@@ -336,7 +337,8 @@ const resources = {
       "overview.averages": "Средние",
 
       "world.countries": "Страны",
-      "error.loading": "Ошибка загрузки..."
+      "error.loading": "Ошибка загрузки...",
+      "chart.round": "Тур"
     }
   }
 };

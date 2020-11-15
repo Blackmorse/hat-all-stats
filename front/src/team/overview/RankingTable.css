@@ -17,6 +17,7 @@
     margin: 5px;
     border-radius: 3px;
     background: #fffbdc;
+    position: static;
 }
 
 .rankings_grid_row > .ranking {
@@ -43,6 +44,16 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+}
+
+.chart_img {
+    height: 15px;
+    margin-left: 10px;
+    background-color: white;
+}
+
+.chart_img:hover {
+    cursor: pointer;
 }
 
 .ranking_table {
