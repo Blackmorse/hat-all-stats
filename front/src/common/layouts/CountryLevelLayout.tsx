@@ -2,7 +2,7 @@ import Layout from './Layout'
 import { PagesEnum } from '../enums/PagesEnum'
 import LevelDataProps from '../LevelDataProps'
 import React from 'react'
-import LevelData from '../../rest/models/leveldata/LevelData'
+import CountryLevelData from '../../rest/models/leveldata/CountryLevelData'
 import { Translation } from 'react-i18next'
 import LeftMenu from '../../common/menu/LeftMenu'
 import '../../i18n'
@@ -10,14 +10,15 @@ import './CountryLevelLayout.css'
 import Mappings from '../enums/Mappings'
 import QueryParams from '../QueryParams'
 import TeamSearchPage from '../pages/TeamSearchPage'
+import CurrentCountryInfoMenu from '../menu/CurrentCountryInfoMenu'
 
-export interface CountryLevelLayoutState<Data extends LevelData> {
+export interface CountryLevelLayoutState<Data extends CountryLevelData> {
     leaguePage: PagesEnum,
     levelData?: Data,
     queryParams: QueryParams
 }
 
-abstract class CountryLevelLayout<Props, Data extends LevelData, TableProps extends LevelDataProps<Data>> extends Layout<Props, CountryLevelLayoutState<Data>> {
+abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TableProps extends LevelDataProps<Data>> extends Layout<Props, CountryLevelLayoutState<Data>> {
     private firstTime: boolean = true
     
     pagesMap = new Map<PagesEnum, (props: TableProps, queryParams: QueryParams) => JSX.Element>()
@@ -98,16 +99,19 @@ abstract class CountryLevelLayout<Props, Data extends LevelData, TableProps exte
     }
 
     leftMenu(): JSX.Element {
-        let promotionsMenu: JSX.Element
-        if(this.state.levelData && this.makeModelProps(this.state.levelData).currentRound() >= 14) {
-            promotionsMenu = <LeftMenu pages={[PagesEnum.PROMOTIONS]}
-                callback={leaguePage => {this.setState({leaguePage: leaguePage})}} 
-                title='menu.promotions' />
-        } else {
-            promotionsMenu = <></>
-        }
-
+        let promotionsMenu: JSX.Element = <></>
+        let currentCountryInfoMenu = <></>
+        if(this.state.levelData ) {
+            let modelProps = this.makeModelProps(this.state.levelData)
+            currentCountryInfoMenu = <CurrentCountryInfoMenu levelDataProps={modelProps}/>
+            if(modelProps.currentRound() >= 14) {
+                promotionsMenu = <LeftMenu pages={[PagesEnum.PROMOTIONS]}
+                    callback={leaguePage => {this.setState({leaguePage: leaguePage})}} 
+                    title='menu.promotions' />
+            }
+        } 
         return <>
+                {currentCountryInfoMenu}
                 {promotionsMenu}
                 <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH))} 
                     callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}

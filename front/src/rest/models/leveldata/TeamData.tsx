@@ -1,6 +1,6 @@
-import LevelData from './LevelData'
+import CountryLevelData from './CountryLevelData'
 
-interface TeamData extends LevelData {
+interface TeamData extends CountryLevelData {
     leagueId: number,
     leagueName: string,
     divisionLevel: number,
