@@ -1,11 +1,9 @@
 package controllers
 
 import com.blackmorse.hattrick.api.teamdetails.model.Team
-import com.blackmorse.hattrick.api.worlddetails.model.League
 import com.blackmorse.hattrick.model.enums.MatchType
-import databases.clickhouse.StatisticsCHRequest
-import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest}
-import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
+import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamMatchesRequest}
+import databases.requests.playerstats.player._
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamrankings.TeamRankingsRequest
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
@@ -14,9 +12,9 @@ import hattrick.Hattrick
 import io.swagger.annotations.Api
 import javax.inject.Inject
 import models.clickhouse.{NearestMatch, TeamRankings}
+import models.web.RestStatisticsParameters
 import models.web.rest.LevelData
 import models.web.rest.LevelData.Rounds
-import models.web.{RestStatisticsParameters, RestTableData, StatisticsParameters}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
 import service.LeagueInfoService
@@ -135,7 +133,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
         ), restStatisticsParameters)
     }) match {
       case Right(statList) => statList.map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
-      case Left(t) => Future(NoContent)
+      case Left(_) => Future(NoContent)
     })
   }
 
@@ -236,4 +234,18 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
       case Left(_) => Future(NoContent)
     })
   }
+
+  def teamMatches(teamId: Long, season: Int) = Action.async( implicit request =>
+    getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
+      val (divisionLevel: Int, leagueUnitId: Long) = getDivisionLevelAndLeagueUnit(team, season)
+
+      TeamMatchesRequest.execute(season, OrderingKeyPath(leagueId = Some(team.getLeague.getLeagueId),
+        divisionLevel = Some(divisionLevel),
+        leagueUnitId = Some(leagueUnitId),
+        teamId = Some(team.getTeamId)))
+    }) match {
+      case Right(matches) => matches.map(result => Ok(Json.toJson(result)))
+      case Left(_) => Future(NoContent)
+    })
+  )
 }

@@ -26,7 +26,8 @@ trait ClickhouseStatisticsRequest[T] extends ClickhouseRequest[T] {
     }
 
     restClickhouseDAO.execute(SqlBuilder(sql)
-      .applyParameters(orderingKeyPath, parameters)
+      .applyParameters(orderingKeyPath)
+      .applyParameters(parameters)
       .build, rowParser)
   }
 }

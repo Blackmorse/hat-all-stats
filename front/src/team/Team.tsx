@@ -18,6 +18,7 @@ import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
 import QueryParams from '../common/QueryParams';
 import PromotionsTable from '../common/pages/PromotionsTable';
+import TeamMatches from './TeamMatches'
 
 interface MatchParams {
     teamId: string
@@ -42,6 +43,8 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
             (props, queryParams) => <PlayerRatingsTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.PLAYER_INJURIES, 
             (props, queryParams) => <PlayerInjuriesTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        pagesMap.set(PagesEnum.TEAM_MATCHES,
+            (props, queryParams) => <TeamMatches levelDataProps={props} queryParams={queryParams}/>)
         pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS, 
             (props, queryParams) => <MatchTopHatstatsTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.MATCH_SURPRISING, 

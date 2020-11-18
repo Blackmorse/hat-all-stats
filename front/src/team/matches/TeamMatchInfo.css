@@ -1,0 +1,38 @@
+.match {
+    width: 100%;
+}
+
+.top_match_info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.top_match_info_left_link {
+    width: 150px;
+    text-align: right;
+}
+
+.top_match_info_right_link {
+    width: 150px;
+    text-align: left;
+}
+
+.bottom_match_info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.left_team_match_info {
+    width: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.right_team_match_info {
+    width: 180px;
+}

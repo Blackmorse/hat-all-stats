@@ -170,7 +170,17 @@ const resources = {
 
       "world.countries": "Countries",
       "error.loading": "Error while loading...",
-      "chart.round": "Round"
+      "chart.round": "Round",
+
+      "match.tactic": "Tactic",
+      "match.tactic_skill": "Tactic skill",
+      "match.normal": "Normal",
+      "match.pressing": "Pressing",
+      "match.counter_attacks": "Counter-attacks",
+      "match.attack_in_the_middle": "Attack in the middle",
+      "match.attack_in_wings": "Attack in wings",
+      "match.play_creatively": "Play creatively",
+      "match.long_shots": "Long shots"
     }
   },
   ru: {
@@ -338,7 +348,17 @@ const resources = {
 
       "world.countries": "Страны",
       "error.loading": "Ошибка загрузки...",
-      "chart.round": "Тур"
+      "chart.round": "Тур",
+
+      "match.tactic": "Тактика",
+      "match.tactic_skill": "Уровень тактики",
+      "match.normal": "Нормально",
+      "match.pressing": "Прессинг",
+      "match.counter_attacks": "Контратаки",
+      "match.attack_in_the_middle": "Атака по центру",
+      "match.attack_in_wings": "Атака по флангам",
+      "match.play_creatively": "Играть творчески",
+      "match.long_shots": "Дальние удары"
     }
   }
 };

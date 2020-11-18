@@ -20,5 +20,6 @@ export enum PagesEnum {
     MATCH_SPECTATORS = "matches.spectatos",
     OVERVIEW = "menu.team_overview",
     PROMOTIONS = "menu.promotions",
-    TEAM_SEARCH = "menu.team_search"
+    TEAM_SEARCH = "menu.team_search",
+    TEAM_MATCHES = "menu.matches"
 }

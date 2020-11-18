@@ -14,13 +14,16 @@ case class SqlBuilder(baseSql: String) {
   private var pageSize = DefaultService.PAGE_SIZE
   private var sortingDirection: String = "desc"
 
-  def applyParameters(orderingKeyPath: OrderingKeyPath,
-                      parameters: RestStatisticsParameters): SqlBuilder = {
+  def applyParameters(orderingKeyPath: OrderingKeyPath): SqlBuilder = {
     orderingKeyPath.leagueId.foreach(leagueId)
     orderingKeyPath.divisionLevel.foreach(this.divisionLevel)
     orderingKeyPath.leagueUnitId.foreach(this.leagueUnitId)
     orderingKeyPath.teamId.foreach(this.teamId)
 
+    this
+  }
+
+  def applyParameters(parameters: RestStatisticsParameters): SqlBuilder = {
     season(parameters.season)
     page(parameters.page)
     pageSize(parameters.pageSize)

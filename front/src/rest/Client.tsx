@@ -42,6 +42,7 @@ import MatchTopHatstatsOverview from './models/overview/MatchTopHatstatsOverview
 import PromotionWithType from './models/promotions/Promotion'
 import TeamSearchResult from './models/TeamSearchResult'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
+import TeamMatch from './models/match/TeamMatch'
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
@@ -136,6 +137,13 @@ export function getPromotions(levelRequest: LevelRequest,
 export function searchTeam(name: string, 
         callback: (loadingEnum: LoadingEnum, results?: Array<TeamSearchResult>) => void): void {
     axios.get<Array<TeamSearchResult>>('/api/teamSearchByName?name=' + name)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
+
+export function getTeamMatches(teamId: number, season: number,
+       callback: (loadingEnum: LoadingEnum, results?: Array<TeamMatch>) => void) {
+    axios.get<Array<TeamMatch>>('/api/team/' + teamId + '/teamMatches?season=' + season)
         .then(response => parseAxiosResponse(response, callback))
         .catch(e => callback(LoadingEnum.ERROR))
 }

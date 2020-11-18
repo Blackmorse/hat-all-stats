@@ -25,7 +25,19 @@ class Mappings {
         [PagesEnum.MATCH_SPECTATORS, MenuGroupsEnum.MATCH],
         [PagesEnum.OVERVIEW, MenuGroupsEnum.OVERVIEW],
         [PagesEnum.PROMOTIONS, MenuGroupsEnum.PROMOTIONS],
-        [PagesEnum.TEAM_SEARCH, MenuGroupsEnum.TEAM_SEARCH]
+        [PagesEnum.TEAM_SEARCH, MenuGroupsEnum.TEAM_SEARCH],
+        [PagesEnum.TEAM_MATCHES, MenuGroupsEnum.MATCH]
+        ])
+    
+    static tacticType: Map<number, string> = 
+        new Map([
+            [0, 'match.normal'],
+            [1, 'match.pressing'],
+            [2, 'match.counter_attacks'],
+            [3, 'match.attack_in_the_middle'],
+            [4, 'match.attack_in_wings'],
+            [7, 'match.play_creatively'],
+            [8, 'match.long_shots']
         ])
 
     static PAGE = 'page'
