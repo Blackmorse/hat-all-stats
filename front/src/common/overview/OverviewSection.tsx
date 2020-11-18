@@ -74,6 +74,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
                 {this.renderOverviewSection(dataDefined)}
                 <SeasonRoundSelector 
                     season={this.state.selectedSeason}
+                    offsettedSeason={this.state.selectedSeason + this.props.levelDataProps.levelData.seasonOffset}
                     round={this.state.selectedRound}
                     seasonRoundInfo={this.props.levelDataProps.seasonRoundInfo()}
                     callback={this.loadRound} />

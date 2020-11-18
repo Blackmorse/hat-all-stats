@@ -3,6 +3,7 @@ import './SeasonRoundSelector.css'
 
 interface Props {    
     season: number,
+    offsettedSeason: number,
     round: number,
     seasonRoundInfo: Array<[number, Array<number>]>,
     callback: (season: number, round: number) => void
@@ -70,7 +71,7 @@ class SeasonRoundSelector extends React.Component<Props> {
         return <nav className="season_round_selector">
             {leftLink}
             <span className="season_round_selector_center">
-                <span className="srselector_info">Season: {this.props.season}</span>
+                <span className="srselector_info">Season: {this.props.offsettedSeason}</span>
                 <span className="srselector_info">Round: {this.props.round}</span>
             </span>
             {rightLink}

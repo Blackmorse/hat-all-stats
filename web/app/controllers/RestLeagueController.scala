@@ -25,6 +25,7 @@ import scala.concurrent.Future
 case class RestLeagueData(leagueId: Int,
                           leagueName: String,
                           divisionLevels: Seq[String],
+                          seasonOffset: Int,
                           seasonRoundInfo: Seq[(Int, Rounds)],
                           currency: String,
                           currencyRate: Double) extends LevelData
@@ -46,12 +47,14 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       val leagueName = league.getEnglishName
       val numberOfDivisions = league.getNumberOfLevels
       val divisionLevels = (1 to numberOfDivisions).map(Romans(_))
+      val seasonOffset = leagueInfoService.leagueInfo(leagueId).league.getSeasonOffset
       val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId)
 
       val restLeagueData = RestLeagueData(
         leagueId = leagueId,
         leagueName = leagueName,
         divisionLevels = divisionLevels,
+        seasonOffset = seasonOffset,
         seasonRoundInfo = seasonRoundInfo,
         currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
         currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate)

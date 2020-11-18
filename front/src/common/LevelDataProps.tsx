@@ -20,6 +20,11 @@ abstract class LevelDataProps<Data extends LevelData> {
     currentSeason(): number {
         return this.seasonRoundInfo()[this.seasonRoundInfo().length - 1][0]
     }
+
+    offsettedSeason(): number {
+        return this.currentSeason() + this.levelData.seasonOffset
+    }
+
     seasons(): Array<number> {
         return this.seasonRoundInfo().map(seasonInfo => seasonInfo[0])
     }

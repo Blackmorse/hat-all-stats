@@ -31,6 +31,7 @@ case class RestLeagueUnitData(leagueId: Int,
                               leagueUnitId: Long,
                               leagueUnitName: String,
                               teams: Seq[(Long, String)],
+                              seasonOffset: Int,
                               seasonRoundInfo: Seq[(Int, Rounds)],
                               currency: String,
                               currencyRate: Double) extends LevelData
@@ -89,6 +90,7 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
         leagueUnitId = leagueUnitId,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
         teams = leagueDetails.getTeams.asScala.map(team => (team.getTeamId.toLong, team.getTeamName)),
+        seasonOffset = league.getSeasonOffset,
         seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueDetails.getLeagueId),
         currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
         currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate)

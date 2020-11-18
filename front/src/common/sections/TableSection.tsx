@@ -188,6 +188,7 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
         return <>
                 <div className="table_settings_div">
                     <SeasonSelector currentSeason={this.state.statisticsParameters.season}
+                        seasonOffset={this.props.levelDataProps.levelData.seasonOffset}
                         seasons={this.props.levelDataProps.seasons()}
                         callback={this.seasonChanged}/>
                     <StatsTypeSelector  statsTypes={this.statsTypes}

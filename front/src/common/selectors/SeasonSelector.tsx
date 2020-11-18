@@ -5,6 +5,7 @@ import './Selector.css'
 
 interface SeasonSelectorProps {
     currentSeason: number,
+    seasonOffset: number
     seasons: Array<number>,
     callback: (season: number) => void
 }
@@ -23,7 +24,7 @@ class SeasonSelector extends React.Component<SeasonSelectorProps> {
                     <select className="selector_div_entry" defaultValue={this.props.currentSeason}
                         onChange={this.onChanged}>
                         {this.props.seasons.map(season => {
-                            return <option key={"select_season_" + season} value={season}>{season}</option>
+                            return <option key={"select_season_" + season} value={season}>{season + this.props.seasonOffset}</option>
                         })}
                     </select>
                 </div>    

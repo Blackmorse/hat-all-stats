@@ -19,7 +19,7 @@ class CurrentCountryInfoMenu<Data extends CountryLevelData> extends React.Compon
                     </header>
                     <section className="left_bar_links">
                         <span className="left_bar_links"> 
-                            {t('filter.season')} {this.props.levelDataProps.currentSeason()}<br />
+                            {t('filter.season')} {this.props.levelDataProps.offsettedSeason()}<br />
                             {t('filter.round')} {this.props.levelDataProps.currentRound()}
                         </span>
                     </section>

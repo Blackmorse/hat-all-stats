@@ -25,6 +25,7 @@ case class RestDivisionLevelData(leagueId: Int,
                                  divisionLevel: Int,
                                  divisionLevelName: String,
                                  leagueUnitsNumber: Int,
+                                 seasonOffset: Int,
                                  seasonRoundInfo: Seq[(Int, Rounds)],
                                  currency: String,
                                  currencyRate: Double) extends LevelData
@@ -50,6 +51,7 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
       divisionLevel = divisionLevel,
       divisionLevelName = Romans(divisionLevel),
       leagueUnitsNumber = leagueUnitsNumber,
+      seasonOffset = league.getSeasonOffset,
       seasonRoundInfo = seasonRoundInfo,
       currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
       currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate)

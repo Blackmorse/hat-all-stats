@@ -13,6 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 case class WorldData(countries: Seq[(Int, String)],
+                     seasonOffset: Int,
                      seasonRoundInfo: Seq[(Int, Rounds)],
                      currency: String,
                      currencyRate: Double) extends LevelData
@@ -36,6 +37,7 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
       .sortBy(_._2)
 
     val worldData = WorldData(countries = countries,
+      seasonOffset = 0,
       seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(lastLeagueId),
       currency = "$",
       currencyRate = 10.0d
