@@ -2,6 +2,8 @@ import React from 'react';
 import './Layout.css'
 import { Translation } from 'react-i18next'
 import '../../i18n'
+import i18n from '../../i18n';
+import Cookies from 'js-cookie';
 
 abstract class Layout<Props, State> extends React.Component<Props, State> {
     
@@ -11,17 +13,29 @@ abstract class Layout<Props, State> extends React.Component<Props, State> {
 
     abstract leftMenu(): JSX.Element
 
+    private changeLanguage(lang: string) {
+        Cookies.set('hattid_language', lang, { sameSite: "Lax", expires: 180})
+        i18n.changeLanguage(lang)
+    }
+
     render() {
+        if(Cookies.get('hattid_language')) {
+            this.changeLanguage(Cookies.get('hattid_language') || 'en')
+        }
         return <Translation>
         { (t, { i18n }) => 
         <div className='main_frame'>
             <aside className="top_links">
                 <span className="suggestions_reports">
-                    Any suggestions/bugs? <a className="aside_link" target="_tab" href="https://www.hattrick.org/goto.ashx?path=/MyHattrick/Inbox/?actionType=newMail%26userId=4040806">Write to me at Hattrick</a>
+                    Any suggestions/bugs? <a className="aside_link" target="_tab" href="https://www.hattrick.org/goto.ashx?path=/MyHattrick/Inbox/?actionType=newMail%26userId=4040806">Contact me at Hattrick</a>
                 </span>
                 <span className="language_links">
-                    <button className="language_link_button" onClick={(e) => i18n.changeLanguage("en")}>en</button>
-                    <button className="language_link_button" onClick={(e) => i18n.changeLanguage("ru")}>ru</button>
+                    <button className="language_link_button" onClick={(e) => this.changeLanguage("en")}>en</button>
+                    <button className="language_link_button" onClick={(e) => this.changeLanguage("es")}>es</button>
+                    <button className="language_link_button" onClick={(e) => this.changeLanguage("de")}>de</button>
+                    <button className="language_link_button" onClick={(e) => this.changeLanguage("hr")}>hr</button>
+                    <button className="language_link_button" onClick={(e) => this.changeLanguage("it")}>it</button>
+                    <button className="language_link_button" onClick={(e) => this.changeLanguage("ru")}>ru</button>
                 </span>
             </aside>
             <header className="header">{this.topMenu()}</header>
