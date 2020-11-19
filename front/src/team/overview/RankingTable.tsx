@@ -23,7 +23,8 @@ interface Props {
     formatter: (value: number) => JSX.Element,
     page: PagesEnum,
     sortingField: string,
-    title: string
+    title: string,
+    yAxisFunc?: (n: number) => number
 }
 
 interface State {
@@ -131,7 +132,9 @@ class RankingTable extends React.Component<Props, State> {
                     valueFunc={this.props.valueFunc}
                     positionFunc={this.props.positionFunc}
                     title={this.props.title} 
-                    teamLevelDataProps={this.props.rankingData.teamLevelDataProps}/> 
+                    teamLevelDataProps={this.props.rankingData.teamLevelDataProps}
+                    yAxisfunc={this.props.yAxisFunc}
+                /> 
                 : <></>}
             <table className="ranking_table">
                 <tbody>

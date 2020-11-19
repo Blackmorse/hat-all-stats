@@ -6,7 +6,8 @@ import i18n from '../../i18n';
 interface Props {
   leagueRankings: Array<TeamRanking>,
   valueFunc: (teamRanking: TeamRanking) => number,
-  title: string
+  title: string,
+  formatterFunc?: (n: number) => number
 }
 
 class RankingsChart extends React.Component<Props, {}> {
@@ -14,7 +15,9 @@ class RankingsChart extends React.Component<Props, {}> {
     render() {
         
         let x = this.props.leagueRankings.map(l => l.round)
-        let y = this.props.leagueRankings.map(this.props.valueFunc)
+        let yy = this.props.leagueRankings.map(this.props.valueFunc)
+        let y = (this.props.formatterFunc !== undefined) ? yy.map(this.props.formatterFunc) : yy
+        console.log(y)
         let chartData = [{
             type: 'scatter',
             x: x,
@@ -30,6 +33,7 @@ class RankingsChart extends React.Component<Props, {}> {
             },
             showlegend: false,
             xaxis: {
+              dtick: 1,
               title: {
                 text: i18n.t('chart.round')
               }

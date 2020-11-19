@@ -12,7 +12,8 @@ interface Props {
     positionFunc: (teamRanking: TeamRanking) => number,
     title: string,
     teamLevelDataProps: TeamLevelDataProps,
-    callback: () => void
+    callback: () => void,
+    yAxisfunc?: (n: number) => number
 }
 
 class ChartWindow extends React.Component<Props> {
@@ -26,6 +27,7 @@ class ChartWindow extends React.Component<Props> {
                     leagueRankings={this.props.leagueRankings}
                     valueFunc={this.props.valueFunc}
                     title={this.props.title}
+                    formatterFunc={this.props.yAxisfunc}
                     />
                 <PositionRankingChart 
                     leagueRankings={this.props.leagueRankings}

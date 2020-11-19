@@ -133,6 +133,7 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             positionFunc={teamRanking => teamRanking.agePosition} 
                             formatter={ageFormatter}
                             title={t('table.age')}   
+                            yAxisFunc={y => Number(y / 112)}
                         />
                         <RankingTable 
                             page={PagesEnum.TEAM_RATINGS}
@@ -142,6 +143,7 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             positionFunc={teamRanking => teamRanking.ratingPosition} 
                             formatter={ratingFormatter}
                             title={t('table.rating')}   
+                            yAxisFunc={y => y / 10}
                         />
                         <RankingTable 
                             page={PagesEnum.TEAM_RATINGS}
@@ -151,6 +153,7 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             positionFunc={teamRanking => teamRanking.ratingEndOfMatchPosition} 
                             formatter={ratingFormatter}
                             title={t('table.rating_end_of_match')}   
+                            yAxisFunc={y => y / 10}
                         />
                     </div>
                     <div className="rankings_grid_row">
@@ -170,7 +173,8 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             valueFunc={teamRanking => teamRanking.injury}
                             positionFunc={teamRanking => teamRanking.injuryPosition} 
                             formatter={injuryFormatter}
-                            title={t('table.total_injury_weeks')}   
+                            title={t('table.total_injury_weeks')}
+                               
                         />
                         <RankingTable 
                             page={PagesEnum.TEAM_AGE_INJURY}
