@@ -6,6 +6,7 @@ import LeagueUnitLink from '../../common/links/LeagueUnitLink'
 import TeamLink from '../../common/links/TeamLink'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import OverviewTableSection from './OverviewTableSection';
+import ExternalMatchLink from '../links/ExternalMatchLink'
 
 abstract class MatchesOverviewSection<Data extends LevelData> extends OverviewTableSection<Data, MatchTopHatstatsOverview> {
 
@@ -37,7 +38,7 @@ abstract class MatchesOverviewSection<Data extends LevelData> extends OverviewTa
                 {this.props.linkProvider(matc.matchTopHatstats.homeHatstats.toString(), this.state.selectedSeason, this.state.selectedRound, matc).render()}
             </td>
             <td className="value">
-                {matc.matchTopHatstats.homeGoals} : {matc.matchTopHatstats.awayGoals}
+                {matc.matchTopHatstats.homeGoals} : {matc.matchTopHatstats.awayGoals} <ExternalMatchLink id={matc.matchTopHatstats.matchId}/>
             </td>
             <td className="value">
             {this.props.linkProvider(matc.matchTopHatstats.awayHatstats.toString(), this.state.selectedSeason, this.state.selectedRound, matc).render()}

@@ -10,6 +10,7 @@ import ModelTableTh from "../../elements/SortingTableTh";
 import TeamLink from "../../links/TeamLink";
 import LeagueUnitLink from "../../links/LeagueUnitLink";
 import { ageFormatter, commasSeparated } from '../../Formatters'
+import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 
 abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends TableSection<Data, TableProps, PlayerSalaryTSI> {
@@ -42,7 +43,7 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
         let playerSortingKey = playerSalaryTSI.playerSortingKey
         return <tr key={"player_cards_row" + index}>
             <td>{index + 1}</td>
-            <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName}</td>
+            <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{ageFormatter(playerSalaryTSI.age)}</td>

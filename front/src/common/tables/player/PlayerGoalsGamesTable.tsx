@@ -10,6 +10,7 @@ import ModelTableTh from '../../../common/elements/SortingTableTh'
 import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getPlayerGoalsGames } from '../../../rest/Client';
+import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 
 abstract class PlayerGoalsGamesTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends TableSection<Data, TableProps, PlayerGoalsGames> {
@@ -43,7 +44,7 @@ abstract class PlayerGoalsGamesTable<Data extends LevelData, TableProps extends 
         let playerSortingKey = playerGoalsGames.playerSortingKey
         return <tr key={"player_goal_games_row" + index}>
             <td>{index + 1}</td>
-            <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName}</td>
+            <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{playerGoalsGames.games}</td>

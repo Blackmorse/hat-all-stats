@@ -10,6 +10,7 @@ import ModelTableTh from '../../elements/SortingTableTh'
 import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getSurprisingMatches } from '../../../rest/Client';
+import ExternalMatchLink from '../../links/ExternalMatchLink';
 
 abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
     extends TableSection<Data, TableProps, MatchTopHatstats> {
@@ -44,7 +45,7 @@ abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends L
             <td className="value"><LeagueUnitLink id={matchHatstats.homeTeam.leagueUnitId} text={matchHatstats.homeTeam.leagueUnitName} /></td>
             <td className="value"><TeamLink id={matchHatstats.homeTeam.teamId} text={matchHatstats.homeTeam.teamName} /></td>
             <td className="value">{matchHatstats.homeHatstats}</td>
-            <td className="value">{matchHatstats.homeGoals} : {matchHatstats.awayGoals}</td>
+            <td className="value">{matchHatstats.homeGoals} : {matchHatstats.awayGoals} <ExternalMatchLink id={matchHatstats.matchId} /></td>
             <td className="value">{matchHatstats.awayHatstats}</td>
             <td className="value"><TeamLink id={matchHatstats.awayTeam.teamId} text={matchHatstats.awayTeam.teamName} /></td>           
         </tr>

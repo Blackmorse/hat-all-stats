@@ -10,6 +10,7 @@ import { Translation } from 'react-i18next'
 import '../../i18n'
 import i18n from '../../i18n'
 import TeamMatchMetaInfo from './TeamMatchMetaInfo'
+import ExternalMatchLink from '../../common/links/ExternalMatchLink'
 
 interface Props {
     teamMatch: TeamMatch
@@ -34,7 +35,7 @@ class TeamMatchInfo extends StatisticsSection<Props, {loadingState: LoadingEnum}
                 <span className="top_match_info_left_link">
                     <TeamLink id={teamMatch.homeTeam.teamId} text={teamMatch.homeTeam.teamName} forceRefresh={true}/>
                 </span>
-                <span>{teamMatch.homegoals} - {teamMatch.awayGoals}</span> 
+                <span>{teamMatch.homegoals} - {teamMatch.awayGoals} <ExternalMatchLink id={teamMatch.matchId} /></span> 
                 <span className="top_match_info_right_link">
                     <TeamLink id={teamMatch.awayTeam.teamId} text={teamMatch.awayTeam.teamName} forceRefresh={true}/>
                 </span>

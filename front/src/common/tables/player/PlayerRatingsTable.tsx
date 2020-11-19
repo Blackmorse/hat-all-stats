@@ -11,6 +11,7 @@ import ModelTableTh from "../../elements/SortingTableTh";
 import TeamLink from "../../links/TeamLink";
 import LeagueUnitLink from "../../links/LeagueUnitLink";
 import { ageFormatter, ratingFormatter } from '../../Formatters'
+import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 
 abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
         extends TableSection<Data, TableProps, PlayerRating> {
@@ -43,7 +44,7 @@ abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends Lev
         let playerSortingKey = playerRating.playerSortingKey
         return <tr key={"player_ratings_row" + index}>
             <td>{index + 1}</td>
-            <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName}</td>
+            <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{ageFormatter(playerRating.age)}</td>

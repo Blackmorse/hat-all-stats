@@ -49,6 +49,7 @@
 .logo:hover {
     background: #00981e;
 }
-/* .logo {
-    height: 100%;
-} */
+
+.external {
+    margin: 0 0 0 -5px !important;
+}

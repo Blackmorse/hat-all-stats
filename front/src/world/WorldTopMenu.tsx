@@ -12,6 +12,10 @@ class WorldTopMenu extends TopMenu<Props> {
         return []
     }
 
+    externalLink(): JSX.Element | undefined {
+        return undefined
+    }
+
     onChanged = (event: React.FormEvent<HTMLSelectElement>) => {
         this.props.callback(Number(event.currentTarget.value))
       }

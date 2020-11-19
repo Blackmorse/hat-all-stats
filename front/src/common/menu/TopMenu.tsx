@@ -9,6 +9,8 @@ abstract class TopMenu<Props> extends React.Component<Props> {
 
     abstract selectBox(): JSX.Element | undefined
 
+    abstract externalLink(): JSX.Element | undefined
+
     render(): JSX.Element {
        let selectBox = this.selectBox()
        let links = this.links()
@@ -28,6 +30,7 @@ abstract class TopMenu<Props> extends React.Component<Props> {
            {this.links().map((link, index) => {
                return <React.Fragment key={'top_menu_link_' + index}>
                     <Link className="header_link" to={link[0]} >{(link[1]) ? link[1] : placeholder}</Link>
+                    {(index === links.length - 1) ? <span className="header_link external">{this.externalLink()}</span> : <></>}
                     {(index !== links.length - 1 || selectBox) ? arrow : <></>}
                 </React.Fragment>
            })}

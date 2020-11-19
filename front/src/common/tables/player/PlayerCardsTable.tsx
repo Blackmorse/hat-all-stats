@@ -11,6 +11,7 @@ import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { yellowCards, redCards } from '../../Formatters'
 import { getPlayerCards } from '../../../rest/Client';
+import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 
 abstract class PlayerCardsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends TableSection<Data, TableProps, PlayerCards> {
@@ -44,7 +45,7 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
         let playerSortingKey = playerCards.playerSortingKey
         return <tr key={"player_cards_row" + index}>
             <td>{index + 1}</td>
-            <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName}</td>
+            <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId} /></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{playerCards.games}</td>

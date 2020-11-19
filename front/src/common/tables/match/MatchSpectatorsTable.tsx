@@ -11,6 +11,7 @@ import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getMatchSpectators } from '../../../rest/Client';
 import { commasSeparated } from '../../Formatters'
+import ExternalMatchLink from '../../links/ExternalMatchLink';
 
 abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
     extends TableSection<Data, TableProps, MatchSpectators> {
@@ -43,7 +44,7 @@ abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends L
             <td>{index + 1}</td>
             <td className="value"><LeagueUnitLink id={matchSpectators.homeTeam.leagueUnitId} text={matchSpectators.homeTeam.leagueUnitName} /></td>
             <td className="value"><TeamLink id={matchSpectators.homeTeam.teamId} text={matchSpectators.homeTeam.teamName} /></td>
-            <td className="value">{matchSpectators.homeGoals} : {matchSpectators.awayGoals}</td>
+            <td className="value">{matchSpectators.homeGoals} : {matchSpectators.awayGoals} <ExternalMatchLink id={matchSpectators.matchId} /></td>
             <td className="value"><TeamLink id={matchSpectators.awayTeam.teamId} text={matchSpectators.awayTeam.teamName} /></td>           
             <td className="value">{commasSeparated(matchSpectators.spectators)}</td>
         </tr>

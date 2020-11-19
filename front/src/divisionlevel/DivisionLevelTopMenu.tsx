@@ -21,6 +21,10 @@ class DivisionLevelTopMenu extends TopMenu<Props> {
         ["/league/" + this.props.divisionLevelData?.leagueId + "/divisionLevel/" + this.props.divisionLevelData?.divisionLevel, this.props.divisionLevelData?.divisionLevelName]
       ]
     }
+
+    externalLink(): JSX.Element | undefined {
+      return undefined;
+    }
     selectBox(): JSX.Element {
       return <select className="href_select" onChange={this.onChanged}>
                 <option value={undefined}>Select...</option>

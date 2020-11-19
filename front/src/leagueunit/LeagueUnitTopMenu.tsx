@@ -2,6 +2,7 @@ import React from 'react'
 import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu';
+import ExternalLeagueUnitLink from '../common/links/ExternalLeagueUnitLink';
 
 interface Props {
     leagueUnitData?: LeagueUnitData,
@@ -20,6 +21,10 @@ class LeagueUnitTopMenu extends TopMenu<Props> {
             ["/league/" + this.props.leagueUnitData?.leagueId + "/divisionLevel/" + this.props.leagueUnitData?.divisionLevel, this.props.leagueUnitData?.divisionLevelName],
             ["/leagueUnit/" + this.props.leagueUnitData?.leagueUnitId, this.props.leagueUnitData?.leagueUnitName]
         ]
+    }
+
+    externalLink(): JSX.Element | undefined {
+        return <ExternalLeagueUnitLink id={this.props.leagueUnitData?.leagueUnitId || 0} black={false} />
     }
 
     selectBox(): JSX.Element {
