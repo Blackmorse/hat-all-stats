@@ -185,7 +185,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
             leagueTeamsCount = leagueTeamsCount,
             divisionLevelTeamsCount = divisionLevelTeamsCount,
             currencyRate = if(currencyRate == null) 10.0d else currencyRate,
-            currencyName = currencyName)
+            currencyName = if(currencyName == null) "$" else currencyName)
 
         })
     }) match {
