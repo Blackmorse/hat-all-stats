@@ -81,7 +81,11 @@ class League extends CountryLevelLayout<Props, LeagueData, LeagueLevelDataProps>
             (props, queryParams) => <PromotionsTable<LeagueData, LeagueLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         
         super(props, pagesMap)
-    }    
+    }   
+    
+    documentTitle(data: LeagueData): string {
+        return data.leagueName
+    }
 
     makeModelProps(levelData: LeagueData): LevelDataProps<LeagueData> {
         return new LeagueLevelDataProps(levelData)

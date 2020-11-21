@@ -81,6 +81,10 @@ class LeagueUnit extends CountryLevelLayout<Props, LeagueUnitData, LeagueUnitLev
         this.teamIdSelected=this.teamIdSelected.bind(this)
     }
 
+    documentTitle(data: LeagueUnitData): string {
+        return data.leagueUnitName
+    }
+
     fetchLevelData(props: Props, callback: (data: LeagueUnitData) => void): void {
         getLeagueUnitData(Number(this.props.match.params.leagueUnitId), callback)
     }

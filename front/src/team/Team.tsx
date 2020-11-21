@@ -59,6 +59,9 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
         super(props, pagesMap)
     }
 
+    documentTitle(data: TeamData): string {
+        return data.teamName
+    }
 
     makeModelProps(levelData: TeamData): TeamLevelDataProps {
         return new TeamLevelDataProps(levelData)

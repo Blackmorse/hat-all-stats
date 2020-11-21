@@ -88,9 +88,12 @@ abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TablePro
 
     abstract fetchLevelData(props: Props, callback: (data: Data) => void): void
 
+    abstract documentTitle(data: Data): string
+
     componentDidMount() {
         const oldState = this.state
         this.fetchLevelData(this.props, data => {
+            document.title = this.documentTitle(data) + ' - AlltidLike'
             this.setState({
                 leaguePage: oldState.leaguePage,
                 levelData: data

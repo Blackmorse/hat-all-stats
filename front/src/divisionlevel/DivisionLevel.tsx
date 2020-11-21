@@ -85,6 +85,10 @@ class DivisionLevel extends CountryLevelLayout<Props, DivisionLevelData, Divisio
         this.leagueUnitSelected=this.leagueUnitSelected.bind(this)
     }
 
+    documentTitle(data: DivisionLevelData): string {
+        return data.divisionLevelName
+    }
+
     fetchLevelData(props: Props, callback: (data: DivisionLevelData) => void): void {
         getDivisionLevelData(Number(this.props.match.params.leagueId), Number(this.props.match.params.divisionLevel) ,
         callback)
