@@ -40,13 +40,13 @@ abstract class TeamSalaryTSITable<Data extends LevelData, TableProps extends Lev
 
     columnValues(index: number, teamSalaryTSI: TeamSalaryTSI): JSX.Element {
         let teamSortingKey = teamSalaryTSI.teamSortingKey
-        return <tr key={"team_salary_tsi_row_" + index}>
+        return <>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{commasSeparated(teamSalaryTSI.tsi)}</td>
             <td className="value">{commasSeparated(teamSalaryTSI.salary / this.props.levelDataProps.currencyRate())}</td>
-        </tr>
+        </>
     }
 }
 

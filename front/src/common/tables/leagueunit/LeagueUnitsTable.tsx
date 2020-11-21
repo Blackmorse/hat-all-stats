@@ -35,14 +35,14 @@ class LeagueUnitsTable<Data extends LevelData, TableProps extends LevelDataProps
     }
 
     columnValues(index: number, leagueUnitRating: LeagueUnitRating): JSX.Element {
-        return <tr key={"league_unit_row_" + index}>
+        return <>
             <td>{index + 1}</td>
             <td className="value"><LeagueUnitLink id={leagueUnitRating.leagueUnitId} text={leagueUnitRating.leagueUnitName}/></td>
             <td className="value">{leagueUnitRating.hatStats}</td>
             <td className="value">{leagueUnitRating.midfield * 3}</td>
             <td className="value">{leagueUnitRating.defense}</td>
             <td className="value">{leagueUnitRating.attack}</td>
-        </tr>
+        </>
     }    
 }
 

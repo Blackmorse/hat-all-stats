@@ -38,7 +38,7 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
     }
 
     columnValues(index: number, teamHatstats: TeamHatstats): JSX.Element {
-        return <tr key={"team_hatstats_row_" + index}>
+        return <>
             <td>{index + 1}</td>
             <td><TeamLink id={teamHatstats.teamId} text={teamHatstats.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamHatstats.leagueUnitId} text={teamHatstats.leagueUnitName}/></td>
@@ -46,7 +46,7 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
             <td className="value">{teamHatstats.midfield * 3}</td>
             <td className="value">{teamHatstats.defense}</td>
             <td className="value">{teamHatstats.attack}</td>
-        </tr>
+        </>
     }
 
 }

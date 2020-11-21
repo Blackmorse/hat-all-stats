@@ -43,7 +43,7 @@ abstract class TeamGoalPointsTable<Data extends LevelData, TableProps extends Le
 
     columnValues(index: number, teamRating: TeamGoalPoints): JSX.Element {
         let teamSortingKey = teamRating.teamSortingKey
-        return <tr key={"team_ratings_row_" + index}>
+        return <>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
@@ -54,7 +54,7 @@ abstract class TeamGoalPointsTable<Data extends LevelData, TableProps extends Le
             <td className="value">{teamRating.goalsAgaints}</td>
             <td className="value">{teamRating.goalsDifference}</td>
             <td className="value">{teamRating.points}</td>
-        </tr>
+        </>
     }
 }
 

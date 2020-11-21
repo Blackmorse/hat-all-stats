@@ -40,14 +40,14 @@ abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends Le
 
     columnValues(index: number, playerInjury: PlayerInjury): JSX.Element {
         let playerSortingKey = playerInjury.playerSortingKey
-        return <tr key={"player_ratings_row" + index}>
+        return <>
             <td>{index + 1}</td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{ageFormatter(playerInjury.age)}</td>
             <td className="value">{injuryFormatter(playerInjury.injury)}</td>
-        </tr>
+        </>
     }
 }
 

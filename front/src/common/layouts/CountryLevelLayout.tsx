@@ -128,7 +128,6 @@ abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TablePro
         if (this.state.levelData && jsxFunction) {
             let queryParams = (this.firstTime) ? this.state.queryParams : {}
             // let queryParams = this.state.queryParams
-            console.log(queryParams)
             res = jsxFunction(this.makeModelProps(this.state.levelData), queryParams)
             this.firstTime = false
         } else {

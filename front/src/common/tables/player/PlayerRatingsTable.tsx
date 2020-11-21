@@ -42,7 +42,7 @@ abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends Lev
 
     columnValues(index: number, playerRating: PlayerRating): JSX.Element {
         let playerSortingKey = playerRating.playerSortingKey
-        return <tr key={"player_ratings_row" + index}>
+        return <>
             <td>{index + 1}</td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
@@ -50,7 +50,7 @@ abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends Lev
             <td className="value">{ageFormatter(playerRating.age)}</td>
             <td className="value">{ratingFormatter(playerRating.rating)}</td>
             <td className="value">{ratingFormatter(playerRating.ratingEndOfMatch)}</td>
-        </tr>
+        </>
     }
 }
 

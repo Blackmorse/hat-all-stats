@@ -19,6 +19,7 @@ interface ModelTableState<T> {
     entities?: Array<T>,
     statisticsParameters: StatisticsParameters,
     isLastPage: boolean,
+    selectedRow?: number
 }
 
 export interface SortingState {
@@ -68,7 +69,8 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
                 statsType: statsType,
                 season: season
             },
-            loadingState: LoadingEnum.OK
+            loadingState: LoadingEnum.OK,
+            selectedRow: (selectedRow === null) ? undefined: selectedRow
         }
 
         this.pageSizeChanged=this.pageSizeChanged.bind(this);
@@ -184,7 +186,7 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
             pageNumber: this.state.statisticsParameters.page,
             isLastPage: this.state.isLastPage
         }
-
+        let indexOffset = this.state.statisticsParameters.pageSize * this.state.statisticsParameters.page 
         return <>
                 <div className="table_settings_div">
                     <SeasonSelector currentSeason={this.state.statisticsParameters.season}
@@ -207,7 +209,11 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
                     </thead>
                     <tbody>
                         {this.state.entities?.map((entity, index) => 
-                            this.columnValues(this.state.statisticsParameters.pageSize * this.state.statisticsParameters.page + index, entity))}
+                            <tr key={this.constructor.name + '_' + index} 
+                                className={(this.state.selectedRow && this.state.selectedRow === indexOffset + index) ? "selected_row" : ""}>
+                                {this.columnValues(indexOffset + index, entity)}
+                            </tr>
+                            )}
                     </tbody>
                 </table>
 

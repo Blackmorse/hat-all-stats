@@ -41,7 +41,7 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
 
     columnValues(index: number, playerSalaryTSI: PlayerSalaryTSI): JSX.Element {
         let playerSortingKey = playerSalaryTSI.playerSortingKey
-        return <tr key={"player_cards_row" + index}>
+        return <>
             <td>{index + 1}</td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
@@ -49,7 +49,7 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
             <td className="value">{ageFormatter(playerSalaryTSI.age)}</td>
             <td className="value">{commasSeparated(playerSalaryTSI.tsi)}</td>
             <td className="value">{commasSeparated(playerSalaryTSI.salary / this.props.levelDataProps.currencyRate())}</td>
-        </tr>
+        </>
     }
 }
 

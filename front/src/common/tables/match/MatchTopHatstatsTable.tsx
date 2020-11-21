@@ -40,7 +40,7 @@ abstract class MatchTopHatstatsTable<Data extends LevelData, TableProps extends 
     }
 
     columnValues(index: number, matchHatstats: MatchTopHatstats): JSX.Element {
-        return <tr key={"top_matches_row" + index}>
+        return <>
             <td>{index + 1}</td>
             <td className="value"><LeagueUnitLink id={matchHatstats.homeTeam.leagueUnitId} text={matchHatstats.homeTeam.leagueUnitName} /></td>
             <td className="value"><TeamLink id={matchHatstats.homeTeam.teamId} text={matchHatstats.homeTeam.teamName} /></td>
@@ -48,7 +48,7 @@ abstract class MatchTopHatstatsTable<Data extends LevelData, TableProps extends 
             <td className="value">{matchHatstats.homeGoals} : {matchHatstats.awayGoals} <ExternalMatchLink id={matchHatstats.matchId} /></td>
             <td className="value">{matchHatstats.awayHatstats}</td>
             <td className="value"><TeamLink id={matchHatstats.awayTeam.teamId} text={matchHatstats.awayTeam.teamName} /></td>           
-        </tr>
+        </>
     }
 }
 

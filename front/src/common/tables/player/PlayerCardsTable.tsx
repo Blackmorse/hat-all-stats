@@ -43,7 +43,7 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
 
     columnValues(index: number, playerCards: PlayerCards): JSX.Element {
         let playerSortingKey = playerCards.playerSortingKey
-        return <tr key={"player_cards_row" + index}>
+        return <>
             <td>{index + 1}</td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId} /></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
@@ -52,7 +52,7 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
             <td className="value">{playerCards.playedMinutes}</td>
             <td className="value">{yellowCards(playerCards.yellowCards)}</td>
             <td className="value">{redCards(playerCards.redCards)}</td>
-        </tr>
+        </>
     }
 }
 

@@ -37,12 +37,12 @@ abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends 
     
     columnValues(index: number, teamPowerRating: TeamPowerRating): JSX.Element {
         let teamSortingKey = teamPowerRating.teamSortingKey
-        return <tr key={"team_power_rating_row_" + index}>
+        return <>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{teamPowerRating.powerRating}</td>
-        </tr>
+        </>
     }
 }
 

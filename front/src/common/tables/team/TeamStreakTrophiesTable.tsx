@@ -39,14 +39,14 @@ abstract class TeamStreakTrophiesTable<Data extends LevelData, TableProps extend
 
     columnValues(index: number, teamStreakTrophies: TeamStreakTrophies): JSX.Element {
         let teamSortingKey = teamStreakTrophies.teamSortingKey
-        return <tr key={"team_streak_trophies_row_" + index}>
+        return <>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{teamStreakTrophies.trophiesNumber}</td>
             <td className="value">{teamStreakTrophies.numberOfVictories}</td>
             <td className="value">{teamStreakTrophies.numberOfUndefeated}</td>
-        </tr>
+        </>
     }
 }
 
