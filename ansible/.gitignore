@@ -1,2 +1,2 @@
 /hosts
-group_vars/
+group_vars/master-server-decrypted.yml
