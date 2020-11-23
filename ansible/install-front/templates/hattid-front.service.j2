@@ -1,0 +1,14 @@
+[Unit]
+Description=Hattid Front
+After=hattid-web.service
+
+[Service]
+WorkingDirectory={{ base_project_directory }}/hat-all-stats/front
+ExecStart=serve -s build -l {{ front.port }}
+User={{ ansible_user_id }}
+Type=simple
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

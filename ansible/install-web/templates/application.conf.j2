@@ -8,6 +8,10 @@ play.filters.enabled += play.filters.hosts.AllowedHostsFilter
 play.filters.hosts.routeModifiers.whiteList = []
 play.filters.hosts.routeModifiers.blackList = ["{{ loader.loader_url }}"]
 
+play.filters.enabled += "play.filters.cors.CORSFilter"
+play.filters.cors.pathPrefixes += "/api"
+play.filters.cors.allowedHttpMethods = ["GET"]
+
 play.http.errorHandler = "handlers.HattidErrorHandler"
 
 hattrick {

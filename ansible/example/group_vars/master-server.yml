@@ -26,3 +26,7 @@ loader:
 web:
   defaultLeagueId:
   port: 
+
+front:
+  apiUrl: 
+  port: 

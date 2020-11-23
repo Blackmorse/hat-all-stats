@@ -1,0 +1,35 @@
+---
+# tasks file for install-front
+ - name: .env for front
+   template:
+      src: .env.j2
+      dest: "{{ base_project_directory }}/hat-all-stats/front/.env"
+
+ - name: pull git changes
+   git:
+    repo: https://github.com/Blackmorse/hat-all-stats.git
+    dest: "{{ base_project_directory }}/hat-all-stats"
+   tags:
+    - update_repo
+  
+ - name: build front with npm
+   shell:
+     chdir: "{{ base_project_directory }}/hat-all-stats/front"
+     cmd: NODE_OPTIONS="--max-old-space-size=4096" npm run build
+   tags:
+    - rebuild
+
+ - name: copy unit for front
+   become: true
+   template:
+     src: hattid-front.service.j2
+     dest: /etc/systemd/system/hattid-front.service
+
+ - name: systemd unit for front
+   become: true
+   systemd:
+     name: hattid-front
+     daemon-reload: yes
+     enabled: yes
+     state: restarted
+   

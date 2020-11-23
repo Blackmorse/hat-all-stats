@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import ax, { AxiosResponse } from 'axios';
 import LeagueData from './models/leveldata/LeagueData'
 import DivisionLevelData from './models/leveldata/DivisionLevelData'
 import TeamHatstats from './models/team/TeamHatstats'
@@ -43,6 +43,8 @@ import PromotionWithType from './models/promotions/Promotion'
 import TeamSearchResult from './models/TeamSearchResult'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import TeamMatch from './models/match/TeamMatch'
+
+const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
 export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
