@@ -1,0 +1,33 @@
+---
+# tasks file for nginx/stub
+ - name: Create stub directory
+   file:
+    path: "{{ base_project_directory }}/stub"
+    state: directory
+
+ - name: copy certs to files
+   copy:
+   content: "{{ vars[ item.key ] }}"
+   dest: "{{ base_project_directory }}/certs/{{ item.value }}"
+   with_dict: 
+    ssl_certificate: certificate.pem
+    ssl_private_key: private_key.pem
+
+ - name: copy stub index page
+   copy:
+    src: index.html
+    dest: "{{ base_project_directory }}/stub/index.html"
+
+ - name: copy to nginx sites-enabled
+   become: true
+   template:
+     src: nginx-default.j2
+     dest: /etc/nginx/sites-available/default
+
+ - name: restart nginx
+   become: true
+   systemd:
+    name: nginx
+    daemon_reload: yes
+    enabled: yes
+    state: restarted

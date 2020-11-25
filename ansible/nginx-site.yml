@@ -1,0 +1,5 @@
+ - hosts: master-server
+   roles:
+    - nginx/site
+   vars_files:
+    - vars/certs.yml

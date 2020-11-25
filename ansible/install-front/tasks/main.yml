@@ -12,6 +12,13 @@
    tags:
     - update_repo
   
+ - name: npm install for front
+   shell:
+     chdir: "{{ base_project_directory }}/hat-all-stats/front"
+     cmd: npm install
+   tags:
+    - rebuild
+
  - name: build front with npm
    shell:
      chdir: "{{ base_project_directory }}/hat-all-stats/front"

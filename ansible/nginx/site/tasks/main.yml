@@ -1,0 +1,23 @@
+---
+# tasks file for nginx/site
+ - name: copy certs to files
+   copy:
+    content: "{{ vars[ item.key ] }}"
+    dest: "{{ base_project_directory }}/certs/{{ item.value }}"
+   with_dict: 
+     ssl_certificate: certificate.pem
+     ssl_private_key: private_key.pem
+
+ - name: copy to nginx sites-enabled
+   become: true
+   template:
+     src: nginx-default.j2
+     dest: /etc/nginx/sites-available/default
+
+ - name: restart nginx
+   become: true
+   systemd:
+    name: nginx
+    daemon_reload: yes
+    enabled: yes
+    state: restarted
