@@ -4,6 +4,7 @@ import { Translation } from 'react-i18next'
 import '../../i18n'
 import i18n from '../../i18n';
 import Cookies from 'js-cookie';
+import { YMInitializer } from 'react-yandex-metrika';
 
 abstract class Layout<Props, State> extends React.Component<Props, State> {
     
@@ -25,6 +26,7 @@ abstract class Layout<Props, State> extends React.Component<Props, State> {
         return <Translation>
         { (t, { i18n }) => 
         <div className='main_frame'>
+            <YMInitializer accounts={[67069579]} />
             <aside className="top_links">
                 <span className="suggestions_reports">
                     Any suggestions/bugs? <a className="aside_link" target="_tab" href="https://www.hattrick.org/goto.ashx?path=/MyHattrick/Inbox/?actionType=newMail%26userId=4040806">Contact me at Hattrick</a>
