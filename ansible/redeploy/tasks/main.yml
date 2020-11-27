@@ -1,0 +1,8 @@
+---
+ - include: 01-web.yml
+   tags: 
+    - web
+  
+ - include: 02-front.yml
+   tags: 
+    - front

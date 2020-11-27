@@ -7,8 +7,8 @@
 
  - name: copy certs to files
    copy:
-   content: "{{ vars[ item.key ] }}"
-   dest: "{{ base_project_directory }}/certs/{{ item.value }}"
+     content: "{{ vars[ item.key ] }}"
+     dest: "{{ base_project_directory }}/certs/{{ item.value }}"
    with_dict: 
     ssl_certificate: certificate.pem
     ssl_private_key: private_key.pem

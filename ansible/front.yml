@@ -1,3 +1,0 @@
- - hosts: master-server
-   roles: 
-    - install-front

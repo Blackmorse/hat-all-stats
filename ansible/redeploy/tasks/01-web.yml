@@ -1,16 +1,8 @@
 ---
-# tasks file for install-web
  - name: aplication.conf for web
    template:
      src: application.conf.j2
      dest: "{{ base_project_directory }}/hat-all-stats/web/conf/application.conf"
-
- - name: pull git changes
-   git:
-    repo: https://github.com/Blackmorse/hat-all-stats.git
-    dest: "{{ base_project_directory }}/hat-all-stats"
-   tags:
-    - update_repo 
 
  - name: unit for web
    become: true

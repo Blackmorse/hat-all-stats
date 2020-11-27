@@ -1,0 +1,8 @@
+ - hosts: master-server
+   roles:
+    - repo-update
+    - nginx/stub
+    - redeploy
+    - nginx/site
+   vars_files:
+    - vars/certs.yml

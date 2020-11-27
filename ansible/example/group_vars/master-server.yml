@@ -1,4 +1,5 @@
 base_project_directory: 
+domainName:
 
 hattrick: 
   customerKey: 
@@ -28,5 +29,4 @@ web:
   port: 
 
 front:
-  apiUrl: 
   port: 

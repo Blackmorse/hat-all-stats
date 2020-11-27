@@ -1,0 +1,8 @@
+---
+# tasks file for repo-update
+ - name: pull git changes
+   git:
+    repo: https://github.com/Blackmorse/hat-all-stats.git
+    dest: "{{ base_project_directory }}/hat-all-stats"
+   tags:
+    - update_repo

@@ -1,16 +1,8 @@
 ---
-# tasks file for install-front
  - name: .env for front
    template:
       src: .env.j2
       dest: "{{ base_project_directory }}/hat-all-stats/front/.env"
-
- - name: pull git changes
-   git:
-    repo: https://github.com/Blackmorse/hat-all-stats.git
-    dest: "{{ base_project_directory }}/hat-all-stats"
-   tags:
-    - update_repo
   
  - name: npm install for front
    shell:
@@ -39,4 +31,3 @@
      daemon-reload: yes
      enabled: yes
      state: restarted
-   
