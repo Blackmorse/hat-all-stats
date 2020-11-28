@@ -1,5 +1,7 @@
 import React from 'react';
 import './SeasonRoundSelector.css'
+import '../../i18n'
+import { Translation } from 'react-i18next'
 
 interface Props {    
     season: number,
@@ -68,14 +70,17 @@ class SeasonRoundSelector extends React.Component<Props> {
             rightLink = <span className="season_round_selector_link disabled">▶</span>
         }
 
-        return <nav className="season_round_selector">
+        return <Translation>
+        {(t, { i18n}) => <nav className="season_round_selector">
             {leftLink}
             <span className="season_round_selector_center">
-                <span className="srselector_info">Season: {this.props.offsettedSeason}</span>
-                <span className="srselector_info">Round: {this.props.round}</span>
+                <span className="srselector_info">{t('filter.season')} {this.props.offsettedSeason}</span>
+                <span className="srselector_info">{t('filter.round')} {this.props.round}</span>
             </span>
             {rightLink}
         </nav>
+        }
+        </Translation>
     }
 }
 
