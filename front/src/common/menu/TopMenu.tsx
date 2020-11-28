@@ -28,10 +28,12 @@ abstract class TopMenu<Props> extends React.Component<Props> {
 
        return <div className="header_inner">
            {this.links().map((link, index) => {
-               return <React.Fragment key={'top_menu_link_' + index}>
-                    <Link className="header_link" to={link[0]} >{(link[1]) ? link[1] : placeholder}</Link>
+               return <React.Fragment key={'top_menu_link_' + index} >
+                    <Link className="header_link" to={link[0]} >
+                        <span className="header_link_text">{(link[1]) ? link[1] : placeholder}</span>
+                    </Link>
                     {(index === links.length - 1) ? <span className="header_link external">{this.externalLink()}</span> : <></>}
-                    {(index !== links.length - 1 || selectBox) ? arrow : <></>}
+                    <span>{(index !== links.length - 1 || selectBox) ? arrow : <></>}</span>
                 </React.Fragment>
            })}
             {selectBox}

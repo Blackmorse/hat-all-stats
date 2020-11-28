@@ -12,6 +12,7 @@
     height: 100%;
     display: flex;
     align-items: center;
+    vertical-align: middle;
     padding: 0 5px;
     color: white;
 
@@ -20,7 +21,18 @@
     -webkit-user-select: none;
     user-select: none;
     text-decoration: none;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+/* hides part of league, league unit names*/
+/* .header_link_text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+} */
 
 .header_link:hover {
     background: #224d14;
