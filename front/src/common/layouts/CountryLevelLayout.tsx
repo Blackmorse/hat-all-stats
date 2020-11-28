@@ -11,11 +11,13 @@ import Mappings from '../enums/Mappings'
 import QueryParams from '../QueryParams'
 import TeamSearchPage from '../pages/TeamSearchPage'
 import CurrentCountryInfoMenu from '../menu/CurrentCountryInfoMenu'
+import { Link } from 'react-router-dom'
 
 export interface CountryLevelLayoutState<Data extends CountryLevelData> {
     leaguePage: PagesEnum,
     levelData?: Data,
-    queryParams: QueryParams
+    queryParams: QueryParams,
+    isError: boolean
 }
 
 abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TableProps extends LevelDataProps<Data>> extends Layout<Props, CountryLevelLayoutState<Data>> {
@@ -71,13 +73,25 @@ abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TablePro
         let pageString = params.get('page')
 
         if (pageString === null) {
-            this.state = {leaguePage: Array.from(pagesMap)[0][0], queryParams: queryParams}
+            this.state = {
+                leaguePage: Array.from(pagesMap)[0][0], 
+                queryParams: queryParams,
+                isError: false
+            }
         } else {
             let page = Mappings.queryParamToPageMap.getValue(pageString)
             if (page) {
-                this.state = {leaguePage: page, queryParams: queryParams}
+                this.state = {
+                    leaguePage: page, 
+                    queryParams: queryParams,
+                    isError: false
+                }
             } else {
-                this.state = {leaguePage: Array.from(pagesMap)[0][0], queryParams: queryParams}
+                this.state = {
+                    leaguePage: Array.from(pagesMap)[0][0], 
+                    queryParams: queryParams,
+                    isError: false
+                }
             }
         }       
     }
@@ -86,7 +100,7 @@ abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TablePro
 
     abstract makeModelProps(levelData: Data): TableProps
 
-    abstract fetchLevelData(props: Props, callback: (data: Data) => void): void
+    abstract fetchLevelData(props: Props, callback: (data: Data) => void, onError: () => void): void
 
     abstract documentTitle(data: Data): string
 
@@ -96,9 +110,15 @@ abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TablePro
             document.title = this.documentTitle(data) + ' - AlltidLike'
             this.setState({
                 leaguePage: oldState.leaguePage,
-                levelData: data
+                levelData: data,
+                isError: false
             })
-        })
+        }, () => this.setState({
+            leaguePage: this.state.leaguePage,
+            levelData: this.state.levelData,
+            queryParams: this.state.queryParams,
+            isError: true
+        }))
     }
 
     leftMenu(): JSX.Element {
@@ -126,6 +146,18 @@ abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TablePro
     }
 
     content() {
+        let errorPopup: JSX.Element
+        if (this.state.isError) {
+            errorPopup = <div className="error_popup">
+            <img src="/warning.gif" className="warning_img" alt="warning" />
+            <span>
+                Error! Page doesn't exist or internal error occured. 
+                Try to <button className="warning_link" onClick={() => window.location.reload(true)}> reload </button> or return to the <Link className="warning_link" to="/">main page</Link>
+            </span>
+        </div>
+        } else {
+            errorPopup = <></>
+        }
         let res: JSX.Element
         let jsxFunction = this.pagesMap.get(this.state.leaguePage)
         if (this.state.levelData && jsxFunction) {
@@ -138,6 +170,7 @@ abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TablePro
         }
         return <Translation>{
             (t, { i18n }) => <>
+                {errorPopup}
                 <header className="content_header">{t(this.state.leaguePage)}</header>
                 <div className="content_body">
                     {res}

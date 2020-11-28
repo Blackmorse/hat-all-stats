@@ -91,8 +91,10 @@ class League extends CountryLevelLayout<Props, LeagueData, LeagueLevelDataProps>
         return new LeagueLevelDataProps(levelData)
     }
 
-    fetchLevelData(props: Props, callback: (data: LeagueData) => void): void {
-        getLeagueData(Number(this.props.match.params.leagueId), callback)
+    fetchLevelData(props: Props, 
+            callback: (data: LeagueData) => void,
+            onError: () => void): void {
+        getLeagueData(Number(this.props.match.params.leagueId), callback, onError)
     }
     
     topMenu(): JSX.Element {

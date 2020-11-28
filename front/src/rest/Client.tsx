@@ -46,31 +46,42 @@ import TeamMatch from './models/match/TeamMatch'
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
-export function getLeagueData(leagueId: number, callback: (leagueData: LeagueData) => void): void {
+export function getLeagueData(leagueId: number, 
+        callback: (leagueData: LeagueData) => void,
+        onError: () => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
         .then(response => response.data)
         .then(callback)
+        .catch(e => onError())
 }
 
 export function getDivisionLevelData(leagueId: number, divisionLevel: number, 
-        callback: (divisionLevelData: DivisionLevelData) => void): void {
+        callback: (divisionLevelData: DivisionLevelData) => void,
+        onError: () => void): void {
     axios.get<DivisionLevelData>('/api/league/' + leagueId + '/divisionLevel/' + divisionLevel)   
     .then(response => {
         return response.data
     }).then(model => callback(model)) 
+    .catch(e => onError())
 }
 
-export function getLeagueUnitData(leagueUnitId: number, callback: (leagueUnitData: LeagueUnitData) => void): void {
+export function getLeagueUnitData(leagueUnitId: number, 
+        callback: (leagueUnitData: LeagueUnitData) => void,
+        onError: () => void): void {
     axios.get<LeagueUnitData>('/api/leagueUnit/' + leagueUnitId)
     .then(response => {
         return response.data
     }).then(model => callback(model))
+    .catch(e => onError())
 }
 
-export function getTeamData(leagueId: number, callback: (teamData: TeamData) => void): void {
+export function getTeamData(leagueId: number, 
+        callback: (teamData: TeamData) => void,
+        onError: () => void): void {
     axios.get<TeamData>('/api/team/' + leagueId)
         .then(response => response.data)
         .then(callback)
+        .catch(e => onError())
 }
 
 export function getWorldData(callback: (worldData: WorldData) => void): void {

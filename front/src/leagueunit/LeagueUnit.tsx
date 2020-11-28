@@ -85,8 +85,10 @@ class LeagueUnit extends CountryLevelLayout<Props, LeagueUnitData, LeagueUnitLev
         return data.leagueUnitName
     }
 
-    fetchLevelData(props: Props, callback: (data: LeagueUnitData) => void): void {
-        getLeagueUnitData(Number(this.props.match.params.leagueUnitId), callback)
+    fetchLevelData(props: Props, 
+            callback: (data: LeagueUnitData) => void,
+            onError: () => void): void {
+        getLeagueUnitData(Number(this.props.match.params.leagueUnitId), callback, onError)
     }
 
     makeModelProps(levelData: LeagueUnitData): LeagueUnitLevelDataProps {

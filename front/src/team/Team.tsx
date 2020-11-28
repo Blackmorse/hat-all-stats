@@ -67,8 +67,10 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
         return new TeamLevelDataProps(levelData)
     }
 
-    fetchLevelData(props: Props, callback: (data: TeamData) => void): void {
-        getTeamData(Number(this.props.match.params.teamId), callback)
+    fetchLevelData(props: Props, 
+            callback: (data: TeamData) => void,
+            onError: () => void): void {
+        getTeamData(Number(this.props.match.params.teamId), callback, onError)
     }
     topMenu(): JSX.Element {
         return <TeamTopMenu teamData={this.state.levelData}/>

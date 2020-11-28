@@ -12,3 +12,42 @@
 .content_body {
     margin: 5px;
 }
+
+.error_popup {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    color: white;
+    background-color: black;
+    z-index: 2;
+    /* transform: translateX(50%);  */
+    box-shadow: 5px 5px 5px -3px black;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.warning_img {
+    height: 100%;
+}
+
+.warning_link:visited,
+.warning_link:active,
+.warning_link {
+    color: white;
+    text-decoration: underline;
+    background-color: transparent;
+    border: none;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+}
+
+.warning_link:hover {
+    text-decoration: none;
+    cursor: pointer;
+}

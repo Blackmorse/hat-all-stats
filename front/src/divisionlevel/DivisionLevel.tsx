@@ -89,9 +89,11 @@ class DivisionLevel extends CountryLevelLayout<Props, DivisionLevelData, Divisio
         return data.divisionLevelName
     }
 
-    fetchLevelData(props: Props, callback: (data: DivisionLevelData) => void): void {
+    fetchLevelData(props: Props, 
+            callback: (data: DivisionLevelData) => void,
+            onError: () => void): void {
         getDivisionLevelData(Number(this.props.match.params.leagueId), Number(this.props.match.params.divisionLevel) ,
-        callback)
+            callback, onError)
     }
 
     makeModelProps(levelData: DivisionLevelData): DivisionLevelDataProps {
