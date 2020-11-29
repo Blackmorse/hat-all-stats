@@ -163,5 +163,9 @@
     "menu.team_salary_tsi": "Stipendio/TSI",
     "menu.teams": "Squadre",
     "table.goals_difference": "+/-",
-    "world.countries": "Nazioni"
+    "world.countries": "Nazioni",
+
+    "overview.attendance": "Assistito alle partite",
+    "overview.winning_streak": "Vittorie consecutive",
+    "overview.scorers": "Bombardiere"
 }

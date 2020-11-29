@@ -14,6 +14,9 @@ import SalaryTeamOverviewSection from './SalaryTeamOverviewSection'
 import TopMatchesOverviewSection from './TopMatchesOverviewSection'
 import SalaryPlayerOverviewSection from './SalaryPlayerOverviewSection'
 import RatingPlayerOverviewSection from './RatingPlayerOverviewSection'
+import MatchAttendanceOverviewSection from './MatchAttendanceOverviewSection'
+import VictoriesTeamOverviewSection from './VictoriesTeamOverviewSection'
+import SeasonScorersOverviewSection from './SeasonScorersOverviewSection'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import { PagesEnum } from '../enums/PagesEnum';
 import HattidLink from '../links/HattidLink';
@@ -135,6 +138,29 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
                         linkProvider={this.linkProviderFunc(PagesEnum.PLAYER_RATINGS, 'rating')}        
                     />
                 </div> 
+            </div>
+            <div className="section_row">
+                <MatchAttendanceOverviewSection
+                    initialData={this.state.totalOverview?.topMatchAttendance}
+                    levelDataProps={this.props.levelDataProps}
+                    linkProvider={this.linkProviderFunc(PagesEnum.MATCH_SPECTATORS, 'sold_total')}
+                />
+            </div>
+            <div className="section_row">
+                <div className="section_row_half_element">
+                    <VictoriesTeamOverviewSection
+                        initialData={this.state.totalOverview?.topTeamVictories}
+                        levelDataProps={this.props.levelDataProps}
+                        linkProvider={this.linkProviderFunc(PagesEnum.TEAM_STREAK_TROPHIES, 'number_of_victories')}
+                    />
+                </div>
+                <div className="section_row_half_element">
+                    <SeasonScorersOverviewSection
+                        initialData={this.state.totalOverview?.topSeasonScorers}
+                        levelDataProps={this.props.levelDataProps}
+                        linkProvider={this.linkProviderFunc(PagesEnum.PLAYER_GOAL_GAMES, 'scored')}
+                    />
+                </div>
             </div>
         </>
         }

@@ -10,7 +10,10 @@ case class TotalOverview(numberOverview: NumberOverview,
                          topSalaryTeams: List[TeamStatOverview],
                          topMatches: List[MatchTopHatstatsOverview],
                          topSalaryPlayers: List[PlayerStatOverview],
-                         topRatingPlayers: List[PlayerStatOverview])
+                         topRatingPlayers: List[PlayerStatOverview],
+                         topMatchAttendance: List[MatchAttendanceOverview],
+                         topTeamVictories: List[TeamStatOverview],
+                         topSeasonScorers: List[PlayerStatOverview])
 object TotalOverview {
   implicit val writes = Json.writes[TotalOverview]
 }

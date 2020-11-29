@@ -4,6 +4,7 @@ import AveragesOverview from './AveragesOverview'
 import TeamStatOverview from './TeamStatOverview'
 import PlayerStatOverview from './PlayerStatOverview'
 import MatchTopHatstatsOverview from './MatchTopHatstatsOverview'
+import MatchAttendanceOverview from './MatchAttendanceOverview'
 
 interface TotalOverview {
     numberOverview: NumberOverview,
@@ -14,7 +15,10 @@ interface TotalOverview {
     topSalaryTeams: Array<TeamStatOverview>,
     topMatches: Array<MatchTopHatstatsOverview>,
     topSalaryPlayers: Array<PlayerStatOverview>,
-    topRatingPlayers: Array<PlayerStatOverview>
+    topRatingPlayers: Array<PlayerStatOverview>,
+    topMatchAttendance: Array<MatchAttendanceOverview>,
+    topTeamVictories: Array<TeamStatOverview>,
+    topSeasonScorers: Array<PlayerStatOverview>
 }
 
 export default TotalOverview

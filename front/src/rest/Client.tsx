@@ -43,6 +43,7 @@ import PromotionWithType from './models/promotions/Promotion'
 import TeamSearchResult from './models/TeamSearchResult'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import TeamMatch from './models/match/TeamMatch'
+import MatchAttendanceOverview from './models/overview/MatchAttendanceOverview'
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
@@ -207,7 +208,10 @@ function requestOverview<T>(path: string):
             callback: (loadingEnum: LoadingEnum, data?: T) => void) {
                 let params = createOverviewParameters(overviewRequest)
                 axios.get<T>('/api/overview/' + path + '?' + params)
-                    .then(response => parseAxiosResponse(response, callback))
+                    .then(response => {
+                        console.log()
+                        return parseAxiosResponse(response, callback)
+                    })
                     .catch(e => callback(LoadingEnum.ERROR))
             }
     }
@@ -231,6 +235,12 @@ export let getTopMatchesOverview = requestOverview<Array<MatchTopHatstatsOvervie
 export let getTopSalaryPlayersOverview = requestOverview<Array<PlayerStatOverview>>('topSalaryPlayers')
 
 export let getTopRatingPlayersOverview = requestOverview<Array<PlayerStatOverview>>('topRatingPlayers')
+
+export let getTopMatchAttendance = requestOverview<Array<MatchAttendanceOverview>>('matchAttendance')
+
+export let getTopTeamVictories = requestOverview<Array<TeamStatOverview>>('topVictories')
+
+export let getTopSeasonScorers = requestOverview<Array<PlayerStatOverview>>('topSeasonScorers')
 
 function startUrl(request: LevelRequest): string {
     if (request.type === 'LeagueRequest') {

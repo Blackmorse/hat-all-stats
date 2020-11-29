@@ -97,6 +97,9 @@ GET     /api/overview/topMatches    controllers.RestOverviewController.topMatche
 GET     /api/overview/topSalaryPlayers    controllers.RestOverviewController.topSalaryPlayers(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/topRatingPlayers    controllers.RestOverviewController.topRatingPlayers(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/totalOverview    controllers.RestOverviewController.totalOverview(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/matchAttendance   controllers.RestOverviewController.topMatchAttendance(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/topVictories   controllers.RestOverviewController.topTeamVictories(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/topSeasonScorers   controllers.RestOverviewController.topSeasonScorers(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/worldData    controllers.RestOverviewController.getWorldData()
 
 GET     /                           controllers.HomeController.index

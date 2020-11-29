@@ -91,6 +91,21 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
       .map(players => Ok(Json.toJson(players)))
   }
 
+  def topMatchAttendance(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async{ implicit request =>
+    restOverviewStatsService.topMatchAttendance(season, round, leagueId, divisionLevel)
+      .map(matches => Ok(Json.toJson(matches)))
+  }
+
+  def topTeamVictories(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async{ implicit request =>
+    restOverviewStatsService.topTeamVictories(season, round, leagueId, divisionLevel)
+      .map(teams => Ok(Json.toJson(teams)))
+  }
+
+  def topSeasonScorers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async{implicit request =>
+    restOverviewStatsService.topSeasonScorers(season, round, leagueId, divisionLevel)
+      .map(players => Ok(Json.toJson(players)))
+  }
+
   def totalOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) = Action.async { implicit request =>
     restOverviewStatsService.totalOverview(season, round, leagueId, divisionLevel)
       .map(totalOverview => Ok(Json.toJson(totalOverview)))

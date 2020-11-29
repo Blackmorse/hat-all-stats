@@ -162,5 +162,9 @@
     "menu.team_ratings": "Bewertungen",
     "menu.team_salary_tsi": "Gehalt/TSI",
     "menu.teams": "Mannschaften",
-    "table.goals_difference": "+/-"
+    "table.goals_difference": "+/-",
+
+    "overview.attendance": "Besuchte Spiele",
+    "overview.winning_streak": "Siegesserien",
+    "overview.scorers": "Torschütze"
 }

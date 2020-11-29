@@ -163,5 +163,9 @@
     "match.attack_in_the_middle": "Napadi kroz sredinu",
     "match.attack_in_wings": "Napadi po krilu",
     "match.play_creatively": "Kreativna igra",
-    "match.long_shots": "Udarci iz daljine"
+    "match.long_shots": "Udarci iz daljine",
+
+    "overview.attendance": "Prisustvovao utakmicama",
+    "overview.winning_streak": "Nizovi",
+    "overview.scorers": "Bombardier"
 }

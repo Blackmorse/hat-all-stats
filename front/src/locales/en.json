@@ -162,5 +162,9 @@
     "match.attack_in_the_middle": "Attack in the middle",
     "match.attack_in_wings": "Attack in wings",
     "match.play_creatively": "Play creatively",
-    "match.long_shots": "Long shots"
+    "match.long_shots": "Long shots",
+
+    "overview.attendance": "Top attendance matches",
+    "overview.winning_streak": "Winning streak",
+    "overview.scorers": "Scorers"
   }

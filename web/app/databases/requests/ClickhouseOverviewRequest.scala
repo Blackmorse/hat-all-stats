@@ -6,7 +6,7 @@ import scala.concurrent.Future
 
 trait ClickhouseOverviewRequest[T] extends ClickhouseRequest[T] {
   val sql: String
-  private val limit = 5
+  val limit = 5
 
   def execute(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int])
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[T]] = {

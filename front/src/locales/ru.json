@@ -162,5 +162,9 @@
     "match.attack_in_the_middle": "Атака по центру",
     "match.attack_in_wings": "Атака по флангам",
     "match.play_creatively": "Играть творчески",
-    "match.long_shots": "Дальние удары"
+    "match.long_shots": "Дальние удары",
+
+    "overview.attendance": "Самые посещаемые матчи",
+    "overview.winning_streak": "Победные серии",
+    "overview.scorers": "Scorers"
 }

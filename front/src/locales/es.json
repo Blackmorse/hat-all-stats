@@ -163,5 +163,9 @@
     "menu.team_salary_tsi": "Salario/TSI",
     "menu.teams": "Equipos",
     "table.goals_difference": "+/-",
-    "world.countries": "Países "
+    "world.countries": "Países ", 
+
+    "overview.attendance": "asistió a partidos",
+    "overview.winning_streak": "Rachas ganadoras",
+    "overview.scorers": "Bombardero"
 }

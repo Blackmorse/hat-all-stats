@@ -1,8 +1,8 @@
 package service
 
 import databases.RestClickhouseDAO
-import databases.requests.overview.{FormationsOverviewRequest, NumberOverviewRequest, OverviewMatchAveragesRequest, OverviewTeamPlayerAveragesRequest, SurprisingMatchesOverviewRequest, TopHatstatsTeamOverviewRequest, TopMatchesOverviewRequest, TopRatingPlayerOverviewRequest, TopSalaryPlayerOverviewRequest, TopSalaryTeamOverviewRequest}
-import databases.requests.overview.model.{AveragesOverview, FormationsOverview, MatchTopHatstatsOverview, NumberOverview, PlayerStatOverview, TeamStatOverview, TotalOverview}
+import databases.requests.overview.{FormationsOverviewRequest, NumberOverviewRequest, OverviewMatchAveragesRequest, OverviewTeamPlayerAveragesRequest, SurprisingMatchesOverviewRequest, TopAttendanceMatchesOverviewRequest, TopHatstatsTeamOverviewRequest, TopMatchesOverviewRequest, TopRatingPlayerOverviewRequest, TopSalaryPlayerOverviewRequest, TopSalaryTeamOverviewRequest, TopSeasonScorersOverviewRequest, TopVictoriesTeamsOverviewRequest}
+import databases.requests.overview.model.{AveragesOverview, FormationsOverview, MatchAttendanceOverview, MatchTopHatstatsOverview, NumberOverview, PlayerStatOverview, TeamStatOverview, TotalOverview}
 import javax.inject.{Inject, Singleton}
 import play.api.cache.AsyncCacheApi
 
@@ -78,6 +78,24 @@ class RestOverviewStatsService @Inject()
     cache.getOrElseUpdate(name, 28 days)(TopRatingPlayerOverviewRequest.execute(season, round, leagueId, divisionLevel))
   }
 
+  def topMatchAttendance(season: Int, round: Int,
+                         leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[MatchAttendanceOverview]] = {
+    val name = cacheName("topMatchAttendance", season, round, leagueId, divisionLevel)
+    cache.getOrElseUpdate(name, 28 days)(TopAttendanceMatchesOverviewRequest.execute(season, round, leagueId, divisionLevel))
+  }
+
+  def topTeamVictories(season: Int, round: Int,
+                       leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[TeamStatOverview]] = {
+    val name = cacheName("topTeamVictories", season, round, leagueId, divisionLevel)
+    cache.getOrElseUpdate(name, 28 days)(TopVictoriesTeamsOverviewRequest.execute(season, round, leagueId, divisionLevel))
+  }
+
+  def topSeasonScorers(season: Int, round: Int,
+                       leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[PlayerStatOverview]] = {
+    val name = cacheName("topSeasonScorers", season, round, leagueId, divisionLevel)
+    cache.getOrElseUpdate(name, 28 days)(TopSeasonScorersOverviewRequest.execute(season, round, leagueId, divisionLevel))
+  }
+
   def totalOverview(season: Int, round: Int,
                     leagueId: Option[Int], divisionLevel: Option[Int]): Future[TotalOverview] = {
     for(numberOverviewData <- numberOverview(season, round, leagueId, divisionLevel);
@@ -88,7 +106,10 @@ class RestOverviewStatsService @Inject()
         topSalaryTeamsData <- topSalaryTeams(season, round, leagueId, divisionLevel);
         topMatchesData <- topMatches(season, round, leagueId, divisionLevel);
         topSalaryPlayersData <- topSalaryPlayers(season, round, leagueId, divisionLevel);
-        topRatingPlayersData <- topRatingPlayers(season, round, leagueId, divisionLevel)) yield
+        topRatingPlayersData <- topRatingPlayers(season, round, leagueId, divisionLevel);
+        topMatchAttendanceData <- topMatchAttendance(season, round, leagueId, divisionLevel);
+        topTeamVictoriesData <- topTeamVictories(season, round, leagueId, divisionLevel);
+        topSeasonScorersData <- topSeasonScorers(season, round, leagueId, divisionLevel)) yield
 
       TotalOverview(numberOverview = numberOverviewData,
         formations = formationsData,
@@ -98,8 +119,9 @@ class RestOverviewStatsService @Inject()
         topSalaryTeams = topSalaryTeamsData,
         topMatches = topMatchesData,
         topSalaryPlayers = topSalaryPlayersData,
-        topRatingPlayers = topRatingPlayersData)
+        topRatingPlayers = topRatingPlayersData,
+        topMatchAttendance = topMatchAttendanceData,
+        topTeamVictories = topTeamVictoriesData,
+        topSeasonScorers = topSeasonScorersData)
   }
-
-
 }

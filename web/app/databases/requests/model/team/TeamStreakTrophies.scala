@@ -24,7 +24,7 @@ object TeamStreakTrophies {
         trophiesNumber ~ numberOfVictories ~ numberOfUndefeated =>
         val teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName)
 
-        TeamStreakTrophies(teamSortingKey, trophiesNumber, numberOfUndefeated, numberOfVictories)
+        TeamStreakTrophies(teamSortingKey, trophiesNumber, numberOfVictories, numberOfUndefeated)
     }
   }
 }
