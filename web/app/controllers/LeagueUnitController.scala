@@ -9,7 +9,8 @@ import models.clickhouse.{BestMatch, FanclubFlags, PlayerStats, PlayersState, Po
 import models.web._
 import play.api.i18n.Messages
 import play.api.mvc.{BaseController, Call, ControllerComponents}
-import service.{DefaultService, LeagueInfo, LeagueInfoService, LeagueUnitCalculatorService, LeagueUnitTeamStat}
+import service.leagueinfo.{LeagueInfo, LeagueInfoService}
+import service.{DefaultService, LeagueUnitCalculatorService, LeagueUnitTeamStat}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

@@ -8,7 +8,8 @@ import hattrick.Hattrick
 import javax.inject.{Inject, Singleton}
 import models.web._
 import play.api.mvc.{BaseController, Call, ControllerComponents}
-import service.{LeagueInfoService, DefaultService, LeagueInfo}
+import service.DefaultService
+import service.leagueinfo.{LeagueInfo, LeagueInfoService}
 
 import collection.JavaConverters._
 import scala.concurrent.Future

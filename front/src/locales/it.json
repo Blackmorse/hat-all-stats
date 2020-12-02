@@ -167,5 +167,11 @@
 
     "overview.attendance": "Assistito alle partite",
     "overview.winning_streak": "Vittorie consecutive",
-    "overview.scorers": "Bombardiere"
+    "overview.scorers": "Bombardiere",
+
+    "league.next_round_scheduled": "Il prossimo round è previsto: ",
+    "league.next_round_loading": "Il prossimo round si sta caricando ora...",
+    "world.loaded": " caricato",
+    "world.loading": " sta caricando...",
+    "world.scheduled": " è previsto per: "
 }

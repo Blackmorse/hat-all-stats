@@ -4,6 +4,7 @@ import databases.OverviewClickhouseDAO
 import javax.inject.{Inject, Singleton}
 import models.clickhouse.overview.{AvgMatchDetailsModel, AvgTeamPlayersStats, FormationsModel, MatchOverviewModel, PlayerOverviewModel, TeamOverviewModel}
 import play.api.cache.AsyncCacheApi
+import service.leagueinfo.LeagueInfoService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

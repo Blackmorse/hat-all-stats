@@ -166,5 +166,11 @@
 
     "overview.attendance": "Самые посещаемые матчи",
     "overview.winning_streak": "Победные серии",
-    "overview.scorers": "Scorers"
+    "overview.scorers": "Scorers",
+
+    "league.next_round_scheduled": "Следующий раунд запланирован на: ",
+    "league.next_round_loading": "Следующий раунд загружается сейчас...",
+    "world.loaded": " загружено",
+    "world.loading": " загружается...",
+    "world.scheduled": " запланирован на: "
 }

@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.Date
+
 import databases.RestClickhouseDAO
 import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.player._
@@ -10,11 +12,11 @@ import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import io.swagger.annotations.Api
 import javax.inject.{Inject, Singleton}
 import models.web.RestStatisticsParameters
-import models.web.rest.LevelData
+import models.web.rest.{CountryLevelData, LevelData}
 import models.web.rest.LevelData.Rounds
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
-import service.LeagueInfoService
+import service.leagueinfo.{LeagueInfoService, LoadingInfo, Scheduled}
 import utils.Romans
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,7 +30,8 @@ case class RestDivisionLevelData(leagueId: Int,
                                  seasonOffset: Int,
                                  seasonRoundInfo: Seq[(Int, Rounds)],
                                  currency: String,
-                                 currencyRate: Double) extends LevelData
+                                 currencyRate: Double,
+                                 loadingInfo: LoadingInfo) extends CountryLevelData
 
 object RestDivisionLevelData {
   implicit val writes = Json.writes[RestDivisionLevelData]
@@ -54,7 +57,8 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
       seasonOffset = league.getSeasonOffset,
       seasonRoundInfo = seasonRoundInfo,
       currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
-      currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate)
+      currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate,
+      loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo)
     Future(Ok(Json.toJson(restDivisionLevelData)))
   }
 

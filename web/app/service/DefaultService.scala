@@ -4,10 +4,10 @@ import play.api.mvc.Request
 import play.api.mvc.AnyContent
 import models.web.StatisticsParameters
 import com.google.inject.Inject
-
 import play.api.mvc.Cookie
 import models.web.StatsType
 import models.web.Desc
+import service.leagueinfo.LeagueInfoService
 
 class DefaultService @Inject() (val leagueInfoService: LeagueInfoService) {
 

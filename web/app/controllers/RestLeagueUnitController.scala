@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.Date
+
 import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 import com.blackmorse.hattrick.model.enums.SearchType
 import databases.RestClickhouseDAO
@@ -12,12 +14,13 @@ import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
 import javax.inject.Inject
-import models.web.rest.LevelData
+import models.web.rest.{CountryLevelData, LevelData}
 import models.web.rest.LevelData.Rounds
 import models.web.{RestStatisticsParameters, RestTableData, Round}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
-import service.{LeagueInfoService, LeagueUnitCalculatorService}
+import service.LeagueUnitCalculatorService
+import service.leagueinfo.{LeagueInfoService, LoadingInfo, Scheduled}
 import utils.{LeagueNameParser, Romans}
 
 import scala.collection.JavaConverters._
@@ -34,7 +37,8 @@ case class RestLeagueUnitData(leagueId: Int,
                               seasonOffset: Int,
                               seasonRoundInfo: Seq[(Int, Rounds)],
                               currency: String,
-                              currencyRate: Double) extends LevelData
+                              currencyRate: Double,
+                              loadingInfo: LoadingInfo) extends CountryLevelData
 
 object RestLeagueUnitData {
   implicit val writes = Json.writes[RestLeagueUnitData]
@@ -83,6 +87,7 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
     Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
     .map(leagueDetails => {
       val league = leagueInfoService.leagueInfo(leagueDetails.getLeagueId).league
+
       RestLeagueUnitData(leagueId = leagueDetails.getLeagueId,
         leagueName = league.getEnglishName,
         divisionLevel = leagueDetails.getLeagueLevel,
@@ -93,7 +98,8 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
         seasonOffset = league.getSeasonOffset,
         seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueDetails.getLeagueId),
         currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
-        currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate)
+        currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate,
+        loadingInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId).loadingInfo)
     }
       )
 

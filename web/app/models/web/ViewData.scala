@@ -3,7 +3,7 @@ package models.web
 import databases.clickhouse._
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.Call
-import service.LeagueInfoService
+import service.leagueinfo.LeagueInfoService
 
 case class ViewData[T, +V <: AbstractWebDetails](details: V,
                                                 webPagedEntities: WebPagedEntities[T],

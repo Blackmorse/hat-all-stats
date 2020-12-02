@@ -7,6 +7,7 @@ import WorldTopMenu from './WorldTopMenu'
 import { RouteComponentProps } from 'react-router';
 import WorldOverviewPage from './WorldOverviewPage'
 import WorldLevelDataProps from './WorldLevelDataProps'
+import WorldLeftLoadingMenu from './WorldLeftLoadingMenu'
 
 
 interface Props extends RouteComponentProps<{}>{}
@@ -48,7 +49,10 @@ class World extends Layout<Props, State> {
     }
 
     leftMenu(): JSX.Element {
-        return <WorldLeftMenu worldData={this.state.levelData}/>
+        return <>
+            <WorldLeftLoadingMenu worldData={this.state.levelData}/>
+            <WorldLeftMenu worldData={this.state.levelData}/>
+        </>
     }
 }
 

@@ -166,5 +166,10 @@
 
     "overview.attendance": "Besuchte Spiele",
     "overview.winning_streak": "Siegesserien",
-    "overview.scorers": "Torschütze"
+    "overview.scorers": "Torschütze",
+    "league.next_round_scheduled": "Die nächste Runde ist für geplant: ",
+    "league.next_round_loading": "Die nächste Runde wird jetzt geladen...",
+    "world.loaded": " geladen",
+    "world.loading": " ladet...",
+    "world.scheduled": " ist geplant für: "
 }

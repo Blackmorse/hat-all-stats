@@ -167,5 +167,10 @@
 
     "overview.attendance": "Prisustvovao utakmicama",
     "overview.winning_streak": "Nizovi",
-    "overview.scorers": "Bombardier"
+    "overview.scorers": "Bombardier",
+    "league.next_round_scheduled": "Sljedeće kolo zakazano je za: ",
+    "league.next_round_loading": "Sljedeći krug se učitava sada...",
+    "world.loaded": " natovaren",
+    "world.loading": " se učitava...",
+    "world.scheduled": " je zakazan za: "
 }

@@ -8,9 +8,10 @@ import models.clickhouse._
 import models.web._
 import play.api.i18n.Messages
 import play.api.mvc.{BaseController, Call, ControllerComponents}
-import service.{DefaultService, LeagueInfo, LeagueInfoService}
+import service.DefaultService
 import utils.Romans
 import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
+import service.leagueinfo.{LeagueInfo, LeagueInfoService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

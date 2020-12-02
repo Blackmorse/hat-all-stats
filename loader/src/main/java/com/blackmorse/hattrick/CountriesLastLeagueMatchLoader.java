@@ -84,6 +84,8 @@ public class CountriesLastLeagueMatchLoader {
             try {
                 League league = hattrickService.getLeagueByCountryName(countryName);
 
+                alltidLike.loadingStarted(league.getLeagueId());
+
                 log.info("Loading country {}, leagueId: {} with {} active teams...", countryName, league.getLeagueId(), league.getActiveTeams());
                 List<LeagueUnit> allLeagueUnitIdsForCountry = hattrickService.getAllLeagueUnitIdsForCountry(countryName);
 
@@ -130,13 +132,14 @@ public class CountriesLastLeagueMatchLoader {
                 log.info("Calculating team ranks for ({}, {})", countryName, league.getLeagueId());
                 teamRankCalculator.calculate(league);
                 log.info("Send request to web about new round...");
-                alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
-                log.info("Request successfully sent");
                 //Load promotions
                 if (league.getMatchRound() - 1 == 14) {
                     log.info("It's last round of season. Time to load promotions!");
                     promotionsLoader.load(countryName, allLeagueUnitIdsForCountry);
                 }
+                alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
+                log.info("Request successfully sent");
+
                 if (callback != null) {
                     callback.run();
                 }

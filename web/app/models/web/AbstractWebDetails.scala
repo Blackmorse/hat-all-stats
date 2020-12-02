@@ -1,6 +1,6 @@
 package models.web
 
-import service.LeagueInfo
+import service.leagueinfo.LeagueInfo
 
 abstract class AbstractWebDetails {
   val leagueInfo: LeagueInfo

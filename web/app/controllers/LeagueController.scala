@@ -15,7 +15,8 @@ import play.api.data.validation.Constraints._
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Json
 import play.api.mvc._
-import service.{DefaultService, LeagueInfo, LeagueInfoService, OverviewStatsService}
+import service.leagueinfo.{LeagueInfo, LeagueInfoService}
+import service.{DefaultService, OverviewStatsService}
 import utils.Romans
 
 import scala.collection.JavaConverters._

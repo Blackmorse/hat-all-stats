@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.Date
+
 import com.blackmorse.hattrick.api.teamdetails.model.Team
 import com.blackmorse.hattrick.model.enums.MatchType
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamMatchesRequest}
@@ -13,11 +15,11 @@ import io.swagger.annotations.Api
 import javax.inject.Inject
 import models.clickhouse.{NearestMatch, TeamRankings}
 import models.web.RestStatisticsParameters
-import models.web.rest.LevelData
+import models.web.rest.{CountryLevelData, LevelData}
 import models.web.rest.LevelData.Rounds
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
-import service.LeagueInfoService
+import service.leagueinfo.{LeagueInfoService, LoadingInfo, Scheduled}
 import utils.Romans
 
 import scala.collection.JavaConverters._
@@ -35,7 +37,8 @@ case class RestTeamData(leagueId: Int,
                         seasonOffset: Int,
                         seasonRoundInfo: Seq[(Int, Rounds)],
                         currency: String,
-                        currencyRate: Double) extends LevelData
+                        currencyRate: Double,
+                        loadingInfo: LoadingInfo) extends CountryLevelData
 
 object RestTeamData {
   implicit val writes = Json.writes[RestTeamData]
@@ -74,6 +77,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
   private def getRestTeamData(team: Team) = {
     val league = leagueInfoService.leagueInfo(team.getLeague.getLeagueId).league
+
     RestTeamData(
       leagueId = team.getLeague.getLeagueId,
       leagueName = league.getEnglishName,
@@ -86,7 +90,8 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
       seasonOffset = league.getSeasonOffset,
       seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(team.getLeague.getLeagueId),
       currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
-      currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate
+      currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate,
+      loadingInfo = leagueInfoService.leagueInfo(team.getLeague.getLeagueId).loadingInfo
     )
   }
 

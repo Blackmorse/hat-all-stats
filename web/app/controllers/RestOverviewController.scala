@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.Date
+
 import databases.RestClickhouseDAO
 import io.swagger.annotations.Api
 import javax.inject.Inject
@@ -7,16 +9,26 @@ import models.web.rest.LevelData
 import models.web.rest.LevelData.Rounds
 import play.api.libs.json.Json
 import play.api.mvc.ControllerComponents
-import service.{LeagueInfoService, RestOverviewStatsService}
+import service.RestOverviewStatsService
+import service.leagueinfo.{Finished, LeagueInfoService, Loading, Scheduled}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+
+case class WorldLoadingInfo(proceedCountries: Int,
+                            nextCountry: Option[(Int, String, Date)],
+                            currentCountry: Option[(Int, String)])
+
+object WorldLoadingInfo {
+  implicit val writes = Json.writes[WorldLoadingInfo]
+}
 
 case class WorldData(countries: Seq[(Int, String)],
                      seasonOffset: Int,
                      seasonRoundInfo: Seq[(Int, Rounds)],
                      currency: String,
-                     currencyRate: Double) extends LevelData
+                     currencyRate: Double,
+                     loadingInfo: Option[WorldLoadingInfo]) extends LevelData
 
 object WorldData {
   implicit val writes = Json.writes[WorldData]
@@ -36,11 +48,33 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
       .map{case(leagueId, leagueInfo) => (leagueId, leagueInfo.league.getEnglishName)}
       .sortBy(_._2)
 
+    val leagueInfoCountries = leagueInfoService.leagueInfo.leagueInfo.values.toSeq
+    val proceedCountries = leagueInfoCountries.count(_.loadingInfo == Finished)
+
+    val worldLoadingInfo = if(proceedCountries == leagueInfoService.leagueInfo.leagueInfo.size) {
+      None
+    } else {
+      val nextCountry = leagueInfoCountries.filter(_.loadingInfo match {
+        case Scheduled(_) => true
+        case _ => false
+      }).sortBy(_.loadingInfo.asInstanceOf[Scheduled].date).headOption
+        .map(leagueInfo => (leagueInfo.leagueId, leagueInfo.league.getEnglishName, leagueInfo.loadingInfo.asInstanceOf[Scheduled].date))
+
+      val currentCountry = leagueInfoCountries.find(_.loadingInfo match {
+        case Loading => true
+        case _ => false
+      })
+        .map(leagueInfo => (leagueInfo.leagueId, leagueInfo.league.getEnglishName))
+
+      Some(WorldLoadingInfo(proceedCountries, nextCountry, currentCountry))
+    }
+
     val worldData = WorldData(countries = countries,
       seasonOffset = 0,
       seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(lastLeagueId),
       currency = "$",
-      currencyRate = 10.0d
+      currencyRate = 10.0d,
+      worldLoadingInfo
       )
 
     Future(Ok(Json.toJson(worldData)))

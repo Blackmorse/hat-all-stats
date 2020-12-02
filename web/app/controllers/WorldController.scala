@@ -7,10 +7,11 @@ import play.api.mvc.ControllerComponents
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.BaseController
+import service.leagueinfo.LeagueInfoService
 
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
-import service.{DefaultService, LeagueInfoService, OverviewStatsService}
+import service.{DefaultService, OverviewStatsService}
 
 import scala.concurrent.Future
 

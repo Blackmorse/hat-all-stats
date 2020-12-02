@@ -1,5 +1,6 @@
 package com.blackmorse.hattrick;
 
+import com.blackmorse.hattrick.api.AlltidLike;
 import com.blackmorse.hattrick.api.Hattrick;
 import com.blackmorse.hattrick.api.worlddetails.model.League;
 import com.blackmorse.hattrick.api.worlddetails.model.WorldDetails;
@@ -32,7 +33,7 @@ public class ScheduledCountryLoader {
 
     @AllArgsConstructor
     @Getter
-    private final static class LeagueTime {
+    public final static class LeagueTime {
         public League league;
         public Date time;
     }
@@ -40,13 +41,17 @@ public class ScheduledCountryLoader {
     private final Hattrick hattrick;
     private final CountriesLastLeagueMatchLoader countriesLastLeagueMatchLoader;
     private final Telegram telegram;
+    private final AlltidLike alltidLike;
 
     @Autowired
     public ScheduledCountryLoader(Hattrick hattrick,
-                                  CountriesLastLeagueMatchLoader countriesLastLeagueMatchLoader, Telegram telegram) {
+                                  CountriesLastLeagueMatchLoader countriesLastLeagueMatchLoader,
+                                  Telegram telegram,
+                                  AlltidLike alltidLike) {
         this.hattrick = hattrick;
         this.countriesLastLeagueMatchLoader = countriesLastLeagueMatchLoader;
         this.telegram = telegram;
+        this.alltidLike = alltidLike;
     }
 
     public void loadFrom(Optional<String> country) {
@@ -134,5 +139,7 @@ public class ScheduledCountryLoader {
             log.info("Scheduled loading ({}, {}) with {} active teams to {}", leagueTime.league.getLeagueName(),
                     leagueTime.league.getLeagueId(), leagueTime.league.getActiveTeams(), format.format(leagueTime.getTime()));
         });
+
+        alltidLike.scheduleInfo(leagueTimes);
     }
 }

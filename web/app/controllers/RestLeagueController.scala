@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.Date
+
 import com.blackmorse.hattrick.common.CommonData
 import com.google.inject.{Inject, Singleton}
 import databases.RestClickhouseDAO
@@ -11,12 +13,12 @@ import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
-import models.web.rest.LevelData
+import models.web.rest.{CountryLevelData, LevelData}
 import models.web.rest.LevelData.Rounds
 import models.web.{RestStatisticsParameters, ViewDataFactory}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import service.LeagueInfoService
+import service.leagueinfo.{LeagueInfoService, LoadingInfo, Scheduled}
 import utils.Romans
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -28,7 +30,8 @@ case class RestLeagueData(leagueId: Int,
                           seasonOffset: Int,
                           seasonRoundInfo: Seq[(Int, Rounds)],
                           currency: String,
-                          currencyRate: Double) extends LevelData
+                          currencyRate: Double,
+                          loadingInfo: LoadingInfo) extends CountryLevelData
 
 object RestLeagueData {
   implicit val writes = Json.writes[RestLeagueData]
@@ -57,7 +60,8 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
         seasonOffset = seasonOffset,
         seasonRoundInfo = seasonRoundInfo,
         currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
-        currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate)
+        currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate,
+        loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo)
       Future(Ok(Json.toJson(restLeagueData)))
     }
 
