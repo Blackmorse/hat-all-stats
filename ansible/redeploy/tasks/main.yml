@@ -6,3 +6,7 @@
  - include: 02-front.yml
    tags: 
     - front
+
+ - include: 03-loader.yml
+   tags:
+    - loader

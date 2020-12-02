@@ -22,6 +22,7 @@
 
  - name: cron for loader
    cron: 
+    name: "Loader cron"
     weekday: "5"
     hour: "12"
     minute: "0"
