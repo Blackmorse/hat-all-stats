@@ -8,12 +8,13 @@ GET     /swagger.json           controllers.ApiHelpController.getResources
 GET     /docs/swagger-ui/*file        controllers.Assets.at(path:String="/public/lib/swagger-ui", file:String)
 
 GET     /api/teamSearchByName       controllers.WorldController.searchByName(name: String)
+GET     /api/league/:leagueId/leagueUnitName/:leagueUnitName    controllers.RestLeagueUnitController.leagueUnitIdByName(leagueUnitName: String, leagueId: Int)
+
 GET     /worldOverview              controllers.WorldController.overview()
 
 GET     /api/league/:leagueId                 controllers.RestLeagueController.getLeagueData(leagueId: Int)
 GET     /api/league/:leagueId/teamHatstats      controllers.RestLeagueController.teamHatstats(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/leagueUnits       controllers.RestLeagueController.leagueUnits(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
-GET     /api/league/:leagueId/leagueUnitName/:leagueUnitName    controllers.RestLeagueUnitController.leagueUnitIdByName(leagueUnitName: String, leagueId: Int)
 GET     /api/league/:leagueId/playerGoalGames   controllers.RestLeagueController.playerGoalGames(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/playerCards       controllers.RestLeagueController.playerCards(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/playerTsiSalary       controllers.RestLeagueController.playerTsiSalary(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)

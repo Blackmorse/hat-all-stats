@@ -15,8 +15,8 @@ class PositionRankingChart extends React.Component<Props, {}> {
     render() {
         let x = this.props.leagueRankings.map(l => l.round)
 
-        let leagueY = this.props.leagueRankings.map(this.props.positionFunc)
-        let divisionLevelY = this.props.divisionLevelRankings.map(this.props.positionFunc)
+        let leagueY = this.props.leagueRankings.map(v => this.props.positionFunc(v) + 1)
+        let divisionLevelY = this.props.divisionLevelRankings.map(v => this.props.positionFunc(v) + 1)
 
         let chartData = [
             {
