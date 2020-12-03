@@ -27,11 +27,11 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
         if(this.props.sortingField) {
             parameters.sortingField = this.props.sortingField || ''
         }
-        if(this.props.rowNumber) {
-            parameters.row = this.props.rowNumber || 0
+        if(this.props.rowNumber !== undefined) {
+            parameters.row = this.props.rowNumber
         }
-        if(this.props.round) {
-            parameters.round = this.props.round || 0
+        if(this.props.round !== undefined) {
+            parameters.round = this.props.round
         }
         if(this.props.season) {
             parameters.season = this.props.season || 0

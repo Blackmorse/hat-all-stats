@@ -105,20 +105,21 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
     abstract columnValues(index: number, model: Model): JSX.Element
 
     componentDidMount() {
-        this.updateCurrent()
+        this.update(this.state.statisticsParameters, false)
     }
 
     updateCurrent(): void {
-        this.update(this.state.statisticsParameters)
+        this.update(this.state.statisticsParameters, true)
     }
 
-    update(statisticsParameters: StatisticsParameters) {
+    update(statisticsParameters: StatisticsParameters, eraseSelectedRow: boolean) {
         
         this.setState({
             entities: this.state.entities,
             statisticsParameters: this.state.statisticsParameters,
             isLastPage: this.state.isLastPage,
             loadingState: LoadingEnum.LOADING,
+            selectedRow: (eraseSelectedRow) ? undefined : this.state.selectedRow
         })
 
         this.fetchEntities(this.props.levelDataProps,
@@ -135,7 +136,7 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
         let newStatisticsParameters = Object.assign({}, this.state.statisticsParameters)
         newStatisticsParameters.page = pageNumber
 
-        this.update(newStatisticsParameters)
+        this.update(newStatisticsParameters, true)
     }
 
     pageSizeChanged(pageSize: number) {
@@ -145,7 +146,7 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
 
         Cookies.set('hattid_page_size', pageSize.toString(), { sameSite: "Lax", expires: 180 })
 
-        this.update(newStatisticsParameters)
+        this.update(newStatisticsParameters, true)
     }
 
     sortingChanged(sortingField: string) {
@@ -164,21 +165,21 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
 
         newStatisticsParameters.sortingField = sortingField
         newStatisticsParameters.sortingDirection = newSortingDirection
-        this.update(newStatisticsParameters)
+        this.update(newStatisticsParameters, true)
     }
 
     statTypeChanged(statType: StatsType) {
         let newStatisticsParameters = Object.assign({}, this.state.statisticsParameters)
         newStatisticsParameters.statsType = statType
 
-        this.update(newStatisticsParameters)
+        this.update(newStatisticsParameters, true)
     }
 
     seasonChanged(season: number) {
         let newStatisticsParameters = Object.assign({}, this.state.statisticsParameters)
         newStatisticsParameters.season = season
 
-        this.update(newStatisticsParameters)
+        this.update(newStatisticsParameters, true)
     }
 
     renderSection(): JSX.Element {
@@ -210,7 +211,7 @@ abstract class TableSection<Data extends LevelData, TableProps extends LevelData
                     <tbody>
                         {this.state.entities?.map((entity, index) => 
                             <tr key={this.constructor.name + '_' + index} 
-                                className={(this.state.selectedRow && this.state.selectedRow === indexOffset + index) ? "selected_row" : ""}>
+                                className={((this.state.selectedRow !== undefined) && this.state.selectedRow === indexOffset + index) ? "selected_row" : ""}>
                                 {this.columnValues(indexOffset + index, entity)}
                             </tr>
                             )}
