@@ -171,5 +171,14 @@
     "league.next_round_loading": "Die nächste Runde wird jetzt geladen...",
     "world.loaded": " geladen",
     "world.loading": " ladet...",
-    "world.scheduled": " ist geplant für: "
+    "world.scheduled": " ist geplant für: ",
+
+    "menu.dream_team": "Traumteam",
+    "dream_team.keeper": "Torwart",
+    "dream_team.wingback": "Wingback",
+    "dream_team.defender": "Verteidiger",
+    "dream_team.winger": "Flügelspieler",
+    "dream_team.midfielder": "Mittelfeldspieler",
+    "dream_team.forward": "Nach vorne",
+    "dream_team.substitions": "Auswechslungen"
 }

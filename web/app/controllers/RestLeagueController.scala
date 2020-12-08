@@ -7,6 +7,7 @@ import com.google.inject.{Inject, Singleton}
 import databases.RestClickhouseDAO
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
+import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
@@ -15,7 +16,7 @@ import hattrick.Hattrick
 import io.swagger.annotations.Api
 import models.web.rest.{CountryLevelData, LevelData}
 import models.web.rest.LevelData.Rounds
-import models.web.{RestStatisticsParameters, ViewDataFactory}
+import models.web.{RestStatisticsParameters, StatsType, ViewDataFactory}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfoService, LoadingInfo, Scheduled}
@@ -130,6 +131,13 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
   def promotions(leagueId: Int) = Action.async { implicit request =>
     PromotionsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), leagueInfoService.leagueInfo.currentSeason(leagueId))
       .map(PromotionWithType.convert).map(result => Ok(Json.toJson(result)))
+  }
+
+  def dreamTeam(season: Int, leagueId: Int, sortBy: String, statsType: StatsType) = Action.async { implicit request =>
+    DreamTeamRequest.execute(OrderingKeyPath(season = Some(season), leagueId = Some(leagueId)),
+      statsType,
+      sortBy)
+      .map(players => Ok(Json.toJson(players)))
   }
 }
 

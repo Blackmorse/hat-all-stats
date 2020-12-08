@@ -15,7 +15,7 @@ case class SqlBuilder(baseSql: String) {
   private var sortingDirection: String = "desc"
 
   def applyParameters(orderingKeyPath: OrderingKeyPath): SqlBuilder = {
-    orderingKeyPath.leagueId.foreach(leagueId)
+    orderingKeyPath.leagueId.foreach(this.leagueId)
     orderingKeyPath.divisionLevel.foreach(this.divisionLevel)
     orderingKeyPath.leagueUnitId.foreach(this.leagueUnitId)
     orderingKeyPath.teamId.foreach(this.teamId)

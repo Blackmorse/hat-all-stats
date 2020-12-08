@@ -172,5 +172,14 @@
     "league.next_round_loading": "Следующий раунд загружается сейчас...",
     "world.loaded": " загружено",
     "world.loading": " загружается...",
-    "world.scheduled": " запланирован на: "
+    "world.scheduled": " запланирован на: ",
+    
+    "menu.dream_team": "Dream team",
+    "dream_team.keeper": "Вратарь",
+    "dream_team.wingback": "Крайний защитник",
+    "dream_team.defender": "Защитник",
+    "dream_team.winger": "Вингер",
+    "dream_team.midfielder": "Полузащитник",
+    "dream_team.forward": "Нападающий",
+    "dream_team.substitions": "Замены"
 }

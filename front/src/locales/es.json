@@ -172,5 +172,14 @@
     "league.next_round_loading": "La próxima ronda se está cargando ahora...",
     "world.loaded": " cargado",
     "world.loading": " esta cargando...",
-    "world.scheduled": " está programado para: "
+    "world.scheduled": " está programado para: ",
+
+    "menu.dream_team": "Equipo soñado",
+    "dream_team.keeper": "Portero",
+    "dream_team.wingback": "Ala trasera",
+    "dream_team.defender": "Defensor",
+    "dream_team.winger": "Exterior",
+    "dream_team.midfielder": "Mediocampista",
+    "dream_team.forward": "Adelante",
+    "dream_team.substitions": "Sustituciones"
 }

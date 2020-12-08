@@ -172,5 +172,14 @@
     "league.next_round_loading": "Sljedeći krug se učitava sada...",
     "world.loaded": " natovaren",
     "world.loading": " se učitava...",
-    "world.scheduled": " je zakazan za: "
+    "world.scheduled": " je zakazan za: ",
+
+    "menu.dream_team": "Tim iz snova",
+    "dream_team.keeper": "Golman",
+    "dream_team.wingback": "Krilo",
+    "dream_team.defender": "Branitelj",
+    "dream_team.winger": "Krilo",
+    "dream_team.midfielder": "Veznjak",
+    "dream_team.forward": "Naprijed",
+    "dream_team.substitions": "Zamjene"
 }

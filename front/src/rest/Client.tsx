@@ -3,7 +3,7 @@ import LeagueData from './models/leveldata/LeagueData'
 import DivisionLevelData from './models/leveldata/DivisionLevelData'
 import TeamHatstats from './models/team/TeamHatstats'
 import LeagueUnitRating from './models/leagueunit/LeagueUnitRating'
-import StatisticsParameters, { StatsTypeEnum } from './models/StatisticsParameters'
+import StatisticsParameters, { StatsTypeEnum, StatsType } from './models/StatisticsParameters'
 import RestTableData from './models/RestTableData'
 import LeagueUnitRequest from './models/request/LeagueUnitRequest'
 import DivisionLevelRequest from './models/request/DivisionLevelRequest';
@@ -44,6 +44,7 @@ import TeamSearchResult from './models/TeamSearchResult'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import TeamMatch from './models/match/TeamMatch'
 import MatchAttendanceOverview from './models/overview/MatchAttendanceOverview'
+import DreamTeamPlayer from './models/player/DreamTeamPlayer';
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
@@ -160,6 +161,27 @@ export function getTeamMatches(teamId: number, season: number,
     axios.get<Array<TeamMatch>>('/api/team/' + teamId + '/teamMatches?season=' + season)
         .then(response => parseAxiosResponse(response, callback))
         .catch(e => callback(LoadingEnum.ERROR))
+}
+
+export function getDreamTeam(request: LevelRequest, season: number, statType: StatsType, sortBy: string,
+        callback: (players: Array<DreamTeamPlayer>) => void,
+        onError: () => void) {
+    var values: any = {}
+
+    values.sortBy = sortBy
+    values.statType = statType.statType
+    values.season = season
+
+    if(statType.statType === StatsTypeEnum.ROUND) {
+        values.statRoundNumber = statType.roundNumber
+    }
+
+    let queryParams = new URLSearchParams(values).toString()
+
+    axios.get<Array<DreamTeamPlayer>>(startUrl(request) + '/dreamTeam?' + queryParams)
+        .then(response => response.data)
+        .then(callback)
+        .catch(e => onError())
 }
 
 export let getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')

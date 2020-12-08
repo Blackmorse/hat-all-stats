@@ -4,6 +4,7 @@ import java.util.Date
 
 import databases.RestClickhouseDAO
 import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
+import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
@@ -11,7 +12,7 @@ import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatings
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import io.swagger.annotations.Api
 import javax.inject.{Inject, Singleton}
-import models.web.RestStatisticsParameters
+import models.web.{RestStatisticsParameters, StatsType}
 import models.web.rest.{CountryLevelData, LevelData}
 import models.web.rest.LevelData.Rounds
 import play.api.libs.json.{Json, Writes}
@@ -136,5 +137,13 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
           leagueInfoService.leagueInfo.currentSeason(leagueId))
       .map(PromotionWithType.convert)
       .map(result => Ok(Json.toJson(result)))
+  }
+
+  def dreamTeam(season: Int, leagueId: Int, divisionLevel: Int, sortBy: String, statsType: StatsType) = Action.async{ implicit request =>
+    DreamTeamRequest.execute(
+      OrderingKeyPath(season = Some(season), leagueId = Some(leagueId), divisionLevel = Some(divisionLevel)),
+        statsType,
+        sortBy)
+      .map(players => Ok(Json.toJson(players)))
   }
 }

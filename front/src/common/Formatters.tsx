@@ -9,7 +9,10 @@ export function ageFormatter(value: number): JSX.Element {
     return <>{Math.floor(value / 112)},{value % 112}</>
 }
 
-export function ratingFormatter(value: number): JSX.Element {
+export function ratingFormatter(value: number | undefined): JSX.Element {
+    if (value === undefined) {
+        return <></>
+    }
     return <span className="rating">
         <span className="rating_container">
             <img className="star" src="/star.svg" alt="star"/>

@@ -21,5 +21,6 @@ export enum PagesEnum {
     OVERVIEW = "menu.team_overview",
     PROMOTIONS = "menu.promotions",
     TEAM_SEARCH = "menu.team_search",
-    TEAM_MATCHES = "menu.matches"
+    TEAM_MATCHES = "menu.matches",
+    DREAM_TEAM = "menu.dream_team"
 }

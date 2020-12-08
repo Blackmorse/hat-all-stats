@@ -26,7 +26,8 @@ class Mappings {
         [PagesEnum.OVERVIEW, MenuGroupsEnum.OVERVIEW],
         [PagesEnum.PROMOTIONS, MenuGroupsEnum.PROMOTIONS],
         [PagesEnum.TEAM_SEARCH, MenuGroupsEnum.TEAM_SEARCH],
-        [PagesEnum.TEAM_MATCHES, MenuGroupsEnum.MATCH]
+        [PagesEnum.TEAM_MATCHES, MenuGroupsEnum.MATCH],
+        [PagesEnum.DREAM_TEAM, MenuGroupsEnum.PLAYER]
         ])
     
     static tacticType: Map<number, string> = 
@@ -63,7 +64,8 @@ class Mappings {
             ['matchTopHatstats', PagesEnum.MATCH_TOP_HATSTATS],
             ['matchSurprising', PagesEnum.MATCH_SURPRISING],
             ['matchSpectators', PagesEnum.MATCH_SPECTATORS],
-            ['overview', PagesEnum.OVERVIEW]
+            ['overview', PagesEnum.OVERVIEW],
+            ['dreamTeam', PagesEnum.DREAM_TEAM]
         ])
 }
 

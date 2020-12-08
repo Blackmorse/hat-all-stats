@@ -6,6 +6,7 @@ import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 import com.blackmorse.hattrick.model.enums.SearchType
 import databases.RestClickhouseDAO
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
+import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
@@ -16,7 +17,7 @@ import io.swagger.annotations.Api
 import javax.inject.Inject
 import models.web.rest.{CountryLevelData, LevelData}
 import models.web.rest.LevelData.Rounds
-import models.web.{RestStatisticsParameters, RestTableData, Round}
+import models.web.{RestStatisticsParameters, RestTableData, Round, StatsType}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
 import service.LeagueUnitCalculatorService
@@ -195,5 +196,18 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
           leagueUnitId = Some(leagueUnitData.leagueUnitId)), leagueInfoService.leagueInfo.currentSeason(leagueUnitData.leagueId)))
       .map(PromotionWithType.convert)
       .map(result => Ok(Json.toJson(result)))
+  }
+
+  def dreamTeam(season: Int, leagueUnitId: Long, sortBy: String, statsType: StatsType) = Action.async{ implicit request =>
+    leagueUnitDataFromId(leagueUnitId).flatMap(leagueUnitData =>
+      DreamTeamRequest.execute(
+        OrderingKeyPath(season = Some(season),
+          leagueId = Some(leagueUnitData.leagueId),
+          divisionLevel = Some(leagueUnitData.divisionLevel),
+          leagueUnitId = Some(leagueUnitData.leagueUnitId)),
+        statsType,
+        sortBy
+      ).map(players => Ok(Json.toJson(players)))
+    )
   }
 }

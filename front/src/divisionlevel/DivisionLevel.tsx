@@ -27,6 +27,7 @@ import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
 import QueryParams from '../common/QueryParams';
 import PromotionsTable from '../common/pages/PromotionsTable';
+import DreamTeamPage from '../common/pages/DreamTeamPage';
 
 interface MatchParams {
     leagueId: string,
@@ -44,6 +45,8 @@ class DivisionLevel extends CountryLevelLayout<Props, DivisionLevelData, Divisio
             (props, queryParams) => <TeamHatstatsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,
             (props, queryParams) => <LeagueUnitsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
+        pagesMap.set(PagesEnum.DREAM_TEAM,
+            (props, queryParams) => <DreamTeamPage<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
         pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES,
             (props, queryParams) => <PlayerGoalsGamesTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams}/>) 
         pagesMap.set(PagesEnum.PLAYER_CARDS,
