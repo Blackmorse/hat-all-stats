@@ -17,6 +17,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @Slf4j
@@ -83,12 +84,16 @@ public class ScheduledCountryLoader {
                     .collect(Collectors.toList());
         } else {
             leagueTimes = worldDetails.getLeagueList().stream()
-                    .map(league -> {
+                    .flatMap(league -> {
+                        if (league.getMatchRound() - 1 > 14) {
+                            log.info("Round {} for country ({}, {}). Nothing to load", league.getMatchRound(), league.getLeagueId(), league.getEnglishName());
+                            return Stream.empty();
+                        }
                         Integer minutesOffset = countriesToMinutesOffset.getOrDefault(league.getLeagueId(), 0);
 
                         Date time = new Date(league.getSeriesMatchDate().getTime() + 1000 * 60 * 60 * 3 + minutesOffset * 60 * 1000);
 
-                        return new LeagueTime(league, time);
+                        return Stream.of(new LeagueTime(league, time));
                     })
                     .sorted(Comparator.comparing(LeagueTime::getTime))
                     .collect(Collectors.toList());

@@ -42,6 +42,7 @@ class LoaderController @Inject()(val controllerComponents: ControllerComponents,
     request.body.validate[Seq[LeagueTime]] match {
       case JsSuccess(schedules, _) =>
         schedules.foreach(leagueTime => {
+          println(s"Scheduled time for ${leagueTime.leagueId}: ${leagueTime.time} (${leagueTime.time.getTime})")
           leagueInfoService.leagueInfo(leagueTime.leagueId).loadingInfo = Scheduled(leagueTime.time)
         })
         Ok("")
