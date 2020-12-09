@@ -22,7 +22,8 @@ CREATE TABLE hattrick.player_info
     `rating_end_of_match` UInt8, 
     `injury_level` Int8, 
     `tsi` UInt32, 
-    `salary` UInt32
+    `salary` UInt32,
+    `nationality` UInt8
 )
 ENGINE = MergeTree()
 ORDER BY (season, league_id, division_level, league_unit_id, team_id, round, cityHash64(player_id))

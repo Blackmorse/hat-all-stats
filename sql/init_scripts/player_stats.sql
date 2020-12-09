@@ -25,7 +25,8 @@ CREATE TABLE hattrick.player_stats
     `salary` UInt32,
     `yellow_cards` UInt8,
     `red_cards` UInt8,
-    `goals` UInt8
+    `goals` UInt8,
+    `nationality` UInt8
 )
 ENGINE = MergeTree()
 PARTITION BY season

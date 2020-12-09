@@ -40,6 +40,8 @@ public class PlayerInfoJdbcMapper extends AbstractJdbcMapper<PlayerInfo> {
         map.put("tsi", PlayerInfo::getTSI);
         map.put("salary", PlayerInfo::getSalary);
 
+        map.put("nationality", PlayerInfo::getNationality);
+
         return map;
     }
 }

@@ -32,4 +32,5 @@ public class PlayerInfo {
     private Integer injuryLevel;
     private Integer TSI;
     private Integer salary;
+    private Integer nationality;
 }

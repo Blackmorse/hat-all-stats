@@ -36,7 +36,8 @@ public class PlayersJoiner {
             "    player_info.salary, \n" +
             "    player_events.yellow_cards, \n" +
             "    player_events.red_cards, \n" +
-            "    player_events.goals\n" +
+            "    player_events.goals,\n" +
+            "    player_info.nationality \n" +
             "FROM {database}.player_info\n" +
             "LEFT JOIN \n" +
             "(\n" +
