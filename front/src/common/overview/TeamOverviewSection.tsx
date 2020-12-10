@@ -21,7 +21,7 @@ abstract class TeamOverviewSection<Data extends LevelData> extends OverviewTable
         return <Translation>
         {(t, { i18n}) =>  <tr>
                 <th>{t('table.team')}</th>
-                {(this.isWorldData) ? <th className="value">{t('overview.country')}</th> : <></>}
+                {(this.isWorldData) ? <th className="value"></th> : <></>}
                 <th className="value">{t('table.league')}</th>
                 <th className="value">{this.valueTitle}</th>
             </tr>

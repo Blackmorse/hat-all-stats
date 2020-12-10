@@ -4,6 +4,7 @@ import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import LeagueLink from '../../common/links/LeagueLink';
 import WorldData from '../../rest/models/leveldata/WorldData';
 import HattidLink from '../links/HattidLink';
+import CountryImage from '../elements/CountryImage'
 
 export interface OverviewTableSectionProps<Data extends LevelData, Entity> 
     extends OverviewSectionProps<Data, Array<Entity>> {
@@ -25,7 +26,8 @@ abstract class OverviewTableSection<Data extends LevelData, Entity>
         if (this.isWorldData) {
             let nameMap = new Map(((this.props.levelDataProps.levelData as any) as WorldData).countries)
             leagueNameFunc = (id) => <td className="value">
-                    <LeagueLink tableLink={true} id={id} text={nameMap.get(id) || ''}/>
+                    <LeagueLink id={id} text={<CountryImage countryId={id} text={nameMap.get(id)} />}/>
+                    
                 </td>
         } else {
             leagueNameFunc = (id) => undefined
