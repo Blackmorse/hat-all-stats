@@ -15,73 +15,74 @@ import SeasonSelector from '../selectors/SeasonSelector';
 import FormationSelector, { Formation } from '../selectors/FormationSelector'
 
 interface State {
-    loadingState: LoadingEnum,
     dreamTeamPlayers?: Array<DreamTeamPlayer>,
-    statsType: StatsType,
-    season: number,
     formation: Formation
 }
 
+interface Request {
+    statsType: StatsType,
+    season: number
+}
+
 class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>> 
-    extends StatisticsSection<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State> {
-    
+    extends StatisticsSection<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<DreamTeamPlayer>, Request> {
+
     constructor(props: LevelDataPropsWrapper<Data, Props>) {
         super(props, 'menu.dream_team')
         this.state = {
             loadingState: LoadingEnum.OK,
-            statsType: {
-                statType: StatsTypeEnum.ROUND,
-                roundNumber: props.levelDataProps.currentRound(),
+            dataRequest: {
+                statsType: {
+                    statType: StatsTypeEnum.ROUND,
+                    roundNumber: props.levelDataProps.currentRound(),
+                },
+                season: props.levelDataProps.currentSeason(),
             },
-            season: props.levelDataProps.currentSeason(),
-            formation: new Formation(4, 4, 2)
+            state: {
+                formation: new Formation(4, 4, 2)
+            }
         }
         this.statsTypeChanged=this.statsTypeChanged.bind(this)
         this.seasonChanged=this.seasonChanged.bind(this)
         this.formationChanged=this.formationChanged.bind(this) 
     }
-    
-    componentDidMount() {
-        this.updateCurrent()
+
+    executeDataRequest(dataRequest: Request, 
+            callback: (loadingState: LoadingEnum, result?: Array<DreamTeamPlayer>) => void): void {
+        getDreamTeam(this.props.levelDataProps.createLevelRequest(), 
+            dataRequest.season, dataRequest.statsType, "rating", callback)
     }
 
-    updateCurrent(): void {
-        this.update(this.state.statsType, this.state.formation, this.state.season)
-    }
-
-    update(statsType: StatsType, formation: Formation, season: number) {
-        this.setState({
-            loadingState: LoadingEnum.LOADING,
-            dreamTeamPlayers: this.state.dreamTeamPlayers
-        })
-
-        getDreamTeam(this.props.levelDataProps.createLevelRequest(), season,
-            statsType, "rating", (players) => this.setState({
-                loadingState: LoadingEnum.OK,
-                dreamTeamPlayers: players,
-                formation: formation,
-                statsType: statsType,
-                season: season
-            }),
-            () => this.setState({
-                loadingState: LoadingEnum.ERROR,
-                dreamTeamPlayers: this.state.dreamTeamPlayers
-            }))
+    stateFromResult(result?: Array<DreamTeamPlayer>): State {
+        return {
+            dreamTeamPlayers: (result) ? result : this.state.state.dreamTeamPlayers,
+            formation: this.state.state.formation
+        }
     }
 
     statsTypeChanged(statType: StatsType) {
-        this.update(statType, this.state.formation, this.state.season)
+        let newRequest = Object.assign({}, this.state.dataRequest)
+        newRequest.statsType = statType
+        
+        this.updateWithRequest(newRequest)
     }
 
     seasonChanged(season: number) {
+        let newRequest = Object.assign({}, this.state.dataRequest)
+
         let rounds = this.props.levelDataProps.rounds(season)
-        this.update({statType: StatsTypeEnum.ROUND, roundNumber: rounds[rounds.length - 1]}, 
-            this.state.formation, season)
+
+        newRequest.season = season
+        newRequest.statsType = {statType: StatsTypeEnum.ROUND, roundNumber: rounds[rounds.length - 1]}
+
+        this.updateWithRequest(newRequest)
     }
 
     formationChanged(formation: Formation) {
+        let newState = Object.assign({}, this.state.state)
+        newState.formation = formation
         this.setState({
-            formation: formation
+            state: newState
         })
     }
 
@@ -127,34 +128,34 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
     }
     
     renderSection(): JSX.Element {
-        if (this.state.dreamTeamPlayers === undefined) {
+        if (this.state.state.dreamTeamPlayers === undefined) {
             return <></>
         }
-        console.log(this.state.statsType)
-        let keepers = this.state.dreamTeamPlayers.filter(player => player.role === 'keeper')
-        let defenders = this.state.dreamTeamPlayers.filter(player => player.role === 'defender')
-        let wingbacks = this.state.dreamTeamPlayers.filter(player => player.role === 'wingback')
-        let midfielders = this.state.dreamTeamPlayers.filter(player => player.role === 'midfielder')
-        let wingers = this.state.dreamTeamPlayers.filter(player => player.role === 'winger')
-        let forwards = this.state.dreamTeamPlayers.filter(player => player.role === 'forward')
+        console.log(this.state.dataRequest.statsType)
+        let keepers = this.state.state.dreamTeamPlayers.filter(player => player.role === 'keeper')
+        let defenders = this.state.state.dreamTeamPlayers.filter(player => player.role === 'defender')
+        let wingbacks = this.state.state.dreamTeamPlayers.filter(player => player.role === 'wingback')
+        let midfielders = this.state.state.dreamTeamPlayers.filter(player => player.role === 'midfielder')
+        let wingers = this.state.state.dreamTeamPlayers.filter(player => player.role === 'winger')
+        let forwards = this.state.state.dreamTeamPlayers.filter(player => player.role === 'forward')
 
-        let jsxWingbacks = this.wings(wingbacks, this.state.formation.defenders, i18n.t('dream_team.wingback'))
-        let jsxDefs = this.centers(defenders, this.state.formation.defenders, i18n.t('dream_team.defender'))
-        let jsxWings = this.wings(wingers, this.state.formation.midfielders, i18n.t('dream_team.winger'))
-        let jsxMidfielders = this.centers(midfielders, this.state.formation.midfielders, i18n.t('dream_team.midfielder'))
-        let jsxForwards = this.forwardsKeeper(forwards, this.state.formation.forwards, i18n.t('dream_team.forward'))
+        let jsxWingbacks = this.wings(wingbacks, this.state.state.formation.defenders, i18n.t('dream_team.wingback'))
+        let jsxDefs = this.centers(defenders, this.state.state.formation.defenders, i18n.t('dream_team.defender'))
+        let jsxWings = this.wings(wingers, this.state.state.formation.midfielders, i18n.t('dream_team.winger'))
+        let jsxMidfielders = this.centers(midfielders, this.state.state.formation.midfielders, i18n.t('dream_team.midfielder'))
+        let jsxForwards = this.forwardsKeeper(forwards, this.state.state.formation.forwards, i18n.t('dream_team.forward'))
 
         return <div className="dream_team_page">
             <div className="selectors_div">
-                <FormationSelector currentFormation={this.state.formation}
+                <FormationSelector currentFormation={this.state.state.formation}
                     callback={this.formationChanged} />
-                <SeasonSelector currentSeason={this.state.season}
+                <SeasonSelector currentSeason={this.state.dataRequest.season}
                     seasonOffset={this.props.levelDataProps.levelData.seasonOffset} 
                     seasons={this.props.levelDataProps.seasons()}
                     callback={this.seasonChanged} />
-                <StatsTypeSelector rounds={this.props.levelDataProps.rounds(this.state.season)}
+                <StatsTypeSelector rounds={this.props.levelDataProps.rounds(this.state.dataRequest.season)}
                     statsTypes={[StatsTypeEnum.ROUND, StatsTypeEnum.ACCUMULATE]}
-                    selectedStatType={this.state.statsType}
+                    selectedStatType={this.state.dataRequest.statsType}
                     onChanged={this.statsTypeChanged}/>
             </div>
             <div className="core_team">

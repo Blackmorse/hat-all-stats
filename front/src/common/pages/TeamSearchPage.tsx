@@ -10,17 +10,17 @@ import './TeamSearchPage.css'
 import { LoadingEnum } from '../enums/LoadingEnum'
 
 interface State {
-    loadingState: LoadingEnum,
     results?: Array<TeamSearchResult>,
-    currentSearch: string
 }
 
-class TeamSearchPage extends StatisticsSection<{}, State> {
+class TeamSearchPage extends StatisticsSection<{}, State, Array<TeamSearchResult>, string> {
+    
     constructor(props: {}) {
         super(props, 'menu.team_search')
         this.state = {
             loadingState: LoadingEnum.OK,
-            currentSearch: ""
+            dataRequest: "",
+            state: {}
         }
 
         this.changeHandler=this.changeHandler.bind(this)
@@ -31,31 +31,29 @@ class TeamSearchPage extends StatisticsSection<{}, State> {
         window.scrollTo(0, 0)
     }
 
-    updateCurrent(): void {
-        this.setState({
-            results: this.state.results,
-            loadingState: LoadingEnum.LOADING,
-            currentSearch: this.state.currentSearch
-        })
+    executeDataRequest(dataRequest: string, callback: (loadingState: LoadingEnum, result?: Array<TeamSearchResult>) => void): void {
+        let name = this.state.dataRequest
+        if (name && name.trim().length > 0) {
+            searchTeam(this.state.dataRequest, callback)
+        } else {
+            callback(LoadingEnum.OK, [])
+        }
+    }
 
-        searchTeam(this.state.currentSearch,
-            (loadingStatus, results) => this.setState({
-                results: (results) ? results : this.state.results,
-                loadingState: loadingStatus,
-                currentSearch: this.state.currentSearch
-            }))
+    stateFromResult(result?: Array<TeamSearchResult>): State {
+        return {
+            results: (result) ? result : this.state.state.results
+        }
     }
 
     changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
-            currentSearch: event.currentTarget.value,
-            loadingState: LoadingEnum.OK,
-            results: this.state.results
+            dataRequest: event.currentTarget.value
         })
       }
 
     clickHandler() {
-        this.updateCurrent()
+        this.update()
     }
 
     renderSection(): JSX.Element {
@@ -63,11 +61,11 @@ class TeamSearchPage extends StatisticsSection<{}, State> {
         return <Translation>{
             (t, { i18n }) => <div className="search_section">
             <div className="search_form">
-                <input type="text" value={this.state.currentSearch} onChange={this.changeHandler}/>
+                <input type="text" value={this.state.dataRequest} onChange={this.changeHandler}/>
                 <input type="submit" value={a} onClick={this.clickHandler}/>
             </div>
 
-            {this.state.results?.map(result => {
+            {this.state.state.results?.map(result => {
                 return <React.Fragment  key={'team_search_id_' + result.teamId}> 
                     <TeamLink id={result.teamId} text={result.teamName} forceRefresh={true}/>
                     <br />

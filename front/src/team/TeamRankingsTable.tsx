@@ -15,46 +15,40 @@ import { LoadingEnum } from '../common/enums/LoadingEnum';
 
 interface State {
     teamRankingsStats?: TeamRankingsStats
-    loadingState: LoadingEnum
 }
 
-class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State> {
+class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, TeamRankingsStats, {}> {
+    
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props, "menu.team_rankings")
         this.state = {
-            loadingState: LoadingEnum.OK
+            loadingState: LoadingEnum.OK,
+            dataRequest: {},
+            state: {}
         }
-        this.updateCurrent=this.updateCurrent.bind(this);
     }
 
-
-    updateCurrent(): void {
-        this.componentDidMount()
-    }
-
-    componentDidMount() {
+    executeDataRequest(dataRequest: {}, callback: (loadingState: LoadingEnum, result?: TeamRankingsStats) => void): void {
         const teamRequest: TeamRequest = {type: 'TeamRequest', teamId: this.props.levelDataProps.teamId()}
-        this.setState({
-            teamRankingsStats: this.state.teamRankingsStats,
-            loadingState: LoadingEnum.LOADING
-        })
 
-        getTeamRankings(teamRequest, 
-            (loadingStatus, teamRankingsStats) => this.setState({
-                teamRankingsStats: (teamRankingsStats) ? teamRankingsStats : this.state.teamRankingsStats, 
-                loadingState: loadingStatus})
-            )
+        getTeamRankings(teamRequest, callback)
+    }
+
+    stateFromResult(result?: TeamRankingsStats | undefined): State {
+        return {
+            teamRankingsStats: (result) ? result : this.state.state.teamRankingsStats
+        }
     }
 
     renderSection(): JSX.Element {
-        if(this.state.loadingState === LoadingEnum.LOADING || !this.state.teamRankingsStats || this.state.loadingState === LoadingEnum.ERROR) {
+        if(this.state.loadingState === LoadingEnum.LOADING || !this.state.state.teamRankingsStats || this.state.loadingState === LoadingEnum.ERROR) {
                 return <></>
         }
 
-        let leagueTeamsCount = this.state.teamRankingsStats.leagueTeamsCount
-        let divisionLevelTeamsCount = this.state.teamRankingsStats.divisionLevelTeamsCount
+        let leagueTeamsCount = this.state.state.teamRankingsStats.leagueTeamsCount
+        let divisionLevelTeamsCount = this.state.state.teamRankingsStats.divisionLevelTeamsCount
 
-        let teamRankings = this.state.teamRankingsStats.teamRankings
+        let teamRankings = this.state.state.teamRankingsStats.teamRankings
 
         let rankingData: RankingData = {
             teamRankings: teamRankings,
@@ -80,10 +74,10 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             page={PagesEnum.TEAM_SALARY_TSI}
                             sortingField='salary'
                             rankingData={rankingData}
-                            valueFunc={teamRanking => teamRanking.salary / (this.state.teamRankingsStats?.currencyRate as number) }
+                            valueFunc={teamRanking => teamRanking.salary / (this.state.state.teamRankingsStats?.currencyRate as number) }
                             positionFunc={teamRanking => teamRanking.salaryPosition} 
                             formatter={commasSeparated}
-                            title={t('table.salary') + ', ' + this.state.teamRankingsStats?.currencyName}   
+                            title={t('table.salary') + ', ' + this.state.state.teamRankingsStats?.currencyName}   
                         />
                         <RankingTable 
                             page={PagesEnum.TEAM_SALARY_TSI}

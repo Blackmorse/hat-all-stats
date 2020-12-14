@@ -1,7 +1,7 @@
 import React from 'react';
 import LevelData from '../../rest/models/leveldata/LevelData';
 import LevelDataProps from '../../common/LevelDataProps';
-import StatisticsSection from '../../common/sections/StatisticsSection';
+import StatisticsSection from '../sections/StatisticsSection';
 import OverviewRequest from '../../rest/models/request/OverviewRequest';
 import '../../common/sections/StatisticsSection.css'
 import SeasonRoundSelector from './SeasonRoundSelector'
@@ -13,71 +13,66 @@ export interface OverviewSectionProps<Data extends LevelData, OverviewEntity> {
 }
 
 interface State<OverviewEntity> {
-    loadingState: LoadingEnum,
-    data?: OverviewEntity,
-    selectedSeason: number,
-    selectedRound: number
+    data?: OverviewEntity
+}
+
+interface Request {
+    round: number,
+    season: number
 }
 
 abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewProps extends OverviewSectionProps<Data, OverviewEntity>> 
-    extends StatisticsSection<OverviewProps, State<OverviewEntity>> {
+    extends StatisticsSection<OverviewProps, State<OverviewEntity>, OverviewEntity, Request> {
     isWorldData: boolean
 
     constructor(props: OverviewProps, title: string) {
         super(props, title)
         this.state = {
             loadingState: LoadingEnum.OK,
-            data: props.initialData,
-            selectedSeason: props.levelDataProps.currentSeason(),
-            selectedRound: props.levelDataProps.currentRound()
+            dataRequest: {
+                season: props.levelDataProps.currentSeason(),
+                round: props.levelDataProps.currentRound()
+            },
+            state: {
+                data: props.initialData
+            }
         }
 
         this.isWorldData = 'countries' in  props.levelDataProps.levelData
-        
-        this.loadRound=this.loadRound.bind(this)
     }
 
     abstract loadOverviewEntity(overviewRequest: OverviewRequest,
             callback: (loadingEnum: LoadingEnum, entities?: OverviewEntity) => void): void
 
-    loadRound(season: number, round: number) {
-        this.setState({
-            loadingState: LoadingEnum.LOADING,
-            data: this.state.data,
-            selectedSeason: this.state.selectedSeason,
-            selectedRound: this.state.selectedRound
-        })
 
+    executeDataRequest(dataRequest: Request, 
+            callback: (loadingState: LoadingEnum, result?: OverviewEntity) => void) {
         let request: OverviewRequest = this.props.levelDataProps.createOverviewRequest()
-        request.season = season
-        request.round = round
+        request.season = dataRequest.season
+        request.round = dataRequest.round
 
-        this.loadOverviewEntity(request,
-            (loadingStatus, overviewEntity) => this.setState({
-                loadingState: loadingStatus,
-                data: (overviewEntity) ? overviewEntity : this.state.data,
-                selectedSeason: season,
-                selectedRound: round
-            }))
+        this.loadOverviewEntity(request, callback)
     }
 
-    updateCurrent(): void {
-        this.loadRound(this.state.selectedSeason, this.state.selectedRound)
+    stateFromResult(result?: OverviewEntity): State<OverviewEntity> {
+        return {
+            data: (result) ? result : this.state.state.data
+        }
     }
 
     renderSection(): JSX.Element {
-        let data = this.state.data
+        let data = this.state.state.data
         if (data) {
             let dataDefined = data
             return <div className="statistics_section_inner">
                 
                 {this.renderOverviewSection(dataDefined)}
                 <SeasonRoundSelector 
-                    season={this.state.selectedSeason}
-                    offsettedSeason={this.state.selectedSeason + this.props.levelDataProps.levelData.seasonOffset}
-                    round={this.state.selectedRound}
+                    season={this.state.dataRequest.season}
+                    offsettedSeason={this.state.dataRequest.season + this.props.levelDataProps.levelData.seasonOffset}
+                    round={this.state.dataRequest.round}
                     seasonRoundInfo={this.props.levelDataProps.seasonRoundInfo()}
-                    callback={this.loadRound} />
+                    callback={(season, round) => this.updateWithRequest({season: season, round: round})} />
             </div>
         } else {
             return <></>

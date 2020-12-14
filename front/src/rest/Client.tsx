@@ -164,8 +164,7 @@ export function getTeamMatches(teamId: number, season: number,
 }
 
 export function getDreamTeam(request: LevelRequest, season: number, statType: StatsType, sortBy: string,
-        callback: (players: Array<DreamTeamPlayer>) => void,
-        onError: () => void) {
+        callback: (loadingEnum: LoadingEnum, players?: Array<DreamTeamPlayer>) => void,) {
     var values: any = {}
 
     values.sortBy = sortBy
@@ -179,9 +178,9 @@ export function getDreamTeam(request: LevelRequest, season: number, statType: St
     let queryParams = new URLSearchParams(values).toString()
 
     axios.get<Array<DreamTeamPlayer>>(startUrl(request) + '/dreamTeam?' + queryParams)
-        .then(response => response.data)
-        .then(callback)
-        .catch(e => onError())
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+
 }
 
 export let getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')

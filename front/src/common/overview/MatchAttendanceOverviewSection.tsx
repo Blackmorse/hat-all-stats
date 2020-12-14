@@ -43,7 +43,7 @@ class MatchAttendanceOverviewSection<Data extends LevelData> extends OverviewTab
                 <LeagueUnitLink id={matc.homeTeams.leagueUnitId} text={matc.homeTeams.leagueUnitName} />
             </td>
             <td className="value">
-                {this.props.linkProvider(commasSeparated(matc.spectators), this.state.selectedSeason, this.state.selectedRound, matc).render()}
+                {this.props.linkProvider(commasSeparated(matc.spectators), this.state.dataRequest.season, this.state.dataRequest.round, matc).render()}
             </td>
             <td className="value">
                 <TeamLink id={matc.homeTeams.teamId} text={matc.homeTeams.teamName}/>

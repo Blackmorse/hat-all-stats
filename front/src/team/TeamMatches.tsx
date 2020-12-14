@@ -11,40 +11,34 @@ import { getTeamMatches } from '../rest/Client'
 import TeamMatchInfo from './matches/TeamMatchInfo'
 
 interface State {
-    loadingState: LoadingEnum,
     matches?: Array<TeamMatch>
 }
 
-class TeamMatches extends StatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State> {
-
+class TeamMatches extends StatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, Array<TeamMatch>, {}> {
+    
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props, "menu.matches")
         this.state = {
-            loadingState: LoadingEnum.OK
+            loadingState: LoadingEnum.OK,
+            dataRequest: {},
+            state: {}
         }
     }
 
-    componentDidMount() {
-        this.setState({
-            matches: this.state.matches,
-            loadingState: LoadingEnum.LOADING
-        })
-
-        getTeamMatches(this.props.levelDataProps.teamId(), this.props.levelDataProps.currentSeason(),
-            (loadingStatus, matches) => this.setState({
-                matches: (matches) ? matches : this.state.matches,
-                loadingState: loadingStatus
-            }))
+    executeDataRequest(dataRequest: {}, callback: (loadingState: LoadingEnum, result?: Array<TeamMatch>) => void): void {
+        getTeamMatches(this.props.levelDataProps.teamId(), this.props.levelDataProps.currentSeason(), callback)
     }
-    
-    updateCurrent(): void {
-        this.componentDidMount()
+
+    stateFromResult(result?: Array<TeamMatch>): State {
+        return {
+            matches: (result) ? result : this.state.state.matches
+        }
     }
 
     renderSection(): JSX.Element {
         return <Translation>{
             (t, { i18n }) => <>
-                {this.state.matches?.map(match => {
+                {this.state.state.matches?.map(match => {
                     return <>
                         <TeamMatchInfo teamMatch={match}/>
                     </>

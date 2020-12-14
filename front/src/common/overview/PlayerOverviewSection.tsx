@@ -42,7 +42,7 @@ abstract class PlayerOverviewSection<Data extends LevelData> extends OverviewTab
             </td>
             <td className="value">{playerStat.playerSortingKey.firstName} {playerStat.playerSortingKey.lastName} <ExternalPlayerLink id={playerStat.playerSortingKey.playerId} /></td>
             <td className="value">
-                {this.props.linkProvider(this.valueFormatter(playerStat.value), this.state.selectedSeason, this.state.selectedRound, playerStat).render()}
+                {this.props.linkProvider(this.valueFormatter(playerStat.value), this.state.dataRequest.season, this.state.dataRequest.round, playerStat).render()}
             </td>
         </tr>
     }

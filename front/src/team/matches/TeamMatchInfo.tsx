@@ -16,15 +16,24 @@ interface Props {
     teamMatch: TeamMatch
 }
 
-class TeamMatchInfo extends StatisticsSection<Props, {loadingState: LoadingEnum}> {
+class TeamMatchInfo extends StatisticsSection<Props, {}, {}, {}> {
+    
     constructor(props: Props) {
         super(props, <>{i18n.t('filter.round')} {props.teamMatch.round}</>)
 
-        this.state = {loadingState: LoadingEnum.OK}
+        this.state = {
+            loadingState: LoadingEnum.OK, 
+            dataRequest: {},
+            state: {}
+        }
     }
-   
-    updateCurrent(): void {
-        
+
+    executeDataRequest(dataRequest: {}, callback: (loadingState: LoadingEnum, result?: {} | undefined) => void): void {
+        callback(LoadingEnum.OK, {})
+    }
+
+    stateFromResult(result?: {} | undefined): {} {
+        return {}
     }
 
     renderSection() {
