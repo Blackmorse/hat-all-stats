@@ -4,6 +4,7 @@ import java.util.Date
 
 import databases.ClickhouseDAO
 import javax.inject.{Inject, Singleton}
+import play.api.Logging
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsSuccess, Json}
 import play.api.mvc.{BaseController, ControllerComponents}
@@ -19,7 +20,8 @@ object LeagueTime {
 class LoaderController @Inject()(val controllerComponents: ControllerComponents,
                                  val clickhouseDAO: ClickhouseDAO,
                                  val leagueInfoService: LeagueInfoService,
-                                 val cache: AsyncCacheApi) extends BaseController {
+                                 val cache: AsyncCacheApi)
+    extends BaseController with Logging {
 
   def leagueRound(season: Int, leagueId: Int, round: Int) = Action {
     val roundInfos = clickhouseDAO
@@ -42,7 +44,7 @@ class LoaderController @Inject()(val controllerComponents: ControllerComponents,
     request.body.validate[Seq[LeagueTime]] match {
       case JsSuccess(schedules, _) =>
         schedules.foreach(leagueTime => {
-          println(s"Scheduled time for ${leagueTime.leagueId}: ${leagueTime.time} (${leagueTime.time.getTime})")
+          logger.info(s"Scheduled time for ${leagueTime.leagueId}: ${leagueTime.time} (${leagueTime.time.getTime})")
           leagueInfoService.leagueInfo(leagueTime.leagueId).loadingInfo = Scheduled(leagueTime.time)
         })
         Ok("")
