@@ -1,14 +1,23 @@
 package com.blackmorse.hattrick.model.converters;
 
+import com.blackmorse.hattrick.api.HattrickInfoService;
 import com.blackmorse.hattrick.clickhouse.model.PlayerInfo;
 import com.blackmorse.hattrick.model.TeamWithMatch;
 import com.blackmorse.hattrick.model.TeamWithMatchAndPlayers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Stream;
 
 @Component
 public class PlayerInfoConverter {
+    private final HattrickInfoService hattrickInfoService;
+
+    @Autowired
+    public PlayerInfoConverter(HattrickInfoService hattrickInfoService) {
+        this.hattrickInfoService = hattrickInfoService;
+    }
+
     public Stream<PlayerInfo> convert(TeamWithMatchAndPlayers teamWithMatchAndPlayers) {
         TeamWithMatch teamWithMatch = teamWithMatchAndPlayers.getTeamWithMatch();
 
@@ -30,7 +39,7 @@ public class PlayerInfoConverter {
                             .lastName(player.getLastName())
                             .age(player.getAge())
                             .days(player.getAgeDays())
-                            .nationality(player.getCountryId());
+                            .nationality(hattrickInfoService.getCountryIdToLeagueIdMap().get(player.getCountryId()));
 
                     if(player.getLastMatch().getDate() != null && player.getLastMatch().getDate().equals(teamWithMatch.getMatch().getDate())) {
                         builder.playedMinutes(player.getLastMatch().getPlayedMinutes())

@@ -10,7 +10,9 @@ import com.blackmorse.hattrick.promotions.model.PromoteTeam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -63,5 +65,13 @@ public class HattrickService {
 
     public List<TeamWithMatchAndTeamDetails> getTeamDetails(List<TeamWithMatchDetails> teamWithMatchDetails) {
         return teamDetailsLoader.getTeamDetails(teamWithMatchDetails);
+    }
+
+    public Map<Integer, Integer> countryIdToLeagueIdMap() {
+        Map<Integer, Integer> map = new HashMap<>();
+        hattrick.getWorldDetails().getLeagueList().forEach(league ->
+                map.put(league.getCountry().getCountryId(), league.getLeagueId()));
+
+        return map;
     }
 }
