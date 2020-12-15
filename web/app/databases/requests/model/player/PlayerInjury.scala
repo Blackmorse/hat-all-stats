@@ -20,11 +20,12 @@ object PlayerInjury {
     get[Long]("league_unit_id") ~
     get[String]("league_unit_name") ~
     get[Int]("age") ~
-    get[Int]("injury") map {
+    get[Int]("injury") ~
+    get[Int]("nationality") map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
-        leagueUnitId ~ leagueUnitName ~ age ~ injury =>
+        leagueUnitId ~ leagueUnitName ~ age ~ injury ~ nationality =>
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
-          leagueUnitId, leagueUnitName)
+          leagueUnitId, leagueUnitName, nationality)
         PlayerInjury(playerSortingKey, age, injury)
     }
   }

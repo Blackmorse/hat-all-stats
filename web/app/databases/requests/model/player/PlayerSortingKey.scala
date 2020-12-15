@@ -8,7 +8,8 @@ case class PlayerSortingKey(playerId: Long,
                             teamId: Long,
                             teamName: String,
                             leagueUnitId: Long,
-                            leagueUnitName: String)
+                            leagueUnitName: String,
+                            nationality: Int)
 
 object PlayerSortingKey {
   implicit val writes = Json.writes[PlayerSortingKey]

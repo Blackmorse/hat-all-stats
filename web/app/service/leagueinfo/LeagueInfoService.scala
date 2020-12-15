@@ -64,6 +64,11 @@ class LeagueInfoService @Inject() (val hattrick: Hattrick,
     LeaguesInfo(seq)
   }
 
+  val idToStringCountryMap = leagueInfo.leagueInfo
+    .toSeq
+    .map{case(leagueId, leagueInfo) => (leagueId, leagueInfo.league.getEnglishName)}
+    .sortBy(_._2)
+
   implicit def toMutable[T](map: Map[Int, T]): mutable.Map[Int, T] = {
     mutable.Map(map.toSeq: _*)
   }

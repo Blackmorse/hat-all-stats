@@ -20,11 +20,13 @@ object PlayerCards {
     get[Int]("games") ~
     get[Int]("played") ~
     get[Int]("yellow_cards") ~
-    get[Int]("red_cards") map {
+    get[Int]("red_cards") ~
+    get[Int]("nationality") map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
-        leagueUnitId ~ leagueUnitName ~ games ~ playedMinutes ~ yellowCards ~ redCards =>
+        leagueUnitId ~ leagueUnitName ~ games ~
+          playedMinutes ~ yellowCards ~ redCards ~ nationality =>
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
-          leagueUnitId, leagueUnitName)
+          leagueUnitId, leagueUnitName, nationality)
         PlayerCards(playerSortingKey, games, playedMinutes, yellowCards, redCards)
     }
   }

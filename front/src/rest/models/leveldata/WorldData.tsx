@@ -7,7 +7,7 @@ interface WorldLoadingInfo {
 }
 
 interface WorldData extends LevelData {
-    countries: Array<[number, string]>,
+    isWorldData: string, //TODO for detecting worlddata type at runtime
     loadingInfo: WorldLoadingInfo
 }
 

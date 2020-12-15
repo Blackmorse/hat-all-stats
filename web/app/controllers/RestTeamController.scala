@@ -38,7 +38,8 @@ case class RestTeamData(leagueId: Int,
                         seasonRoundInfo: Seq[(Int, Rounds)],
                         currency: String,
                         currencyRate: Double,
-                        loadingInfo: LoadingInfo) extends CountryLevelData
+                        loadingInfo: LoadingInfo,
+                        countries: Seq[(Int, String)]) extends CountryLevelData
 
 object RestTeamData {
   implicit val writes = Json.writes[RestTeamData]
@@ -91,7 +92,8 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
       seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(team.getLeague.getLeagueId),
       currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
       currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate,
-      loadingInfo = leagueInfoService.leagueInfo(team.getLeague.getLeagueId).loadingInfo
+      loadingInfo = leagueInfoService.leagueInfo(team.getLeague.getLeagueId).loadingInfo,
+      countries = leagueInfoService.idToStringCountryMap
     )
   }
 

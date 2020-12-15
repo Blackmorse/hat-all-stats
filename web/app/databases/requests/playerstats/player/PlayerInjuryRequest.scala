@@ -18,7 +18,8 @@ object PlayerInjuryRequest extends ClickhouseStatisticsRequest[PlayerInjury] {
        |    first_name,
        |    last_name,
        |    ((age * 112) + days)  AS age,
-       |    injury_level as injury
+       |    injury_level as injury,
+       |    nationality
        |FROM hattrick.player_stats
        |__where__ AND (round = __round__)
        |ORDER BY

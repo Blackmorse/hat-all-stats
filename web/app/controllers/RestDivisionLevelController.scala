@@ -32,7 +32,8 @@ case class RestDivisionLevelData(leagueId: Int,
                                  seasonRoundInfo: Seq[(Int, Rounds)],
                                  currency: String,
                                  currencyRate: Double,
-                                 loadingInfo: LoadingInfo) extends CountryLevelData
+                                 loadingInfo: LoadingInfo,
+                                 countries: Seq[(Int, String)]) extends CountryLevelData
 
 object RestDivisionLevelData {
   implicit val writes = Json.writes[RestDivisionLevelData]
@@ -59,7 +60,8 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
       seasonRoundInfo = seasonRoundInfo,
       currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
       currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate,
-      loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo)
+      loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo,
+      countries = leagueInfoService.idToStringCountryMap)
     Future(Ok(Json.toJson(restDivisionLevelData)))
   }
 

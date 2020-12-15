@@ -18,7 +18,8 @@ object PlayerRatingsRequest extends ClickhouseStatisticsRequest[PlayerRating]{
          |    last_name,
          |    ((age * 112) + days)  AS age,
          |    rating,
-         |    rating_end_of_match
+         |    rating_end_of_match,
+         |    nationality
          |FROM hattrick.player_stats
          |__where__ AND (round = __round__)
          |ORDER BY

@@ -24,7 +24,6 @@ import utils.Romans
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.util.Random
 
 case class RestLeagueData(leagueId: Int,
                           leagueName: String,
@@ -33,7 +32,8 @@ case class RestLeagueData(leagueId: Int,
                           seasonRoundInfo: Seq[(Int, Rounds)],
                           currency: String,
                           currencyRate: Double,
-                          loadingInfo: LoadingInfo) extends CountryLevelData
+                          loadingInfo: LoadingInfo,
+                          countries: Seq[(Int, String)]) extends CountryLevelData
 
 object RestLeagueData {
   implicit val writes = Json.writes[RestLeagueData]
@@ -63,7 +63,8 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
         seasonRoundInfo = seasonRoundInfo,
         currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
         currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate,
-        loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo)
+        loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo,
+        countries = leagueInfoService.idToStringCountryMap)
       Future(Ok(Json.toJson(restLeagueData)))
     }
 

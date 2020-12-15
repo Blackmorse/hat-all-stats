@@ -19,7 +19,8 @@ object PlayerSalaryTSIRequest extends ClickhouseStatisticsRequest[PlayerSalaryTS
       |    last_name,
       |    ((age * 112) + days)  AS age,
       |    tsi,
-      |    salary
+      |    salary,
+      |    nationality
       |FROM hattrick.player_stats
       |__where__ AND (round = __round__)
       |ORDER BY

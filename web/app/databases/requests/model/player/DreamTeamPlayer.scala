@@ -24,11 +24,12 @@ object DreamTeamPlayer {
     get[Int]("round") ~
     get[String]("role") ~
     get[Int]("rating") ~
-    get[Int]("rating_end_of_match") map {
+    get[Int]("rating_end_of_match") ~
+    get[Int]("nationality") map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
-        leagueUnitId ~ leagueUnitName ~ round ~ role ~ rating ~ ratingEndOfMatch =>
+        leagueUnitId ~ leagueUnitName ~ round ~ role ~ rating ~ ratingEndOfMatch ~ nationality =>
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
-          leagueUnitId, leagueUnitName)
+          leagueUnitId, leagueUnitName, nationality)
 
         DreamTeamPlayer(playerSortingKey, round, role, rating, ratingEndOfMatch)
     }

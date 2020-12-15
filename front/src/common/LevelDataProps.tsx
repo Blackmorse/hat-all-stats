@@ -44,6 +44,10 @@ abstract class LevelDataProps<Data extends LevelData> {
 
     currencyRate(): number {return this.levelData.currencyRate}
 
+    countriesMap(): Map<number, string> {
+        return new Map(this.levelData.countries)
+    }
+
     abstract createLevelRequest(): LevelRequest
 
     abstract createOverviewRequest(): OverviewRequest

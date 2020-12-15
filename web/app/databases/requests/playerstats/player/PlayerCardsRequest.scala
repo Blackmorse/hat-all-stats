@@ -20,7 +20,8 @@ object PlayerCardsRequest extends ClickhouseStatisticsRequest[PlayerCards] {
        |    countIf(played_minutes > 0) AS games,
        |    sum(played_minutes) AS played,
        |    sum(yellow_cards) AS yellow_cards,
-       |    sum(red_cards) AS red_cards
+       |    sum(red_cards) AS red_cards,
+       |    argMax(nationality, round) as nationality
        |FROM hattrick.player_stats
        |__where__ AND round <= __round__
        |GROUP BY

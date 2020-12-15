@@ -12,6 +12,8 @@ import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { yellowCards, redCards } from '../../Formatters'
 import { getPlayerCards } from '../../../rest/Client';
 import ExternalPlayerLink from '../../links/ExternalPlayerLink';
+import CountryImage from '../../elements/CountryImage';
+import LeagueLink from '../../links/LeagueLink';
 
 abstract class PlayerCardsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends TableSection<Data, TableProps, PlayerCards> {
@@ -29,6 +31,7 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
             (t, { i18n }) =>
             <tr>
                 <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
                 <th className="value">{t('table.league')}</th>
@@ -45,6 +48,7 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
         let playerSortingKey = playerCards.playerSortingKey
         return <>
             <td>{index + 1}</td>
+            <td className="value"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId} /></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>

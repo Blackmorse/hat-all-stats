@@ -21,12 +21,13 @@ object PlayerStatOverview {
     get[String]("team_name") ~
     get[Long]("league_unit_id") ~
     get[String]("league_unit_name") ~
+    get[Int]("nationality") ~
     get[Int]("value") map {
       case leagueId ~ playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
-        leagueUnitId ~ leagueUnitName ~ value =>
+        leagueUnitId ~ leagueUnitName ~ nationality ~ value =>
 
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
-          leagueUnitId, leagueUnitName)
+          leagueUnitId, leagueUnitName, nationality)
         PlayerStatOverview(leagueId, playerSortingKey, value)
     }
   }

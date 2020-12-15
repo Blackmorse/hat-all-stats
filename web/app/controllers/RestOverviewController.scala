@@ -28,7 +28,8 @@ case class WorldData(countries: Seq[(Int, String)],
                      seasonRoundInfo: Seq[(Int, Rounds)],
                      currency: String,
                      currencyRate: Double,
-                     loadingInfo: Option[WorldLoadingInfo]) extends LevelData
+                     loadingInfo: Option[WorldLoadingInfo],
+                     isWorldData: String /*TODO for detecting type at TS*/) extends LevelData
 
 object WorldData {
   implicit val writes = Json.writes[WorldData]
@@ -43,10 +44,7 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
   private val lastLeagueId = 100
 
   def getWorldData() = Action.async{implicit request =>
-    val countries = leagueInfoService.leagueInfo.leagueInfo
-        .toSeq
-      .map{case(leagueId, leagueInfo) => (leagueId, leagueInfo.league.getEnglishName)}
-      .sortBy(_._2)
+    val countries = leagueInfoService.idToStringCountryMap
 
     val leagueInfoCountries = leagueInfoService.leagueInfo.leagueInfo.values.toSeq
     val proceedCountries = leagueInfoCountries.count(_.loadingInfo == Finished)
@@ -74,7 +72,8 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
       seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(lastLeagueId),
       currency = "$",
       currencyRate = 10.0d,
-      worldLoadingInfo
+      worldLoadingInfo,
+      isWorldData = "true"
       )
 
     Future(Ok(Json.toJson(worldData)))

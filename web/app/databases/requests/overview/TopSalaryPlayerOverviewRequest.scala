@@ -15,7 +15,8 @@ object TopSalaryPlayerOverviewRequest extends ClickhouseOverviewRequest[PlayerSt
        |  player_id,
        |  first_name,
        |  last_name,
-       |  salary AS value
+       |  salary AS value,
+       |  nationality
        |FROM hattrick.player_stats
        |__where__
        |ORDER BY value DESC

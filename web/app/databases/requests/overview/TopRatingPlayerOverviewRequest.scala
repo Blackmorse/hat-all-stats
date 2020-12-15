@@ -15,7 +15,8 @@ object TopRatingPlayerOverviewRequest extends ClickhouseOverviewRequest[PlayerSt
      |  player_id,
      |  first_name,
      |  last_name,
-     |  rating AS value
+     |  rating AS value,
+     |  nationality
      |FROM hattrick.player_stats
      |__where__
      |ORDER BY value DESC

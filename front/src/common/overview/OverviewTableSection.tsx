@@ -2,7 +2,6 @@ import React from 'react'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import LeagueLink from '../../common/links/LeagueLink';
-import WorldData from '../../rest/models/leveldata/WorldData';
 import HattidLink from '../links/HattidLink';
 import CountryImage from '../elements/CountryImage'
 
@@ -24,7 +23,7 @@ abstract class OverviewTableSection<Data extends LevelData, Entity>
         let leagueNameFunc: (id: number) => JSX.Element | undefined
 
         if (this.isWorldData) {
-            let nameMap = new Map(((this.props.levelDataProps.levelData as any) as WorldData).countries)
+            let nameMap = this.props.levelDataProps.countriesMap()
             leagueNameFunc = (id) => <td className="value">
                     <LeagueLink id={id} text={<CountryImage countryId={id} text={nameMap.get(id)} />}/>
                     

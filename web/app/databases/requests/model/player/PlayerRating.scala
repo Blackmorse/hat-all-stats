@@ -22,11 +22,12 @@ object PlayerRating {
     get[String]("league_unit_name") ~
     get[Int]("age") ~
     get[Int]("rating") ~
-    get[Int]("rating_end_of_match") map {
+    get[Int]("rating_end_of_match") ~
+    get[Int]("nationality") map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
-        leagueUnitId ~ leagueUnitName ~ age ~ rating ~ ratingEndOfMatch =>
+        leagueUnitId ~ leagueUnitName ~ age ~ rating ~ ratingEndOfMatch ~ nationality =>
       val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
-        leagueUnitId, leagueUnitName)
+        leagueUnitId, leagueUnitName, nationality)
       PlayerRating(playerSortingKey, age, rating, ratingEndOfMatch)
     }
   }

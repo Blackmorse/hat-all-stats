@@ -38,7 +38,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
             }
         }
 
-        this.isWorldData = 'countries' in  props.levelDataProps.levelData
+        this.isWorldData = 'isWorldData' in  props.levelDataProps.levelData
     }
 
     abstract loadOverviewEntity(overviewRequest: OverviewRequest,

@@ -11,6 +11,8 @@ import TeamLink from "../../links/TeamLink";
 import LeagueUnitLink from "../../links/LeagueUnitLink";
 import { ageFormatter, commasSeparated } from '../../Formatters'
 import ExternalPlayerLink from '../../links/ExternalPlayerLink';
+import LeagueLink from '../../links/LeagueLink';
+import CountryImage from '../../elements/CountryImage';
 
 abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends TableSection<Data, TableProps, PlayerSalaryTSI> {
@@ -28,6 +30,7 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
             (t, { i18n }) =>
             <tr>
                 <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
                 <th className="value">{t('table.league')}</th>
@@ -43,6 +46,7 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
         let playerSortingKey = playerSalaryTSI.playerSortingKey
         return <>
             <td>{index + 1}</td>
+            <td className="value"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>

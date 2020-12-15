@@ -19,7 +19,8 @@ object PlayerGamesGoalsRequest extends ClickhouseStatisticsRequest[PlayerGamesGo
            |    countIf(played_minutes > 0) AS games,
            |    sum(played_minutes) AS played,
            |    sum(goals) AS scored,
-           |    floor(played / scored, 2) AS goal_rate
+           |    floor(played / scored, 2) AS goal_rate,
+           |    argMax(nationality, round) as nationality
            |FROM hattrick.player_stats
            |__where__ AND (round <= __round__)
            |GROUP BY

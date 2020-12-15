@@ -37,7 +37,8 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
       |       113, 'forward',
       |     '') AS role,
       |    rating,
-      |    rating_end_of_match
+      |    rating_end_of_match,
+      |    nationality
       |FROM hattrick.player_stats
       |__where__ AND (round = __round__) AND (role_id != 0)
       |ORDER BY __sortBy__
@@ -72,7 +73,8 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
       |       113, 'forward',
       |     '') AS role,
       |    rating,
-      |    rating_end_of_match
+      |    rating_end_of_match,
+      |    nationality
       |FROM hattrick.player_stats
       |__where__ AND (role_id != 0)
       |ORDER BY __sortBy__

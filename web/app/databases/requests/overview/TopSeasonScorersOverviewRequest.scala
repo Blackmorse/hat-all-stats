@@ -19,7 +19,8 @@ object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerS
       |    argMax(team_name, round) AS team_name,
       |    league_unit_id,
       |    league_unit_name,
-      |    sum(goals) AS value
+      |    sum(goals) AS value,
+      |    argMax(nationality, round) as nationality
       |FROM
       |(
       |    SELECT
@@ -32,7 +33,8 @@ object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerS
       |        league_unit_id,
       |        league_unit_name,
       |        goals,
-      |        round
+      |        round,
+      |        nationality
       |    FROM hattrick.player_stats
       |    __where__ and round <= __round__
       |) AS inner

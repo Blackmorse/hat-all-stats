@@ -5,6 +5,8 @@ import { ratingFormatter } from '../../Formatters'
 import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 import TeamLink from '../../links/TeamLink';
 import LeagueUnitLink from '../../links/LeagueUnitLink';
+import CountryImage from '../../elements/CountryImage';
+import LeagueLink from '../../links/LeagueLink';
 
 interface Props {
     position: string,
@@ -18,6 +20,10 @@ class DreamTeamPlayerCard extends React.Component<Props> {
             content = <>
                 <span className="player_name player_card_line">
                     {this.props.player?.playerSortingKey.firstName} {this.props.player.playerSortingKey.lastName}{<ExternalPlayerLink id={this.props.player?.playerSortingKey.playerId}/>}
+                </span>
+                <span className="player_nationality player_card_line">
+                    <LeagueLink id={this.props.player.playerSortingKey.nationality} forceRefresh={true}
+                        text={<CountryImage countryId={this.props.player.playerSortingKey.nationality} />}/>  
                 </span>
                 <span className="player_team player_card_line">
                     <TeamLink id={this.props.player.playerSortingKey.teamId} text={this.props.player.playerSortingKey.teamName} />

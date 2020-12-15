@@ -22,11 +22,12 @@ object PlayerSalaryTSI {
     get[String]("league_unit_name") ~
     get[Int]("age") ~
     get[Int]("tsi") ~
-    get[Int]("salary") map {
+    get[Int]("salary") ~
+    get[Int]("nationality") map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
-        leagueUnitId ~ leagueUnitName ~ age ~ tsi ~ salary =>
+        leagueUnitId ~ leagueUnitName ~ age ~ tsi ~ salary ~ nationality=>
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
-          leagueUnitId, leagueUnitName)
+          leagueUnitId, leagueUnitName, nationality)
         PlayerSalaryTSI(playerSortingKey, age, tsi, salary)
     }
   }
