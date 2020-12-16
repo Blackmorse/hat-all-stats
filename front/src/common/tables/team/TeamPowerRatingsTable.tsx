@@ -1,6 +1,7 @@
 import React from 'react';
 import LevelData from '../../../rest/models/leveldata/LevelData';
-import TableSection, { SortingState } from '../../../common/sections/TableSection';
+import { SortingState } from '../AbstractTableSection'
+import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import '../../../i18n'
 import { Translation } from 'react-i18next'
@@ -12,7 +13,7 @@ import { getTeamPowerRatings } from '../../../rest/Client';
 import TeamPowerRating from '../../../rest/models/team/TeamPowerRating';
 
 abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends TableSection<Data, TableProps, TeamPowerRating> {
+    extends ClassicTableSection<Data, TableProps, TeamPowerRating> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'power_rating', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},

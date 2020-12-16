@@ -182,5 +182,7 @@
     "dream_team.winger": "Winger",
     "dream_team.midfielder": "Centrocampista",
     "dream_team.forward": "Inoltrare",
-    "dream_team.substitions": "Sostituzioni"
+    "dream_team.substitions": "Sostituzioni",
+
+    "filter.full_season": "Ho giocato l'intera stagione"
 }

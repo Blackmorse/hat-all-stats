@@ -181,5 +181,7 @@
     "dream_team.winger": "Winger",
     "dream_team.midfielder": "Midifielder",
     "dream_team.forward": "Forward",
-    "dream_team.substitions": "Substitutions"
+    "dream_team.substitions": "Substitutions",
+
+    "filter.full_season": "Have played the full season"
   }

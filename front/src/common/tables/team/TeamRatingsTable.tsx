@@ -1,5 +1,6 @@
 import React from 'react'
-import TableSection, { SortingState } from '../../sections/TableSection';
+import { SortingState } from '../AbstractTableSection'
+import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import LevelData from '../../../rest/models/leveldata/LevelData';
 import TeamRating from '../../../rest/models/team/TeamRating';
@@ -13,7 +14,7 @@ import TeamLink from '../../links/TeamLink'
 import { ratingFormatter } from '../../Formatters'
 
 abstract class TeamRatingsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends TableSection<Data, TableProps, TeamRating> {
+    extends ClassicTableSection<Data, TableProps, TeamRating> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'rating', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},

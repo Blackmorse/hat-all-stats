@@ -1,5 +1,6 @@
 import LevelData from '../../../rest/models/leveldata/LevelData';
-import TableSection, { SortingState } from '../../sections/TableSection';
+import { SortingState } from '../AbstractTableSection'
+import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import React from 'react';
 import MatchTopHatstats from '../../../rest/models/match/MatchTopHatstats';
@@ -13,7 +14,7 @@ import { getMatchesTopHatstats } from '../../../rest/Client';
 import ExternalMatchLink from '../../links/ExternalMatchLink';
 
 abstract class MatchTopHatstatsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends TableSection<Data, TableProps, MatchTopHatstats> {
+    extends ClassicTableSection<Data, TableProps, MatchTopHatstats> {
     
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'sum_hatstats', {statType: StatsTypeEnum.ACCUMULATE},

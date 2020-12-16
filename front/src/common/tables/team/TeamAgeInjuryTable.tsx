@@ -1,7 +1,8 @@
 import React from 'react';
 import TeamAgeInjury from "../../../rest/models/team/TeamAgeInjury";
 import LevelData from '../../../rest/models/leveldata/LevelData';
-import TableSection, { SortingState } from '../../../common/sections/TableSection';
+import { SortingState } from '../AbstractTableSection'
+import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import '../../../i18n'
 import { Translation } from 'react-i18next'
@@ -13,7 +14,7 @@ import TeamLink from '../../links/TeamLink'
 import { injuryFormatter, ageFormatter } from '../../Formatters'
 
 abstract class TeamAgeInjuryTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends TableSection<Data, TableProps, TeamAgeInjury> {
+    extends ClassicTableSection<Data, TableProps, TeamAgeInjury> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'age', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},

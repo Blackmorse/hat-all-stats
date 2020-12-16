@@ -1,5 +1,6 @@
 import React from 'react'
-import TableSection, { SortingState } from '../../sections/TableSection';
+import { SortingState } from '../AbstractTableSection'
+import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import LevelData from '../../../rest/models/leveldata/LevelData';
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
@@ -12,7 +13,7 @@ import TeamLink from '../../links/TeamLink'
 import TeamFanclubFlags from '../../../rest/models/team/TeamFanclubFlags';
 
 abstract class TeamFanclubFlagsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends TableSection<Data, TableProps, TeamFanclubFlags> {
+    extends ClassicTableSection<Data, TableProps, TeamFanclubFlags> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'fanclub_size', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},

@@ -1,6 +1,7 @@
 import React from 'react';
 import LevelData from "../../../rest/models/leveldata/LevelData";
-import TableSection, { SortingState } from "../../sections/TableSection";
+import { SortingState } from '../AbstractTableSection'
+import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import PlayerSalaryTSI from "../../../rest/models/player/PlayerSalaryTSI";
 import { StatsTypeEnum } from "../../../rest/models/StatisticsParameters";
@@ -15,7 +16,7 @@ import LeagueLink from '../../links/LeagueLink';
 import CountryImage from '../../elements/CountryImage';
 
 abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-    extends TableSection<Data, TableProps, PlayerSalaryTSI> {
+    extends ClassicTableSection<Data, TableProps, PlayerSalaryTSI> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'tsi', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},

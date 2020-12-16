@@ -181,5 +181,7 @@
     "dream_team.winger": "Krilo",
     "dream_team.midfielder": "Veznjak",
     "dream_team.forward": "Naprijed",
-    "dream_team.substitions": "Zamjene"
+    "dream_team.substitions": "Zamjene",
+
+    "filter.full_season": "Igrali su cijelu sezonu"
 }

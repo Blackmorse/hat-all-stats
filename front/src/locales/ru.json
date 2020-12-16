@@ -181,5 +181,7 @@
     "dream_team.winger": "Вингер",
     "dream_team.midfielder": "Полузащитник",
     "dream_team.forward": "Нападающий",
-    "dream_team.substitions": "Замены"
+    "dream_team.substitions": "Замены",
+
+    "filter.full_season": "Сыгравшие весь сезон"
 }

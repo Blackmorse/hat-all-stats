@@ -1,6 +1,7 @@
 import React from 'react';
 import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
-import TableSection, { SortingState } from '../common/sections/TableSection'
+import { SortingState } from '../common/tables/AbstractTableSection'
+import ClassicTableSection from '../common/tables/ClassicTableSection'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps'
 import { StatsTypeEnum } from '../rest/models/StatisticsParameters';
 import TeamPosition from '../rest/models/team/TeamPosition';
@@ -11,7 +12,7 @@ import { Translation } from 'react-i18next'
 import SortingTableTh from '../common/elements/SortingTableTh';
 import TeamLink from '../common/links/TeamLink'
 
-class TeamPositionsTable extends TableSection<LeagueUnitData, LeagueUnitLevelDataProps, TeamPosition> {
+class TeamPositionsTable extends ClassicTableSection<LeagueUnitData, LeagueUnitLevelDataProps, TeamPosition> {
     
     constructor(props: LevelDataPropsWrapper<LeagueUnitData, LeagueUnitLevelDataProps>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},

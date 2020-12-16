@@ -1,5 +1,6 @@
 import LevelData from '../../../rest/models/leveldata/LevelData';
-import TableSection, { SortingState } from '../../sections/TableSection';
+import { SortingState } from '../AbstractTableSection'
+import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps' 
 import React from 'react';
 import MatchSpectators from '../../../rest/models/match/MatchSpectators';
@@ -14,7 +15,7 @@ import { commasSeparated } from '../../Formatters'
 import ExternalMatchLink from '../../links/ExternalMatchLink';
 
 abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends TableSection<Data, TableProps, MatchSpectators> {
+    extends ClassicTableSection<Data, TableProps, MatchSpectators> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'sold_total', {statType: StatsTypeEnum.ACCUMULATE},

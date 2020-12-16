@@ -1,9 +1,7 @@
 package controllers
 
-import java.util.Date
-
 import databases.RestClickhouseDAO
-import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
+import databases.requests.matchdetails._
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
@@ -12,12 +10,12 @@ import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatings
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import io.swagger.annotations.Api
 import javax.inject.{Inject, Singleton}
-import models.web.{RestStatisticsParameters, StatsType}
-import models.web.rest.{CountryLevelData, LevelData}
+import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
+import models.web.{RestStatisticsParameters, StatsType}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
-import service.leagueinfo.{LeagueInfoService, LoadingInfo, Scheduled}
+import service.leagueinfo.{LeagueInfoService, LoadingInfo}
 import utils.Romans
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -111,8 +109,17 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
   def teamAgeInjuries(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamAgeInjuryRequest, leagueId, divisionLevel, restStatisticsParameters)
 
-  def teamGoalPoints(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
-    stats(TeamGoalPointsRequest, leagueId, divisionLevel, restStatisticsParameters)
+  def teamGoalPoints(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters,
+                     playedAllMatches: Boolean) = Action.async { implicit request =>
+    TeamGoalPointsRequest.execute(
+        OrderingKeyPath(
+          leagueId = Some(leagueId),
+          divisionLevel = Some(divisionLevel)),
+        restStatisticsParameters,
+        playedAllMatches,
+        leagueInfoService.leagueInfo(leagueId).seasonInfo(restStatisticsParameters.season).roundInfo.size)
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
 
   def teamPowerRatings(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamPowerRatingsRequest, leagueId, divisionLevel, restStatisticsParameters)

@@ -1,6 +1,6 @@
 import React from 'react';
 import LevelData from '../../../rest/models/leveldata/LevelData';
-import TableSection, { SortingState } from '../../../common/sections/TableSection';
+import AbstractTableSection, { SortingState, DataRequest } from '../AbstractTableSection';
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import '../../../i18n'
 import { Translation } from 'react-i18next'
@@ -10,16 +10,28 @@ import ModelTableTh from '../../../common/elements/SortingTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import TeamGoalPoints from '../../../rest/models/team/TeamGoalPoints';
+import { SelectorsEnum } from '../SelectorsEnum';
+import { LoadingEnum } from '../../enums/LoadingEnum'
+import RestTableData from '../../../rest/models/RestTableData';
 
-abstract class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-    extends TableSection<Data, TableProps, TeamGoalPoints> {
+class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
+    extends AbstractTableSection<Data, TableProps, TeamGoalPoints> {
+    
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
-            [StatsTypeEnum.ROUND])
+            [StatsTypeEnum.ROUND],
+            [SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+                SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR,
+                SelectorsEnum.PLAYED_ALL_MATCHES_SELECTOR])
     }
 
-    fetchDataFunction = getTeamGoalPoints
+    executeDataRequest(dataRequest: DataRequest, 
+            callback: (loadingState: LoadingEnum, result?: RestTableData<TeamGoalPoints>) => void): void {
+        const leveRequest = this.props.levelDataProps.createLevelRequest()
+        getTeamGoalPoints(leveRequest, dataRequest.statisticsParameters, dataRequest.playedAllMatches,
+            callback)
+    }
 
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>

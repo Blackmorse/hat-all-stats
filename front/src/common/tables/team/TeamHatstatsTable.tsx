@@ -1,6 +1,7 @@
 import React from 'react';
 import TeamHatstats from '../../../rest/models/team/TeamHatstats';
-import TableSection, { SortingState } from '../../sections/TableSection';
+import ClassicTableSection from '../ClassicTableSection';
+import { SortingState } from '../AbstractTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import ModelTableTh from '../../elements/SortingTableTh'
 import '../../../i18n'
@@ -12,7 +13,7 @@ import TeamLink from '../../links/TeamLink'
 import { getTeamHatstats } from '../../../rest/Client';
 
 class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-    extends TableSection<Data, TableProps, TeamHatstats> {
+    extends ClassicTableSection<Data, TableProps, TeamHatstats> {
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG},
             [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])

@@ -1,25 +1,22 @@
 package controllers
 
-import java.util.Date
-
-import com.blackmorse.hattrick.common.CommonData
 import com.google.inject.{Inject, Singleton}
 import databases.RestClickhouseDAO
-import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.requests.matchdetails.{LeagueUnitHatstatsRequest, MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamGoalPointsRequest, TeamHatstatsRequest}
+import databases.requests.matchdetails._
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
-import databases.requests.playerstats.player.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
+import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
+import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
-import models.web.rest.{CountryLevelData, LevelData}
+import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{RestStatisticsParameters, StatsType, ViewDataFactory}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import service.leagueinfo.{LeagueInfoService, LoadingInfo, Scheduled}
+import service.leagueinfo.{LeagueInfoService, LoadingInfo}
 import utils.Romans
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -71,7 +68,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
   private def stats[T](chRequest: ClickhouseStatisticsRequest[T],
                        leagueId: Int,
                        restStatisticsParameters: RestStatisticsParameters)
-                      (implicit writes: Writes[T])= Action.async { implicit request =>
+                      (implicit writes: Writes[T]) = Action.async { implicit request =>
     chRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), restStatisticsParameters)
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
@@ -109,8 +106,15 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
   def teamAgeInjuries(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamAgeInjuryRequest, leagueId, restStatisticsParameters)
 
-  def teamGoalPoints(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
-    stats(TeamGoalPointsRequest, leagueId, restStatisticsParameters)
+  def teamGoalPoints(leagueId: Int, restStatisticsParameters: RestStatisticsParameters,
+                     playedAllMatches: Boolean) = Action.async { implicit request =>
+    TeamGoalPointsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)),
+          restStatisticsParameters,
+          playedAllMatches,
+          leagueInfoService.leagueInfo(leagueId).seasonInfo(restStatisticsParameters.season).roundInfo.size
+          )
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
 
   def teamPowerRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamPowerRatingsRequest, leagueId, restStatisticsParameters)

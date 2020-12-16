@@ -1,6 +1,7 @@
 import React from 'react';
 import LeagueUnitRating from '../../../rest/models/leagueunit/LeagueUnitRating'
-import TableSection, { SortingState } from '../../sections/TableSection'
+import { SortingState } from '../AbstractTableSection'
+import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import ModelTableTh from '../../elements/SortingTableTh'
 import { Translation } from 'react-i18next'
@@ -11,7 +12,7 @@ import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getLeagueUnits } from '../../../rest/Client'
 
 class LeagueUnitsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-        extends TableSection<Data, TableProps ,LeagueUnitRating> {
+        extends ClassicTableSection<Data, TableProps ,LeagueUnitRating> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG}, 

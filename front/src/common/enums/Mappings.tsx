@@ -65,7 +65,8 @@ class Mappings {
             ['matchSurprising', PagesEnum.MATCH_SURPRISING],
             ['matchSpectators', PagesEnum.MATCH_SPECTATORS],
             ['overview', PagesEnum.OVERVIEW],
-            ['dreamTeam', PagesEnum.DREAM_TEAM]
+            ['dreamTeam', PagesEnum.DREAM_TEAM],
+            ['promotions', PagesEnum.PROMOTIONS]
         ])
 }
 

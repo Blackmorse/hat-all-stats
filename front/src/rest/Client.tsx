@@ -207,7 +207,16 @@ export let getTeamRatings = statisticsRequest<TeamRating>('teamRatings')
 
 export let getTeamAgeInjuries = statisticsRequest<TeamAgeInjury>('teamAgeInjuries')
 
-export let getTeamGoalPoints = statisticsRequest<TeamGoalPoints>('teamGoalPoints')
+export function getTeamGoalPoints(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        playedAllMatches: boolean,
+        callback: (loadingEnum: LoadingEnum, entities?: RestTableData<TeamGoalPoints>) => void){
+    let params = createStatisticsParameters(statisticsParameters)
+    axios.get<RestTableData<TeamGoalPoints>>(startUrl(request) + '/teamGoalPoints?' + params.toString() + 
+        '&playedAllMatches=' + playedAllMatches)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
 
 export let getTeamPowerRatings = statisticsRequest<TeamPowerRating>('teamPowerRatings')
 

@@ -1,5 +1,6 @@
 import LevelData from '../../../rest/models/leveldata/LevelData';
-import TableSection, { SortingState } from '../../sections/TableSection';
+import { SortingState } from '../AbstractTableSection'
+import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import React from 'react';
 import PlayerCards from '../../../rest/models/player/PlayerCards';
@@ -16,7 +17,7 @@ import CountryImage from '../../elements/CountryImage';
 import LeagueLink from '../../links/LeagueLink';
 
 abstract class PlayerCardsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-    extends TableSection<Data, TableProps, PlayerCards> {
+    extends ClassicTableSection<Data, TableProps, PlayerCards> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'yellow_cards', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},

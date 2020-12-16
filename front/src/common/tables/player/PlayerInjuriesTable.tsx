@@ -1,6 +1,7 @@
 import React from 'react';
 import LevelData from "../../../rest/models/leveldata/LevelData";
-import TableSection, { SortingState } from "../../sections/TableSection";
+import { SortingState } from '../AbstractTableSection'
+import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import { Translation } from "react-i18next";
 import '../../../i18n'
@@ -16,7 +17,7 @@ import LeagueLink from '../../links/LeagueLink';
 import CountryImage from '../../elements/CountryImage';
 
 abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-        extends TableSection<Data, TableProps, PlayerInjury>{
+        extends ClassicTableSection<Data, TableProps, PlayerInjury>{
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'injury', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
