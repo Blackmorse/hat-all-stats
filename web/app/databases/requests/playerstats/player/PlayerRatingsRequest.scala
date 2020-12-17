@@ -1,12 +1,11 @@
 package databases.requests.playerstats.player
 
 import anorm.RowParser
-import databases.requests.{ClickhouseRequest, ClickhouseStatisticsRequest}
+import databases.requests.ClickhouseRequest
 import databases.requests.model.player.PlayerRating
 
-object PlayerRatingsRequest extends ClickhouseStatisticsRequest[PlayerRating]{
+object PlayerRatingsRequest extends ClickhousePlayerRequest[PlayerRating]{
   override val sortingColumns: Seq[String] = Seq("age", "rating", "rating_end_of_match")
-  override val aggregateSql: String = ""
   override val oneRoundSql: String = s"""
          |SELECT
          |    team_name,

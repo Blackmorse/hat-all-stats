@@ -1,12 +1,12 @@
 package databases.requests.playerstats.player
 
 import anorm.RowParser
-import databases.requests.{ClickhouseRequest, ClickhouseStatisticsRequest}
+import databases.requests.ClickhouseRequest
 import databases.requests.model.player.PlayerSalaryTSI
 
-object PlayerSalaryTSIRequest extends ClickhouseStatisticsRequest[PlayerSalaryTSI] {
+object PlayerSalaryTSIRequest extends ClickhousePlayerRequest[PlayerSalaryTSI] {
   override val sortingColumns: Seq[String] = Seq("age", "tsi", "salary")
-  override val aggregateSql: String = ""
+
   override val oneRoundSql: String =
     s"""
       |SELECT

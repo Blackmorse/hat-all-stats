@@ -2,6 +2,7 @@ package databases
 
 import anorm.{NamedParameter, ParameterValue, Row, SQL, SimpleSql}
 import databases.requests.OrderingKeyPath
+import databases.requests.model.Role
 import models.web.{Asc, Desc, RestStatisticsParameters, Round, SortingDirection}
 import service.DefaultService
 
@@ -74,6 +75,13 @@ case class SqlBuilder(baseSql: String) {
     this.sortingDirection = direction match {
       case Desc => "desc"
       case Asc => "asc"
+    }
+    this
+  }
+
+  def role(role: Role): SqlBuilder = {
+    if(role.name != "none") {
+      params += (("role", role.name))
     }
     this
   }

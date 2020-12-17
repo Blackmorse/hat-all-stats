@@ -1,7 +1,7 @@
 import LevelData from '../../../rest/models/leveldata/LevelData';
 import React from 'react';
 import { SortingState } from '../AbstractTableSection'
-import ClassicTableSection from '../ClassicTableSection'
+import PlayersTableSection from '../PlayersTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import PlayerGoalsGames from '../../../rest/models/player/PlayerGoalsGames'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
@@ -18,7 +18,7 @@ import Mappings from '../../enums/Mappings';
 import i18n from '../../../i18n';
 
 abstract class PlayerGoalsGamesTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-    extends ClassicTableSection<Data, TableProps, PlayerGoalsGames> {
+    extends PlayersTableSection<Data, TableProps, PlayerGoalsGames> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'scored', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()}, 

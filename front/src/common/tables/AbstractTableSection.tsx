@@ -9,6 +9,7 @@ import PageSizeSelector from '../selectors/PageSizeSelector'
 import StatsTypeSelector from '../selectors/StatsTypeSelector'
 import SeasonSelector from '../selectors/SeasonSelector'
 import PlayedAllMatchesSelector from '../selectors/PlayedAllMatchesSelector'
+import PositionSelector from '../selectors/PositionSelector'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import StatisticsSection from '../sections/StatisticsSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
@@ -29,7 +30,8 @@ export interface SortingState {
 
 export interface DataRequest {
     statisticsParameters: StatisticsParameters,
-    playedAllMatches: boolean
+    playedAllMatches: boolean,
+    role: string
 }
 
 abstract class AbstractTableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, Model> 
@@ -78,7 +80,8 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                     statsType: statsType,
                     season: season
                 },
-                playedAllMatches: true
+                playedAllMatches: true,
+                role: "none"
             },
             state: {
                 isLastPage: true,
@@ -91,6 +94,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         this.statTypeChanged=this.statTypeChanged.bind(this);
         this.seasonChanged=this.seasonChanged.bind(this);
         this.playedAllMatchesChanged=this.playedAllMatchesChanged.bind(this);
+        this.roleChanged=this.roleChanged.bind(this)
     }
 
     createColumnHeaders(): JSX.Element {
@@ -205,6 +209,16 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         this.updateWithRequest(newDataRequest)
     }
 
+    roleChanged(role: string) {
+        let newDataRequest = Object.assign({}, this.state.dataRequest)
+
+        newDataRequest.role = role
+
+        this.fistOpening = false
+
+        this.updateWithRequest(newDataRequest)
+    }
+
     renderSection(): JSX.Element {
         let seasonSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.SEASON_SELECTOR) !== -1) {
@@ -251,12 +265,20 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                 />
         }
 
+        let playerPositionsSelector = <></>
+        if(this.selectors.indexOf(SelectorsEnum.PLAYER_ROLES) !== -1) {
+            playerPositionsSelector = <PositionSelector 
+                value={this.state.dataRequest.role}
+                callback={this.roleChanged}/>
+        }
+
         let indexOffset = this.state.dataRequest.statisticsParameters.pageSize * this.state.dataRequest.statisticsParameters.page 
         return <>
                 <div className="table_settings_div">
                     {seasonSelector}
                     {statsTypeSelector}
                     {playedAllMatchesSelector}
+                    {playerPositionsSelector}
                     {pageSizeSelector}
                     
                 </div>

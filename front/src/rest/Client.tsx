@@ -183,21 +183,39 @@ export function getDreamTeam(request: LevelRequest, season: number, statType: St
 
 }
 
+function playersRequest<T>(path: string): 
+    (request: LevelRequest,
+    statisticsParameters: StatisticsParameters,
+    role: string,
+        callback: (loadingEnum: LoadingEnum, entities?: RestTableData<T>) => void) => void {
+            
+            return function(request: LevelRequest,
+                statisticsParameters: StatisticsParameters,
+                role: string,
+                callback: (loadingEnum: LoadingEnum, entities?: RestTableData<T>) => void): void {
+                    let params = createStatisticsParameters(statisticsParameters)
+                    axios.get<RestTableData<T>>(startUrl(request) + '/' + path + '?' + params.toString() + '&role=' + role)
+                        .then(response => parseAxiosResponse(response, callback))
+                        .catch(e => callback(LoadingEnum.ERROR))
+                }
+}
+
+export let getPlayerCards = playersRequest<PlayerCards>('playerCards')
+
+export let getPlayerGoalsGames = playersRequest<PlayerGoalGames>('playerGoalGames')
+
+export let getPlayerSalaryTsi = playersRequest<PlayerSalaryTSI>('playerTsiSalary')
+
+export let getPlayerRatings = playersRequest<PlayerRating>('playerRatings')
+
+
+export let getPlayerInjuries = statisticsRequest<PlayerInjury>('playerInjuries')
+
 export let getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')
 
 export let getLeagueUnits = statisticsRequest<LeagueUnitRating>('leagueUnits')
 
 export let getTeamPositions = statisticsRequest<TeamPosition>('teamPositions')
-
-export let getPlayerGoalsGames = statisticsRequest<PlayerGoalGames>('playerGoalGames')
-
-export let getPlayerCards = statisticsRequest<PlayerCards>('playerCards')
-
-export let getPlayerSalaryTsi = statisticsRequest<PlayerSalaryTSI>('playerTsiSalary')
-
-export let getPlayerRatings = statisticsRequest<PlayerRating>('playerRatings')
-
-export let getPlayerInjuries = statisticsRequest<PlayerInjury>('playerInjuries')
 
 export let getTeamSalaryTSI = statisticsRequest<TeamSalaryTSI>('teamSalaryTsi')
 

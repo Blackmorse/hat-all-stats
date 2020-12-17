@@ -182,6 +182,7 @@
     "dream_team.midfielder": "Mediocampista",
     "dream_team.forward": "Adelante",
     "dream_team.substitions": "Sustituciones",
+    "dream_team.none": "",
 
     "filter.full_season": "Han jugado la temporada completa"
 }

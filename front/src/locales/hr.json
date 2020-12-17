@@ -182,6 +182,7 @@
     "dream_team.midfielder": "Veznjak",
     "dream_team.forward": "Naprijed",
     "dream_team.substitions": "Zamjene",
+    "dream_team.none": "",
 
     "filter.full_season": "Igrali su cijelu sezonu"
 }
