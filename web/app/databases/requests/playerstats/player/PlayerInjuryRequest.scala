@@ -8,7 +8,7 @@ object PlayerInjuryRequest extends ClickhouseStatisticsRequest[PlayerInjury] {
   override val sortingColumns: Seq[String] = Seq("age", "injury")
   override val aggregateSql: String = ""
 
-  override val oneRoundSql: String = """
+  override val oneRoundSql: String = s"""
        |SELECT
        |    team_name,
        |    team_id,

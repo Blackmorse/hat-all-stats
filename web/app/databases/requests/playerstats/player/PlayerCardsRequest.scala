@@ -1,14 +1,14 @@
 package databases.requests.playerstats.player
 
 import anorm.RowParser
-import databases.requests.ClickhouseStatisticsRequest
+import databases.requests.{ClickhouseRequest, ClickhouseStatisticsRequest}
 import databases.requests.model.player.PlayerCards
 
 object PlayerCardsRequest extends ClickhouseStatisticsRequest[PlayerCards] {
   override val sortingColumns: Seq[String] = Seq("games", "played", "yellow_cards", "red_cards")
   override val aggregateSql: String = ""
 
-  override val oneRoundSql: String = """
+  override val oneRoundSql: String = s"""
        |SELECT
        |    player_id,
        |    first_name,
@@ -21,7 +21,8 @@ object PlayerCardsRequest extends ClickhouseStatisticsRequest[PlayerCards] {
        |    sum(played_minutes) AS played,
        |    sum(yellow_cards) AS yellow_cards,
        |    sum(red_cards) AS red_cards,
-       |    argMax(nationality, round) as nationality
+       |    argMax(nationality, round) as nationality,
+       |    anyHeavy(${ClickhouseRequest.roleIdCase("role_id")}) as role
        |FROM hattrick.player_stats
        |__where__ AND round <= __round__
        |GROUP BY

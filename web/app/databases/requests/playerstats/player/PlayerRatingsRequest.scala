@@ -1,13 +1,13 @@
 package databases.requests.playerstats.player
 
 import anorm.RowParser
-import databases.requests.ClickhouseStatisticsRequest
+import databases.requests.{ClickhouseRequest, ClickhouseStatisticsRequest}
 import databases.requests.model.player.PlayerRating
 
 object PlayerRatingsRequest extends ClickhouseStatisticsRequest[PlayerRating]{
   override val sortingColumns: Seq[String] = Seq("age", "rating", "rating_end_of_match")
   override val aggregateSql: String = ""
-  override val oneRoundSql: String = """
+  override val oneRoundSql: String = s"""
          |SELECT
          |    team_name,
          |    team_id,
@@ -19,7 +19,8 @@ object PlayerRatingsRequest extends ClickhouseStatisticsRequest[PlayerRating]{
          |    ((age * 112) + days)  AS age,
          |    rating,
          |    rating_end_of_match,
-         |    nationality
+         |    nationality,
+         |    ${ClickhouseRequest.roleIdCase("role_id")} as role
          |FROM hattrick.player_stats
          |__where__ AND (round = __round__)
          |ORDER BY

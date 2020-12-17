@@ -4,7 +4,8 @@ interface PlayerSalaryTSI {
     playerSortingKey: PlayerSortingKey,
     age: number,
     tsi: number,
-    salary: number
+    salary: number,
+    role: string
 }
 
 export default PlayerSalaryTSI

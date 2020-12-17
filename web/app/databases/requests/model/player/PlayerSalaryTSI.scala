@@ -7,7 +7,8 @@ import anorm.~
 case class PlayerSalaryTSI(playerSortingKey: PlayerSortingKey,
                            age: Int,
                            tsi: Int,
-                           salary: Int)
+                           salary: Int,
+                           role: String)
 
 object PlayerSalaryTSI {
   implicit val writes = Json.writes[PlayerSalaryTSI]
@@ -23,12 +24,13 @@ object PlayerSalaryTSI {
     get[Int]("age") ~
     get[Int]("tsi") ~
     get[Int]("salary") ~
-    get[Int]("nationality") map {
+    get[Int]("nationality") ~
+    get[String]("role") map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
-        leagueUnitId ~ leagueUnitName ~ age ~ tsi ~ salary ~ nationality=>
+        leagueUnitId ~ leagueUnitName ~ age ~ tsi ~ salary ~ nationality ~ role =>
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
           leagueUnitId, leagueUnitName, nationality)
-        PlayerSalaryTSI(playerSortingKey, age, tsi, salary)
+        PlayerSalaryTSI(playerSortingKey, age, tsi, salary, role)
     }
   }
 }

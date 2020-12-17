@@ -7,7 +7,8 @@ import anorm.~
 case class PlayerRating(playerSortingKey: PlayerSortingKey,
                         age: Int,
                         rating: Int,
-                        ratingEndOfMatch: Int)
+                        ratingEndOfMatch: Int,
+                        role: String)
 
 object PlayerRating {
   implicit val writes = Json.writes[PlayerRating]
@@ -23,12 +24,13 @@ object PlayerRating {
     get[Int]("age") ~
     get[Int]("rating") ~
     get[Int]("rating_end_of_match") ~
-    get[Int]("nationality") map {
+    get[Int]("nationality") ~
+    get[String]("role") map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
-        leagueUnitId ~ leagueUnitName ~ age ~ rating ~ ratingEndOfMatch ~ nationality =>
+        leagueUnitId ~ leagueUnitName ~ age ~ rating ~ ratingEndOfMatch ~ nationality ~ role =>
       val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
         leagueUnitId, leagueUnitName, nationality)
-      PlayerRating(playerSortingKey, age, rating, ratingEndOfMatch)
+      PlayerRating(playerSortingKey, age, rating, ratingEndOfMatch, role)
     }
   }
 }

@@ -1,14 +1,14 @@
 package databases.requests.playerstats.player
 
 import anorm.RowParser
-import databases.requests.ClickhouseStatisticsRequest
+import databases.requests.{ClickhouseRequest, ClickhouseStatisticsRequest}
 import databases.requests.model.player.PlayerSalaryTSI
 
 object PlayerSalaryTSIRequest extends ClickhouseStatisticsRequest[PlayerSalaryTSI] {
   override val sortingColumns: Seq[String] = Seq("age", "tsi", "salary")
   override val aggregateSql: String = ""
   override val oneRoundSql: String =
-    """
+    s"""
       |SELECT
       |    team_name,
       |    team_id,
@@ -20,7 +20,8 @@ object PlayerSalaryTSIRequest extends ClickhouseStatisticsRequest[PlayerSalaryTS
       |    ((age * 112) + days)  AS age,
       |    tsi,
       |    salary,
-      |    nationality
+      |    nationality,
+      |    ${ClickhouseRequest.roleIdCase("role_id")} as role
       |FROM hattrick.player_stats
       |__where__ AND (round = __round__)
       |ORDER BY

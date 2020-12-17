@@ -4,7 +4,12 @@ import anorm.SqlParser.get
 import anorm.~
 import play.api.libs.json.Json
 
-case class PlayerCards(playerSortingKey: PlayerSortingKey, games: Int, playedMinutes: Int, yellowCards: Int, redCards: Int)
+case class PlayerCards(playerSortingKey: PlayerSortingKey,
+                       games: Int,
+                       playedMinutes: Int,
+                       yellowCards: Int,
+                       redCards: Int,
+                       role: String)
 
 object PlayerCards {
   implicit val writes = Json.writes[PlayerCards]
@@ -21,13 +26,14 @@ object PlayerCards {
     get[Int]("played") ~
     get[Int]("yellow_cards") ~
     get[Int]("red_cards") ~
-    get[Int]("nationality") map {
+    get[Int]("nationality") ~
+    get[String]("role" )map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
         leagueUnitId ~ leagueUnitName ~ games ~
-          playedMinutes ~ yellowCards ~ redCards ~ nationality =>
+          playedMinutes ~ yellowCards ~ redCards ~ nationality ~ role =>
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
           leagueUnitId, leagueUnitName, nationality)
-        PlayerCards(playerSortingKey, games, playedMinutes, yellowCards, redCards)
+        PlayerCards(playerSortingKey, games, playedMinutes, yellowCards, redCards, role)
     }
   }
 }

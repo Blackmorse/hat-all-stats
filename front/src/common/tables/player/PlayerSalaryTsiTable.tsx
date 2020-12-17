@@ -14,6 +14,8 @@ import { ageFormatter, commasSeparated } from '../../Formatters'
 import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 import LeagueLink from '../../links/LeagueLink';
 import CountryImage from '../../elements/CountryImage';
+import Mappings from '../../enums/Mappings';
+import i18n from '../../../i18n';
 
 abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends ClassicTableSection<Data, TableProps, PlayerSalaryTSI> {
@@ -35,6 +37,7 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
                 <th className="value">{t('table.league')}</th>
+                <th></th>
                 <ModelTableTh title='table.age' sortingField='age' sortingState={sortingState} />
                 <ModelTableTh title='table.tsi' sortingField='tsi' sortingState={sortingState} />
                 <ModelTableTh title='table.salary' titlePostfix={', ' + this.props.levelDataProps.currency()} sortingField='salary' sortingState={sortingState} />
@@ -51,6 +54,7 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
+            <td className="value">{i18n.t(Mappings.roleToTranslationMap.get(playerSalaryTSI.role) || '')}</td>
             <td className="value">{ageFormatter(playerSalaryTSI.age)}</td>
             <td className="value">{commasSeparated(playerSalaryTSI.tsi)}</td>
             <td className="value">{commasSeparated(playerSalaryTSI.salary / this.props.levelDataProps.currencyRate())}</td>

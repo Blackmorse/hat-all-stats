@@ -68,6 +68,16 @@ class Mappings {
             ['dreamTeam', PagesEnum.DREAM_TEAM],
             ['promotions', PagesEnum.PROMOTIONS]
         ])
+
+    static roleToTranslationMap: Map<string, string> = 
+        new Map([
+            ['keeper', 'dream_team.keeper'],
+            ['wingback', 'dream_team.wingback'],
+            ['defender', 'dream_team.defender'],
+            ['winger', 'dream_team.winger'],
+            ['midfielder', 'dream_team.midfielder'],
+            ['forward', 'dream_team.forward']
+        ])
 }
 
 export default Mappings

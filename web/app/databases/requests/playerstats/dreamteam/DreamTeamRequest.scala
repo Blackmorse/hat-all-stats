@@ -10,7 +10,7 @@ import scala.concurrent.Future
 
 object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
   val oneRoundSql =
-    """
+    s"""
       |SELECT
       |    player_id,
       |    first_name,
@@ -20,22 +20,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
       |    league_unit_id,
       |    league_unit_name,
       |    round,
-      |    caseWithExpression(role_id,
-      |       100, 'keeper',
-      |       101, 'wingback',
-      |       102, 'defender',
-      |       103, 'defender',
-      |       104, 'defender',
-      |       105, 'wingback',
-      |       106, 'winger',
-      |       107, 'midfielder',
-      |       108, 'midfielder',
-      |       109, 'midfielder',
-      |       110, 'winger',
-      |       111, 'forward',
-      |       112, 'forward',
-      |       113, 'forward',
-      |     '') AS role,
+      |    ${ClickhouseRequest.roleIdCase("role_id")} AS role,
       |    rating,
       |    rating_end_of_match,
       |    nationality
@@ -46,7 +31,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
       |""".stripMargin
 
   val aggregateSql =
-    """SELECT * FROM (
+    s"""SELECT * FROM (
       |SELECT
       |    player_id,
       |    first_name,
@@ -56,22 +41,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
       |    league_unit_id,
       |    league_unit_name,
       |    round,
-      |    caseWithExpression(role_id,
-      |       100, 'keeper',
-      |       101, 'wingback',
-      |       102, 'defender',
-      |       103, 'defender',
-      |       104, 'defender',
-      |       105, 'wingback',
-      |       106, 'winger',
-      |       107, 'midfielder',
-      |       108, 'midfielder',
-      |       109, 'midfielder',
-      |       110, 'winger',
-      |       111, 'forward',
-      |       112, 'forward',
-      |       113, 'forward',
-      |     '') AS role,
+      |    ${ClickhouseRequest.roleIdCase("role_id")} AS role,
       |    rating,
       |    rating_end_of_match,
       |    nationality

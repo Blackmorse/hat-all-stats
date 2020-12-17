@@ -5,7 +5,8 @@ interface PlayerGoalGames {
     games: number,
     playedMinutes: number,
     scored: number,
-    goalRate: number
+    goalRate: number,
+    role: string
 }
 
 export default PlayerGoalGames

@@ -15,6 +15,8 @@ import { ageFormatter, ratingFormatter } from '../../Formatters'
 import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 import LeagueLink from '../../links/LeagueLink';
 import CountryImage from '../../elements/CountryImage';
+import Mappings from '../../enums/Mappings';
+import i18n from '../../../i18n';
 
 abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
         extends ClassicTableSection<Data, TableProps, PlayerRating> {
@@ -36,6 +38,7 @@ abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends Lev
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
                 <th className="value">{t('table.league')}</th>
+                <th></th>
                 <ModelTableTh title='table.age' sortingField='age' sortingState={sortingState} />
                 <ModelTableTh title='table.rating' sortingField='rating' sortingState={sortingState} />
                 <ModelTableTh title='table.rating_end_of_match' sortingField='rating_end_of_match' sortingState={sortingState} />
@@ -52,6 +55,7 @@ abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends Lev
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
+            <td className="value">{i18n.t(Mappings.roleToTranslationMap.get(playerRating.role) || '')}</td>
             <td className="value">{ageFormatter(playerRating.age)}</td>
             <td className="value">{ratingFormatter(playerRating.rating)}</td>
             <td className="value">{ratingFormatter(playerRating.ratingEndOfMatch)}</td>

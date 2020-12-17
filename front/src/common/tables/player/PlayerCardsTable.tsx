@@ -15,6 +15,8 @@ import { getPlayerCards } from '../../../rest/Client';
 import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 import CountryImage from '../../elements/CountryImage';
 import LeagueLink from '../../links/LeagueLink';
+import Mappings from '../../enums/Mappings';
+import i18n from '../../../i18n';
 
 abstract class PlayerCardsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends ClassicTableSection<Data, TableProps, PlayerCards> {
@@ -36,6 +38,7 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
                 <th className="value">{t('table.league')}</th>
+                <th className="value"></th>
                 <ModelTableTh title='table.games' sortingField='games' sortingState={sortingState} />
                 <ModelTableTh title='table.minutes' sortingField='played' sortingState={sortingState} />
                 <ModelTableTh title='table.yellow_cards' sortingField='yellow_cards' sortingState={sortingState} />
@@ -53,6 +56,7 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId} /></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
+            <td className="value">{i18n.t(Mappings.roleToTranslationMap.get(playerCards.role) || '')}</td>
             <td className="value">{playerCards.games}</td>
             <td className="value">{playerCards.playedMinutes}</td>
             <td className="value">{yellowCards(playerCards.yellowCards)}</td>
