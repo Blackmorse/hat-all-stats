@@ -53,11 +53,13 @@ object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerS
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[PlayerStatOverview]] = {
 
     val builder = SqlBuilder(sql.replace("__round__", round.toString))
-      .season(season)
+      .where
+        .season(season)
+        .leagueId(leagueId)
+        .divisionLevel(divisionLevel)
+      .and
       .page(0)
       .pageSize(limit)
-    leagueId.foreach(builder.leagueId)
-    divisionLevel.foreach(builder.divisionLevel)
 
     restClickhouseDAO.execute(builder.build, rowParser)
   }

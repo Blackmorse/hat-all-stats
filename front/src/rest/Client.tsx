@@ -45,6 +45,7 @@ import { LoadingEnum } from '../common/enums/LoadingEnum';
 import TeamMatch from './models/match/TeamMatch'
 import MatchAttendanceOverview from './models/overview/MatchAttendanceOverview'
 import DreamTeamPlayer from './models/player/DreamTeamPlayer';
+import PlayersParameters from './models/PlayersParameters'
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
@@ -186,15 +187,16 @@ export function getDreamTeam(request: LevelRequest, season: number, statType: St
 function playersRequest<T>(path: string): 
     (request: LevelRequest,
     statisticsParameters: StatisticsParameters,
-    role: string,
+    playersParameters: PlayersParameters,
         callback: (loadingEnum: LoadingEnum, entities?: RestTableData<T>) => void) => void {
             
             return function(request: LevelRequest,
                 statisticsParameters: StatisticsParameters,
-                role: string,
+                playersParameters: PlayersParameters,
                 callback: (loadingEnum: LoadingEnum, entities?: RestTableData<T>) => void): void {
                     let params = createStatisticsParameters(statisticsParameters)
-                    axios.get<RestTableData<T>>(startUrl(request) + '/' + path + '?' + params.toString() + '&role=' + role)
+                    let playerParams = createPlayersParameters(playersParameters)
+                    axios.get<RestTableData<T>>(startUrl(request) + '/' + path + '?' + params.toString() + '&' + playerParams)
                         .then(response => parseAxiosResponse(response, callback))
                         .catch(e => callback(LoadingEnum.ERROR))
                 }
@@ -317,6 +319,19 @@ function createStatisticsParameters(statisticsParameters: StatisticsParameters) 
 
     if(statisticsParameters.statsType.statType === StatsTypeEnum.ROUND) {
         values.statRoundNumber = statisticsParameters.statsType.roundNumber
+    }
+
+    return new URLSearchParams(values).toString()
+}
+
+function createPlayersParameters(playersParameters: PlayersParameters): string {
+    var values: any = {}
+
+    if(playersParameters.role !== undefined) {
+        values.role = playersParameters.role
+    }
+    if(playersParameters.nationality !== undefined) {
+        values.nationality = playersParameters.nationality
     }
 
     return new URLSearchParams(values).toString()

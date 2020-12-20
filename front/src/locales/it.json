@@ -183,7 +183,8 @@
     "dream_team.midfielder": "Centrocampista",
     "dream_team.forward": "Inoltrare",
     "dream_team.substitions": "Sostituzioni",
-    "dream_team.none": "",
+    "dream_team.undefined": "",
 
-    "filter.full_season": "Ho giocato l'intera stagione"
+    "filter.full_season": "Ho giocato l'intera stagione",
+    "filter.nationality": "Nazionalità:"
 }

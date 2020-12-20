@@ -182,7 +182,8 @@
     "dream_team.midfielder": "Midfielder",
     "dream_team.forward": "Forward",
     "dream_team.substitions": "Substitutions",
-    "dream_team.none": "",
+    "dream_team.undefined": "",
 
-    "filter.full_season": "Have played the full season"
+    "filter.full_season": "Have played the full season",
+    "filter.nationality": "Nationality:"
   }

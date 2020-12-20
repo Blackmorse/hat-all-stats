@@ -47,10 +47,10 @@ object PromotionsRequest extends ClickhouseRequest[Promotion] {
     val whereHas = s"$divisionLevelWhere $hasLeagueUnitId $hasTeamId"
 
     val builder = SqlBuilder(sql.replace("__AND__", whereHas))
-    orderingKeyPath.leagueId.foreach(builder.leagueId)
-    builder.season(season)
+      .where
+        .leagueId(orderingKeyPath.leagueId)
+        .season(season)
 
-    restClickhouseDAO.execute(builder
-      .build, rowParser)
+    restClickhouseDAO.execute(builder.build, rowParser)
   }
 }

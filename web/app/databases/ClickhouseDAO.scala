@@ -38,11 +38,11 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
 
       val builder = SqlBuilder(sql)
 
-      leagueId.foreach(builder.leagueId)
-      season.foreach(builder.season)
-      divisionLevel.foreach(builder.divisionLevel)
-      leagueUnitId.foreach(builder.leagueUnitId)
-      teamId.foreach(builder.teamId)
+      leagueId.foreach(builder.where.leagueId)
+      season.foreach(builder.where.season)
+      divisionLevel.foreach(builder.where.divisionLevel)
+      leagueUnitId.foreach(builder.where.leagueUnitId)
+      teamId.foreach(builder.where.teamId)
       builder.page(page)
       builder.pageSize(pageSize)
       builder.sortingDirection(sortingDirection)
@@ -73,6 +73,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
           | __where__
           |ORDER BY round ASC
         """.stripMargin)
+        .where
         .season(season).leagueId(leagueId).teamId(teamId)
         .build
 
@@ -108,7 +109,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
           |`going_up_teams.scored`
           |FROM hattrick.promotions
           |__where__""".stripMargin)
-        .season(season)
+        .where.season(season)
         .leagueId(leagueId)
         .build
 
@@ -154,6 +155,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
         |    rank_type ASC,
         |    round ASC
         |    """.stripMargin)
+        .where
         .season(season).leagueId(leagueId).teamId(teamId)
         .build
 
@@ -182,9 +184,9 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                       |    round ASC
                       |""".stripMargin)
 
-        leagueId.foreach(builder.leagueId)
-        season.foreach(builder.season)
-        round.foreach(builder.round)
+        leagueId.foreach(builder.where.leagueId)
+        season.foreach(builder.where.season)
+        round.foreach(builder.where.round)
 
         builder.build.as(HistoryInfo.mapper.*)
     }
@@ -200,7 +202,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
            |__where__
            |LIMIT 1
            |""".stripMargin)
-        .season(season).leagueId(leagueId).teamId(teamId)
+        .where.season(season).leagueId(leagueId).teamId(teamId)
 
       builder.build.as(HistoryTeamLeagueUnitInfo.historyTeamLeagueUnitInfoMapper.singleOpt)
     }

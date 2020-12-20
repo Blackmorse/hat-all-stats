@@ -14,7 +14,7 @@ import hattrick.Hattrick
 import io.swagger.annotations.Api
 import javax.inject.Inject
 import models.clickhouse.{NearestMatch, TeamRankings}
-import models.web.RestStatisticsParameters
+import models.web.{PlayersParameters, RestStatisticsParameters}
 import models.web.rest.{CountryLevelData, LevelData}
 import models.web.rest.LevelData.Rounds
 import play.api.libs.json.{Json, Writes}
@@ -149,7 +149,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   private def playersRequest[T](plRequest: ClickhousePlayerRequest[T],
                                 teamId: Long,
                                 restStatisticsParameters: RestStatisticsParameters,
-                                role: String)(implicit writes: Writes[T]) =
+                                playersParameters: PlayersParameters)(implicit writes: Writes[T]) =
     Action.async{ implicit request =>
       getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
 
@@ -161,25 +161,25 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
             divisionLevel = Some(divisionLevel),
             leagueUnitId = Some(leagueUnitId),
             teamId = Some(teamId)
-          ), restStatisticsParameters, role)
+          ), restStatisticsParameters, playersParameters)
       }) match {
         case Right(statList) => statList.map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
         case Left(_) => Future(NoContent)
       })
     }
 
-  def playerGoalGames(teamId: Long, restStatisticsParameters: RestStatisticsParameters, role: String) =
-    playersRequest(PlayerGamesGoalsRequest, teamId, restStatisticsParameters, role)
+  def playerGoalGames(teamId: Long, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters) =
+    playersRequest(PlayerGamesGoalsRequest, teamId, restStatisticsParameters, playersParameters)
 
   def playerCards(teamId: Long, restStatisticsParameters: RestStatisticsParameters,
-                  role: String) =
-    playersRequest(PlayerCardsRequest, teamId, restStatisticsParameters, role)
+                  playersParameters: PlayersParameters) =
+    playersRequest(PlayerCardsRequest, teamId, restStatisticsParameters, playersParameters)
 
-  def playerTsiSalary(teamId: Long, restStatisticsParameters: RestStatisticsParameters, role: String) =
-    playersRequest(PlayerSalaryTSIRequest, teamId, restStatisticsParameters, role)
+  def playerTsiSalary(teamId: Long, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters) =
+    playersRequest(PlayerSalaryTSIRequest, teamId, restStatisticsParameters, playersParameters)
 
-  def playerRatings(teamId: Long, restStatisticsParameters: RestStatisticsParameters, role: String) =
-    playersRequest(PlayerRatingsRequest, teamId, restStatisticsParameters, role)
+  def playerRatings(teamId: Long, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters) =
+    playersRequest(PlayerRatingsRequest, teamId, restStatisticsParameters, playersParameters)
 
   def playerInjuries(teamId: Long, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerInjuryRequest, teamId, restStatisticsParameters)

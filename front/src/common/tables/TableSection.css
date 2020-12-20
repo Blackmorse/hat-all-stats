@@ -6,6 +6,11 @@
     justify-content: space-between;
 }
 
+.players_settings_div {
+    display: flex;
+    justify-content: flex-start;
+}
+
 .statistics_table {
     width: 100%;
     border-spacing: 0px;

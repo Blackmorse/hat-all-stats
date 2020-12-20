@@ -12,12 +12,14 @@ trait ClickhouseOverviewRequest[T] extends ClickhouseRequest[T] {
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[T]] = {
 
     val builder = SqlBuilder(sql)
-      .round(round)
-      .season(season)
-      .page(0)
-      .pageSize(limit)
-    leagueId.foreach(builder.leagueId)
-    divisionLevel.foreach(builder.divisionLevel)
+      .where
+        .round(round)
+        .season(season)
+        .leagueId(leagueId)
+        .divisionLevel(divisionLevel)
+      .and
+        .page(0)
+        .pageSize(limit)
 
     restClickhouseDAO.execute(builder.build, rowParser)
   }

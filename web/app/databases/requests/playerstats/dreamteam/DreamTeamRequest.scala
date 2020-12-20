@@ -69,12 +69,11 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
       case Round(round) => oneRoundSql.replace("__round__", round.toString)
     }
 
-    val builder = SqlBuilder(sql.replace("__sortBy__", sortString))
+    val build = SqlBuilder(sql.replace("__sortBy__", sortString))
       .applyParameters(orderingKeyPath)
-
-    orderingKeyPath.season.foreach(builder.season)
-
-    val build = builder.build
+      .where
+        .season(orderingKeyPath.season)
+      .build
 
     restClickhouseDAO.execute(build, rowParser)
   }

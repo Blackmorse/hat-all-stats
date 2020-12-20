@@ -50,8 +50,9 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
   def execute(orderingKeyPath: OrderingKeyPath)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamRankings]] =
     restClickhouseDAO.execute(SqlBuilder(request)
-      .season(orderingKeyPath.season.get)
-      .leagueId(orderingKeyPath.leagueId.get)
-      .teamId(orderingKeyPath.teamId.get)
+      .where
+        .season(orderingKeyPath.season)
+        .leagueId(orderingKeyPath.leagueId)
+        .teamId(orderingKeyPath.teamId)
       .build, rowParser)
 }

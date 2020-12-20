@@ -182,7 +182,8 @@
     "dream_team.midfielder": "Полузащитник",
     "dream_team.forward": "Нападающий",
     "dream_team.substitions": "Замены",
-    "dream_team.none": "",
+    "dream_team.undefined": "",
 
-    "filter.full_season": "Сыгравшие весь сезон"
+    "filter.full_season": "Сыгравшие весь сезон",
+    "filter.nationality": "Национальность:"
 }

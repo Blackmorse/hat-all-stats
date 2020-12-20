@@ -53,7 +53,8 @@ object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
   def execute(season: Int, orderingKeyPath: OrderingKeyPath)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamMatch]] = {
     val builder = SqlBuilder(sql)
       .applyParameters(orderingKeyPath)
-      .season(season)
+      .where
+        .season(season)
 
     restClickhouseDAO.execute(builder.build, rowParser)
   }

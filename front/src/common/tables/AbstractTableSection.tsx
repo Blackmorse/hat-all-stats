@@ -10,11 +10,13 @@ import StatsTypeSelector from '../selectors/StatsTypeSelector'
 import SeasonSelector from '../selectors/SeasonSelector'
 import PlayedAllMatchesSelector from '../selectors/PlayedAllMatchesSelector'
 import PositionSelector from '../selectors/PositionSelector'
+import NationalitySelector from '../selectors/NationalitySelector'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import StatisticsSection from '../sections/StatisticsSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
 import { LoadingEnum } from '../enums/LoadingEnum';
 import { SelectorsEnum } from './SelectorsEnum'
+import PlayersParameters from '../../rest/models/PlayersParameters'
 
 interface ModelTableState<T> {
     entities?: Array<T>,
@@ -31,8 +33,9 @@ export interface SortingState {
 export interface DataRequest {
     statisticsParameters: StatisticsParameters,
     playedAllMatches: boolean,
-    role: string
+    playersParameters: PlayersParameters
 }
+
 
 abstract class AbstractTableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, Model> 
         extends StatisticsSection<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<Model>, RestTableData<Model>, DataRequest> {
@@ -81,7 +84,8 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                     season: season
                 },
                 playedAllMatches: true,
-                role: "none"
+                playersParameters: {
+                }
             },
             state: {
                 isLastPage: true,
@@ -95,6 +99,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         this.seasonChanged=this.seasonChanged.bind(this);
         this.playedAllMatchesChanged=this.playedAllMatchesChanged.bind(this);
         this.roleChanged=this.roleChanged.bind(this)
+        this.nationalityChanged=this.nationalityChanged.bind(this)
     }
 
     createColumnHeaders(): JSX.Element {
@@ -209,10 +214,26 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         this.updateWithRequest(newDataRequest)
     }
 
-    roleChanged(role: string) {
+    roleChanged(role?: string) {
         let newDataRequest = Object.assign({}, this.state.dataRequest)
 
-        newDataRequest.role = role
+        let newPlayersParameters = Object.assign({}, this.state.dataRequest.playersParameters)
+        newPlayersParameters.role = role
+
+        newDataRequest.playersParameters = newPlayersParameters
+
+        this.fistOpening = false
+
+        this.updateWithRequest(newDataRequest)
+    }
+
+    nationalityChanged(nationality?: number) {
+        let newDataRequest = Object.assign({}, this.state.dataRequest)
+
+        let newPlayersParameters = Object.assign({}, this.state.dataRequest.playersParameters)
+        newPlayersParameters.nationality = nationality
+
+        newDataRequest.playersParameters = newPlayersParameters
 
         this.fistOpening = false
 
@@ -268,8 +289,16 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         let playerPositionsSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.PLAYER_ROLES) !== -1) {
             playerPositionsSelector = <PositionSelector 
-                value={this.state.dataRequest.role}
+                value={this.state.dataRequest.playersParameters.role}
                 callback={this.roleChanged}/>
+        }
+
+        let nationalitySelector = <></>
+        if(this.selectors.indexOf(SelectorsEnum.NATIONALITIES_SELECTOR) !== -1) {
+            nationalitySelector = <NationalitySelector 
+                value={this.state.dataRequest.playersParameters.nationality}
+                countryMap={this.props.levelDataProps.countriesMap()}
+                callback={this.nationalityChanged} />
         }
 
         let indexOffset = this.state.dataRequest.statisticsParameters.pageSize * this.state.dataRequest.statisticsParameters.page 
@@ -278,8 +307,11 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                     {seasonSelector}
                     {statsTypeSelector}
                     {playedAllMatchesSelector}
-                    {playerPositionsSelector}
                     {pageSizeSelector}
+                </div>
+                <div className="players_settings_div">
+                    {playerPositionsSelector}
+                    {nationalitySelector}
                     
                 </div>
                 <table className="statistics_table">

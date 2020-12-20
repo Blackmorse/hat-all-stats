@@ -104,9 +104,9 @@ class OverviewClickhouseDAO @Inject()(
 
   private def stats[T](sql: String, round: Int, season: Int, leagueId: Option[Int], parser: ResultSetParser[T]): T = db.withConnection{ implicit connection =>
     val builder = SqlBuilder(sql)
-        builder.round(round)
-        builder.season(season)
-        leagueId.foreach(builder.leagueId)
+        builder.where.round(round)
+        builder.where.season(season)
+        leagueId.foreach(builder.where.leagueId)
 
         builder.build.as(parser)
   }
