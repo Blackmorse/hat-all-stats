@@ -130,7 +130,7 @@ abstract class Clause(sqlBuilder: SqlBuilder) {
 
   def round = addParameter(IntParameter(sqlBuilder.parametersNumber, "round", this))
 
-  def role = addParameter(StringParameter(sqlBuilder.parametersNumber, "role", this))
+  def role = addParameter(IntParameter(sqlBuilder.parametersNumber, "role", this))
 
   def nationality = addParameter( IntParameter(sqlBuilder.parametersNumber, "nationality", this))
 

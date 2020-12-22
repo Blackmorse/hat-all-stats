@@ -2,6 +2,7 @@ package databases.requests.model.player
 
 import anorm.SqlParser.get
 import anorm.~
+import databases.requests.model.Roles
 import play.api.libs.json.Json
 
 case class DreamTeamPlayer(playerSortingKey: PlayerSortingKey,
@@ -22,7 +23,7 @@ object DreamTeamPlayer {
     get[Long]("league_unit_id") ~
     get[String]("league_unit_name") ~
     get[Int]("round") ~
-    get[String]("role") ~
+    get[Int]("role") ~
     get[Int]("rating") ~
     get[Int]("rating_end_of_match") ~
     get[Int]("nationality") map {
@@ -31,7 +32,7 @@ object DreamTeamPlayer {
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
           leagueUnitId, leagueUnitName, nationality)
 
-        DreamTeamPlayer(playerSortingKey, round, role, rating, ratingEndOfMatch)
+        DreamTeamPlayer(playerSortingKey, round, Roles.mapping(role), rating, ratingEndOfMatch)
     }
   }
 }

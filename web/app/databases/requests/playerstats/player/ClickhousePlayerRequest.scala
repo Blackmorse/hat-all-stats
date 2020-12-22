@@ -32,7 +32,7 @@ trait ClickhousePlayerRequest[T] extends ClickhouseRequest[T] {
         .where
           .applyParameters(orderingKeyPath)
         .having
-          .role(role)
+          .role(role.map(Roles.reverseMapping))
           .nationality(playersParameters.nationality)
           .age.greaterEqual(playersParameters.minAge.map(_ * 112))
           .age.lessEqual(playersParameters.maxAge.map(_ * 112 + 111))
@@ -42,7 +42,7 @@ trait ClickhousePlayerRequest[T] extends ClickhouseRequest[T] {
         .applyParameters(parameters)
         .where
           .applyParameters(orderingKeyPath)
-          .role(role)
+          .role(role.map(Roles.reverseMapping))
           .nationality(playersParameters.nationality)
           .age.greaterEqual(playersParameters.minAge.map(_ * 112))
           .age.lessEqual(playersParameters.maxAge.map(_ * 112 + 111))

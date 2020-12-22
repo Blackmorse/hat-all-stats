@@ -4,7 +4,7 @@ case class Role(name: String, htIds: Seq[Int], internalId: Int)
 
 object Roles {
   val all = Seq(
-    Role("none", Seq(), 0),
+    Role("", Seq(), 0),
     Role("keeper", Seq(100), 1),
     Role("wingback", Seq(101, 105), 2),
     Role("defender", Seq(102, 103, 104), 3),
@@ -21,6 +21,16 @@ object Roles {
     4 -> "winger",
     5 -> "midfielder",
     6 -> "forward"
+  )
+
+  val reverseMapping = Map(
+    "" -> 0,
+    "keeper" -> 1,
+    "wingback" -> 2,
+    "defender" -> 3,
+    "winger" -> 4,
+    "midfielder" -> 5,
+    "forward" -> 6
   )
 
   def of(name: String): Option[Role] = all.find(_.name == name)
