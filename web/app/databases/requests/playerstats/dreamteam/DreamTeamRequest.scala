@@ -70,8 +70,8 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
     }
 
     val build = SqlBuilder(sql.replace("__sortBy__", sortString))
-      .applyParameters(orderingKeyPath)
       .where
+        .applyParameters(orderingKeyPath)
         .season(orderingKeyPath.season)
       .build
 

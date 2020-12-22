@@ -19,7 +19,8 @@ abstract class PlayersTableSection<Data extends LevelData, TableProps extends Le
         super(props, defaultSortingField, defaultStatsType, statsTypes, 
             [SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
                 SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR,
-                SelectorsEnum.PLAYER_ROLES, SelectorsEnum.NATIONALITIES_SELECTOR])
+                SelectorsEnum.PLAYER_ROLES, SelectorsEnum.NATIONALITIES_SELECTOR,
+                SelectorsEnum.AGE_SELECTOR])
     }
 
     abstract fetchDataFunction(levelRequest: LevelRequest,

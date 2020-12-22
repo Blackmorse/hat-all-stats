@@ -16,6 +16,7 @@ import LeagueLink from '../../links/LeagueLink';
 import CountryImage from '../../elements/CountryImage';
 import Mappings from '../../enums/Mappings';
 import i18n from '../../../i18n';
+import { ageFormatter } from '../../Formatters'
 
 abstract class PlayerGoalsGamesTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends PlayersTableSection<Data, TableProps, PlayerGoalsGames> {
@@ -38,6 +39,7 @@ abstract class PlayerGoalsGamesTable<Data extends LevelData, TableProps extends 
                 <th>{t('table.team')}</th>
                 <th className="value">{t('table.league')}</th>
                 <th></th>
+                <th>{t('table.age')}</th>
                 <ModelTableTh title='table.games' sortingField='games' sortingState={sortingState} />
                 <ModelTableTh title='table.minutes' sortingField='played' sortingState={sortingState} />
                 <ModelTableTh title='table.scored' sortingField='scored' sortingState={sortingState} />
@@ -56,6 +58,7 @@ abstract class PlayerGoalsGamesTable<Data extends LevelData, TableProps extends 
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{i18n.t(Mappings.roleToTranslationMap.get(playerGoalsGames.role) || '')}</td>
+            <td className="value">{ageFormatter(playerGoalsGames.age)}</td>
             <td className="value">{playerGoalsGames.games}</td>
             <td className="value">{playerGoalsGames.playedMinutes}</td>
             <td className="value">{playerGoalsGames.scored}</td>

@@ -103,11 +103,11 @@ class OverviewClickhouseDAO @Inject()(
             |""".stripMargin, round, season, leagueId, PlayerOverviewModel.mapper.*)
 
   private def stats[T](sql: String, round: Int, season: Int, leagueId: Option[Int], parser: ResultSetParser[T]): T = db.withConnection{ implicit connection =>
-    val builder = SqlBuilder(sql)
-        builder.where.round(round)
-        builder.where.season(season)
-        leagueId.foreach(builder.where.leagueId)
-
-        builder.build.as(parser)
+    SqlBuilder(sql)
+      .where
+        .round(round)
+        .season(season)
+        .leagueId(leagueId)
+      .build.as(parser)
   }
 }

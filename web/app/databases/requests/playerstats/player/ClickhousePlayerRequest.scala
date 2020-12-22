@@ -24,22 +24,28 @@ trait ClickhousePlayerRequest[T] extends ClickhouseRequest[T] {
     }
 
     val role = playersParameters.role.map(roleString => Roles.of(roleString).getOrElse(throw new RuntimeException("Looks like SQL injection")))
+      .map(_.name)
     val builder = if(sql.contains("__having__")) {
 
       SqlBuilder(sql)
-        .applyParameters(orderingKeyPath)
         .applyParameters(parameters)
+        .where
+          .applyParameters(orderingKeyPath)
         .having
           .role(role)
           .nationality(playersParameters.nationality)
+          .age.greaterEqual(playersParameters.minAge.map(_ * 112))
+          .age.lessEqual(playersParameters.maxAge.map(_ * 112 + 111))
         .build
     } else {
       SqlBuilder(sql)
-        .applyParameters(orderingKeyPath)
         .applyParameters(parameters)
         .where
+          .applyParameters(orderingKeyPath)
           .role(role)
           .nationality(playersParameters.nationality)
+          .age.greaterEqual(playersParameters.minAge.map(_ * 112))
+          .age.lessEqual(playersParameters.maxAge.map(_ * 112 + 111))
         .build
     }
 

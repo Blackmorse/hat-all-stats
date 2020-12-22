@@ -9,7 +9,8 @@ case class PlayerCards(playerSortingKey: PlayerSortingKey,
                        playedMinutes: Int,
                        yellowCards: Int,
                        redCards: Int,
-                       role: String)
+                       role: String,
+                       age: Int)
 
 object PlayerCards {
   implicit val writes = Json.writes[PlayerCards]
@@ -27,13 +28,14 @@ object PlayerCards {
     get[Int]("yellow_cards") ~
     get[Int]("red_cards") ~
     get[Int]("nationality") ~
-    get[String]("role" )map {
+    get[String]("role" ) ~
+    get[Int]("age") map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
         leagueUnitId ~ leagueUnitName ~ games ~
-          playedMinutes ~ yellowCards ~ redCards ~ nationality ~ role =>
+          playedMinutes ~ yellowCards ~ redCards ~ nationality ~ role ~ age =>
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
           leagueUnitId, leagueUnitName, nationality)
-        PlayerCards(playerSortingKey, games, playedMinutes, yellowCards, redCards, role)
+        PlayerCards(playerSortingKey, games, playedMinutes, yellowCards, redCards, role, age)
     }
   }
 }

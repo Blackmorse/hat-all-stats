@@ -52,6 +52,10 @@ object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerS
   override def execute(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int])
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[PlayerStatOverview]] = {
 
+    val season1 = SqlBuilder("")
+      .where
+      .season
+
     val builder = SqlBuilder(sql.replace("__round__", round.toString))
       .where
         .season(season)

@@ -6,7 +6,8 @@ interface PlayerCards {
     playedMinutes: number,
     yellowCards: number,
     redCards: number,
-    role: string
+    role: string,
+    age: number
 }
 
 export default PlayerCards

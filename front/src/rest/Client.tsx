@@ -333,6 +333,12 @@ function createPlayersParameters(playersParameters: PlayersParameters): string {
     if(playersParameters.nationality !== undefined) {
         values.nationality = playersParameters.nationality
     }
+    if(playersParameters.minAge !== undefined) {
+        values.minAge = playersParameters.minAge
+    }
+    if(playersParameters.maxAge !== undefined) {
+        values.maxAge = playersParameters.maxAge
+    }
 
     return new URLSearchParams(values).toString()
 }

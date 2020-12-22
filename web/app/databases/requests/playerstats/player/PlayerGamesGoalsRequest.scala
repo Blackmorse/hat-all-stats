@@ -20,7 +20,8 @@ object PlayerGamesGoalsRequest extends ClickhousePlayerRequest[PlayerGamesGoals]
            |    sum(goals) AS scored,
            |    floor(played / scored, 2) AS goal_rate,
            |    argMax(nationality, round) as nationality,
-           |    arrayFirst(x -> x != '', topK(2)(${ClickhouseRequest.roleIdCase("role_id")})) as role
+           |    arrayFirst(x -> x != '', topK(2)(${ClickhouseRequest.roleIdCase("role_id")})) as role,
+           |    ((argMax(age, round) * 112) + argMax(days, round)) as age
            |FROM hattrick.player_stats
            |__where__ AND (round <= __round__)
            |GROUP BY

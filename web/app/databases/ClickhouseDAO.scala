@@ -36,18 +36,17 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
         case Round(round) => request.oneRoundSql.replace("__round__", round.toString).replace("__sortBy__", sortBy)
       }
 
-      val builder = SqlBuilder(sql)
-
-      leagueId.foreach(builder.where.leagueId)
-      season.foreach(builder.where.season)
-      divisionLevel.foreach(builder.where.divisionLevel)
-      leagueUnitId.foreach(builder.where.leagueUnitId)
-      teamId.foreach(builder.where.teamId)
-      builder.page(page)
-      builder.pageSize(pageSize)
-      builder.sortingDirection(sortingDirection)
-
-      builder.build.as(request.parser.*)
+      SqlBuilder(sql)
+        .page(page)
+        .pageSize(pageSize)
+        .sortingDirection(sortingDirection)
+        .where
+          .leagueId(leagueId)
+          .season(season)
+          .divisionLevel(divisionLevel)
+          .leagueUnitId(leagueUnitId)
+          .teamId(teamId)
+        .build.as(request.parser.*)
     }
   }
 
@@ -164,7 +163,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
 
   def historyInfo(leagueId: Option[Int], season: Option[Int], round: Option[Int]): List[HistoryInfo] = {
     db.withConnection { implicit connection =>
-      val builder = SqlBuilder( """SELECT
+      SqlBuilder( """SELECT
                       |    season,
                       |    league_id,
                       |    division_level,
@@ -183,12 +182,11 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
                       |    division_level ASC,
                       |    round ASC
                       |""".stripMargin)
-
-        leagueId.foreach(builder.where.leagueId)
-        season.foreach(builder.where.season)
-        round.foreach(builder.where.round)
-
-        builder.build.as(HistoryInfo.mapper.*)
+          .where
+            .leagueId(leagueId)
+            .season(season)
+            .round(round)
+        .build.as(HistoryInfo.mapper.*)
     }
   }
 

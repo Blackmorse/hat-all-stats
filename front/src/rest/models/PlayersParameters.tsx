@@ -1,6 +1,8 @@
 interface PlayersParameters {
     role?: string,
-    nationality?: number
+    nationality?: number,
+    minAge?: number,
+    maxAge?: number
 }
 
 export default PlayersParameters

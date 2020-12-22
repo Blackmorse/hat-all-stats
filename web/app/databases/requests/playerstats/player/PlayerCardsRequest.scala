@@ -21,7 +21,8 @@ object PlayerCardsRequest extends ClickhousePlayerRequest[PlayerCards] {
        |    sum(yellow_cards) AS yellow_cards,
        |    sum(red_cards) AS red_cards,
        |    argMax(nationality, round) as nationality,
-       |    arrayFirst(x -> x != '', topK(2)(${ClickhouseRequest.roleIdCase("role_id")})) as role
+       |    arrayFirst(x -> x != '', topK(2)(${ClickhouseRequest.roleIdCase("role_id")})) as role,
+       |    ((argMax(age, round) * 112) + argMax(days, round)) as age
        |FROM hattrick.player_stats
        |__where__ AND round <= __round__
        |GROUP BY

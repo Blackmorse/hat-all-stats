@@ -60,8 +60,9 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
     }
 
     restClickhouseDAO.execute(SqlBuilder(sql)
-      .applyParameters(orderingKeyPath)
       .applyParameters(parameters)
+      .where
+        .applyParameters(orderingKeyPath)
       .build, rowParser)
   }
 }

@@ -2,7 +2,7 @@ package models.web
 
 import play.api.mvc.QueryStringBindable
 
-case class PlayersParameters(role: Option[String], nationality: Option[Int])
+case class PlayersParameters(role: Option[String], nationality: Option[Int], minAge: Option[Int], maxAge: Option[Int])
 
 object PlayersParameters {
   implicit def queryStringBindable(implicit stringBuilder: QueryStringBindable[String]) = new QueryStringBindable[PlayersParameters] {
@@ -15,10 +15,22 @@ object PlayersParameters {
         .map(nationalityEither => nationalityEither.map(nationality => Some(nationality)))
         .orElse(Some(Right(None)))
 
+      val minAgeOptionEither = ParametersUtils.bindInt("minAge", params)
+        .map(minAgeEither => minAgeEither.map(minAge => Some(minAge)))
+        .orElse(Some(Right(None)))
+
+      val maxAgeOptionEither = ParametersUtils.bindInt("maxAge", params)
+        .map(maxAgeEither => maxAgeEither.map(maxAge => Some(maxAge)))
+        .orElse(Some(Right(None)))
+
       for (roleEither <- roleOptionEither;
-           nationalityEither <- nationalityOptionEither) yield {
+           nationalityEither <- nationalityOptionEither;
+           minAgeEither <- minAgeOptionEither;
+           maxAgeEither <- maxAgeOptionEither) yield {
         for(role <- roleEither;
-            nationality <- nationalityEither) yield PlayersParameters(role, nationality)
+            nationality <- nationalityEither;
+            minAge <- minAgeEither;
+            maxAge <- maxAgeEither) yield PlayersParameters(role, nationality, minAge, maxAge)
       }
     }
 

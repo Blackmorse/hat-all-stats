@@ -2,88 +2,139 @@ package databases
 
 import anorm.{NamedParameter, ParameterValue, Row, SQL, SimpleSql}
 import databases.requests.OrderingKeyPath
-import databases.requests.model.Role
 import models.web.{Asc, Desc, RestStatisticsParameters, SortingDirection}
 import service.DefaultService
 
 import scala.collection.mutable
 
+trait Parameter {
+  val parameterNumber: Int
+  val name: String
+  def oper: String
+  def value: ParameterValue
+}
+
+case class IntParameter(parameterNumber: Int, name: String, clause: Clause) extends Parameter {
+  var _oper: String = "="
+  var _value: ParameterValue = _
+
+  def apply(value: Int): Clause = {
+    this._value = value
+    clause
+  }
+
+  def apply(valueOpt: Option[Int]): Clause = {
+    valueOpt.foreach(value => this._value = value)
+    clause
+  }
+
+  def greaterEqual(value: Int): Clause = {
+    this._value = value
+    this._oper = ">="
+    clause
+  }
+
+  def greaterEqual(valueOpt: Option[Int]): Clause = {
+    valueOpt.foreach(value => this._value = value)
+    this._oper = ">="
+    clause
+  }
+
+  def lessEqual(value: Int): Clause = {
+    this._value = value
+    this._oper = "<="
+    clause
+  }
+
+  def lessEqual(valueOpt: Option[Int]): Clause = {
+    valueOpt.foreach(value => this._value = value)
+    this._oper = "<="
+    clause
+  }
+
+  override def oper: String = _oper
+  override def value: ParameterValue = _value
+}
+
+case class LongParameter(parameterNumber: Int, name: String, clause: Clause) extends Parameter {
+  var _oper: String = "="
+  var _value: ParameterValue = _
+
+  def apply(value: Long): Clause = {
+    this._value = value.toString
+    clause
+  }
+
+  def apply(valueOpt: Option[Long]): Clause = {
+    valueOpt.foreach(value => this._value = value.toString)
+    clause
+  }
+
+  def greaterEqual(value: Long): Clause = {
+    this._value = value.toString
+    this._oper = ">"
+    clause
+  }
+
+  override def oper: String = _oper
+
+  override def value: ParameterValue = _value
+}
+
+case class StringParameter(parameterNumber: Int, name: String, clause: Clause) extends Parameter {
+  var _oper = "="
+  var _value: ParameterValue = _
+
+  def apply(value: String): Clause = {
+    this._value = value
+    clause
+  }
+
+  def apply(valueOpt: Option[String]): Clause = {
+    valueOpt.foreach(value => this._value = value)
+    clause
+  }
+
+  override def oper: String = _oper
+  override def value: ParameterValue = _value
+}
+
 abstract class Clause(sqlBuilder: SqlBuilder) {
+  private[databases] val parameters: mutable.Buffer[Parameter] = mutable.Buffer()
   private[databases] val params: mutable.Buffer[(String, ParameterValue)] = mutable.Buffer()
 
   def applyParameters(orderingKeyPath: OrderingKeyPath): this.type = {
-    orderingKeyPath.leagueId.foreach(this.leagueId)
-    orderingKeyPath.divisionLevel.foreach(this.divisionLevel)
-    orderingKeyPath.leagueUnitId.foreach(this.leagueUnitId)
-    orderingKeyPath.teamId.foreach(this.teamId)
+    leagueId(orderingKeyPath.leagueId)
+    divisionLevel(orderingKeyPath.divisionLevel)
+    leagueUnitId(orderingKeyPath.leagueUnitId)
+    teamId(orderingKeyPath.teamId)
 
     this
   }
 
-  def season(season: Int): this.type = {
-    params += (("season", season))
-    this
+  private def addParameter[T <: Parameter](parameter: T): T = {
+    sqlBuilder.parametersNumber += 1
+    parameters += parameter
+    parameter
   }
 
-  def season(seasonOpt: Option[Int]): this.type = {
-    seasonOpt.foreach(season => params += (("season", season)))
-    this
-  }
+  def season = addParameter(IntParameter(sqlBuilder.parametersNumber, "season", this))
 
-  def leagueId(leagueIdOpt: Option[Int]): this.type = {
-    leagueIdOpt.foreach(leagueId => params += (("league_id", leagueId)))
-    this
-  }
+  def leagueId = addParameter(IntParameter(sqlBuilder.parametersNumber, "league_id", this))
 
-  def leagueId(leagueId: Int): this.type = {
-    params += (("league_id", leagueId))
-    this
-  }
+  def divisionLevel = addParameter(IntParameter(sqlBuilder.parametersNumber, "division_level", this))
 
-  def divisionLevel(divisionLevelOpt: Option[Int]): this.type = {
-    divisionLevelOpt.foreach(divisionLevel => params += (("division_level", divisionLevel)))
-    this
-  }
+  def leagueUnitId = addParameter(LongParameter(sqlBuilder.parametersNumber, "league_unit_id", this))
 
-  def divisionLevel(divisionLevel: Int): this.type = {
-    params += (("division_level", divisionLevel))
-    this
-  }
+  def teamId = addParameter(LongParameter(sqlBuilder.parametersNumber, "team_id", this))
 
-  def leagueUnitId(leagueUnitId: Long): this.type = {
-    params += (("league_unit_id", leagueUnitId))
-    this
-  }
+  def round = addParameter(IntParameter(sqlBuilder.parametersNumber, "round", this))
 
-  def teamId(teamId: Long): this.type = {
-    params += (("team_id", teamId))
-    this
-  }
+  def role = addParameter(StringParameter(sqlBuilder.parametersNumber, "role", this))
 
-  def teamId(teamIdOpt: Option[Long]): this.type = {
-    teamIdOpt.foreach(teamId => params += (("team_id", teamId)))
-    this
-  }
+  def nationality = addParameter( IntParameter(sqlBuilder.parametersNumber, "nationality", this))
 
-  def round(round: Int): this.type = {
-    params += (("round", round))
-    this
-  }
-
-  def role(roleOpt: Option[Role]): this.type = {
-    roleOpt.foreach(role => params += (("role", role.name)))
-    this
-  }
-
-  def nationality(nationalityOpt: Option[Int]): this.type = {
-    nationalityOpt.foreach(nationality => params += (("nationality", nationality)))
-    this
-  }
-
-  def nationality(nationality: Int): this.type = {
-    params += (("nationality", nationality))
-    this
-  }
+  def age = addParameter(IntParameter(sqlBuilder.parametersNumber, "age", this))
 
   def and: SqlBuilder = sqlBuilder
 
@@ -99,6 +150,7 @@ class WhereClause(sqlBuilder: SqlBuilder) extends Clause(sqlBuilder)
 class HavingClause(sqlBuilder: SqlBuilder) extends Clause(sqlBuilder)
 
 case class SqlBuilder(baseSql: String) {
+  var parametersNumber = 0
   private var page = 0
   private var pageSize = DefaultService.PAGE_SIZE
   private var sortingDirection: String = "desc"
@@ -108,14 +160,6 @@ case class SqlBuilder(baseSql: String) {
   def where = whereClause
   def having = havingClause
 
-  def applyParameters(orderingKeyPath: OrderingKeyPath): SqlBuilder = {
-    orderingKeyPath.leagueId.foreach(this.whereClause.leagueId)
-    orderingKeyPath.divisionLevel.foreach(this.whereClause.divisionLevel)
-    orderingKeyPath.leagueUnitId.foreach(this.whereClause.leagueUnitId)
-    orderingKeyPath.teamId.foreach(this.whereClause.teamId)
-
-    this
-  }
 
   def applyParameters(parameters: RestStatisticsParameters): SqlBuilder = {
     whereClause.season(parameters.season)
@@ -146,15 +190,17 @@ case class SqlBuilder(baseSql: String) {
 
 
   def build: SimpleSql[Row] = {
-    val sql =  if(where.params.nonEmpty) {
-      val wheresql = " WHERE " + where.params.map{case (name, _) => s"$name = {$name}"}.mkString(" and ")
+    val whereParameters = where.parameters.filter(_.value != null)
+    val sql =  if(whereParameters.nonEmpty) {
+      val wheresql = " WHERE " + whereParameters.map(parameter => s"${parameter.name} ${parameter.oper} {${parameter.name}_${parameter.parameterNumber}}").mkString(" AND ")
       baseSql.replace("__where__", wheresql)
     } else {
       baseSql.replace("__where__", " ")
     }
 
-    val hSql = if(having.params.nonEmpty) {
-      val havingSql = " HAVING " + having.params.map{case (name, _) => s"$name = {$name}"}.mkString(" and ")
+    val havingParameters = having.parameters.filter(_.value != null)
+    val hSql = if(havingParameters.nonEmpty) {
+      val havingSql = " HAVING " + havingParameters.map(parameter => s"${parameter.name} ${parameter.oper} {${parameter.name}_${parameter.parameterNumber}}").mkString(" AND ")
       sql.replace("__having__", havingSql)
     } else {
       sql.replace("__having__", " ")
@@ -165,6 +211,6 @@ case class SqlBuilder(baseSql: String) {
       .replace("__sortingDirection__", sortingDirection)
 
     SQL(result)
-      .on((where.params ++ having.params).map(NamedParameter.namedWithString): _*)
+      .on((where.parameters ++ having.parameters).map(parameter => NamedParameter.namedWithString((s"${parameter.name}_${parameter.parameterNumber}", parameter.value))): _*)
   }
 }

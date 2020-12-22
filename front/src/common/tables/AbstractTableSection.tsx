@@ -11,6 +11,7 @@ import SeasonSelector from '../selectors/SeasonSelector'
 import PlayedAllMatchesSelector from '../selectors/PlayedAllMatchesSelector'
 import PositionSelector from '../selectors/PositionSelector'
 import NationalitySelector from '../selectors/NationalitySelector'
+import AgeSelector from '../selectors/AgeSelector'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import StatisticsSection from '../sections/StatisticsSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
@@ -100,6 +101,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         this.playedAllMatchesChanged=this.playedAllMatchesChanged.bind(this);
         this.roleChanged=this.roleChanged.bind(this)
         this.nationalityChanged=this.nationalityChanged.bind(this)
+        this.minMaxAgeChanged=this.minMaxAgeChanged.bind(this)
     }
 
     createColumnHeaders(): JSX.Element {
@@ -240,6 +242,20 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         this.updateWithRequest(newDataRequest)
     }
 
+    minMaxAgeChanged(minMax: [number?, number?]) {
+        let newDataRequest = Object.assign({}, this.state.dataRequest)
+
+        let newPlayersParameters = Object.assign({}, this.state.dataRequest.playersParameters)
+        newPlayersParameters.minAge = minMax[0]
+        newPlayersParameters.maxAge = minMax[1]
+
+        newDataRequest.playersParameters = newPlayersParameters
+
+        this.fistOpening = false
+
+        this.updateWithRequest(newDataRequest)
+    }
+
     renderSection(): JSX.Element {
         let seasonSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.SEASON_SELECTOR) !== -1) {
@@ -301,6 +317,11 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                 callback={this.nationalityChanged} />
         }
 
+        let ageSelector = <></>
+        if(this.selectors.indexOf(SelectorsEnum.AGE_SELECTOR) !== -1) {
+            ageSelector = <AgeSelector callback={this.minMaxAgeChanged}/>
+        }
+
         let indexOffset = this.state.dataRequest.statisticsParameters.pageSize * this.state.dataRequest.statisticsParameters.page 
         return <>
                 <div className="table_settings_div">
@@ -312,7 +333,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                 <div className="players_settings_div">
                     {playerPositionsSelector}
                     {nationalitySelector}
-                    
+                    {ageSelector}
                 </div>
                 <table className="statistics_table">
                     <thead>
