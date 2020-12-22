@@ -39,7 +39,7 @@ public class PlayerInfoConverter {
                             .lastName(player.getLastName())
                             .age(player.getAge())
                             .days(player.getAgeDays())
-                            .nationality(hattrickInfoService.getCountryIdToLeagueIdMap().get(player.getCountryId()));
+                            .nationality(hattrickInfoService.getCountryIdToLeagueIdMap().getOrDefault(player.getCountryId(), 0));
 
                     if(player.getLastMatch().getDate() != null && player.getLastMatch().getDate().equals(teamWithMatch.getMatch().getDate())) {
                         builder.playedMinutes(player.getLastMatch().getPlayedMinutes())
