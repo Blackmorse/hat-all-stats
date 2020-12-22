@@ -3,6 +3,7 @@ package databases.requests.model.player
 import play.api.libs.json.Json
 import anorm.SqlParser.get
 import anorm.~
+import databases.requests.model.Roles
 
 case class PlayerSalaryTSI(playerSortingKey: PlayerSortingKey,
                            age: Int,
@@ -25,12 +26,12 @@ object PlayerSalaryTSI {
     get[Int]("tsi") ~
     get[Int]("salary") ~
     get[Int]("nationality") ~
-    get[String]("role") map {
+    get[Int]("role") map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
         leagueUnitId ~ leagueUnitName ~ age ~ tsi ~ salary ~ nationality ~ role =>
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
           leagueUnitId, leagueUnitName, nationality)
-        PlayerSalaryTSI(playerSortingKey, age, tsi, salary, role)
+        PlayerSalaryTSI(playerSortingKey, age, tsi, salary, Roles.mapping(role))
     }
   }
 }

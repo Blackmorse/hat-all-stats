@@ -2,6 +2,7 @@ package databases.requests.model.player
 
 import anorm.SqlParser.get
 import anorm.~
+import databases.requests.model.Roles
 import play.api.libs.json.Json
 
 case class PlayerGamesGoals(playerSortingKey: PlayerSortingKey,
@@ -28,7 +29,7 @@ object PlayerGamesGoals {
     get[Int]("scored") ~
     get[Double]("goal_rate") ~
     get[Int]("nationality") ~
-    get[String]("role") ~
+    get[Int]("role") ~
     get[Int]("age") map {
       case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
         leagueUnitId ~ leagueUnitName ~ games ~ playedMinutes ~
@@ -41,7 +42,7 @@ object PlayerGamesGoals {
           playedMinutes,
           scored,
           if(goalRate.isNaN || goalRate.isInfinite) null.asInstanceOf[Double] else goalRate,
-          role,
+          Roles.mapping(role),
           age)
     }
   }

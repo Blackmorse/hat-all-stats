@@ -11,12 +11,12 @@ trait ClickhouseRequest[T] {
 object ClickhouseRequest {
   def roleIdCase(fieldName: String) = {
     val rolesList = (for(role <- Roles.all;
-        id <- role.htIds) yield s"$id, '${role.name}',")
+        id <- role.htIds) yield s"$id, ${role.internalId},")
       .mkString("\n")
 
     s"""
        |caseWithExpression($fieldName,
        |$rolesList
-       |'')""".stripMargin
+       |0)""".stripMargin
   }
 }
