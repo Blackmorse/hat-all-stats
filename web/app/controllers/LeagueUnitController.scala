@@ -61,6 +61,7 @@ class LeagueUnitController @Inject()(val controllerComponents: ControllerCompone
         case _ => None
       }
       val leagueUnitTeamStats = leagueUnitCalculatorService.calculate(leagueFixture, tillRound)
+        .map(_.leagueUnitTeamStat)
 
       val details = WebLeagueUnitDetails(leagueInfo = leagueInfoService.leagueInfo(leagueDetails.getLeagueId),
         currentRound = leagueInfoService.leagueInfo.currentRound(leagueDetails.getLeagueId),

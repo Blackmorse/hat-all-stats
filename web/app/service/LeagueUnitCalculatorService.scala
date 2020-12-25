@@ -22,18 +22,7 @@ class LeagueUnitCalculatorService  {
       }
     }
 
-  def calculate(leagueFixture: LeagueFixtures, tillRound: Option[Int] = None, sortingField: String = "points", sortingDirection: SortingDirection = Desc) = {
-    val accumulatorMap = mutable.HashMap[Long, LeagueTeamStatAccumulator]()
-
-    for (matc <- leagueFixture.getMatches.asScala) {
-      val homeTeamAccumulator = accumulatorMap.getOrElseUpdate(matc.getHomeTeam.getHomeTeamId, LeagueTeamStatAccumulator(matc.getHomeTeam))
-      val awayTeamAccumulator = accumulatorMap.getOrElseUpdate(matc.getAwayTeam.getAwayTeamId, LeagueTeamStatAccumulator(matc.getAwayTeam))
-
-      if(matc.getHomeGoals != null && tillRound.map(matc.getMatchRound <= _).getOrElse(true)) {
-        accumulate(homeTeamAccumulator, awayTeamAccumulator, matc)
-      }
-    }
-
+  def calculate(leagueFixture: LeagueFixtures, tillRound: Option[Int] = None, sortingField: String = "points", sortingDirection: SortingDirection = Desc): Seq[LeagueUnitTeamStatsWithPositionDiff] = {
     val ordering = sortingField match {
       case "points" => orderingFactory(_.points)
       case "teamName" => orderingFactory(_.teamName)
@@ -44,18 +33,43 @@ class LeagueUnitCalculatorService  {
       case "lost" => orderingFactory(_.lost)
     }
 
-    val accumulators = accumulatorMap.toSeq.map(_._2).sorted(ordering)
+    val accumulatorMap = mutable.HashMap[Long, LeagueTeamStatAccumulator]()
 
-    val accumulatorDirection = sortingDirection match {
-      case Desc => accumulators.reverse
-      case Asc => accumulators
+    val teamPositions = for (round <- 1 to tillRound.getOrElse(14)) yield {
+      for(matc <- leagueFixture.getMatches.asScala.filter(_.getMatchRound == round)) {
+        val homeTeamAccumulator = accumulatorMap.getOrElseUpdate(matc.getHomeTeam.getHomeTeamId, LeagueTeamStatAccumulator(matc.getHomeTeam))
+        val awayTeamAccumulator = accumulatorMap.getOrElseUpdate(matc.getAwayTeam.getAwayTeamId, LeagueTeamStatAccumulator(matc.getAwayTeam))
+
+        if(matc.getHomeGoals != null) {
+          accumulate(homeTeamAccumulator, awayTeamAccumulator, matc)
+        }
+      }
+
+      val accumulators = accumulatorMap.toSeq.map(_._2).sorted(ordering)
+
+      val accumulatorDirection = sortingDirection match {
+        case Desc => accumulators.reverse
+        case Asc => accumulators
+      }
+
+      accumulatorDirection.reverse.zipWithIndex
+        .map{case (accumulator, index) =>
+          LeagueUnitTeamStat(index + 1, accumulator.teamId, accumulator.teamName, accumulator.games, accumulator.scored, accumulator. missed,
+            accumulator.win, accumulator.draw, accumulator.lost, accumulator.points)
+        }
     }
 
-    accumulatorDirection.reverse.zipWithIndex
-      .map{case (accumulator, index) =>
-        LeagueUnitTeamStat(index + 1, accumulator.teamId, accumulator.teamName, accumulator.games, accumulator.scored, accumulator. missed,
-          accumulator.win, accumulator.draw, accumulator.lost, accumulator.points)
-      }
+    val teamPositionsReverse = teamPositions.reverse
+    val previousPositionsOpt = teamPositionsReverse.tail.headOption
+    if(previousPositionsOpt.isEmpty) {
+      teamPositionsReverse.head.map(luts => LeagueUnitTeamStatsWithPositionDiff(0, luts))
+    } else {
+      teamPositionsReverse.head.map(luts => {
+        val previousPosition = previousPositionsOpt.get.find(_.teamId == luts.teamId).get.position
+        val positionChange = luts.position - previousPosition
+        LeagueUnitTeamStatsWithPositionDiff(positionChange, luts)
+      })
+    }
   }
 
   private def accumulate(homeTeamAccumulator: LeagueTeamStatAccumulator, awayTeamAccumulator: LeagueTeamStatAccumulator, matc: Match): Unit = {
@@ -104,6 +118,12 @@ object LeagueTeamStatAccumulator {
 case class LeagueUnitTeamStat(position: Int, teamId: Long, teamName: String, games: Int, scored: Int, missed: Int,
                               win: Int, draw: Int, lost: Int, points: Int)
 
+case class LeagueUnitTeamStatsWithPositionDiff(positionDiff: Int, leagueUnitTeamStat: LeagueUnitTeamStat)
+
 object LeagueUnitTeamStat {
   implicit val writes = Json.writes[LeagueUnitTeamStat]
+}
+
+object LeagueUnitTeamStatsWithPositionDiff {
+  implicit val writes = Json.writes[LeagueUnitTeamStatsWithPositionDiff]
 }

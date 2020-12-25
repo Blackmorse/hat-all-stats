@@ -85,14 +85,6 @@
     align-items: center;
 }
 
-.trend_down {
-    transform: rotate(45deg);
-}
-
-.trend_up {
-    transform: rotate(-45deg);
-}
-
 .max_ranking_teams {
     font-size: 0.7em;
 }

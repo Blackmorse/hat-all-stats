@@ -1,4 +1,4 @@
-export default interface TeamPosition {
+export interface TeamPosition {
     position: number,
     teamId: number,
     teamName: string,
@@ -9,4 +9,9 @@ export default interface TeamPosition {
     draw: number,
     lost: number,
     points: number
+}
+
+export default interface TeamPositionWithDiff {
+    positionDiff: number, 
+    leagueUnitTeamStat: TeamPosition
 }

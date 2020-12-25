@@ -4,15 +4,16 @@ import { SortingState } from '../common/tables/AbstractTableSection'
 import ClassicTableSection from '../common/tables/ClassicTableSection'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps'
 import { StatsTypeEnum } from '../rest/models/StatisticsParameters';
-import TeamPosition from '../rest/models/team/TeamPosition';
+import TeamPositionWithDiff from '../rest/models/team/TeamPosition';
 import LeagueUnitLevelDataProps from './LeagueUnitLevelDataProps';
 import { getTeamPositions } from '../rest/Client'
 import '../i18n'
 import { Translation } from 'react-i18next'
 import SortingTableTh from '../common/elements/SortingTableTh';
 import TeamLink from '../common/links/TeamLink'
+import '../common/elements/Trends.css'
 
-class TeamPositionsTable extends ClassicTableSection<LeagueUnitData, LeagueUnitLevelDataProps, TeamPosition> {
+class TeamPositionsTable extends ClassicTableSection<LeagueUnitData, LeagueUnitLevelDataProps, TeamPositionWithDiff> {
     
     constructor(props: LevelDataPropsWrapper<LeagueUnitData, LeagueUnitLevelDataProps>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
@@ -26,6 +27,7 @@ class TeamPositionsTable extends ClassicTableSection<LeagueUnitData, LeagueUnitL
             {(t, { i18n }) => 
                 <tr>
                     <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                    <th></th>
                     <th>{t('table.team')}</th>
                     <th className="value hint" popped-hint={t('table.games')}>{t('table.games_abbr')}</th>
                     <SortingTableTh poppedHint={t('table.win')} title='table.win_abbr' sortingField='win' sortingState={sortingState}/>
@@ -41,9 +43,17 @@ class TeamPositionsTable extends ClassicTableSection<LeagueUnitData, LeagueUnitL
     }
 
 
-    columnValues(index: number, teamPosition: TeamPosition): JSX.Element {
+    columnValues(index: number, teamPositionWithDiff: TeamPositionWithDiff): JSX.Element {
+        let teamPosition = teamPositionWithDiff.leagueUnitTeamStat
+        let trend: JSX.Element = <img src="/trend-gray.png" alt="same" />
+        if(teamPositionWithDiff.positionDiff < 0) {
+            trend = <img className="trend_up" src="/trend-green.png" alt="up" />
+        } else if (teamPositionWithDiff.positionDiff > 0) {
+            trend = <img className="trend_down" src="/trend-red.png" alt="down" />
+        }
         return <>
             <td>{index + 1}</td>
+            <td>{trend}</td>
             <td><TeamLink id={teamPosition.teamId} text={teamPosition.teamName} /></td>
             <td className="value">{teamPosition.games}</td>
             <td className="value">{teamPosition.win}</td>
