@@ -185,5 +185,9 @@
     "dream_team.undefined": "",
 
     "filter.full_season": "Have played the full season",
-    "filter.nationality": "Nationality:"
+    "filter.nationality": "Nationality:",
+
+    "table.average_salary": "Average salary",
+    "table.average_tsi": "Average TSI",
+    "filter.played_in_last_match": "Played in the last match"
   }

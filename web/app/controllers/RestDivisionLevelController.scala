@@ -114,8 +114,14 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
   def playerInjuries(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerInjuryRequest, leagueId, divisionLevel, restStatisticsParameters)
 
-  def teamSalaryTsi(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
-    stats(TeamSalaryTSIRequest, leagueId, divisionLevel, restStatisticsParameters)
+  def teamSalaryTsi(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean) = Action.async { implicit request =>
+    TeamSalaryTSIRequest.execute(OrderingKeyPath(
+        leagueId = Some(leagueId),
+        divisionLevel = Some(divisionLevel)),
+        restStatisticsParameters,
+        playedInLastMatch)
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
 
   def teamCards(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamCardsRequest, leagueId, divisionLevel, restStatisticsParameters)

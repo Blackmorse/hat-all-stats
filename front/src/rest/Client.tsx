@@ -219,7 +219,15 @@ export let getLeagueUnits = statisticsRequest<LeagueUnitRating>('leagueUnits')
 
 export let getTeamPositions = statisticsRequest<TeamPosition>('teamPositions')
 
-export let getTeamSalaryTSI = statisticsRequest<TeamSalaryTSI>('teamSalaryTsi')
+export function getTeamSalaryTSI(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        playedInLastMatch: boolean,
+        callback: (loadingEnum: LoadingEnum, entities?: RestTableData<TeamSalaryTSI>) => void) {
+    let params = createStatisticsParameters(statisticsParameters)
+    axios.get<RestTableData<TeamSalaryTSI>>(startUrl(request) + '/teamSalaryTsi?' + params.toString() + '&playedInLastMatch=' + playedInLastMatch)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
 
 export let getTeamCards = statisticsRequest<TeamCards>('teamCards')
 

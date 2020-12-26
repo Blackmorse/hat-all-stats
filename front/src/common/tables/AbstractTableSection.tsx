@@ -8,7 +8,7 @@ import Cookies from 'js-cookie'
 import PageSizeSelector from '../selectors/PageSizeSelector'
 import StatsTypeSelector from '../selectors/StatsTypeSelector'
 import SeasonSelector from '../selectors/SeasonSelector'
-import PlayedAllMatchesSelector from '../selectors/PlayedAllMatchesSelector'
+import CheckBoxSelector from '../selectors/CheckBoxSelector'
 import PositionSelector from '../selectors/PositionSelector'
 import NationalitySelector from '../selectors/NationalitySelector'
 import AgeSelector from '../selectors/AgeSelector'
@@ -34,7 +34,8 @@ export interface SortingState {
 export interface DataRequest {
     statisticsParameters: StatisticsParameters,
     playedAllMatches: boolean,
-    playersParameters: PlayersParameters
+    playersParameters: PlayersParameters,
+    playedInLastMatch: boolean
 }
 
 
@@ -86,7 +87,8 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                 },
                 playedAllMatches: true,
                 playersParameters: {
-                }
+                },
+                playedInLastMatch: false
             },
             state: {
                 isLastPage: true,
@@ -102,6 +104,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         this.roleChanged=this.roleChanged.bind(this)
         this.nationalityChanged=this.nationalityChanged.bind(this)
         this.minMaxAgeChanged=this.minMaxAgeChanged.bind(this)
+        this.playedInLastMatchChanged=this.playedInLastMatchChanged.bind(this)
     }
 
     createColumnHeaders(): JSX.Element {
@@ -256,6 +259,16 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         this.updateWithRequest(newDataRequest)
     }
 
+    playedInLastMatchChanged(playedInLastMatch: boolean) {
+        let newDataRequest = Object.assign({}, this.state.dataRequest)
+
+        newDataRequest.playedInLastMatch = playedInLastMatch
+
+        this.fistOpening = false
+
+        this.updateWithRequest(newDataRequest)
+    }
+
     renderSection(): JSX.Element {
         let seasonSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.SEASON_SELECTOR) !== -1) {
@@ -296,9 +309,10 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
 
         let playedAllMatchesSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.PLAYED_ALL_MATCHES_SELECTOR) !== -1) {
-            playedAllMatchesSelector = <PlayedAllMatchesSelector 
+            playedAllMatchesSelector = <CheckBoxSelector 
                 value={this.state.dataRequest.playedAllMatches}
                 callback={this.playedAllMatchesChanged}
+                title='filter.full_season'
                 />
         }
 
@@ -322,12 +336,21 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
             ageSelector = <AgeSelector callback={this.minMaxAgeChanged}/>
         }
 
+        let playedInLastMatchSelector = <></>
+        if(this.selectors.indexOf(SelectorsEnum.PLAYED_IN_LAST_MATCH_SELECTOR) !== -1) {
+            playedInLastMatchSelector = <CheckBoxSelector
+                value={this.state.dataRequest.playedInLastMatch}
+                callback={this.playedInLastMatchChanged}
+                title='filter.played_in_last_match' />
+        }
+
         let indexOffset = this.state.dataRequest.statisticsParameters.pageSize * this.state.dataRequest.statisticsParameters.page 
         return <>
                 <div className="table_settings_div">
                     {seasonSelector}
                     {statsTypeSelector}
                     {playedAllMatchesSelector}
+                    {playedInLastMatchSelector}
                     {pageSizeSelector}
                 </div>
                 <div className="players_settings_div">

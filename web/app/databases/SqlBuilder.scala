@@ -136,6 +136,8 @@ abstract class Clause(sqlBuilder: SqlBuilder) {
 
   def age = addParameter(IntParameter(sqlBuilder.parametersNumber, "age", this))
 
+  def playedMinutes = addParameter(IntParameter(sqlBuilder.parametersNumber, "played_minutes", this))
+
   def and: SqlBuilder = sqlBuilder
 
   def build: SimpleSql[Row] = sqlBuilder.build

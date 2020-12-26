@@ -1,6 +1,5 @@
 import React from 'react';
-import { SortingState } from '../AbstractTableSection'
-import ClassicTableSection from '../ClassicTableSection'
+import AbstractTableSection, { SortingState, DataRequest } from '../AbstractTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import LevelData from '../../../rest/models/leveldata/LevelData';
 import TeamSalaryTSI from '../../../rest/models/team/TeamSalaryTSI';
@@ -12,16 +11,25 @@ import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { commasSeparated } from '../../Formatters'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
+import { LoadingEnum } from '../../enums/LoadingEnum'
+import RestTableData from '../../../rest/models/RestTableData'
+import { SelectorsEnum } from '../SelectorsEnum';
 
-abstract class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends ClassicTableSection<Data, TableProps, TeamSalaryTSI> {
-
+class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
+    extends AbstractTableSection<Data, TableProps, TeamSalaryTSI> {
+    
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'salary', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
-            [StatsTypeEnum.ROUND])
+            [StatsTypeEnum.ROUND],
+            [SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+                SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR,
+                SelectorsEnum.PLAYED_IN_LAST_MATCH_SELECTOR])
     }
 
-    fetchDataFunction = getTeamSalaryTSI
+    executeDataRequest(dataRequest: DataRequest, callback: (loadingState: LoadingEnum, result?: RestTableData<TeamSalaryTSI>) => void): void {
+        getTeamSalaryTSI(this.props.levelDataProps.createLevelRequest(), dataRequest.statisticsParameters, dataRequest.playedInLastMatch, 
+            callback)
+    }
 
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
@@ -34,6 +42,10 @@ abstract class TeamSalaryTSITable<Data extends LevelData, TableProps extends Lev
                 <ModelTableTh title='table.tsi' sortingField='tsi' sortingState={sortingState} />
                 <ModelTableTh title='table.salary' sortingField='salary' titlePostfix={', ' + this.props.levelDataProps.currency()}
                      sortingState={sortingState} />
+                <ModelTableTh title='menu.players' sortingField='players_count' sortingState={sortingState}/>
+                <ModelTableTh title='table.average_tsi' sortingField='avg_tsi' sortingState={sortingState} />
+                <ModelTableTh title='table.average_salary' titlePostfix={', ' + this.props.levelDataProps.currency()} 
+                    sortingField='avg_salary' sortingState={sortingState} />
             </tr>
         }
         </Translation>
@@ -47,6 +59,9 @@ abstract class TeamSalaryTSITable<Data extends LevelData, TableProps extends Lev
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{commasSeparated(teamSalaryTSI.tsi)}</td>
             <td className="value">{commasSeparated(Math.floor(teamSalaryTSI.salary / this.props.levelDataProps.currencyRate()))}</td>
+            <td className="value">{teamSalaryTSI.playersCount}</td>
+            <td className="value">{commasSeparated(teamSalaryTSI.avgTsi)}</td>
+            <td className="value">{commasSeparated(Math.floor(teamSalaryTSI.avgSalary / this.props.levelDataProps.currencyRate()))}</td>
         </>
     }
 }

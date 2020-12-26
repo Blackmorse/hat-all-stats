@@ -185,5 +185,9 @@
     "dream_team.undefined": "",
 
     "filter.full_season": "Сыгравшие весь сезон",
-    "filter.nationality": "Национальность:"
+    "filter.nationality": "Национальность:",
+
+    "table.average_salary": "Средняя зарплата",
+    "table.average_tsi": "Среднее TSI",
+    "filter.played_in_last_match": "Сыгравшие в последнем матче"
 }

@@ -105,8 +105,12 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
   def playerInjuries(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(PlayerInjuryRequest, leagueId, restStatisticsParameters)
 
-  def teamSalaryTsi(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
-    stats(TeamSalaryTSIRequest, leagueId, restStatisticsParameters)
+  def teamSalaryTsi(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean) = Action.async { implicit request =>
+    TeamSalaryTSIRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)),
+        restStatisticsParameters,
+        playedInLastMatch)
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
 
   def teamCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamCardsRequest, leagueId, restStatisticsParameters)

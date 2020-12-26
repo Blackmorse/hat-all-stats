@@ -186,5 +186,9 @@
     "dream_team.undefined": "",
 
     "filter.full_season": "Ho giocato l'intera stagione",
-    "filter.nationality": "Nazionalità:"
+    "filter.nationality": "Nazionalità:",
+
+    "table.average_salary": "Stipendio medio",
+    "table.average_tsi": "TSI media",
+    "filter.played_in_last_match": "Giocato nell'ultima partita"
 }
