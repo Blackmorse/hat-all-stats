@@ -46,7 +46,7 @@ abstract class TeamSalaryTSITable<Data extends LevelData, TableProps extends Lev
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{commasSeparated(teamSalaryTSI.tsi)}</td>
-            <td className="value">{commasSeparated(teamSalaryTSI.salary / this.props.levelDataProps.currencyRate())}</td>
+            <td className="value">{commasSeparated(Math.floor(teamSalaryTSI.salary / this.props.levelDataProps.currencyRate()))}</td>
         </>
     }
 }
