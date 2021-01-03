@@ -261,22 +261,24 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     )
   }
 
-  def searchResult(leagueId: Int, teamName: String) = Action.async { implicit request =>
-    val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
-      currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
-      divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueId))
+  def searchResult(leagueId: Int, teamName: String) = Logging {
+    Action.async { implicit request =>
+      val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
+        currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
+        divisionLevelsLinks = leagueInfoService.divisionLevelLinks(leagueId))
 
-    val teamsFuture = Future(hattrick.api.search()
-      .searchType(SearchType.TEAMS).searchLeagueId(leagueId).searchString(teamName)
+      val teamsFuture = Future(hattrick.api.search()
+        .searchType(SearchType.TEAMS).searchLeagueId(leagueId).searchString(teamName)
         .execute())
 
-    teamsFuture.map(teams => {
-      val seq = Option(teams.getSearchResults.asScala)
-        .map(results => results.map(result => (result.getResultId.toLong, result.getResultName)))
+      teamsFuture.map(teams => {
+        val seq = Option(teams.getSearchResults.asScala)
+          .map(results => results.map(result => (result.getResultId.toLong, result.getResultName)))
           .getOrElse(Seq())
 
-      Ok(views.html.league.searchPage(details, SearchForm.form, seq)(messages))
-    })
+        Ok(views.html.league.searchPage(details, SearchForm.form, seq)(messages))
+      })
+    }
   }
 }
 

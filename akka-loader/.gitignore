@@ -1,0 +1,16 @@
+target
+/.bsp
+/.idea
+/.idea_modules
+/.classpath
+/.project
+/.settings
+/RUNNING_PID
+
+.metals/*
+project/metals.sbt
+.bloop/
+
+
+conf/application.conf
+src/main/resources/application.conf
