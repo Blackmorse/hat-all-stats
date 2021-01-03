@@ -11,6 +11,7 @@ import sources.leagueunits.{LeagueUnitIdsSource, LeagueWithLevelSource}
 object LoaderApp extends  App {
   implicit val actorSystem = ActorSystem("LoaderActorSystem")
   import actorSystem.dispatcher
+//  implicit val executionContext = actorSystem.dispatchers.lookup("my-dispatcher")
 
   val config = ConfigFactory.load()
 
@@ -26,6 +27,7 @@ object LoaderApp extends  App {
     case _ => Supervision.Restart
   }
 
-  LeagueUnitIdsSource(35)
+  LeagueUnitIdsSource(4)
+    .async
     .runForeach(println)
 }

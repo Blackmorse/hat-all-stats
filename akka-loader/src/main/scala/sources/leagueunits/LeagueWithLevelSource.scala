@@ -15,7 +15,7 @@ object LeagueWithLevelSource {
              executionContext: ExecutionContext) = {
     Source.single(leagueId)
       .map(leagueId => (WorldDetailsRequest(leagueId = Some(leagueId)), leagueId))
-      .via(WorldDetailsFlow.apply)
+      .via(WorldDetailsFlow())
       .map(_._1)
       .flatMapConcat(worldDetails => {
         val league = worldDetails.leagueList.head
