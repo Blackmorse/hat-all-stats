@@ -1,11 +1,11 @@
-package models.worlddetails
+package models.chpp.worlddetails
 
 import java.util.Date
 
 import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{XmlReader, __}
-import models.BaseXmlMapper
+import models.chpp.BaseXmlMapper
 
 case class League(leagueId: Int,
                   leagueName: String,

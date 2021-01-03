@@ -1,4 +1,4 @@
-package models.worlddetails
+package models.chpp.worlddetails
 
 
 import com.lucidchart.open.xtract.XmlReader._

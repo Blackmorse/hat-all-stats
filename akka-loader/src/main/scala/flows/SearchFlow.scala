@@ -4,8 +4,8 @@ import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.Flow
 import models.OauthTokens
-import models.search.Search
-import models.worlddetails.WorldDetails
+import models.chpp.search.Search
+import models.chpp.worlddetails.WorldDetails
 import requests.{SearchRequest, WorldDetailsRequest}
 
 import scala.concurrent.ExecutionContext

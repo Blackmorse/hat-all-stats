@@ -2,10 +2,11 @@ import akka.actor.ActorSystem
 import akka.stream.Supervision
 import akka.stream.scaladsl.Source
 import com.typesafe.config.ConfigFactory
-import flows.SearchFlow
+import flows.{SearchFlow, WorldDetailsFlow}
 import models.OauthTokens
-import models.search.SearchType
-import requests.SearchRequest
+import models.chpp.search.SearchType
+import requests.{SearchRequest, WorldDetailsRequest}
+import sources.leagueunits.{LeagueUnitIdsSource, LeagueWithLevelSource}
 
 object LoaderApp extends  App {
   implicit val actorSystem = ActorSystem("LoaderActorSystem")
@@ -25,11 +26,6 @@ object LoaderApp extends  App {
     case _ => Supervision.Restart
   }
 
-  Source(1 to 2)
-//    .map(leagueId => (WorldDetailsRequest(leagueId = Some(leagueId)), leagueId))
-//    .via(WorldDetailsFlow.create)
-    .map(leagueId => (SearchRequest(searchType = Some(SearchType.TEAMS), searchString = Some("asd")), leagueId))
-    .via(SearchFlow.create)
-    .log("logger")
+  LeagueUnitIdsSource(35)
     .runForeach(println)
 }

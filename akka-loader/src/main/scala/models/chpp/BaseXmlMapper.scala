@@ -1,4 +1,4 @@
-package models
+package models.chpp
 
 import java.util.Date
 

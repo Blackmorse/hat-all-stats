@@ -1,8 +1,8 @@
-package models.worlddetails
+package models.chpp.worlddetails
 
 import cats.syntax.all._
 import com.lucidchart.open.xtract.{XmlReader, __}
-import models.BaseXmlMapper
+import models.chpp.BaseXmlMapper
 
 case class Country(countryId: Int,
                    countryName: String,

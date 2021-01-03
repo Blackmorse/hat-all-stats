@@ -1,9 +1,9 @@
-package models.search
+package models.chpp.search
 
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{XmlReader, __}
-import models.BaseXmlMapper
 import cats.syntax.all._
+import models.chpp.BaseXmlMapper
 
 case class Search(searchParams: SearchParams,
                   pageIndex: Int,

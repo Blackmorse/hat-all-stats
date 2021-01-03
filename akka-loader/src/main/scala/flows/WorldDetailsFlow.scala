@@ -1,6 +1,6 @@
 package flows
 
-import models.worlddetails.WorldDetails
+import models.chpp.worlddetails.WorldDetails
 import requests.WorldDetailsRequest
 
 object WorldDetailsFlow extends AbstractFlow[WorldDetailsRequest, WorldDetails] {

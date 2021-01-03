@@ -2,7 +2,7 @@ package requests
 
 import akka.http.scaladsl.model.HttpRequest
 import models.{OauthTokens, RequestCreator}
-import models.search.SearchType
+import models.chpp.search.SearchType
 
 case class SearchRequest(searchType: Option[SearchType.Value] = None,
                          searchString: Option[String] = None,

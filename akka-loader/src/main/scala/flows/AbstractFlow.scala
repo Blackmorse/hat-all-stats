@@ -8,7 +8,7 @@ import akka.stream.FlowShape
 import akka.stream.scaladsl.{Flow, GraphDSL}
 import com.lucidchart.open.xtract.XmlReader
 import models.OauthTokens
-import models.worlddetails.WorldDetails
+import models.chpp.worlddetails.WorldDetails
 import requests.AbstractRequest
 
 import scala.concurrent.ExecutionContext
@@ -19,8 +19,8 @@ import scala.xml.XML
 abstract class AbstractFlow[Request <: AbstractRequest, Model] {
   def preprocessBody(body: String): String
 
-  def create[T](implicit oauthTokens: OauthTokens, system: ActorSystem,
-                executionContext: ExecutionContext, reader: XmlReader[Model]): Flow[(Request, T), (Model, T), NotUsed] = {
+  def apply[T]()(implicit oauthTokens: OauthTokens, system: ActorSystem,
+               executionContext: ExecutionContext, reader: XmlReader[Model]): Flow[(Request, T), (Model, T), NotUsed] = {
     val flow = Flow[(Request, T)]
       .map{case(request, t) => (request.createRequest(), t)}
 

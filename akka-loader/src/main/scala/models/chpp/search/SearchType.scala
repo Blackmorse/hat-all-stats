@@ -1,4 +1,4 @@
-package models.search
+package models.chpp.search
 
 object SearchType extends Enumeration {
   val PLAYERS = Value("0")

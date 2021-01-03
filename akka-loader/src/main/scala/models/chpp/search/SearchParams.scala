@@ -1,8 +1,8 @@
-package models.search
+package models.chpp.search
 
-import models.BaseXmlMapper
 import cats.syntax.all._
 import com.lucidchart.open.xtract.{XmlReader, __}
+import models.chpp.BaseXmlMapper
 
 case class SearchParams(searchType: Int,
                         searchString: String,
