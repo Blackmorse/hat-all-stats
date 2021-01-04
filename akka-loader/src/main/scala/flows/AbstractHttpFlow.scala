@@ -8,7 +8,6 @@ import akka.stream.FlowShape
 import akka.stream.scaladsl.{Flow, GraphDSL}
 import com.lucidchart.open.xtract.XmlReader
 import models.OauthTokens
-import models.chpp.worlddetails.WorldDetails
 import requests.AbstractRequest
 
 import scala.concurrent.ExecutionContext
