@@ -2,7 +2,7 @@ package sources.leagueunits
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.Source
-import flows.WorldDetailsFlow
+import flows.http.WorldDetailsFlow
 import models.OauthTokens
 import models.stream.League
 import requests.WorldDetailsRequest

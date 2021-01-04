@@ -2,10 +2,10 @@ import akka.actor.ActorSystem
 import akka.stream.Supervision
 import akka.stream.scaladsl.Source
 import com.typesafe.config.ConfigFactory
-import flows.{SearchFlow, WorldDetailsFlow}
+import flows.http.LeagueDetailsFlow
 import models.OauthTokens
 import models.chpp.search.SearchType
-import requests.{SearchRequest, WorldDetailsRequest}
+import requests.{LeagueDetailsRequest, SearchRequest, WorldDetailsRequest}
 import sources.leagueunits.{LeagueUnitIdsSource, LeagueWithLevelSource}
 
 object LoaderApp extends  App {
@@ -27,7 +27,13 @@ object LoaderApp extends  App {
     case _ => Supervision.Restart
   }
 
-  LeagueUnitIdsSource(1)
-    .async
-    .runForeach(_ => {})
+//  LeagueUnitIdsSource(1)
+//    .async
+//    .runForeach(_ => {})
+
+  Source.single(3193)
+    .map(id => (LeagueDetailsRequest(leagueUnitId = Some(id)), id))
+    .via(LeagueDetailsFlow())
+    .log("log")
+    .runForeach(println)
 }

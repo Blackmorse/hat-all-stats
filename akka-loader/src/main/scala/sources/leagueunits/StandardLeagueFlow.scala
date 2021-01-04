@@ -4,7 +4,7 @@ import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import com.blackmorse.hattrick.common.CommonData
-import flows.SearchFlow
+import flows.http.SearchFlow
 import models.OauthTokens
 import models.chpp.search.{Search, SearchType}
 import models.stream.LeagueUnit

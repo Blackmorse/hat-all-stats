@@ -16,7 +16,7 @@ import scala.concurrent.duration._
 import scala.util.{Success, Try}
 import scala.xml.XML
 
-abstract class AbstractFlow[Request <: AbstractRequest, Model] {
+abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
   def preprocessBody(body: String): String
 
   def apply[T]()(implicit oauthTokens: OauthTokens, system: ActorSystem,

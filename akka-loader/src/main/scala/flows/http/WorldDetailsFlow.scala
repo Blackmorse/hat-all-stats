@@ -1,9 +1,10 @@
-package flows
+package flows.http
 
+import flows.AbstractHttpFlow
 import models.chpp.worlddetails.WorldDetails
 import requests.WorldDetailsRequest
 
-object WorldDetailsFlow extends AbstractFlow[WorldDetailsRequest, WorldDetails] {
+object WorldDetailsFlow extends AbstractHttpFlow[WorldDetailsRequest, WorldDetails] {
   override def preprocessBody(body: String): String =
         body.replace("<Country Available=False />", "")
             .replace("Available=True", "Available=\"True\"")
