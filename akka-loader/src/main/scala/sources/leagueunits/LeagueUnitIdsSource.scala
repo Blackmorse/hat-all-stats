@@ -3,19 +3,23 @@ package sources.leagueunits
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.SourceShape
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Source}
+import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Sink, Source}
+import com.typesafe.scalalogging.Logger
+import flows.LogProgressFlow
 import models.OauthTokens
 import models.stream.LeagueUnit
+import org.slf4j.LoggerFactory
 import sources.leagueunits.sweden.SwedenLeagueUnitFlow
 
 import scala.concurrent.ExecutionContext
 
 object LeagueUnitIdsSource {
+
   def apply(leagueId: Int)(implicit oauthTokens: OauthTokens, system: ActorSystem,
                            executionContext: ExecutionContext): Source[LeagueUnit, NotUsed] = {
     val source = LeagueWithLevelSource(leagueId)
 
-    Source.fromGraph {
+    val flow = Source.fromGraph {
       GraphDSL.create(){ implicit builder =>
         import GraphDSL.Implicits._
 
@@ -39,10 +43,12 @@ object LeagueUnitIdsSource {
 
         sourceShape ~> broadcast ~> filterHighest  ~> highestLeagueFlow  ~> merge
                        broadcast ~> filterSweden   ~> swedenLeagueFlow   ~> merge
-                       broadcast ~> filterStandard ~> standardLeagueFlow ~> merge
+                       broadcast ~> filterStandard ~> standardLeagueFlow ~> merge// ~> broadcastCounter.in
 
         SourceShape(merge.out)
       }
     }
+
+    flow.via(LogProgressFlow("league units"))
   }
 }

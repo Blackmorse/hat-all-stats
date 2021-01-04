@@ -27,7 +27,7 @@ object LoaderApp extends  App {
     case _ => Supervision.Restart
   }
 
-  LeagueUnitIdsSource(4)
+  LeagueUnitIdsSource(1)
     .async
-    .runForeach(println)
+    .runForeach(_ => {})
 }
