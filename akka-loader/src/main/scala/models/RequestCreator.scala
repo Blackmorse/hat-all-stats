@@ -1,6 +1,8 @@
 package models
 
 import java.net.URLEncoder
+import java.text.SimpleDateFormat
+import java.util.Date
 
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.model.headers.RawHeader
@@ -58,6 +60,13 @@ object RequestCreator {
   }
 
   def params(file: String, version: String, params: (String, Option[Any])*): Map[String, String] = {
-    (Seq("file" -> file, "version" -> version) ++ params.filter(_._2.isDefined).map(t => (t._1, t._2.get.toString))).toMap
+    val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+    (Seq("file" -> file, "version" -> version) ++ params.filter(_._2.isDefined).map({
+      case (key: String, Some(date: Date)) =>
+        (key: String, dateFormat.format(date): String)
+      case (key, value) =>
+        (key, value.get.toString: String)
+    }))
+      .toMap
   }
 }
