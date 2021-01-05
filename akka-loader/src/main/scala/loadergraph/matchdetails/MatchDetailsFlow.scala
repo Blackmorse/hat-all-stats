@@ -1,0 +1,65 @@
+package loadergraph.matchdetails
+
+import akka.actor.ActorSystem
+import akka.stream.scaladsl.{Flow, Source}
+import flows.LogProgressFlow
+import flows.http.{LeagueDetailsFlow, MatchDetailsHttpFlow, MatchesArchiveFlow}
+import models.OauthTokens
+import models.chpp.leaguedetails.LeagueDetails
+import models.chpp.matchesarchive.{MatchType, MatchesArchive}
+import models.stream.{LeagueUnit, Match, StreamMatchDetails, Team}
+import requests.{LeagueDetailsRequest, MatchDetailsRequest, MatchesArchiveRequest}
+
+import scala.concurrent.ExecutionContext
+
+object MatchDetailsFlow {
+  def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
+              executionContext: ExecutionContext) = {
+    Flow[LeagueUnit]
+      .map(leagueUnit => (LeagueDetailsRequest(leagueUnitId = Some(leagueUnit.leagueUnitId)), leagueUnit))
+      .async
+      .via(LeagueDetailsFlow())
+      .flatMapConcat{case(leagueDetails, leagueUnit) =>
+        Source(teamsFromLeagueUnit(leagueDetails, leagueUnit))
+      }
+      .map(team => (MatchesArchiveRequest(teamId = Some(team.id)), team))
+      .async
+      .via(MatchesArchiveFlow())
+      .map{case(matchesArchive, team) => lastMatch(matchesArchive, team)}
+      .flatMapConcat(matchOpt => matchOpt.map(matc => Source.single(matc)).getOrElse(Source.empty[Match]))
+      .map(matc => (MatchDetailsRequest(matchId = Some(matc.id)), matc))
+      .async
+      .via(MatchDetailsHttpFlow())
+      .map{case(matchDetails, matc) => StreamMatchDetails(matc = matc, matchDetails = matchDetails)}
+      .via(LogProgressFlow("Match Details"))
+  }
+
+  private def lastMatch(matchesArchive: MatchesArchive, team: Team) = {
+    Option(matchesArchive.team.matchList)
+      .flatMap(matchList =>
+        matchList.filter(_.matchType == MatchType.LEAGUE_MATCH)
+          .sortBy(_.matchDate).reverse
+          .headOption
+          .map(matc =>
+            Match(id = matc.matchId,
+              round = team.leagueUnit.league.nextRound - 1,
+              date = matc.matchDate,
+              season = team.leagueUnit.league.season,
+              team = team))
+      )
+  }
+
+  private def teamsFromLeagueUnit(leagueDetails: LeagueDetails, leagueUnit: LeagueUnit): List[Team] = {
+    if(leagueDetails.teams == null)
+      List[Team]()
+    else {
+      leagueDetails.teams
+        .filter(_.userId != 0)
+        .map(team =>
+          Team(leagueUnit = leagueUnit,
+            id = team.teamId,
+            name = team.teamName))
+        .toList
+    }
+  }
+}

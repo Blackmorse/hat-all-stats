@@ -1,12 +1,12 @@
-package sources.leagueunits.sweden
+package loadergraph.leagueunits.sweden
 
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.FlowShape
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge}
+import loadergraph.leagueunits.LeagueWithLevel
 import models.OauthTokens
 import models.stream.LeagueUnit
-import sources.leagueunits.LeagueWithLevel
 
 import scala.concurrent.ExecutionContext
 

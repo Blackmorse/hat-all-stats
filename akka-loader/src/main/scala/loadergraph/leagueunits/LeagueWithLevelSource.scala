@@ -1,4 +1,4 @@
-package sources.leagueunits
+package loadergraph.leagueunits
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.Source
@@ -23,7 +23,8 @@ object LeagueWithLevelSource {
           (1 to worldDetails.leagueList.head.numberOfLevels)
             .map(level => LeagueWithLevel(league = League(leagueId = league.leagueId,
                 seasonOffset = league.seasonOffset,
-                nextRound = league.matchRound),
+                nextRound = league.matchRound,
+                season = league.season),
               level = level))
         )})
   }

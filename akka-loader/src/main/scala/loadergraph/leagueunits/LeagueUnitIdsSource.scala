@@ -1,15 +1,13 @@
-package sources.leagueunits
+package loadergraph.leagueunits
 
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.SourceShape
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Sink, Source}
-import com.typesafe.scalalogging.Logger
 import flows.LogProgressFlow
+import loadergraph.leagueunits.sweden.SwedenLeagueUnitFlow
 import models.OauthTokens
 import models.stream.LeagueUnit
-import org.slf4j.LoggerFactory
-import sources.leagueunits.sweden.SwedenLeagueUnitFlow
 
 import scala.concurrent.ExecutionContext
 
