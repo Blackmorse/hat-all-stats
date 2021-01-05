@@ -41,7 +41,10 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
     }
 
     renderSection(): JSX.Element {
-        if(this.state.loadingState === LoadingEnum.LOADING || !this.state.state.teamRankingsStats || this.state.loadingState === LoadingEnum.ERROR) {
+        if(this.state.loadingState === LoadingEnum.LOADING || 
+            !this.state.state.teamRankingsStats ||
+             this.state.state.teamRankingsStats.teamRankings.length === 0 ||
+             this.state.loadingState === LoadingEnum.ERROR) {
                 return <></>
         }
 

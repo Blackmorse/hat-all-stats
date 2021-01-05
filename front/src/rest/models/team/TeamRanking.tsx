@@ -1,6 +1,7 @@
 interface TeamRanking {
     teamId: number,
     teamName: string,
+    divisionLevel: number,
     round: number,
     rank_type: string,
     hatstats: number,

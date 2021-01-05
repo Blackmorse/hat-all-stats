@@ -9,6 +9,7 @@ import { PagesEnum } from '../../common/enums/PagesEnum';
 import LeagueLink from '../../common/links/LeagueLink';
 import DivisionLevelLink from '../../common/links/DivisionLevelLink';
 import ChartWindow from './ChartWindow'
+import { toRoman } from "../../common/Utils"
 
 export interface RankingData {
     teamRankings: Array<TeamRanking>,
@@ -182,14 +183,14 @@ class RankingTable extends React.Component<Props, State> {
                     <td className="ranking_row_name">
                         <DivisionLevelLink
                             leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
-                            divisionLevel={this.props.rankingData.teamLevelDataProps.levelData.divisionLevel}
-                            text={this.props.rankingData.teamLevelDataProps.levelData.divisionLevelName}
+                            divisionLevel={lastDivisionLevelRanking.divisionLevel}
+                            text={toRoman(lastDivisionLevelRanking.divisionLevel)}
                             />
                     </td>
                     <td className="ranking_row_value">
                         <DivisionLevelLink 
                             leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
-                            divisionLevel={this.props.rankingData.teamLevelDataProps.levelData.divisionLevel}
+                            divisionLevel={lastDivisionLevelRanking.divisionLevel}
                             text={(positionFunc(lastDivisionLevelRanking) + 1).toString()}
                             page={this.props.page}
                             sortingField={this.props.sortingField} 

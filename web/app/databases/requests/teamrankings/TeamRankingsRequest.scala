@@ -12,6 +12,7 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
     |SELECT
        |    team_id,
        |    team_name,
+       |    division_level,
        |    round,
        |    rank_type,
        |    match_id,

@@ -3,6 +3,7 @@ import TeamRanking from '../../rest/models/team/TeamRanking'
 import PlotlyChart from 'react-plotlyjs-ts';
 import TeamLevelDataProps from '../TeamLevelDataProps';
 import i18n from '../../i18n';
+import { toRoman } from "../../common/Utils"
 
 interface Props {
     leagueRankings: Array<TeamRanking>,
@@ -30,7 +31,7 @@ class PositionRankingChart extends React.Component<Props, {}> {
             },
             {
                 type: 'scatter',
-                name: this.props.teamLevelDataProps.levelData.divisionLevelName,
+                name: toRoman(this.props.divisionLevelRankings[0].divisionLevel),
                 x: x,
                 y: divisionLevelY,
                 marker: {
