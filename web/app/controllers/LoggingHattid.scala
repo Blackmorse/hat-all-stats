@@ -8,7 +8,7 @@ import play.api.mvc.Results._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 
-case class Logging[A](action: Action[A]) extends Action[A]  {
+case class LoggingHattid[A](action: Action[A]) extends Action[A]  {
 
   def apply(request: Request[A]): Future[Result] = {
     println("Calling action!!!!")
@@ -33,5 +33,5 @@ class LoggingAction @Inject()(parser: BodyParsers.Default)(implicit ec: Executio
       Future(Forbidden("Access denied"))
     }
   }
-  override def composeAction[A](action: Action[A]) = Logging(action)
+  override def composeAction[A](action: Action[A]) = LoggingHattid(action)
 }

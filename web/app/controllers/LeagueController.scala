@@ -261,7 +261,7 @@ class LeagueController @Inject() (val controllerComponents: ControllerComponents
     )
   }
 
-  def searchResult(leagueId: Int, teamName: String) = Logging {
+  def searchResult(leagueId: Int, teamName: String) = LoggingHattid {
     Action.async { implicit request =>
       val details = WebLeagueDetails(leagueInfo = leagueInfoService.leagueInfo(leagueId),
         currentRound = leagueInfoService.leagueInfo.currentRound(leagueId),
