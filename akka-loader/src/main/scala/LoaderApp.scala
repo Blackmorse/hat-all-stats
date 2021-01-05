@@ -7,6 +7,7 @@ import loadergraph.leagueunits.LeagueUnitIdsSource
 import loadergraph.matchdetails.MatchDetailsFlow
 import models.OauthTokens
 import models.chpp.search.SearchType
+import models.clickhouse.MatchDetailsCHModel
 import requests.{LeagueDetailsRequest, MatchDetailsRequest, MatchesArchiveRequest, SearchRequest, WorldDetailsRequest}
 
 object LoaderApp extends  App {
@@ -31,5 +32,6 @@ object LoaderApp extends  App {
 
   LeagueUnitIdsSource(35)
     .via(MatchDetailsFlow())
-    .runForeach(v => {})
+    .map(md => MatchDetailsCHModel.convert(md))
+    .runForeach(println)
 }

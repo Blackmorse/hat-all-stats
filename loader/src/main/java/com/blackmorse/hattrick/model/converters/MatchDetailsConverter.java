@@ -32,10 +32,10 @@ public class MatchDetailsConverter {
             enemyGoals = matchDetails.getMatch().getAwayTeam().getAwayGoals();
         } else {
             isHomeMatch = MatchDetails.IsHomeMatch.AWAY;
+            currentTeam = matchDetails.getMatch().getAwayTeam();
             oppositeTeam = matchDetails.getMatch().getHomeTeam();
             oppositeTeamId = matchDetails.getMatch().getHomeTeam().getHomeTeamId();
             oppositeTeamName = matchDetails.getMatch().getHomeTeam().getHomeTeamName();
-            currentTeam = matchDetails.getMatch().getAwayTeam();
             goals = matchDetails.getMatch().getAwayTeam().getAwayGoals();
             enemyGoals = matchDetails.getMatch().getHomeTeam().getHomeGoals();
         }
