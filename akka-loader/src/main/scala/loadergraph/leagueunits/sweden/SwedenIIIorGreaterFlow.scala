@@ -3,8 +3,8 @@ package loadergraph.leagueunits.sweden
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
+import chpp.search.models.SearchHttpFlow
 import com.blackmorse.hattrick.common.CommonData
-import flows.http.SearchFlow
 import loadergraph.leagueunits.{LeagueWithLevel, StandardLeagueFlow}
 import models.OauthTokens
 import models.stream.LeagueUnit
@@ -18,7 +18,7 @@ object SwedenIIIorGreaterFlow {
       val romanLevel = CommonData.arabToRomans.get(leagueWithLevel.level - 1)
       StandardLeagueFlow.searchRequest(leagueWithLevel, romanLevel)
     })
-      .via(SearchFlow())
+      .via(SearchHttpFlow())
       .flatMapConcat{case(search, leagueWithLevel) =>
         val romanLevel = CommonData.arabToRomans.get(leagueWithLevel.level - 1)
         val pagesRequests = (0 until search.pages).map(page => {
@@ -27,7 +27,7 @@ object SwedenIIIorGreaterFlow {
         Source(pagesRequests)
       }
       .async
-      .via(SearchFlow())
+      .via(SearchHttpFlow())
       .flatMapConcat {
         case(search, leagueWithLevel) => StandardLeagueFlow.leagueUnitsSourceFromResult(search, leagueWithLevel)
       }

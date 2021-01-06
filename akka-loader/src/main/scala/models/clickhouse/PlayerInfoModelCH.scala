@@ -2,7 +2,7 @@ package models.clickhouse
 
 import java.util.Date
 
-import models.chpp.players.Player
+import chpp.players.models.Player
 import models.stream.StreamMatchDetails
 
 case class PlayerInfoModelCH(season: Int,

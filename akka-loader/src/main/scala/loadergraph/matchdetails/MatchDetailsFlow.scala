@@ -2,13 +2,14 @@ package loadergraph.matchdetails
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
+import chpp.leaguedetails.models.LeagueDetails
 import flows.LogProgressFlow
-import flows.http.{LeagueDetailsFlow, MatchDetailsHttpFlow, MatchesArchiveFlow}
 import models.OauthTokens
-import models.chpp.leaguedetails.LeagueDetails
-import models.chpp.matchesarchive.{MatchType, MatchesArchive}
+import chpp.leaguedetails.{LeagueDetailsHttpFlow, LeagueDetailsRequest}
+import chpp.matchdetails.{MatchDetailsHttpFlow, MatchDetailsRequest}
+import chpp.matchesarchive.models.{MatchType, MatchesArchive}
+import chpp.matchesarchive.{MatchesArchiveHttpFlow, MatchesArchiveRequest}
 import models.stream.{LeagueUnit, Match, StreamMatchDetails, Team}
-import requests.{LeagueDetailsRequest, MatchDetailsRequest, MatchesArchiveRequest}
 
 import scala.concurrent.ExecutionContext
 
@@ -18,13 +19,13 @@ object MatchDetailsFlow {
     Flow[LeagueUnit]
       .map(leagueUnit => (LeagueDetailsRequest(leagueUnitId = Some(leagueUnit.leagueUnitId)), leagueUnit))
       .async
-      .via(LeagueDetailsFlow())
+      .via(LeagueDetailsHttpFlow())
       .flatMapConcat{case(leagueDetails, leagueUnit) =>
         Source(teamsFromLeagueUnit(leagueDetails, leagueUnit))
       }
       .map(team => (MatchesArchiveRequest(teamId = Some(team.id)), team))
       .async
-      .via(MatchesArchiveFlow())
+      .via(MatchesArchiveHttpFlow())
       .map{case(matchesArchive, team) => lastMatch(matchesArchive, team)}
       .flatMapConcat(matchOpt => matchOpt.map(matc => Source.single(matc)).getOrElse(Source.empty[Match]))
       .map(matc => (MatchDetailsRequest(matchId = Some(matc.id)), matc))

@@ -4,12 +4,11 @@ import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import com.blackmorse.hattrick.common.CommonData
-import flows.http.SearchFlow
 import loadergraph.leagueunits.LeagueWithLevel
 import models.OauthTokens
-import models.chpp.search.SearchType
+import chpp.search.SearchRequest
+import chpp.search.models.{SearchHttpFlow, SearchType}
 import models.stream.LeagueUnit
-import requests.SearchRequest
 
 import scala.concurrent.ExecutionContext
 
@@ -28,7 +27,7 @@ object SwedenIorIIFlow {
         searchString = Some(s"${romanLevel}a"))
       (searchRequest, leagueWithLevel)
     })
-      .via(SearchFlow())
+      .via(SearchHttpFlow())
       .flatMapConcat{case(search, leagueWithLevel: LeagueWithLevel) => {
         val baseId = search.searchResults.head.resultId
         val leagueUnits = (0 until leagueNumber).map(i => LeagueUnit(leagueUnitId = baseId.toInt + i,

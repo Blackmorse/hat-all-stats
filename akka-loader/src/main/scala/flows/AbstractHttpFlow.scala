@@ -6,9 +6,9 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpResponse
 import akka.stream.FlowShape
 import akka.stream.scaladsl.{Flow, GraphDSL}
+import chpp.AbstractRequest
 import com.lucidchart.open.xtract.XmlReader
 import models.OauthTokens
-import requests.AbstractRequest
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._

@@ -2,10 +2,9 @@ package loadergraph.leagueunits
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.Source
-import flows.http.WorldDetailsFlow
+import chpp.worlddetails.{WorldDetailsHttpFlow, WorldDetailsRequest}
 import models.OauthTokens
 import models.stream.League
-import requests.WorldDetailsRequest
 
 import scala.concurrent.ExecutionContext
 
@@ -15,7 +14,7 @@ object LeagueWithLevelSource {
              executionContext: ExecutionContext) = {
     Source.single(leagueId)
       .map(leagueId => (WorldDetailsRequest(leagueId = Some(leagueId)), leagueId))
-      .via(WorldDetailsFlow())
+      .via(WorldDetailsHttpFlow())
       .map(_._1)
       .flatMapConcat(worldDetails => {
         val league = worldDetails.leagueList.head
