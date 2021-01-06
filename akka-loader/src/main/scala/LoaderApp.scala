@@ -2,7 +2,7 @@ import akka.actor.ActorSystem
 import akka.stream.{ClosedShape, Supervision}
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, RunnableGraph, Sink, Source}
 import com.typesafe.config.ConfigFactory
-import flows.http.{LeagueDetailsFlow, MatchDetailsHttpFlow, MatchesArchiveFlow}
+import flows.http.{LeagueDetailsFlow, MatchDetailsHttpFlow, MatchesArchiveFlow, PlayersFlow}
 import loadergraph.leagueunits.LeagueUnitIdsSource
 import loadergraph.matchdetails.MatchDetailsFlow
 import loadergraph.playerevents.PlayerEventsFlow
@@ -10,7 +10,7 @@ import models.OauthTokens
 import models.chpp.search.SearchType
 import models.clickhouse.MatchDetailsCHModel
 import models.stream.StreamMatchDetails
-import requests.{LeagueDetailsRequest, MatchDetailsRequest, MatchesArchiveRequest, SearchRequest, WorldDetailsRequest}
+import requests.{LeagueDetailsRequest, MatchDetailsRequest, MatchesArchiveRequest, PlayersRequest, SearchRequest, WorldDetailsRequest}
 
 object LoaderApp extends  App {
   implicit val actorSystem = ActorSystem("LoaderActorSystem")
@@ -33,22 +33,29 @@ object LoaderApp extends  App {
 
 
 
-  val matchDetailsSource = LeagueUnitIdsSource(35)
-    .via(MatchDetailsFlow())
+//  val matchDetailsSource = LeagueUnitIdsSource(35)
+//    .via(MatchDetailsFlow())
+//
+//  val graph = RunnableGraph.fromGraph(
+//    GraphDSL.create() { implicit builder =>
+//      import GraphDSL.Implicits._
+//
+//      val broadcast = builder.add(Broadcast[StreamMatchDetails](2))
+//      val matchDetailsFlow = builder.add(Flow[StreamMatchDetails].map(MatchDetailsCHModel.convert))
+//      val playerEventsFlow = builder.add(PlayerEventsFlow())
+//
+//      matchDetailsSource ~> broadcast ~> matchDetailsFlow ~> Sink.foreach(println)
+//                            broadcast ~> playerEventsFlow ~> Sink.foreach(println)
+//      ClosedShape
+//    }
+//  )
+//
+//  graph.run()
 
-  val graph = RunnableGraph.fromGraph(
-    GraphDSL.create() { implicit builder =>
-      import GraphDSL.Implicits._
 
-      val broadcast = builder.add(Broadcast[StreamMatchDetails](2))
-      val matchDetailsFlow = builder.add(Flow[StreamMatchDetails].map(MatchDetailsCHModel.convert))
-      val playerEventsFlow = builder.add(PlayerEventsFlow())
-
-      matchDetailsSource ~> broadcast ~> matchDetailsFlow ~> Sink.foreach(println)
-                            broadcast ~> playerEventsFlow ~> Sink.foreach(println)
-      ClosedShape
-    }
-  )
-
-  graph.run()
+  Source.single(615797)
+    .map(id => (PlayersRequest(teamId = Some(id), includeMatchInfo = Some(true)), id))
+    .via(PlayersFlow())
+    .log("asd")
+    .runForeach(println)
 }
