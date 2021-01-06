@@ -7,7 +7,12 @@ import com.lucidchart.open.xtract.XmlReader._
 import models.chpp.BaseXmlMapper
 import cats.syntax.all._
 
-case class PlayerPart(age: Int,
+case class PlayerPart(playerId: Long,
+                      firstName: String,
+                      nickName: String,
+                      lastName: String,
+                      playerNumber: Int,
+                      age: Int,
                       ageDays: Int,
                       arrivalDate: Date,
                       ownerNotes: String,
@@ -26,6 +31,11 @@ case class PlayerPart(age: Int,
 
 object PlayerPart extends BaseXmlMapper {
   implicit val reader: XmlReader[PlayerPart] = (
+    (__ \ "PlayerID").read[Long],
+    (__ \ "FirstName").read[String],
+    (__ \ "NickName").read[String],
+    (__ \ "LastName").read[String],
+    (__ \ "PlayerNumber").read[Int],
     (__ \ "Age").read[Int],
     (__ \ "AgeDays").read[Int],
     (__ \ "ArrivalDate").read[String].map(date),
@@ -60,7 +70,7 @@ case class Player(playerPart: PlayerPart,
                   caps: Int,
                   capsU20: Int,
                   cards: Int,
-                  injuryLevel: Int,
+                  injuryLevel: Option[Int],
                   staminaSkill: Int,
                   trainerData: Option[TrainerData],
                   lastMatch: LastMatch)
@@ -82,7 +92,7 @@ object Player extends BaseXmlMapper{
       (__ \ "Caps").read[Int],
       (__ \ "CapsU20").read[Int],
       (__ \ "Cards").read[Int],
-      (__ \ "InjuryLevel").read[Int],
+      (__ \ "InjuryLevel").read[Int].optional,
       (__ \ "StaminaSkill").read[Int],
       (__ \ "TrainerData").read[TrainerData].optional,
       (__ \ "LastMatch").read[LastMatch],

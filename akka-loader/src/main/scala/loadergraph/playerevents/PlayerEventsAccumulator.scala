@@ -1,6 +1,6 @@
 package loadergraph.playerevents
 
-import models.stream.StreamPlayerEvents
+import models.clickhouse.PlayerEventsModelCH
 
 case class PlayerEventsAccumulator(var season: Int,
                                    var round: Int,
@@ -10,8 +10,8 @@ case class PlayerEventsAccumulator(var season: Int,
                                    var goals: Int = 0,
                                    var injury: Int = 0,
                                    var leftFieldMinute: Int = - 1) {
-  def build: StreamPlayerEvents =
-    StreamPlayerEvents(season = season,
+  def build: PlayerEventsModelCH =
+    PlayerEventsModelCH(season = season,
       round = round,
       playerId = playerId,
       yellowCards = yellowCards,

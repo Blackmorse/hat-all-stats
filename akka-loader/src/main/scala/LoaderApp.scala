@@ -6,6 +6,7 @@ import flows.http.{LeagueDetailsFlow, MatchDetailsHttpFlow, MatchesArchiveFlow, 
 import loadergraph.leagueunits.LeagueUnitIdsSource
 import loadergraph.matchdetails.MatchDetailsFlow
 import loadergraph.playerevents.PlayerEventsFlow
+import loadergraph.playerinfos.PlayerInfoFlow
 import models.OauthTokens
 import models.chpp.search.SearchType
 import models.clickhouse.MatchDetailsCHModel
@@ -33,29 +34,32 @@ object LoaderApp extends  App {
 
 
 
-//  val matchDetailsSource = LeagueUnitIdsSource(35)
-//    .via(MatchDetailsFlow())
-//
-//  val graph = RunnableGraph.fromGraph(
-//    GraphDSL.create() { implicit builder =>
-//      import GraphDSL.Implicits._
-//
-//      val broadcast = builder.add(Broadcast[StreamMatchDetails](2))
-//      val matchDetailsFlow = builder.add(Flow[StreamMatchDetails].map(MatchDetailsCHModel.convert))
-//      val playerEventsFlow = builder.add(PlayerEventsFlow())
-//
-//      matchDetailsSource ~> broadcast ~> matchDetailsFlow ~> Sink.foreach(println)
-//                            broadcast ~> playerEventsFlow ~> Sink.foreach(println)
-//      ClosedShape
-//    }
-//  )
-//
-//  graph.run()
+  val matchDetailsSource = LeagueUnitIdsSource(35)
+    .via(MatchDetailsFlow())
+    .async
+
+  val graph = RunnableGraph.fromGraph(
+    GraphDSL.create() { implicit builder =>
+      import GraphDSL.Implicits._
+
+      val broadcast = builder.add(Broadcast[StreamMatchDetails](3).async)
+      val matchDetailsFlow = builder.add(Flow[StreamMatchDetails].map(MatchDetailsCHModel.convert))
+      val playerEventsFlow = builder.add(PlayerEventsFlow())
+      val playerInfosFlow = builder.add(PlayerInfoFlow())
+
+      matchDetailsSource ~> broadcast ~> matchDetailsFlow ~> Sink.ignore
+                            broadcast ~> playerEventsFlow ~> Sink.ignore
+                            broadcast ~> playerInfosFlow  ~> Sink.ignore
+      ClosedShape
+    }
+  )
+
+  graph.run()
 
 
-  Source.single(615797)
-    .map(id => (PlayersRequest(teamId = Some(id), includeMatchInfo = Some(true)), id))
-    .via(PlayersFlow())
-    .log("asd")
-    .runForeach(println)
+//  Source.single(615797)
+//    .map(id => (PlayersRequest(teamId = Some(id), includeMatchInfo = Some(true)), id))
+//    .via(PlayersFlow())
+//    .log("asd")
+//    .runForeach(println)
 }

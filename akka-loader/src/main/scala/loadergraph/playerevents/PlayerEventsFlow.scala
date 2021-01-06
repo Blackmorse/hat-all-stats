@@ -4,14 +4,15 @@ import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import models.OauthTokens
 import models.chpp.matchdetails.{BookingType, InjuryType}
-import models.stream.{StreamMatchDetails, StreamPlayerEvents}
+import models.clickhouse.PlayerEventsModelCH
+import models.stream.StreamMatchDetails
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 
 object PlayerEventsFlow {
   def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
-              executionContext: ExecutionContext): Flow[StreamMatchDetails, StreamPlayerEvents, _] = {
+              executionContext: ExecutionContext): Flow[StreamMatchDetails, PlayerEventsModelCH, _] = {
     Flow[StreamMatchDetails].flatMapConcat(streamMatchDetails => {
       val playersMap = mutable.Map[Long, PlayerEventsAccumulator]()
 

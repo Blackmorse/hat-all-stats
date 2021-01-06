@@ -109,40 +109,40 @@ public class CountriesLastLeagueMatchLoader {
 
                 log.info("Loaded {} player infos", playerInfos.size());
 
-                List<TeamDetails> teamDetails = hattrickService.getTeamDetails(lastTeamWithMatchDetails)
-                        .stream()
-                        .map(teamDetailsConverter::convert)
-                        .collect(Collectors.toList());
-
-                log.info("Loaded {} Team Details", teamDetails.size());
-
-                writtenToClickhouse = true;
-                log.info("Writing match details to Clickhouse: {} rows", lastMatchDetails.size());
-                matchDetailsWriter.writeToClickhouse(lastMatchDetails);
-                log.info("Writing player events to Clickhouse: {} rows", playerEvents.size());
-                playerEventsWriter.writeToClickhouse(playerEvents);
-                log.info("Writing player info  to Clickhouse: {} rows", playerInfos.size());
-                playerInfoWriter.writeToClickhouse(playerInfos);
-
-                log.info("Writing teams details to Clickhouse: {} rows", teamDetails.size());
-                teamDetailsWriter.writeToClickhouse(teamDetails);
-
-                log.info("Joining player_stats for ({}, {}) ", countryName, league.getLeagueId());
-                playersJoiner.join(league);
-                log.info("Calculating team ranks for ({}, {})", countryName, league.getLeagueId());
-                teamRankCalculator.calculate(league);
-                log.info("Send request to web about new round...");
-                //Load promotions
-                if (league.getMatchRound() - 1 == 14) {
-                    log.info("It's last round of season. Time to load promotions!");
-                    promotionsLoader.load(countryName, allLeagueUnitIdsForCountry);
-                }
-                alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
-                log.info("Request successfully sent");
-
-                if (callback != null) {
-                    callback.run();
-                }
+//                List<TeamDetails> teamDetails = hattrickService.getTeamDetails(lastTeamWithMatchDetails)
+//                        .stream()
+//                        .map(teamDetailsConverter::convert)
+//                        .collect(Collectors.toList());
+//
+//                log.info("Loaded {} Team Details", teamDetails.size());
+//
+//                writtenToClickhouse = true;
+//                log.info("Writing match details to Clickhouse: {} rows", lastMatchDetails.size());
+//                matchDetailsWriter.writeToClickhouse(lastMatchDetails);
+//                log.info("Writing player events to Clickhouse: {} rows", playerEvents.size());
+//                playerEventsWriter.writeToClickhouse(playerEvents);
+//                log.info("Writing player info  to Clickhouse: {} rows", playerInfos.size());
+//                playerInfoWriter.writeToClickhouse(playerInfos);
+//
+//                log.info("Writing teams details to Clickhouse: {} rows", teamDetails.size());
+//                teamDetailsWriter.writeToClickhouse(teamDetails);
+//
+//                log.info("Joining player_stats for ({}, {}) ", countryName, league.getLeagueId());
+//                playersJoiner.join(league);
+//                log.info("Calculating team ranks for ({}, {})", countryName, league.getLeagueId());
+//                teamRankCalculator.calculate(league);
+//                log.info("Send request to web about new round...");
+//                //Load promotions
+//                if (league.getMatchRound() - 1 == 14) {
+//                    log.info("It's last round of season. Time to load promotions!");
+//                    promotionsLoader.load(countryName, allLeagueUnitIdsForCountry);
+//                }
+//                alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
+//                log.info("Request successfully sent");
+//
+//                if (callback != null) {
+//                    callback.run();
+//                }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 telegram.send(e.getMessage());
