@@ -1,4 +1,4 @@
-package models
+package chpp
 
 case class OauthTokens(oauthToken: String,
                        oauthCustomerKey: String,

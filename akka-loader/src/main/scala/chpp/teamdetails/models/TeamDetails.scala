@@ -1,0 +1,15 @@
+package chpp.teamdetails.models
+
+import cats.syntax.all._
+import com.lucidchart.open.xtract.XmlReader._
+import com.lucidchart.open.xtract.{XmlReader, __}
+
+case class TeamDetails(user: User,
+                       teams: Seq[Team])
+
+object TeamDetails {
+  implicit val reader: XmlReader[TeamDetails] = (
+    (__ \ "User").read[User],
+    (__ \ "Teams" \ "Team").read(seq[Team]),
+  ).mapN(apply _)
+}

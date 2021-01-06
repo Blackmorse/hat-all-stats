@@ -1,8 +1,8 @@
 package chpp.search
 
 import akka.http.scaladsl.model.HttpRequest
-import chpp.AbstractRequest
-import models.{OauthTokens, RequestCreator, SearchType}
+import chpp.search.models.SearchType
+import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 
 case class SearchRequest(searchType: Option[SearchType.Value] = None,
                          searchString: Option[String] = None,

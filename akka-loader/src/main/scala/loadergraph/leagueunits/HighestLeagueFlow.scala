@@ -3,11 +3,10 @@ package loadergraph.leagueunits
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.Flow
-import models.OauthTokens
+import chpp.OauthTokens
 import models.stream.LeagueUnit
 
 import scala.concurrent.ExecutionContext
-
 import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 
 object HighestLeagueFlow {

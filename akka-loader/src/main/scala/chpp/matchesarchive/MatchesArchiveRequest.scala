@@ -3,8 +3,7 @@ package chpp.matchesarchive
 import java.util.Date
 
 import akka.http.scaladsl.model.HttpRequest
-import chpp.AbstractRequest
-import models.{OauthTokens, RequestCreator}
+import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 
 case class MatchesArchiveRequest(teamId: Option[Long] = None,
                                  isYouth: Option[Boolean] = None,

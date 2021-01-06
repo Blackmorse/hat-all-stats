@@ -3,10 +3,10 @@ package loadergraph.leagueunits.sweden
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
+import chpp.OauthTokens
 import chpp.search.models.SearchHttpFlow
 import com.blackmorse.hattrick.common.CommonData
 import loadergraph.leagueunits.{LeagueWithLevel, StandardLeagueFlow}
-import models.OauthTokens
 import models.stream.LeagueUnit
 
 import scala.concurrent.ExecutionContext

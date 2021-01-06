@@ -1,8 +1,7 @@
 package chpp.worlddetails
 
 import akka.http.scaladsl.model.HttpRequest
-import chpp.AbstractRequest
-import models.{OauthTokens, RequestCreator}
+import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 
 case class WorldDetailsRequest(leagueId: Option[Int] = None,
                                countryId: Option[Int] = None,

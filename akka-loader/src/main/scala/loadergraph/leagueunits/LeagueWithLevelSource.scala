@@ -2,8 +2,8 @@ package loadergraph.leagueunits
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.Source
+import chpp.OauthTokens
 import chpp.worlddetails.{WorldDetailsHttpFlow, WorldDetailsRequest}
-import models.OauthTokens
 import models.stream.League
 
 import scala.concurrent.ExecutionContext

@@ -2,9 +2,9 @@ package loadergraph.playerinfos
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
+import chpp.OauthTokens
 import chpp.players.{PlayersHttpFlow, PlayersRequest}
 import flows.LogProgressFlow
-import models.OauthTokens
 import models.clickhouse.PlayerInfoModelCH
 import models.stream.StreamMatchDetails
 

@@ -3,8 +3,8 @@ package loadergraph.leagueunits
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
+import chpp.OauthTokens
 import com.blackmorse.hattrick.common.CommonData
-import models.OauthTokens
 import chpp.search.SearchRequest
 import chpp.search.models.{Search, SearchHttpFlow, SearchType}
 import models.stream.LeagueUnit

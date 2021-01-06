@@ -2,9 +2,9 @@ package loadergraph.matchdetails
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
+import chpp.OauthTokens
 import chpp.leaguedetails.models.LeagueDetails
 import flows.LogProgressFlow
-import models.OauthTokens
 import chpp.leaguedetails.{LeagueDetailsHttpFlow, LeagueDetailsRequest}
 import chpp.matchdetails.{MatchDetailsHttpFlow, MatchDetailsRequest}
 import chpp.matchesarchive.models.{MatchType, MatchesArchive}

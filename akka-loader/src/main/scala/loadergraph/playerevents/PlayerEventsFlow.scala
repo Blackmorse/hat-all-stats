@@ -2,8 +2,7 @@ package loadergraph.playerevents
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
-import models.OauthTokens
-import chpp.matchdetails.InjuryType
+import chpp.OauthTokens
 import chpp.matchdetails.models.{BookingType, InjuryType}
 import models.clickhouse.PlayerEventsModelCH
 import models.stream.StreamMatchDetails
