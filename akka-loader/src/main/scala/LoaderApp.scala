@@ -3,6 +3,7 @@ import akka.http.scaladsl.Http
 import akka.stream.{ClosedShape, Supervision}
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, RunnableGraph, Sink, Source}
 import chpp.OauthTokens
+import chpp.leaguefixtures.{LeagueFixturesHttpFlow, LeagueFixturesRequest}
 import chpp.players.{PlayersHttpFlow, PlayersRequest}
 import chpp.search.models.SearchType
 import chpp.teamdetails.{TeamDetailsHttpFlow, TeamDetailsRequest}
@@ -75,7 +76,13 @@ object LoaderApp extends  App {
     }
   )
 
-  graph.run().onComplete(println)
+
+  Source.single(3277)
+    .map(id => (LeagueFixturesRequest(leagueLevelUnitId = Some(id), season = Some(63)), id))
+    .via(LeagueFixturesHttpFlow())
+    .runForeach(println)
+
+//  graph.run().onComplete(println)
 
 
 }
