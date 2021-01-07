@@ -8,7 +8,7 @@ import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{XmlReader, __}
 
 case class User(userId: Int,
-                language: String,
+                language: Option[String],
                 supporterTies: String,
                 loginname: String,
                 name: String,
@@ -21,7 +21,7 @@ case class User(userId: Int,
 object User extends BaseXmlMapper {
   implicit val reader: XmlReader[User] = (
     (__ \ "UserID").read[Int],
-    (__ \ "Language").read[String],
+    (__ \ "Language").read[String].optional,
     (__ \ "SupporterTier").read[String],
     (__ \ "Loginname").read[String],
     (__ \ "Name").read[String],

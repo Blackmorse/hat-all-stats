@@ -11,7 +11,7 @@ import models.stream.StreamMatchDetails
 import scala.concurrent.ExecutionContext
 
 object PlayerInfoFlow {
-  def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
+  def apply(countryMap: Map[Int, Int])(implicit oauthTokens: OauthTokens, system: ActorSystem,
               executionContext: ExecutionContext): Flow[StreamMatchDetails, PlayerInfoModelCH, _] = {
     Flow[StreamMatchDetails]
       .map(matchDetails => (PlayersRequest(teamId = Some(matchDetails.matc.team.id)), matchDetails))
@@ -19,7 +19,7 @@ object PlayerInfoFlow {
       .via(PlayersHttpFlow())
       .via(LogProgressFlow("Players of teams"))
       .flatMapConcat{case(players, matchDetails) =>
-        val playerInfos = players.team.playerList.map(player => PlayerInfoModelCH.convert(player, matchDetails))
+        val playerInfos = players.team.playerList.map(player => PlayerInfoModelCH.convert(player, matchDetails, countryMap))
         Source(playerInfos.toList)
       }
   }

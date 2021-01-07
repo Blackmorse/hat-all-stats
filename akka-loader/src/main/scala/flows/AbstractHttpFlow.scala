@@ -11,7 +11,7 @@ import com.lucidchart.open.xtract.XmlReader
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 import scala.xml.XML
 
 abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
@@ -34,9 +34,10 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
       .map{case(responseBody, t) =>
         val preprocessed = preprocessBody(responseBody)
         val xml = XML.loadString(preprocessed)
-        val model = XmlReader.of[Model].read(xml)
-        (model
-          .getOrElse(throw new RuntimeException("Unable to parse")), t)
+        val modelParse = XmlReader.of[Model].read(xml)
+        val model = modelParse
+          .getOrElse(throw new RuntimeException("Unable to parse"))
+        (model, t)
       }
 
     Flow.fromGraph{

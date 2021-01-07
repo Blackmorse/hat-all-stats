@@ -32,7 +32,7 @@ case class PlayerInfoModelCH(season: Int,
                             nationality: Int)
 
 object PlayerInfoModelCH {
-  def convert(player: Player, matchDetails: StreamMatchDetails): PlayerInfoModelCH = {
+  def convert(player: Player, matchDetails: StreamMatchDetails, countryMap: Map[Int, Int]): PlayerInfoModelCH = {
     val (playedMinutes,
         roleId,
         rating,
@@ -63,7 +63,7 @@ object PlayerInfoModelCH {
       lastName = player.playerPart.lastName,
       age = player.playerPart.age,
       days = player.playerPart.ageDays,
-      nationality = 0, //TODO
+      nationality = countryMap.getOrElse(player.countryId, 0),
       playedMinutes = playedMinutes,
       roleId = roleId,
       rating = rating,
