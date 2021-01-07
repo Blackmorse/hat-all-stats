@@ -1,13 +1,16 @@
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.{ClosedShape, Supervision}
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, RunnableGraph, Sink, Source}
+import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Keep, RunnableGraph, Sink, Source}
+import akka.util.ByteString
 import chpp.OauthTokens
 import chpp.players.{PlayersHttpFlow, PlayersRequest}
 import chpp.search.models.SearchType
 import chpp.teamdetails.{TeamDetailsHttpFlow, TeamDetailsRequest}
 import chpp.worlddetails.models.WorldDetails
 import chpp.worlddetails.{WorldDetailsHttpFlow, WorldDetailsRequest}
+import com.crobox.clickhouse.ClickhouseClient
+import com.crobox.clickhouse.stream.{ClickhouseSink, Insert}
 import com.typesafe.config.ConfigFactory
 import loadergraph.leagueunits.LeagueUnitIdsSource
 import loadergraph.matchdetails.MatchDetailsFlow
@@ -48,6 +51,21 @@ object LoaderApp extends  App {
         .toMap
     }
 
+  val client = new ClickhouseClient(Some(config))
+
+  val sink = ClickhouseSink.insertSink(config, client)
+
+//  val r = sink.runWith()
+
+  val r = Source.single(Insert("akka_hattrick.t1", "{a: \"a\"}")).toMat(sink)(Keep.right)
+
+  r.run().onComplete(f => {
+    println(f)
+    f
+  })
+//  client.sink("insert into akka_hattrick.t1", Source.single(ByteString("ahah"))).map(println)
+
+
   val countryMap = Await.result(countryMapFuture, 30 seconds)
   println(countryMap)
 
@@ -75,7 +93,7 @@ object LoaderApp extends  App {
     }
   )
 
-  graph.run().onComplete(println)
+//  graph.run().onComplete(println)
 
 
 }
