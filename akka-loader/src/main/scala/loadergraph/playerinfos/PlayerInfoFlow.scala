@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext
 
 object PlayerInfoFlow {
   def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
-              executionContext: ExecutionContext) = {
+              executionContext: ExecutionContext): Flow[StreamMatchDetails, PlayerInfoModelCH, _] = {
     Flow[StreamMatchDetails]
       .map(matchDetails => (PlayersRequest(teamId = Some(matchDetails.matc.team.id)), matchDetails))
       .async
