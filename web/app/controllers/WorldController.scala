@@ -11,7 +11,7 @@ import service.leagueinfo.LeagueInfoService
 
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
-import service.{DefaultService, OverviewStatsService}
+import service.{DefaultService, OverviewStatsService, RequestCounterService}
 
 import scala.concurrent.Future
 
@@ -25,7 +25,8 @@ object TeamSearchResult {
 class WorldController @Inject() (val controllerComponents: ControllerComponents,
             val overviewStatsService: OverviewStatsService,
              val leagueInfoService: LeagueInfoService,
-             val hattrick: Hattrick)
+             val hattrick: Hattrick,
+             val requestCounterService: RequestCounterService)
         extends BaseController with I18nSupport with MessageSupport {
 
   def overview() = Action.async {implicit request =>
@@ -44,5 +45,14 @@ class WorldController @Inject() (val controllerComponents: ControllerComponents,
       .map(search => search.getSearchResults.asScala
           .map(result => TeamSearchResult(result.getResultId, result.getResultName)))
       .map(r => Ok(Json.toJson(r)))
+  }
+
+  def health() = Action.async {implicit request =>
+    Future(Ok(Json.toJson("")))
+  }
+
+  def hoRequests() = Action.async{ implicit request =>
+    val requests = requestCounterService.getHoRequests
+    Future(Ok(Json.toJson(requests)))
   }
 }

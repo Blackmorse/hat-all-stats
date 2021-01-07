@@ -12,6 +12,9 @@ GET     /api/league/:leagueId/leagueUnitName/:leagueUnitName    controllers.Rest
 
 GET     /worldOverview              controllers.WorldController.overview()
 
+GET     /health                     controllers.WorldController.health()
+GET     /api/hoRequests             controllers.WorldController.hoRequests()
+
 GET     /api/league/:leagueId                 controllers.RestLeagueController.getLeagueData(leagueId: Int)
 GET     /api/league/:leagueId/teamHatstats      controllers.RestLeagueController.teamHatstats(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/leagueUnits       controllers.RestLeagueController.leagueUnits(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)

@@ -12,6 +12,8 @@ play.filters.enabled += "play.filters.cors.CORSFilter"
 play.filters.cors.pathPrefixes += "/api"
 play.filters.cors.allowedHttpMethods = ["GET"]
 
+play.http.filters=controllers.Filters
+
 play.http.errorHandler = "handlers.HattidErrorHandler"
 
 hattrick {
