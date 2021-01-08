@@ -2,6 +2,7 @@ package models.clickhouse
 
 import chpp.teamdetails.models.{Team, TrophyTypeId}
 import models.stream.StreamMatchDetails
+import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
 
 case class TeamDetailsModelCH(season: Int,
                              leagueId: Int,
@@ -21,6 +22,30 @@ case class TeamDetailsModelCH(season: Int,
                              numberOfUndefeated: Int)
 
 object TeamDetailsModelCH {
+  implicit val format: JsonFormat[TeamDetailsModelCH] = new JsonFormat[TeamDetailsModelCH] {
+    override def read(json: JsValue): TeamDetailsModelCH = null
+
+    override def write(obj: TeamDetailsModelCH): JsValue = {
+      JsObject(
+        ("season", JsNumber(obj.season)),
+        ("league_id", JsNumber(obj.leagueId)),
+        ("division_level", JsNumber(obj.divisionLevel)),
+        ("league_unit_id", JsNumber(obj.leagueUnitId)),
+        ("league_unit_name", JsString(obj.leagueUnitName)),
+        ("team_id", JsNumber(obj.teamId)),
+        ("team_name", JsString(obj.teamName)),
+        ("round", JsNumber(obj.round)),
+        ("power_rating", JsNumber(obj.powerRating)),
+        ("home_flags", JsNumber(obj.homeFlags)),
+        ("away_flags", JsNumber(obj.awayFlags)),
+        ("fanclub_size", JsNumber(obj.fanclubSize)),
+        ("trophies_number", JsNumber(obj.trophiesNumber)),
+        ("number_of_victories", JsNumber(obj.numberOfVictories)),
+        ("number_of_undefeated", JsNumber(obj.numberOfUndefeated)),
+      )
+    }
+  }
+
   def convert(team: Team, matchDetails: StreamMatchDetails): TeamDetailsModelCH = {
     val trophyNumber = team.trophyList.count(trophy => trophy.trophyTypeId != TrophyTypeId.TOURNAMENT_WINNER
                                                     && trophy.trophyTypeId != TrophyTypeId.STUDY_TOURNNAMENT)

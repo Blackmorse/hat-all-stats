@@ -73,7 +73,7 @@ case class Player(playerPart: PlayerPart,
                   injuryLevel: Option[Int],
                   staminaSkill: Int,
                   trainerData: Option[TrainerData],
-                  lastMatch: LastMatch)
+                  lastMatch: Option[LastMatch])
 
 object Player extends BaseXmlMapper{
   implicit val reader: XmlReader[Player] = (
@@ -95,6 +95,6 @@ object Player extends BaseXmlMapper{
       (__ \ "InjuryLevel").read[Int].optional,
       (__ \ "StaminaSkill").read[Int],
       (__ \ "TrainerData").read[TrainerData].optional,
-      (__ \ "LastMatch").read[LastMatch],
+      (__ \ "LastMatch").read[LastMatch].optional,
     ).mapN(apply _)
 }

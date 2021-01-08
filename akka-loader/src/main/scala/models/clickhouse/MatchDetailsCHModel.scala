@@ -3,6 +3,8 @@ package models.clickhouse
 import java.util.Date
 
 import models.stream.StreamMatchDetails
+import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
+import utils.DateMarshalling._
 
 object IsHomeMatch extends Enumeration {
   val HOME = Value(1, "home")
@@ -10,51 +12,100 @@ object IsHomeMatch extends Enumeration {
 }
 
 case class MatchDetailsCHModel(season: Int,
-                              leagueId: Int,
-                              divisionLevel: Int,
-                              leagueUnitId: Int,
-                              leagueUnitName: String,
-                              teamId: Long,
-                              teamName: String,
-                              date: Date,
-                              round: Int,
-                              matchId: Long,
+                               leagueId: Int,
+                               divisionLevel: Int,
+                               leagueUnitId: Int,
+                               leagueUnitName: String,
+                               teamId: Long,
+                               teamName: String,
+                               date: Date,
+                               round: Int,
+                               matchId: Long,
 
-                              isHomeMatch: IsHomeMatch.Value,
-                              goals: Int,
-                              oppositeGoals: Int,
+                               isHomeMatch: IsHomeMatch.Value,
+                               goals: Int,
+                               enemyGoals: Int,
 
-                              soldTotal: Int,
+                               soldTotal: Int,
 
-                              formation: String,
-                              tacticType: Int,
-                              tacticSkill: Int,
-                              ratingMidfield: Int,
-                              ratingRightDef: Int,
-                              ratingLeftDef: Int,
-                              ratingMidDef: Int,
-                              ratingRightAtt: Int,
-                              ratingMidAtt: Int,
-                              ratingLeftAtt: Int,
-                              ratingIndirectSetPiecesDef: Int,
-                              ratingIndirectSetPiecesAtt: Int,
+                               formation: String,
+                               tacticType: Int,
+                               tacticSkill: Int,
+                               ratingMidfield: Int,
+                               ratingRightDef: Int,
+                               ratingLeftDef: Int,
+                               ratingMidDef: Int,
+                               ratingRightAtt: Int,
+                               ratingMidAtt: Int,
+                               ratingLeftAtt: Int,
+                               ratingIndirectSetPiecesDef: Int,
+                               ratingIndirectSetPiecesAtt: Int,
 
-                              oppositeTeamId: Long,
-                              oppositeTeamName: String,
-                              oppositeFormation: String,
-                              oppositeTacticType: Int,
-                              oppositeTacticSkill: Int,
-                              oppositeRatingMidfield: Int,
-                              oppositeRatingRightDef: Int,
-                              oppositeRatingLeftDef: Int,
-                              oppositeRatingMidDef: Int,
-                              oppositeRatingRightAtt: Int,
-                              oppositeRatingMidAtt: Int,
-                              oppositeRatingLeftAtt: Int,
-                              oppositeRatingIndirectSetPiecesDef: Int,
-                              oppositeRatingIndirectSetPiecesAtt: Int)
+                               oppositeTeamId: Long,
+                               oppositeTeamName: String,
+                               oppositeFormation: String,
+                               oppositeTacticType: Int,
+                               oppositeTacticSkill: Int,
+                               oppositeRatingMidfield: Int,
+                               oppositeRatingRightDef: Int,
+                               oppositeRatingLeftDef: Int,
+                               oppositeRatingMidDef: Int,
+                               oppositeRatingRightAtt: Int,
+                               oppositeRatingMidAtt: Int,
+                               oppositeRatingLeftAtt: Int,
+                               oppositeRatingIndirectSetPiecesDef: Int,
+                               oppositeRatingIndirectSetPiecesAtt: Int)
 
 object MatchDetailsCHModel {
+  implicit val format: JsonFormat[MatchDetailsCHModel] = new JsonFormat[MatchDetailsCHModel] {
+    override def read(json: JsValue): MatchDetailsCHModel = null
+
+    override def write(obj: MatchDetailsCHModel): JsValue = {
+      JsObject(
+        ("season", JsNumber(obj.season)),
+        ("league_id", JsNumber(obj.leagueId)),
+        ("division_level", JsNumber(obj.divisionLevel)),
+        ("league_unit_id", JsNumber(obj.leagueUnitId)),
+        ("league_unit_name", JsString(obj.leagueUnitName)),
+        ("team_id", JsNumber(obj.teamId)),
+        ("team_name", JsString(obj.teamName)),
+        ("time", DateFormat.write(obj.date)),
+        ("round", JsNumber(obj.round)),
+        ("match_id", JsNumber(obj.matchId)),
+        ("is_home_match", JsNumber(obj.isHomeMatch.id)),
+        ("goals", JsNumber(obj.goals)),
+        ("enemy_goals", JsNumber(obj.enemyGoals)),
+        ("sold_total", JsNumber(obj.soldTotal)),
+        ("formation", JsString(obj.formation)),
+        ("tactic_type", JsNumber(obj.tacticType)),
+        ("tactic_skill", JsNumber(obj.tacticSkill)),
+        ("rating_midfield", JsNumber(obj.ratingMidfield)),
+        ("rating_right_def", JsNumber(obj.ratingRightDef)),
+        ("rating_left_def", JsNumber(obj.ratingLeftDef)),
+        ("rating_mid_def", JsNumber(obj.ratingMidDef)),
+        ("rating_right_att", JsNumber(obj.ratingRightAtt)),
+        ("rating_mid_att", JsNumber(obj.ratingMidAtt)),
+        ("rating_left_att", JsNumber(obj.ratingLeftAtt)),
+        ("rating_indirect_set_pieces_def", JsNumber(obj.ratingIndirectSetPiecesDef)),
+        ("rating_indirect_set_pieces_def", JsNumber(obj.ratingIndirectSetPiecesAtt)),
+        ("opposite_team_id", JsNumber(obj.oppositeTeamId)),
+        ("opposite_team_name", JsString(obj.oppositeTeamName)),
+        ("opposite_formation", JsString(obj.oppositeFormation)),
+        ("opposite_tactic_type", JsNumber(obj.oppositeTacticType)),
+        ("opposite_tactic_skill", JsNumber(obj.oppositeTacticSkill)),
+        ("opposite_rating_midfield", JsNumber(obj.oppositeRatingMidfield)),
+        ("opposite_rating_right_def", JsNumber(obj.oppositeRatingRightDef)),
+        ("opposite_rating_left_def", JsNumber(obj.oppositeRatingLeftDef)),
+        ("opposite_rating_mid_def", JsNumber(obj.oppositeRatingMidDef)),
+        ("opposite_rating_right_att", JsNumber(obj.oppositeRatingRightAtt)),
+        ("opposite_rating_mid_att", JsNumber(obj.oppositeRatingMidAtt)),
+        ("opposite_rating_left_att", JsNumber(obj.oppositeRatingLeftAtt)),
+        ("opposite_rating_indirect_set_pieces_def", JsNumber(obj.oppositeRatingIndirectSetPiecesAtt)),
+        ("opposite_rating_indirect_set_pieces_att", JsNumber(obj.oppositeRatingIndirectSetPiecesAtt)),
+      )
+    }
+  }
+
   def convert(streamMatchDetails: StreamMatchDetails): MatchDetailsCHModel = {
     val matchDetails = streamMatchDetails.matchDetails
 
@@ -87,7 +138,7 @@ object MatchDetailsCHModel {
 
       isHomeMatch = isHomeMatch,
       goals = currentTeam.goals,
-      oppositeGoals = oppositeTeam.goals,
+      enemyGoals = oppositeTeam.goals,
 
       soldTotal = matchDetails.matc.arena.soldTotal,
 

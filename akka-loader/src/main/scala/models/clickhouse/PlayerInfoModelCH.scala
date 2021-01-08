@@ -4,6 +4,8 @@ import java.util.Date
 
 import chpp.players.models.Player
 import models.stream.StreamMatchDetails
+import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
+import utils.DateMarshalling.DateFormat
 
 case class PlayerInfoModelCH(season: Int,
                             leagueId: Int,
@@ -32,20 +34,52 @@ case class PlayerInfoModelCH(season: Int,
                             nationality: Int)
 
 object PlayerInfoModelCH {
+  implicit val format: JsonFormat[PlayerInfoModelCH] = new JsonFormat[PlayerInfoModelCH] {
+    override def read(json: JsValue): PlayerInfoModelCH = null
+
+    override def write(obj: PlayerInfoModelCH): JsValue = {
+      JsObject(
+        ("season", JsNumber(obj.season)),
+        ("league_id", JsNumber(obj.leagueId)),
+        ("division_level", JsNumber(obj.divisionLevel)),
+        ("league_unit_id", JsNumber(obj.leagueUnitId)),
+        ("league_unit_name", JsString(obj.leagueUnitName)),
+        ("team_id", JsNumber(obj.teamId)),
+        ("team_name", JsString(obj.teamName)),
+        ("time", DateFormat.write(obj.date)),
+        ("round", JsNumber(obj.round)),
+        ("match_id", JsNumber(obj.matchId)),
+        ("player_id", JsNumber(obj.playerId)),
+        ("first_name", JsString(obj.firstName)),
+        ("last_name", JsString(obj.lastName)),
+        ("age", JsNumber(obj.age)),
+        ("days", JsNumber(obj.days)),
+        ("role_id", JsNumber(obj.roleId)),
+        ("played_minutes", JsNumber(obj.playedMinutes)),
+        ("rating", JsNumber(obj.rating)),
+        ("rating_end_of_match", JsNumber(obj.ratingEndOfMatch)),
+        ("injury_level", JsNumber(obj.injuryLevel)),
+        ("tsi", JsNumber(obj.TSI)),
+        ("salary", JsNumber(obj.salary)),
+        ("nationality", JsNumber(obj.nationality)),
+      )
+    }
+  }
+
   def convert(player: Player, matchDetails: StreamMatchDetails, countryMap: Map[Int, Int]): PlayerInfoModelCH = {
     val (playedMinutes,
         roleId,
         rating,
         ratingEndOfMatch) =
-      if(player.lastMatch.date != null && player.lastMatch.date == matchDetails.matc.date) {
-        (
-          player.lastMatch.playedMinutes,
-          player.lastMatch.positionCode.id,
-          (player.lastMatch.rating * 10).toInt,
-          (player.lastMatch.ratingEndOfMatch * 10).toInt
-        ) } else {
-          (0, 0, 0, 0)
-        }
+      player.lastMatch.flatMap(lastMatch => {
+        if(lastMatch.date != null && lastMatch.date == matchDetails.matc.date) {
+          Some(
+            lastMatch.playedMinutes,
+            lastMatch.positionCode.id,
+            (lastMatch.rating * 10).toInt,
+            (lastMatch.ratingEndOfMatch * 10).toInt
+          )} else None
+      }).getOrElse((0, 0, 0, 0))
 
     PlayerInfoModelCH(
       season = matchDetails.matc.season,
