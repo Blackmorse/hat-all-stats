@@ -17,10 +17,11 @@ object PlayerInfoFlow {
       .map(matchDetails => (PlayersRequest(teamId = Some(matchDetails.matc.team.id)), matchDetails))
       .async
       .via(PlayersHttpFlow())
+      .async
       .via(LogProgressFlow("Players of teams"))
       .flatMapConcat{case(players, matchDetails) =>
         val playerInfos = players.team.playerList.map(player => PlayerInfoModelCH.convert(player, matchDetails, countryMap))
         Source(playerInfos.toList)
-      }
+      }.async
   }
 }

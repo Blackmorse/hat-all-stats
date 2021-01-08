@@ -1,4 +1,4 @@
-package loadergraph.leagueunits
+package loadergraph.teams
 
 import akka.NotUsed
 import akka.actor.ActorSystem

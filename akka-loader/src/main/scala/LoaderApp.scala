@@ -10,7 +10,7 @@ import chpp.teamdetails.{TeamDetailsHttpFlow, TeamDetailsRequest}
 import chpp.worlddetails.models.WorldDetails
 import chpp.worlddetails.{WorldDetailsHttpFlow, WorldDetailsRequest}
 import com.typesafe.config.ConfigFactory
-import loadergraph.leagueunits.LeagueUnitIdsSource
+import loadergraph.teams.{LeagueUnitIdsSource, TeamsSource}
 import loadergraph.matchdetails.MatchDetailsFlow
 import loadergraph.playerevents.PlayerEventsFlow
 import loadergraph.playerinfos.PlayerInfoFlow
@@ -52,7 +52,8 @@ object LoaderApp extends  App {
   val countryMap = Await.result(countryMapFuture, 30 seconds)
   println(countryMap)
 
-  val matchDetailsSource = LeagueUnitIdsSource(100)
+  val matchDetailsSource = TeamsSource(35)
+    .async
     .via(MatchDetailsFlow())
     .async
 
@@ -77,12 +78,12 @@ object LoaderApp extends  App {
   )
 
 
-  Source.single(3277)
-    .map(id => (LeagueFixturesRequest(leagueLevelUnitId = Some(id), season = Some(63)), id))
-    .via(LeagueFixturesHttpFlow())
-    .runForeach(println)
+//  Source.single(3277)
+//    .map(id => (LeagueFixturesRequest(leagueLevelUnitId = Some(id), season = Some(63)), id))
+//    .via(LeagueFixturesHttpFlow())
+//    .runForeach(println)
 
-//  graph.run().onComplete(println)
+  graph.run().onComplete(println)
 
 
 }

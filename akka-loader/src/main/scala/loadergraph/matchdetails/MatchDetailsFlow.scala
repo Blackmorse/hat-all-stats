@@ -9,20 +9,14 @@ import chpp.leaguedetails.{LeagueDetailsHttpFlow, LeagueDetailsRequest}
 import chpp.matchdetails.{MatchDetailsHttpFlow, MatchDetailsRequest}
 import chpp.matchesarchive.models.{MatchType, MatchesArchive}
 import chpp.matchesarchive.{MatchesArchiveHttpFlow, MatchesArchiveRequest}
-import models.stream.{LeagueUnit, Match, StreamMatchDetails, Team}
+import models.stream.{LeagueUnit, Match, StreamMatchDetails, StreamTeam}
 
 import scala.concurrent.ExecutionContext
 
 object MatchDetailsFlow {
   def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
               executionContext: ExecutionContext) = {
-    Flow[LeagueUnit]
-      .map(leagueUnit => (LeagueDetailsRequest(leagueUnitId = Some(leagueUnit.leagueUnitId)), leagueUnit))
-      .async
-      .via(LeagueDetailsHttpFlow())
-      .flatMapConcat{case(leagueDetails, leagueUnit) =>
-        Source(teamsFromLeagueUnit(leagueDetails, leagueUnit))
-      }
+    Flow[StreamTeam]
       .map(team => (MatchesArchiveRequest(teamId = Some(team.id)), team))
       .async
       .via(MatchesArchiveHttpFlow())
@@ -35,7 +29,7 @@ object MatchDetailsFlow {
       .via(LogProgressFlow("Match Details"))
   }
 
-  private def lastMatch(matchesArchive: MatchesArchive, team: Team) = {
+  private def lastMatch(matchesArchive: MatchesArchive, team: StreamTeam) = {
     Option(matchesArchive.team.matchList)
       .flatMap(matchList =>
         matchList.filter(_.matchType == MatchType.LEAGUE_MATCH)
@@ -48,19 +42,5 @@ object MatchDetailsFlow {
               season = team.leagueUnit.league.season,
               team = team))
       )
-  }
-
-  private def teamsFromLeagueUnit(leagueDetails: LeagueDetails, leagueUnit: LeagueUnit): List[Team] = {
-    if(leagueDetails.teams == null)
-      List[Team]()
-    else {
-      leagueDetails.teams
-        .filter(_.userId != 0)
-        .map(team =>
-          Team(leagueUnit = leagueUnit,
-            id = team.teamId,
-            name = team.teamName))
-        .toList
-    }
   }
 }

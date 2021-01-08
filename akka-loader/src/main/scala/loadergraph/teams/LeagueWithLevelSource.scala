@@ -1,4 +1,4 @@
-package loadergraph.leagueunits
+package loadergraph.teams
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.Source

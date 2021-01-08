@@ -40,18 +40,6 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
         (model, t)
       }
 
-    Flow.fromGraph{
-      GraphDSL.create(){ implicit builder =>
-        import GraphDSL.Implicits._
-
-        val toRequestConverterFlowShape = builder.add(flow)
-        val httpRequestFlowShape = builder.add(httpsFlow)
-        val unmarshallFlowShape = builder.add(unmarshalFlow)
-
-        toRequestConverterFlowShape ~> httpRequestFlowShape ~> unmarshallFlowShape
-
-        FlowShape(toRequestConverterFlowShape.in, unmarshallFlowShape.out)
-      }
-    }
+    flow.async.via(httpsFlow).async.via(unmarshalFlow).async
   }
 }

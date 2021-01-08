@@ -1,4 +1,4 @@
-package loadergraph.leagueunits
+package loadergraph.teams
 
 import akka.NotUsed
 import akka.actor.ActorSystem
@@ -6,7 +6,7 @@ import akka.stream.SourceShape
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Sink, Source}
 import chpp.OauthTokens
 import flows.LogProgressFlow
-import loadergraph.leagueunits.sweden.SwedenLeagueUnitFlow
+import loadergraph.teams.sweden.SwedenLeagueUnitFlow
 import models.stream.LeagueUnit
 
 import scala.concurrent.ExecutionContext
@@ -47,6 +47,6 @@ object LeagueUnitIdsSource {
       }
     }
 
-    flow.via(LogProgressFlow("league units"))
+    flow.via(LogProgressFlow("league units")).async
   }
 }

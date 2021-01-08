@@ -6,4 +6,4 @@ case class Match(id: Long,
                  round: Int,
                  date: Date,
                  season: Int,
-                 team: Team)
+                 team: StreamTeam)

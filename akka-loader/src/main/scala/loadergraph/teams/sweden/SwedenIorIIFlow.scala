@@ -1,11 +1,11 @@
-package loadergraph.leagueunits.sweden
+package loadergraph.teams.sweden
 
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
 import com.blackmorse.hattrick.common.CommonData
-import loadergraph.leagueunits.LeagueWithLevel
+import loadergraph.teams.LeagueWithLevel
 import chpp.search.SearchRequest
 import chpp.search.models.{SearchHttpFlow, SearchType}
 import models.stream.LeagueUnit

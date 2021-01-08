@@ -1,4 +1,4 @@
-package loadergraph.leagueunits
+package loadergraph.teams
 
 import models.stream.League
 
