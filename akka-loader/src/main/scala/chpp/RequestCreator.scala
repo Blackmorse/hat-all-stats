@@ -15,10 +15,12 @@ import scala.util.Random
 case class  RequestCreator()
 
 object RequestCreator {
+  val URL = "chpp.hattrick.org"
+  val API_ENDPOINT = "/chppxml.ashx"
+
   def create(requestParams: Map[String, String])
             (implicit oauthTokens: OauthTokens): HttpRequest = {
-    val BASE_URL = "/chppxml.ashx"
-    val url = BASE_URL + "?" +
+    val url = API_ENDPOINT + "?" +
       requestParams.map{case(key, value) => s"$key=$value"}.mkString("&")
 
     val oauthNonce = System.currentTimeMillis() / 1000 + new Random().nextInt()
@@ -37,7 +39,7 @@ object RequestCreator {
 
     val allParams = (oauthParameters ++ requestParams).toSeq.sortBy(_._1)
 
-    val urlEncoded = URLEncoder.encode("https://chpp.hattrick.org" + BASE_URL, "UTF-8")
+    val urlEncoded = URLEncoder.encode(s"https://$URL" + API_ENDPOINT, "UTF-8")
     val paramsStringEncoded = URLEncoder.encode(allParams.map{case (key, value) => s"$key=$value"}.mkString("&"), "UTF-8")
 
     val key = s"${URLEncoder.encode(oauthTokens.clientSecret, "UTF-8")}&${URLEncoder.encode(oauthTokens.tokenSecret, "UTF-8")}"
@@ -53,10 +55,8 @@ object RequestCreator {
     val header = "OAuth " +
       (oauthParameters + ("oauth_signature" -> URLEncoder.encode(result, "UTF-8"))).map{case(key, value) => s"""$key="$value""""}.mkString(", ");
 
-    val r = HttpRequest(uri = url)
+    HttpRequest(uri = url)
       .withHeaders(RawHeader("Authorization", header))
-//    println(r)
-    r
   }
 
   def params(file: String, version: String, params: (String, Option[Any])*): Map[String, String] = {

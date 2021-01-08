@@ -6,7 +6,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpResponse
 import akka.stream.FlowShape
 import akka.stream.scaladsl.{Flow, GraphDSL}
-import chpp.{AbstractRequest, OauthTokens}
+import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 import com.lucidchart.open.xtract.XmlReader
 
 import scala.concurrent.ExecutionContext
@@ -22,7 +22,7 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
     val flow = Flow[(Request, T)]
       .map{case(request, t) => (request.createRequest(), t)}
 
-    val httpsFlow = Http().cachedHostConnectionPoolHttps[T]("chpp.hattrick.org")
+    val httpsFlow = Http().cachedHostConnectionPoolHttps[T](RequestCreator.URL)
 
     val unmarshalFlow = Flow[(Try[HttpResponse], T)].mapAsync(2){
       case (Success(response), t) =>
