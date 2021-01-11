@@ -1,5 +1,6 @@
 package com.blackmorse.hattrick.api;
 
+import com.blackmorse.hattrick.api.players.model.Players;
 import com.blackmorse.hattrick.model.TeamWithMatchAndPlayers;
 import com.blackmorse.hattrick.model.TeamWithMatchDetails;
 import io.reactivex.Flowable;
@@ -31,8 +32,9 @@ public class PlayersLoader {
                 .runOn(scheduler)
                 .map(teamWithMatchDetail -> {
                     log.debug("Players for teams: {}", teamsWithPlayersCounter.incrementAndGet());
+                    Players playersFromTeam = hattrick.getPlayersFromTeam(teamWithMatchDetail.getTeamWithMatch().getTeam().getId());
                     return new TeamWithMatchAndPlayers(teamWithMatchDetail.getTeamWithMatch(),
-                            hattrick.getPlayersFromTeam(teamWithMatchDetail.getTeamWithMatch().getTeam().getId()));
+                            playersFromTeam);
                 })
                 .sequential()
                 .toList()

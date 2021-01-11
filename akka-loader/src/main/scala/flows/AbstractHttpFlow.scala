@@ -35,8 +35,11 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
         val preprocessed = preprocessBody(responseBody)
         val xml = XML.loadString(preprocessed)
         val modelParse = XmlReader.of[Model].read(xml)
+        if(!modelParse.errors.isEmpty) {
+          throw new Exception("Parse model have an errors")
+        }
         val model = modelParse
-          .getOrElse(throw new RuntimeException("Unable to parse"))
+          .getOrElse(throw new Exception("Unable to parse"))
         (model, t)
       }
 

@@ -23,7 +23,7 @@ object LeagueWithLevelSource {
             .map(level => LeagueWithLevel(league = League(leagueId = league.leagueId,
                 seasonOffset = league.seasonOffset,
                 nextRound = league.matchRound,
-                season = league.season),
+                season = league.season - league.seasonOffset),
               level = level))
         )})
   }

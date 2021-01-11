@@ -25,7 +25,9 @@ object MatchDetailsFlow {
       .map(matc => (MatchDetailsRequest(matchId = Some(matc.id)), matc))
       .async
       .via(MatchDetailsHttpFlow())
-      .map{case(matchDetails, matc) => StreamMatchDetails(matc = matc, matchDetails = matchDetails)}
+      .map{case(matchDetails, matc) => {
+        StreamMatchDetails(matc = matc, matchDetails = matchDetails)
+      }}
       .via(LogProgressFlow("Match Details"))
   }
 

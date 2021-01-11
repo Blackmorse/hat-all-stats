@@ -57,15 +57,15 @@ object TeamDetailsModelCH {
       leagueUnitId = matchDetails.matc.team.leagueUnit.leagueUnitId,
       leagueUnitName = matchDetails.matc.team.leagueUnit.leagueUnitName,
       teamId = team.teamId,
-      teamName = team.teamName,
+      teamName = matchDetails.matc.team.name,
       round = matchDetails.matc.round,
       powerRating = team.powerRating.powerRating,
       homeFlags = team.flags.homeFlags.size,
-      awayFlags = team.flags.awaFlags.size,
+      awayFlags = team.flags.awayFlags.size,
       fanclubSize = team.fanclub.fanclubSize,
       trophiesNumber = trophyNumber,
-      numberOfVictories = team.numberOfVictories,
-      numberOfUndefeated = team.numberOfUndefeated
+      numberOfVictories = team.numberOfVictories.getOrElse(0),
+      numberOfUndefeated = team.numberOfUndefeated.getOrElse(0)
     )
   }
 }

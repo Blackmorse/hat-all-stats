@@ -5,8 +5,8 @@ import com.crobox.clickhouse.stream.Insert
 import spray.json._
 
 object ClickhouseFlow {
-  def apply[Model](table: String)(implicit writes: JsonWriter[Model]): Flow[Model, Insert, _] = {
+  def apply[Model](database: String, table: String)(implicit writes: JsonWriter[Model]): Flow[Model, Insert, _] = {
     Flow[Model]
-      .map(model => Insert(s"akka_hattrick.$table", model.toJson.prettyPrint))
+      .map(model => Insert(s"$database.$table", model.toJson.prettyPrint))
   }
 }

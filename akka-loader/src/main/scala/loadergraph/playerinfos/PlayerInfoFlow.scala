@@ -14,7 +14,7 @@ object PlayerInfoFlow {
   def apply(countryMap: Map[Int, Int])(implicit oauthTokens: OauthTokens, system: ActorSystem,
               executionContext: ExecutionContext): Flow[StreamMatchDetails, PlayerInfoModelCH, _] = {
     Flow[StreamMatchDetails]
-      .map(matchDetails => (PlayersRequest(teamId = Some(matchDetails.matc.team.id)), matchDetails))
+      .map(matchDetails => (PlayersRequest(teamId = Some(matchDetails.matc.team.id), includeMatchInfo = Some(true)), matchDetails))
       .async
       .via(PlayersHttpFlow())
       .async

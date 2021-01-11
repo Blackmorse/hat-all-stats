@@ -39,25 +39,37 @@ object LoaderApp extends  App {
   val clientSecret = config.getString("tokens.clientSecret")
   val tokenSecret = config.getString("tokens.tokenSecret")
 
+  val databaseName = config.getString("database_name")
+
   implicit val oauthTokens: OauthTokens = OauthTokens(authToken, authCustomerKey, clientSecret, tokenSecret)
 
   val countryMapFuture = Source.single((WorldDetailsRequest(), Unit))
     .via(WorldDetailsHttpFlow())
     .map(_._1)
     .runFold(null.asInstanceOf[WorldDetails])((_, wd) => wd)
-    .map{worldDetails =>
-      worldDetails.leagueList
-        .view
-        .map(league => league.country.map(country => (country.countryId, league.leagueId)))
-        .filter(_.isDefined)
-        .map(_.get)
-        .toMap
-    }
+//    .map{worldDetails =>
+//      worldDetails.leagueList
+//        .view
+//        .map(league => league.country.map(country => (country.countryId, league.leagueId)))
+//        .filter(_.isDefined)
+//        .map(_.get)
+//        .toMap
+//    }
 
-  val countryMap = Await.result(countryMapFuture, 30 seconds)
-  println(countryMap)
 
-  val matchDetailsSource = TeamsSource(100)
+  val worldDetails = Await.result(countryMapFuture, 30 seconds)
+//  println(countryMap)
+
+  val countryMap = worldDetails.leagueList
+    .view
+    .map(league => league.country.map(country => (country.countryId, league.leagueId)))
+    .filter(_.isDefined)
+    .map(_.get)
+    .toMap
+
+
+  private val leagueIdNumber = 35
+  val matchDetailsSource = TeamsSource(leagueIdNumber)
     .async
     .via(MatchDetailsFlow())
     .async
@@ -75,10 +87,10 @@ object LoaderApp extends  App {
       val playerInfosFlow = builder.add(PlayerInfoFlow(countryMap))
       val teamDetailsFlow = builder.add(TeamDetailsFlow())
 
-      val matchDetailsChFlow = builder.add(ClickhouseFlow[MatchDetailsCHModel]("match_details"))
-      val playerEventsChFlow = builder.add(ClickhouseFlow[PlayerEventsModelCH]("player_events"))
-      val playerInfosChFlow = builder.add(ClickhouseFlow[PlayerInfoModelCH]("player_info"))
-      val teamDetailsChFlow = builder.add(ClickhouseFlow[TeamDetailsModelCH]("team_details"))
+      val matchDetailsChFlow = builder.add(ClickhouseFlow[MatchDetailsCHModel](databaseName, "match_details"))
+      val playerEventsChFlow = builder.add(ClickhouseFlow[PlayerEventsModelCH](databaseName, "player_events"))
+      val playerInfosChFlow = builder.add(ClickhouseFlow[PlayerInfoModelCH](databaseName, "player_info"))
+      val teamDetailsChFlow = builder.add(ClickhouseFlow[TeamDetailsModelCH](databaseName, "team_details"))
 
       val merge = builder.add(Merge[Insert](4))
 
@@ -95,10 +107,50 @@ object LoaderApp extends  App {
 //    .map(id => (PlayersRequest(teamId = Some(id)), id))
 //    .via(PlayersHttpFlow())
 //    .runForeach(println)
+  graph.run().onComplete(_ => {
+    val league = worldDetails.leagueList.filter(_.leagueId == leagueIdNumber).head
+    val leagueId = leagueIdNumber
+    val round = league.matchRound - 1
+    val season = league.season - league.seasonOffset
 
-  graph.run().onComplete(c => {
-    println(c)
-    c
+    client.execute(s"""INSERT INTO $databaseName.player_stats SELECT
+        |player_info.season,
+        |player_info.league_id,
+        |player_info.division_level,
+        |player_info.league_unit_id,
+        |player_info.league_unit_name,
+        |player_info.team_id,
+        |player_info.team_name,
+        |player_info.time,
+        |player_info.dt,
+        |player_info.round,
+        |player_info.match_id,
+        |player_info.player_id,
+        |player_info.first_name,
+        |player_info.last_name,
+        |player_info.age,
+        |player_info.days,
+        |player_info.role_id,
+        |player_info.played_minutes,
+        |player_info.rating,
+        |player_info.rating_end_of_match,
+        |player_info.injury_level,
+        |player_info.tsi,
+        |player_info.salary,
+        |player_events.yellow_cards,
+        |player_events.red_cards,
+        |player_events.goals,
+        |player_info.nationality
+      |FROM $databaseName.player_info
+      |LEFT JOIN
+      |(
+        |SELECT *
+        |FROM $databaseName.player_events
+        |WHERE (season = $season) AND (round = $round)
+      |)
+        |AS player_events ON (player_info.player_id = player_events.player_id) AND (player_info.season = player_events.season) AND (player_info.round = player_events.round)
+      |WHERE (season = $season) AND (league_id = $leagueId) AND (round = $round)""".stripMargin)
+      .onComplete(println)
   })
 
 

@@ -18,8 +18,10 @@ object TeamDetailsFlow {
       .async
       .via(TeamDetailsHttpFlow())
       .map{case(teamDetails, matchDetails) =>
-        val team = teamDetails.teams
-          .filter(team => team.teamId == matchDetails.matc.team.id)
+        val teams = teamDetails.teams
+          .filter(t => t.teamId == matchDetails.matc.team.id)
+
+        val team = teams
           .head
         TeamDetailsModelCH.convert(team, matchDetails)
       }.via(LogProgressFlow("Team Details"))

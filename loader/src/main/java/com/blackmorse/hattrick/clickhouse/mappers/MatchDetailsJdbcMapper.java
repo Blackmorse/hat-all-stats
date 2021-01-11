@@ -42,8 +42,8 @@ public class MatchDetailsJdbcMapper extends AbstractJdbcMapper<MatchDetails> {
         map.put("rating_right_att", MatchDetails::getRatingRightAtt);
         map.put("rating_mid_att", MatchDetails::getRatingMidAtt);
         map.put("rating_left_att", MatchDetails::getRatingLeftAtt);
-        map.put("rating_indirect_set_pieces_def", MatchDetails::getOppositeRatingIndirectSetPiecesDef);
-        map.put("rating_indirect_set_pieces_att", MatchDetails::getOppositeRatingIndirectSetPiecesAtt);
+        map.put("rating_indirect_set_pieces_def", MatchDetails::getRatingIndirectSetPiecesDef);
+        map.put("rating_indirect_set_pieces_att", MatchDetails::getRatingIndirectSetPiecesAtt);
 
         map.put("opposite_team_id", MatchDetails::getOppositeTeamId);
         map.put("opposite_team_name", MatchDetails::getOppositeTeamName);

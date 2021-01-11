@@ -7,8 +7,8 @@ import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
 import utils.DateMarshalling._
 
 object IsHomeMatch extends Enumeration {
-  val HOME = Value(1, "home")
-  val AWAY = Value(0, "away")
+  val HOME = Value(0, "home")
+  val AWAY = Value(1, "away")
 }
 
 case class MatchDetailsCHModel(season: Int,
@@ -87,7 +87,7 @@ object MatchDetailsCHModel {
         ("rating_mid_att", JsNumber(obj.ratingMidAtt)),
         ("rating_left_att", JsNumber(obj.ratingLeftAtt)),
         ("rating_indirect_set_pieces_def", JsNumber(obj.ratingIndirectSetPiecesDef)),
-        ("rating_indirect_set_pieces_def", JsNumber(obj.ratingIndirectSetPiecesAtt)),
+        ("rating_indirect_set_pieces_att", JsNumber(obj.ratingIndirectSetPiecesAtt)),
         ("opposite_team_id", JsNumber(obj.oppositeTeamId)),
         ("opposite_team_name", JsString(obj.oppositeTeamName)),
         ("opposite_formation", JsString(obj.oppositeFormation)),
@@ -100,7 +100,7 @@ object MatchDetailsCHModel {
         ("opposite_rating_right_att", JsNumber(obj.oppositeRatingRightAtt)),
         ("opposite_rating_mid_att", JsNumber(obj.oppositeRatingMidAtt)),
         ("opposite_rating_left_att", JsNumber(obj.oppositeRatingLeftAtt)),
-        ("opposite_rating_indirect_set_pieces_def", JsNumber(obj.oppositeRatingIndirectSetPiecesAtt)),
+        ("opposite_rating_indirect_set_pieces_def", JsNumber(obj.oppositeRatingIndirectSetPiecesDef)),
         ("opposite_rating_indirect_set_pieces_att", JsNumber(obj.oppositeRatingIndirectSetPiecesAtt)),
       )
     }
