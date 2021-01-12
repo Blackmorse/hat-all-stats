@@ -1,7 +1,7 @@
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.stream.{ClosedShape, Supervision}
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Keep, Merge, RunnableGraph, Sink, Source}
+import akka.stream.{ClosedShape, RestartSettings, SinkShape, SourceShape, Supervision}
+import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Keep, Merge, RestartSource, RunnableGraph, Sink, Source}
 import akka.util.ByteString
 import chpp.OauthTokens
 import chpp.leaguefixtures.{LeagueFixturesHttpFlow, LeagueFixturesRequest}
@@ -24,7 +24,7 @@ import models.stream.StreamMatchDetails
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.util.Success
+import scala.util.{Failure, Success}
 import spray.json._
 
 object LoaderApp extends  App {
@@ -68,17 +68,29 @@ object LoaderApp extends  App {
     .toMap
 
 
-  private val leagueIdNumber = 35
+  private val leagueIdNumber = 1
+
+
+
   val matchDetailsSource = TeamsSource(leagueIdNumber)
     .async
     .via(MatchDetailsFlow())
     .async
 
-  val client = new ClickhouseClient(Some(config))
-  val chSink = ClickhouseSink.insertSink(config, client)
+  val settings = RestartSettings(
+    minBackoff = 1 minute,
+    maxBackoff = 10 minutes,
+    randomFactor = 0
+  ).withMaxRestarts(10, 10 minutes)
 
-  val graph = RunnableGraph.fromGraph(
-    GraphDSL.create(chSink) { implicit builder => chSinkShape =>
+
+  val client = new ClickhouseClient(Some(config))
+  val chSink = Flow[Insert].log("pipeline_log").toMat(ClickhouseSink.insertSink(config, client))(Keep.right)
+
+
+
+  val graph = Source.fromGraph(
+    GraphDSL.create() { implicit builder =>
       import GraphDSL.Implicits._
 
       val broadcast = builder.add(Broadcast[StreamMatchDetails](4).async)
@@ -94,63 +106,64 @@ object LoaderApp extends  App {
 
       val merge = builder.add(Merge[Insert](4))
 
-      matchDetailsSource ~> broadcast ~> matchDetailsFlow ~> matchDetailsChFlow ~> merge
-                            broadcast ~> playerEventsFlow ~> playerEventsChFlow ~> merge
-                            broadcast ~> playerInfosFlow  ~> playerInfosChFlow  ~> merge
-                            broadcast ~> teamDetailsFlow  ~> teamDetailsChFlow  ~> merge ~> chSinkShape
-      ClosedShape
+      matchDetailsSource ~>  broadcast ~> matchDetailsFlow ~> matchDetailsChFlow ~> merge
+                             broadcast ~> playerEventsFlow ~> playerEventsChFlow ~> merge
+                             broadcast ~> playerInfosFlow  ~> playerInfosChFlow  ~> merge
+                             broadcast ~> teamDetailsFlow  ~> teamDetailsChFlow  ~> merge
+      SourceShape(merge.out)
     }
   )
 
-//
-//  Source.single(615797)
-//    .map(id => (PlayersRequest(teamId = Some(id)), id))
-//    .via(PlayersHttpFlow())
-//    .runForeach(println)
-  graph.run().onComplete(_ => {
-    val league = worldDetails.leagueList.filter(_.leagueId == leagueIdNumber).head
-    val leagueId = leagueIdNumber
-    val round = league.matchRound - 1
-    val season = league.season - league.seasonOffset
+  val graphBackoff = RestartSource.withBackoff(settings){() => graph}
 
-    client.execute(s"""INSERT INTO $databaseName.player_stats SELECT
-        |player_info.season,
-        |player_info.league_id,
-        |player_info.division_level,
-        |player_info.league_unit_id,
-        |player_info.league_unit_name,
-        |player_info.team_id,
-        |player_info.team_name,
-        |player_info.time,
-        |player_info.dt,
-        |player_info.round,
-        |player_info.match_id,
-        |player_info.player_id,
-        |player_info.first_name,
-        |player_info.last_name,
-        |player_info.age,
-        |player_info.days,
-        |player_info.role_id,
-        |player_info.played_minutes,
-        |player_info.rating,
-        |player_info.rating_end_of_match,
-        |player_info.injury_level,
-        |player_info.tsi,
-        |player_info.salary,
-        |player_events.yellow_cards,
-        |player_events.red_cards,
-        |player_events.goals,
-        |player_info.nationality
-      |FROM $databaseName.player_info
-      |LEFT JOIN
-      |(
-        |SELECT *
-        |FROM $databaseName.player_events
-        |WHERE (season = $season) AND (round = $round)
-      |)
-        |AS player_events ON (player_info.player_id = player_events.player_id) AND (player_info.season = player_events.season) AND (player_info.round = player_events.round)
-      |WHERE (season = $season) AND (league_id = $leagueId) AND (round = $round)""".stripMargin)
-      .onComplete(println)
+  graphBackoff.toMat(chSink)(Keep.right).run().onComplete( {
+    case Failure(exception) =>
+      println("Due  to some error : " + exception)
+      throw new Exception(exception)
+    case Success(_) =>
+      val league = worldDetails.leagueList.filter(_.leagueId == leagueIdNumber).head
+      val leagueId = leagueIdNumber
+      val round = league.matchRound - 1
+      val season = league.season - league.seasonOffset
+
+      client.execute(s"""INSERT INTO $databaseName.player_stats SELECT
+          |player_info.season,
+          |player_info.league_id,
+          |player_info.division_level,
+          |player_info.league_unit_id,
+          |player_info.league_unit_name,
+          |player_info.team_id,
+          |player_info.team_name,
+          |player_info.time,
+          |player_info.dt,
+          |player_info.round,
+          |player_info.match_id,
+          |player_info.player_id,
+          |player_info.first_name,
+          |player_info.last_name,
+          |player_info.age,
+          |player_info.days,
+          |player_info.role_id,
+          |player_info.played_minutes,
+          |player_info.rating,
+          |player_info.rating_end_of_match,
+          |player_info.injury_level,
+          |player_info.tsi,
+          |player_info.salary,
+          |player_events.yellow_cards,
+          |player_events.red_cards,
+          |player_events.goals,
+          |player_info.nationality
+        |FROM $databaseName.player_info
+        |LEFT JOIN
+        |(
+          |SELECT *
+          |FROM $databaseName.player_events
+          |WHERE (season = $season) AND (round = $round)
+        |)
+          |AS player_events ON (player_info.player_id = player_events.player_id) AND (player_info.season = player_events.season) AND (player_info.round = player_events.round)
+        |WHERE (season = $season) AND (league_id = $leagueId) AND (round = $round)""".stripMargin)
+        .onComplete(println)
   })
 
 
