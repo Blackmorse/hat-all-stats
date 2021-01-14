@@ -8,4 +8,5 @@ case class LeagueUnit(leagueUnitId: Int,
 case class League(leagueId: Int,
                   seasonOffset: Int,
                   nextRound: Int,
-                  season: Int)
+                  season: Int,
+                  activeTeams: Int)

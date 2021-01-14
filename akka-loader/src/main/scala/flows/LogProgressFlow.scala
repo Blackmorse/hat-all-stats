@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory
 object LogProgressFlow {
   private val logger = Logger(LoggerFactory.getLogger(this.getClass))
 
-  def apply[I](logEntityName: String): Flow[I, I, _] = {
-    val accumulateFlow = Flow[I].fold(0)((s, _) => {
-      logger.info(s"${s + 1} $logEntityName loaded")
+  def apply[I](logEntityName: String, maxProgressFunc: Option[I => Int] = None): Flow[I, I, _] = {
+    val accumulateFlow = Flow[I].fold(0)((s, i) => {
+      logger.info(s"${s + 1}${maxProgressFunc.map(f => f(i)).map(n => s"/$n").getOrElse("")} $logEntityName loaded")
       s + 1
     })
 

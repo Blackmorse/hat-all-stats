@@ -18,7 +18,7 @@ object PlayerInfoFlow {
       .async
       .via(PlayersHttpFlow())
       .async
-      .via(LogProgressFlow("Players of teams"))
+      .via(LogProgressFlow("Players of teams", Some(_._2.matc.team.leagueUnit.league.activeTeams)))
       .flatMapConcat{case(players, matchDetails) =>
         val playerInfos = players.team.playerList.map(player => PlayerInfoModelCH.convert(player, matchDetails, countryMap))
         Source(playerInfos.toList)

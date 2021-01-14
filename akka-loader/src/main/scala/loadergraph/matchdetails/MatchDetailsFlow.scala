@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext
 
 object MatchDetailsFlow {
   def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
-              executionContext: ExecutionContext) = {
+              executionContext: ExecutionContext): Flow[StreamTeam, StreamMatchDetails, _] = {
     Flow[StreamTeam]
       .map(team => (MatchesArchiveRequest(teamId = Some(team.id)), team))
       .async
@@ -28,7 +28,7 @@ object MatchDetailsFlow {
       .map{case(matchDetails, matc) => {
         StreamMatchDetails(matc = matc, matchDetails = matchDetails)
       }}
-      .via(LogProgressFlow("Match Details"))
+      .via(LogProgressFlow("Match Details", Some(_.matc.team.leagueUnit.league.activeTeams)))
   }
 
   private def lastMatch(matchesArchive: MatchesArchive, team: StreamTeam) = {

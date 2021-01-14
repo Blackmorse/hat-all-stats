@@ -17,6 +17,7 @@ object TeamDetailsFlow {
       .map(matchDetails => (TeamDetailsRequest(teamId = Some(matchDetails.matc.team.id), includeFlags = Some(true), includeDomesticFlags = Some(true)), matchDetails))
       .async
       .via(TeamDetailsHttpFlow())
+      .via(LogProgressFlow("Team Details", Some(_._2.matc.team.leagueUnit.league.activeTeams)))
       .map{case(teamDetails, matchDetails) =>
         val teams = teamDetails.teams
           .filter(t => t.teamId == matchDetails.matc.team.id)
@@ -24,6 +25,6 @@ object TeamDetailsFlow {
         val team = teams
           .head
         TeamDetailsModelCH.convert(team, matchDetails)
-      }.via(LogProgressFlow("Team Details"))
+      }
   }
 }

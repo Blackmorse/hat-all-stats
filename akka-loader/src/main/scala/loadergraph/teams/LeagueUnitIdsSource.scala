@@ -47,6 +47,7 @@ object LeagueUnitIdsSource {
       }
     }
 
-    flow.via(LogProgressFlow("league units")).async
+    val v: Source[LeagueUnit, NotUsed] = flow.via(LogProgressFlow("league units", None))
+    v.async
   }
 }
