@@ -130,19 +130,19 @@ public class CountriesLastLeagueMatchLoader {
                 log.info("Joining player_stats for ({}, {}) ", countryName, league.getLeagueId());
                 playersJoiner.join(league);
                 log.info("Calculating team ranks for ({}, {})", countryName, league.getLeagueId());
-//                teamRankCalculator.calculate(league);
-//                log.info("Send request to web about new round...");
-//                //Load promotions
-//                if (league.getMatchRound() - 1 == 14) {
-//                    log.info("It's last round of season. Time to load promotions!");
-//                    promotionsLoader.load(countryName, allLeagueUnitIdsForCountry);
-//                }
-//                alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
-//                log.info("Request successfully sent");
-//
-//                if (callback != null) {
-//                    callback.run();
-//                }
+                teamRankCalculator.calculate(league);
+                log.info("Send request to web about new round...");
+                //Load promotions
+                if (league.getMatchRound() - 1 == 14) {
+                    log.info("It's last round of season. Time to load promotions!");
+                    promotionsLoader.load(countryName, allLeagueUnitIdsForCountry);
+                }
+                alltidLike.updateRoundInfo(league.getSeason() - league.getSeasonOffset(), league.getLeagueId(), league.getMatchRound() - 1);
+                log.info("Request successfully sent");
+
+                if (callback != null) {
+                    callback.run();
+                }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 telegram.send(e.getMessage());

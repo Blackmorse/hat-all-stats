@@ -10,6 +10,7 @@ import chpp.search.models.SearchType
 import chpp.teamdetails.{TeamDetailsHttpFlow, TeamDetailsRequest}
 import chpp.worlddetails.models.WorldDetails
 import chpp.worlddetails.{WorldDetailsHttpFlow, WorldDetailsRequest}
+import clickhouse.{PlayerStatsRequester, TableTruncater, TeamRankJoiner}
 import com.crobox.clickhouse.ClickhouseClient
 import com.crobox.clickhouse.stream.{ClickhouseSink, Insert}
 import com.typesafe.config.ConfigFactory
@@ -68,7 +69,7 @@ object LoaderApp extends  App {
     .toMap
 
 
-  private val leagueIdNumber = 1
+  private val leagueIdNumber = 100
 
 
 
@@ -86,8 +87,6 @@ object LoaderApp extends  App {
 
   val client = new ClickhouseClient(Some(config))
   val chSink = Flow[Insert].log("pipeline_log").toMat(ClickhouseSink.insertSink(config, client))(Keep.right)
-
-
 
   val graph = Source.fromGraph(
     GraphDSL.create() { implicit builder =>
@@ -114,57 +113,43 @@ object LoaderApp extends  App {
     }
   )
 
-  val graphBackoff = RestartSource.withBackoff(settings){() => graph}
+  val graphBackoff = RestartSource.onFailuresWithBackoff(settings){() => graph}
 
-  graphBackoff.toMat(chSink)(Keep.right).run().onComplete( {
+  val v = graphBackoff.log("LOG").toMat(chSink)(Keep.right)
+
+  v.run().onComplete{
     case Failure(exception) =>
       println("Due  to some error : " + exception)
       throw new Exception(exception)
     case Success(_) =>
+      println("SUCCESS!")
       val league = worldDetails.leagueList.filter(_.leagueId == leagueIdNumber).head
-      val leagueId = leagueIdNumber
-      val round = league.matchRound - 1
-      val season = league.season - league.seasonOffset
+      client.execute(PlayerStatsRequester.playerStatsJoinRequest(league, databaseName))
+        .onComplete{
+          case Failure(exception) =>
+            println(exception)
+          case Success(_) =>
+            client.execute(TableTruncater.sql(league, "player_info", databaseName))
+            client.execute(TableTruncater.sql(league, "player_events", databaseName))
 
-      client.execute(s"""INSERT INTO $databaseName.player_stats SELECT
-          |player_info.season,
-          |player_info.league_id,
-          |player_info.division_level,
-          |player_info.league_unit_id,
-          |player_info.league_unit_name,
-          |player_info.team_id,
-          |player_info.team_name,
-          |player_info.time,
-          |player_info.dt,
-          |player_info.round,
-          |player_info.match_id,
-          |player_info.player_id,
-          |player_info.first_name,
-          |player_info.last_name,
-          |player_info.age,
-          |player_info.days,
-          |player_info.role_id,
-          |player_info.played_minutes,
-          |player_info.rating,
-          |player_info.rating_end_of_match,
-          |player_info.injury_level,
-          |player_info.tsi,
-          |player_info.salary,
-          |player_events.yellow_cards,
-          |player_events.red_cards,
-          |player_events.goals,
-          |player_info.nationality
-        |FROM $databaseName.player_info
-        |LEFT JOIN
-        |(
-          |SELECT *
-          |FROM $databaseName.player_events
-          |WHERE (season = $season) AND (round = $round)
-        |)
-          |AS player_events ON (player_info.player_id = player_events.player_id) AND (player_info.season = player_events.season) AND (player_info.round = player_events.round)
-        |WHERE (season = $season) AND (league_id = $leagueId) AND (round = $round)""".stripMargin)
-        .onComplete(println)
-  })
-
-
+            val sql = TeamRankJoiner.createSql(
+              season = league.season - league.seasonOffset,
+              leagueId = league.leagueId,
+              round = league.matchRound - 1,
+              divisionLevel = None,
+              database = databaseName
+            )
+            client.execute(sql).onComplete(println)
+            (1 to league.numberOfLevels).foreach(level => {
+              val sql = TeamRankJoiner.createSql(
+                season = league.season - league.seasonOffset,
+                leagueId = league.leagueId,
+                round = league.matchRound - 1,
+                divisionLevel = Some(level),
+                database = databaseName
+              )
+              client.execute(sql)
+            })
+        }
+  }
 }
