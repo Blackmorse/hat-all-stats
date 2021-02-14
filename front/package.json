@@ -24,6 +24,7 @@
     "react-content-loader": "^5.1.4",
     "react-dom": "^16.13.1",
     "react-i18next": "^11.7.0",
+    "react-paypal-button-v2": "^2.6.2",
     "react-plotlyjs-ts": "^2.2.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",

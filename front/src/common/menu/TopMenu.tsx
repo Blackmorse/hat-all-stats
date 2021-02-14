@@ -9,6 +9,10 @@ abstract class TopMenu<Props> extends React.Component<Props> {
 
     abstract selectBox(): JSX.Element | undefined
 
+    sectionLinks(): JSX.Element | undefined {
+        return undefined
+    }
+
     abstract externalLink(): JSX.Element | undefined
 
     render(): JSX.Element {
@@ -37,10 +41,15 @@ abstract class TopMenu<Props> extends React.Component<Props> {
                 </React.Fragment>
            })}
             {selectBox}
+            <span className="right_header_links">
+                <span className="right_header_section_links">
+                    {this.sectionLinks()}    
+                </span>
+                <Link className="logo_href" to="/">
+                    <img className="logo" src="/logo.png" alt="AlltidLike"/>
+                </Link>
+            </span>
             
-            <Link className="logo_href" to="/">
-                <img className="logo" src="/logo.png" alt="AlltidLike"/>
-            </Link>
             
         </div>
    }

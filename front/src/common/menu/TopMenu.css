@@ -48,9 +48,24 @@
     margin: 0 5px;
 }
 
+.right_header_links {
+    margin-left: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.right_header_section_links {
+    display: flex;
+    flex-direction: row;
+}
+
+.right_header_section_link {
+    margin: 0 20px;
+}
+
 .logo {
     height: 100%;
-    margin-left: auto;
 }
 
 .logo_href {

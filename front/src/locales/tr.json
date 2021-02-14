@@ -189,6 +189,8 @@
 
   "table.average_salary": "Ortalama maaş",
   "table.average_tsi": "Ortalama TSI",
-  "filter.played_in_last_match": "Son maçta oynadı"
+  "filter.played_in_last_match": "Son maçta oynadı",
+
+  "menu.about": "Hakkında"
 }
 

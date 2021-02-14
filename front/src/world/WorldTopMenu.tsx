@@ -1,6 +1,9 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import TopMenu from '../common/menu/TopMenu'
 import WorldData from '../rest/models/leveldata/WorldData'
+import { Translation } from 'react-i18next'
+import '../i18n'
 
 interface Props {
     worldData?: WorldData,
@@ -14,6 +17,19 @@ class WorldTopMenu extends TopMenu<Props> {
 
     externalLink(): JSX.Element | undefined {
         return undefined
+    }
+
+    sectionLinks(): JSX.Element | undefined {
+        return <Translation>{
+            (t, { i18n }) => <>
+            <span className="right_header_section_link">
+                <Link className="header_link" to="/about">{t('menu.about')}</Link>
+                </span>
+            <span className="right_header_section_link">
+                <Link className="header_link" to="/worldOverview">{t('overview.world_overview')}</Link>
+            </span>
+        </>
+        }</Translation>
     }
 
     onChanged = (event: React.FormEvent<HTMLSelectElement>) => {

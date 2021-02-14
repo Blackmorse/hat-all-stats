@@ -6,6 +6,7 @@ import DivisionLevel from './divisionlevel/DivisionLevel'
 import LeagueUnit from './leagueunit/LeagueUnit'
 import Team from './team/Team'
 import World from './world/World';
+import About from './world/About'
 import CookieWidget from './CookieWidget'
 import LeagueRedirect from './common/redirect/LeagueRedirect'
 import LeagueUnitRedirect from './common/redirect/LeagueUnitRedirect'
@@ -17,7 +18,8 @@ class App extends React.Component{
     return (<>
     <Router>
       <Switch>
-        <Route exact path="/" component={World} />
+        <Route exact path="/" component={About} />
+        <Route exact path="/about" component={About} />
         <Route exact path="/worldOverview" component={World} />
         <Route exact path="/league" component={LeagueRedirect} />
         <Route exact path="/league/:leagueId" component={League} />

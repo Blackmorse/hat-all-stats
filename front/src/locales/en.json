@@ -189,5 +189,7 @@
 
     "table.average_salary": "Average salary",
     "table.average_tsi": "Average TSI",
-    "filter.played_in_last_match": "Played in the last match"
+    "filter.played_in_last_match": "Played in the last match",
+
+    "menu.about": "About"
   }

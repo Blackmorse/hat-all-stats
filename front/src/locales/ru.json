@@ -189,5 +189,7 @@
 
     "table.average_salary": "Средняя зарплата",
     "table.average_tsi": "Среднее TSI",
-    "filter.played_in_last_match": "Сыгравшие в последнем матче"
+    "filter.played_in_last_match": "Сыгравшие в последнем матче",
+
+    "menu.about": "О сайте"
 }

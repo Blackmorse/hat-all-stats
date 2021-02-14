@@ -189,5 +189,7 @@
 
     "table.average_salary": "Prosječna plaća",
     "table.average_tsi": "Prosječni TSI",
-    "filter.played_in_last_match": "Igrano u posljednjem meču"
+    "filter.played_in_last_match": "Igrano u posljednjem meču",
+
+    "menu.about": "Oko"
 }

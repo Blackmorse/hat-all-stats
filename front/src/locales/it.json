@@ -190,5 +190,7 @@
 
     "table.average_salary": "Stipendio medio",
     "table.average_tsi": "TSI media",
-    "filter.played_in_last_match": "Giocato nell'ultima partita"
+    "filter.played_in_last_match": "Giocato nell'ultima partita",
+
+    "menu.about": "Di"
 }
