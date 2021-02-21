@@ -27,6 +27,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 import spray.json._
+import utils.WorldDetailsSingleRequest
 
 object LoaderApp extends  App {
   implicit val actorSystem = ActorSystem("LoaderActorSystem")
@@ -44,22 +45,7 @@ object LoaderApp extends  App {
 
   implicit val oauthTokens: OauthTokens = OauthTokens(authToken, authCustomerKey, clientSecret, tokenSecret)
 
-  val countryMapFuture = Source.single((WorldDetailsRequest(), Unit))
-    .via(WorldDetailsHttpFlow())
-    .map(_._1)
-    .runFold(null.asInstanceOf[WorldDetails])((_, wd) => wd)
-//    .map{worldDetails =>
-//      worldDetails.leagueList
-//        .view
-//        .map(league => league.country.map(country => (country.countryId, league.leagueId)))
-//        .filter(_.isDefined)
-//        .map(_.get)
-//        .toMap
-//    }
-
-
-  val worldDetails = Await.result(countryMapFuture, 30 seconds)
-//  println(countryMap)
+  val worldDetails = WorldDetailsSingleRequest.request(leagueId = None)
 
   val countryMap = worldDetails.leagueList
     .view
@@ -69,11 +55,9 @@ object LoaderApp extends  App {
     .toMap
 
 
-  private val leagueIdNumber = 100
+  private val leagueIdNumber = 4
 
-
-
-  val matchDetailsSource = TeamsSource(leagueIdNumber)
+  val teamsSource = TeamsSource(leagueIdNumber)
     .async
     .via(MatchDetailsFlow())
     .async
@@ -105,25 +89,24 @@ object LoaderApp extends  App {
 
       val merge = builder.add(Merge[Insert](4))
 
-      matchDetailsSource ~>  broadcast ~> matchDetailsFlow ~> matchDetailsChFlow ~> merge
-                             broadcast ~> playerEventsFlow ~> playerEventsChFlow ~> merge
-                             broadcast ~> playerInfosFlow  ~> playerInfosChFlow  ~> merge
-                             broadcast ~> teamDetailsFlow  ~> teamDetailsChFlow  ~> merge
+      teamsSource ~>  broadcast ~> matchDetailsFlow ~> matchDetailsChFlow ~> merge
+                      broadcast ~> playerEventsFlow ~> playerEventsChFlow ~> merge
+                      broadcast ~> playerInfosFlow  ~> playerInfosChFlow  ~> merge
+                      broadcast ~> teamDetailsFlow  ~> teamDetailsChFlow  ~> merge
       SourceShape(merge.out)
     }
   )
 
   val graphBackoff = RestartSource.onFailuresWithBackoff(settings){() => graph}
 
-  val v = graphBackoff.log("LOG").toMat(chSink)(Keep.right)
-
-  v.run().onComplete{
+    graphBackoff.toMat(chSink)(Keep.right).run().onComplete{
     case Failure(exception) =>
       println("Due  to some error : " + exception)
       throw new Exception(exception)
     case Success(_) =>
       println("SUCCESS!")
-      val league = worldDetails.leagueList.filter(_.leagueId == leagueIdNumber).head
+      val league = WorldDetailsSingleRequest.request(leagueId = Some(leagueIdNumber)).leagueList.head
+      //worldDetails.leagueList.filter(_.leagueId == leagueIdNumber).head
       client.execute(PlayerStatsRequester.playerStatsJoinRequest(league, databaseName))
         .onComplete{
           case Failure(exception) =>

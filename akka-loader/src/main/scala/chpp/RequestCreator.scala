@@ -55,7 +55,7 @@ object RequestCreator {
     val header = "OAuth " +
       (oauthParameters + ("oauth_signature" -> URLEncoder.encode(result, "UTF-8"))).map{case(key, value) => s"""$key="$value""""}.mkString(", ");
 
-    HttpRequest(uri = url)
+    HttpRequest(uri = s"https://$URL" + url)
       .withHeaders(RawHeader("Authorization", header))
   }
 

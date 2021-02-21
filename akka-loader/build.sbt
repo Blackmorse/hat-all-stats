@@ -4,8 +4,8 @@ version := "0.1"
 
 scalaVersion := "2.12.12"
 
-val akkaVersion = "2.6.10"
-val akkaHttpVersion = "10.2.2"
+val akkaVersion = "2.6.12"
+val akkaHttpVersion = "10.2.3"
 
 resolvers += Resolver.mavenLocal
 
