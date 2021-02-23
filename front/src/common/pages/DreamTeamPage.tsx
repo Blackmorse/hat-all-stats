@@ -13,6 +13,7 @@ import i18n from '../../i18n';
 import StatsTypeSelector from '../selectors/StatsTypeSelector'
 import SeasonSelector from '../selectors/SeasonSelector';
 import FormationSelector, { Formation } from '../selectors/FormationSelector'
+import { ratingFormatter } from '../Formatters'
 
 interface State {
     dreamTeamPlayers?: Array<DreamTeamPlayer>,
@@ -22,6 +23,11 @@ interface State {
 interface Request {
     statsType: StatsType,
     season: number
+}
+
+export interface DreamTeamPlayerPosition {
+    player?: DreamTeamPlayer,
+    position: string
 }
 
 class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>> 
@@ -87,14 +93,14 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
     }
 
 
-    private pushPlayer(array: Array<JSX.Element>, index: number, 
+    private pushPlayer(array: Array<DreamTeamPlayerPosition>, index: number, 
             players: Array<DreamTeamPlayer>, position: string) {
-        array.push((players.length > index) ? <DreamTeamPlayerCard player={players[index]} position={position}/> : 
-            <DreamTeamPlayerCard position={position}/>)
+        array.push((players.length > index) ? {player: players[index], position: position } : 
+            { position: position})
     }
 
-    private wings(dreamTeamPlayers: Array<DreamTeamPlayer>, linePositions: number, position: string): Array<JSX.Element> {
-        let result: Array<JSX.Element> = []
+    private wings(dreamTeamPlayers: Array<DreamTeamPlayer>, linePositions: number, position: string): Array<DreamTeamPlayerPosition> {
+        let result: Array<DreamTeamPlayerPosition> = []
         if (linePositions === 2) {
             return []
         } else {
@@ -104,8 +110,8 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
         }
     }
 
-    private centers(dreamTeamPlayers: Array<DreamTeamPlayer>, linePositions: number, position: string): Array<JSX.Element> {
-        let result: Array<JSX.Element> = []
+    private centers(dreamTeamPlayers: Array<DreamTeamPlayer>, linePositions: number, position: string): Array<DreamTeamPlayerPosition> {
+        let result: Array<DreamTeamPlayerPosition> = []
         if(linePositions === 2 || linePositions === 4) {
             this.pushPlayer(result, 0, dreamTeamPlayers, position)
             this.pushPlayer(result, 1, dreamTeamPlayers, position)
@@ -119,19 +125,26 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
         return result
     }
 
-    private forwardsKeeper(dreamTeamPlayers: Array<DreamTeamPlayer>, linePositions: number, position: string): Array<JSX.Element> {
-        let result: Array<JSX.Element> = []
+    private forwardsKeeper(dreamTeamPlayers: Array<DreamTeamPlayer>, linePositions: number, position: string): Array<DreamTeamPlayerPosition> {
+        let result: Array<DreamTeamPlayerPosition> = []
         Array.from(Array(linePositions).keys()).forEach(i => {
             this.pushPlayer(result, i, dreamTeamPlayers, position)
         })
         return result
     }
     
+    private starsOfPlayers(players: Array<DreamTeamPlayerPosition>): number {
+        if (players.length === 0) {
+            return 0
+        }
+        return players.map(player => (player.player !== undefined) ? player.player.rating : 0).reduce((a, b) => a + b)
+    }
+
     renderSection(): JSX.Element {
         if (this.state.state.dreamTeamPlayers === undefined) {
             return <></>
         }
-        console.log(this.state.dataRequest.statsType)
+        
         let keepers = this.state.state.dreamTeamPlayers.filter(player => player.role === 'keeper')
         let defenders = this.state.state.dreamTeamPlayers.filter(player => player.role === 'defender')
         let wingbacks = this.state.state.dreamTeamPlayers.filter(player => player.role === 'wingback')
@@ -139,55 +152,69 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
         let wingers = this.state.state.dreamTeamPlayers.filter(player => player.role === 'winger')
         let forwards = this.state.state.dreamTeamPlayers.filter(player => player.role === 'forward')
 
-        let jsxWingbacks = this.wings(wingbacks, this.state.state.formation.defenders, i18n.t('dream_team.wingback'))
-        let jsxDefs = this.centers(defenders, this.state.state.formation.defenders, i18n.t('dream_team.defender'))
-        let jsxWings = this.wings(wingers, this.state.state.formation.midfielders, i18n.t('dream_team.winger'))
-        let jsxMidfielders = this.centers(midfielders, this.state.state.formation.midfielders, i18n.t('dream_team.midfielder'))
-        let jsxForwards = this.forwardsKeeper(forwards, this.state.state.formation.forwards, i18n.t('dream_team.forward'))
+        let displayedKeepers = this.forwardsKeeper(keepers, 1, i18n.t('dream_team.keeper'))
+        let displayedWingbacks = this.wings(wingbacks, this.state.state.formation.defenders, i18n.t('dream_team.wingback'))
+        let displayedDefs = this.centers(defenders, this.state.state.formation.defenders, i18n.t('dream_team.defender'))
+        let displayedWings = this.wings(wingers, this.state.state.formation.midfielders, i18n.t('dream_team.winger'))
+        let displayedMidfielders = this.centers(midfielders, this.state.state.formation.midfielders, i18n.t('dream_team.midfielder'))
+        let displayedForwards = this.forwardsKeeper(forwards, this.state.state.formation.forwards, i18n.t('dream_team.forward'))
+
+        let sumStars = 0
+        sumStars += this.starsOfPlayers(displayedKeepers)
+        sumStars += this.starsOfPlayers(displayedWingbacks)
+        sumStars += this.starsOfPlayers(displayedDefs)
+        sumStars += this.starsOfPlayers(displayedWings)
+        sumStars += this.starsOfPlayers(displayedMidfielders)
+        sumStars += this.starsOfPlayers(displayedForwards)
 
         return <div className="dream_team_page">
-            <div className="selectors_div">
-                <FormationSelector currentFormation={this.state.state.formation}
-                    callback={this.formationChanged} />
-                <SeasonSelector currentSeason={this.state.dataRequest.season}
-                    seasonOffset={this.props.levelDataProps.levelData.seasonOffset} 
-                    seasons={this.props.levelDataProps.seasons()}
-                    callback={this.seasonChanged} />
-                <StatsTypeSelector rounds={this.props.levelDataProps.rounds(this.state.dataRequest.season)}
-                    statsTypes={[StatsTypeEnum.ROUND, StatsTypeEnum.ACCUMULATE]}
-                    selectedStatType={this.state.dataRequest.statsType}
-                    onChanged={this.statsTypeChanged}/>
+            <div className="stats_and_selectors_div">
+                <div className="dream_team_stats">
+                    <span className="dream_team_stats_total">{i18n.t('dream_team.total')}:</span> {ratingFormatter(sumStars)}
+                </div>
+                <nav className="selectors_nav">
+                    <FormationSelector currentFormation={this.state.state.formation}
+                        callback={this.formationChanged} />
+                    <SeasonSelector currentSeason={this.state.dataRequest.season}
+                        seasonOffset={this.props.levelDataProps.levelData.seasonOffset} 
+                        seasons={this.props.levelDataProps.seasons()}
+                        callback={this.seasonChanged} />
+                    <StatsTypeSelector rounds={this.props.levelDataProps.rounds(this.state.dataRequest.season)}
+                        statsTypes={[StatsTypeEnum.ROUND, StatsTypeEnum.ACCUMULATE]}
+                        selectedStatType={this.state.dataRequest.statsType}
+                        onChanged={this.statsTypeChanged}/>
+                </nav>
             </div>
             <div className="core_team">
                 <div className="core_team_column"></div>
                 <div className="core_team_column">
-                    {this.forwardsKeeper(keepers, 1, i18n.t('dream_team.keeper'))}
+                    {displayedKeepers.map(keeper => <DreamTeamPlayerCard dreamTeamPlayerPosition={keeper} />)}
                 </div>
                 <div className="core_team_column"></div>
                 {/* def */}
                 <div className="core_team_column">
-                    {jsxWingbacks[0]}
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[0]} />
                 </div>
                 <div className="core_team_column">
-                    {jsxDefs}
+                    {displayedDefs.map(def => <DreamTeamPlayerCard dreamTeamPlayerPosition={def} />)}
                 </div>
                 <div className="core_team_column">
-                    {jsxWingbacks[1]}
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[1]} />
                 </div>
                 {/* mid */}
                 <div className="core_team_column">
-                    {jsxWings[0]}
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[0]} />
                 </div>
                 <div className="core_team_column">
-                    {jsxMidfielders}
+                    {displayedMidfielders.map(midfielder => <DreamTeamPlayerCard dreamTeamPlayerPosition={midfielder} />)}
                 </div>
                 <div className="core_team_column">
-                    {jsxWings[1]}
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[1]} />
                 </div>
                 {/* attack */}
                 <div className="core_team_column"></div>
                 <div className="core_team_column">
-                    {jsxForwards}
+                    {displayedForwards.map(forward => <DreamTeamPlayerCard dreamTeamPlayerPosition={forward} />)}
                 </div>
                 <div className="core_team_column"></div>
             </div>
@@ -195,12 +222,12 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
                 {i18n.t('dream_team.substitions')}
             </div>
             <div className="substitutions">
-                <DreamTeamPlayerCard player={keepers[1]} position={i18n.t('dream_team.keeper')}/>
-                <DreamTeamPlayerCard player={wingbacks[jsxWingbacks.length]} position={i18n.t('dream_team.wingback')}/>
-                <DreamTeamPlayerCard player={defenders[jsxDefs.length]} position={i18n.t('dream_team.defender')} />
-                <DreamTeamPlayerCard player={midfielders[jsxMidfielders.length]} position={i18n.t('dream_team.midfielder')}/>
-                <DreamTeamPlayerCard player={forwards[jsxForwards.length]} position={i18n.t('dream_team.forward')}/>
-                <DreamTeamPlayerCard player={wingers[jsxWings.length]} position={i18n.t('dream_team.winger')}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: keepers[1], position: i18n.t('dream_team.keeper')}}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingbacks[displayedWingbacks.length], position: i18n.t('dream_team.wingback')}}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: defenders[displayedDefs.length], position: i18n.t('dream_team.defender')}} />
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: midfielders[displayedMidfielders.length], position: i18n.t('dream_team.midfielder')}}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: forwards[displayedForwards.length], position: i18n.t('dream_team.forward')}}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingers[displayedWings.length], position: i18n.t('dream_team.winger')}}/>
             </div>
         </div>
     }

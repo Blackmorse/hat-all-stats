@@ -190,5 +190,7 @@
     "table.average_tsi": "Durchschnittliche TSI",
     "filter.played_in_last_match": "Im letzten Spiel gespielt",
 
-    "menu.about": "Über"
+    "menu.about": "Über",
+
+    "dream_team.total": "Summe"
 }

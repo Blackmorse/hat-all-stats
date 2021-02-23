@@ -191,5 +191,7 @@
     "table.average_tsi": "Average TSI",
     "filter.played_in_last_match": "Played in the last match",
 
-    "menu.about": "About"
+    "menu.about": "About",
+
+    "dream_team.total": "Total"
   }

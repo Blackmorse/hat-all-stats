@@ -3,9 +3,25 @@
     flex-direction: column;
 }
 
-.selectors_div {
-    align-self: flex-end;
+.stats_and_selectors_div {
+    
     margin: 0 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.dream_team_stats {
+    display: flex;
+    flex-direction: row;
+}
+
+.dream_team_stats_total {
+    margin : 5px;
+}
+
+.selectors_nav {
+    align-self: flex-end;
     display: flex;
     flex-direction: row;
 }

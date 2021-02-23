@@ -191,5 +191,7 @@
     "table.average_tsi": "Prosječni TSI",
     "filter.played_in_last_match": "Igrano u posljednjem meču",
 
-    "menu.about": "Oko"
+    "menu.about": "Oko",
+
+    "dream_team.total": "Iznos"
 }
