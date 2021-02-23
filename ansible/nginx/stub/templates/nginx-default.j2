@@ -19,7 +19,7 @@ server {
 
         ssl on;
         ssl_certificate {{ base_project_directory }}/certs/certificate.pem;
-        ssl_certificate_key {{ base_project_directory }}/certs/private_key.key;
+        ssl_certificate_key {{ base_project_directory }}/certs/private_key.pem;
 
         server_name hattid.com;
 
