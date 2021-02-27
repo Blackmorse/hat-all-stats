@@ -1,16 +1,18 @@
 package controllers
 
 import java.util.Date
-
 import com.blackmorse.hattrick.model.enums.MatchType
 import databases.ClickhouseDAO
 import hattrick.Hattrick
+
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.ControllerComponents
+import play.api.mvc.{BaseController, ControllerComponents}
 
 import collection.JavaConverters._
 import scala.concurrent.Future
 import models.clickhouse.TeamMatchInfo
+import play.api.libs.json.Json
+import service.SimilarMatchesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -21,7 +23,8 @@ case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, date: Date,
 @Singleton
 class MatchController @Inject()(val controllerComponents: ControllerComponents,
                                 val clickhouseDAO: ClickhouseDAO,
-                                val hattrick: Hattrick) {
+                                val hattrick: Hattrick,
+                                val similarMatchesService: SimilarMatchesService)  extends BaseController {
   def matchesFuture(webTeamDetails: WebTeamDetails, season: Int) = {
     val htMatchesFuture = Future(hattrick.api.matchesArchive().teamId(webTeamDetails.teamId).season(season).execute())
 
@@ -42,5 +45,11 @@ class MatchController @Inject()(val controllerComponents: ControllerComponents,
           )
       })
     }
+  }
+
+  def similarMatches(matchId: Long, accuracy: Double) = Action.async{ implicit request =>
+    similarMatchesService.similarMatchesStats(matchId, accuracy)
+      .map(similarMatchesStats =>
+        similarMatchesStats.map(s => Ok(Json.toJson(s))).getOrElse(Ok("")))
   }
 }

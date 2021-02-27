@@ -16,4 +16,10 @@ class RestClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionCo
       simpleRow.as(rowParser.*)
     }
   }
+
+  def executeSingleOpt[T](simpleRow: SimpleSql[Row], rowParser: RowParser[T]): Future[Option[T]] = Future {
+    db.withConnection { implicit connection =>
+      simpleRow.as(rowParser.singleOpt)
+    }
+  }
 }

@@ -109,6 +109,8 @@ GET     /api/overview/topVictories   controllers.RestOverviewController.topTeamV
 GET     /api/overview/topSeasonScorers   controllers.RestOverviewController.topSeasonScorers(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/worldData    controllers.RestOverviewController.getWorldData()
 
+GET     /api/matches/similarMatches controllers.MatchController.similarMatches(matchId: Long, accuracy: Double)
+
 GET     /                           controllers.HomeController.index
 GET     /league                     controllers.LeagueController.overview(leagueId: Int)
 GET     /league/bestTeams           controllers.LeagueController.bestTeams(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
