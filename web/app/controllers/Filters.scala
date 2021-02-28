@@ -19,6 +19,18 @@ class RequestSourceFilter @Inject() (implicit val mat: Materializer,
   }
 }
 
+class LogUrlsFilter @Inject()(implicit val mat: Materializer,
+                             ) extends Filter with Logging {
+  override def apply(nextFilter: RequestHeader => Future[Result])(requestHeader: RequestHeader): Future[Result] = {
+    try {
+
+    } catch {
+      case _ => logger.warn("Unable to write request to CH")
+    }
+    nextFilter(requestHeader)
+  }
+}
+
 import javax.inject.Inject
 import play.api.http.DefaultHttpFilters
 import play.api.http.EnabledFilters

@@ -1,6 +1,7 @@
 package service
 
-import databases.OverviewClickhouseDAO
+import databases.dao.OverviewClickhouseDAO
+
 import javax.inject.{Inject, Singleton}
 import models.clickhouse.overview.{AvgMatchDetailsModel, AvgTeamPlayersStats, FormationsModel, MatchOverviewModel, PlayerOverviewModel, TeamOverviewModel}
 import play.api.cache.AsyncCacheApi

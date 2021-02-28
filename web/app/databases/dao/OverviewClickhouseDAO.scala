@@ -1,9 +1,11 @@
-package databases
+package databases.dao
 
 import anorm.ResultSetParser
-import javax.inject.{Inject, Singleton}
+import databases.SqlBuilder
 import models.clickhouse.overview._
 import play.api.db.DBApi
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class OverviewClickhouseDAO @Inject()(

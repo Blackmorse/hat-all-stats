@@ -2,9 +2,10 @@ package controllers
 
 import com.blackmorse.hattrick.common.CommonData
 import com.blackmorse.hattrick.model.enums.SearchType
-import databases.ClickhouseDAO
 import databases.clickhouse._
+import databases.dao.ClickhouseDAO
 import hattrick.Hattrick
+
 import javax.inject.{Inject, Singleton}
 import models.clickhouse._
 import models.web

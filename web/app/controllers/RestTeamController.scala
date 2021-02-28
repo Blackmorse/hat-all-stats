@@ -1,7 +1,6 @@
 package controllers
 
 import java.util.Date
-
 import com.blackmorse.hattrick.api.teamdetails.model.Team
 import com.blackmorse.hattrick.model.enums.MatchType
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamMatchesRequest}
@@ -9,9 +8,11 @@ import databases.requests.playerstats.player._
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamrankings.TeamRankingsRequest
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.{ClickhouseDAO, RestClickhouseDAO}
+import databases.RestClickhouseDAO
+import databases.dao.{ClickhouseDAO, RestClickhouseDAO}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
+
 import javax.inject.Inject
 import models.clickhouse.{NearestMatch, TeamRankings}
 import models.web.{PlayersParameters, RestStatisticsParameters}

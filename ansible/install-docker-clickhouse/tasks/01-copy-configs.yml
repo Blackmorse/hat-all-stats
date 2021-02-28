@@ -1,0 +1,15 @@
+---
+- name: create clickhouse directory
+  file:
+    path: "{{ base_project_directory }}/clickhouse/volume"
+    state: directory
+
+- name: copy users.xml
+  template:
+    src: users.xml.j2
+    dest: "{{ base_project_directory }}/clickhouse/users.xml"
+
+- name: copy config.xml
+  template:
+    src: config.xml.j2
+    dest: "{{ base_project_directory }}/clickhouse/config.xml"

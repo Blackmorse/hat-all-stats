@@ -1,9 +1,9 @@
-package databases
+package databases.dao
 
 import anorm.{Row, RowParser, SimpleSql}
-import javax.inject.{Inject, Singleton}
 import play.api.db.DBApi
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton

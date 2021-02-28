@@ -1,6 +1,7 @@
 package databases.requests
 
-import databases.{RestClickhouseDAO, SqlBuilder}
+import databases.SqlBuilder
+import databases.dao.RestClickhouseDAO
 import models.web.{Accumulate, MultiplyRoundsType, RestStatisticsParameters, Round}
 
 import scala.concurrent.Future

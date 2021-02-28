@@ -2,9 +2,10 @@ package controllers
 
 import com.blackmorse.hattrick.api.teamdetails.model.{Team, TeamDetails}
 import com.blackmorse.hattrick.model.enums.MatchType
-import databases.ClickhouseDAO
 import databases.clickhouse.{Accumulated, OnlyRound, StatisticsCHRequest}
+import databases.dao.ClickhouseDAO
 import hattrick.Hattrick
+
 import javax.inject.{Inject, Singleton}
 import models.web._
 import play.api.mvc.{BaseController, Call, ControllerComponents}

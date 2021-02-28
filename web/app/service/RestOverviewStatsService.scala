@@ -1,8 +1,9 @@
 package service
 
-import databases.RestClickhouseDAO
+import databases.dao.RestClickhouseDAO
 import databases.requests.overview.{FormationsOverviewRequest, NumberOverviewRequest, OverviewMatchAveragesRequest, OverviewTeamPlayerAveragesRequest, SurprisingMatchesOverviewRequest, TopAttendanceMatchesOverviewRequest, TopHatstatsTeamOverviewRequest, TopMatchesOverviewRequest, TopRatingPlayerOverviewRequest, TopSalaryPlayerOverviewRequest, TopSalaryTeamOverviewRequest, TopSeasonScorersOverviewRequest, TopVictoriesTeamsOverviewRequest}
 import databases.requests.overview.model.{AveragesOverview, FormationsOverview, MatchAttendanceOverview, MatchTopHatstatsOverview, NumberOverview, PlayerStatOverview, TeamStatOverview, TotalOverview}
+
 import javax.inject.{Inject, Singleton}
 import play.api.cache.AsyncCacheApi
 

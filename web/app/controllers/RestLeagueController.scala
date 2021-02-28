@@ -1,7 +1,7 @@
 package controllers
 
 import com.google.inject.{Inject, Singleton}
-import databases.RestClickhouseDAO
+import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails._
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._

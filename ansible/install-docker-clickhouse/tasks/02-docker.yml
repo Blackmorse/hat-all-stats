@@ -1,0 +1,15 @@
+---
+- name: start docker
+  docker_container: 
+    name: clickhouse-server-hattrick
+    image: yandex/clickhouse-server:20.11
+    restart_policy: always
+    volumes:
+      - "{{ base_project_directory }}/clickhouse/volume:/var/lib/clickhouse"
+      - "{{ base_project_directory }}/clickhouse/users.xml:/etc/clickhouse-server/users.xml"
+      - "{{ base_project_directory }}/clickhouse/config.xml:/etc/clickhouse-server/config.xml"
+    ulimits:
+      - nofile:262144:262144
+    ports:
+      - 8123:8123
+    state: started

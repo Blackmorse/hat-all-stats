@@ -2,7 +2,8 @@ package databases.requests.matchdetails
 
 import anorm.RowParser
 import com.blackmorse.hattrick.api.matchdetails.model.MatchDetails
-import databases.{RestClickhouseDAO, SqlBuilder}
+import databases.SqlBuilder
+import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
 import databases.requests.model.`match`.SimilarMatchesStats
 

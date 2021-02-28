@@ -1,7 +1,8 @@
 package databases.requests.playerstats.dreamteam
 
 import anorm.RowParser
-import databases.{RestClickhouseDAO, SqlBuilder}
+import databases.SqlBuilder
+import databases.dao.RestClickhouseDAO
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.player.DreamTeamPlayer
 import models.web.{Accumulate, Round, StatsType}

@@ -3,6 +3,7 @@ package databases
 package clickhouse
 
 import anorm.RowParser
+import databases.dao.ClickhouseDAO
 import models.clickhouse._
 import models.web.StatisticsParameters
 

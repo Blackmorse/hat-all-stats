@@ -1,8 +1,8 @@
 package controllers
 
 import com.blackmorse.hattrick.api.worlddetails.model.League
-import databases.ClickhouseDAO
 import databases.clickhouse._
+
 import javax.inject.{Inject, Singleton}
 import models.clickhouse._
 import models.web._
@@ -11,6 +11,7 @@ import play.api.mvc.{BaseController, Call, ControllerComponents}
 import service.DefaultService
 import utils.Romans
 import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
+import databases.dao.ClickhouseDAO
 import service.leagueinfo.{LeagueInfo, LeagueInfoService}
 
 import scala.concurrent.ExecutionContext.Implicits.global

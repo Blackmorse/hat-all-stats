@@ -1,9 +1,10 @@
 package controllers
 
-import java.util.Date
+import databases.dao.RestClickhouseDAO
 
-import databases.RestClickhouseDAO
+import java.util.Date
 import io.swagger.annotations.Api
+
 import javax.inject.Inject
 import models.web.rest.LevelData
 import models.web.rest.LevelData.Rounds

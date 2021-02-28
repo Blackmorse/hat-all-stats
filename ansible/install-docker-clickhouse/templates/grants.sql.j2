@@ -1,0 +1,6 @@
+CREATE USER IF NOT EXISTS hattrick_web IDENTIFIED WITH PLAIN_PASSWORD BY '{{ clickhouse.users.web.password }}';
+GRANT SELECT on {{ loader.databaseName }}.* TO hattrick_web;
+GRANT INSERT on {{ loader.databaseName }}.request_log TO hattrick_web;
+
+CREATE USER IF NOT EXISTS hattrick_loader IDENTIFIED WITH PLAIN_PASSWORD BY '{{ clickhouse.users.loader.password }}';
+GRANT INSERT, SELECT on {{ loader.databaseName }}.* TO hattrick_loader;

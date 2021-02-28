@@ -1,14 +1,15 @@
-package databases
+package databases.dao
 
 import akka.actor.ActorSystem
+import databases.SqlBuilder
 import databases.clickhouse.StatisticsCHRequest
-import javax.inject.{Inject, Singleton}
-import models.clickhouse.{HistoryInfo, HistoryTeamLeagueUnitInfo, Promotion, TeamMatchInfo, TeamRankings}
-import models.web.{Accumulate, Desc, MultiplyRoundsType, Round, SortingDirection, StatsType}
+import models.clickhouse._
+import models.web._
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
 import service.DefaultService
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton

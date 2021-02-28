@@ -1,6 +1,6 @@
 package controllers
 
-import databases.RestClickhouseDAO
+import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails._
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
@@ -9,6 +9,7 @@ import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import io.swagger.annotations.Api
+
 import javax.inject.{Inject, Singleton}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds

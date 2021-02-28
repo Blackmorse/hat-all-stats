@@ -1,9 +1,10 @@
 package controllers
 
 import com.blackmorse.hattrick.model.enums.SearchType
-import databases.ClickhouseDAO
 import databases.clickhouse.{Accumulated, AvgMax, OnlyRound, StatisticsCHRequest, StatisticsType}
+import databases.dao.ClickhouseDAO
 import hattrick.Hattrick
+
 import javax.inject.{Inject, Singleton}
 import models.clickhouse.{BestMatch, FanclubFlags, PlayerStats, PlayersState, PowerRating, StreakTrophy, SurprisingMatch, TeamHatstats, TeamState}
 import models.web._

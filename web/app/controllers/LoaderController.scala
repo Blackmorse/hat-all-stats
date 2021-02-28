@@ -1,8 +1,8 @@
 package controllers
 
-import java.util.Date
+import databases.dao.ClickhouseDAO
 
-import databases.ClickhouseDAO
+import java.util.Date
 import javax.inject.{Inject, Singleton}
 import play.api.Logging
 import play.api.cache.AsyncCacheApi

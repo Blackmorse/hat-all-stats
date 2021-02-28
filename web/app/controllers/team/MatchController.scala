@@ -2,7 +2,7 @@ package controllers
 
 import java.util.Date
 import com.blackmorse.hattrick.model.enums.MatchType
-import databases.ClickhouseDAO
+import databases.dao.ClickhouseDAO
 import hattrick.Hattrick
 
 import javax.inject.{Inject, Singleton}

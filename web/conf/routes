@@ -12,7 +12,7 @@ GET     /api/league/:leagueId/leagueUnitName/:leagueUnitName    controllers.Rest
 
 GET     /worldOverview              controllers.WorldController.overview()
 
-GET     /health                     controllers.WorldController.health()
+GET     /api/health                     controllers.WorldController.health()
 GET     /api/hoRequests             controllers.WorldController.hoRequests()
 
 GET     /api/league/:leagueId                 controllers.RestLeagueController.getLeagueData(leagueId: Int)

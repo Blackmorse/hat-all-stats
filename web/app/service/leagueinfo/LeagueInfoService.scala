@@ -1,8 +1,9 @@
 package service.leagueinfo
 
 import controllers.routes
-import databases.ClickhouseDAO
+import databases.dao.ClickhouseDAO
 import hattrick.Hattrick
+
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import utils.Romans

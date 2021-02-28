@@ -1,62 +1,11 @@
 ---
 # tasks file for install-docker-clickhouse
-- name: install pip
-  become: true
-  apt:
-    name: python3-pip
-    state: present
+- include: 00-python-dependencies.yml
 
-- name: install python docker
-  pip:
-    name: docker
+- include: 01-copy-configs.yml
 
-- name: create clickhouse directory
-  file:
-    path: "{{ base_project_directory }}/clickhouse/volume"
-    state: directory
+- include: 02-docker.yml
 
-- name: copy users.xml
-  template:
-    src: users.xml.j2
-    dest: "{{ base_project_directory }}/clickhouse/users.xml"
+- include: 03-grants.yml
 
-- name: copy config.xml
-  template:
-    src: config.xml.j2
-    dest: "{{ base_project_directory }}/clickhouse/config.xml"
-
-- name: start docker
-  docker_container: 
-    name: clickhouse-server-hattrick
-    image: yandex/clickhouse-server:20.11
-    restart_policy: always
-    volumes:
-      - "{{ base_project_directory }}/clickhouse/volume:/var/lib/clickhouse"
-      - "{{ base_project_directory }}/clickhouse/users.xml:/etc/clickhouse-server/users.xml"
-      - "{{ base_project_directory }}/clickhouse/config.xml:/etc/clickhouse-server/config.xml"
-    ulimits:
-      - nofile:262144:262144
-    ports:
-      - 8123:8123
-    state: started
-
-- name: cron for backuping clickhouse
-  become: true
-  cron:
-    name: "Cron for backuping clickhouse"
-    weekday: "1"
-    hour: "18"
-    minute: "0"
-    job: "mkdir {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d) && cp -r  {{ base_project_directory }}/clickhouse/ {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d)"
-  tags:
-   - cron
-
-- name: cron for deleting old clickhouse backups
-  become: true
-  cron:
-    weekday: "1"
-    hour: "20"
-    minute: "0"
-    job: "rm -R {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d -d '-35 days')"
-  tags:
-   - cron
+- include: 04-cron.yml

@@ -1,7 +1,8 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
-import databases.{RestClickhouseDAO, SqlBuilder}
+import databases.SqlBuilder
+import databases.dao.RestClickhouseDAO
 import databases.requests.{ClickhouseRequest, ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.model.team.TeamGoalPoints
 import models.web.{Accumulate, MultiplyRoundsType, RestStatisticsParameters, Round}

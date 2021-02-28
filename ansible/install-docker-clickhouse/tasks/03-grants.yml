@@ -1,0 +1,11 @@
+---
+- name: read grants template
+  set_fact:
+    rendered_template: "{{ lookup('template', './grants.sql.j2') }}"
+
+- name: execute grants
+  uri:
+    url: "http://localhost:8123?user=default"
+    method: POST
+    body: "{{ item }}"
+  with_items: "{{ rendered_template.replace('\n', '').split(';') }}"
