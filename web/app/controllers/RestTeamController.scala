@@ -1,28 +1,25 @@
 package controllers
 
-import java.util.Date
 import com.blackmorse.hattrick.api.teamdetails.model.Team
 import com.blackmorse.hattrick.model.enums.MatchType
+import databases.dao.{ClickhouseDAO, RestClickhouseDAO}
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamMatchesRequest}
 import databases.requests.playerstats.player._
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamrankings.TeamRankingsRequest
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.RestClickhouseDAO
-import databases.dao.{ClickhouseDAO, RestClickhouseDAO}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
-
-import javax.inject.Inject
 import models.clickhouse.{NearestMatch, TeamRankings}
-import models.web.{PlayersParameters, RestStatisticsParameters}
-import models.web.rest.{CountryLevelData, LevelData}
+import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
+import models.web.{PlayersParameters, RestStatisticsParameters}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
-import service.leagueinfo.{LeagueInfoService, LoadingInfo, Scheduled}
+import service.leagueinfo.{LeagueInfoService, LoadingInfo}
 import utils.Romans
 
+import javax.inject.Inject
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
