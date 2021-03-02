@@ -9,6 +9,8 @@ spring:
   datasource:
     url: jdbc:clickhouse://localhost:8123
     driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
+    username: {{ clickhouse.users.loader.name }}
+    password: {{ clickhouse.users.loader.password }}
 
 clickhouse:
   databaseName: {{ loader.databaseName }}
