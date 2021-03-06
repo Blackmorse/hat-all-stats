@@ -1,8 +1,9 @@
-CREATE USER IF NOT EXISTS hattrick_web IDENTIFIED WITH PLAINTEXT_PASSWORD BY '{{ clickhouse.users.web.password }}';
-GRANT SELECT on {{ loader.databaseName }}.* TO hattrick_web;
-GRANT INSERT on {{ loader.databaseName }}.request_log TO hattrick_web;
+CREATE USER IF NOT EXISTS {{ clickhouse.users.web.name }} IDENTIFIED WITH PLAINTEXT_PASSWORD BY '{{ clickhouse.users.web.password }}';
+GRANT SELECT on {{ loader.databaseName }}.* TO {{ clickhouse.users.web.name }};
+GRANT INSERT on {{ loader.databaseName }}.request_log TO {{ clickhouse.users.web.name }};
+GRANT INSERT on {{ loader.databaseName }}.request_log_buffer TO {{ clickhouse.users.web.name }};
 
-CREATE USER IF NOT EXISTS hattrick_loader IDENTIFIED WITH PLAINTEXT_PASSWORD BY '{{ clickhouse.users.loader.password }}';
-GRANT INSERT, SELECT on {{ loader.databaseName }}.* TO hattrick_loader;
-GRANT ALTER DELETE on {{ loader.databaseName }}.player_events TO hattrick_loader;
-GRANT ALTER DELETE on {{ loader.databaseName }}.player_info TO hattrick_loader
+CREATE USER IF NOT EXISTS {{ clickhouse.users.loader.name }} IDENTIFIED WITH PLAINTEXT_PASSWORD BY '{{ clickhouse.users.loader.password }}';
+GRANT INSERT, SELECT on {{ loader.databaseName }}.* TO {{ clickhouse.users.loader.name }};
+GRANT ALTER DELETE on {{ loader.databaseName }}.player_events TO {{ clickhouse.users.loader.name }};
+GRANT ALTER DELETE on {{ loader.databaseName }}.player_info TO {{ clickhouse.users.loader.name }}
