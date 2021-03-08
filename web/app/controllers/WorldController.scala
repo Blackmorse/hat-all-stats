@@ -1,7 +1,13 @@
 package controllers
 
 import com.blackmorse.hattrick.model.enums.SearchType
+import databases.dao.RestClickhouseDAO
+import databases.requests.OrderingKeyPath
+import databases.requests.matchdetails.{MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
+import databases.requests.playerstats.player.{PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import hattrick.Hattrick
+import models.web.{PlayersParameters, RestStatisticsParameters}
+
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.ControllerComponents
 import play.api.i18n.I18nSupport
@@ -23,11 +29,12 @@ object TeamSearchResult {
 
 @Singleton
 class WorldController @Inject() (val controllerComponents: ControllerComponents,
+                                 implicit val restClickhouseDAO: RestClickhouseDAO,
             val overviewStatsService: OverviewStatsService,
              val leagueInfoService: LeagueInfoService,
              val hattrick: Hattrick,
              val requestCounterService: RequestCounterService)
-        extends BaseController with I18nSupport with MessageSupport {
+        extends RestController with I18nSupport with MessageSupport {
 
   def overview() = Action.async {implicit request =>
     val pageSize = request.cookies.get("hattid_page_size").map(_.value.toInt).getOrElse(DefaultService.PAGE_SIZE)
@@ -54,5 +61,33 @@ class WorldController @Inject() (val controllerComponents: ControllerComponents,
   def hoRequests() = Action.async{ implicit request =>
     val requests = requestCounterService.getHoRequests
     Future(Ok(Json.toJson(requests)))
+  }
+
+  def teamHatstats(restStatisticsParameters: RestStatisticsParameters) = Action.async{ implicit request =>
+    TeamHatstatsRequest.execute(OrderingKeyPath(), restStatisticsParameters)
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
+
+  def playersTsiSalary(restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters) =
+    Action.async{ implicit request =>
+      PlayerSalaryTSIRequest.execute(OrderingKeyPath(), restStatisticsParameters, playersParameters)
+        .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
+
+  def playerRatings(restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters) =
+    Action.async { implicit request =>
+      PlayerRatingsRequest.execute(OrderingKeyPath(), restStatisticsParameters, playersParameters)
+        .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+    }
+
+  def topMatches(restStatisticsParameters: RestStatisticsParameters) =
+    Action.async { implicit request =>
+      MatchTopHatstatsRequest.execute(OrderingKeyPath(), restStatisticsParameters)
+        .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+    }
+
+  def surprisingMatches(restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
+    MatchSurprisingRequest.execute(OrderingKeyPath(), restStatisticsParameters)
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 }

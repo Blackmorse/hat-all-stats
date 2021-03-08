@@ -15,6 +15,12 @@ GET     /worldOverview              controllers.WorldController.overview()
 GET     /api/health                     controllers.WorldController.health()
 GET     /api/hoRequests             controllers.WorldController.hoRequests()
 
+GET     /api/world/teamHatstats         controllers.WorldController.teamHatstats(restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/world/playerTsiSalary      controllers.WorldController.playersTsiSalary(restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
+GET     /api/world/playerRatings        controllers.WorldController.playerRatings(restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
+GET     /api/world/topMatches           controllers.WorldController.topMatches(restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/world/surprisingMatches    controllers.WorldController.surprisingMatches(restStatisticsParameters: models.web.RestStatisticsParameters)
+
 GET     /api/league/:leagueId                 controllers.RestLeagueController.getLeagueData(leagueId: Int)
 GET     /api/league/:leagueId/teamHatstats      controllers.RestLeagueController.teamHatstats(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/leagueUnits       controllers.RestLeagueController.leagueUnits(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
