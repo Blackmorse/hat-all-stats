@@ -1,13 +1,22 @@
 import React from 'react'
-import WorldData from '../rest/models/leveldata/WorldData';
 import { getWorldData } from '../rest/Client'
-import Layout from '../common/layouts/Layout';
-import WorldLeftMenu from './WorldLeftMenu'
 import WorldTopMenu from './WorldTopMenu'
 import { RouteComponentProps } from 'react-router';
 import WorldOverviewPage from './WorldOverviewPage'
 import WorldLevelDataProps from './WorldLevelDataProps'
 import WorldLeftLoadingMenu from './WorldLeftLoadingMenu'
+import LeftMenu from '../common/menu/LeftMenu'
+import LevelLayout from '../common/layouts/LevelLayout'
+import WorldData from '../rest/models/leveldata/WorldData'
+import LevelDataProps from '../common/LevelDataProps';
+import QueryParams from '../common/QueryParams'
+import { PagesEnum } from '../common/enums/PagesEnum'
+import PlayerSalaryTsiTable from '../common/tables/player/PlayerSalaryTsiTable';
+import TeamHatstatsTable from '../common/tables/team/TeamHatstatsTable';
+import PlayerRatingsTable from '../common/tables/player/PlayerRatingsTable';
+import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable';
+import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
+import DreamTeamPage from '../common/pages/DreamTeamPage';
 
 
 interface Props extends RouteComponentProps<{}>{}
@@ -16,18 +25,42 @@ interface State {
     levelData?: WorldData
 }
 
-class World extends Layout<Props, State> {
+class World extends LevelLayout<Props, WorldData, LevelDataProps<WorldData>> {
     constructor(props: Props) {
-        super(props)
-        this.state = {}
-
+        const pagesMap = new Map<PagesEnum, (props: WorldLevelDataProps, queryParams: QueryParams) => JSX.Element>()
+        pagesMap.set(PagesEnum.OVERVIEW, 
+            (props, _queryParams) => <WorldOverviewPage levelDataProps={props} title='overview.world_overview'/>)
+        pagesMap.set(PagesEnum.TEAM_HATSTATS,
+            (props, queryParams) => <TeamHatstatsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        pagesMap.set(PagesEnum.PLAYER_SALARY_TSI, 
+            (props, queryParams) => <PlayerSalaryTsiTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        pagesMap.set(PagesEnum.PLAYER_RATINGS, 
+            (props, queryParams) => <PlayerRatingsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS, 
+            (props, queryParams) => <MatchTopHatstatsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        pagesMap.set(PagesEnum.MATCH_SURPRISING, 
+            (props, queryParams) => <MatchSurprisingTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        pagesMap.set(PagesEnum.DREAM_TEAM, 
+            (props, queryParams) => <DreamTeamPage<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+    
+        super(props, pagesMap)
+    
         this.leagueIdSelected=this.leagueIdSelected.bind(this)
     }
 
-    componentDidMount() {
-        getWorldData(worldData => {
-            this.setState({levelData: worldData})
-        })
+    documentTitle(data: WorldData): string {
+        return 'World'
+    }
+
+
+    makeModelProps(levelData: WorldData): LevelDataProps<WorldData> {
+        return new WorldLevelDataProps(levelData)
+    }
+
+    fetchLevelData(props: Props, 
+            callback: (data: WorldData) => void,
+            onError: () => void): void {
+        getWorldData(callback, onError)
     }
 
     leagueIdSelected(leagueId: number) {
@@ -39,19 +72,16 @@ class World extends Layout<Props, State> {
             callback={this.leagueIdSelected}/>
     }
 
-    content(): JSX.Element {
-        if(this.state.levelData) {
-            let props = new WorldLevelDataProps(this.state.levelData)
-            return <WorldOverviewPage levelDataProps={props} title='overview.world_overview'/>
-        } else {
-            return <></>
-        }
-    }
-
     leftMenu(): JSX.Element {
         return <>
             <WorldLeftLoadingMenu worldData={this.state.levelData}/>
-            <WorldLeftMenu worldData={this.state.levelData}/>
+            
+            <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH))} 
+                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
+                    title='menu.statistics'/>
+            <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
+                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
+                    title='menu.team_search' />
         </>
     }
 }

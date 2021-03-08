@@ -30,7 +30,7 @@ class About extends Layout<Props, State> {
     componentDidMount() {
         getWorldData(worldData => {
             this.setState({levelData: worldData})
-        })
+        }, () => {})
     }
 
     leagueIdSelected(leagueId: number) {

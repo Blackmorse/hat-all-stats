@@ -4,9 +4,11 @@ import com.blackmorse.hattrick.model.enums.SearchType
 import databases.dao.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
 import databases.requests.matchdetails.{MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
+import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player.{PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import hattrick.Hattrick
-import models.web.{PlayersParameters, RestStatisticsParameters}
+import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
+import play.api.cache.AsyncCacheApi
 
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.ControllerComponents
@@ -29,11 +31,12 @@ object TeamSearchResult {
 
 @Singleton
 class WorldController @Inject() (val controllerComponents: ControllerComponents,
-                                 implicit val restClickhouseDAO: RestClickhouseDAO,
-            val overviewStatsService: OverviewStatsService,
+             implicit val restClickhouseDAO: RestClickhouseDAO,
+             val overviewStatsService: OverviewStatsService,
              val leagueInfoService: LeagueInfoService,
              val hattrick: Hattrick,
-             val requestCounterService: RequestCounterService)
+             val requestCounterService: RequestCounterService,
+             val cache: AsyncCacheApi)
         extends RestController with I18nSupport with MessageSupport {
 
   def overview() = Action.async {implicit request =>
@@ -90,4 +93,14 @@ class WorldController @Inject() (val controllerComponents: ControllerComponents,
     MatchSurprisingRequest.execute(OrderingKeyPath(), restStatisticsParameters)
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
+
+  def dreamTeam(season: Int, sortBy: String, statsType: StatsType) =
+    Action.async {implicit request =>
+      cache.getOrElseUpdate(s"worldDreamTeam_s${season}_r${statsType.toString}")(
+        DreamTeamRequest.execute(OrderingKeyPath(season = Some(season)),
+          statsType,
+          sortBy)
+      )
+        .map(players => Ok(Json.toJson(players)))
+    }
 }

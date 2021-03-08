@@ -87,10 +87,12 @@ export function getTeamData(leagueId: number,
         .catch(e => onError())
 }
 
-export function getWorldData(callback: (worldData: WorldData) => void): void {
+export function getWorldData(callback: (worldData: WorldData) => void,
+        onError: () => void): void {
     axios.get<WorldData>('/api/overview/worldData')
         .then(response => response.data)
         .then(callback)
+        .catch(e => onError())
 }
 
 interface LeagueUnitId {
@@ -310,6 +312,8 @@ function startUrl(request: LevelRequest): string {
         return '/api/leagueUnit/' + (request as LeagueUnitRequest).leagueUnitId
     } else if(request.type === 'TeamRequest') { 
         return '/api/team/' + (request as TeamRequest).teamId
+    } else if(request.type === 'WorldRequest') {
+        return '/api/world'
     } else {
         return ''
     }

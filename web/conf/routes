@@ -20,6 +20,7 @@ GET     /api/world/playerTsiSalary      controllers.WorldController.playersTsiSa
 GET     /api/world/playerRatings        controllers.WorldController.playerRatings(restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
 GET     /api/world/topMatches           controllers.WorldController.topMatches(restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/world/surprisingMatches    controllers.WorldController.surprisingMatches(restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/world/dreamTeam            controllers.WorldController.dreamTeam(season: Int, sortBy: String, statsType: models.web.StatsType)
 
 GET     /api/league/:leagueId                 controllers.RestLeagueController.getLeagueData(leagueId: Int)
 GET     /api/league/:leagueId/teamHatstats      controllers.RestLeagueController.teamHatstats(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
