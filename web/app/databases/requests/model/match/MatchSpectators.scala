@@ -16,6 +16,7 @@ object MatchSpectators {
   implicit val writes = Json.writes[MatchSpectators]
 
   val mapper = {
+    get[Int]("league_id") ~
     get[Long]("league_unit_id") ~
     get[String]("league_unit_name") ~
     get[Long]("team_id") ~
@@ -27,17 +28,17 @@ object MatchSpectators {
     get[Int]("goals") ~
     get[Int]("enemy_goals") ~
     get[Int]("sold_total") map {
-      case leagueUnitId ~ leagueUnitName ~ teamId ~ teamName ~ oppositeTeamId
+      case leagueId ~ leagueUnitId ~ leagueUnitName ~ teamId ~ teamName ~ oppositeTeamId
         ~ oppositeTeamName ~ matchId ~ isHomeMatch ~ goals ~ enemyGoals ~ soldTotal =>
 
         val (homeTeam, awayTeam, homeGoals, awayGoals) =
           if (isHomeMatch == "home") {
-            (TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName),
-              TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName),
+            (TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId),
+              TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName, leagueId),
               goals, enemyGoals)
           } else {
-            (TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName),
-              TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName),
+            (TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName, leagueId),
+              TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId),
               enemyGoals, goals)
           }
 

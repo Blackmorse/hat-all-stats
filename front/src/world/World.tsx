@@ -5,7 +5,6 @@ import { RouteComponentProps } from 'react-router';
 import WorldOverviewPage from './WorldOverviewPage'
 import WorldLevelDataProps from './WorldLevelDataProps'
 import WorldLeftLoadingMenu from './WorldLeftLoadingMenu'
-import LeftMenu from '../common/menu/LeftMenu'
 import LevelLayout from '../common/layouts/LevelLayout'
 import WorldData from '../rest/models/leveldata/WorldData'
 import LevelDataProps from '../common/LevelDataProps';
@@ -21,27 +20,23 @@ import DreamTeamPage from '../common/pages/DreamTeamPage';
 
 interface Props extends RouteComponentProps<{}>{}
 
-interface State {
-    levelData?: WorldData
-}
-
 class World extends LevelLayout<Props, WorldData, LevelDataProps<WorldData>> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: WorldLevelDataProps, queryParams: QueryParams) => JSX.Element>()
         pagesMap.set(PagesEnum.OVERVIEW, 
             (props, _queryParams) => <WorldOverviewPage levelDataProps={props} title='overview.world_overview'/>)
         pagesMap.set(PagesEnum.TEAM_HATSTATS,
-            (props, queryParams) => <TeamHatstatsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+            (props, queryParams) => <TeamHatstatsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
         pagesMap.set(PagesEnum.PLAYER_SALARY_TSI, 
-            (props, queryParams) => <PlayerSalaryTsiTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+            (props, queryParams) => <PlayerSalaryTsiTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
         pagesMap.set(PagesEnum.PLAYER_RATINGS, 
-            (props, queryParams) => <PlayerRatingsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+            (props, queryParams) => <PlayerRatingsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
         pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS, 
-            (props, queryParams) => <MatchTopHatstatsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+            (props, queryParams) => <MatchTopHatstatsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
         pagesMap.set(PagesEnum.MATCH_SURPRISING, 
-            (props, queryParams) => <MatchSurprisingTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+            (props, queryParams) => <MatchSurprisingTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
         pagesMap.set(PagesEnum.DREAM_TEAM, 
-            (props, queryParams) => <DreamTeamPage<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+            (props, queryParams) => <DreamTeamPage<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
     
         super(props, pagesMap)
     
@@ -72,17 +67,8 @@ class World extends LevelLayout<Props, WorldData, LevelDataProps<WorldData>> {
             callback={this.leagueIdSelected}/>
     }
 
-    leftMenu(): JSX.Element {
-        return <>
-            <WorldLeftLoadingMenu worldData={this.state.levelData}/>
-            
-            <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH))} 
-                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
-                    title='menu.statistics'/>
-            <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
-                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
-                    title='menu.team_search' />
-        </>
+    topLeftMenu(): JSX.Element {
+        return <WorldLeftLoadingMenu worldData={this.state.levelData}/>
     }
 }
 

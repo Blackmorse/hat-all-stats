@@ -44,11 +44,13 @@ abstract class MatchTopHatstatsTable<Data extends LevelData, TableProps extends 
         return <>
             <td>{index + 1}</td>
             <td className="value"><LeagueUnitLink id={matchHatstats.homeTeam.leagueUnitId} text={matchHatstats.homeTeam.leagueUnitName} /></td>
-            <td className="value"><TeamLink id={matchHatstats.homeTeam.teamId} text={matchHatstats.homeTeam.teamName} /></td>
+            <td className="value"><TeamLink id={matchHatstats.homeTeam.teamId} text={matchHatstats.homeTeam.teamName} 
+                flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? matchHatstats.homeTeam.leagueId : undefined}/></td>
             <td className="value">{matchHatstats.homeHatstats}</td>
             <td className="value">{matchHatstats.homeGoals} : {matchHatstats.awayGoals} <ExternalMatchLink id={matchHatstats.matchId} /></td>
             <td className="value">{matchHatstats.awayHatstats}</td>
-            <td className="value"><TeamLink id={matchHatstats.awayTeam.teamId} text={matchHatstats.awayTeam.teamName} /></td>           
+            <td className="value"><TeamLink id={matchHatstats.awayTeam.teamId} text={matchHatstats.awayTeam.teamName} 
+                flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? matchHatstats.awayTeam.leagueId : undefined}/></td>           
         </>
     }
 }

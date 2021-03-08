@@ -27,7 +27,7 @@ object PlayerStatOverview {
         leagueUnitId ~ leagueUnitName ~ nationality ~ value =>
 
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
-          leagueUnitId, leagueUnitName, nationality)
+          leagueUnitId, leagueUnitName, nationality, leagueId)
         PlayerStatOverview(leagueId, playerSortingKey, value)
     }
   }

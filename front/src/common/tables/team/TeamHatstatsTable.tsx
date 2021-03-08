@@ -13,7 +13,7 @@ import TeamLink from '../../links/TeamLink'
 import { getTeamHatstats } from '../../../rest/Client';
 
 class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-    extends ClassicTableSection<Data, TableProps, TeamHatstats> {
+        extends ClassicTableSection<Data, TableProps, TeamHatstats> {
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG},
             [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
@@ -39,10 +39,13 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
     }
 
     columnValues(index: number, teamHatstats: TeamHatstats): JSX.Element {
+        let teamSortingKey = teamHatstats.teamSortingKey
+        console.log(this.props.showCountryFlags)
         return <>
             <td>{index + 1}</td>
-            <td><TeamLink id={teamHatstats.teamId} text={teamHatstats.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamHatstats.leagueUnitId} text={teamHatstats.leagueUnitName}/></td>
+            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} 
+                flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? teamSortingKey.leagueId : undefined} /></td>
+            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{teamHatstats.hatStats}</td>
             <td className="value">{teamHatstats.midfield * 3}</td>
             <td className="value">{teamHatstats.defense}</td>

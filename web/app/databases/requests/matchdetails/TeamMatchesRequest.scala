@@ -12,6 +12,7 @@ object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
   val sql =
     """SELECT
       |  season,
+      |  league_id,
       |  dt,
       |  round,
       |  team_name,

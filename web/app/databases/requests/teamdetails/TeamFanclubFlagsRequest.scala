@@ -10,6 +10,7 @@ object TeamFanclubFlagsRequest extends ClickhouseStatisticsRequest[TeamFanclubFl
 
   override val oneRoundSql: String = """
        |SELECT
+       |    league_id,
        |    team_id,
        |    team_name,
        |    league_unit_id,

@@ -17,7 +17,7 @@ export interface CountryLevelLayoutState<Data extends CountryLevelData> {
 }
 
 abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TableProps extends LevelDataProps<Data>> extends LevelLayout<Props, Data, TableProps> {
-    leftMenu(): JSX.Element {
+    topLeftMenu(): JSX.Element {
         let promotionsMenu: JSX.Element = <></>
         let currentCountryInfoMenu = <></>
         if(this.state.levelData ) {
@@ -32,12 +32,6 @@ abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TablePro
         return <>
                 {currentCountryInfoMenu}
                 {promotionsMenu}
-                <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH))} 
-                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
-                    title='menu.statistics'/>
-                <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
-                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
-                    title='menu.team_search' />
             </>
     }
 }

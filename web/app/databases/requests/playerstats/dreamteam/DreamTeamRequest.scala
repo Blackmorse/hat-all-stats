@@ -13,6 +13,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
   val oneRoundSql =
     s"""
       |SELECT
+      |    league_id,
       |    player_id,
       |    first_name,
       |    last_name,
@@ -34,6 +35,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
   val aggregateSql =
     s"""SELECT * FROM (
       |SELECT
+      |    league_id,
       |    player_id,
       |    first_name,
       |    last_name,

@@ -12,15 +12,16 @@ object TeamCards {
   implicit val writes = Json.writes[TeamCards]
 
   val mapper = {
+      get[Int]("league") ~
       get[Long]("team_id") ~
       get[String]("team_name") ~
       get[Long]("league_unit_id") ~
       get[String]("league_unit_name") ~
       get[Int]("yellow_cards") ~
       get[Int]("red_cards") map {
-        case teamId ~ teamName ~ leagueUnitId ~ leagueUnitName ~
+        case leagueId ~ teamId ~ teamName ~ leagueUnitId ~ leagueUnitName ~
           yellowCards ~ redCards =>
-          val teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName)
+          val teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId)
         TeamCards(teamSortingKey, yellowCards, redCards)
     }
   }

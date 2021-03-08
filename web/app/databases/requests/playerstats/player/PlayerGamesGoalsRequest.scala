@@ -8,6 +8,7 @@ object PlayerGamesGoalsRequest extends ClickhousePlayerRequest[PlayerGamesGoals]
   override val sortingColumns: Seq[String] = Seq("games", "played", "scored", "goal_rate")
   override val oneRoundSql: String = s"""
            |SELECT
+           |    any(league_id) as league,
            |    player_id,
            |    first_name,
            |    last_name,

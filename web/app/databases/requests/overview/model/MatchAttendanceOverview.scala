@@ -32,8 +32,8 @@ object MatchAttendanceOverview {
       case leagueId ~ leagueUnitId ~ leagueUnitName ~ teamId ~ teamName ~
         oppositeTeamId ~ oppositeTeamName ~ matchId ~ isHomeMatch ~
         goals ~ enemyGoals ~ spectators =>
-          val team = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName)
-          val oppositeTeam = TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName)
+          val team = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId)
+          val oppositeTeam = TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName, leagueId)
 
           val (homeTeam, awayTeam, homeGoals, awayGoals) = if(isHomeMatch == "home") {
             (team, oppositeTeam, goals, enemyGoals)

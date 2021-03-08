@@ -19,7 +19,7 @@ object TeamStatOverview {
     get[String]("league_unit_name") ~
     get[Int]("value") map {
       case leagueId ~ teamId ~ teamName ~ leagueUnitId ~ leagueUnitName ~ value =>
-        val teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName)
+        val teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId)
         TeamStatOverview(leagueId, teamSortingKey, value)
     }
   }

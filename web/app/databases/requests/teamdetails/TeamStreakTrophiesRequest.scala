@@ -11,6 +11,7 @@ object TeamStreakTrophiesRequest extends ClickhouseStatisticsRequest[TeamStreakT
 
   override val oneRoundSql: String = """
      |SELECT
+     |    league_id,
      |    team_id,
      |    team_name,
      |    league_unit_id,

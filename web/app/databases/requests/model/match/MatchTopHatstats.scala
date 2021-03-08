@@ -18,6 +18,7 @@ object MatchTopHatstats {
   implicit val writes = Json.writes[MatchTopHatstats]
 
   val mapper = {
+    get[Int]("league_id") ~
     get[Long]("league_unit_id") ~
     get[String]("league_unit_name") ~
     get[Long]("team_id") ~
@@ -30,28 +31,28 @@ object MatchTopHatstats {
     get[Int]("enemy_goals") ~
     get[Int]("hatstats") ~
     get[Int]("opposite_hatstats") map {
-      case leagueUnitId ~ leagueUnitName ~ teamId ~ teamName ~ oppositeTeamId
+      case leagueId ~ leagueUnitId ~ leagueUnitName ~ teamId ~ teamName ~ oppositeTeamId
         ~ oppositeTeamName ~ matchId ~ isHomeMatch ~ goals ~ enemyGoals
         ~ hatstats ~ oppositeHatstats =>
 
-        MatchTopHatstats(leagueUnitId, leagueUnitName, teamId, teamName, oppositeTeamId,
+        MatchTopHatstats(leagueId, leagueUnitId, leagueUnitName, teamId, teamName, oppositeTeamId,
           oppositeTeamName, matchId, isHomeMatch, goals, enemyGoals,
           hatstats, oppositeHatstats)
     }
   }
 
-  def apply(leagueUnitId: Long, leagueUnitName: String, teamId: Long, teamName: String, oppositeTeamId: Long,
+  def apply(leagueId: Int, leagueUnitId: Long, leagueUnitName: String, teamId: Long, teamName: String, oppositeTeamId: Long,
     oppositeTeamName: String, matchId: Long, isHomeMatch: String, goals: Int, enemyGoals: Int,
     hatstats: Int, oppositeHatstats: Int): MatchTopHatstats = {
     val (homeTeam, awayTeam, homeHatstats, awayHatstats, homeGoals, awayGoals) =
       if (isHomeMatch == "home") {
-        (TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName),
-          TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName),
+        (TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId),
+          TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName, leagueId),
           hatstats, oppositeHatstats,
           goals, enemyGoals)
       } else {
-        (TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName),
-          TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName),
+        (TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName, leagueId),
+          TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId),
           oppositeHatstats, hatstats,
           enemyGoals, goals)
       }

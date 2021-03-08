@@ -9,6 +9,7 @@ object MatchTopHatstatsRequest extends ClickhouseStatisticsRequest[MatchTopHatst
 
   override val aggregateSql: String =
     """SELECT
+      |    league_id,
       |    league_unit_id,
       |    league_unit_name,
       |    team_id,
@@ -33,6 +34,7 @@ object MatchTopHatstatsRequest extends ClickhouseStatisticsRequest[MatchTopHatst
 
   override val oneRoundSql: String = """
        |SELECT
+       |    league_id,
        |    league_unit_id,
        |    league_unit_name,
        |    team_id,

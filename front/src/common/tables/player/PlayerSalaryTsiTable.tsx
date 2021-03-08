@@ -52,7 +52,8 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
             <td>{index + 1}</td>
             <td className="value"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
-            <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
+            <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} 
+               flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? playerSortingKey.teamLeagueId : undefined} /></td>
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{i18n.t(Mappings.roleToTranslationMap.get(playerSalaryTSI.role) || '')}</td>
             <td className="value">{ageFormatter(playerSalaryTSI.age)}</td>

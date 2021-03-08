@@ -5,7 +5,8 @@ import QueryParams from './QueryParams';
 
 export interface LevelDataPropsWrapper<Data extends LevelData, TableProps extends LevelDataProps<Data>> {
     levelDataProps: TableProps,
-    queryParams: QueryParams
+    queryParams: QueryParams,
+    showCountryFlags?: boolean
 }
 
 abstract class LevelDataProps<Data extends LevelData> {

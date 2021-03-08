@@ -8,6 +8,7 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
   override val sortingColumns: Seq[String] = Seq("abs_goals_difference", "abs_hatstats_difference")
   override val aggregateSql: String =
     """SELECT
+      |    league_id,
       |    league_unit_id,
       |    league_unit_name,
       |    team_id,
@@ -34,6 +35,7 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
 
   override val oneRoundSql: String =
     """SELECT
+      |    league_id,
       |    league_unit_id,
       |    league_unit_name,
       |    team_id,

@@ -6,7 +6,8 @@ interface PlayerSortingKey {
     teamName: string,
     leagueUnitId: number,
     leagueUnitName: string,
-    nationality: number
+    nationality: number,
+    teamLeagueId: number
 }
 
 export default PlayerSortingKey

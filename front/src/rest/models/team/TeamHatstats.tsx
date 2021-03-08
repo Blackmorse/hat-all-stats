@@ -1,8 +1,7 @@
+import TeamSortingKey from "./TeamSortingKey";
+
 interface TeamHatstats {
-    teamId: number, 
-    teamName: string,
-    leagueUnitId: number,
-    leagueUnitName: string
+    teamSortingKey: TeamSortingKey,
     hatStats: number, 
     midfield: number, 
     defense: number, 

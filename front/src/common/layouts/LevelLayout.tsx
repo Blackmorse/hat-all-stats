@@ -9,6 +9,7 @@ import '../../i18n'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Translation } from 'react-i18next'
+import LeftMenu from '../../common/menu/LeftMenu'
 
 export interface LevelLayoutState<Data extends LevelData> {
     leaguePage: PagesEnum,
@@ -115,6 +116,20 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
             queryParams: this.state.queryParams,
             isError: true
         }))
+    }
+
+    abstract topLeftMenu(): JSX.Element
+
+    leftMenu(): JSX.Element {
+        return <>
+            {this.topLeftMenu()}
+            <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH))} 
+                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
+                    title='menu.statistics'/>
+            <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
+                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
+                    title='menu.team_search' />
+        </>
     }
 
     content() {

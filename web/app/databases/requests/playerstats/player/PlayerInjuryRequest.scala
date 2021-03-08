@@ -11,6 +11,7 @@ object PlayerInjuryRequest extends ClickhouseStatisticsRequest[PlayerInjury] {
 
   override val oneRoundSql: String = s"""
        |SELECT
+       |    league_id,
        |    team_name,
        |    team_id,
        |    league_unit_name,

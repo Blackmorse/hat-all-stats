@@ -15,6 +15,7 @@ object PlayerSalaryTSI {
   implicit val writes = Json.writes[PlayerSalaryTSI]
 
   val mapper = {
+    get[Int]("league_id") ~
     get[Long]("player_id") ~
     get[String]("first_name") ~
     get[String]("last_name") ~
@@ -27,10 +28,10 @@ object PlayerSalaryTSI {
     get[Int]("salary") ~
     get[Int]("nationality") ~
     get[Int]("role") map {
-      case playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
+      case leagueId ~ playerId ~ firstName ~ lastName ~ teamId ~ teamName ~
         leagueUnitId ~ leagueUnitName ~ age ~ tsi ~ salary ~ nationality ~ role =>
         val playerSortingKey = PlayerSortingKey(playerId, firstName, lastName, teamId, teamName,
-          leagueUnitId, leagueUnitName, nationality)
+          leagueUnitId, leagueUnitName, nationality, leagueId)
         PlayerSalaryTSI(playerSortingKey, age, tsi, salary, Roles.mapping(role))
     }
   }

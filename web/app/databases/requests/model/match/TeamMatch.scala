@@ -43,6 +43,7 @@ object TeamMatch {
 
   val mapper = {
     get[Int]("season") ~
+    get[Int]("league_id") ~
     get[Date]("dt") ~
     get[Int]("round") ~
     get[String]("team_name") ~
@@ -75,7 +76,7 @@ object TeamMatch {
     get[Int]("opposite_rating_left_att") ~
     get[Int]("opposite_rating_mid_att") ~
     get[Int]("opposite_rating_right_att") map {
-      case season ~ date ~ round ~
+      case season ~ leagueId ~ date ~ round ~
         teamName ~ teamId ~ leagueUnitName ~ leagueUnitId ~
         oppositeTeamName ~ oppositeTeamId ~ matchId ~ isHomeMatch ~
         goals ~ oppositeGoals ~ formation ~ oppositeFormation ~
@@ -85,8 +86,8 @@ object TeamMatch {
         oppositeRatingMidfield ~ oppositeRatingLeftDef ~ oppositeRatingMidDef ~
         oppositeRatingRightDef ~ oppositeRatingLeftAtt ~ oppositeRatingMidAtt ~
         oppositeRatingRightAtt =>
-          val team = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName)
-          val oppositeTeam = TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName)
+          val team = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId)
+          val oppositeTeam = TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName, leagueId)
 
           val matchRatings = MatchRatings(formation, tacticType, tacticSkill,
             ratingMidfield, ratingRightDef, ratingMidDef, ratingLeftDef,

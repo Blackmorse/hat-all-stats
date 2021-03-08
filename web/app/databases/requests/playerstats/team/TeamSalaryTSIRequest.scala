@@ -3,9 +3,9 @@ package databases.requests.playerstats.team
 import anorm.RowParser
 import databases.SqlBuilder
 import databases.dao.RestClickhouseDAO
-import databases.requests.{ClickhouseRequest, ClickhouseStatisticsRequest, OrderingKeyPath}
+import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.team.TeamSalaryTSI
-import models.web.{Accumulate, MultiplyRoundsType, RestStatisticsParameters, Round}
+import models.web.{RestStatisticsParameters, Round}
 
 import scala.concurrent.Future
 
@@ -14,6 +14,7 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
 
   val oneRoundSql: String =
     """SELECT
+      |    any(league_id) as league,
       |    argMax(team_name, round) as team_name,
       |    team_id,
       |    league_unit_id,

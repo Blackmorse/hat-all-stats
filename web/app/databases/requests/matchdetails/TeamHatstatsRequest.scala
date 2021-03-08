@@ -7,6 +7,7 @@ import models.clickhouse.TeamHatstats
 object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
   override val aggregateSql: String =
     """select team_id,
+          |any(league_id) as league,
           |argMax(team_name, round) as team_name,
           |league_unit_id,
           |league_unit_name,
@@ -19,6 +20,7 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
 
   override val oneRoundSql: String =
     """select team_id,
+          |league_id as league,
           |team_name,
           |league_unit_id,
           |league_unit_name,

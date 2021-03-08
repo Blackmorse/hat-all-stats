@@ -10,6 +10,7 @@ object TeamCardsRequest extends ClickhouseStatisticsRequest[TeamCards] {
   override val oneRoundSql: String =
     """
       |SELECT
+      |    any(league_id) as league,
       |    argMax(team_name, round) as team_name,
       |    team_id,
       |    league_unit_id,

@@ -8,6 +8,7 @@ object PlayerRatingsRequest extends ClickhousePlayerRequest[PlayerRating]{
   override val sortingColumns: Seq[String] = Seq("age", "rating", "rating_end_of_match")
   override val oneRoundSql: String = s"""
          |SELECT
+         |    league_id,
          |    team_name,
          |    team_id,
          |    league_unit_name,

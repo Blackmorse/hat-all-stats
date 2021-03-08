@@ -8,6 +8,7 @@ object MatchSpectatorsRequest extends ClickhouseStatisticsRequest[MatchSpectator
   override val sortingColumns: Seq[String] = Seq("sold_total")
   override val aggregateSql: String =
     """SELECT
+      |    league_id,
       |    league_unit_id,
       |    league_unit_name,
       |    team_id,
@@ -30,6 +31,7 @@ object MatchSpectatorsRequest extends ClickhouseStatisticsRequest[MatchSpectator
 
   override val oneRoundSql: String =
     """SELECT
+      |    league_id,
       |    league_unit_id,
       |    league_unit_name,
       |    team_id,

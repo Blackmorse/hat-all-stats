@@ -188,33 +188,33 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
             <div className="core_team">
                 <div className="core_team_column"></div>
                 <div className="core_team_column">
-                    {displayedKeepers.map(keeper => <DreamTeamPlayerCard dreamTeamPlayerPosition={keeper} />)}
+                    {displayedKeepers.map(keeper => <DreamTeamPlayerCard dreamTeamPlayerPosition={keeper} showTeamCountryFlag={this.props.showCountryFlags}/>)}
                 </div>
                 <div className="core_team_column"></div>
                 {/* def */}
                 <div className="core_team_column">
-                    <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[0]} />
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[0]} showTeamCountryFlag={this.props.showCountryFlags} />
                 </div>
                 <div className="core_team_column">
-                    {displayedDefs.map(def => <DreamTeamPlayerCard dreamTeamPlayerPosition={def} />)}
+                    {displayedDefs.map(def => <DreamTeamPlayerCard dreamTeamPlayerPosition={def} showTeamCountryFlag={this.props.showCountryFlags} />)}
                 </div>
                 <div className="core_team_column">
-                    <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[1]} />
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[1]} showTeamCountryFlag={this.props.showCountryFlags} />
                 </div>
                 {/* mid */}
                 <div className="core_team_column">
-                    <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[0]} />
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[0]} showTeamCountryFlag={this.props.showCountryFlags} />
                 </div>
                 <div className="core_team_column">
-                    {displayedMidfielders.map(midfielder => <DreamTeamPlayerCard dreamTeamPlayerPosition={midfielder} />)}
+                    {displayedMidfielders.map(midfielder => <DreamTeamPlayerCard dreamTeamPlayerPosition={midfielder} showTeamCountryFlag={this.props.showCountryFlags} />)}
                 </div>
                 <div className="core_team_column">
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[1]} />
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[1]} showTeamCountryFlag={this.props.showCountryFlags} />
                 </div>
                 {/* attack */}
                 <div className="core_team_column"></div>
                 <div className="core_team_column">
-                    {displayedForwards.map(forward => <DreamTeamPlayerCard dreamTeamPlayerPosition={forward} />)}
+                    {displayedForwards.map(forward => <DreamTeamPlayerCard dreamTeamPlayerPosition={forward} showTeamCountryFlag={this.props.showCountryFlags} />)}
                 </div>
                 <div className="core_team_column"></div>
             </div>
@@ -222,12 +222,12 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
                 {i18n.t('dream_team.substitions')}
             </div>
             <div className="substitutions">
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: keepers[1], position: i18n.t('dream_team.keeper')}}/>
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingbacks[displayedWingbacks.length], position: i18n.t('dream_team.wingback')}}/>
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: defenders[displayedDefs.length], position: i18n.t('dream_team.defender')}} />
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: midfielders[displayedMidfielders.length], position: i18n.t('dream_team.midfielder')}}/>
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: forwards[displayedForwards.length], position: i18n.t('dream_team.forward')}}/>
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingers[displayedWings.length], position: i18n.t('dream_team.winger')}}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: keepers[1], position: i18n.t('dream_team.keeper')}} showTeamCountryFlag={this.props.showCountryFlags}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingbacks[displayedWingbacks.length], position: i18n.t('dream_team.wingback')}} showTeamCountryFlag={this.props.showCountryFlags}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: defenders[displayedDefs.length], position: i18n.t('dream_team.defender')}}  showTeamCountryFlag={this.props.showCountryFlags}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: midfielders[displayedMidfielders.length], position: i18n.t('dream_team.midfielder')}} showTeamCountryFlag={this.props.showCountryFlags}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: forwards[displayedForwards.length], position: i18n.t('dream_team.forward')}} showTeamCountryFlag={this.props.showCountryFlags}/>
+                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingers[displayedWings.length], position: i18n.t('dream_team.winger')}} showTeamCountryFlag={this.props.showCountryFlags}/>
             </div>
         </div>
     }

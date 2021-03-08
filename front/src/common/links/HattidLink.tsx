@@ -18,6 +18,10 @@ export interface LinkProps {
 abstract class HattidLink<Props extends LinkProps> extends React.Component<Props, {}> {
     abstract baseString(): string
 
+    additionalContent(): JSX.Element {
+        return <></>
+    }
+
     render() {
         let parameters: any = {}
         let page: PagesEnum | undefined = this.props.page
@@ -53,11 +57,15 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
             cback = () => {setTimeout( () => {window.location.reload()}, 100)}
         } 
 
-        return <Link className={className} 
-            to={this.baseString() + '?' + queryParams}
-            onClick={cback} >
-                {this.props.text}
+        return <> 
+            {this.additionalContent()}
+            <Link className={className} 
+                to={this.baseString() + '?' + queryParams}
+                onClick={cback} >
+                    {this.props.text}
             </Link>
+            
+        </>
     }
 }
 

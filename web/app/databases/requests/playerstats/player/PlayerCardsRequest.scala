@@ -9,6 +9,7 @@ object PlayerCardsRequest extends ClickhousePlayerRequest[PlayerCards] {
 
   override val oneRoundSql: String = s"""
        |SELECT
+       |    any(league_id) as league,
        |    player_id,
        |    first_name,
        |    last_name,

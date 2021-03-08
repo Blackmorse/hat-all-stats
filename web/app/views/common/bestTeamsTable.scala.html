@@ -13,10 +13,10 @@
         <th class="value">@messages("table.attack")</th>
     </tr>
     @for((team, index) <- bestTeams.entities.zipWithIndex) {
-    <tr @{if(bestTeams.selectedId.contains(team.teamId)) "class=selected_row"}>
+    <tr @{if(bestTeams.selectedId.contains(team.teamSortingKey.teamId)) "class=selected_row"}>
         <td>@{bestTeams.pageInfo.pageSize * bestTeams.pageInfo.page + index + 1}</td>
-        <td><a class="table_link" href="@routes.TeamController.teamOverview(team.teamId)">@team.teamName</a></td>
-        <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(team.leagueUnitId)">@team.leagueUnitName</a></td>
+        <td><a class="table_link" href="@routes.TeamController.teamOverview(team.teamSortingKey.teamId)">@team.teamSortingKey.teamName</a></td>
+        <td class="value"><a class="table_link" href="@routes.LeagueUnitController.bestTeams(team.teamSortingKey.leagueUnitId)">@team.teamSortingKey.leagueUnitName</a></td>
         <td class="value">@team.hatStats</td>
         <td class="value">@{team.midfield * 3}</td>
         <td class="value">@team.defense</td>

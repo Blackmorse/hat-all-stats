@@ -27,7 +27,7 @@ object MatchTopHatstatsOverview {
       case leagueId ~ leagueUnitId ~ leagueUnitName ~ teamId ~ teamName ~ oppositeTeamId
         ~ oppositeTeamName ~ matchId ~ isHomeMatch ~ goals ~ enemyGoals
         ~ hatstats ~ oppositeHatstats =>
-        val matchTopHatstats = MatchTopHatstats(leagueUnitId, leagueUnitName, teamId, teamName, oppositeTeamId,
+        val matchTopHatstats = MatchTopHatstats(leagueId, leagueUnitId, leagueUnitName, teamId, teamName, oppositeTeamId,
           oppositeTeamName, matchId, isHomeMatch, goals, enemyGoals,
           hatstats, oppositeHatstats)
 

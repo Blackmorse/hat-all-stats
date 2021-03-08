@@ -15,6 +15,7 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
   val aggregateSql: String = ""
   val oneRoundSql: String = """
          |SELECT
+         |    any(league_id) as league,
          |    team_id,
          |    team_name,
          |    league_unit_id,
