@@ -2,7 +2,7 @@ package databases.dao
 
 import anorm.ResultSetParser
 import databases.SqlBuilder
-import models.clickhouse.overview._
+import databases.requests.model.overview._
 import play.api.db.DBApi
 
 import javax.inject.{Inject, Singleton}

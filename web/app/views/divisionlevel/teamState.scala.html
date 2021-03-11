@@ -1,9 +1,0 @@
-@import models.clickhouse.TeamState
-@import controllers.WebDivisionLevelDetails
-@import models.web.ViewData
-
-@(viewData: ViewData[TeamState, WebDivisionLevelDetails])(implicit messages: Messages)
-
-@main(viewData.details.divisionLevelRoman, header(viewData.details), leftBar(viewData.details), messages("menu.team_state")) {
-    @stats(viewData.links)(common.teamStateTable(viewData))
-}

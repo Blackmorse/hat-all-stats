@@ -21,7 +21,7 @@ class InsertClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecution
         SQL(entry)
           .execute()
       } catch {
-        case e => e.printStackTrace()
+        case e: Throwable => e.printStackTrace()
       }
     }
   }

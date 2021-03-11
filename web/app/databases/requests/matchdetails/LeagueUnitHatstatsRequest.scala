@@ -2,7 +2,7 @@ package databases.requests.matchdetails
 
 import anorm.RowParser
 import databases.requests.ClickhouseStatisticsRequest
-import models.clickhouse.LeagueUnitRating
+import databases.requests.model.league.LeagueUnitRating
 
 object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitRating] {
   override val sortingColumns: Seq[String] = Seq("hatstats", "midfield", "defense", "attack")

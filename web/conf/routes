@@ -2,15 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
-GET     /lang                       controllers.HomeController.lang(lang: String)
-
 GET     /swagger.json           controllers.ApiHelpController.getResources
 GET     /docs/swagger-ui/*file        controllers.Assets.at(path:String="/public/lib/swagger-ui", file:String)
 
 GET     /api/teamSearchByName       controllers.WorldController.searchByName(name: String)
 GET     /api/league/:leagueId/leagueUnitName/:leagueUnitName    controllers.RestLeagueUnitController.leagueUnitIdByName(leagueUnitName: String, leagueId: Int)
-
-GET     /worldOverview              controllers.WorldController.overview()
 
 GET     /api/health                     controllers.WorldController.health()
 GET     /api/hoRequests             controllers.WorldController.hoRequests()
@@ -117,54 +113,6 @@ GET     /api/overview/topSeasonScorers   controllers.RestOverviewController.topS
 GET     /api/overview/worldData    controllers.RestOverviewController.getWorldData()
 
 GET     /api/matches/similarMatches controllers.MatchController.similarMatches(matchId: Long, accuracy: Double)
-
-GET     /                           controllers.HomeController.index
-GET     /league                     controllers.LeagueController.overview(leagueId: Int)
-GET     /league/bestTeams           controllers.LeagueController.bestTeams(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
-GET     /league/bestLeagueUnits     controllers.LeagueController.bestLeagueUnits(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /league/playerStats         controllers.LeagueController.playerStats(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /league/teamState           controllers.LeagueController.teamState(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeam: Option[Long] ?= None)
-GET     /league/playerState         controllers.LeagueController.playerState(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /league/formalTeamStats     controllers.LeagueController.formalTeamStats(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /league/search              controllers.LeagueController.search(leagueId: Int)
-GET     /league/processSearch       controllers.LeagueController.processSearch(leagueId: Int)
-GET     /league/searchResult        controllers.LeagueController.searchResult(leagueId: Int, teamName: String)
-GET     /league/promotions          controllers.LeagueController.promotions(leagueId: Int)
-GET     /league/fanclubFlags        controllers.LeagueController.fanclubFlags(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /league/streakTrophies      controllers.LeagueController.streakTrophies(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /league/powerRatings        controllers.LeagueController.powerRatings(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
-GET     /league/bestMatches         controllers.LeagueController.bestMatches(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /league/surprisingMatches   controllers.LeagueController.surprisingMatches(leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-
-GET     /divisionlevel              controllers.DivisionLevelController.bestTeams(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
-GET     /divisionlevel/bestLeagueUnits      controllers.DivisionLevelController.bestLeagueUnits(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /divisionlevel/playerStats  controllers.DivisionLevelController.playerStats(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /divisionlevel/teamState    controllers.DivisionLevelController.teamState(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
-GET     /divisionlevel/playerState  controllers.DivisionLevelController.playerState(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /divisionlevel/formalTeamStats  controllers.DivisionLevelController.formalTeamStats(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /divisionlevel/fanclubFlags controllers.DivisionLevelController.fanclubFlags(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /divisionlevel/streakTrophies   controllers.DivisionLevelController.streakTrophies(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /divisionlevel/powerRatings     controllers.DivisionLevelController.powerRatings(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None, selectedTeamId: Option[Long] ?= None)
-GET     /divisionLevel/bestMatches      controllers.DivisionLevelController.bestMatches(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /divisionLevel/surprisingMatches    controllers.DivisionLevelController.surprisingMatches(leagueId: Int, divisionLevel: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-
-GET     /leagueLevelUnitByName        controllers.LeagueUnitController.bestTeamsByName(leagueUnitName: String, leagueId: Int, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /leagueLevelUnit        controllers.LeagueUnitController.bestTeams(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /leagueLevelUnit/playerStats    controllers.LeagueUnitController.playerStats(leagueUnitId: Long,  statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /leagueLevelUnit/teamState      controllers.LeagueUnitController.teamState(leagueUnitOd: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /leagueLevelUnit/playerState    controllers.LeagueUnitController.playerState(leagueUnitOd: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /leagueLevelUnit/fanclubFlags   controllers.LeagueUnitController.fanclubFlags(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /leagueLevelUnit/streakTrophies controllers.LeagueUnitController.streakTrophies(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /leagueLevelUnit/powerRatings   controllers.LeagueUnitController.powerRatings(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /leagueLevelUnit/bestMatches    controllers.LeagueUnitController.bestMatches(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /leagueLevelUnit/surprisingMatches  controllers.LeagueUnitController.surprisingMatches(leagueUnitId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-
-GET     /team/teamOverview          controllers.TeamController.teamOverview(teamId: Long)
-GET     /team/matches               controllers.TeamController.matches(teamId: Long)
-GET     /team/playerStats           controllers.TeamController.playerStats(teamId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-GET     /team/playerState           controllers.TeamController.playerState(teamId: Long, statisticsParametersOpt: Option[models.web.StatisticsParameters] ?= None)
-
-GET     /error/league               controllers.ErrorController.errorForLeague(leagueId: Int)
 
 POST    /loader/leagueRound         controllers.LoaderController.leagueRound(season: Int, leagueId: Int, round: Int)
 POST    /loader/scheduleInfo        controllers.LoaderController.scheduleInfo()

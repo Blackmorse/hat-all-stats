@@ -1,9 +1,0 @@
-@import models.clickhouse.TeamHatstats
-@import controllers.WebDivisionLevelDetails
-@import models.web.ViewData
-
-@(viewData: ViewData[TeamHatstats, WebDivisionLevelDetails])(implicit messages: Messages)
-
-@main(viewData.details.divisionLevelRoman, header(viewData.details), leftBar(viewData.details), messages("menu.best_teams")) {
-    @stats(viewData.links)(common.bestTeamsTable(viewData.webPagedEntities))
-}

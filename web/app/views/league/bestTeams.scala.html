@@ -1,9 +1,0 @@
-@import models.clickhouse.TeamHatstats
-@import controllers.WebLeagueDetails
-@import models.web.ViewData
-
-@(viewData: ViewData[TeamHatstats, WebLeagueDetails])(implicit messages: Messages)
-
-@main(viewData.details.leagueInfo.league.getEnglishName, header(viewData.details), leftBar(viewData.details), messages("menu.best_teams")) {
-    @stats(viewData.links)(common.bestTeamsTable(viewData.webPagedEntities))
-}

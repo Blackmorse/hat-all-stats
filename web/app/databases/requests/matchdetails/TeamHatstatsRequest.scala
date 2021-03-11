@@ -2,7 +2,7 @@ package databases.requests.matchdetails
 
 import anorm.RowParser
 import databases.requests.ClickhouseStatisticsRequest
-import models.clickhouse.TeamHatstats
+import databases.requests.model.team.TeamHatstats
 
 object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
   override val aggregateSql: String =

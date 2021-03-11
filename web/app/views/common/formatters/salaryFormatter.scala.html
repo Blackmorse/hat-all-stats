@@ -1,8 +1,0 @@
-@import com.blackmorse.hattrick.api.worlddetails.model.League
-
-@(salary: Int, league: League)
-@rate = @{if (league.getCountry.getCurrencyRate != null) league.getCountry.getCurrencyRate.toDouble else 10.0d}
-
-@formatter = @{java.text.NumberFormat.getIntegerInstance}
-
-@{formatter.format((salary / rate).toInt)}

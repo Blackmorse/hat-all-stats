@@ -1,8 +1,0 @@
-@import models.web.ViewData
-
-@import models.clickhouse.PowerRating
-@(viewData: ViewData[PowerRating, WebLeagueUnitDetails])(implicit messages: Messages)
-
-@main(viewData.details.leagueUnitName, header(viewData.details), leftBar(viewData.details), messages("menu.power_ratings")) {
-    @stats(viewData.links)(common.powerRatingsTable(viewData.webPagedEntities))
-}

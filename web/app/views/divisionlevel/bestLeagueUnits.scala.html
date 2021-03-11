@@ -1,9 +1,0 @@
-@import controllers.WebDivisionLevelDetails
-@import models.clickhouse.LeagueUnitRating
-@import models.web.ViewData
-
-@(viewData: ViewData[LeagueUnitRating, WebDivisionLevelDetails])(implicit messages: Messages)
-
-@main(viewData.details.divisionLevelRoman, header(viewData.details), leftBar(viewData.details), messages("menu.best_league_units")) {
-    @stats(viewData.links)(common.bestLeagueUnitsTable(viewData.webPagedEntities))
-}

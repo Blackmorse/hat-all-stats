@@ -1,9 +1,0 @@
-@import models.clickhouse.PlayerStats
-@import controllers.WebLeagueDetails
-@import models.web.ViewData
-
-@(viewData: ViewData[PlayerStats, WebDivisionLevelDetails])(implicit messages: Messages)
-
-@main(viewData.details.divisionLevelRoman, header(viewData.details), leftBar(viewData.details), messages("menu.player_stats")) {
-    @stats(viewData.links)(common.playerStatsTable(viewData.webPagedEntities))
-}

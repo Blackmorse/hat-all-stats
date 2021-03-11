@@ -1,7 +1,0 @@
-@import models.web.ViewData
-@import models.clickhouse.StreakTrophy
-@(viewData: ViewData[StreakTrophy, WebLeagueUnitDetails])(implicit messages: Messages)
-
-@main(viewData.details.leagueUnitName, header(viewData.details), leftBar(viewData.details), messages("menu.streak_trophies")) {
-    @stats(viewData.links)(common.streakTrophiesTable(viewData.webPagedEntities))
-}

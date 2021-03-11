@@ -3,6 +3,7 @@ package controllers
 import com.google.inject.{Inject, Singleton}
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails._
+import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
@@ -13,7 +14,7 @@ import hattrick.Hattrick
 import io.swagger.annotations.Api
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
-import models.web.{PlayersParameters, RestStatisticsParameters, StatsType, ViewDataFactory}
+import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
@@ -41,7 +42,6 @@ object RestLeagueData {
 class RestLeagueController @Inject() (val controllerComponents: ControllerComponents,
                                       implicit val restClickhouseDAO: RestClickhouseDAO,
                                   val leagueInfoService: LeagueInfoService,
-                                  val viewDataFactory: ViewDataFactory,
                                   val hattrick: Hattrick) extends RestController  {
 
   def getLeagueData(leagueId: Int): Action[AnyContent] =  Action.async { implicit request =>

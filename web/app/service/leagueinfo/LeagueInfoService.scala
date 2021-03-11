@@ -1,12 +1,10 @@
 package service.leagueinfo
 
-import controllers.routes
 import databases.dao.ClickhouseDAO
 import hattrick.Hattrick
 
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
-import utils.Romans
 
 import collection.JavaConverters._
 import scala.collection.mutable
@@ -33,12 +31,6 @@ class LeagueInfoService @Inject() (val hattrick: Hattrick,
 
   def lastFullSeason(): Int = {
     leagueInfo.currentSeason(100)
-  }
-
-  def divisionLevelLinks(leagueId: Int): Seq[(String, String)] = {
-    val maxLevels = leagueInfo(leagueId).league.getNumberOfLevels
-    (1 to maxLevels)
-      .map(i => Romans(i) -> routes.DivisionLevelController.bestTeams(leagueId, i).url )
   }
 
   def getRelativeSeasonFromAbsolute(season: Int, leagueId: Int) = leagueInfo(leagueId).league.getSeasonOffset + season

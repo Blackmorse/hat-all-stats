@@ -4,6 +4,7 @@ import com.blackmorse.hattrick.api.teamdetails.model.Team
 import com.blackmorse.hattrick.model.enums.MatchType
 import databases.dao.{ClickhouseDAO, RestClickhouseDAO}
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamMatchesRequest}
+import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.player._
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamrankings.TeamRankingsRequest

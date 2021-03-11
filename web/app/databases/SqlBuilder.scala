@@ -3,7 +3,6 @@ package databases
 import anorm.{NamedParameter, ParameterValue, Row, SQL, SimpleSql}
 import databases.requests.OrderingKeyPath
 import models.web.{Asc, Desc, RestStatisticsParameters, SortingDirection}
-import service.DefaultService
 
 import scala.collection.mutable
 
@@ -154,7 +153,7 @@ class HavingClause(sqlBuilder: SqlBuilder) extends Clause(sqlBuilder)
 case class SqlBuilder(baseSql: String) {
   var parametersNumber = 0
   private var page = 0
-  private var pageSize = DefaultService.PAGE_SIZE
+  private var pageSize = 16
   private var sortingDirection: String = "desc"
   private val whereClause = new WhereClause(this)
   private val havingClause = new HavingClause(this)

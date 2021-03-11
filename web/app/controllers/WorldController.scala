@@ -14,12 +14,11 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc.ControllerComponents
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.BaseController
 import service.leagueinfo.LeagueInfoService
 
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
-import service.{DefaultService, OverviewStatsService, RequestCounterService}
+import service.{OverviewStatsService, RequestCounterService}
 
 import scala.concurrent.Future
 
@@ -39,15 +38,6 @@ class WorldController @Inject() (val controllerComponents: ControllerComponents,
              val cache: AsyncCacheApi)
         extends RestController with I18nSupport with MessageSupport {
 
-  def overview() = Action.async {implicit request =>
-    val pageSize = request.cookies.get("hattid_page_size").map(_.value.toInt).getOrElse(DefaultService.PAGE_SIZE)
-    overviewStatsService.overviewStatistics().map(overviewStatistics => {
-      Ok(views.html.world.worldOverview(overviewStatistics,
-        leagueInfoService.leagueInfo(1000).league,
-        Some(leagueInfoService.leagueInfo),
-        pageSize)(messages))
-    })
-  }
 
   def searchByName(name: String) = Action.async {implicit request =>
     Future(hattrick.api.search().searchType(SearchType.TEAMS)

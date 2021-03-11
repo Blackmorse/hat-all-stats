@@ -2,6 +2,7 @@ package controllers
 
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails._
+import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}

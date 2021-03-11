@@ -3,8 +3,8 @@ package databases.requests.promotions
 import anorm.RowParser
 import databases.SqlBuilder
 import databases.dao.RestClickhouseDAO
+import databases.requests.model.promotions.Promotion
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
-import models.clickhouse.Promotion
 
 import scala.concurrent.Future
 

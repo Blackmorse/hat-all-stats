@@ -5,6 +5,7 @@ import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 import com.blackmorse.hattrick.model.enums.SearchType
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
+import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}

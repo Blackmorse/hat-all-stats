@@ -25,15 +25,24 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
     implicit val dispatcher: MessageDispatcher = system.dispatchers.lookup("my-dispatcher")
 
     val flow = Flow[(Request, T)]
-      .map{case(request, t) => (request.createRequest(), t)}
+      .map{case(request, t) => (request.createRequest(), t)}.async
 
 //    val httpsFlow = Http().cachedHostConnectionPoolHttps[T](RequestCreator.URL)
 
-    val httpsFlow2 = flow.mapAsyncUnordered(4){case(request, t) => Http().singleRequest(request).map(resp => (resp, t))}
-      .mapAsync(2){
-        case(response, t) =>
+    val httpsFlow2 = flow.mapAsyncUnordered(4){
+      case(request, t) =>
+        val resp = Http().singleRequest(request)//.map(resp => (resp, t))
+
+//      }
+//      .mapAsync(2){
+        resp.flatMap(response => {
           val r = response.entity.toStrict(1.minute)
           r.map(res => (res.data.utf8String, t))
+        })
+
+//        case(response, t) =>
+//          val r = response.entity.toStrict(1.minute)
+//          r.map(res => (res.data.utf8String, t))
       }
       .map{case(responseBody, t) =>
         val preprocessed = preprocessBody(responseBody)
@@ -73,6 +82,6 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
 
 
 //    flow.async.via(httpsFlow).async.via(unmarshalFlow).async
-    httpsFlow2
+    httpsFlow2.async
   }
 }
