@@ -20,7 +20,7 @@ object TeamStreakTrophiesRequest extends ClickhouseStatisticsRequest[TeamStreakT
      |    number_of_victories,
      |    number_of_undefeated
      |FROM hattrick.team_details
-     | __where__ AND (round = __round__)
+     | __where__
      |ORDER BY
      |   __sortBy__ __sortingDirection__,
      |   team_id __sortingDirection__

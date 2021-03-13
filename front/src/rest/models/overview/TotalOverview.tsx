@@ -3,17 +3,17 @@ import FormationsOverview from './FormationsOverview'
 import AveragesOverview from './AveragesOverview'
 import TeamStatOverview from './TeamStatOverview'
 import PlayerStatOverview from './PlayerStatOverview'
-import MatchTopHatstatsOverview from './MatchTopHatstatsOverview'
+import MatchTopHatstats from '../match/MatchTopHatstats'
 import MatchAttendanceOverview from './MatchAttendanceOverview'
 
 interface TotalOverview {
     numberOverview: NumberOverview,
     formations: Array<FormationsOverview>,
     averageOverview: AveragesOverview,
-    surprisingMatches: Array<MatchTopHatstatsOverview>,
+    surprisingMatches: Array<MatchTopHatstats>,
     topHatstatsTeams: Array<TeamStatOverview>,
     topSalaryTeams: Array<TeamStatOverview>,
-    topMatches: Array<MatchTopHatstatsOverview>,
+    topMatches: Array<MatchTopHatstats>,
     topSalaryPlayers: Array<PlayerStatOverview>,
     topRatingPlayers: Array<PlayerStatOverview>,
     topMatchAttendance: Array<MatchAttendanceOverview>,

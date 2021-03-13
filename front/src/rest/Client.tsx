@@ -38,7 +38,6 @@ import NumberOverview from './models/overview/NumberOverview'
 import FormationsOverview from './models/overview/FormationsOverview';
 import TeamStatOverview from './models/overview/TeamStatOverview';
 import PlayerStatOverview from './models/overview/PlayerStatOverview';
-import MatchTopHatstatsOverview from './models/overview/MatchTopHatstatsOverview';
 import PromotionWithType from './models/promotions/Promotion'
 import TeamSearchResult from './models/TeamSearchResult'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
@@ -284,13 +283,13 @@ export let getFormationsOverview = requestOverview<Array<FormationsOverview>>('f
 
 export let getAveragesOverview = requestOverview<AveragesOverview>('averagesOverview')
 
-export let getSurprisingMatchesOverview = requestOverview<Array<MatchTopHatstatsOverview>>('surprisingMatches')
+export let getSurprisingMatchesOverview = requestOverview<Array<MatchTopHatstats>>('surprisingMatches')
 
 export let getTopHatstatsTeamsOverview = requestOverview<Array<TeamStatOverview>>('topHatstatsTeams')
 
 export let getTopSalaryTeamsOverview = requestOverview<Array<TeamStatOverview>>('topSalaryTeams')
 
-export let getTopMatchesOverview = requestOverview<Array<MatchTopHatstatsOverview>>('topMatches')
+export let getTopMatchesOverview = requestOverview<Array<MatchTopHatstats>>('topMatches')
 
 export let getTopSalaryPlayersOverview = requestOverview<Array<PlayerStatOverview>>('topSalaryPlayers')
 

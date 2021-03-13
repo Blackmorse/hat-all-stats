@@ -1,8 +1,9 @@
 package service
 
 import databases.dao.RestClickhouseDAO
+import databases.requests.model.`match`.MatchTopHatstats
 import databases.requests.overview.{FormationsOverviewRequest, NumberOverviewRequest, OverviewMatchAveragesRequest, OverviewTeamPlayerAveragesRequest, SurprisingMatchesOverviewRequest, TopAttendanceMatchesOverviewRequest, TopHatstatsTeamOverviewRequest, TopMatchesOverviewRequest, TopRatingPlayerOverviewRequest, TopSalaryPlayerOverviewRequest, TopSalaryTeamOverviewRequest, TopSeasonScorersOverviewRequest, TopVictoriesTeamsOverviewRequest}
-import databases.requests.overview.model.{AveragesOverview, FormationsOverview, MatchAttendanceOverview, MatchTopHatstatsOverview, NumberOverview, PlayerStatOverview, TeamStatOverview, TotalOverview}
+import databases.requests.overview.model.{AveragesOverview, FormationsOverview, MatchAttendanceOverview, NumberOverview, PlayerStatOverview, TeamStatOverview, TotalOverview}
 
 import javax.inject.{Inject, Singleton}
 import play.api.cache.AsyncCacheApi
@@ -44,7 +45,7 @@ class RestOverviewStatsService @Inject()
   }
 
   def surprisingMatches(season: Int, round: Int,
-                        leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[MatchTopHatstatsOverview]] = {
+                        leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[MatchTopHatstats]] = {
     val name = cacheName("surprisingMatches", season, round, leagueId, divisionLevel)
     cache.getOrElseUpdate(name, 28 days)(SurprisingMatchesOverviewRequest.execute(season, round, leagueId, divisionLevel))
   }
@@ -62,7 +63,7 @@ class RestOverviewStatsService @Inject()
   }
 
   def topMatches(season: Int, round: Int,
-                 leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[MatchTopHatstatsOverview]] = {
+                 leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[MatchTopHatstats]] = {
     val name = cacheName("topMatches", season, round, leagueId, divisionLevel)
     cache.getOrElseUpdate(name, 28 days)(TopMatchesOverviewRequest.execute(season, round, leagueId, divisionLevel))
   }

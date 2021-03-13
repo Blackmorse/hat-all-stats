@@ -19,7 +19,7 @@ object TeamRatingsRequest extends ClickhouseStatisticsRequest[TeamRating] {
      |    sum(rating) AS rating,
      |    sum(rating_end_of_match) AS rating_end_of_match
      |FROM hattrick.player_stats
-     |__where__ AND (round = __round__)
+     |__where__
      |GROUP BY
      |    team_id,
      |    league_unit_id,

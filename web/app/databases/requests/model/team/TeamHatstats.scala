@@ -5,7 +5,8 @@ import anorm.~
 import play.api.libs.json.Json
 
 case class TeamHatstats(teamSortingKey: TeamSortingKey,
-                        hatStats: Int, midfield: Int, defense: Int, attack: Int)
+                        hatStats: Int, midfield: Int, defense: Int, attack: Int,
+                        loddarStats: Double)
 
 object TeamHatstats {
   implicit val writes = Json.writes[TeamHatstats]
@@ -19,14 +20,16 @@ object TeamHatstats {
       get[Int]("hatstats") ~
       get[Int]("midfield") ~
       get[Int]("defense") ~
-      get[Int]("attack") map {
-        case leagueId ~ teamId ~ teamName ~ leagueUnitId ~ leagueUnitName ~ hatstats ~ midfield ~ defense ~ attack =>
+      get[Int]("attack") ~
+      get[Double]("loddar_stats") map {
+        case leagueId ~ teamId ~ teamName ~ leagueUnitId ~ leagueUnitName ~ hatstats ~ midfield ~ defense ~ attack ~ loddarStats =>
         TeamHatstats(
-          TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId),
-          hatstats,
-          midfield,
-          defense,
-          attack)
+          teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId),
+          hatStats = hatstats,
+          midfield = midfield,
+          defense = defense,
+          attack = attack,
+          loddarStats = loddarStats)
     }
   }
 }

@@ -6,12 +6,15 @@ import databases.requests.model.team.TeamSortingKey
 import play.api.libs.json.Json
 
 case class MatchTopHatstats(
+                             leagueId: Int,
                              homeTeam: TeamSortingKey,
                              awayTeam: TeamSortingKey,
                              homeHatstats: Int,
                              homeGoals: Int,
+                             homeLoddarStats: Double,
                              awayHatstats: Int,
                              awayGoals: Int,
+                             awayLoddarStats: Double,
                              matchId: Long)
 
 object MatchTopHatstats {
@@ -30,33 +33,47 @@ object MatchTopHatstats {
     get[Int]("goals") ~
     get[Int]("enemy_goals") ~
     get[Int]("hatstats") ~
-    get[Int]("opposite_hatstats") map {
+    get[Int]("opposite_hatstats") ~
+    get[Double]("loddar_stats") ~
+    get[Double]("opposite_loddar_stats") map {
       case leagueId ~ leagueUnitId ~ leagueUnitName ~ teamId ~ teamName ~ oppositeTeamId
         ~ oppositeTeamName ~ matchId ~ isHomeMatch ~ goals ~ enemyGoals
-        ~ hatstats ~ oppositeHatstats =>
+        ~ hatstats ~ oppositeHatstats ~ loddarStats ~ oppositeLoddarStats =>
 
         MatchTopHatstats(leagueId, leagueUnitId, leagueUnitName, teamId, teamName, oppositeTeamId,
           oppositeTeamName, matchId, isHomeMatch, goals, enemyGoals,
-          hatstats, oppositeHatstats)
+          hatstats, oppositeHatstats, loddarStats, oppositeLoddarStats)
     }
   }
 
   def apply(leagueId: Int, leagueUnitId: Long, leagueUnitName: String, teamId: Long, teamName: String, oppositeTeamId: Long,
     oppositeTeamName: String, matchId: Long, isHomeMatch: String, goals: Int, enemyGoals: Int,
-    hatstats: Int, oppositeHatstats: Int): MatchTopHatstats = {
-    val (homeTeam, awayTeam, homeHatstats, awayHatstats, homeGoals, awayGoals) =
+    hatstats: Int, oppositeHatstats: Int, loddarStats: Double, oppositeLoddarStats: Double): MatchTopHatstats = {
+    val (homeTeam, awayTeam, homeHatstats, awayHatstats, homeGoals, awayGoals, homeLoddarStats, awayLoddarStats) =
       if (isHomeMatch == "home") {
         (TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId),
           TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName, leagueId),
           hatstats, oppositeHatstats,
-          goals, enemyGoals)
+          goals, enemyGoals,
+          loddarStats, oppositeLoddarStats)
       } else {
         (TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName, leagueId),
           TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId),
           oppositeHatstats, hatstats,
-          enemyGoals, goals)
+          enemyGoals, goals,
+          oppositeLoddarStats, loddarStats)
       }
 
-    MatchTopHatstats(homeTeam, awayTeam, homeHatstats, homeGoals, awayHatstats, awayGoals, matchId)
+    MatchTopHatstats(
+      leagueId = leagueId,
+      homeTeam = homeTeam,
+      awayTeam = awayTeam,
+      homeHatstats = homeHatstats,
+      homeGoals = homeGoals,
+      homeLoddarStats = homeLoddarStats,
+      awayHatstats = awayHatstats,
+      awayGoals = awayGoals,
+      awayLoddarStats = awayLoddarStats,
+      matchId = matchId)
   }
 }

@@ -155,6 +155,7 @@ case class SqlBuilder(baseSql: String) {
   private var page = 0
   private var pageSize = 16
   private var sortingDirection: String = "desc"
+  private var sortBy: Option[String] = None
   private val whereClause = new WhereClause(this)
   private val havingClause = new HavingClause(this)
 
@@ -178,6 +179,11 @@ case class SqlBuilder(baseSql: String) {
 
   def pageSize(pageSize: Int): SqlBuilder = {
     this.pageSize = pageSize
+    this
+  }
+
+  def sortBy(sb: String): SqlBuilder = {
+    this.sortBy = Some(sb)
     this
   }
 
@@ -211,7 +217,9 @@ case class SqlBuilder(baseSql: String) {
       .replace("__limit__", s" limit ${page * pageSize}, ${pageSize + 1}")
       .replace("__sortingDirection__", sortingDirection)
 
-    SQL(result)
+    val finalResult = this.sortBy.map(sb => result.replace("__sortBy__", sb)).getOrElse(result)
+
+    SQL(finalResult)
       .on((where.parameters ++ having.parameters).map(parameter => NamedParameter.namedWithString((s"${parameter.name}_${parameter.parameterNumber}", parameter.value))): _*)
   }
 }

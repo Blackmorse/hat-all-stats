@@ -1,11 +1,11 @@
-import MatchTopHatstatsOverview from '../../rest/models/overview/MatchTopHatstatsOverview'
+import MatchTopHatstats from '../../rest/models/match/MatchTopHatstats'
 import { getTopMatchesOverview } from '../../rest/Client'
 import MatchesOverviewSection from './MatchesOverviewSection'
 import { OverviewTableSectionProps } from './OverviewTableSection';
 import LevelData from '../../rest/models/leveldata/LevelData';
 
 class TopMatchesOverviewSection<Data extends LevelData> extends MatchesOverviewSection<Data> {
-    constructor(props: OverviewTableSectionProps<Data, MatchTopHatstatsOverview>) {
+    constructor(props: OverviewTableSectionProps<Data, MatchTopHatstats>) {
         super(props, 'overview.top_matches')
     }
 

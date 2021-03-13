@@ -11,6 +11,7 @@ import LevelData from '../../../rest/models/leveldata/LevelData';
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { getTeamHatstats } from '../../../rest/Client';
+import { loddarStats } from '../../Formatters'
 
 class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
         extends ClassicTableSection<Data, TableProps, TeamHatstats> {
@@ -33,6 +34,7 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
                 <ModelTableTh title='table.midfield' sortingField='midfield' sortingState={sortingState} />
                 <ModelTableTh title='table.defense' sortingField='defense' sortingState={sortingState} />
                 <ModelTableTh title='table.attack' sortingField='attack' sortingState={sortingState} />
+                <ModelTableTh title='table.loddar_stats' sortingField='loddar_stats' sortingState={sortingState} />
             </tr>
         }
         </Translation>
@@ -50,6 +52,7 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
             <td className="value">{teamHatstats.midfield * 3}</td>
             <td className="value">{teamHatstats.defense}</td>
             <td className="value">{teamHatstats.attack}</td>
+            <td className="value">{loddarStats(teamHatstats.loddarStats)}</td>
         </>
     }
 

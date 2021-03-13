@@ -23,7 +23,7 @@ object PlayerInjuryRequest extends ClickhouseStatisticsRequest[PlayerInjury] {
        |    injury_level as injury,
        |    nationality
        |FROM hattrick.player_stats
-       |__where__ AND (round = __round__)
+       |__where__
        |ORDER BY
        |    __sortBy__ __sortingDirection__, player_id __sortingDirection__
        |__limit__""".stripMargin

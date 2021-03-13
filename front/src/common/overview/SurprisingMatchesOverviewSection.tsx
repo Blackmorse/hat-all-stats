@@ -1,11 +1,11 @@
-import MatchTopHatstatsOverview from '../../rest/models/overview/MatchTopHatstatsOverview'
+import MatchTopHatstats from '../../rest/models/match/MatchTopHatstats'
 import { getSurprisingMatchesOverview } from '../../rest/Client'
 import MatchesOverviewSection from './MatchesOverviewSection'
 import { OverviewTableSectionProps } from './OverviewTableSection';
 import LevelData from '../../rest/models/leveldata/LevelData';
 
 class SurprisingMatchesOverviewSection<Data extends LevelData> extends MatchesOverviewSection<Data> {
-    constructor(props: OverviewTableSectionProps<Data, MatchTopHatstatsOverview>) {
+    constructor(props: OverviewTableSectionProps<Data, MatchTopHatstats>) {
         super(props, 'overview.surprising_matches')
     }
 

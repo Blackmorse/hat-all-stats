@@ -12,6 +12,7 @@ import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getSurprisingMatches } from '../../../rest/Client';
 import ExternalMatchLink from '../../links/ExternalMatchLink';
+import { loddarStats } from '../../Formatters'
 
 abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
     extends ClassicTableSection<Data, TableProps, MatchTopHatstats> {
@@ -31,9 +32,11 @@ abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends L
                 <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th className="value">{t('table.league')}</th>
                 <th>{t('table.team')}</th>
+                <ModelTableTh title='table.loddar_stats' sortingField='abs_loddar_stats_difference' sortingState={sortingState} />
                 <ModelTableTh title='table.hatstats' sortingField='abs_hatstats_difference' sortingState={sortingState} />
                 <ModelTableTh title='overview.goals' sortingField='abs_goals_difference' sortingState={sortingState} />
                 <ModelTableTh title='table.hatstats' sortingField='abs_hatstats_difference' sortingState={sortingState} />
+                <ModelTableTh title='table.loddar_stats' sortingField='abs_loddar_stats_difference' sortingState={sortingState} />
                 <th>{t('table.team')}</th>
             </tr>
             }
@@ -46,9 +49,11 @@ abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends L
             <td className="value"><LeagueUnitLink id={matchHatstats.homeTeam.leagueUnitId} text={matchHatstats.homeTeam.leagueUnitName} /></td>
             <td className="value"><TeamLink id={matchHatstats.homeTeam.teamId} text={matchHatstats.homeTeam.teamName} 
                 flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? matchHatstats.homeTeam.leagueId : undefined}/></td>
+            <td className="value">{loddarStats(matchHatstats.homeLoddarStats)}</td>
             <td className="value">{matchHatstats.homeHatstats}</td>
             <td className="value">{matchHatstats.homeGoals} : {matchHatstats.awayGoals} <ExternalMatchLink id={matchHatstats.matchId} /></td>
             <td className="value">{matchHatstats.awayHatstats}</td>
+            <td className="value">{loddarStats(matchHatstats.awayLoddarStats)}</td>
             <td className="value"><TeamLink id={matchHatstats.awayTeam.teamId} text={matchHatstats.awayTeam.teamName} 
                 flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? matchHatstats.awayTeam.leagueId : undefined}/></td>           
         </>

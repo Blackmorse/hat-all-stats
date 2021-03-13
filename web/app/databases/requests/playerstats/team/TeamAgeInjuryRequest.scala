@@ -20,7 +20,7 @@ object TeamAgeInjuryRequest extends ClickhouseStatisticsRequest[TeamAgeInjury] {
        |    sumIf(injury_level, (played_minutes > 0) AND (injury_level > 0)) AS injury,
        |    countIf(injury_level, (played_minutes > 0) AND (injury_level > 0)) AS injury_count
        |FROM hattrick.player_stats
-       |__where__ AND (round = __round__)
+       |__where__
        |GROUP BY
        |    team_id,
        |    league_unit_id,

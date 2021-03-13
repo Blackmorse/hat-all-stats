@@ -5,7 +5,8 @@ interface TeamHatstats {
     hatStats: number, 
     midfield: number, 
     defense: number, 
-    attack: number
+    attack: number,
+    loddarStats: number
 }
 
 export default TeamHatstats

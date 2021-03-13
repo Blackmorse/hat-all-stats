@@ -17,7 +17,7 @@ object TeamPowerRatingsRequest extends ClickhouseStatisticsRequest[TeamPowerRati
        |    league_unit_name,
        |    power_rating
        |FROM hattrick.team_details
-       | __where__ AND (round = __round__)
+       | __where__
        |ORDER BY
        |   __sortBy__ __sortingDirection__,
        |   team_id __sortingDirection__

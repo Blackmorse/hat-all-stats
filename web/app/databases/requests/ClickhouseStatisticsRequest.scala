@@ -20,16 +20,24 @@ trait ClickhouseStatisticsRequest[T] extends ClickhouseRequest[T] {
     if(!sortingColumns.contains(sortBy))
       throw new Exception("Looks like SQL injection")
 
-    val sql = parameters.statsType match {
-      case MultiplyRoundsType(func) => aggregateSql.replace("__func__", func).replace("__sortBy__", sortBy)
-      case Accumulate => aggregateSql.replace("__sortBy__", sortBy)
-      case Round(round) => oneRoundSql.replace("__round__", round.toString).replace("__sortBy__", sortBy)
+    val sql = (parameters.statsType match {
+      case MultiplyRoundsType(func) => aggregateSql.replace("__func__", func)
+      case Accumulate  => aggregateSql
+      case Round(_) => oneRoundSql
+    }).replace("__sortBy__", sortBy)
+
+    val round = parameters.statsType match {
+      case Round(r) => Some(r)
+      case _ => None
     }
 
     restClickhouseDAO.execute(SqlBuilder(sql)
       .applyParameters(parameters)
       .where
         .applyParameters(orderingKeyPath)
+      .and
+      .where
+        .round(round)
       .build, rowParser)
   }
 }

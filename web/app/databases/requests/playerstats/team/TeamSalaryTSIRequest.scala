@@ -25,7 +25,7 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
       |    toUInt64(salary / players_count) as avg_salary,
       |    toUInt64(tsi / players_count) as avg_tsi
       |FROM hattrick.player_stats
-      |__where__ AND (round = __round__)
+      |__where__
       |GROUP BY
       |    team_id,
       |    league_unit_id,
