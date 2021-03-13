@@ -5,7 +5,7 @@ import java.util.Date
 import chpp.players.models.Player
 import models.stream.StreamMatchDetails
 import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
-import utils.DateMarshalling.DateFormat
+import utils.DateTimeMarshalling.DateTimeFormat
 
 case class PlayerInfoModelCH(season: Int,
                             leagueId: Int,
@@ -46,7 +46,7 @@ object PlayerInfoModelCH {
         ("league_unit_name", JsString(obj.leagueUnitName)),
         ("team_id", JsNumber(obj.teamId)),
         ("team_name", JsString(obj.teamName)),
-        ("time", DateFormat.write(obj.date)),
+        ("time", DateTimeFormat.write(obj.date)),
         ("round", JsNumber(obj.round)),
         ("match_id", JsNumber(obj.matchId)),
         ("player_id", JsNumber(obj.playerId)),

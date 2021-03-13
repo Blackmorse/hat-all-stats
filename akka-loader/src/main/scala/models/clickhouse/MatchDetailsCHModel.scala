@@ -4,7 +4,7 @@ import java.util.Date
 
 import models.stream.StreamMatchDetails
 import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
-import utils.DateMarshalling._
+import utils.DateTimeMarshalling._
 
 object IsHomeMatch extends Enumeration {
   val HOME = Value(0, "home")
@@ -69,7 +69,7 @@ object MatchDetailsCHModel {
         ("league_unit_name", JsString(obj.leagueUnitName)),
         ("team_id", JsNumber(obj.teamId)),
         ("team_name", JsString(obj.teamName)),
-        ("time", DateFormat.write(obj.date)),
+        ("time", DateTimeFormat.write(obj.date)),
         ("round", JsNumber(obj.round)),
         ("match_id", JsNumber(obj.matchId)),
         ("is_home_match", JsNumber(obj.isHomeMatch.id)),

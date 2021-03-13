@@ -7,6 +7,7 @@ CREATE TABLE hattrick.team_details
 	    `league_unit_name` LowCardinality(String),
 	    `team_id` UInt64,
 	    `team_name` String,
+            `founded_date` Date,
 	    `round` UInt8,
 	    `power_rating` UInt16,
 	    `home_flags` UInt8,

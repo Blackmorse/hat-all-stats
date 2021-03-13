@@ -2,11 +2,14 @@ package com.blackmorse.hattrick.clickhouse.mappers;
 
 import com.blackmorse.hattrick.clickhouse.model.TeamDetails;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public class TeamDetailsJdbcMapper extends AbstractJdbcMapper<TeamDetails> {
+    private final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
     public TeamDetailsJdbcMapper(String databaseName) {
         super(databaseName + ".team_details");
     }
@@ -31,6 +34,8 @@ public class TeamDetailsJdbcMapper extends AbstractJdbcMapper<TeamDetails> {
         map.put("trophies_number", TeamDetails::getTrophiesNumber);
         map.put("number_of_victories", TeamDetails::getNumberOfVictories);
         map.put("number_of_undefeated", TeamDetails::getNumberOfUndefeated);
+        map.put("founded_date", teamDetails -> format.format(teamDetails.getFoundedDate()));
+
         return map;
     }
 }

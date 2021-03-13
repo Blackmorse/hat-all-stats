@@ -3,6 +3,8 @@ package com.blackmorse.hattrick.clickhouse.model;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 @Builder
 public class TeamDetails {
@@ -22,4 +24,5 @@ public class TeamDetails {
     private final Integer trophiesNumber;
     private final Integer numberOfVictories;
     private final Integer numberOfUndefeated;
+    private final Date foundedDate;
 }

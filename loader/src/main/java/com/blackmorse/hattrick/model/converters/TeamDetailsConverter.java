@@ -34,6 +34,7 @@ public class TeamDetailsConverter {
                 .trophiesNumber(trophyNumber)
                 .numberOfVictories(numberOfVictories)
                 .numberOfUndefeated(numberOfUndefeated)
+                .foundedDate(teamWithMatchAndTeamDetails.getTeamDetails().getFoundedDate())
             .build();
     }
 }

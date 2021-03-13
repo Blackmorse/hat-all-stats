@@ -3,6 +3,9 @@ package models.clickhouse
 import chpp.teamdetails.models.{Team, TrophyTypeId}
 import models.stream.StreamMatchDetails
 import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
+import utils.DateMarshalling.DateFormat
+
+import java.util.Date
 
 case class TeamDetailsModelCH(season: Int,
                              leagueId: Int,
@@ -11,6 +14,7 @@ case class TeamDetailsModelCH(season: Int,
                              leagueUnitName: String,
                              teamId: Long,
                              teamName: String,
+                             foundedDate: Date,
                              round: Int,
 
                              powerRating: Int,
@@ -34,6 +38,7 @@ object TeamDetailsModelCH {
         ("league_unit_name", JsString(obj.leagueUnitName)),
         ("team_id", JsNumber(obj.teamId)),
         ("team_name", JsString(obj.teamName)),
+        ("founded_date", DateFormat.write(obj.foundedDate)),
         ("round", JsNumber(obj.round)),
         ("power_rating", JsNumber(obj.powerRating)),
         ("home_flags", JsNumber(obj.homeFlags)),
@@ -58,6 +63,7 @@ object TeamDetailsModelCH {
       leagueUnitName = matchDetails.matc.team.leagueUnit.leagueUnitName,
       teamId = team.teamId,
       teamName = matchDetails.matc.team.name,
+      foundedDate = team.foundedDate,
       round = matchDetails.matc.round,
       powerRating = team.powerRating.powerRating,
       homeFlags = team.flags.homeFlags.size,
