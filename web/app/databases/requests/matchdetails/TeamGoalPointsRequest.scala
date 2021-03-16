@@ -28,7 +28,7 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
          |    countIf(goals < enemy_goals) AS lost,
          |    (3 * won) + draw AS points
          |FROM hattrick.match_details
-         |__where__ and round <= __round__
+         |__where__
          |GROUP BY
          |    team_name,
          |    team_id,
@@ -52,19 +52,23 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
     if(!sortingColumns.contains(sortBy))
       throw new Exception("Looks like SQL injection")
 
-    val sql = parameters.statsType match {
-      case Round(round) =>
-        val tmp = oneRoundSql.replace("__round__", round.toString).replace("__sortBy__", sortBy)
+    val (sql, round) = parameters.statsType match {
+      case Round(r) =>
+        val tmp = oneRoundSql
         if(playedAllMatches) {
-          val matches = Math.min(round, currentRound)
-          tmp.replace("__having__", s"HAVING count() >= $matches")
-        } else tmp.replace("__having__", "")
+          val matches = Math.min(r, currentRound)
+          (tmp.replace("__having__", s"HAVING count() >= $matches"), r)
+        } else {
+          (tmp.replace("__having__", ""), r)
+        }
     }
 
     restClickhouseDAO.execute(SqlBuilder(sql)
-      .applyParameters(parameters)
       .where
+        .applyParameters(parameters)
         .applyParameters(orderingKeyPath)
+        .round.lessEqual(round)
+      .sortBy(sortBy)
       .build, rowParser)
   }
 }

@@ -55,7 +55,7 @@ object LoaderApp extends  App {
     .toMap
 
 
-  private val leagueIdNumber = 88
+  private val leagueIdNumber = 100
 
   val teamsSource = TeamsSource(leagueIdNumber)
     .async

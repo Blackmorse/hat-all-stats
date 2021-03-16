@@ -112,8 +112,12 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
-  def teamCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
-    stats(TeamCardsRequest, leagueId, restStatisticsParameters)
+  def teamCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
+    TeamCardsRequest.execute(
+      OrderingKeyPath(leagueId = Some(leagueId)),
+      restStatisticsParameters)
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
 
   def teamRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamRatingsRequest, leagueId, restStatisticsParameters)

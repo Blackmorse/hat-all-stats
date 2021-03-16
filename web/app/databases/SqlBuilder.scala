@@ -98,7 +98,11 @@ case class StringParameter(parameterNumber: Int, name: String, clause: Clause) e
   override def value: ParameterValue = _value
 }
 
-abstract class Clause(sqlBuilder: SqlBuilder) {
+object Clause {
+  implicit def sqlBuilder(clause: Clause): SqlBuilder = clause.sqlBuilder
+}
+
+abstract class Clause(val sqlBuilder: SqlBuilder) {
   private[databases] val parameters: mutable.Buffer[Parameter] = mutable.Buffer()
   private[databases] val params: mutable.Buffer[(String, ParameterValue)] = mutable.Buffer()
 
@@ -107,6 +111,15 @@ abstract class Clause(sqlBuilder: SqlBuilder) {
     divisionLevel(orderingKeyPath.divisionLevel)
     leagueUnitId(orderingKeyPath.leagueUnitId)
     teamId(orderingKeyPath.teamId)
+
+    this
+  }
+
+  def applyParameters(parameters: RestStatisticsParameters): this.type = {
+    season(parameters.season)
+    sqlBuilder.page(parameters.page)
+    sqlBuilder.pageSize(parameters.pageSize)
+    sqlBuilder.sortingDirection(parameters.sortingDirection)
 
     this
   }
@@ -162,15 +175,6 @@ case class SqlBuilder(baseSql: String) {
   def where = whereClause
   def having = havingClause
 
-
-  def applyParameters(parameters: RestStatisticsParameters): SqlBuilder = {
-    whereClause.season(parameters.season)
-    page(parameters.page)
-    pageSize(parameters.pageSize)
-    sortingDirection(parameters.sortingDirection)
-
-    this
-  }
 
   def page(page: Int): SqlBuilder = {
     this.page = page

@@ -20,11 +20,11 @@ trait ClickhouseStatisticsRequest[T] extends ClickhouseRequest[T] {
     if(!sortingColumns.contains(sortBy))
       throw new Exception("Looks like SQL injection")
 
-    val sql = (parameters.statsType match {
+    val sql = parameters.statsType match {
       case MultiplyRoundsType(func) => aggregateSql.replace("__func__", func)
       case Accumulate  => aggregateSql
       case Round(_) => oneRoundSql
-    }).replace("__sortBy__", sortBy)
+    }
 
     val round = parameters.statsType match {
       case Round(r) => Some(r)
@@ -32,12 +32,11 @@ trait ClickhouseStatisticsRequest[T] extends ClickhouseRequest[T] {
     }
 
     restClickhouseDAO.execute(SqlBuilder(sql)
-      .applyParameters(parameters)
       .where
+        .applyParameters(parameters)
         .applyParameters(orderingKeyPath)
-      .and
-      .where
         .round(round)
+      .sortBy(sortBy)
       .build, rowParser)
   }
 }

@@ -27,7 +27,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
       |    rating_end_of_match,
       |    nationality
       |FROM hattrick.player_stats
-      |__where__ AND (round = __round__) AND (role_id != 0)
+      |__where__ AND (role_id != 0)
       |ORDER BY __sortBy__
       |LIMIT 4 BY role
       |""".stripMargin
@@ -67,15 +67,16 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
     val sortString = if (sortBy == "rating") "rating DESC, rating_end_of_match DESC"
     else "rating_end_of_match DESC, rating DESC"
 
-    val sql = statsType match {
-      case Accumulate => aggregateSql
-      case Round(round) => oneRoundSql.replace("__round__", round.toString)
+    val (sql, round) = statsType match {
+      case Accumulate => (aggregateSql, None)
+      case Round(r) => (oneRoundSql, Some(r))
     }
 
     val build = SqlBuilder(sql.replace("__sortBy__", sortString))
       .where
         .applyParameters(orderingKeyPath)
         .season(orderingKeyPath.season)
+        .round(round)
       .build
 
     restClickhouseDAO.execute(build, rowParser)

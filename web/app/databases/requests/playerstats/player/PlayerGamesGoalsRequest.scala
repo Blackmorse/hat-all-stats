@@ -4,7 +4,7 @@ import anorm.RowParser
 import databases.requests.{ClickhouseRequest}
 import databases.requests.model.player.PlayerGamesGoals
 
-object PlayerGamesGoalsRequest extends ClickhousePlayerRequest[PlayerGamesGoals]{
+object PlayerGamesGoalsRequest extends ClickhousePlayerAggregateRoundRequest[PlayerGamesGoals]{
   override val sortingColumns: Seq[String] = Seq("games", "played", "scored", "goal_rate")
   override val oneRoundSql: String = s"""
            |SELECT
@@ -24,7 +24,7 @@ object PlayerGamesGoalsRequest extends ClickhousePlayerRequest[PlayerGamesGoals]
            |    arrayFirst(x -> x != 0, topK(2)(${ClickhouseRequest.roleIdCase("role_id")})) as role,
            |    ((argMax(age, round) * 112) + argMax(days, round)) as age
            |FROM hattrick.player_stats
-           |__where__ AND (round <= __round__)
+           |__where__
            |GROUP BY
            |    player_id,
            |    first_name,

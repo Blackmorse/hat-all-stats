@@ -1,6 +1,5 @@
 package controllers
 
-import java.util.Date
 import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 import com.blackmorse.hattrick.model.enums.SearchType
 import databases.dao.RestClickhouseDAO
@@ -14,17 +13,16 @@ import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatings
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattrick.Hattrick
 import io.swagger.annotations.Api
-
-import javax.inject.Inject
-import models.web.rest.{CountryLevelData, LevelData}
+import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
-import models.web.{PlayersParameters, RestStatisticsParameters, RestTableData, Round, StatsType}
+import models.web._
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
 import service.LeagueUnitCalculatorService
-import service.leagueinfo.{LeagueInfoService, LoadingInfo, Scheduled}
+import service.leagueinfo.{LeagueInfoService, LoadingInfo}
 import utils.{LeagueNameParser, Romans}
 
+import javax.inject.Inject
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -173,8 +171,16 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
     )
   }
 
-  def teamCards(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
-    stats(TeamCardsRequest, leagueUnitId, restStatisticsParameters)
+  def teamCards(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit requst =>
+    leagueUnitDataFromId(leagueUnitId).flatMap(leagueUnitData =>
+      TeamCardsRequest.execute(
+        OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
+          divisionLevel = Some(leagueUnitData.divisionLevel),
+          leagueUnitId = Some(leagueUnitData.leagueUnitId)),
+        restStatisticsParameters)
+        .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+    )
+  }
 
   def teamRatings(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamRatingsRequest, leagueUnitId, restStatisticsParameters)

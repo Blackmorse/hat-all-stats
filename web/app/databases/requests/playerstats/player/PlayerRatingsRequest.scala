@@ -4,7 +4,7 @@ import anorm.RowParser
 import databases.requests.ClickhouseRequest
 import databases.requests.model.player.PlayerRating
 
-object PlayerRatingsRequest extends ClickhousePlayerRequest[PlayerRating]{
+object PlayerRatingsRequest extends ClickhousePlayerSingleRoundRequest[PlayerRating]{
   override val sortingColumns: Seq[String] = Seq("age", "rating", "rating_end_of_match")
   override val oneRoundSql: String = s"""
          |SELECT

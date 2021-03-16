@@ -125,8 +125,13 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
-  def teamCards(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
-    stats(TeamCardsRequest, leagueId, divisionLevel, restStatisticsParameters)
+  def teamCards(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
+    TeamCardsRequest.execute(
+      OrderingKeyPath(leagueId = Some(leagueId),
+        divisionLevel = Some(divisionLevel)),
+      restStatisticsParameters)
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
 
   def teamRatings(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters) =
     stats(TeamRatingsRequest, leagueId, divisionLevel, restStatisticsParameters)

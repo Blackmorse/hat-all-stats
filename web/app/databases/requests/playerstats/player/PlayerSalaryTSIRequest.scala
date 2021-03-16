@@ -4,7 +4,7 @@ import anorm.RowParser
 import databases.requests.ClickhouseRequest
 import databases.requests.model.player.PlayerSalaryTSI
 
-object PlayerSalaryTSIRequest extends ClickhousePlayerRequest[PlayerSalaryTSI] {
+object PlayerSalaryTSIRequest extends ClickhousePlayerSingleRoundRequest[PlayerSalaryTSI] {
   override val sortingColumns: Seq[String] = Seq("age", "tsi", "salary")
 
   override val oneRoundSql: String =

@@ -48,8 +48,8 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
     val playedMinutes = if(playedInLastMatch) Some(1) else None
 
     restClickhouseDAO.execute(SqlBuilder(sql)
-      .applyParameters(parameters)
       .where
+        .applyParameters(parameters)
         .applyParameters(orderingKeyPath)
         .playedMinutes.greaterEqual(playedMinutes)
       .build, rowParser)

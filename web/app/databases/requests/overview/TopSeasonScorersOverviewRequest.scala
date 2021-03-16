@@ -37,7 +37,7 @@ object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerS
       |        round,
       |        nationality
       |    FROM hattrick.player_stats
-      |    __where__ and round <= __round__
+      |    __where__
       |) AS inner
       |GROUP BY
       |    player_id,
@@ -53,18 +53,14 @@ object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerS
   override def execute(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int])
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[PlayerStatOverview]] = {
 
-    val season1 = SqlBuilder("")
-      .where
-      .season
-
-    val builder = SqlBuilder(sql.replace("__round__", round.toString))
+    val builder = SqlBuilder(sql)
       .where
         .season(season)
         .leagueId(leagueId)
         .divisionLevel(divisionLevel)
-      .and
-      .page(0)
-      .pageSize(limit)
+        .round.lessEqual(round)
+        .page(0)
+        .pageSize(limit)
 
     restClickhouseDAO.execute(builder.build, rowParser)
   }

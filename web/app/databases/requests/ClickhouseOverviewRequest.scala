@@ -20,7 +20,6 @@ trait ClickhouseOverviewRequest[T] extends ClickhouseRequest[T] {
         .season(season)
         .leagueId(leagueId)
         .divisionLevel(divisionLevel)
-      .and
         .page(0)
         .pageSize(limit)
       .sortBy(sortBy)
