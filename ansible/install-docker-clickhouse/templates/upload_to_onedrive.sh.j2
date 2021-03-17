@@ -1,0 +1,64 @@
+#!/bin/bash
+
+backup_name=$(ls {{ base_project_directory }}/backup | tail -1)
+previous_backup_name=$(ls {{ base_project_directory }}/backup | tail -2 | head -1)
+echo "Backup name: $backup_name"
+echo "Previous backup: $previous_backup_name"
+
+tar -cvzf {{ base_project_directory }}/OneDrive/$backup_name.tar.gz {{ base_project_directory }}/backup/$backup_name 
+
+REFRESH_TOKEN=$(cat {{ base_project_directory }}/OneDrive/refresh_token)
+
+JSON=$(echo "client_id=b1459a06-16bd-4e9e-a2bf-55210aea96b4&redirect_uri=http://localhost:9001/api/token&client_secret=~j1.FxQBk2EX9kb7cSSwA0t4X2W-.ugiPO&refresh_token=$REFRESH_TOKEN&grant_type=refresh_token" | curl -X POST -H 'Content-Type: application/x-www-form-urlencoded' "https://login.live.com/oauth20_token.srf" --data-binary @-)
+
+echo $(echo "$JSON" | jq -r '.["refresh_token"]') > {{ base_project_directory }}/OneDrive/refresh_token 
+NEW_REFRESH_TOKEN=$(cat {{ base_project_directory }}/OneDrive/refresh_token)
+
+ACCESS_TOKEN=$(echo "$JSON" | jq -r '.["access_token"]')
+echo $ACCESS_TOKEN > {{ base_project_directory }}/OneDrive/access_token
+
+HATTID_PREVIOUS_BACKUP_ID=$(curl -H "Authorization: bearer $ACCESS_TOKEN" "https://graph.microsoft.com/v1.0/me/drive/root:/backups/Hattid/$previous_backup_name.tar.gz" | jq -r '.["id"]')
+HATTID_BACKUP_FOLDER_ID=$(curl -H "Authorization: bearer $ACCESS_TOKEN" "https://graph.microsoft.com/v1.0/me/drive/root:/backups/Hattid" | jq -r '.["id"]')
+
+echo "Hattid backup file id: $HATTID_PREVIOUS_BACKUP_ID"
+echo "Hattid backup folder id: $HATTID_BACKUP_FOLDER_ID"
+
+
+UPLOAD_URL=$(echo "" | curl -X POST -H "Authorization: bearer $ACCESS_TOKEN" "https://graph.microsoft.com/v1.0/me/drive/items/$HATTID_BACKUP_FOLDER_ID:/${backup_name}.tar.gz:/createUploadSession" --data-binary @- | jq -r '.["uploadUrl"]')
+
+echo "Upload URL: $UPLOAD_URL"
+
+backup_bytes=$(wc -c {{ base_project_directory }}/OneDrive/$backup_name.tar.gz | cut -d' ' -f 1)
+
+echo "backup bytes: $backup_bytes"
+chunk_size=$((1024 * 1024 * 64))
+echo "chunk size: $chunk_size"
+
+chunks=$((($backup_bytes / $chunk_size) + 1))
+echo "chunks: $chunks"
+
+for i in $(seq 0 $(($chunks - 2))); do
+  echo "
+bytes $(($i * $chunk_size))-$((($i + 1) * $chunk_size - 1))/$backup_bytes"
+  cat {{ base_project_directory }}/OneDrive/$backup_name.tar.gz | tail -c +$(($i * $chunk_size + 1)) | head -c $chunk_size | curl -X PUT -H "Content-Length: $chunk_size" -H "Content-Range: bytes $(($i * $chunk_size))-$((($i + 1) * $chunk_size - 1))/$backup_bytes" "$UPLOAD_URL" --data-binary @-
+
+done
+echo "
+bytes $(($chunk_size * ($chunks - 1)))-$(($backup_bytes - 1))/$backup_bytes"
+echo "Content-Length: $(($backup_bytes - ($chunk_size * ($chunks - 1))))"
+echo "Content-Range: bytes $(($chunk_size * ($chunks - 1)))-$(($backup_bytes - 1))/$backup_bytes"
+cat {{ base_project_directory }}/OneDrive/$backup_name.tar.gz | tail -c +$((($chunk_size * ($chunks - 1)) + 1)) | head -c $chunk_size | curl -X PUT -H "Content-Length: $(($backup_bytes - ($chunk_size * ($chunks - 1))))" -H "Content-Range: bytes $(($chunk_size * ($chunks - 1)))-$(($backup_bytes - 1))/$backup_bytes" "$UPLOAD_URL" --data-binary @-
+
+
+RESULT=$?
+
+echo "RESULT: $RESULT"
+
+rm {{ base_project_directory }}/OneDrive/$backup_name.tar.gz
+
+if [ $RESULT -ne 0 ]; then
+  echo "Error"
+  exit 1
+fi
+
+curl -H "Authorization: bearer $ACCESS_TOKEN" -X DELETE "https://graph.microsoft.com/v1.0/me/drive/items/$HATTID_PREVIOUS_BACKUP_ID"

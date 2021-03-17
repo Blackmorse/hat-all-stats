@@ -8,4 +8,11 @@
 
 - include: 03-grants.yml
 
-- include: 04-cron.yml
+- include: 04-cron-local-backup.yml
+  tags:
+   - cron
+
+- include: 05-cron-onedrive.yml
+  tags:
+   - cron
+   - remote-cron

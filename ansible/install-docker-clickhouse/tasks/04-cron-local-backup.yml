@@ -7,15 +7,12 @@
     hour: "18"
     minute: "0"
     job: "mkdir {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d) && cp -r  {{ base_project_directory }}/clickhouse/ {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d)"
-  tags:
-   - cron
 
 - name: cron for deleting old clickhouse backups
   become: true
   cron:
+    name: "cron for deleting old clickhouse backups"
     weekday: "1"
     hour: "20"
     minute: "0"
     job: "rm -R {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d -d '-35 days')"
-  tags:
-   - cron

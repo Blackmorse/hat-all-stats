@@ -1,0 +1,19 @@
+- name: create onedrive directory
+  file:
+    path: "{{ base_project_directory }}/OneDrive"
+    state: directory
+
+- name: copy script
+  template:
+    src: upload_to_onedrive.sh.j2
+    dest: "{{ base_project_directory }}/OneDrive/upload_to_onedrive.sh"
+    mode: 0775
+
+- name: cron onedrive
+  become: true
+  cron:
+    name: "cron for uploading to Onedrive"
+    weekday: "1"
+    hour: "23"
+    minute: "00"
+    job: "/bin/bash -c \"{{ base_project_directory }}/OneDrive/upload_to_onedrive.sh\""

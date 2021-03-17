@@ -8,3 +8,9 @@
 - name: install python docker
   pip:
     name: docker
+
+- name: install jq
+  become: true
+  apt:
+    name: jq
+    state: present
