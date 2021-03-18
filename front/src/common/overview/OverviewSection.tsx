@@ -41,6 +41,10 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
         this.isWorldData = 'isWorldData' in  props.levelDataProps.levelData
     }
 
+    componentDidMount() {
+        
+    }
+
     abstract loadOverviewEntity(overviewRequest: OverviewRequest,
             callback: (loadingEnum: LoadingEnum, entities?: OverviewEntity) => void): void
 
