@@ -41,17 +41,19 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
     if(!sortingColumns.contains(parameters.sortBy))
       throw new Exception("Looks like SQL injection")
 
-    val sql = parameters.statsType match {
-      case Round(round) => oneRoundSql.replace("__round__", round.toString).replace("__sortBy__", parameters.sortBy)
+    val round = parameters.statsType match {
+      case Round(r) => r
     }
 
     val playedMinutes = if(playedInLastMatch) Some(1) else None
 
-    restClickhouseDAO.execute(SqlBuilder(sql)
+    restClickhouseDAO.execute(SqlBuilder(oneRoundSql)
       .where
         .applyParameters(parameters)
         .applyParameters(orderingKeyPath)
         .playedMinutes.greaterEqual(playedMinutes)
+        .round(round)
+      .sortBy(parameters.sortBy)
       .build, rowParser)
   }
 
