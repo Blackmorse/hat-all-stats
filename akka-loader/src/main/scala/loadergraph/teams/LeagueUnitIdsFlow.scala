@@ -2,7 +2,7 @@ package loadergraph.teams
 
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.stream.SourceShape
+import akka.stream.{FlowShape, SourceShape}
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Sink, Source}
 import chpp.OauthTokens
 import flows.LogProgressFlow
@@ -11,17 +11,17 @@ import models.stream.LeagueUnit
 
 import scala.concurrent.ExecutionContext
 
-object LeagueUnitIdsSource {
+object LeagueUnitIdsFlow {
 
-  def apply(leagueId: Int)(implicit oauthTokens: OauthTokens, system: ActorSystem,
-                           executionContext: ExecutionContext): Source[LeagueUnit, NotUsed] = {
-    val source = LeagueWithLevelSource(leagueId)
+  def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
+                           executionContext: ExecutionContext): Flow[Int, LeagueUnit, NotUsed] = {
+    val leagueWithLevelFlow = LeagueWithLevelFlow()
 
-    val flow = Source.fromGraph {
+    val flow = Flow.fromGraph {
       GraphDSL.create(){ implicit builder =>
         import GraphDSL.Implicits._
 
-        val sourceShape = builder.add(source)
+        val sourceShape = builder.add(leagueWithLevelFlow)
 
         val broadcast = builder.add(Broadcast[LeagueWithLevel](3))
 
@@ -41,13 +41,12 @@ object LeagueUnitIdsSource {
 
         sourceShape ~> broadcast ~> filterHighest  ~> highestLeagueFlow  ~> merge
                        broadcast ~> filterSweden   ~> swedenLeagueFlow   ~> merge
-                       broadcast ~> filterStandard ~> standardLeagueFlow ~> merge// ~> broadcastCounter.in
+                       broadcast ~> filterStandard ~> standardLeagueFlow ~> merge
 
-        SourceShape(merge.out)
+        FlowShape(sourceShape.in, merge.out)
       }
     }
 
-    val v: Source[LeagueUnit, NotUsed] = flow.via(LogProgressFlow("league units", None))
-    v.async
+    flow.async.via(LogProgressFlow("league units", None))
   }
 }

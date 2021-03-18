@@ -1,18 +1,18 @@
 package loadergraph.teams
 
+import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.Source
+import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
 import chpp.worlddetails.{WorldDetailsHttpFlow, WorldDetailsRequest}
 import models.stream.League
 
 import scala.concurrent.ExecutionContext
 
-object LeagueWithLevelSource {
-  def apply(leagueId: Int)
-            (implicit oauthTokens: OauthTokens, system: ActorSystem,
-             executionContext: ExecutionContext) = {
-    Source.single(leagueId)
+object LeagueWithLevelFlow {
+  def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
+             executionContext: ExecutionContext): Flow[Int, LeagueWithLevel, NotUsed] = {
+   Flow[Int]
       .map(leagueId => (WorldDetailsRequest(leagueId = Some(leagueId)), leagueId))
       .via(WorldDetailsHttpFlow())
       .map(_._1)

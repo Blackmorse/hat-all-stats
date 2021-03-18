@@ -22,8 +22,8 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
   def apply[T]()(implicit oauthTokens: OauthTokens, system: ActorSystem,
                 reader: XmlReader[Model]): Flow[(Request, T), (Model, T), NotUsed] = {
 
-    implicit val dispatcher: MessageDispatcher = system.dispatchers.lookup("my-dispatcher")
-
+//    implicit val dispatcher: MessageDispatcher = system.dispatchers.lookup("my-dispatcher")
+    import system.dispatcher
     val flow = Flow[(Request, T)]
       .map{case(request, t) => (request.createRequest(), t)}.async
 

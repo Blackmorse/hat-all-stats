@@ -2,7 +2,7 @@ package clickhouse
 
 import chpp.worlddetails.models.League
 
-object PlayerStatsRequester {
+object PlayerStatsJoiner {
   def playerStatsJoinRequest(league: League, databaseName: String): String = {
     val leagueId = league.leagueId
     val round = league.matchRound - 1
