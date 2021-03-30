@@ -17,6 +17,7 @@ object MatchDetailsFlow {
   def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
               executionContext: ExecutionContext): Flow[StreamTeam, StreamMatchDetails, _] = {
     Flow[StreamTeam]
+      .filter(_.userId != 0)
       .map(team => (MatchesArchiveRequest(teamId = Some(team.id)), team))
       .async
       .via(MatchesArchiveHttpFlow())

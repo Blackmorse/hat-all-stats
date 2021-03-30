@@ -5,18 +5,14 @@ import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
 import chpp.leaguedetails.models.LeagueDetails
-import chpp.leaguedetails.{LeagueDetailsHttpFlow, LeagueDetailsRequest}
 import models.stream.{LeagueUnit, StreamTeam}
 
 import scala.concurrent.ExecutionContext
 
 object TeamsFlow {
   def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
-                            executionContext: ExecutionContext): Flow[Int, StreamTeam, NotUsed] = {
-    LeagueUnitIdsFlow()
-      .map(leagueUnit => (LeagueDetailsRequest(leagueUnitId = Some(leagueUnit.leagueUnitId)), leagueUnit))
-      .async
-      .via(LeagueDetailsHttpFlow())
+                            executionContext: ExecutionContext): Flow[(LeagueDetails, LeagueUnit), StreamTeam, NotUsed] = {
+    Flow[(LeagueDetails, LeagueUnit)]
       .flatMapConcat{case(leagueDetails, leagueUnit) =>
         Source(teamsFromLeagueUnit(leagueDetails, leagueUnit))
       }
@@ -28,9 +24,9 @@ object TeamsFlow {
       List[StreamTeam]()
     else {
       leagueDetails.teams
-        .filter(_.userId != 0)
         .map(team =>
           StreamTeam(leagueUnit = leagueUnit,
+            userId = team.userId,
             id = team.teamId,
             name = team.teamName,
             position = team.position,

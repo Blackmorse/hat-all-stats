@@ -3,10 +3,17 @@ package actors
 import actors.TaskExecutorActor.{ScheduleTask, TaskFinished, TryToExecute}
 import akka.Done
 import akka.actor.Actor
-import akka.stream.scaladsl.{Keep, Sink, Source}
+import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
+import chpp.OauthTokens
 import clickhouse.HattidLoaderClickhouseClient
+import com.crobox.clickhouse.stream.Insert
 import com.typesafe.scalalogging.Logger
+import flows.ClickhouseFlow
+import models.clickhouse.{MatchDetailsCHModel, PromotionModelCH}
+import models.stream.{StreamMatchDetails, StreamTeam}
 import org.slf4j.LoggerFactory
+import promotions.PromotionsCalculator
+import utils.WorldDetailsSingleRequest
 
 import java.util.Date
 import scala.concurrent.Future
@@ -22,8 +29,8 @@ object TaskExecutorActor {
   case object TaskFinished
 }
 
-class TaskExecutorActor(graph: Sink[Int, Future[Done]],
-                        hattidClient: HattidLoaderClickhouseClient)
+class TaskExecutorActor(graph: Sink[Int, (Future[List[StreamTeam]], Future[Done])], chSink: Sink[Insert, Future[Done]],
+                        hattidClient: HattidLoaderClickhouseClient)(implicit oauthTokens: OauthTokens)
     extends Actor {
   import context.{dispatcher, system}
 
@@ -51,18 +58,42 @@ class TaskExecutorActor(graph: Sink[Int, Future[Done]],
             tasks = tasks.drop(1)
             running = true
             logger.info(s"Started league ${task.leagueId}")
-            Source.single(task.leagueId).toMat(graph)(Keep.right).run()
+            val (promotionsFuture, roundFuture) = Source.single(task.leagueId).toMat(graph)(Keep.right).run()
+            roundFuture.zip(promotionsFuture)
               .onComplete {
-                case Failure(exception) =>
-                  logger.error(s"Failed to upload ${task.leagueId}", exception)
-                  self ! ScheduleTask(task.leagueId,
-                    new Date(System.currentTimeMillis() + 3 * 60 * 1000))
-                  self ! TaskFinished
-                case Success(_) =>
-                  hattidClient.join(task.leagueId)
+              case Failure(exception) =>
+                logger.error(s"Failed to upload ${task.leagueId}", exception)
+                self ! ScheduleTask(task.leagueId,
+                  new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                self ! TaskFinished
+              case
+                Success((_, promotionsTeams)) =>
+
+                val result = for {
+                 leagueWorldDetails <- WorldDetailsSingleRequest.request(Some(task.leagueId))
+                 _ <- hattidClient.join(task.leagueId)
+                 promotions <- Future(PromotionsCalculator.calculatePromotions(
+                   new PromotionsCalculator(leagueWorldDetails.leagueList.head, promotionsTeams),
+                   leagueWorldDetails.leagueList.head.numberOfLevels))
+                r <- {
+                  println(promotions)
+
+                  Source(promotions).log("pipeline_log").via(ClickhouseFlow[PromotionModelCH](context.system.settings.config.getString("database_name"), "promotions")).toMat(chSink)(Keep.right).run()
+                }
+                } yield {
                   logger.info(s"${task.leagueId} successfully loaded")
                   self ! TaskFinished
-              }
+                  r
+                }
+
+                  result.onComplete{
+                    case Failure(exception) =>
+                      logger.error(exception.getMessage, exception)
+                    case Success(_) =>
+                      logger.info("Success")
+                  }
+
+            }
           }
         }
       } else {

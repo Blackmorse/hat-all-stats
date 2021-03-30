@@ -5,7 +5,7 @@ import chpp.BaseXmlMapper
 import com.lucidchart.open.xtract.{XmlReader, __}
 
 case class Team(userId: Int,
-                teamId: Int,
+                teamId: Long,
                 teamName: String,
                 position: Int,
                 positionChange: Int,
@@ -20,7 +20,7 @@ case class Team(userId: Int,
 object Team extends BaseXmlMapper {
   implicit val reader: XmlReader[Team] = (
     (__ \ "UserId").read[Int],
-    (__ \ "TeamID").read[Int],
+    (__ \ "TeamID").read[Long],
     (__ \ "TeamName").read[String],
     (__ \ "Position").read[Int],
     (__ \ "PositionChange").read[Int],

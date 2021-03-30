@@ -13,7 +13,7 @@ object WorldDetailsSingleRequest {
   def request(leagueId: Option[Int] = None)(implicit oauthTokens: OauthTokens,
                 actorSystem: ActorSystem,
                 executionContext: ExecutionContext): Future[WorldDetails] = {
-    Source.single((WorldDetailsRequest(leagueId = leagueId), Unit))
+    Source.single((WorldDetailsRequest(leagueId = leagueId), ()))
       .via(WorldDetailsHttpFlow())
       .map(_._1)
       .runFold(null.asInstanceOf[WorldDetails])((_, wd) => wd)

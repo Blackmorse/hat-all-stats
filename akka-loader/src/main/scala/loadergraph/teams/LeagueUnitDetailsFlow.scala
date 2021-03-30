@@ -2,19 +2,21 @@ package loadergraph.teams
 
 import akka.NotUsed
 import akka.actor.ActorSystem
-import akka.stream.{FlowShape, SourceShape}
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge, Sink, Source}
+import akka.stream.FlowShape
+import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge}
 import chpp.OauthTokens
+import chpp.leaguedetails.models.LeagueDetails
+import chpp.leaguedetails.{LeagueDetailsHttpFlow, LeagueDetailsRequest}
 import flows.LogProgressFlow
 import loadergraph.teams.sweden.SwedenLeagueUnitFlow
 import models.stream.LeagueUnit
 
 import scala.concurrent.ExecutionContext
 
-object LeagueUnitIdsFlow {
+object LeagueUnitDetailsFlow {
 
   def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
-                           executionContext: ExecutionContext): Flow[Int, LeagueUnit, NotUsed] = {
+                           executionContext: ExecutionContext): Flow[Int, (LeagueDetails, LeagueUnit), NotUsed] = {
     val leagueWithLevelFlow = LeagueWithLevelFlow()
 
     val flow = Flow.fromGraph {
@@ -47,6 +49,10 @@ object LeagueUnitIdsFlow {
       }
     }
 
-    flow.async.via(LogProgressFlow("league units", None))
+    val loggingFlow: Flow[Int, LeagueUnit, NotUsed] = flow.async.via(LogProgressFlow("league units", None))
+    loggingFlow
+      .map((leagueUnit: LeagueUnit) => (LeagueDetailsRequest(leagueUnitId = Some(leagueUnit.leagueUnitId)), leagueUnit))
+      .async
+      .via(LeagueDetailsHttpFlow())
   }
 }

@@ -25,17 +25,18 @@ class HattidLoaderClickhouseClient(config: Config)(implicit oauthTokens: OauthTo
   }
 
   private def createTeamRankJoinerSql(league: League): Future[Try[Unit]] = {
-    val seqFuture = (1 to league.numberOfLevels).map(level => {
-      val sql = TeamRankJoiner.createSql(
-        season = league.season - league.seasonOffset,
-        leagueId = league.leagueId,
-        round = league.matchRound - 1,
-        divisionLevel = Some(level),
-        database = databaseName
-      )
-      client.execute(sql)
-    })
+    val seqFuture = (1 to league.numberOfLevels).map(Some(_)).concat(Seq(None))
+      .map(level => {
+        val sql = TeamRankJoiner.createSql(
+          season = league.season - league.seasonOffset,
+          leagueId = league.leagueId,
+          round = league.matchRound - 1,
+          divisionLevel = level,
+          database = databaseName
+        )
+        client.execute(sql)
+      })
 
-    Future.sequence(seqFuture).map(_ => Success(Unit))
+    Future.sequence(seqFuture).map(_ => Success(()))
   }
 }
