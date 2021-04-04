@@ -1,9 +1,9 @@
 package databases.requests.playerstats.player
 
 import databases.requests.model.Roles
-import databases.SqlBuilder
 import databases.dao.RestClickhouseDAO
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
+import databases.sqlbuilder.SqlBuilder
 import models.web.{PlayersParameters, RestStatisticsParameters, Round}
 
 import scala.concurrent.Future

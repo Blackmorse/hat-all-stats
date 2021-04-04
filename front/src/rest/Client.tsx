@@ -45,6 +45,7 @@ import TeamMatch from './models/match/TeamMatch'
 import MatchAttendanceOverview from './models/overview/MatchAttendanceOverview'
 import DreamTeamPlayer from './models/player/DreamTeamPlayer';
 import PlayersParameters from './models/PlayersParameters'
+import CreatedSameTimeTeamExtended from './models/team/CreatedSameTimeTeamExtended'
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
@@ -183,6 +184,14 @@ export function getDreamTeam(request: LevelRequest, season: number, statType: St
         .then(response => parseAxiosResponse(response, callback))
         .catch(e => callback(LoadingEnum.ERROR))
 
+}
+
+export function getCreatedSameTimeTeams(leagueId: number, foundedDate: number, period: string,
+        callback: (loadingEnum: LoadingEnum, results?: Array<CreatedSameTimeTeamExtended>) => void) {
+    axios.get<Array<CreatedSameTimeTeamExtended>>('/api/team/stats/teamsFoundedSameDate?leagueId=' + leagueId + 
+            '&foundedDate=' + foundedDate + '&period=' + period)
+        .then(response => callback(LoadingEnum.OK, response.data))
+        .catch(e => callback(LoadingEnum.ERROR))
 }
 
 function playersRequest<T>(path: string): 

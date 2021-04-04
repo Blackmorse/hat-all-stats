@@ -106,7 +106,7 @@
   "filter.sorting_direction": "Sıralama",
   "filter.asc": "Artan",
   "filter.desc": "Azalan",
-  "filter.season": "Sezon:",
+  "filter.season": "Sezon",
   "filter.round": "Tur",
   "filter.sort_by": "Göre sırala:",
 
@@ -195,5 +195,9 @@
 
   "dream_team.total": "Toplam",
 
-  "table.loddar_stats": "Loddar Stats"
+  "table.loddar_stats": "Loddar Stats",
+
+  "menu.created_same_time_teams": "Takımlar aynı anda başladı",
+  "team.period": "Periyot",
+  "team.date_of_foundation": "Kuruluş tarihi"
 }

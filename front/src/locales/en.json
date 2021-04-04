@@ -106,7 +106,7 @@
     "filter.sorting_direction": "Sorting",
     "filter.asc": "ascending",
     "filter.desc": "descending",
-    "filter.season": "Season:",
+    "filter.season": "Season",
     "filter.round": "Round:",
     "filter.sort_by": "Sort By:",
 
@@ -195,5 +195,9 @@
 
     "dream_team.total": "Total",
 
-    "table.loddar_stats": "Loddar Stats"
+    "table.loddar_stats": "Loddar Stats",
+
+    "menu.created_same_time_teams": "Teams started same time",
+    "team.period": "Period",
+    "team.date_of_foundation": "Date of foundation"
   }

@@ -22,5 +22,6 @@ export enum PagesEnum {
     PROMOTIONS = "menu.promotions",
     TEAM_SEARCH = "menu.team_search",
     TEAM_MATCHES = "menu.matches",
-    DREAM_TEAM = "menu.dream_team"
+    DREAM_TEAM = "menu.dream_team",
+    CREATED_SAME_TIME_TEAMS = "menu.created_same_time_teams"
 }

@@ -1,7 +1,7 @@
 package databases.dao
 
 import akka.actor.ActorSystem
-import databases.SqlBuilder
+import databases.sqlbuilder.SqlBuilder
 import models.clickhouse._
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext

@@ -20,7 +20,7 @@ class SeasonSelector extends React.Component<SeasonSelectorProps> {
         return <Translation>
             { (t, { i18n }) =>
                 <div className="selector_div">
-                    <span className="selector_div_entry">{t('filter.season')}</span>
+                    <span className="selector_div_entry">{t('filter.season')}:</span>
                     <select className="selector_div_entry" defaultValue={this.props.currentSeason}
                         onChange={this.onChanged}>
                         {this.props.seasons.map(season => {

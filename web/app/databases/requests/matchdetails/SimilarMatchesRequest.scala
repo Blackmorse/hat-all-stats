@@ -2,10 +2,10 @@ package databases.requests.matchdetails
 
 import anorm.RowParser
 import com.blackmorse.hattrick.api.matchdetails.model.MatchDetails
-import databases.SqlBuilder
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
 import databases.requests.model.`match`.SimilarMatchesStats
+import databases.sqlbuilder.SqlBuilder
 
 import scala.concurrent.Future
 

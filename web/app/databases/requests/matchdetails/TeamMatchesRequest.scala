@@ -1,10 +1,10 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
-import databases.SqlBuilder
 import databases.dao.RestClickhouseDAO
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.`match`.TeamMatch
+import databases.sqlbuilder.SqlBuilder
 
 import scala.concurrent.Future
 

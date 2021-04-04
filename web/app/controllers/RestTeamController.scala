@@ -17,9 +17,11 @@ import models.web.rest.LevelData.Rounds
 import models.web.{PlayersParameters, RestStatisticsParameters}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
+import service.{HattrickPeriod, TeamsService}
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
 import utils.Romans
 
+import java.util.Date
 import javax.inject.Inject
 import scala.collection.JavaConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,6 +35,7 @@ case class RestTeamData(leagueId: Int,
                         leagueUnitName: String,
                         teamId: Long,
                         teamName: String,
+                        foundedDate: Long,
                         seasonOffset: Int,
                         seasonRoundInfo: Seq[(Int, Rounds)],
                         currency: String,
@@ -64,6 +67,7 @@ object NearestMatches {
 class RestTeamController @Inject() (val controllerComponents: ControllerComponents,
                                     val hattrick: Hattrick,
                                     val leagueInfoService: LeagueInfoService,
+                                    val teamsService: TeamsService,
                                     implicit val clickhouseDAO: ClickhouseDAO,
                                     implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
   private def getTeamById(teamId: Long): Future[Either[Team, Team]] = Future {
@@ -87,6 +91,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
       leagueUnitName = team.getLeagueLevelUnit.getLeagueLevelUnitName,
       teamId = team.getTeamId,
       teamName = team.getTeamName,
+      foundedDate = team.getFoundedDate.getTime,
       seasonOffset = league.getSeasonOffset,
       seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(team.getLeague.getLeagueId),
       currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
@@ -280,4 +285,9 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
       case Left(_) => Future(NoContent)
     })
   )
+
+  def teamsFoundedSameDate(period: HattrickPeriod, leagueId: Int, foundedDate: Long) = Action.async { implicit request =>
+    teamsService.teamsCreatedSamePeriod(period, new Date(foundedDate), leagueId)
+      .map(teams => Ok(Json.toJson(teams)))
+  }
 }

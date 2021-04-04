@@ -1,8 +1,8 @@
 package databases.requests.playerstats.player
 
-import databases.SqlBuilder
 import databases.requests.OrderingKeyPath
 import databases.requests.model.Roles
+import databases.sqlbuilder.SqlBuilder
 import models.web.{PlayersParameters, RestStatisticsParameters}
 
 trait ClickhousePlayerAggregateRoundRequest[T] extends ClickhousePlayerRequest[T] {

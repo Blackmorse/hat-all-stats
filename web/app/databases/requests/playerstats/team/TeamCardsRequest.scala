@@ -1,10 +1,10 @@
 package databases.requests.playerstats.team
 
 import anorm.RowParser
-import databases.SqlBuilder
 import databases.dao.RestClickhouseDAO
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.team.TeamCards
+import databases.sqlbuilder.SqlBuilder
 import models.web.{RestStatisticsParameters, Round}
 
 import scala.concurrent.Future

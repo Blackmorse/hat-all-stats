@@ -96,6 +96,7 @@ GET     /api/team/:teamId/surprisingMatches   controllers.RestTeamController.sur
 GET     /api/team/:teamId/matchSpectators   controllers.RestTeamController.matchSpectators(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/team/:teamId/promotions   controllers.RestTeamController.promotions(teamId: Long)
 GET     /api/team/:teamId/teamMatches   controllers.RestTeamController.teamMatches(teamId: Long, season: Int)
+GET     /api/team/stats/teamsFoundedSameDate  controllers.RestTeamController.teamsFoundedSameDate(period: service.HattrickPeriod, leagueId: Int, foundedDate: Long)
 
 GET     /api/overview/numberOverview    controllers.RestOverviewController.numberOverview(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/formations    controllers.RestOverviewController.formations(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)

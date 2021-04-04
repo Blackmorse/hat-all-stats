@@ -1,7 +1,7 @@
 package databases.requests
 
-import databases.SqlBuilder
 import databases.dao.RestClickhouseDAO
+import databases.sqlbuilder.SqlBuilder
 import models.web.Desc
 
 import scala.concurrent.Future

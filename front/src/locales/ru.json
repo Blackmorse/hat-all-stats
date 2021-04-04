@@ -106,7 +106,7 @@
     "filter.sorting_direction": "Сортировка:",
     "filter.asc": "по возрастанию",
     "filter.desc": "по убыванию",
-    "filter.season": "Сезон:",
+    "filter.season": "Сезон",
     "filter.round": "Тур:",
     "filter.sort_by": "Сортировка:",
 
@@ -195,5 +195,9 @@
 
     "dream_team.total": "Сумма",
 
-    "table.loddar_stats": "Loddar Stats"
+    "table.loddar_stats": "Loddar Stats",
+
+    "menu.created_same_time_teams": "Команды, стартовавшие в то же время",
+    "team.period": "Период",
+    "team.date_of_foundation": "Дата основания"
 }

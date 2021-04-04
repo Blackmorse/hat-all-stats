@@ -1,10 +1,10 @@
 package databases.requests.overview
 
 import anorm.RowParser
-import databases.SqlBuilder
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseOverviewRequest
 import databases.requests.overview.model.PlayerStatOverview
+import databases.sqlbuilder.SqlBuilder
 
 import scala.concurrent.Future
 

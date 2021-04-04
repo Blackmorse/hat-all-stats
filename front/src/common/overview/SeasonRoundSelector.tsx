@@ -74,7 +74,7 @@ class SeasonRoundSelector extends React.Component<Props> {
         {(t, { i18n}) => <nav className="season_round_selector">
             {leftLink}
             <span className="season_round_selector_center">
-                <span className="srselector_info">{t('filter.season')} {this.props.offsettedSeason}</span>
+                <span className="srselector_info">{t('filter.season')}: {this.props.offsettedSeason}</span>
                 <span className="srselector_info">{t('filter.round')} {this.props.round}</span>
             </span>
             {rightLink}

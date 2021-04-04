@@ -1,8 +1,8 @@
 package databases.dao
 
 import anorm.ResultSetParser
-import databases.SqlBuilder
 import databases.requests.model.overview._
+import databases.sqlbuilder.SqlBuilder
 import play.api.db.DBApi
 
 import javax.inject.{Inject, Singleton}

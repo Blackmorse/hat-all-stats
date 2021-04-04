@@ -8,7 +8,8 @@ interface TeamData extends CountryLevelData {
     leagueUnitId: number,
     leagueUnitName: string,
     teamId: number,
-    teamName: string
+    teamName: string,
+    foundedDate: number
 }
 
 export default TeamData

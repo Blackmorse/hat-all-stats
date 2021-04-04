@@ -1,9 +1,9 @@
 package databases.requests.teamrankings
 
 import anorm.RowParser
-import databases.SqlBuilder
 import databases.dao.RestClickhouseDAO
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
+import databases.sqlbuilder.SqlBuilder
 import models.clickhouse.TeamRankings
 
 import scala.concurrent.Future
