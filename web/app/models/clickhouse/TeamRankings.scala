@@ -9,6 +9,7 @@ import ai.x.play.json.implicits._
 case class TeamRankings(teamId: Long,
                         teamName: String,
                         divisionLevel: Int,
+                        season: Int,
                         round: Int,
                         rank_type: String,
                         hatstats: Int,
@@ -45,6 +46,7 @@ object TeamRankings {
     get[Long]("team_id") ~
     get[String]("team_name") ~
     get[Int]("division_level") ~
+    get[Int]("season") ~
     get[Int]("round") ~
     get[String]("rank_type") ~
     get[Int]("hatstats") ~
@@ -71,13 +73,13 @@ object TeamRankings {
     get[Int]("injury_count_position") ~
     get[Int]("power_rating") ~
     get[Int]("power_rating_position") map {
-      case teamId ~ teamName ~ divisionLevel ~ round ~ rankType ~ hatstats ~ hatstatsPosition ~ attack ~
+      case teamId ~ teamName ~ divisionLevel ~ season ~ round ~ rankType ~ hatstats ~ hatstatsPosition ~ attack ~
         attackPosition ~ midfield ~ midfieldPosition ~
         defense ~ defensePosition ~ tsi ~ tsiPosition ~ salary ~ salaryPosition ~
         rating ~ ratingPosition ~ ratingEndOfMatch ~ ratingEndOfMatchPosition ~
         age ~ agePosition ~ injury ~ injuryPosition ~ injuryCount ~ injuryCountPosition  ~
         powerRating ~ powerRatingPosition =>
-        TeamRankings(teamId, teamName, divisionLevel, round, rankType, hatstats, hatstatsPosition, attack,
+        TeamRankings(teamId, teamName, divisionLevel, season, round, rankType, hatstats, hatstatsPosition, attack,
           attackPosition, midfield, midfieldPosition, defense, defensePosition,
           tsi, tsiPosition, salary, salaryPosition, rating, ratingPosition,
           ratingEndOfMatch, ratingEndOfMatchPosition, age, agePosition,

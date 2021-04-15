@@ -5,11 +5,13 @@ import '../../i18n'
 import './RankingTable.css'
 import '../../common/elements/Trends.css'
 import TeamLevelDataProps from '../TeamLevelDataProps';
-import { PagesEnum } from '../../common/enums/PagesEnum';
 import LeagueLink from '../../common/links/LeagueLink';
 import DivisionLevelLink from '../../common/links/DivisionLevelLink';
 import ChartWindow from './ChartWindow'
 import { toRoman } from "../../common/Utils"
+import DiffPosition from '../../common/widgets/DiffPosition'
+import DiffValue from '../../common/widgets/DiffValue'
+import RankingParameters from '../../common/ranking/RankingParameters';
 
 export interface RankingData {
     teamRankings: Array<TeamRanking>,
@@ -20,13 +22,7 @@ export interface RankingData {
 
 interface Props {
     rankingData: RankingData,
-    valueFunc: (teamRanking: TeamRanking) => number,
-    positionFunc: (teamRanking: TeamRanking) => number,
-    formatter: (value: number) => JSX.Element,
-    page: PagesEnum,
-    sortingField: string,
-    title: string,
-    yAxisFunc?: (n: number) => number
+    rankingParameters: RankingParameters
 }
 
 interface State {
@@ -45,13 +41,12 @@ class RankingTable extends React.Component<Props, State> {
         this.setState({
             chart: false
         })
-        console.log()
     }
 
     render() {
-        let formatter = this.props.formatter
-        let valueFunc = this.props.valueFunc
-        let positionFunc = this.props.positionFunc
+        let formatter = this.props.rankingParameters.formatter
+        let valueFunc = this.props.rankingParameters.valueFunc
+        let positionFunc = this.props.rankingParameters.positionFunc
 
         let divisionLevelRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rank_type === "division_level")
         let leagueRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rank_type === "league_id")
@@ -65,83 +60,49 @@ class RankingTable extends React.Component<Props, State> {
         let diffValueContent: JSX.Element
         let divisionLevelDiffPositionContent: JSX.Element
         if (previousDivisionLevelRanking) {
-            if(valueFunc(previousDivisionLevelRanking) > valueFunc(lastDivisionLevelRanking)) {
-                diffValueContent = <>
-                    <img className="trend_down" src="/trend-red.png" alt="down" />
-                    -{formatter((valueFunc(previousDivisionLevelRanking) - valueFunc(lastDivisionLevelRanking)))}
-                </>
-            } else if(valueFunc(lastDivisionLevelRanking) > valueFunc(previousDivisionLevelRanking)) {
-                diffValueContent = <>
-                    <img className="trend_up" src="/trend-green.png" alt="up" />
-                    +{formatter(valueFunc(lastDivisionLevelRanking) - valueFunc(previousDivisionLevelRanking))}
-                </>
-            } else {
-                diffValueContent = <>
-                    <img src="/trend-gray.png" alt="same" />
-                    +0
-                </>
-            }
+            divisionLevelDiffPositionContent = <DiffPosition
+                positionFunc={positionFunc}
+                previousRanking={previousDivisionLevelRanking}
+                lastRanking={lastDivisionLevelRanking} 
+                />
 
-            if(positionFunc(previousDivisionLevelRanking) > positionFunc(lastDivisionLevelRanking)) {
-                divisionLevelDiffPositionContent = <>
-                    <img className="trend_up" src="/trend-green.png" alt="up" />
-                    {positionFunc(lastDivisionLevelRanking) - positionFunc(previousDivisionLevelRanking)}
-                </>
-            } else if(positionFunc(lastDivisionLevelRanking) > positionFunc(previousDivisionLevelRanking)) {
-                divisionLevelDiffPositionContent = <>
-                    <img className="trend_down" src="/trend-red.png" alt="down" />
-                    +{positionFunc(lastDivisionLevelRanking) - positionFunc(previousDivisionLevelRanking)}
-                </>
-            } else {
-                divisionLevelDiffPositionContent = <>
-                    <img src="/trend-gray.png" alt="same" />
-                    +0
-                </>
-            }
+            diffValueContent = <DiffValue
+                formatter={formatter}
+                 valueFunc={valueFunc}
+                 previousRanking={previousDivisionLevelRanking}
+                 lastRanking={lastDivisionLevelRanking} />
         }
 
         let leagueDiffPositionContent: JSX.Element
         if(previousLeagueRanking) {
-            if(positionFunc(previousLeagueRanking) > positionFunc(lastLeagueRanking)) {
-                leagueDiffPositionContent = <>
-                    <img className="trend_up" src="/trend-green.png" alt="up"/>
-                    {(positionFunc(lastLeagueRanking) - positionFunc(previousLeagueRanking))}
-                </>
-            } else if (positionFunc(previousLeagueRanking) < positionFunc(lastLeagueRanking)) {
-                leagueDiffPositionContent = <>
-                    <img className="trend_down" src="/trend-red.png" alt="down"/>
-                    +{positionFunc(lastLeagueRanking) - positionFunc(previousLeagueRanking)}
-                </>
-            } else {
-                leagueDiffPositionContent = <>
-                    <img src="/trend-gray.png" alt="same" />+0
-                </>
-            }
+            leagueDiffPositionContent = <DiffPosition 
+                positionFunc={positionFunc}
+                previousRanking={previousLeagueRanking}
+                lastRanking={lastLeagueRanking} />
         }
-
 
             return <Translation>{
                 (t, { i18n }) => 
         <span className="ranking">
             <span className="ranking_name">
-                {this.props.title}
+                {this.props.rankingParameters.title}
                 <img className="chart_img" src='/chart.svg' onClick={() => this.setState({chart: !this.state.chart})} alt=" chart"/>
             </span>
             {(this.state.chart) ? 
                 <ChartWindow callback={this.closeWindow}
                     divisionLevelRankings={divisionLevelRankings}
                     leagueRankings={leagueRankings}
-                    valueFunc={this.props.valueFunc}
-                    positionFunc={this.props.positionFunc}
-                    title={this.props.title} 
+                    valueFunc={this.props.rankingParameters.valueFunc}
+                    positionFunc={this.props.rankingParameters.positionFunc}
+                    title={this.props.rankingParameters.title} 
                     teamLevelDataProps={this.props.rankingData.teamLevelDataProps}
-                    yAxisfunc={this.props.yAxisFunc}
+                    yAxisfunc={this.props.rankingParameters.yAxisFunc}
                 /> 
                 : <></>}
             <table className="ranking_table">
                 <tbody>
                 <tr className="ranking_row">
-                    <td className="ranking_row_name">{this.props.title}</td>
+                    <td className="ranking_row_name">{this.props.rankingParameters.title}</td>
                     <td className="ranking_row_value">{formatter(valueFunc(lastDivisionLevelRanking))}</td>
                     <td className="ranking_row_diff">
                         <div className="ranking_row_diff_value">
@@ -160,10 +121,12 @@ class RankingTable extends React.Component<Props, State> {
                         <LeagueLink id={this.props.rankingData.teamLevelDataProps.leagueId()} 
                             tableLink={true}
                             text={(positionFunc(lastLeagueRanking) + 1).toString()} 
-                            page={this.props.page} 
-                            sortingField={this.props.sortingField} 
-                            rowNumber={positionFunc(lastLeagueRanking)}
-                            round={this.props.rankingData.teamLevelDataProps.currentRound()}
+                            page={this.props.rankingParameters.page} 
+                            queryParams={{
+                                sortingField: this.props.rankingParameters.sortingField,
+                                selectedRow: positionFunc(lastLeagueRanking),
+                                round: this.props.rankingData.teamLevelDataProps.currentRound()
+                            }}
                         />
                         /{this.props.rankingData.leagueTeamsCount}
                     </td>
@@ -171,10 +134,12 @@ class RankingTable extends React.Component<Props, State> {
                         {(previousLeagueRanking) ? <LeagueLink id={this.props.rankingData.teamLevelDataProps.leagueId()} 
                             tableLink={true}
                             text={leagueDiffPositionContent} 
-                            page={this.props.page}
-                            sortingField={this.props.sortingField}  
-                            rowNumber={positionFunc(previousLeagueRanking)} 
-                            round={this.props.rankingData.teamLevelDataProps.currentRound() - 1}    
+                            page={this.props.rankingParameters.page}
+                            queryParams={{
+                                sortingField: this.props.rankingParameters.sortingField,
+                                selectedRow: positionFunc(previousLeagueRanking),
+                                round: this.props.rankingData.teamLevelDataProps.currentRound() - 1
+                            }}
                         /> : <></>
                         }
                     </td>
@@ -192,10 +157,12 @@ class RankingTable extends React.Component<Props, State> {
                             leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
                             divisionLevel={lastDivisionLevelRanking.divisionLevel}
                             text={(positionFunc(lastDivisionLevelRanking) + 1).toString()}
-                            page={this.props.page}
-                            sortingField={this.props.sortingField} 
-                            rowNumber={positionFunc(lastDivisionLevelRanking)}
-                            round={this.props.rankingData.teamLevelDataProps.currentRound()}
+                            page={this.props.rankingParameters.page}
+                            queryParams={{
+                                sortingField: this.props.rankingParameters.sortingField, 
+                                selectedRow: positionFunc(lastDivisionLevelRanking),
+                                round: this.props.rankingData.teamLevelDataProps.currentRound()
+                            }}
                         />/{this.props.rankingData.divisionLevelTeamsCount}
                     </td>
                     <td className="ranking_row_diff">
@@ -203,10 +170,12 @@ class RankingTable extends React.Component<Props, State> {
                             leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
                             divisionLevel={this.props.rankingData.teamLevelDataProps.levelData.divisionLevel}
                             text={divisionLevelDiffPositionContent}
-                            page={this.props.page}
-                            sortingField={this.props.sortingField} 
-                            rowNumber={positionFunc(previousDivisionLevelRanking)}
-                            round={this.props.rankingData.teamLevelDataProps.currentRound() - 1}
+                            page={this.props.rankingParameters.page}
+                            queryParams={{
+                                sortingField: this.props.rankingParameters.sortingField, 
+                                selectedRow: positionFunc(previousDivisionLevelRanking),
+                                round: this.props.rankingData.teamLevelDataProps.currentRound() - 1
+                            }}
                         /> : <></>
                     }
                     </td>

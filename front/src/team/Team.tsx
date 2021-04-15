@@ -20,6 +20,7 @@ import QueryParams from '../common/QueryParams';
 import PromotionsTable from '../common/pages/PromotionsTable';
 import TeamMatches from './TeamMatches'
 import TeamSamePeriodTeams from './TeamSamePeriodTeams'
+import CompareTeamsPage from './compare/CompareTeamsPage'
 
 interface MatchParams {
     teamId: string
@@ -54,6 +55,8 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
             (props, queryParams) => <MatchSpectatorsTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.CREATED_SAME_TIME_TEAMS,
             (props, queryParams) => <TeamSamePeriodTeams levelDataProps={props} queryParams={queryParams}/>)
+        pagesMap.set(PagesEnum.TEAM_COMPARSION,
+            (props, queryParams) => <CompareTeamsPage levelDataProps={props} queryParams={queryParams}/>)
 
 
         pagesMap.set(PagesEnum.PROMOTIONS,

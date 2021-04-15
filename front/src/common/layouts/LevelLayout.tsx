@@ -52,11 +52,17 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
             season = Number(seasonParams)
         }
 
+        let teamIdParams = params.get('teamId')
+        let teamId: number | undefined = undefined
+        if(teamIdParams !== null) {
+            teamId = Number(teamIdParams)
+        }
         return {
             sortingField: sortingField,
             selectedRow: selectedRow,
             round: round,
-            season: season
+            season: season,
+            teamId: teamId 
         }
     }
 
@@ -123,7 +129,7 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
     leftMenu(): JSX.Element {
         return <>
             {this.topLeftMenu()}
-            <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH))} 
+            <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH && /*TODO */  p !== PagesEnum.TEAM_COMPARSION))} 
                     callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
                     title='menu.statistics'/>
             <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 

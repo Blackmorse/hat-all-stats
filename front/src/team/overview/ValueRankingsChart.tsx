@@ -17,7 +17,6 @@ class RankingsChart extends React.Component<Props, {}> {
         let x = this.props.leagueRankings.map(l => l.round)
         let yy = this.props.leagueRankings.map(this.props.valueFunc)
         let y = (this.props.formatterFunc !== undefined) ? yy.map(this.props.formatterFunc) : yy
-        console.log(y)
         let chartData = [{
             type: 'scatter',
             x: x,

@@ -199,5 +199,7 @@
 
   "menu.created_same_time_teams": "Takımlar aynı anda başladı",
   "team.period": "Periyot",
-  "team.date_of_foundation": "Kuruluş tarihi"
+  "team.date_of_foundation": "Kuruluş tarihi",
+
+  "menu.comparsion_of_teams": "Takımların karşılaştırılması"
 }

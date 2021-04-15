@@ -14,9 +14,11 @@ class WorldOverviewPage extends OverviewPage<WorldData, WorldLevelDataProps> {
                 id: entity.leagueId,
                 text: text,
                 page: page,
-                sortingField: sortingField,
-                season: season,
-                round: round
+                queryParams: {
+                    sortingField: sortingField,
+                    season: season,
+                    round: round
+                }
             })
         }        
     }

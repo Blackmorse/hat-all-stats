@@ -5,6 +5,7 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.sqlbuilder.SqlBuilder
 import models.clickhouse.TeamRankings
+import models.web.Asc
 
 import scala.concurrent.Future
 
@@ -14,6 +15,7 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
        |    team_id,
        |    team_name,
        |    division_level,
+       |    season,
        |    round,
        |    rank_type,
        |    match_id,
@@ -43,9 +45,8 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
        |    power_rating_position
        |FROM hattrick.team_rankings
        | __where__
-       |ORDER BY
-       |    rank_type ASC,
-       |    round ASC""".stripMargin
+       | __orderBy__
+""".stripMargin
 
   override val rowParser: RowParser[TeamRankings] = TeamRankings.teamRankingsMapper
 
@@ -56,5 +57,7 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
         .season(orderingKeyPath.season)
         .leagueId(orderingKeyPath.leagueId)
         .teamId(orderingKeyPath.teamId)
+      .orderBy("rank_type", "round")
+      .sortingDirection(Asc)
       .build, rowParser)
 }

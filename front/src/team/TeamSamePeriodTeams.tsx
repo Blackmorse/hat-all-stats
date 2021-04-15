@@ -11,6 +11,7 @@ import TeamLink from '../common/links/TeamLink'
 import LeagueUnitLink from '../common/links/LeagueUnitLink';
 import '../common/tables/TableSection.css'
 import { Translation } from 'react-i18next'
+import { PagesEnum } from '../common/enums/PagesEnum';
 
 interface State {
     teams?: Array<CreatedSameTimeTeamExtended>
@@ -68,7 +69,8 @@ class TeamSamePeriodTeams extends StatisticsSection<LevelDataPropsWrapper<TeamDa
                     <th className="value">{t('table.power_rating')}</th>
                     <th className="value">{t('filter.season')}</th>
                     <th className="value">{t('chart.round')}</th>
-                    <th className="value">{t('team.date_of_foundation')}</th>                    
+                    <th className="value">{t('team.date_of_foundation')}</th>     
+                    <th></th>               
                 </thead>
                 <tbody>
                     {this.state.state.teams?.filter(team => team.createdSameTimeTeam.teamSortingKey.teamId !== this.props.levelDataProps.teamId())
@@ -79,7 +81,14 @@ class TeamSamePeriodTeams extends StatisticsSection<LevelDataPropsWrapper<TeamDa
                                 <td className="value">{team.createdSameTimeTeam.powerRating}</td>
                                 <td className="value">{team.season + this.props.levelDataProps.levelData.seasonOffset}</td>
                                 <td className="value">{team.round}</td>
-                                <td className="value">{moment(team.createdSameTimeTeam.foundedDate).format('DD.MM.YYYY')}</td>                              
+                                <td className="value">{moment(team.createdSameTimeTeam.foundedDate).format('DD.MM.YYYY')}</td>
+                                <td className="value"><TeamLink text='Compare' 
+                                    id={this.props.levelDataProps.teamId()} 
+                                    page={PagesEnum.TEAM_COMPARSION}
+                                    queryParams={{
+                                        teamId: team.createdSameTimeTeam.teamSortingKey.teamId
+                                    }}
+                                    forceRefresh={true} /></td>
                             </tr>
                         })}
                 </tbody>

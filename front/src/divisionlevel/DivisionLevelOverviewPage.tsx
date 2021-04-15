@@ -15,9 +15,11 @@ class DivisionLevelOverviewPage extends OverviewPage<DivisionLevelData, Division
                 divisionLevel: this.props.levelDataProps.divisionLevel(),
                 text: text,
                 page: page,
-                sortingField: sortingField,
-                season: season,
-                round: round,
+                queryParams: {
+                    sortingField: sortingField,
+                    season: season,
+                    round: round
+                },
                 forceRefresh: true
             })
         }        

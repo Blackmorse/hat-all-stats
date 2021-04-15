@@ -200,5 +200,7 @@
 
     "menu.created_same_time_teams": "Le squadre hanno iniziato alla stessa ora",
     "team.period": "Periodo",
-    "team.date_of_foundation": "Data di fondazione"
+    "team.date_of_foundation": "Data di fondazione",
+
+    "menu.comparsion_of_teams": "Confronto delle squadre"
 }

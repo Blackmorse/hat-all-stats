@@ -46,6 +46,7 @@ import MatchAttendanceOverview from './models/overview/MatchAttendanceOverview'
 import DreamTeamPlayer from './models/player/DreamTeamPlayer';
 import PlayersParameters from './models/PlayersParameters'
 import CreatedSameTimeTeamExtended from './models/team/CreatedSameTimeTeamExtended'
+import TeamComparsion from './models/team/TeamComparsion'
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
@@ -192,6 +193,14 @@ export function getCreatedSameTimeTeams(leagueId: number, foundedDate: number, p
             '&foundedDate=' + foundedDate + '&period=' + period)
         .then(response => callback(LoadingEnum.OK, response.data))
         .catch(e => callback(LoadingEnum.ERROR))
+}
+
+export function getTeamsComparsion(team1Id: number, team2Id: number,
+        callback: (LoadingEnum: LoadingEnum, result?: TeamComparsion) => void) {
+    axios.get<TeamComparsion>('/api/team/stats/compareTeams?teamId1=' + team1Id + '&teamId2=' + team2Id)
+        .then(response => callback(LoadingEnum.OK, response.data))
+        .catch(e => callback(LoadingEnum.ERROR))
+
 }
 
 function playersRequest<T>(path: string): 

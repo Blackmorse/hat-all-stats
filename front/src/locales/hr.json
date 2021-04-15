@@ -199,5 +199,7 @@
 
     "menu.created_same_time_teams": "Timovi su započeli u isto vrijeme",
     "team.period": "Razdoblje",
-    "team.date_of_foundation": "Datum osnivanja"
+    "team.date_of_foundation": "Datum osnivanja",
+
+    "menu.comparsion_of_teams": "Usporedba timova"
 }

@@ -1,6 +1,7 @@
 package databases.sqlbuilder
 
 import anorm.ParameterValue
+import databases.sqlbuilder.clause.ClauseEntry
 
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -12,66 +13,66 @@ trait Parameter {
   def value: ParameterValue
 }
 
-case class IntParameter(parameterNumber: Int, name: String, clause: Clause) extends Parameter {
-  var _oper: String = "="
-  var _value: ParameterValue = _
+case class IntParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends Parameter {
+  private[sqlbuilder] var _oper: String = "="
+  private[sqlbuilder] var _value: ParameterValue = _
 
-  def apply(value: Int): Clause = {
+  def apply(value: Int): ClauseEntry = {
     this._value = value
-    clause
+    clauseEntry
   }
 
-  def apply(valueOpt: Option[Int]): Clause = {
+  def apply(valueOpt: Option[Int]): ClauseEntry = {
     valueOpt.foreach(value => this._value = value)
-    clause
+    clauseEntry
   }
 
-  def greaterEqual(value: Int): Clause = {
+  def greaterEqual(value: Int): ClauseEntry = {
     this._value = value
     this._oper = ">="
-    clause
+    clauseEntry
   }
 
-  def greaterEqual(valueOpt: Option[Int]): Clause = {
+  def greaterEqual(valueOpt: Option[Int]): ClauseEntry = {
     valueOpt.foreach(value => this._value = value)
     this._oper = ">="
-    clause
+    clauseEntry
   }
 
-  def lessEqual(value: Int): Clause = {
+  def lessEqual(value: Int): ClauseEntry = {
     this._value = value
     this._oper = "<="
-    clause
+    clauseEntry
   }
 
-  def lessEqual(valueOpt: Option[Int]): Clause = {
+  def lessEqual(valueOpt: Option[Int]): ClauseEntry = {
     valueOpt.foreach(value => this._value = value)
     this._oper = "<="
-    clause
+    clauseEntry
   }
 
   override def oper: String = _oper
   override def value: ParameterValue = _value
 }
 
-case class LongParameter(parameterNumber: Int, name: String, clause: Clause) extends Parameter {
+case class LongParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends Parameter {
   var _oper: String = "="
   var _value: ParameterValue = _
 
-  def apply(value: Long): Clause = {
+  def apply(value: Long): ClauseEntry = {
     this._value = value.toString
-    clause
+    clauseEntry
   }
 
-  def apply(valueOpt: Option[Long]): Clause = {
+  def apply(valueOpt: Option[Long]): ClauseEntry = {
     valueOpt.foreach(value => this._value = value.toString)
-    clause
+    clauseEntry
   }
 
-  def greaterEqual(value: Long): Clause = {
+  def greaterEqual(value: Long): ClauseEntry = {
     this._value = value.toString
     this._oper = ">"
-    clause
+    clauseEntry
   }
 
   override def oper: String = _oper
@@ -79,47 +80,58 @@ case class LongParameter(parameterNumber: Int, name: String, clause: Clause) ext
   override def value: ParameterValue = _value
 }
 
-case class StringParameter(parameterNumber: Int, name: String, clause: Clause) extends Parameter {
+case class StringParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends Parameter {
   var _oper = "="
   var _value: ParameterValue = _
 
-  def apply(value: String): Clause = {
+  def apply(value: String): ClauseEntry = {
     this._value = value
-    clause
+    clauseEntry
   }
 
-  def apply(valueOpt: Option[String]): Clause = {
+  def apply(valueOpt: Option[String]): ClauseEntry = {
     valueOpt.foreach(value => this._value = value)
-    clause
+    clauseEntry
   }
 
   override def oper: String = _oper
   override def value: ParameterValue = _value
 }
 
-case class DateParameter(parameterNumber: Int, name: String, clause: Clause) extends Parameter {
+case class DateParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends Parameter {
   var _oper = "="
   var _value: ParameterValue = _
   val format = new SimpleDateFormat("yyyy-MM-dd")
 
-  def apply(value: Date): Clause = {
+  def apply(value: Date): ClauseEntry = {
     this._value = format.format(value)
-    clause
+    clauseEntry
   }
 
-  def greaterOrEqual(date: Date): Clause = {
+  def greaterOrEqual(date: Date): ClauseEntry = {
     this._value = format.format(date)
     this._oper = ">="
-    clause
+    clauseEntry
   }
 
-  def less(date: Date): Clause = {
+  def less(date: Date): ClauseEntry = {
     this._value = format.format(date)
     this._oper = "<"
-    clause
+    clauseEntry
   }
 
   override def oper: String = _oper
 
   override def value: ParameterValue = _value
 }
+
+case class StringParameters(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) {
+  var _oper = "="
+  var _value: ParameterValue = _
+
+  def apply(value: String): ClauseEntry = {
+    this._value = value
+    clauseEntry
+  }
+}
+

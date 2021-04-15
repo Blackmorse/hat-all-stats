@@ -28,7 +28,8 @@ class Mappings {
         [PagesEnum.TEAM_SEARCH, MenuGroupsEnum.TEAM_SEARCH],
         [PagesEnum.TEAM_MATCHES, MenuGroupsEnum.MATCH],
         [PagesEnum.DREAM_TEAM, MenuGroupsEnum.PLAYER],
-        [PagesEnum.CREATED_SAME_TIME_TEAMS, MenuGroupsEnum.TEAM]
+        [PagesEnum.CREATED_SAME_TIME_TEAMS, MenuGroupsEnum.TEAM],
+        [PagesEnum.TEAM_COMPARSION, MenuGroupsEnum.TEAM]
         ])
     
     static tacticType: Map<number, string> = 
@@ -68,7 +69,8 @@ class Mappings {
             ['overview', PagesEnum.OVERVIEW],
             ['dreamTeam', PagesEnum.DREAM_TEAM],
             ['promotions', PagesEnum.PROMOTIONS],
-            ['createdSameTimeTeams', PagesEnum.CREATED_SAME_TIME_TEAMS]
+            ['createdSameTimeTeams', PagesEnum.CREATED_SAME_TIME_TEAMS],
+            ['teamComparsion', PagesEnum.TEAM_COMPARSION]
         ])
 
     static roleToTranslationMap: Map<string, string> = 

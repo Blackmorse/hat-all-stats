@@ -290,4 +290,9 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
     teamsService.teamsCreatedSamePeriod(period, new Date(foundedDate), leagueId)
       .map(teams => Ok(Json.toJson(teams)))
   }
+
+  def compareTeams(team1: Long, team2: Long) = Action.async{ implicit request =>
+    teamsService.compareTwoTeams(team1, team2)
+      .map(rankings => Ok(Json.toJson(rankings)))
+  }
 }

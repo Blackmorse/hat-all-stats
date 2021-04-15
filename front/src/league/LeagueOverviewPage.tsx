@@ -14,9 +14,11 @@ class LeagueOverviewPage extends OverviewPage<LeagueData, LeagueLevelDataProps> 
                 id: this.props.levelDataProps.leagueId(),
                 text: text,
                 page: page,
-                sortingField: sortingField,
-                season: season,
-                round: round,
+                queryParams: {
+                    sortingField: sortingField,
+                    season: season,
+                    round: round
+                },
                 forceRefresh: true
             })
         }        
