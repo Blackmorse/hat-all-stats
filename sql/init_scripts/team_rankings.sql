@@ -6,7 +6,7 @@ CREATE TABLE hattrick.team_rankings
     `round` UInt8,
     `division_level` UInt8,
     `league_unit_id` UInt32,
-    `league_unit_name` LowCardinality(String),
+    `league_unit_name` String,
     `team_id` UInt64,
     `team_name` String,
     `match_id` UInt64,
@@ -36,6 +36,5 @@ CREATE TABLE hattrick.team_rankings
     `power_rating_position` UInt32
 )
 ENGINE = MergeTree()
-PARTITION BY season
-ORDER BY (season, league_id, team_id, round)
+ORDER BY (league_id, team_id, season, round)
 SETTINGS index_granularity = 512
