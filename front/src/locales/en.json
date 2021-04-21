@@ -199,5 +199,7 @@
 
     "menu.created_same_time_teams": "Teams started same time",
     "team.period": "Period",
-    "team.date_of_foundation": "Date of foundation"
+    "team.date_of_foundation": "Date of foundation",
+
+    "menu.comparsion_of_teams": "Comparsion of teams"
   }

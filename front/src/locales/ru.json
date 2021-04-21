@@ -199,5 +199,7 @@
 
     "menu.created_same_time_teams": "Команды, стартовавшие в то же время",
     "team.period": "Период",
-    "team.date_of_foundation": "Дата основания"
+    "team.date_of_foundation": "Дата основания",
+
+    "menu.comparsion_of_teams": "Сравнение команд"
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import PlotlyChart from 'react-plotlyjs-ts';
 import TeamComparsion from '../../rest/models/team/TeamComparsion';
 import TeamRanking from '../../rest/models/team/TeamRanking';
+import i18n from '../../i18n';
 
 interface Props {
     teamComparsion: TeamComparsion,
@@ -14,7 +15,7 @@ class CompareTeamsValuesChart extends React.Component<Props> {
         let team1Rankings = this.props.teamComparsion.team1Rankings
         let team2Rankings = this.props.teamComparsion.team2Rankings
 
-        let x = team1Rankings.map(ranking => 'Season ' + ranking.season + ' round ' + ranking.round)
+        let x = team1Rankings.map(ranking => i18n.t('filter.season') + ' ' + ranking.season + ' ' + i18n.t("chart.round") + ' ' + ranking.round)
         let team1Y = team1Rankings.map(ranking => this.props.valueFunc(ranking))
         let team2Y = team2Rankings.map(ranking => this.props.valueFunc(ranking))
 
@@ -52,7 +53,7 @@ class CompareTeamsValuesChart extends React.Component<Props> {
                 },
               },
             yaxis: {
-                autorange: "reversed",
+                // autorange: "reversed",
                 title: {
                     text: this.props.title
                 }
