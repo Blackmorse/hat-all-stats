@@ -11,13 +11,8 @@ import CookieWidget from './CookieWidget'
 import LeagueRedirect from './common/redirect/LeagueRedirect'
 import LeagueUnitRedirect from './common/redirect/LeagueUnitRedirect'
 import TeamRedirect from './common/redirect/TeamRedirect'
-import ReactGA from "react-ga";
 
 class App extends React.Component{
-  componentDidMount() {  
-    ReactGA.initialize('G-QNPYRNEN6B');
-
-}
 
   render() {
     return (<>

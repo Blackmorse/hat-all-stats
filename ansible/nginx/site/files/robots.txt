@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /divisionLevel
+Disallow: /leagueLevelUnit
+Disallow: /team
+Disallow: /divisionlevel
