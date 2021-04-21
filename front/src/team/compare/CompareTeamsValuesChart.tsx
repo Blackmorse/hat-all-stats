@@ -53,7 +53,6 @@ class CompareTeamsValuesChart extends React.Component<Props> {
                 },
               },
             yaxis: {
-                // autorange: "reversed",
                 title: {
                     text: this.props.title
                 }
