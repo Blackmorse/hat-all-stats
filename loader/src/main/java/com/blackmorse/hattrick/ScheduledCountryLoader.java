@@ -85,8 +85,8 @@ public class ScheduledCountryLoader {
         } else {
             leagueTimes = worldDetails.getLeagueList().stream()
                     .flatMap(league -> {
-                        if (league.getMatchRound() - 1 > 14) {
-                            log.info("Round {} for country ({}, {}). Nothing to load", league.getMatchRound(), league.getLeagueId(), league.getEnglishName());
+                        if (league.getMatchRound() > 14) {
+                            log.info("Round {} for country ({}, {}). Nothing to load, because season is over", league.getMatchRound(), league.getLeagueId(), league.getEnglishName());
                             return Stream.empty();
                         }
                         Integer minutesOffset = countriesToMinutesOffset.getOrDefault(league.getLeagueId(), 0);
@@ -108,6 +108,9 @@ public class ScheduledCountryLoader {
             }
         });
 
+        if (leaguesSize == 0) {
+            isOver.set(true);
+        }
         schedule(leagueTimes, executorService, timer);
 
         while(true) {
@@ -145,6 +148,8 @@ public class ScheduledCountryLoader {
                     leagueTime.league.getLeagueId(), leagueTime.league.getActiveTeams(), format.format(leagueTime.getTime()));
         });
 
-        alltidLike.scheduleInfo(leagueTimes);
+        if(!leagueTimes.isEmpty()) {
+            alltidLike.scheduleInfo(leagueTimes);
+        }
     }
 }

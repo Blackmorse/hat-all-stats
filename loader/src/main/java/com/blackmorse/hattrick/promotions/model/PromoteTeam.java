@@ -3,10 +3,12 @@ package com.blackmorse.hattrick.promotions.model;
 import com.blackmorse.hattrick.model.Team;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 
 @Builder
 @Getter
+@ToString
 public class PromoteTeam {
     public Team team;
     public Integer season;
