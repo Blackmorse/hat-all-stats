@@ -49,7 +49,7 @@ object LoaderApp extends  App {
   val graph = FullLoaderFlow(config, countryMap).toMat(chSink)(Keep.both)
 
 
-  val taskExecutorActor = actorSystem.actorOf(Props(new TaskExecutorActor(graph, chSink, hattidClient)))
+  val taskExecutorActor = actorSystem.actorOf(Props(new TaskExecutorActor(graph, chSink, hattidClient, worldDetails)))
 
   val taskScheduler = new TaskScheduler(worldDetails, taskExecutorActor)
 

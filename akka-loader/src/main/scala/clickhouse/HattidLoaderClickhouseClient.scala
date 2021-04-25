@@ -21,10 +21,10 @@ class HattidLoaderClickhouseClient(config: Config)(implicit oauthTokens: OauthTo
         _ <- client.execute(PlayerStatsJoiner.playerStatsJoinRequest(league, databaseName));
         _ <- client.execute(TableTruncater.sql(league, "player_info", databaseName));
         - <- client.execute(TableTruncater.sql(league, "player_events", databaseName));
-        r <- createTeamRankJoinerSql(league)} yield r
+        r <- joinTeamRankings(league)} yield r
   }
 
-  private def createTeamRankJoinerSql(league: League): Future[Try[Unit]] = {
+  private def joinTeamRankings(league: League): Future[Try[Unit]] = {
     val seqFuture = (1 to league.numberOfLevels).map(Some(_)).concat(Seq(None))
       .map(level => {
         val sql = TeamRankJoiner.createSql(

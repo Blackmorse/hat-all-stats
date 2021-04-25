@@ -87,7 +87,7 @@ object TeamRankJoiner {
         SqlRequestParam("rating_right_att + rating_mid_att + rating_left_att", "attack", match_details_request),
         SqlRequestParam("rating_midfield", "midfield", match_details_request),
         SqlRequestParam("rating_right_def + rating_left_def + rating_mid_def", "defense", match_details_request),
-    
+
         SqlRequestParam("sum(tsi)", "tsi", player_stats_request),
         SqlRequestParam("sum(salary)", "salary", player_stats_request),
         SqlRequestParam("sum(rating)", "rating", player_stats_request),
@@ -95,7 +95,7 @@ object TeamRankJoiner {
         SqlRequestParam("avg((age * 112) + days)", "age", player_stats_request),
         SqlRequestParam("sumIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury", player_stats_request),
         SqlRequestParam("countIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury_count", player_stats_request),
-    
+
         SqlRequestParam("power_rating", "power_rating", team_details_request)
       )
 
@@ -119,7 +119,7 @@ object TeamRankJoiner {
           |) as ${sqlRequestParam.fieldAlias}_table
           |ON ${oldTablePrefix}_${oldFieldAlias}_table.team_id = ${sqlRequestParam.fieldAlias}_table.team_id""".stripMargin
 
-        request = s"""SELECT ${if (divisionLevel.isDefined) "'league_id'" else "'division_level'"}, $base_fields $newFields  FROM (
+        request = s"""SELECT ${if (divisionLevel.isDefined) "'division_level'" else "'league_id'"}, $base_fields $newFields  FROM (
          |$request)""".stripMargin
 
         oldTablePrefix = s"${oldTablePrefix}_$oldFieldAlias"

@@ -3,14 +3,18 @@ package actors
 import actors.TaskExecutorActor.{ScheduleTask, TaskFinished, TryToExecute}
 import akka.Done
 import akka.actor.Actor
-import akka.stream.scaladsl.{Flow, Keep, Sink, Source}
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.{HttpMethods, HttpRequest}
+import akka.stream.scaladsl.{Keep, Sink, Source}
+import alltid.AlltidClient
 import chpp.OauthTokens
+import chpp.worlddetails.models.WorldDetails
 import clickhouse.HattidLoaderClickhouseClient
 import com.crobox.clickhouse.stream.Insert
 import com.typesafe.scalalogging.Logger
 import flows.ClickhouseFlow
-import models.clickhouse.{MatchDetailsCHModel, PromotionModelCH}
-import models.stream.{StreamMatchDetails, StreamTeam}
+import models.clickhouse.PromotionModelCH
+import models.stream.StreamTeam
 import org.slf4j.LoggerFactory
 import promotions.PromotionsCalculator
 import utils.WorldDetailsSingleRequest
@@ -29,8 +33,12 @@ object TaskExecutorActor {
   case object TaskFinished
 }
 
-class TaskExecutorActor(graph: Sink[Int, (Future[List[StreamTeam]], Future[Done])], chSink: Sink[Insert, Future[Done]],
-                        hattidClient: HattidLoaderClickhouseClient)(implicit oauthTokens: OauthTokens)
+class TaskExecutorActor(graph: Sink[Int, (Future[List[StreamTeam]], Future[Done])],
+                        chSink: Sink[Insert, Future[Done]],
+                        hattidClient: HattidLoaderClickhouseClient,
+                        worldDetails: WorldDetails
+                       )
+                       (implicit oauthTokens: OauthTokens)
     extends Actor {
   import context.{dispatcher, system}
 
@@ -57,7 +65,11 @@ class TaskExecutorActor(graph: Sink[Int, (Future[List[StreamTeam]], Future[Done]
           if (task.time.before(new Date())) {
             tasks = tasks.drop(1)
             running = true
+            val league = worldDetails.leagueList.filter(_.leagueId == task.leagueId).head
             logger.info(s"Started league ${task.leagueId}")
+
+            AlltidClient.notifyCountryLoadingStarted(league)
+
             val (promotionsFuture, roundFuture) = Source.single(task.leagueId).toMat(graph)(Keep.right).run()
             roundFuture.zip(promotionsFuture)
               .onComplete {
@@ -69,28 +81,26 @@ class TaskExecutorActor(graph: Sink[Int, (Future[List[StreamTeam]], Future[Done]
               case
                 Success((_, promotionsTeams)) =>
 
+
                 val result = for {
-                 leagueWorldDetails <- WorldDetailsSingleRequest.request(Some(task.leagueId))
-                 _ <- hattidClient.join(task.leagueId)
-                 promotions <- Future(PromotionsCalculator.calculatePromotions(
+                  leagueWorldDetails <- WorldDetailsSingleRequest.request(Some(task.leagueId))
+                  _ <- hattidClient.join(task.leagueId)
+                  promotions <- Future(PromotionsCalculator.calculatePromotions(
                    new PromotionsCalculator(leagueWorldDetails.leagueList.head, promotionsTeams),
                    leagueWorldDetails.leagueList.head.numberOfLevels))
-                r <- {
-                  println(promotions)
-
-                  Source(promotions).log("pipeline_log").via(ClickhouseFlow[PromotionModelCH](context.system.settings.config.getString("database_name"), "promotions")).toMat(chSink)(Keep.right).run()
-                }
+                  finalFuture <- Source(promotions).log("pipeline_log").via(ClickhouseFlow[PromotionModelCH](context.system.settings.config.getString("database_name"), "promotions")).toMat(chSink)(Keep.right).run()
                 } yield {
                   logger.info(s"${task.leagueId} successfully loaded")
                   self ! TaskFinished
-                  r
+                  finalFuture
                 }
 
                   result.onComplete{
                     case Failure(exception) =>
                       logger.error(exception.getMessage, exception)
                     case Success(_) =>
-                      logger.info("Success")
+                      AlltidClient.notifyCountryLoadingFinished(league)
+                      logger.info(s"${league.leagueName} success")
                   }
 
             }

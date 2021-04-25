@@ -1,6 +1,6 @@
 package models.clickhouse
 
-import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
+import spray.json.{JsNumber, JsObject, JsValue, JsonFormat}
 
 case class PlayerEventsModelCH(season: Int,
                                round: Int,

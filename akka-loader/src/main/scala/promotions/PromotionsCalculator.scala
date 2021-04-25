@@ -29,6 +29,7 @@ object PromotionsCalculator {
   private val reverseOrdering = straightOrdering.reverse
 
   def calculatePromotions(promotionsCalculator: PromotionsCalculator, levels: Int): List[PromotionModelCH] = {
+    if(promotionsCalculator.divisionTeams.isEmpty) return List()
     (1 until levels).flatMap(level => promotionsCalculator.calculatePromotionsForDivision(level)).toList
   }
 }

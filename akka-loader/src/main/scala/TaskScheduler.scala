@@ -1,6 +1,7 @@
 import TaskScheduler.countriesToMinutesOffset
 import actors.TaskExecutorActor.ScheduleTask
-import akka.actor.ActorRef
+import akka.actor.{ActorRef, ActorSystem}
+import alltid.AlltidClient
 import chpp.worlddetails.models.WorldDetails
 
 import java.util.Date
@@ -16,20 +17,27 @@ object TaskScheduler {
 }
 
 class TaskScheduler(worldDetails: WorldDetails,
-                    taskExecutorActor: ActorRef) {
+                    taskExecutorActor: ActorRef)(implicit actorSystem: ActorSystem) {
   private val firstLeagueId = 1000
   private val lastLeagueId = 100
   private val threeHoursMs = 1000L * 60 * 60 * 3
 
   def schedule(): Unit = {
-    worldDetails.leagueList
-      .foreach(league => {
+    val tasks = worldDetails.leagueList
+      .filter(_.matchRound <= 14)
+      .map(league => {
         val minutesOffset  = countriesToMinutesOffset.getOrElse(league.leagueId, 0L)
 
         val scheduledDate = new Date(league.seriesMatchDate.getTime + threeHoursMs
           + minutesOffset * 60 * 1000)
-        taskExecutorActor ! ScheduleTask(league.leagueId, scheduledDate)
+        ScheduleTask(league.leagueId, scheduledDate)
       })
+
+    tasks.foreach(task => taskExecutorActor ! task)
+
+    if (tasks.nonEmpty) {
+      AlltidClient.notifyScheduleInfo(tasks)
+    }
   }
 
   def load(leagueNames: String): Unit = {
