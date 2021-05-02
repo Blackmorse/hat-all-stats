@@ -2,7 +2,8 @@ import TaskScheduler.countriesToMinutesOffset
 import actors.TaskExecutorActor.ScheduleTask
 import akka.actor.{ActorRef, ActorSystem}
 import alltid.AlltidClient
-import chpp.worlddetails.models.WorldDetails
+import chpp.matchesarchive.models.MatchType
+import chpp.worlddetails.models.{League, WorldDetails}
 
 import java.util.Date
 
@@ -22,13 +23,14 @@ class TaskScheduler(worldDetails: WorldDetails,
   private val lastLeagueId = 100
   private val threeHoursMs = 1000L * 60 * 60 * 3
 
-  def schedule(): Unit = {
-    val tasks = worldDetails.leagueList
+  def schedule(dateTimeFunc: League => Date): Unit = {
+    val value = worldDetails.leagueList
       .filter(_.matchRound <= 14)
+    val tasks = value
       .map(league => {
         val minutesOffset  = countriesToMinutesOffset.getOrElse(league.leagueId, 0L)
 
-        val scheduledDate = new Date(league.seriesMatchDate.getTime + threeHoursMs
+        val scheduledDate = new Date(dateTimeFunc(league).getTime + threeHoursMs
           + minutesOffset * 60 * 1000)
         ScheduleTask(league.leagueId, scheduledDate)
       })
@@ -51,19 +53,19 @@ class TaskScheduler(worldDetails: WorldDetails,
     leagueIds.foreach(leagueID => taskExecutorActor ! ScheduleTask(leagueID, new Date()))
   }
 
-  def scheduleFrom(leagueName: String): Unit = {
+  def scheduleFrom(leagueName: String, dateTimeFunc: League => Date): Unit = {
     val leagueId = worldDetails.leagueList
       .find(_.leagueName == leagueName)
       .getOrElse(throw new IllegalArgumentException(s"Unknown county $leagueName"))
       .leagueId
 
-    scheduleFrom(leagueId)
+    scheduleFrom(leagueId, dateTimeFunc)
   }
 
-  def scheduleFrom(leagueId: Int): Unit = {
+  def scheduleFrom(leagueId: Int, dateTimeFunc: League => Date): Unit = {
     val lastLeague = worldDetails.leagueList.filter(_.leagueId == lastLeagueId).head
     val firstLeague = worldDetails.leagueList.filter(_.leagueId == firstLeagueId).head
-    val matchesAlreadyFinished = firstLeague.seriesMatchDate.after(new Date()) && lastLeague.seriesMatchDate.after(new Date())
+    val matchesAlreadyFinished = dateTimeFunc(firstLeague).after(new Date()) && dateTimeFunc(lastLeague).after(new Date())
 
     val previousWeekMs = if (matchesAlreadyFinished) 1000L * 3600 * 24 * 7 else 0L
 
@@ -71,11 +73,11 @@ class TaskScheduler(worldDetails: WorldDetails,
       .map(league => {
         val minutesOffset: Long  = countriesToMinutesOffset.getOrElse(league.leagueId, 0)
 
-        val date = if (league.seriesMatchDate.after(lastLeague.seriesMatchDate)) {
-          new Date(league.seriesMatchDate.getTime - 1000L * 3600 * 24 * 7
+        val date = if (dateTimeFunc(league).after(dateTimeFunc(lastLeague))) {
+          new Date(dateTimeFunc(league).getTime - 1000L * 3600 * 24 * 7
            + threeHoursMs + (minutesOffset * 60 * 1000))
         } else {
-          new Date(league.seriesMatchDate.getTime + threeHoursMs + + minutesOffset * 60 * 1000)
+          new Date(dateTimeFunc(league).getTime + threeHoursMs + + minutesOffset * 60 * 1000)
         }
 
         ScheduleTask(league.leagueId, new Date(date.getTime - previousWeekMs))

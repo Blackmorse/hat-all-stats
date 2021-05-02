@@ -2,6 +2,7 @@ import akka.actor.ActorSystem
 import akka.stream.FlowShape
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge}
 import chpp.OauthTokens
+import chpp.matchesarchive.models.MatchType
 import com.crobox.clickhouse.stream.Insert
 import com.typesafe.config.Config
 import flows.ClickhouseFlow
@@ -17,17 +18,17 @@ import models.stream.{StreamMatchDetails, StreamTeam}
 import scala.concurrent.{ExecutionContext, Future}
 
 object FullLoaderFlow {
-  def apply(config: Config, countryMap: Map[Int, Int])(implicit oauthTokens: OauthTokens, system: ActorSystem,
+  def apply(config: Config, countryMap: Map[Int, Int], matchType: MatchType.Value)(implicit oauthTokens: OauthTokens, system: ActorSystem,
               executionContext: ExecutionContext): Flow[Int, Insert, Future[List[StreamTeam]]] = {
     val databaseName = config.getString("database_name")
 
     Flow.fromGraph(
-      GraphDSL.create(PromotionsSink()) { implicit builder => promotionsSink =>
+      GraphDSL.create(PromotionsSink(matchType)) { implicit builder => promotionsSink =>
         import GraphDSL.Implicits._
 
         val teamFlow = builder.add(TeamsFlow())
         val leagueUnitDetailsFlow = builder.add(LeagueUnitDetailsFlow())
-        val matchDetailsFlow = builder.add(MatchDetailsFlow())
+        val matchDetailsFlow = builder.add(MatchDetailsFlow(matchType))
         val broadcast = builder.add(Broadcast[StreamMatchDetails](4).async)
         val matchDetailsCHModelFlow = builder.add(Flow[StreamMatchDetails].map(MatchDetailsCHModel.convert))
         val playerEventsFlow = builder.add(PlayerEventsFlow())

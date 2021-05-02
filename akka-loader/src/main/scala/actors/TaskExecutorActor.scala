@@ -3,8 +3,6 @@ package actors
 import actors.TaskExecutorActor.{ScheduleTask, TaskFinished, TryToExecute}
 import akka.Done
 import akka.actor.Actor
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{HttpMethods, HttpRequest}
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import alltid.AlltidClient
 import chpp.OauthTokens
@@ -68,7 +66,7 @@ class TaskExecutorActor(graph: Sink[Int, (Future[List[StreamTeam]], Future[Done]
             val league = worldDetails.leagueList.filter(_.leagueId == task.leagueId).head
             logger.info(s"Started league ${task.leagueId}")
 
-            AlltidClient.notifyCountryLoadingStarted(league)
+//            AlltidClient.notifyCountryLoadingStarted(league) TODO: turned off for cup loading
 
             val (promotionsFuture, roundFuture) = Source.single(task.leagueId).toMat(graph)(Keep.right).run()
             roundFuture.zip(promotionsFuture)
@@ -99,7 +97,7 @@ class TaskExecutorActor(graph: Sink[Int, (Future[List[StreamTeam]], Future[Done]
                     case Failure(exception) =>
                       logger.error(exception.getMessage, exception)
                     case Success(_) =>
-                      AlltidClient.notifyCountryLoadingFinished(league)
+//                      AlltidClient.notifyCountryLoadingFinished(league) TODO: turned off for cup loading
                       logger.info(s"${league.leagueName} success")
                   }
 

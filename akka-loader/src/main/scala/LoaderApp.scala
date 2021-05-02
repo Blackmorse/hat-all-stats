@@ -3,6 +3,8 @@ import actors.TaskExecutorActor.TryToExecute
 import akka.actor.{ActorSystem, Props}
 import akka.stream.scaladsl.{Flow, Keep}
 import chpp.OauthTokens
+import chpp.matchesarchive.models.MatchType
+import chpp.worlddetails.models.League
 import clickhouse.HattidLoaderClickhouseClient
 import com.crobox.clickhouse.ClickhouseClient
 import com.crobox.clickhouse.stream.{ClickhouseSink, Insert}
@@ -11,6 +13,7 @@ import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 import utils.WorldDetailsSingleRequest
 
+import java.util.Date
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -46,19 +49,27 @@ object LoaderApp extends  App {
 
   val hattidClient = new HattidLoaderClickhouseClient(config)
 
-  val graph = FullLoaderFlow(config, countryMap).toMat(chSink)(Keep.both)
+  val (matchType, dateTimeFunc) = if (args(1) == "league") {
+    (MatchType.LEAGUE_MATCH, (league: League) => league.seriesMatchDate)
+  } else if (args(1) == "cup") {
+    (MatchType.CUP_MATCH, (league: League) => league.cupMatchDate)
+  } else {
+    throw new Exception(s"Unknown/unsupported ${args(1)} match type")
+  }
 
+  val graph = FullLoaderFlow(config, countryMap, matchType).toMat(chSink)(Keep.both)
 
   val taskExecutorActor = actorSystem.actorOf(Props(new TaskExecutorActor(graph, chSink, hattidClient, worldDetails)))
 
   val taskScheduler = new TaskScheduler(worldDetails, taskExecutorActor)
 
+
   if (args(0) == "schedule") {
-    taskScheduler.schedule()
+    taskScheduler.schedule(dateTimeFunc)
   } else if (args(0) == "scheduleFrom") {
-    taskScheduler.scheduleFrom(args(1))
+    taskScheduler.scheduleFrom(args(2), dateTimeFunc)
   } else if (args(0) == "load") {
-    taskScheduler.load(args(1))
+    taskScheduler.load(args(2))
   } else {
     logger.error("Please specify one of available tasks: schedule, scheduleFrom, load")
     throw new IllegalArgumentException(s"Unknown args: $args")
