@@ -24,5 +24,5 @@ export enum PagesEnum {
     TEAM_MATCHES = "menu.matches",
     DREAM_TEAM = "menu.dream_team",
     CREATED_SAME_TIME_TEAMS = "menu.created_same_time_teams",
-    TEAM_COMPARSION = "qmenu.comparsion_of_teams"
+    TEAM_COMPARSION = "menu.comparsion_of_teams"
 }
