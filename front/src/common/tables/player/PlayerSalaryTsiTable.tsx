@@ -10,7 +10,7 @@ import { Translation } from "react-i18next";
 import ModelTableTh from "../../elements/SortingTableTh";
 import TeamLink from "../../links/TeamLink";
 import LeagueUnitLink from "../../links/LeagueUnitLink";
-import { ageFormatter, commasSeparated } from '../../Formatters'
+import { ageFormatter, commasSeparated, salaryFormatter } from '../../Formatters'
 import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 import LeagueLink from '../../links/LeagueLink';
 import CountryImage from '../../elements/CountryImage';
@@ -58,7 +58,7 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
             <td className="value">{i18n.t(Mappings.roleToTranslationMap.get(playerSalaryTSI.role) || '')}</td>
             <td className="value">{ageFormatter(playerSalaryTSI.age)}</td>
             <td className="value">{commasSeparated(playerSalaryTSI.tsi)}</td>
-            <td className="value">{commasSeparated(Math.floor(playerSalaryTSI.salary / this.props.levelDataProps.currencyRate()))}</td>
+            <td className="value">{salaryFormatter(playerSalaryTSI.salary, this.props.levelDataProps.currencyRate())}</td>
         </>
     }
 }

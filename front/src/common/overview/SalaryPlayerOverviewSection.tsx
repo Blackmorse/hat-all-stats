@@ -4,7 +4,7 @@ import PlayerStatOverview from '../../rest/models/overview/PlayerStatOverview';
 import { OverviewTableSectionProps } from './OverviewTableSection';
 import '../../i18n'
 import i18n from '../../i18n';
-import { commasSeparated } from '../../common/Formatters'
+import { salaryFormatter } from '../../common/Formatters'
 import LevelData from '../../rest/models/leveldata/LevelData';
 
 class SalaryPlayerOverviewSection<Data extends LevelData> extends PlayerOverviewSection<Data> {
@@ -16,7 +16,7 @@ class SalaryPlayerOverviewSection<Data extends LevelData> extends PlayerOverview
     loadOverviewEntity = getTopSalaryPlayersOverview
 
     valueFormatter(value: number): JSX.Element {
-        return commasSeparated(Math.floor(value / this.props.levelDataProps.levelData.currencyRate))
+        return salaryFormatter(value, this.props.levelDataProps.levelData.currencyRate)
     }
 }
 

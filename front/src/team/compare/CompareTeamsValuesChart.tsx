@@ -7,7 +7,8 @@ import i18n from '../../i18n';
 interface Props {
     teamComparsion: TeamComparsion,
     valueFunc: (teamRanking: TeamRanking) => number,
-    title: string
+    title: string,
+    formatterFunc?: (n: number) => number
 }
 
 class CompareTeamsValuesChart extends React.Component<Props> {
@@ -18,6 +19,9 @@ class CompareTeamsValuesChart extends React.Component<Props> {
         let x = team1Rankings.map(ranking => i18n.t('filter.season') + ' ' + ranking.season + ' ' + i18n.t("chart.round") + ' ' + ranking.round)
         let team1Y = team1Rankings.map(ranking => this.props.valueFunc(ranking))
         let team2Y = team2Rankings.map(ranking => this.props.valueFunc(ranking))
+
+        team1Y = (this.props.formatterFunc !== undefined) ? team1Y.map(this.props.formatterFunc) : team1Y
+        team2Y = (this.props.formatterFunc !== undefined) ? team2Y.map(this.props.formatterFunc) : team1Y
 
         let chartData = [
             {

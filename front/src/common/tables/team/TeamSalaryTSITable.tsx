@@ -9,7 +9,7 @@ import { Translation } from 'react-i18next'
 import ModelTableTh from '../../../common/elements/SortingTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
-import { commasSeparated } from '../../Formatters'
+import { commasSeparated, salaryFormatter } from '../../Formatters'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { LoadingEnum } from '../../enums/LoadingEnum'
 import RestTableData from '../../../rest/models/RestTableData'
@@ -58,10 +58,10 @@ class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataPro
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{commasSeparated(teamSalaryTSI.tsi)}</td>
-            <td className="value">{commasSeparated(Math.floor(teamSalaryTSI.salary / this.props.levelDataProps.currencyRate()))}</td>
+            <td className="value">{salaryFormatter(teamSalaryTSI.salary, this.props.levelDataProps.currencyRate())}</td>
             <td className="value">{teamSalaryTSI.playersCount}</td>
             <td className="value">{commasSeparated(teamSalaryTSI.avgTsi)}</td>
-            <td className="value">{commasSeparated(Math.floor(teamSalaryTSI.avgSalary / this.props.levelDataProps.currencyRate()))}</td>
+            <td className="value">{salaryFormatter(teamSalaryTSI.avgSalary, this.props.levelDataProps.currencyRate())}</td>
         </>
     }
 }

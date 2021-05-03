@@ -69,7 +69,7 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                         />
                         <RankingTable
                             rankingData={rankingData}
-                            rankingParameters={RankingParametersProvider.SALARY(this.state.state.teamRankingsStats?.currencyName)} 
+                            rankingParameters={RankingParametersProvider.SALARY(this.state.state.teamRankingsStats?.currencyRate, this.state.state.teamRankingsStats?.currencyName)} 
                         />
                         <RankingTable 
                             rankingData={rankingData}

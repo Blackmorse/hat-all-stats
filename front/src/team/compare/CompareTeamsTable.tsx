@@ -130,6 +130,7 @@ class CompareTeamsTable extends React.Component<Props, State> {
                     positionsFunc={this.props.rankingParameters.positionFunc}
                     title={this.props.rankingParameters.title}
                     teamLevelDataProps={this.props.teamLevelDataProps}
+                    yAxisFunc={this.props.rankingParameters.yAxisFunc}
                 /> 
                 : <></>}
         <div className="comparsion_gridtable">

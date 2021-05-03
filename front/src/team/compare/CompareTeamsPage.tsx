@@ -62,7 +62,7 @@ class CompareTeamsPage extends StatisticsSection<LevelDataPropsWrapper<TeamData,
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
                     teamLevelDataProps={this.props.levelDataProps} 
-                    rankingParameters={RankingParametersProvider.SALARY(this.props.levelDataProps.currency())}
+                    rankingParameters={RankingParametersProvider.SALARY(this.props.levelDataProps.currencyRate(), this.props.levelDataProps.currency())}
                 />
             </div>
             <div className="section_row">

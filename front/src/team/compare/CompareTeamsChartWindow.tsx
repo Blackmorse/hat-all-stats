@@ -13,6 +13,7 @@ interface Props {
     positionsFunc: (ranking: TeamRanking) => number,
     title: string,
     teamLevelDataProps: TeamLevelDataProps,
+    yAxisFunc?: (y: number) => number
 }
 
 class CompareTeamsChartWindow extends React.Component<Props> {
@@ -26,6 +27,7 @@ class CompareTeamsChartWindow extends React.Component<Props> {
                     teamComparsion={this.props.teamComparsion}
                     valueFunc={this.props.valueFunc}
                     title={this.props.title}
+                    formatterFunc={this.props.yAxisFunc}
                 />
                 <CompareTeamsPositionsChart 
                     teamComparsion={this.props.teamComparsion}

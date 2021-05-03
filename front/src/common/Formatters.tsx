@@ -51,3 +51,7 @@ export function redCards(value: number): JSX.Element {
 export function loddarStats(value: number): JSX.Element {
     return <>{Math.ceil(value * 100) / 100}</>
 }
+
+export function salaryFormatter(value: number, currencyRate?: number): JSX.Element {
+    return commasSeparated(Math.floor(value / ((currencyRate === undefined) ? 1 : currencyRate)))
+}

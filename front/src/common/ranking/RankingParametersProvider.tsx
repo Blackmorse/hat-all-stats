@@ -1,6 +1,6 @@
 import RankingParameters from "./RankingParameters";
 import i18n from "../../i18n";
-import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter } from '../Formatters'
+import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter, salaryFormatter } from '../Formatters'
 import { PagesEnum } from "../enums/PagesEnum";
 
 class RankingParametersProvider {
@@ -15,14 +15,15 @@ class RankingParametersProvider {
         }
     }
 
-    static SALARY(currency?: string): RankingParameters {
+    static SALARY(rate?: number, currency?: string): RankingParameters {
         return {
             title: i18n.t('table.salary') + ', ' + currency, 
             positionFunc: teamRanking => teamRanking.salaryPosition,
             valueFunc: teamRanking => teamRanking.salary,
-            formatter: commasSeparated,
+            formatter: value => salaryFormatter(value, rate),
             sortingField: 'salary',
-            page: PagesEnum.TEAM_SALARY_TSI
+            page: PagesEnum.TEAM_SALARY_TSI,
+            yAxisFunc: n => n / ((rate === undefined) ? 1 : rate)
         }
     }
 
