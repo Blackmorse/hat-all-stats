@@ -38,7 +38,7 @@ class TaskScheduler(worldDetails: WorldDetails,
     tasks.foreach(task => taskExecutorActor ! task)
 
     if (tasks.nonEmpty) {
-      AlltidClient.notifyScheduleInfo(tasks)
+//      AlltidClient.notifyScheduleInfo(tasks)
     }
   }
 

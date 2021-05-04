@@ -1,0 +1,35 @@
+version: "3.7"
+
+networks:
+  hattrick_network:
+    name: hattrick_network
+
+services:
+  hattrick-clickhouse:
+    image: yandex/clickhouse-server:20.4.4.18
+    container_name: hattrick-clickhouse
+    expose:
+     - "8123"
+    ports:
+     - 9000:9000
+     - 8123:8123
+    networks:
+     - hattrick_network
+    volumes:
+     - ./sql/init_scripts:/docker-entrypoint-initdb.d
+
+  hattid-web:
+    image: mozilla/sbt:11.0.8_1.3.13
+    container_name: hattid-web
+    expose:
+     - 9001
+    ports:
+     - "9001:9001"
+    networks:
+     - hattrick_network
+    volumes:
+     - ./web:/app
+     - ~/.m2:/root/.m2
+     - ~/.sbt:/root/.sbt
+     - ~/.ivy2:/root/.ivy2
+    command: bash -c "cd /app && sbt clean && sbt  -Dconfig.resource=application-docker.conf \"run 9001\""
