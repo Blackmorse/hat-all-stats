@@ -10,7 +10,6 @@ import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamrankings.TeamRankingsRequest
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattrick.Hattrick
-import io.swagger.annotations.Api
 import models.clickhouse.{NearestMatch, TeamRankings}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
@@ -63,7 +62,6 @@ object NearestMatches {
   implicit val writes = Json.writes[NearestMatches]
 }
 
-@Api(produces = "application/json")
 class RestTeamController @Inject() (val controllerComponents: ControllerComponents,
                                     val hattrick: Hattrick,
                                     val leagueInfoService: LeagueInfoService,
@@ -250,7 +248,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
       val upcomingMatches = matches.filter(_.status == "UPCOMING")
         .sortBy(_.matchDate)
         .take(3)
-      Ok(Json.toJson(NearestMatches(playedMatches, upcomingMatches)))
+      Ok(Json.toJson(NearestMatches(playedMatches.toSeq, upcomingMatches.toSeq)))
     })
   }
 

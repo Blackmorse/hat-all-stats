@@ -11,6 +11,7 @@ import play.api.cache.AsyncCacheApi
 import scala.concurrent.duration._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.language.postfixOps
 
 
 @Singleton

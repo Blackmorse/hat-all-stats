@@ -3,7 +3,6 @@ package controllers
 import databases.dao.RestClickhouseDAO
 
 import java.util.Date
-import io.swagger.annotations.Api
 
 import javax.inject.Inject
 import models.web.rest.LevelData
@@ -36,7 +35,6 @@ object WorldData {
   implicit val writes = Json.writes[WorldData]
 }
 
-@Api(produces = "application/json")
 class RestOverviewController @Inject()(val controllerComponents: ControllerComponents,
                                        implicit val restClickhouseDAO: RestClickhouseDAO,
                                        val restOverviewStatsService: RestOverviewStatsService,

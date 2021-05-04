@@ -69,6 +69,6 @@ case class SqlBuilder(baseSql: String) {
     val withSortByResult = this.sortBy.map(sb => tr.replace("__sortBy__", sb)).getOrElse(tr)
 
     SQL(withSortByResult)
-      .on((whereClause.parameters ++ havingClause.parameters).map(parameter => NamedParameter.namedWithString((s"${parameter.name}_${parameter.parameterNumber}", parameter.value))): _*)
+      .on((whereClause.parameters ++ havingClause.parameters).toSeq.map(parameter => NamedParameter.namedWithString((s"${parameter.name}_${parameter.parameterNumber}", parameter.value))): _*)
   }
 }

@@ -11,7 +11,6 @@ import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattrick.Hattrick
-import io.swagger.annotations.Api
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
@@ -38,7 +37,6 @@ object RestLeagueData {
 }
 
 @Singleton
-@Api(produces = "application/json")
 class RestLeagueController @Inject() (val controllerComponents: ControllerComponents,
                                       implicit val restClickhouseDAO: RestClickhouseDAO,
                                   val leagueInfoService: LeagueInfoService,

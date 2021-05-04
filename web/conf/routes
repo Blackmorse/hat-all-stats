@@ -2,9 +2,6 @@
 # This file defines all application routes (Higher priority routes first)
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
-GET     /swagger.json           controllers.ApiHelpController.getResources
-GET     /docs/swagger-ui/*file        controllers.Assets.at(path:String="/public/lib/swagger-ui", file:String)
-
 GET     /api/teamSearchByName       controllers.WorldController.searchByName(name: String)
 GET     /api/league/:leagueId/leagueUnitName/:leagueUnitName    controllers.RestLeagueUnitController.leagueUnitIdByName(leagueUnitName: String, leagueId: Int)
 

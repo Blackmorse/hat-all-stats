@@ -12,7 +12,6 @@ import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattrick.Hattrick
-import io.swagger.annotations.Api
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web._
@@ -45,7 +44,6 @@ object RestLeagueUnitData {
   implicit val writes = Json.writes[RestLeagueUnitData]
 }
 
-@Api(produces = "application/json")
 class RestLeagueUnitController @Inject() (val controllerComponents: ControllerComponents,
                                           val leagueInfoService: LeagueInfoService,
                                           val hattrick: Hattrick,
@@ -95,7 +93,7 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
         divisionLevelName = Romans(leagueDetails.getLeagueLevel),
         leagueUnitId = leagueUnitId,
         leagueUnitName = leagueDetails.getLeagueLevelUnitName,
-        teams = leagueDetails.getTeams.asScala.map(team => (team.getTeamId.toLong, team.getTeamName)),
+        teams = leagueDetails.getTeams.asScala.toSeq.map(team => (team.getTeamId.toLong, team.getTeamName)),
         seasonOffset = league.getSeasonOffset,
         seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueDetails.getLeagueId),
         currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,

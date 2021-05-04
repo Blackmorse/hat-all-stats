@@ -7,7 +7,7 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.12.12"
+scalaVersion := "2.13.5"
 
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
@@ -20,11 +20,9 @@ libraryDependencies += "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
 libraryDependencies += "ai.x" %% "play-json-extensions" % "0.42.0"
 
 
-libraryDependencies += "org.playframework.anorm" %% "anorm" % "2.6.2"
+libraryDependencies += "org.playframework.anorm" %% "anorm" % "2.6.4"
 libraryDependencies += caffeine
 
-libraryDependencies += "io.swagger" %% "swagger-play2" % "1.7.1"
-libraryDependencies += "org.webjars" % "swagger-ui" % "2.2.0"
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.blackmorse.hattrick.controllers._"
 

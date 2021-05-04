@@ -9,7 +9,6 @@ import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsReque
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import io.swagger.annotations.Api
 
 import javax.inject.{Inject, Singleton}
 import models.web.rest.CountryLevelData
@@ -40,7 +39,6 @@ object RestDivisionLevelData {
 }
 
 @Singleton
-@Api(produces = "application/json")
 class RestDivisionLevelController @Inject()(val controllerComponents: ControllerComponents,
                                             val leagueInfoService: LeagueInfoService,
                                             implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
