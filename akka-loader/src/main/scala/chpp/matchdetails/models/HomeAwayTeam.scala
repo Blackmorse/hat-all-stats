@@ -3,7 +3,7 @@ package chpp.matchdetails.models
 import cats.syntax.all._
 import com.lucidchart.open.xtract.{XmlReader, __}
 
-case class HomeAwayTeam(teamId: Int,
+case class HomeAwayTeam(teamId: Long,
                         teamName: String,
                         goals: Int,
 
@@ -24,7 +24,7 @@ case class HomeAwayTeam(teamId: Int,
 abstract class HomeAwayTeamBase {
   def readerBase(idFieldName: String, nameFieldName: String, goalsFieldName: String):
             XmlReader[HomeAwayTeam] = (
-    (__ \ idFieldName).read[Int],
+    (__ \ idFieldName).read[Long],
     (__ \ nameFieldName).read[String],
     (__ \ goalsFieldName).read[Int],
     (__ \ "DressURI").read[String],

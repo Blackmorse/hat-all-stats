@@ -65,7 +65,8 @@ class TaskScheduler(worldDetails: WorldDetails,
   def scheduleFrom(leagueId: Int, dateTimeFunc: League => Date): Unit = {
     val lastLeague = worldDetails.leagueList.filter(_.leagueId == lastLeagueId).head
     val firstLeague = worldDetails.leagueList.filter(_.leagueId == firstLeagueId).head
-    val matchesAlreadyFinished = dateTimeFunc(firstLeague).after(new Date()) && dateTimeFunc(lastLeague).after(new Date())
+    val matchesAlreadyFinished = dateTimeFunc(firstLeague).after(new Date()) &&
+      dateTimeFunc(lastLeague).after(new Date()) && dateTimeFunc(lastLeague).after(dateTimeFunc(firstLeague))
 
     val previousWeekMs = if (matchesAlreadyFinished) 1000L * 3600 * 24 * 7 else 0L
 

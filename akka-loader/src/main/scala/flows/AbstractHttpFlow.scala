@@ -10,6 +10,8 @@ import akka.stream.FlowShape
 import akka.stream.scaladsl.{Flow, GraphDSL}
 import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 import com.lucidchart.open.xtract.XmlReader
+import com.typesafe.scalalogging.Logger
+import org.slf4j.LoggerFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
@@ -17,6 +19,8 @@ import scala.util.{Failure, Success, Try}
 import scala.xml.XML
 
 abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
+  private val logger = Logger(LoggerFactory.getLogger(this.getClass))
+
   def preprocessBody(body: String): String
 
   def apply[T]()(implicit oauthTokens: OauthTokens, system: ActorSystem,
@@ -49,6 +53,7 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
         val xml = XML.loadString(preprocessed)
         val modelParse = XmlReader.of[Model].read(xml)
         if(!modelParse.errors.isEmpty) {
+          modelParse.errors.foreach(pe => logger.error(pe.toString))
           throw new Exception("Parse model have an errors")
         }
         val model = modelParse
