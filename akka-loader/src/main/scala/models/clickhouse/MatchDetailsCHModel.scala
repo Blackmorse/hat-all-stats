@@ -155,7 +155,7 @@ object MatchDetailsCHModel {
       ratingIndirectSetPiecesDef = currentTeam.ratingIndirectSetPiecesDef,
       ratingIndirectSetPiecesAtt = currentTeam.ratingInderectSetPiecesAtt,
 
-      oppositeTeamId = oppositeTeam.teamId,
+      oppositeTeamId = if(oppositeTeam.teamId < 0) 0 else oppositeTeam.teamId,
       oppositeTeamName = oppositeTeam.teamName,
       oppositeFormation = oppositeTeam.formation,
       oppositeTacticType = oppositeTeam.tacticType,
