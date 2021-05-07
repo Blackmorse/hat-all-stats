@@ -33,7 +33,7 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
 
 //    val httpsFlow = Http().cachedHostConnectionPoolHttps[T](RequestCreator.URL)
 
-    val httpsFlow2 = flow.mapAsyncUnordered(4){
+    val httpsFlow2 = flow.mapAsyncUnordered(32){
       case(request, t) =>
         val resp = Http().singleRequest(request)//.map(resp => (resp, t))
 
