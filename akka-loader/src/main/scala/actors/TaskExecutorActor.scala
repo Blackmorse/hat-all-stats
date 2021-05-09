@@ -1,46 +1,25 @@
 package actors
 
-import actors.TaskExecutorActor.{ScheduleTask, TaskFinished, TryToExecute}
+import actors.LeagueTaskExecutorActor.{ScheduleTask, TaskFinished, TryToExecute}
 import akka.Done
 import akka.actor.Actor
 import akka.stream.scaladsl.{Keep, Sink, Source}
-import alltid.AlltidClient
-import chpp.OauthTokens
-import chpp.worlddetails.models.WorldDetails
-import clickhouse.HattidLoaderClickhouseClient
-import com.crobox.clickhouse.stream.Insert
+import chpp.matchesarchive.models.MatchType
+import chpp.worlddetails.models.{League, WorldDetails}
+import clickhouse.PlayerStatsClickhouseClient
 import com.typesafe.scalalogging.Logger
-import flows.ClickhouseFlow
-import models.clickhouse.PromotionModelCH
-import models.stream.StreamTeam
 import org.slf4j.LoggerFactory
-import promotions.PromotionsCalculator
-import utils.WorldDetailsSingleRequest
 
 import java.util.Date
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-object TaskExecutorActor {
-  trait Message
-
-  case class ScheduleTask(leagueId: Int, time: Date) extends Message
-
-  case object TryToExecute
-
-  case object TaskFinished
-}
-
-class TaskExecutorActor(graph: Sink[Int, (Future[List[StreamTeam]], Future[Done])],
-                        chSink: Sink[Insert, Future[Done]],
-                        hattidClient: HattidLoaderClickhouseClient,
-                        worldDetails: WorldDetails
-                       )
-                       (implicit oauthTokens: OauthTokens)
-    extends Actor {
-  import context.{dispatcher, system}
-
+abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
+                        worldDetails: WorldDetails,
+                        matToFuture: GraphMat => Future[MatValue]) extends Actor {
   private val logger = Logger(LoggerFactory.getLogger(this.getClass))
+
+  import context.{dispatcher, system}
 
   private var tasks = List[ScheduleTask]()
   private var running = false
@@ -55,7 +34,7 @@ class TaskExecutorActor(graph: Sink[Int, (Future[List[StreamTeam]], Future[Done]
       running = false
     case TryToExecute =>
       if(!running) {
-        if(tasks.isEmpty) {
+        if (tasks.isEmpty) {
           logger.info("No tasks running and no tasks in the queue. Turning off!")
           System.exit(0)
         } else {
@@ -64,48 +43,33 @@ class TaskExecutorActor(graph: Sink[Int, (Future[List[StreamTeam]], Future[Done]
             tasks = tasks.drop(1)
             running = true
             val league = worldDetails.leagueList.filter(_.leagueId == task.leagueId).head
-            logger.info(s"Started league ${task.leagueId}")
+            logger.info(s"Started league (${task.leagueId}, ${league.leagueName})")
 
-//            AlltidClient.notifyCountryLoadingStarted(league) TODO: turned off for cup loading
+            val mat = Source.single(task.leagueId).toMat(graph)(Keep.right).run()
 
-            val (promotionsFuture, roundFuture) = Source.single(task.leagueId).toMat(graph)(Keep.right).run()
-            roundFuture.zip(promotionsFuture)
-              .onComplete {
+            matToFuture(mat).onComplete{
               case Failure(exception) =>
                 logger.error(s"Failed to upload ${task.leagueId}", exception)
                 self ! ScheduleTask(task.leagueId,
                   new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                 self ! TaskFinished
-              case
-                Success((_, promotionsTeams)) =>
-
-
-                val result = for {
-                  leagueWorldDetails <- WorldDetailsSingleRequest.request(Some(task.leagueId))
-                  _ <- hattidClient.join(task.leagueId)
-                  promotions <- Future(PromotionsCalculator.calculatePromotions(
-                   new PromotionsCalculator(leagueWorldDetails.leagueList.head, promotionsTeams),
-                   leagueWorldDetails.leagueList.head.numberOfLevels))
-                  finalFuture <- Source(promotions).log("pipeline_log").via(ClickhouseFlow[PromotionModelCH](context.system.settings.config.getString("database_name"), "promotions")).toMat(chSink)(Keep.right).run()
-                } yield {
-                  logger.info(s"${task.leagueId} successfully loaded")
-                  self ! TaskFinished
-                  finalFuture
+              case Success(matValue) =>
+                val result = postProcessLoadedResults(league, matValue)
+                result.onComplete{
+                  case Failure(exception) =>
+                    logger.error(exception.getMessage, exception)
+                  case Success(_) =>
+                    logger.info(s"(${league.leagueId}, ${league.leagueName}) successfully loaded")
+                    self ! TaskFinished
                 }
-
-                  result.onComplete{
-                    case Failure(exception) =>
-                      logger.error(exception.getMessage, exception)
-                    case Success(_) =>
-//                      AlltidClient.notifyCountryLoadingFinished(league) TODO: turned off for cup loading
-                      logger.info(s"${league.leagueName} success")
-                  }
-
             }
+
           }
         }
       } else {
         logger.debug("Some task is running!")
       }
   }
+
+  def postProcessLoadedResults(league: League, matValue: MatValue): Future[_]
 }

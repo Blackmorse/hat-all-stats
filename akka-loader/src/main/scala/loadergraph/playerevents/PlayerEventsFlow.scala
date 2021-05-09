@@ -4,6 +4,8 @@ import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
 import chpp.matchdetails.models.{BookingType, InjuryType}
+import com.crobox.clickhouse.stream.Insert
+import flows.ClickhouseFlow
 import models.clickhouse.PlayerEventsModelCH
 import models.stream.StreamMatchDetails
 
@@ -11,8 +13,8 @@ import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 
 object PlayerEventsFlow {
-  def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
-              executionContext: ExecutionContext): Flow[StreamMatchDetails, PlayerEventsModelCH, _] = {
+  def apply(databaseName: String)(implicit oauthTokens: OauthTokens, system: ActorSystem,
+              executionContext: ExecutionContext): Flow[StreamMatchDetails, Insert, _] = {
     Flow[StreamMatchDetails].flatMapConcat(streamMatchDetails => {
       val playersMap = mutable.Map[Long, PlayerEventsAccumulator]()
 
@@ -54,6 +56,7 @@ object PlayerEventsFlow {
 
       Source(playersMap.values.map(_.build).toList)
     })
+      .via(ClickhouseFlow[PlayerEventsModelCH](databaseName, "player_events"))
   }
 
   private def playerAccumulator(streamMatchDetails: StreamMatchDetails, playerId: Long): PlayerEventsAccumulator =

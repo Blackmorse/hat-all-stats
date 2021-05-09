@@ -1,8 +1,34 @@
 package clickhouse
 
+import chpp.worlddetails.models.League
+import com.crobox.clickhouse.ClickhouseClient
+import com.typesafe.config.Config
+
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Try}
+
 case class SqlRequestParam(field: String, fieldAlias: String, request: String)
 
 object TeamRankJoiner {
+
+  def joinTeamRankings(config: Config, league: League)
+                      (implicit executionContext: ExecutionContext): Future[Try[Unit]] = {
+    val client = new ClickhouseClient(Some(config))
+    val seqFuture = (1 to league.numberOfLevels).map(Some(_)).concat(Seq(None))
+      .map(level => {
+        val sql = TeamRankJoiner.createSql(
+          season = league.season - league.seasonOffset,
+          leagueId = league.leagueId,
+          round = league.matchRound - 1,
+          divisionLevel = level,
+          database = config.getString("database_name")
+        )
+        client.execute(sql)
+      })
+
+    Future.sequence(seqFuture).map(_ => Success(()))
+  }
+
   private val base_fields = " season, league_id, round, division_level, league_unit_id, league_unit_name, team_id, team_name, match_id, "
 
   private val match_details_request = """SELECT

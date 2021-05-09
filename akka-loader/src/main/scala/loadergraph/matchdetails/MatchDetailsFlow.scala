@@ -41,7 +41,9 @@ object MatchDetailsFlow {
           .headOption
           .map(matc =>
             Match(id = matc.matchId,
-              round = team.leagueUnit.league.nextRound - 1,
+              round = if(matchType == MatchType.LEAGUE_MATCH) team.leagueUnit.league.nextRound - 1
+                else if (matchType == MatchType.CUP_MATCH) team.leagueUnit.league.nextRound //cup is playing before league match
+                else throw new IllegalArgumentException(matchType.toString),
               date = matc.matchDate,
               season = team.leagueUnit.league.season,
               team = team))

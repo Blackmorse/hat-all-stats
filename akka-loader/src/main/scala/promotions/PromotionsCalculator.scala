@@ -6,6 +6,8 @@ import models.clickhouse.PromotionModelCH
 import models.stream.StreamTeam
 import promotions.PromotionsCalculator.{downStrategies, reverseOrdering, straightOrdering}
 
+import scala.concurrent.{ExecutionContext, Future}
+
 object PromotionsCalculator {
   val downStrategies = Map(
     1 -> DivisionDownStrategy(Reverse, Straightforward),
@@ -27,6 +29,14 @@ object PromotionsCalculator {
     .orElseBy(- _.scored)
 
   private val reverseOrdering = straightOrdering.reverse
+
+  def calculatePromotions(league: League, teams: List[StreamTeam])
+                         (implicit executionContext: ExecutionContext): Future[List[PromotionModelCH]] = {
+    val calculator = new PromotionsCalculator(league, teams)
+    if(calculator.divisionTeams.isEmpty) return Future(List())
+    val levels = league.numberOfLevels
+    Future((1 until levels).flatMap(level => calculator.calculatePromotionsForDivision(level)).toList)
+  }
 
   def calculatePromotions(promotionsCalculator: PromotionsCalculator, levels: Int): List[PromotionModelCH] = {
     if(promotionsCalculator.divisionTeams.isEmpty) return List()

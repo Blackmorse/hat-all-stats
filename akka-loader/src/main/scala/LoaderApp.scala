@@ -1,11 +1,11 @@
-import actors.TaskExecutorActor
-import actors.TaskExecutorActor.TryToExecute
+import actors.{CupExecutorActor, LeagueExecutorActor, LeagueTaskExecutorActor}
+import actors.LeagueTaskExecutorActor.TryToExecute
 import akka.actor.{ActorSystem, Props}
 import akka.stream.scaladsl.{Flow, Keep}
 import chpp.OauthTokens
 import chpp.matchesarchive.models.MatchType
 import chpp.worlddetails.models.League
-import clickhouse.HattidLoaderClickhouseClient
+import clickhouse.PlayerStatsClickhouseClient
 import com.crobox.clickhouse.ClickhouseClient
 import com.crobox.clickhouse.stream.{ClickhouseSink, Insert}
 import com.typesafe.config.ConfigFactory
@@ -13,7 +13,6 @@ import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 import utils.WorldDetailsSingleRequest
 
-import java.util.Date
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -47,21 +46,21 @@ object LoaderApp extends  App {
   val client = new ClickhouseClient(Some(config))
   val chSink = Flow[Insert].log("pipeline_log").toMat(ClickhouseSink.insertSink(config, client))(Keep.right)
 
-  val hattidClient = new HattidLoaderClickhouseClient(config)
+  val hattidClient = new PlayerStatsClickhouseClient(config)
 
-  val (matchType, dateTimeFunc) = if (args(1) == "league") {
-    (MatchType.LEAGUE_MATCH, (league: League) => league.seriesMatchDate)
+  val (taskExecutorActor, matchType, dateTimeFunc) = if (args(1) == "league") {
+    val graph = LeagueMatchesFlow(config, countryMap).toMat(chSink)(Keep.both)
+    val taskExecutorActor = actorSystem.actorOf(Props(new LeagueExecutorActor(graph, chSink, hattidClient, worldDetails, config)))
+    (taskExecutorActor, MatchType.LEAGUE_MATCH, (league: League) => league.seriesMatchDate)
   } else if (args(1) == "cup") {
-    (MatchType.CUP_MATCH, (league: League) => league.cupMatchDate)
+    val graph = CupMatchesFlow(config, countryMap).toMat(chSink)(Keep.right)
+    val taskExecutorActor = actorSystem.actorOf(Props(new CupExecutorActor(graph, hattidClient, worldDetails)))
+    (taskExecutorActor, MatchType.CUP_MATCH, (league: League) => league.cupMatchDate)
   } else {
     throw new Exception(s"Unknown/unsupported ${args(1)} match type")
   }
 
-  val graph = FullLoaderFlow(config, countryMap, matchType).toMat(chSink)(Keep.both)
-
-  val taskExecutorActor = actorSystem.actorOf(Props(new TaskExecutorActor(graph, chSink, hattidClient, worldDetails)))
-
-  val taskScheduler = new TaskScheduler(worldDetails, taskExecutorActor)
+  val taskScheduler = new TaskScheduler(worldDetails, taskExecutorActor, matchType)
 
 
   if (args(0) == "schedule") {

@@ -1,11 +1,13 @@
 package clickhouse
 
+import chpp.matchesarchive.models.MatchType
 import chpp.worlddetails.models.League
 
 object PlayerStatsJoiner {
-  def playerStatsJoinRequest(league: League, databaseName: String): String = {
+  def playerStatsJoinRequest(league: League, matchType: MatchType.Value, databaseName: String): String = {
     val leagueId = league.leagueId
-    val round = league.matchRound - 1
+    val round = if (matchType == MatchType.LEAGUE_MATCH) league.matchRound - 1 else if (matchType == MatchType.CUP_MATCH) league.matchRound
+    else throw new IllegalArgumentException(matchType.toString)
     val season = league.season - league.seasonOffset
 
     s"""INSERT INTO $databaseName.player_stats SELECT
