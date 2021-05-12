@@ -1,5 +1,5 @@
 import TaskScheduler.countriesToMinutesOffset
-import actors.LeagueTaskExecutorActor.ScheduleTask
+import actors.TaskExecutorActor.ScheduleTask
 import akka.actor.{ActorRef, ActorSystem}
 import alltid.AlltidClient
 import chpp.matchesarchive.models.MatchType

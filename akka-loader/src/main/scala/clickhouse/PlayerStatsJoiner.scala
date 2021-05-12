@@ -21,6 +21,8 @@ object PlayerStatsJoiner {
        |player_info.time,
        |player_info.dt,
        |player_info.round,
+       |player_info.cup_level,
+       |player_info.cup_level_index,
        |player_info.match_id,
        |player_info.player_id,
        |player_info.first_name,

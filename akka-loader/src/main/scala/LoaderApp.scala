@@ -1,5 +1,5 @@
-import actors.{CupExecutorActor, LeagueExecutorActor, LeagueTaskExecutorActor}
-import actors.LeagueTaskExecutorActor.TryToExecute
+import actors.TaskExecutorActor.TryToExecute
+import actors.{CupExecutorActor, LeagueExecutorActor}
 import akka.actor.{ActorSystem, Props}
 import akka.stream.scaladsl.{Flow, Keep}
 import chpp.OauthTokens

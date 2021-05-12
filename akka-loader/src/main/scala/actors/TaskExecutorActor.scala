@@ -1,6 +1,6 @@
 package actors
 
-import actors.LeagueTaskExecutorActor.{ScheduleTask, TaskFinished, TryToExecute}
+import actors.TaskExecutorActor.{ScheduleTask, TaskFinished, TryToExecute}
 import akka.Done
 import akka.actor.Actor
 import akka.stream.scaladsl.{Keep, Sink, Source}
@@ -13,6 +13,16 @@ import org.slf4j.LoggerFactory
 import java.util.Date
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
+
+object TaskExecutorActor {
+  trait Message
+
+  case class ScheduleTask(leagueId: Int, time: Date) extends Message
+
+  case object TryToExecute
+
+  case object TaskFinished
+}
 
 abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                         worldDetails: WorldDetails,
