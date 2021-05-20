@@ -1,0 +1,22 @@
+---
+
+ - name: create logs directory
+   file:
+     path: "{{ base_project_directory }}/akka_loader_logs"
+     state: directory
+
+ - name: configure logback
+   template:
+     src: akka-logback.xml.j2
+     dest: "{{ base_project_directory }}/hat-all-stats/akka-loader/src/main/resources/logback.xml"
+
+ - name: configure loader
+   template:
+     src: akka-application.conf.j2
+     dest: "{{ base_project_directory }}/hat-all-stats/akka-loader/src/main/resources/application.conf"
+
+ - name: build akka-loader jar
+   shell:
+     chdir: "{{ base_project_directory }}/hat-all-stats/akka-loader"
+     cmd: sbt assembly
+

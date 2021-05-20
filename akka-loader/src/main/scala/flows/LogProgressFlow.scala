@@ -5,12 +5,22 @@ import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Sink}
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 
+import java.util.concurrent.atomic.AtomicLong
+
 object LogProgressFlow {
   private val logger = Logger(LoggerFactory.getLogger(this.getClass))
 
   def apply[I](logEntityName: String, maxProgressFunc: Option[I => Int] = None): Flow[I, I, _] = {
+    val timeout = 10_000L
+    val lastLogTime = new AtomicLong(System.currentTimeMillis())
+
     val accumulateFlow = Flow[I].fold(0)((s, i) => {
-      logger.info(s"${s + 1}${maxProgressFunc.map(f => f(i)).map(n => s"/$n").getOrElse("")} $logEntityName loaded")
+      logger.debug(s"${s + 1}${maxProgressFunc.map(f => f(i)).map(n => s"/$n").getOrElse("")} $logEntityName loaded")
+
+      if(System.currentTimeMillis() - lastLogTime.get() > timeout) {
+        logger.info(s"${s + 1}${maxProgressFunc.map(f => f(i)).map(n => s"/$n").getOrElse("")} $logEntityName loaded")
+        lastLogTime.set(System.currentTimeMillis())
+      }
       s + 1
     })
 

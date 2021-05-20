@@ -3,6 +3,7 @@ package clickhouse
 import chpp.worlddetails.models.League
 import com.crobox.clickhouse.ClickhouseClient
 import com.typesafe.config.Config
+import org.slf4j.LoggerFactory
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Try}
@@ -10,9 +11,11 @@ import scala.util.{Success, Try}
 case class SqlRequestParam(field: String, fieldAlias: String, request: String)
 
 object TeamRankJoiner {
+  private val logger = LoggerFactory.getLogger(this.getClass)
 
   def joinTeamRankings(config: Config, league: League)
                       (implicit executionContext: ExecutionContext): Future[Try[Unit]] = {
+    logger.info(s"Executing team_rankings join request for (${league.leagueId}, ${league.leagueName})")
     val client = new ClickhouseClient(Some(config))
     val seqFuture = (1 to league.numberOfLevels).map(Some(_)).concat(Seq(None))
       .map(level => {

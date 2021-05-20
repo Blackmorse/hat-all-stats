@@ -10,3 +10,7 @@
  - include: 03-loader.yml
    tags:
     - loader
+
+ - include: 04-akka-loader.yml
+   tags:
+    - akka-loader

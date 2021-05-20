@@ -42,6 +42,12 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
       logger.info(s"Scheduled loading of $task")
     case TaskFinished =>
       running = false
+      val nextTaskOption = tasks.headOption
+
+      nextTaskOption.foreach(nextTask => {
+        val league = worldDetails.leagueList.filter(_.leagueId == nextTask.leagueId).head
+        logger.info(s"Next task is (${league.leagueId}, ${league.leagueName}) scheduled for ${nextTask.time}")
+      })
     case TryToExecute =>
       if(!running) {
         if (tasks.isEmpty) {
@@ -57,7 +63,7 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
 
             val mat = Source.single(task.leagueId).toMat(graph)(Keep.right).run()
 
-            matToFuture(mat).onComplete{
+            matToFuture(mat).onComplete {
               case Failure(exception) =>
                 logger.error(s"Failed to upload ${task.leagueId}", exception)
                 self ! ScheduleTask(task.leagueId,
@@ -65,9 +71,10 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                 self ! TaskFinished
               case Success(matValue) =>
                 val result = postProcessLoadedResults(league, matValue)
-                result.onComplete{
+                result.onComplete {
                   case Failure(exception) =>
                     logger.error(exception.getMessage, exception)
+                    self ! TaskFinished
                   case Success(_) =>
                     logger.info(s"(${league.leagueId}, ${league.leagueName}) successfully loaded")
                     self ! TaskFinished

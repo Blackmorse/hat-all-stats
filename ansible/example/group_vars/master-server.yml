@@ -8,10 +8,15 @@ hattrick:
   accessTokenSecret: 
 
 clickhouse:
+  url:
+  port:
   jdbc_url: "jdbc:clickhouse://"
   users:
     web:
-      name: web
+      name: 
+      password: 
+    loader:
+      name: 
       password: 
     
 loader:
