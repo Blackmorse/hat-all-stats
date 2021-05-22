@@ -21,7 +21,7 @@ class CompareTeamsValuesChart extends React.Component<Props> {
         let team2Y = team2Rankings.map(ranking => this.props.valueFunc(ranking))
 
         team1Y = (this.props.formatterFunc !== undefined) ? team1Y.map(this.props.formatterFunc) : team1Y
-        team2Y = (this.props.formatterFunc !== undefined) ? team2Y.map(this.props.formatterFunc) : team1Y
+        team2Y = (this.props.formatterFunc !== undefined) ? team2Y.map(this.props.formatterFunc) : team2Y
 
         let chartData = [
             {
