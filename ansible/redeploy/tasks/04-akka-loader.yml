@@ -17,6 +17,5 @@
 
  - name: build akka-loader jar
    shell:
-     chdir: "{{ base_project_directory }}/hat-all-stats/akka-loader"
-     cmd: sbt assembly
-
+     chdir: "{{ base_project_directory }}/hat-all-stats"
+     cmd: sbt akkaLoader/assembly

@@ -4,9 +4,9 @@ import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
-import com.blackmorse.hattrick.common.CommonData
 import chpp.search.SearchRequest
 import chpp.search.models.{Search, SearchHttpFlow, SearchType}
+import hattid.CommonData.arabToRomans
 import models.stream.LeagueUnit
 
 import scala.concurrent.ExecutionContext
@@ -35,12 +35,12 @@ object StandardLeagueFlow {
   def apply()(implicit oauthTokens: OauthTokens, system: ActorSystem,
               executionContext: ExecutionContext): Flow[LeagueWithLevel, LeagueUnit, NotUsed] = {
     Flow[LeagueWithLevel].map(leagueWithLevel => {
-      val romanLevel = CommonData.arabToRomans.get(leagueWithLevel.level)
+      val romanLevel = arabToRomans(leagueWithLevel.level)
       searchRequest(leagueWithLevel, romanLevel)
     })
       .via(SearchHttpFlow())
       .flatMapConcat{case(search, leagueWithLevel) =>
-        val romanLevel = CommonData.arabToRomans.get(leagueWithLevel.level)
+        val romanLevel = arabToRomans(leagueWithLevel.level)
         val pagesRequests = (0 until search.pages).map(page => {
           searchRequest(leagueWithLevel, romanLevel, page)
         })

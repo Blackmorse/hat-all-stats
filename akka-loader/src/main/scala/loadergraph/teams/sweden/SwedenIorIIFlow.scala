@@ -4,10 +4,10 @@ import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
-import com.blackmorse.hattrick.common.CommonData
 import loadergraph.teams.LeagueWithLevel
 import chpp.search.SearchRequest
 import chpp.search.models.{SearchHttpFlow, SearchType}
+import hattid.CommonData.{arabToRomans, leagueLevelNumberTeams}
 import models.stream.LeagueUnit
 
 import scala.concurrent.ExecutionContext
@@ -17,8 +17,8 @@ object SwedenIorIIFlow {
               executionContext: ExecutionContext): Flow[LeagueWithLevel, LeagueUnit, NotUsed] = {
     if(level != 2 && level != 3) throw new RuntimeException()
 
-    val romanLevel = CommonData.arabToRomans.get(level - 1)
-    val leagueNumber = CommonData.leagueLevelNumberTeams.get(level)
+    val romanLevel = arabToRomans(level - 1)
+    val leagueNumber = leagueLevelNumberTeams(level)
 
     Flow[LeagueWithLevel].map(leagueWithLevel => {
       val searchRequest = SearchRequest(searchType = Some(SearchType.SERIES),

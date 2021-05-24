@@ -1,6 +1,5 @@
 package controllers
 
-import com.blackmorse.hattrick.common.CommonData.higherLeagueMap
 import com.blackmorse.hattrick.model.enums.SearchType
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
@@ -11,6 +10,7 @@ import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsReque
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
+import hattid.CommonData
 import hattrick.Hattrick
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
@@ -57,9 +57,9 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
       .map(id => Ok(Json.toJson(LongWrapper(id))))
   }
 
-  private def findLeagueUnitIdByName(leagueUnitName: String, leagueId: Int) = {
+  private def findLeagueUnitIdByName(leagueUnitName: String, leagueId: Int): Long = {
     if(leagueUnitName == "I.1") {
-      higherLeagueMap.get(leagueId).getLeagueUnitId
+      CommonData.higherLeagueMap(leagueId).leagueUnitId
     } else {
       if(leagueId == 1) { //Sweden
         val (division, number) = LeagueNameParser.getLeagueUnitNumberByName(leagueUnitName)
