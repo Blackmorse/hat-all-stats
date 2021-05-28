@@ -8,7 +8,7 @@ object PlayersParameters {
   implicit def queryStringBindable(implicit stringBuilder: QueryStringBindable[String]) = new QueryStringBindable[PlayersParameters] {
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, PlayersParameters]] = {
       val roleOptionEither = stringBuilder.bind("role", params)
-        .map(roleEither => roleEither.map(role => Some(role)))
+        .map(roleEither => roleEither.map(role => if (role.isEmpty) None else Some(role)))
         .orElse(Some(Right(None)))
 
       val nationalityOptionEither = ParametersUtils.bindInt("nationality", params)
