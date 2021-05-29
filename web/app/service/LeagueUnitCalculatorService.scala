@@ -15,8 +15,8 @@ class LeagueUnitCalculatorService  {
   def orderingFactory[T : Ordering](compField: LeagueTeamStatAccumulator => T): Ordering[LeagueTeamStatAccumulator] =
     new Ordering[LeagueTeamStatAccumulator] {
       override def compare(x: LeagueTeamStatAccumulator, y: LeagueTeamStatAccumulator): Int = {
-        if(compField(x) > compField(y)) return -1
-        if(compField(x) < compField(y)) return 1
+        if(compField(x) > compField(y)) return 1
+        if(compField(x) < compField(y)) return -1
         if((x.scored - x.missed) != (y.scored - y.missed)) return (x.scored - x.missed).compareTo(y.scored - y.missed)
         0
       }
@@ -52,7 +52,7 @@ class LeagueUnitCalculatorService  {
         case Asc => accumulators
       }
 
-      accumulatorDirection.reverse.zipWithIndex
+      accumulatorDirection.zipWithIndex
         .map{case (accumulator, index) =>
           LeagueUnitTeamStat(index + 1, accumulator.teamId, accumulator.teamName, accumulator.games, accumulator.scored, accumulator. missed,
             accumulator.win, accumulator.draw, accumulator.lost, accumulator.points)
@@ -60,6 +60,9 @@ class LeagueUnitCalculatorService  {
     }
 
     val teamPositionsReverse = teamPositions.reverse
+
+    teamPositionsReverse.head.foreach(println)
+
     val previousPositionsOpt = teamPositionsReverse.tail.headOption
     if(previousPositionsOpt.isEmpty) {
       teamPositionsReverse.head.map(luts => LeagueUnitTeamStatsWithPositionDiff(0, luts))
