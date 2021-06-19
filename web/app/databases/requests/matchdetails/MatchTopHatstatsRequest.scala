@@ -1,9 +1,9 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
-import databases.requests.ClickhouseRequestFunctions.Away
-import databases.requests.{ClickhouseRequestFunctions, ClickhouseStatisticsRequest}
+import databases.requests.ClickhouseStatisticsRequest
 import databases.requests.model.`match`.MatchTopHatstats
+import hattid.LoddarStatsUtils
 
 object MatchTopHatstatsRequest extends ClickhouseStatisticsRequest[MatchTopHatstats] {
   override val sortingColumns: Seq[String] = Seq("sum_hatstats", "sum_loddar_stats")
@@ -24,8 +24,8 @@ object MatchTopHatstatsRequest extends ClickhouseStatisticsRequest[MatchTopHatst
       |    ((((((rating_midfield * 3) + rating_left_att) + rating_mid_att) + rating_right_att) + rating_left_def) + rating_right_def) + rating_mid_def AS hatstats,
       |    ((((((opposite_rating_midfield * 3) + opposite_rating_left_att) + opposite_rating_right_att) + opposite_rating_mid_att) + opposite_rating_left_def) + opposite_rating_right_def) + opposite_rating_mid_def AS opposite_hatstats,
       |    hatstats + opposite_hatstats AS sum_hatstats,
-      |    ${ClickhouseRequestFunctions.loddarStats()} as loddar_stats,
-      |    ${ClickhouseRequestFunctions.loddarStats(Away)} as opposite_loddar_stats,
+      |    ${LoddarStatsUtils.homeLoddarStats} as loddar_stats,
+      |    ${LoddarStatsUtils.awayLoddarStats} as opposite_loddar_stats,
       |    loddar_stats + opposite_loddar_stats as sum_loddar_stats
       |FROM hattrick.match_details
       |__where__
@@ -52,8 +52,8 @@ object MatchTopHatstatsRequest extends ClickhouseStatisticsRequest[MatchTopHatst
        |    ((((((rating_midfield * 3) + rating_left_att) + rating_mid_att) + rating_right_att) + rating_left_def) + rating_right_def) + rating_mid_def AS hatstats,
        |    ((((((opposite_rating_midfield * 3) + opposite_rating_left_att) + opposite_rating_right_att) + opposite_rating_mid_att) + opposite_rating_left_def) + opposite_rating_right_def) + opposite_rating_mid_def AS opposite_hatstats,
        |    hatstats + opposite_hatstats AS sum_hatstats,
-       |    ${ClickhouseRequestFunctions.loddarStats()} as loddar_stats,
-       |    ${ClickhouseRequestFunctions.loddarStats(Away)} as opposite_loddar_stats,
+       |    ${LoddarStatsUtils.homeLoddarStats} as loddar_stats,
+       |    ${LoddarStatsUtils.awayLoddarStats} as opposite_loddar_stats,
        |    loddar_stats + opposite_loddar_stats as sum_loddar_stats
        |FROM hattrick.match_details
        |__where__

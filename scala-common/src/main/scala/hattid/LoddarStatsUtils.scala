@@ -1,28 +1,18 @@
-package databases.requests
+package hattid
 
-object ClickhouseRequestFunctions {
-  sealed trait HomeAway{
-    val prefix: String
-  }
+object LoddarStatsUtils {
+  lazy val homeLoddarStats: String = loddarStats("")
 
-  case object Home extends HomeAway {
-    override val prefix: String = ""
-  }
+  lazy val awayLoddarStats: String = loddarStats("opposite_")
 
-  case object Away extends HomeAway {
-    override val prefix: String = "opposite_"
-  }
-
-  //TODO lazy initialization (total 2 requests)
-  def loddarStats(homeAway: HomeAway = Home): String = {
-    val prefix = homeAway.prefix
+  private def loddarStats(prefix: String): String =
     s"""
        |multiIf(${prefix}tactic_type = 2, ${ca(prefix)},
        |        ${prefix}tactic_type = 4, ${attackWings(prefix)},
        |        ${prefix}tactic_type = 3, ${attackMiddle(prefix)},
        |        ${noTactic(prefix)})
        |""".stripMargin
-  }
+
 
   private def ca(prefix: String): String = {
     s"""

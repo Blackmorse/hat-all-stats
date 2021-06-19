@@ -1,8 +1,9 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
-import databases.requests.{ClickhouseRequestFunctions, ClickhouseStatisticsRequest}
+import databases.requests.ClickhouseStatisticsRequest
 import databases.requests.model.league.LeagueUnitRating
+import hattid.LoddarStatsUtils
 
 object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitRating] {
   override val sortingColumns: Seq[String] = Seq("hatstats", "midfield", "defense", "attack", "loddar_stats")
@@ -25,7 +26,7 @@ object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitR
           |     toInt32(avg(rating_midfield)) as midfield,
           |     toInt32(avg((rating_right_def + rating_left_def + rating_mid_def))) as defense,
           |     toInt32(avg((rating_right_att + rating_mid_att + rating_left_att))) as attack,
-          |     avg(${ClickhouseRequestFunctions.loddarStats()}) as loddar_stats
+          |     avg(${LoddarStatsUtils.homeLoddarStats}) as loddar_stats
           |     from hattrick.match_details
           |     __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
           |     group by league_unit_id, league_unit_name, round)
@@ -38,7 +39,7 @@ object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitR
          |     toInt32(avg(rating_midfield)) as midfield,
          |     toInt32(avg((rating_right_def + rating_left_def + rating_mid_def))) as defense,
          |     toInt32(avg((rating_right_att + rating_mid_att + rating_left_att))) as attack,
-         |     avg(${ClickhouseRequestFunctions.loddarStats()}) as loddar_stats
+         |     avg(${LoddarStatsUtils.homeLoddarStats}) as loddar_stats
          |     from hattrick.match_details
          |     __where__  AND rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
          |     group by league_unit_id, league_unit_name

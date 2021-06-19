@@ -1,9 +1,9 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
-import databases.requests.ClickhouseRequestFunctions.Away
-import databases.requests.{ClickhouseRequestFunctions, ClickhouseStatisticsRequest}
+import databases.requests.ClickhouseStatisticsRequest
 import databases.requests.model.`match`.MatchTopHatstats
+import hattid.LoddarStatsUtils
 
 object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatstats] {
   override val sortingColumns: Seq[String] = Seq("abs_goals_difference",
@@ -27,8 +27,8 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
       |    ((((((opposite_rating_midfield * 3) + opposite_rating_left_att) + opposite_rating_right_att) + opposite_rating_mid_att) + opposite_rating_left_def) + opposite_rating_right_def) + opposite_rating_mid_def AS opposite_hatstats,
       |    hatstats - opposite_hatstats as hatstats_difference,
       |    abs(hatstats_difference) as abs_hatstats_difference,
-      |    ${ClickhouseRequestFunctions.loddarStats()} as loddar_stats,
-      |    ${ClickhouseRequestFunctions.loddarStats(Away)} as opposite_loddar_stats,
+      |    ${LoddarStatsUtils.homeLoddarStats} as loddar_stats,
+      |    ${LoddarStatsUtils.awayLoddarStats} as opposite_loddar_stats,
       |    abs(loddar_stats - opposite_loddar_stats) as abs_loddar_stats_difference
       |FROM hattrick.match_details
       |__where__ AND (((goals - enemy_goals) * hatstats_difference) < 0) AND (opposite_team_id != 0)
@@ -57,8 +57,8 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
       |    ((((((opposite_rating_midfield * 3) + opposite_rating_left_att) + opposite_rating_right_att) + opposite_rating_mid_att) + opposite_rating_left_def) + opposite_rating_right_def) + opposite_rating_mid_def AS opposite_hatstats,
       |    hatstats - opposite_hatstats as hatstats_difference,
       |    abs(hatstats_difference) as abs_hatstats_difference,
-      |    ${ClickhouseRequestFunctions.loddarStats()} as loddar_stats,
-      |    ${ClickhouseRequestFunctions.loddarStats(Away)} as opposite_loddar_stats,
+      |    ${LoddarStatsUtils.homeLoddarStats} as loddar_stats,
+      |    ${LoddarStatsUtils.awayLoddarStats} as opposite_loddar_stats,
       |    abs(loddar_stats - opposite_loddar_stats) as abs_loddar_stats_difference
       |FROM hattrick.match_details
       |__where__ AND (((goals - enemy_goals) * hatstats_difference) < 0)  AND (opposite_team_id != 0)

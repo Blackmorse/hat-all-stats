@@ -1,14 +1,13 @@
 package actors
 
 import actors.TaskExecutorActor.{ScheduleTask, TaskFinished, TryToExecute}
-import akka.Done
 import akka.actor.Actor
 import akka.stream.scaladsl.{Keep, Sink, Source}
-import chpp.matchesarchive.models.MatchType
+import chpp.OauthTokens
 import chpp.worlddetails.models.{League, WorldDetails}
-import clickhouse.PlayerStatsClickhouseClient
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
+import utils.WorldDetailsSingleRequest
 
 import java.util.Date
 import scala.concurrent.Future
@@ -26,7 +25,9 @@ object TaskExecutorActor {
 
 abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                         worldDetails: WorldDetails,
-                        matToFuture: GraphMat => Future[MatValue]) extends Actor {
+                        matToFuture: GraphMat => Future[MatValue])
+                        (implicit oauthTokens: OauthTokens)
+  extends Actor {
   private val logger = Logger(LoggerFactory.getLogger(this.getClass))
 
   import context.{dispatcher, system}
@@ -70,15 +71,18 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                   new Date(System.currentTimeMillis() + 30 * 60 * 1000))
                 self ! TaskFinished
               case Success(matValue) =>
-                val result = postProcessLoadedResults(league, matValue)
+                val updatedLeagueFuture =  WorldDetailsSingleRequest.request(leagueId = Some(league.leagueId)).map(_.leagueList.head);
+
+                updatedLeagueFuture.foreach(updatedLeague => {
+                val result = postProcessLoadedResults(updatedLeague, matValue)
                 result.onComplete {
                   case Failure(exception) =>
                     logger.error(exception.getMessage, exception)
                     self ! TaskFinished
                   case Success(_) =>
-                    logger.info(s"(${league.leagueId}, ${league.leagueName}) successfully loaded")
+                    logger.info(s"(${updatedLeague.leagueId}, ${updatedLeague.leagueName}) successfully loaded")
                     self ! TaskFinished
-                }
+                }})
             }
 
           }
