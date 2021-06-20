@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 import scala.xml.XML
 
-abstract class AbstractHttpFlow[Request <: AbstractRequest, Model] {
+abstract class AbstractHttpFlow[Request <: AbstractRequest[Model], Model] {
   private val logger = Logger(LoggerFactory.getLogger(this.getClass))
 
   def preprocessBody(body: String): String

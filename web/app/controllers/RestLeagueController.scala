@@ -39,8 +39,7 @@ object RestLeagueData {
 @Singleton
 class RestLeagueController @Inject() (val controllerComponents: ControllerComponents,
                                       implicit val restClickhouseDAO: RestClickhouseDAO,
-                                  val leagueInfoService: LeagueInfoService,
-                                  val hattrick: Hattrick) extends RestController  {
+                                  val leagueInfoService: LeagueInfoService) extends RestController  {
 
   def getLeagueData(leagueId: Int): Action[AnyContent] =  Action.async { implicit request =>
       val league = leagueInfoService.leagueInfo(leagueId).league

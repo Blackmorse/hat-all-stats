@@ -24,15 +24,13 @@ lazy val webSettings = Seq(
 )
 
 
-val akkaVersion = "2.6.12"
-val akkaHttpVersion = "10.2.3"
+val akkaVersion = "2.6.14"
+val akkaHttpVersion = "10.1.14"
 lazy val akkaLoaderDependencies = Seq(
   // akka streams
   "com.typesafe.akka" %% "akka-stream" % akkaVersion,
   // akka http
   "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-  "commons-codec" % "commons-codec" % "1.15",
-  "com.lucidchart" %% "xtract" % "2.2.1",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "io.spray" %% "spray-json" % "1.3.6",
@@ -45,15 +43,28 @@ lazy val akkaLoaderSetting = Seq(
   libraryDependencies ++= akkaLoaderDependencies
 )
 
+lazy val chppSettings = Seq(
+  libraryDependencies ++= Seq(
+    "commons-codec" % "commons-codec" % "1.15",
+    "com.lucidchart" %% "xtract" % "2.2.1",
+    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+  )
+)
+
 lazy val scalaCommon = (project in file("scala-common"))
 
-lazy val web = (project in file("web"))
-  .dependsOn(scalaCommon)
-  .settings(webSettings)
-  .enablePlugins(PlayScala)
+lazy val chpp = (project in file("chpp"))
+  .settings(chppSettings)
 
 lazy val akkaLoader = (project in file("akka-loader"))
   .dependsOn(scalaCommon)
+  .dependsOn(chpp)
   .settings(akkaLoaderSetting)
+
+lazy val web = (project in file("web"))
+  .dependsOn(scalaCommon)
+  .dependsOn(chpp)
+  .settings(webSettings)
+  .enablePlugins(PlayScala)
 
 

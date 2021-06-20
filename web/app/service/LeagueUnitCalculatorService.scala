@@ -61,8 +61,6 @@ class LeagueUnitCalculatorService  {
 
     val teamPositionsReverse = teamPositions.reverse
 
-    teamPositionsReverse.head.foreach(println)
-
     val previousPositionsOpt = teamPositionsReverse.tail.headOption
     if(previousPositionsOpt.isEmpty) {
       teamPositionsReverse.head.map(luts => LeagueUnitTeamStatsWithPositionDiff(0, luts))

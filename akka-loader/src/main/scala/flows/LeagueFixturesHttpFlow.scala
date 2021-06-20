@@ -1,7 +1,7 @@
-package chpp.leaguefixtures
+package flows
 
+import chpp.leaguefixtures.LeagueFixturesRequest
 import chpp.leaguefixtures.models.LeagueFixtures
-import flows.AbstractHttpFlow
 
 object LeagueFixturesHttpFlow extends AbstractHttpFlow[LeagueFixturesRequest, LeagueFixtures] {
   override def preprocessBody(body: String): String =

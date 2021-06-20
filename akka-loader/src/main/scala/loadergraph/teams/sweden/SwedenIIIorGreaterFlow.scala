@@ -4,7 +4,7 @@ import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
-import chpp.search.models.SearchHttpFlow
+import flows.SearchHttpFlow
 import hattid.CommonData.arabToRomans
 import loadergraph.teams.{LeagueWithLevel, StandardLeagueFlow}
 import models.stream.LeagueUnit

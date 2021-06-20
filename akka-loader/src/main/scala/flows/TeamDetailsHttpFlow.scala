@@ -1,7 +1,7 @@
-package chpp.teamdetails
+package flows
 
+import chpp.teamdetails.TeamDetailsRequest
 import chpp.teamdetails.models.TeamDetails
-import flows.AbstractHttpFlow
 
 object TeamDetailsHttpFlow extends AbstractHttpFlow[TeamDetailsRequest, TeamDetails] {
   override def preprocessBody(body: String): String =

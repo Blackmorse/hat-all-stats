@@ -1,5 +1,9 @@
 package controllers
 
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import chpp.search.SearchRequest
+import chpp.search.models.Search
 import com.blackmorse.hattrick.model.enums.SearchType
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
@@ -11,7 +15,7 @@ import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattid.CommonData
-import hattrick.Hattrick
+import hattrick.{ChppClient, Hattrick}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web._
@@ -44,7 +48,8 @@ object RestLeagueUnitData {
   implicit val writes = Json.writes[RestLeagueUnitData]
 }
 
-class RestLeagueUnitController @Inject() (val controllerComponents: ControllerComponents,
+class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
+                                           val controllerComponents: ControllerComponents,
                                           val leagueInfoService: LeagueInfoService,
                                           val hattrick: Hattrick,
                                           implicit val restClickhouseDAO: RestClickhouseDAO,
@@ -53,8 +58,36 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
   implicit val writes = Json.writes[LongWrapper]
 
   def leagueUnitIdByName(leagueUnitName: String, leagueId: Int) = Action.async{implicit request =>
-    Future(findLeagueUnitIdByName(leagueUnitName, leagueId))
+//    Future(findLeagueUnitIdByName(leagueUnitName, leagueId))
+    findLeagueUnitIdByNameAsync(leagueUnitName, leagueId)
       .map(id => Ok(Json.toJson(LongWrapper(id))))
+  }
+
+  private def findLeagueUnitIdByNameAsync(leagueUnitName: String, leagueId: Int): Future[Long] = {
+    if(leagueUnitName == "I.1") {
+      Future(CommonData.higherLeagueMap(leagueId).leagueUnitId)
+    } else {
+      if(leagueId == 1) { //Sweden
+        val (division, number) = LeagueNameParser.getLeagueUnitNumberByName(leagueUnitName)
+        val actualDivision = Romans(Romans(division) - 1)
+        val actualNumber = if (division == "II" || division == "III") {
+          ('a' + number - 1).toChar.toString
+        } else {
+          "." + number.toString
+        }
+        chppClient.execute[Search, SearchRequest](SearchRequest(
+          searchType = Some(chpp.search.models.SearchType.SERIES),
+          searchLeagueId = Some(leagueId),
+          searchString = Some(actualDivision + actualNumber)
+        )).map(_.searchResults.head.resultId)
+      } else {
+        chppClient.execute[Search, SearchRequest](SearchRequest(
+          searchType = Some(chpp.search.models.SearchType.SERIES),
+          searchLeagueId = Some(leagueId),
+          searchString = Some(leagueUnitName)
+        )).map(_.searchResults.head.resultId)
+      }
+    }
   }
 
   private def findLeagueUnitIdByName(leagueUnitName: String, leagueId: Int): Long = {

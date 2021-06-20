@@ -6,8 +6,8 @@ import akka.stream.FlowShape
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge}
 import chpp.OauthTokens
 import chpp.leaguedetails.models.LeagueDetails
-import chpp.leaguedetails.{LeagueDetailsHttpFlow, LeagueDetailsRequest}
-import flows.LogProgressFlow
+import chpp.leaguedetails.LeagueDetailsRequest
+import flows.{LeagueDetailsHttpFlow, LogProgressFlow}
 import loadergraph.teams.sweden.SwedenLeagueUnitFlow
 import models.stream.LeagueUnit
 

@@ -1,7 +1,7 @@
-package chpp.matchesarchive
+package flows
 
+import chpp.matchesarchive.MatchesArchiveRequest
 import chpp.matchesarchive.models.MatchesArchive
-import flows.AbstractHttpFlow
 
 object MatchesArchiveHttpFlow extends AbstractHttpFlow[MatchesArchiveRequest, MatchesArchive] {
   override def preprocessBody(body: String): String =

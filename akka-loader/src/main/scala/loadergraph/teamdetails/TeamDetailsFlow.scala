@@ -3,9 +3,9 @@ package loadergraph.teamdetails
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.Flow
 import chpp.OauthTokens
-import chpp.teamdetails.{TeamDetailsHttpFlow, TeamDetailsRequest}
+import chpp.teamdetails.TeamDetailsRequest
 import com.crobox.clickhouse.stream.Insert
-import flows.{ClickhouseFlow, LogProgressFlow}
+import flows.{ClickhouseFlow, LogProgressFlow, TeamDetailsHttpFlow}
 import models.clickhouse.TeamDetailsModelCH
 import models.stream.StreamMatchDetails
 

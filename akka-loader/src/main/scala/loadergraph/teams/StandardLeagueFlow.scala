@@ -5,7 +5,8 @@ import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
 import chpp.search.SearchRequest
-import chpp.search.models.{Search, SearchHttpFlow, SearchType}
+import chpp.search.models.{Search, SearchType}
+import flows.SearchHttpFlow
 import hattid.CommonData.arabToRomans
 import models.stream.LeagueUnit
 
