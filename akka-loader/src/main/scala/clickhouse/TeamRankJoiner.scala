@@ -3,6 +3,7 @@ package clickhouse
 import chpp.worlddetails.models.League
 import com.crobox.clickhouse.ClickhouseClient
 import com.typesafe.config.Config
+import hattid.LoddarStatsUtils
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -116,6 +117,7 @@ object TeamRankJoiner {
         SqlRequestParam("rating_right_att + rating_mid_att + rating_left_att", "attack", match_details_request),
         SqlRequestParam("rating_midfield", "midfield", match_details_request),
         SqlRequestParam("rating_right_def + rating_left_def + rating_mid_def", "defense", match_details_request),
+        SqlRequestParam(LoddarStatsUtils.homeLoddarStats, "loddar_stats", match_details_request),
 
         SqlRequestParam("sum(tsi)", "tsi", player_stats_request),
         SqlRequestParam("sum(salary)", "salary", player_stats_request),

@@ -1,6 +1,6 @@
 import RankingParameters from "./RankingParameters";
 import i18n from "../../i18n";
-import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter, salaryFormatter } from '../Formatters'
+import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter, salaryFormatter, loddarStats } from '../Formatters'
 import { PagesEnum } from "../enums/PagesEnum";
 
 class RankingParametersProvider {
@@ -136,6 +136,17 @@ class RankingParametersProvider {
             formatter: commasSeparated,
             sortingField: 'injury_count',
             page: PagesEnum.TEAM_AGE_INJURY
+        }
+    }
+
+    static LODDAR_STATS(): RankingParameters {
+        return {
+            title: i18n.t('table.loddar_stats'),
+            positionFunc: teamRanking => teamRanking.loddarStatsPosition,
+            valueFunc: teamRanking => teamRanking.loddarStats,
+            formatter: loddarStats,
+            sortingField: 'loddar_stats',
+            page: PagesEnum.TEAM_HATSTATS
         }
     }
 }

@@ -10,6 +10,8 @@ CREATE TABLE hattrick.match_details
     `time` DateTime,
     `dt` Date DEFAULT toDate(time),
     `round` UInt8,
+    `cup_level` UInt8,
+    `cup_level_index` UInt8,
     `match_id` UInt64,
     `is_home_match` Enum8('home' = 0, 'away' = 1),
     `goals` UInt8,

@@ -11,7 +11,7 @@ case class TeamRankings(teamId: Long,
                         divisionLevel: Int,
                         season: Int,
                         round: Int,
-                        rank_type: String,
+                        rankType: String,
                         hatstats: Int,
                         hatstatsPosition: Int,
                         attack: Int,
@@ -20,6 +20,8 @@ case class TeamRankings(teamId: Long,
                         midfieldPosition: Int,
                         defense: Int,
                         defensePosition: Int,
+                        loddarStats: Double,
+                        loddarStatsPosition: Int,
                         tsi: Int,
                         tsiPosition: Int,
                         salary: Int,
@@ -57,6 +59,8 @@ object TeamRankings {
     get[Int]("midfield_position") ~
     get[Int]("defense") ~
     get[Int]("defense_position") ~
+    get[Double]("loddar_stats") ~
+    get[Int]("loddar_stats_position") ~
     get[Int]("tsi") ~
     get[Int]("tsi_position") ~
     get[Int]("salary") ~
@@ -75,16 +79,42 @@ object TeamRankings {
     get[Int]("power_rating_position") map {
       case teamId ~ teamName ~ divisionLevel ~ season ~ round ~ rankType ~ hatstats ~ hatstatsPosition ~ attack ~
         attackPosition ~ midfield ~ midfieldPosition ~
-        defense ~ defensePosition ~ tsi ~ tsiPosition ~ salary ~ salaryPosition ~
+        defense ~ defensePosition ~ loddarStats ~ loddarStatsPosition ~ tsi ~ tsiPosition ~ salary ~ salaryPosition ~
         rating ~ ratingPosition ~ ratingEndOfMatch ~ ratingEndOfMatchPosition ~
         age ~ agePosition ~ injury ~ injuryPosition ~ injuryCount ~ injuryCountPosition  ~
         powerRating ~ powerRatingPosition =>
-        TeamRankings(teamId, teamName, divisionLevel, season, round, rankType, hatstats, hatstatsPosition, attack,
-          attackPosition, midfield, midfieldPosition, defense, defensePosition,
-          tsi, tsiPosition, salary, salaryPosition, rating, ratingPosition,
-          ratingEndOfMatch, ratingEndOfMatchPosition, age, agePosition,
-          injury, injuryPosition, injuryCount, injuryCountPosition,
-          powerRating, powerRatingPosition
+        TeamRankings(teamId = teamId,
+          teamName = teamName,
+          divisionLevel = divisionLevel,
+          season = season,
+          round = round,
+          rankType = rankType,
+          hatstats = hatstats,
+          hatstatsPosition = hatstatsPosition,
+          attack = attack,
+          attackPosition = attackPosition,
+          midfield = midfield,
+          midfieldPosition = midfieldPosition,
+          defense = defense,
+          defensePosition = defensePosition,
+          loddarStats = loddarStats,
+          loddarStatsPosition = loddarStatsPosition,
+          tsi = tsi,
+          tsiPosition = tsiPosition,
+          salary = salary,
+          salaryPosition = salaryPosition,
+          rating = rating,
+          ratingPosition = ratingPosition,
+          ratingEndOfMatch = ratingEndOfMatch,
+          ratingEndOfMatchPosition = ratingEndOfMatchPosition,
+          age = age,
+          agePosition = agePosition,
+          injury = injury,
+          injuryPosition = injuryPosition,
+          injuryCount = injuryCount,
+          injuryCountPosition = injuryCountPosition,
+          powerRating = powerRating,
+          powerRatingPosition = powerRatingPosition
         )
     }
   }

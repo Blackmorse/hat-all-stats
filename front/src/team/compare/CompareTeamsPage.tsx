@@ -127,6 +127,13 @@ class CompareTeamsPage extends StatisticsSection<LevelDataPropsWrapper<TeamData,
                     rankingParameters={RankingParametersProvider.INJURY_COUNT()}
                 />
             </div>
+            <div className="section_row">
+                <CompareTeamsTable 
+                    teamComparsion={teamComparsion}
+                    teamLevelDataProps={this.props.levelDataProps} 
+                    rankingParameters={RankingParametersProvider.LODDAR_STATS()}
+                />
+            </div>
             </>
         }
         </Translation>

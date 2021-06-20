@@ -48,8 +48,8 @@ class RankingTable extends React.Component<Props, State> {
         let valueFunc = this.props.rankingParameters.valueFunc
         let positionFunc = this.props.rankingParameters.positionFunc
 
-        let divisionLevelRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rank_type === "division_level")
-        let leagueRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rank_type === "league_id")
+        let divisionLevelRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rankType === "division_level")
+        let leagueRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rankType === "league_id")
 
         let lastLeagueRanking = leagueRankings[leagueRankings.length - 1]
         let previousLeagueRanking = (leagueRankings.length > 1) ? leagueRankings[leagueRankings.length - 2] : undefined

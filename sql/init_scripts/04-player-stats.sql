@@ -10,6 +10,8 @@ CREATE TABLE hattrick.player_stats
     `time` DateTime,
     `dt` Date DEFAULT toDate(time),
     `round` UInt8,
+    `cup_level` UInt8,
+    `cup_level_index` UInt8,
     `match_id` UInt64,
     `player_id` UInt64,
     `first_name` String,

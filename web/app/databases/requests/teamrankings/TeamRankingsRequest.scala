@@ -27,6 +27,8 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
        |    midfield_position,
        |    defense,
        |    defense_position,
+       |    loddar_stats,
+       |    loddar_stats_position,
        |    tsi,
        |    tsi_position,
        |    salary,

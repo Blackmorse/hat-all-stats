@@ -18,6 +18,8 @@ CREATE TABLE hattrick.team_rankings
     `midfield_position` UInt32,
     `defense` UInt16,
     `defense_position` UInt32,
+    `loddar_stats` Float64,
+    `loddar_stats_position` UInt32,
     `tsi` UInt32,
     `tsi_position` UInt32,
     `salary` UInt32,

@@ -118,6 +118,12 @@ class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData
                             rankingParameters={RankingParametersProvider.INJURY_COUNT()}
                         />
                     </div>
+                    <div className="rankings_grid_row">
+                        <RankingTable 
+                            rankingData={rankingData}
+                            rankingParameters={RankingParametersProvider.LODDAR_STATS()}
+                        />
+                    </div>
                 </div>
             </>
             }
