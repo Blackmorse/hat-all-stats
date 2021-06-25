@@ -1,6 +1,7 @@
-import sbt.Keys.{libraryDependencies, version}
+
 
 name := "hattid-scala"
+trapExit := false
 
 ThisBuild / scalaVersion := "2.13.5"
 ThisBuild / organization := "com.blackmorse.hattrick"
@@ -21,6 +22,10 @@ lazy val webSettings = Seq(
   resolvers += Resolver.mavenLocal,
   version := "1.0-SNAPSHOT",
   libraryDependencies ++= webDependencies,
+  assemblyMergeStrategy in assembly := {
+    case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+    case x => MergeStrategy.first
+  }
 )
 
 
@@ -40,7 +45,8 @@ lazy val akkaLoaderDependencies = Seq(
 lazy val akkaLoaderSetting = Seq(
   name := "akka-loader",
   version := "0.1",
-  libraryDependencies ++= akkaLoaderDependencies
+  libraryDependencies ++= akkaLoaderDependencies,
+    trapExit := false
 )
 
 lazy val chppSettings = Seq(
