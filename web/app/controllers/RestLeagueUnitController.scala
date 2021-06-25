@@ -1,10 +1,7 @@
 package controllers
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
 import chpp.search.SearchRequest
-import chpp.search.models.Search
-import com.blackmorse.hattrick.model.enums.SearchType
+import chpp.search.models.{Search, SearchType}
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
 import databases.requests.model.promotions.PromotionWithType
@@ -58,12 +55,11 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
   implicit val writes = Json.writes[LongWrapper]
 
   def leagueUnitIdByName(leagueUnitName: String, leagueId: Int) = Action.async{implicit request =>
-//    Future(findLeagueUnitIdByName(leagueUnitName, leagueId))
-    findLeagueUnitIdByNameAsync(leagueUnitName, leagueId)
+    findLeagueUnitIdByName(leagueUnitName, leagueId)
       .map(id => Ok(Json.toJson(LongWrapper(id))))
   }
 
-  private def findLeagueUnitIdByNameAsync(leagueUnitName: String, leagueId: Int): Future[Long] = {
+  private def findLeagueUnitIdByName(leagueUnitName: String, leagueId: Int): Future[Long] = {
     if(leagueUnitName == "I.1") {
       Future(CommonData.higherLeagueMap(leagueId).leagueUnitId)
     } else {
@@ -76,13 +72,13 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
           "." + number.toString
         }
         chppClient.execute[Search, SearchRequest](SearchRequest(
-          searchType = Some(chpp.search.models.SearchType.SERIES),
+          searchType = Some(SearchType.SERIES),
           searchLeagueId = Some(leagueId),
           searchString = Some(actualDivision + actualNumber)
         )).map(_.searchResults.head.resultId)
       } else {
         chppClient.execute[Search, SearchRequest](SearchRequest(
-          searchType = Some(chpp.search.models.SearchType.SERIES),
+          searchType = Some(SearchType.SERIES),
           searchLeagueId = Some(leagueId),
           searchString = Some(leagueUnitName)
         )).map(_.searchResults.head.resultId)
@@ -90,30 +86,6 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
     }
   }
 
-  private def findLeagueUnitIdByName(leagueUnitName: String, leagueId: Int): Long = {
-    if(leagueUnitName == "I.1") {
-      CommonData.higherLeagueMap(leagueId).leagueUnitId
-    } else {
-      if(leagueId == 1) { //Sweden
-        val (division, number) = LeagueNameParser.getLeagueUnitNumberByName(leagueUnitName)
-        val actualDivision = Romans(Romans(division) - 1)
-        val actualNumber = if (division == "II" || division == "III") {
-          ('a' + number - 1).toChar.toString
-        } else {
-          "." + number.toString
-        }
-        hattrick.api.search()
-          .searchLeagueId(leagueId).searchString(actualDivision + actualNumber).searchType(SearchType.SERIES)
-          .execute()
-          .getSearchResults.get(0).getResultId
-      } else {
-        hattrick.api.search()
-          .searchLeagueId(leagueId).searchString(leagueUnitName).searchType(SearchType.SERIES)
-          .execute()
-          .getSearchResults.get(0).getResultId
-      }
-    }
-  }
 
   private def leagueUnitDataFromId(leagueUnitId: Long): Future[RestLeagueUnitData] =
     Future(hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute())
