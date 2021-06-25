@@ -1,7 +1,6 @@
 package databases.requests.model.promotions
 
-import com.blackmorse.hattrick.common.CommonData
-import models.clickhouse._
+import hattid.CommonData
 import play.api.libs.json.Json
 import utils.Romans
 
@@ -22,7 +21,7 @@ object PromotionWithType {
       .toSeq.sortBy(_._1)
       .map{case((upDivisionLevel, promoteType), promotions) =>
         PromotionWithType(upDivisionLevel,
-          if(upDivisionLevel == 1) CommonData.higherLeagueMap.get(promotions.head.leagueId).getLeagueUnitName else Romans(upDivisionLevel),
+          if(upDivisionLevel == 1) CommonData.higherLeagueMap(promotions.head.leagueId).leagueUnitName else Romans(upDivisionLevel),
           Romans(upDivisionLevel + 1),
           promoteType,
           promotions)
