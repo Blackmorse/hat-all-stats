@@ -19,3 +19,11 @@
    shell:
      chdir: "{{ base_project_directory }}/hat-all-stats"
      cmd: sbt akkaLoader/assembly
+
+ - name: league cron for loader
+   cron:
+     name: "Akka loader cron"
+     weekday: "5"
+     hour: "12"
+     minute: "0"
+     job: "java -Xmx6096m -Xms256m -jar {{ base_project_directory }}/hat-all-stats/akka-loader/target/scala-2.13/akka-loader-assembly-0.1.jar schedule league"
