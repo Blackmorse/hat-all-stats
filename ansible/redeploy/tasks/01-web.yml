@@ -4,6 +4,16 @@
      src: application.conf.j2
      dest: "{{ base_project_directory }}/hat-all-stats/web/conf/application.conf"
 
+ - name: build web distribution
+   shell: 
+     chdir: "{{ base_project_directory }}/hat-all-stats"
+     cmd: sbt web/clean web/dist
+
+ - name: unzip distribution
+   shell:
+     chdir: "{{ base_project_directory }}/hat-all-stats"
+     cmd: unzip web/target/universal/web-1.0-SNAPSHOT.zip -d web/target/dist
+
  - name: unit for web
    become: true
    template:

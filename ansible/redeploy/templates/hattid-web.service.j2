@@ -3,7 +3,7 @@ Description=Hattid Web
 
 [Service]
 WorkingDirectory={{ base_project_directory }}/hat-all-stats
-ExecStart=sbt web/'runProd {{ web.port }}'
+ExecStart={{ base_project_directory }}/hat-all-stats/web/target/dist/web-1.0-SNAPSHOT/bin/web -Dhttp.port={{ web.port }}
 User={{ ansible_user_id }}
 Type=simple
 Restart=on-failure
