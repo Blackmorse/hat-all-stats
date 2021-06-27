@@ -39,7 +39,8 @@ lazy val akkaLoaderDependencies = Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "io.spray" %% "spray-json" % "1.3.6",
-  "com.crobox.clickhouse" %% "client" % "0.9.19"
+  "com.crobox.clickhouse" %% "client" % "0.9.19",
+  "com.google.inject" % "guice" % "5.0.1"
 )
 
 lazy val akkaLoaderSetting = Seq(

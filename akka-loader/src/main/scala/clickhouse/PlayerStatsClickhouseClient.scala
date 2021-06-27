@@ -7,10 +7,14 @@ import com.crobox.clickhouse.ClickhouseClient
 import com.typesafe.config.Config
 import org.slf4j.LoggerFactory
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-class PlayerStatsClickhouseClient(config: Config)(implicit actorSystem: ActorSystem,
-                                                  executionContext: ExecutionContext) {
+@Singleton
+class PlayerStatsClickhouseClient @Inject()(val config: Config,
+                                            implicit val actorSystem: ActorSystem)
+{
+  import actorSystem.dispatcher
   private val logger  = LoggerFactory.getLogger(this.getClass)
 
   private val client = new ClickhouseClient(Some(config))

@@ -1,3 +1,6 @@
+package flows
+
+import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.stream.FlowShape
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge}
@@ -8,43 +11,37 @@ import com.typesafe.config.Config
 import loadergraph.matchdetails.{MatchDetailsCHModelFlow, MatchDetailsFlow}
 import loadergraph.playerevents.PlayerEventsFlow
 import loadergraph.playerinfos.PlayerInfoFlow
-import loadergraph.promotions.PromotionsSink
-import loadergraph.teamdetails.TeamDetailsFlow
 import loadergraph.teams.{LeagueUnitDetailsFlow, TeamsFlow}
-import models.stream.{StreamMatchDetails, StreamTeam}
+import models.stream.StreamMatchDetails
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
-object LeagueMatchesFlow {
+object CupMatchesFlow {
   def apply(config: Config, countryMap: Map[Int, Int])(implicit oauthTokens: OauthTokens, system: ActorSystem,
-              executionContext: ExecutionContext): Flow[Int, Insert, Future[List[StreamTeam]]] = {
+                                                       executionContext: ExecutionContext): Flow[Int, Insert, NotUsed] = {
     val databaseName = config.getString("database_name")
 
     Flow.fromGraph(
-      GraphDSL.create(PromotionsSink()) { implicit builder => promotionsSink =>
+      GraphDSL.create() { implicit builder =>
         import GraphDSL.Implicits._
 
         val teamFlow = builder.add(TeamsFlow())
         val leagueUnitDetailsFlow = builder.add(LeagueUnitDetailsFlow())
-        val matchDetailsFlow = builder.add(MatchDetailsFlow(MatchType.LEAGUE_MATCH))
+        val matchDetailsFlow = builder.add(MatchDetailsFlow(MatchType.CUP_MATCH))
 
-        val broadcast = builder.add(Broadcast[StreamMatchDetails](4).async)
+        val broadcast = builder.add(Broadcast[StreamMatchDetails](3).async)
 
         val matchDetailsCHModelFlow = builder.add(MatchDetailsCHModelFlow(databaseName))
         val playerEventsFlow = builder.add(PlayerEventsFlow(databaseName))
         val playerInfosFlow = builder.add(PlayerInfoFlow(databaseName, countryMap))
-        val teamDetailsFlow = builder.add(TeamDetailsFlow(databaseName))
 
-        val merge = builder.add(Merge[Insert](4))
+        val merge = builder.add(Merge[Insert](3))
 
-        val teamBroadcast = builder.add(Broadcast[StreamTeam](2))
+        leagueUnitDetailsFlow ~> teamFlow ~> matchDetailsFlow ~> broadcast
 
-        leagueUnitDetailsFlow ~> teamFlow ~> teamBroadcast ~> matchDetailsFlow ~>  broadcast
-                                             teamBroadcast ~> promotionsSink
-           broadcast ~> matchDetailsCHModelFlow ~> merge
-           broadcast ~> playerEventsFlow        ~> merge
-           broadcast ~> playerInfosFlow         ~> merge
-           broadcast ~> teamDetailsFlow         ~> merge
+        broadcast ~> matchDetailsCHModelFlow ~> merge
+        broadcast ~> playerEventsFlow ~> merge
+        broadcast ~> playerInfosFlow ~> merge
         FlowShape(leagueUnitDetailsFlow.in, merge.out)
       }
     )
