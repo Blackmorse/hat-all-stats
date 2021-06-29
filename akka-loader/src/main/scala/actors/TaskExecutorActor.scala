@@ -1,6 +1,6 @@
 package actors
 
-import actors.TaskExecutorActor.{ScheduleTask, TaskFinished, TryToExecute}
+import actors.TaskExecutorActor.{ScheduleFinished, ScheduleTask, TaskFinished, TryToExecute}
 import akka.actor.Actor
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import chpp.OauthTokens
@@ -17,6 +17,8 @@ object TaskExecutorActor {
   trait Message
 
   case class ScheduleTask(leagueId: Int, time: Date) extends Message
+
+  case object ScheduleFinished
 
   case object TryToExecute
 
@@ -40,7 +42,8 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
       val beforeTasks = tasks.takeWhile(_.time.compareTo(time) <= 0)
       val afterTasks = tasks.dropWhile(_.time.compareTo(time) <= 0)
       tasks = beforeTasks ++ List(task) ++ afterTasks
-      logger.info(s"Scheduled loading of $task")
+    case ScheduleFinished =>
+      tasks.foreach(task => logger.info(s"Scheduled loading of $task"))
     case TaskFinished =>
       running = false
       val nextTaskOption = tasks.headOption

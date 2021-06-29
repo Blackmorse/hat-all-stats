@@ -1,5 +1,5 @@
 import TaskScheduler.countriesToMinutesOffset
-import actors.TaskExecutorActor.ScheduleTask
+import actors.TaskExecutorActor.{ScheduleFinished, ScheduleTask}
 import akka.actor.{ActorRef, ActorSystem}
 import alltid.AlltidClient
 import chpp.matchesarchive.models.MatchType
@@ -28,6 +28,7 @@ class TaskScheduler(worldDetails: WorldDetails,
     val value = worldDetails.leagueList
       .filter(_.matchRound <= 14)
     val tasks = value
+      .filter(league => dateTimeFunc(league).after(new Date()))
       .map(league => {
         val minutesOffset  = if(matchType == MatchType.LEAGUE_MATCH)
           countriesToMinutesOffset.getOrElse(league.leagueId, 0L)
@@ -39,6 +40,7 @@ class TaskScheduler(worldDetails: WorldDetails,
       })
 
     tasks.foreach(task => taskExecutorActor ! task)
+    taskExecutorActor ! ScheduleFinished
 
     if (tasks.nonEmpty && matchType == MatchType.LEAGUE_MATCH) {
       AlltidClient.notifyScheduleInfo(tasks)
@@ -72,7 +74,6 @@ class TaskScheduler(worldDetails: WorldDetails,
       dateTimeFunc(lastLeague).after(new Date()) && dateTimeFunc(lastLeague).after(dateTimeFunc(firstLeague))
 
     val previousWeekMs = if (matchesAlreadyFinished) 1000L * 3600 * 24 * 7 else 0L
-
     worldDetails.leagueList
       .map(league => {
         val minutesOffset: Long  = countriesToMinutesOffset.getOrElse(league.leagueId, 0)
@@ -89,5 +90,7 @@ class TaskScheduler(worldDetails: WorldDetails,
       .sortBy(_.time)
       .dropWhile(_.leagueId != leagueId)
       .foreach(taskExecutorActor ! _)
+
+    taskExecutorActor ! ScheduleFinished
   }
 }
