@@ -63,6 +63,7 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
             tasks = tasks.drop(1)
             running = true
             val league = worldDetails.leagueList.filter(_.leagueId == task.leagueId).head
+            notifyStarted(league)
             logger.info(s"Started league (${task.leagueId}, ${league.leagueName})")
 
             val mat = Source.single(task.leagueId).toMat(graph)(Keep.right).run()
@@ -84,6 +85,7 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                     self ! TaskFinished
                   case Success(_) =>
                     logger.info(s"(${updatedLeague.leagueId}, ${updatedLeague.leagueName}) successfully loaded")
+                    notifyFinished(updatedLeague)
                     self ! TaskFinished
                 }})
             }
@@ -94,6 +96,10 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
         logger.debug("Some task is running!")
       }
   }
+
+  def notifyStarted(league: League)
+
+  def notifyFinished(league: League)
 
   def postProcessLoadedResults(league: League, matValue: MatValue): Future[_]
 }

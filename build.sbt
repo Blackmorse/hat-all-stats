@@ -28,7 +28,7 @@ lazy val webSettings = Seq(
   }
 )
 
-
+val guiceVersion = "5.0.1"
 val akkaVersion = "2.6.14"
 val akkaHttpVersion = "10.1.14"
 lazy val akkaLoaderDependencies = Seq(
@@ -40,7 +40,9 @@ lazy val akkaLoaderDependencies = Seq(
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "io.spray" %% "spray-json" % "1.3.6",
   "com.crobox.clickhouse" %% "client" % "0.9.19",
-  "com.google.inject" % "guice" % "5.0.1"
+  "com.google.inject" % "guice" % guiceVersion,
+  "com.google.inject.extensions" % "guice-assistedinject" % guiceVersion
+
 )
 
 lazy val akkaLoaderSetting = Seq(

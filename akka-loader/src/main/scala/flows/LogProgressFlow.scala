@@ -11,7 +11,7 @@ object LogProgressFlow {
   private val logger = Logger(LoggerFactory.getLogger(this.getClass))
 
   def apply[I](logEntityName: String, maxProgressFunc: Option[I => Int] = None): Flow[I, I, _] = {
-    val timeout = 10_000L
+    val timeout = 2_000L
     val lastLogTime = new AtomicLong(System.currentTimeMillis())
 
     val accumulateFlow = Flow[I].fold(0)((s, i) => {

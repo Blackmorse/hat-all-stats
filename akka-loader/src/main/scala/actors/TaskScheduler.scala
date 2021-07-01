@@ -1,11 +1,16 @@
-import TaskScheduler.countriesToMinutesOffset
+package actors
+
 import actors.TaskExecutorActor.{ScheduleFinished, ScheduleTask}
-import akka.actor.{ActorRef, ActorSystem}
+import actors.TaskScheduler.countriesToMinutesOffset
+import akka.actor.ActorRef
 import alltid.AlltidClient
 import chpp.matchesarchive.models.MatchType
 import chpp.worlddetails.models.{League, WorldDetails}
+import com.google.inject.assistedinject.{Assisted, AssistedInject}
 
 import java.util.Date
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 
 object TaskScheduler {
   val countriesToMinutesOffset = Map(
@@ -17,9 +22,15 @@ object TaskScheduler {
   )
 }
 
-class TaskScheduler(worldDetails: WorldDetails,
-                    taskExecutorActor: ActorRef,
-                    matchType: MatchType.Value)(implicit actorSystem: ActorSystem) {
+trait TaskSchedulerFactory {
+  def createTaskScheduler(worldDetails: WorldDetails, taskExecutorActor: ActorRef, matchType: MatchType.Value): TaskScheduler
+}
+
+class TaskScheduler @AssistedInject()(
+                    @Assisted worldDetails: WorldDetails,
+                    @Assisted taskExecutorActor: ActorRef,
+                    @Assisted matchType: MatchType.Value,
+                              alltidClient: AlltidClient) {
   private val firstLeagueId = 1000
   private val lastLeagueId = 100
   private val threeHoursMs = 1000L * 60 * 60 * 3
@@ -35,16 +46,18 @@ class TaskScheduler(worldDetails: WorldDetails,
         else 0L
 
         val scheduledDate = new Date(dateTimeFunc(league).getTime + threeHoursMs
-          + minutesOffset * 60 * 1000)
+          + minutesOffset * 60 * 1000 - 1000L*3600*24*7)
         ScheduleTask(league.leagueId, scheduledDate)
       })
 
     tasks.foreach(task => taskExecutorActor ! task)
-    taskExecutorActor ! ScheduleFinished
 
     if (tasks.nonEmpty && matchType == MatchType.LEAGUE_MATCH) {
-      AlltidClient.notifyScheduleInfo(tasks)
+      alltidClient.notifyScheduleInfo(tasks)
+      TimeUnit.SECONDS.sleep(3L) //TODO move notification to TaskExecutorActor?
     }
+
+    taskExecutorActor ! ScheduleFinished
   }
 
   def load(leagueNames: String): Unit = {

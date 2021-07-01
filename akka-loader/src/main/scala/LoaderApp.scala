@@ -1,4 +1,4 @@
-import actors.ExecutorActorFactory
+import actors.{ExecutorActorFactory, TaskScheduler, TaskSchedulerFactory}
 import actors.TaskExecutorActor.TryToExecute
 import akka.actor.ActorSystem
 import chpp.OauthTokens
@@ -49,7 +49,7 @@ object LoaderApp extends  App {
     throw new Exception(s"Unknown/unsupported ${args(1)} match type")
   }
 
-  val taskScheduler = new TaskScheduler(worldDetails, taskExecutorActor, matchType)
+  val taskScheduler = injector.getInstance(classOf[TaskSchedulerFactory]).createTaskScheduler(worldDetails, taskExecutorActor, matchType)
 
   if (args(0) == "schedule") {
     taskScheduler.schedule(dateTimeFunc)
@@ -59,7 +59,7 @@ object LoaderApp extends  App {
     taskScheduler.load(args(2))
   } else {
     logger.error("Please specify one of available tasks: schedule, scheduleFrom, load")
-    throw new IllegalArgumentException(s"Unknown args: $args")
+    throw new IllegalArgumentException(s"Unknown args: ${args.mkString("Array(", ", ", ")")}")
   }
 
   actorSystem.scheduler.scheduleWithFixedDelay(0.second , 5.second)(() => taskExecutorActor ! TryToExecute)

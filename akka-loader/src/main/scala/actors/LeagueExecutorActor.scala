@@ -3,6 +3,7 @@ package actors
 import actors.LeagueExecutorActor.LeagueMat
 import akka.Done
 import akka.stream.scaladsl.Sink
+import alltid.AlltidClient
 import chpp.OauthTokens
 import chpp.matchesarchive.models.MatchType
 import chpp.worlddetails.models.{League, WorldDetails}
@@ -23,7 +24,8 @@ class LeagueExecutorActor
  chSink: Sink[Insert, Future[Done]],
  playerStatsClickhouseClient: PlayerStatsClickhouseClient,
  worldDetails: WorldDetails,
- config: Config)(implicit oauthTokens: OauthTokens)
+ config: Config,
+ alltidClient: AlltidClient)(implicit oauthTokens: OauthTokens)
   extends TaskExecutorActor[LeagueMat, (List[StreamTeam], Done)](graph, worldDetails, lm => lm._1.zip(lm._2)) {
 
   import context.{dispatcher, system}
@@ -37,5 +39,13 @@ class LeagueExecutorActor
     } yield {
       finalFuture
     }
+  }
+
+  override def notifyStarted(league: League): Unit = {
+    alltidClient.notifyCountryLoadingStarted(league)
+  }
+
+  override def notifyFinished(league: League): Unit = {
+    alltidClient.notifyCountryLoadingFinished(league)
   }
 }

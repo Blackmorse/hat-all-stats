@@ -21,4 +21,8 @@ class CupExecutorActor[CupMat, Done](graph: Sink[Int, Future[Done]],
   override def postProcessLoadedResults(league: League, matValue: Done): Future[_] = {
     playerStatsClickhouseClient.join(league, MatchType.CUP_MATCH)
   }
+
+  override def notifyStarted(league: League): Unit = ()
+
+  override def notifyFinished(league: League): Unit = ()
 }
