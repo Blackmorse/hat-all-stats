@@ -1,10 +1,10 @@
 import React from 'react';
 import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
-import { SortingState } from '../common/tables/AbstractTableSection'
-import ClassicTableSection from '../common/tables/ClassicTableSection'
+import { DataRequest, SortingState } from '../common/tables/AbstractTableSection'
+import AbstractTableSection from '../common/tables/AbstractTableSection'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps'
 import { StatsTypeEnum } from '../rest/models/StatisticsParameters';
-import TeamPositionWithDiff from '../rest/models/team/TeamPosition';
+import LeagueUnitTeamStatsWithPositionDiff, { LeagueUnitTeamStatHistoryInfo } from '../rest/models/team/LeagueUnitTeamStat';
 import LeagueUnitLevelDataProps from './LeagueUnitLevelDataProps';
 import { getTeamPositions } from '../rest/Client'
 import '../i18n'
@@ -12,12 +12,28 @@ import { Translation } from 'react-i18next'
 import SortingTableTh from '../common/elements/SortingTableTh';
 import TeamLink from '../common/links/TeamLink'
 import '../common/elements/Trends.css'
+import { SelectorsEnum } from '../common/tables/SelectorsEnum';
+import { LoadingEnum } from '../common/enums/LoadingEnum';
+import RestTableData from '../rest/models/RestTableData';
 
-class TeamPositionsTable extends ClassicTableSection<LeagueUnitData, LeagueUnitLevelDataProps, TeamPositionWithDiff> {
-    
+class TeamPositionsTable extends AbstractTableSection<LeagueUnitData, LeagueUnitLevelDataProps, LeagueUnitTeamStatsWithPositionDiff, LeagueUnitTeamStatHistoryInfo> {
+        
     constructor(props: LevelDataPropsWrapper<LeagueUnitData, LeagueUnitLevelDataProps>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
-            [StatsTypeEnum.ROUND])
+            [StatsTypeEnum.ROUND],
+            [SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+                SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR])
+    }
+
+    responseModelToRowModel(responseModel?: LeagueUnitTeamStatHistoryInfo): RestTableData<LeagueUnitTeamStatsWithPositionDiff> {
+        return {
+            entities: (responseModel === undefined) ? [] : responseModel.teamsLastRoundWithPositionsDiff,
+            isLastPage: true
+        }
+    }
+    executeDataRequest(dataRequest: DataRequest, callback: (loadingState: LoadingEnum, result?: LeagueUnitTeamStatHistoryInfo) => void): void {
+        const leveRequest = this.props.levelDataProps.createLevelRequest()
+        getTeamPositions(leveRequest, dataRequest.statisticsParameters, callback)
     }
 
     fetchDataFunction = getTeamPositions
@@ -43,7 +59,7 @@ class TeamPositionsTable extends ClassicTableSection<LeagueUnitData, LeagueUnitL
     }
 
 
-    columnValues(index: number, teamPositionWithDiff: TeamPositionWithDiff): JSX.Element {
+    columnValues(index: number, teamPositionWithDiff: LeagueUnitTeamStatsWithPositionDiff): JSX.Element {
         let teamPosition = teamPositionWithDiff.leagueUnitTeamStat
         let trend: JSX.Element = <img src="/trend-gray.png" alt="same" />
         if(teamPositionWithDiff.positionDiff < 0) {

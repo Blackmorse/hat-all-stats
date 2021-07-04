@@ -15,8 +15,7 @@ import { LoadingEnum } from '../../enums/LoadingEnum'
 import RestTableData from '../../../rest/models/RestTableData';
 
 class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-    extends AbstractTableSection<Data, TableProps, TeamGoalPoints> {
-    
+    extends AbstractTableSection<Data, TableProps, TeamGoalPoints, RestTableData<TeamGoalPoints>> {    
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
@@ -24,6 +23,10 @@ class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataPr
             [SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
                 SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR,
                 SelectorsEnum.PLAYED_ALL_MATCHES_SELECTOR])
+    }
+
+    responseModelToRowModel(responseModel: RestTableData<TeamGoalPoints>): RestTableData<TeamGoalPoints> {
+        return responseModel
     }
 
     executeDataRequest(dataRequest: DataRequest, 

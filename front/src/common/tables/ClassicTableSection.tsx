@@ -8,7 +8,7 @@ import { SelectorsEnum } from "./SelectorsEnum";
 import LevelRequest from "../../rest/models/request/LevelRequest";
 
 abstract class ClassicTableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, Model>
-    extends AbstractTableSection<Data, TableProps, Model> {
+    extends AbstractTableSection<Data, TableProps, Model, RestTableData<Model>> {
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>, 
             defaultSortingField: string, 
@@ -27,6 +27,10 @@ abstract class ClassicTableSection<Data extends LevelData, TableProps extends Le
             callback: (loadingState: LoadingEnum, result?: RestTableData<Model>) => void): void {
         const leveRequest = this.props.levelDataProps.createLevelRequest()
         this.fetchDataFunction(leveRequest, dataRequest.statisticsParameters, callback)
+    }
+
+    responseModelToRowModel(responseModel: RestTableData<Model>): RestTableData<Model> {
+        return responseModel
     }
 }
 

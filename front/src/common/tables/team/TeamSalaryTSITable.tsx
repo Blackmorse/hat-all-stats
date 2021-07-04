@@ -16,7 +16,7 @@ import RestTableData from '../../../rest/models/RestTableData'
 import { SelectorsEnum } from '../SelectorsEnum';
 
 class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends AbstractTableSection<Data, TableProps, TeamSalaryTSI> {
+    extends AbstractTableSection<Data, TableProps, TeamSalaryTSI, RestTableData<TeamSalaryTSI>> {
     
     constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
         super(props, 'salary', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
@@ -24,6 +24,10 @@ class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataPro
             [SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
                 SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR,
                 SelectorsEnum.PLAYED_IN_LAST_MATCH_SELECTOR])
+    }
+
+    responseModelToRowModel(responseModel: RestTableData<TeamSalaryTSI>): RestTableData<TeamSalaryTSI> {
+        return responseModel
     }
 
     executeDataRequest(dataRequest: DataRequest, callback: (loadingState: LoadingEnum, result?: RestTableData<TeamSalaryTSI>) => void): void {

@@ -61,7 +61,7 @@ GET     /api/league/:leagueId/divisionLevel/:divisionLevel/dreamTeam         con
 
 GET     /api/leagueUnit/:leagueUnitId   controllers.RestLeagueUnitController.getLeagueUnitData(leagueUnitId: Long)
 GET     /api/leagueUnit/:leagueUnitId/teamHatstats  controllers.RestLeagueUnitController.teamHatstats(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
-GET     /api/leagueUnit/:leagueUnitId/teamPositions controllers.RestLeagueUnitController.teamPositions(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/leagueUnit/:leagueUnitId/teamPositions controllers.RestLeagueUnitController.teamPositions(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/playerGoalGames   controllers.RestLeagueUnitController.playerGoalGames(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
 GET     /api/leagueUnit/:leagueUnitId/playerCards   controllers.RestLeagueUnitController.playerCards(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
 GET     /api/leagueUnit/:leagueUnitId/playerTsiSalary   controllers.RestLeagueUnitController.playerTsiSalary(leagueUnitId: Long, restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)

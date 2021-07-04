@@ -1,5 +1,9 @@
 package controllers
 
+import chpp.leaguedetails.LeagueDetailsRequest
+import chpp.leaguedetails.models.LeagueDetails
+import chpp.leaguefixtures.LeagueFixturesRequest
+import chpp.leaguefixtures.models.LeagueFixtures
 import chpp.search.SearchRequest
 import chpp.search.models.{Search, SearchType}
 import databases.dao.RestClickhouseDAO
@@ -18,8 +22,8 @@ import models.web.rest.LevelData.Rounds
 import models.web._
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
-import service.LeagueUnitCalculatorService
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
+import service.leagueunit.LeagueUnitCalculatorService
 import utils.{LeagueNameParser, Romans}
 
 import javax.inject.Inject
@@ -209,21 +213,21 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
   def matchSpectators(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) =
     stats(MatchSpectatorsRequest, leagueUnitId, restStatisticsParameters)
 
-  def teamPositions(leagueUnitId: Long, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>
-    Future{
-      val leagueDetails = hattrick.api.leagueDetails().leagueLevelUnitId(leagueUnitId).execute()
+  def teamPositions(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async{implicit request =>
+    chppClient.execute[LeagueDetails, LeagueDetailsRequest](LeagueDetailsRequest(leagueUnitId = Some(leagueUnitId)))
+      .flatMap(leagueDetails => {
+        val offsettedSeason = leagueInfoService.getRelativeSeasonFromAbsolute(restStatisticsParameters.season, leagueDetails.leagueId)
 
-      val offsettedSeason = leagueInfoService.getRelativeSeasonFromAbsolute(restStatisticsParameters.season, leagueDetails.getLeagueId)
+        chppClient.execute[LeagueFixtures, LeagueFixturesRequest](LeagueFixturesRequest(leagueLevelUnitId = Some(leagueUnitId), season = Some(offsettedSeason)))
+          .map(leagueFixture => {
+            val round = restStatisticsParameters.statsType.asInstanceOf[Round].round
 
-      val leagueFixture = hattrick.api.leagueFixtures().season(offsettedSeason).leagueLevelUnitId(leagueUnitId).execute()
+            val teams = leagueUnitCalculatorService.calculate(leagueFixture, Some(round),
+                    restStatisticsParameters.sortBy, restStatisticsParameters.sortingDirection)
 
-      val round = restStatisticsParameters.statsType.asInstanceOf[Round].round
-
-      val teams = leagueUnitCalculatorService.calculate(leagueFixture, Some(round),
-        restStatisticsParameters.sortBy, restStatisticsParameters.sortingDirection)
-
-      Ok(Json.toJson(RestTableData(teams, true)))
-    }
+            Ok(Json.toJson(teams))
+          })
+      })
   }
 
   def promotions(leagueUnitId: Long) = Action.async{ implicit request =>

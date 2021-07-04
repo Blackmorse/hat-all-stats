@@ -1,14 +1,12 @@
-package service
+package service.leagueunit
 
-import com.blackmorse.hattrick.api.leaguefixtures.model.{LeagueFixtures, Match}
-import com.blackmorse.hattrick.model.common.{AwayTeam, HomeTeam}
-import javax.inject.Singleton
+import chpp.leaguefixtures.models.{LeagueFixtures, Match}
+import chpp.matchesarchive.models.{AwayTeam, HomeTeam}
 import models.web.{Asc, Desc, SortingDirection}
-import play.api.libs.json.Json
 
+import javax.inject.Singleton
+import scala.Ordering.Implicits._
 import scala.collection.mutable
-import collection.JavaConverters._
-import Ordering.Implicits._
 
 @Singleton
 class LeagueUnitCalculatorService  {
@@ -22,7 +20,7 @@ class LeagueUnitCalculatorService  {
       }
     }
 
-  def calculate(leagueFixture: LeagueFixtures, tillRound: Option[Int] = None, sortingField: String = "points", sortingDirection: SortingDirection = Desc): Seq[LeagueUnitTeamStatsWithPositionDiff] = {
+  def calculate(leagueFixture: LeagueFixtures, tillRound: Option[Int] = None, sortingField: String = "points", sortingDirection: SortingDirection = Desc): LeagueUnitTeamStatHistoryInfo = {
     val ordering = sortingField match {
       case "points" => orderingFactory(_.points)
       case "teamName" => orderingFactory(_.teamName)
@@ -36,11 +34,11 @@ class LeagueUnitCalculatorService  {
     val accumulatorMap = mutable.HashMap[Long, LeagueTeamStatAccumulator]()
 
     val teamPositions = for (round <- 1 to tillRound.getOrElse(14)) yield {
-      for(matc <- leagueFixture.getMatches.asScala.filter(_.getMatchRound == round)) {
-        val homeTeamAccumulator = accumulatorMap.getOrElseUpdate(matc.getHomeTeam.getHomeTeamId, LeagueTeamStatAccumulator(matc.getHomeTeam))
-        val awayTeamAccumulator = accumulatorMap.getOrElseUpdate(matc.getAwayTeam.getAwayTeamId, LeagueTeamStatAccumulator(matc.getAwayTeam))
+      for(matc <- leagueFixture.matches.filter(_.matchRound == round)) {
+        val homeTeamAccumulator = accumulatorMap.getOrElseUpdate(matc.homeTeam.homeTeamId, LeagueTeamStatAccumulator(matc.homeTeam))
+        val awayTeamAccumulator = accumulatorMap.getOrElseUpdate(matc.awayTeam.awayTeamId, LeagueTeamStatAccumulator(matc.awayTeam))
 
-        if(matc.getHomeGoals != null) {
+        if(matc.homeGoals.isDefined) {
           accumulate(homeTeamAccumulator, awayTeamAccumulator, matc)
         }
       }
@@ -54,15 +52,24 @@ class LeagueUnitCalculatorService  {
 
       accumulatorDirection.zipWithIndex
         .map{case (accumulator, index) =>
-          LeagueUnitTeamStat(index + 1, accumulator.teamId, accumulator.teamName, accumulator.games, accumulator.scored, accumulator. missed,
-            accumulator.win, accumulator.draw, accumulator.lost, accumulator.points)
+          LeagueUnitTeamStat(round = round,
+            position = index + 1,
+            teamId = accumulator.teamId,
+            teamName = accumulator.teamName,
+            games = accumulator.games,
+            scored = accumulator.scored,
+            missed = accumulator.missed,
+            win = accumulator.win,
+            draw = accumulator.draw,
+            lost = accumulator.lost,
+            points = accumulator.points)
         }
     }
 
     val teamPositionsReverse = teamPositions.reverse
 
     val previousPositionsOpt = teamPositionsReverse.tail.headOption
-    if(previousPositionsOpt.isEmpty) {
+    val teamsLastRoundWithPositionsDiff = if(previousPositionsOpt.isEmpty) {
       teamPositionsReverse.head.map(luts => LeagueUnitTeamStatsWithPositionDiff(0, luts))
     } else {
       teamPositionsReverse.head.map(luts => {
@@ -71,24 +78,27 @@ class LeagueUnitCalculatorService  {
         LeagueUnitTeamStatsWithPositionDiff(positionChange, luts)
       })
     }
+
+    LeagueUnitTeamStatHistoryInfo(teamsLastRoundWithPositionsDiff = teamsLastRoundWithPositionsDiff,
+      positionsHistory = teamPositionsReverse.flatten)
   }
 
   private def accumulate(homeTeamAccumulator: LeagueTeamStatAccumulator, awayTeamAccumulator: LeagueTeamStatAccumulator, matc: Match): Unit = {
     homeTeamAccumulator.games += 1
     awayTeamAccumulator.games += 1
 
-    homeTeamAccumulator.scored += matc.getHomeGoals
-    awayTeamAccumulator.scored += matc.getAwayGoals
+    homeTeamAccumulator.scored += matc.homeGoals.get
+    awayTeamAccumulator.scored += matc.awayGoals.get
 
-    homeTeamAccumulator.missed += matc.getAwayGoals
-    awayTeamAccumulator.missed += matc.getHomeGoals
+    homeTeamAccumulator.missed += matc.awayGoals.get
+    awayTeamAccumulator.missed += matc.homeGoals.get
 
-    if (matc.getHomeGoals > matc.getAwayGoals) {
+    if (matc.homeGoals.get > matc.awayGoals.get) {
       homeTeamAccumulator.win += 1
       awayTeamAccumulator.lost += 1
 
       homeTeamAccumulator.points += 3
-    } else if (matc.getHomeGoals < matc.getAwayGoals) {
+    } else if (matc.homeGoals.get < matc.awayGoals.get) {
       awayTeamAccumulator.win += 1
       homeTeamAccumulator.lost += 1
 
@@ -108,23 +118,10 @@ case class LeagueTeamStatAccumulator(var teamId: Long, var teamName: String, var
 
 object LeagueTeamStatAccumulator {
   def apply(homeTeam: HomeTeam): LeagueTeamStatAccumulator =
-    LeagueTeamStatAccumulator(homeTeam.getHomeTeamId, homeTeam.getHomeTeamName, 0 ,0 ,0 ,
+    LeagueTeamStatAccumulator(homeTeam.homeTeamId, homeTeam.homeTeamName, 0 ,0 ,0 ,
       0, 0 ,0 ,0)
 
   def apply(awayTeam: AwayTeam): LeagueTeamStatAccumulator =
-    LeagueTeamStatAccumulator(awayTeam.getAwayTeamId, awayTeam.getAwayTeamName, 0 ,0 ,0 ,
+    LeagueTeamStatAccumulator(awayTeam.awayTeamId, awayTeam.awayTeamName, 0 ,0 ,0 ,
       0, 0 ,0 ,0)
-}
-
-case class LeagueUnitTeamStat(position: Int, teamId: Long, teamName: String, games: Int, scored: Int, missed: Int,
-                              win: Int, draw: Int, lost: Int, points: Int)
-
-case class LeagueUnitTeamStatsWithPositionDiff(positionDiff: Int, leagueUnitTeamStat: LeagueUnitTeamStat)
-
-object LeagueUnitTeamStat {
-  implicit val writes = Json.writes[LeagueUnitTeamStat]
-}
-
-object LeagueUnitTeamStatsWithPositionDiff {
-  implicit val writes = Json.writes[LeagueUnitTeamStatsWithPositionDiff]
 }

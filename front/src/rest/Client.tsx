@@ -5,13 +5,12 @@ import TeamHatstats from './models/team/TeamHatstats'
 import LeagueUnitRating from './models/leagueunit/LeagueUnitRating'
 import StatisticsParameters, { StatsTypeEnum, StatsType } from './models/StatisticsParameters'
 import RestTableData from './models/RestTableData'
-import LeagueUnitRequest from './models/request/LeagueUnitRequest'
 import DivisionLevelRequest from './models/request/DivisionLevelRequest';
 import LeagueRequest from './models/request/LeagueRequest'
 import TeamRequest from './models/request/TeamRequest'
 import LevelRequest from './models/request/LevelRequest';
 import LeagueUnitData from './models/leveldata/LeagueUnitData';
-import TeamPosition from './models/team/TeamPosition';
+import { LeagueUnitTeamStatHistoryInfo } from './models/team/LeagueUnitTeamStat';
 import TeamData from './models/leveldata/TeamData'
 import TeamRankingsStats from './models/team/TeamRankingsStats'
 import { NearestMatches } from './models/match/NearestMatch';
@@ -47,6 +46,7 @@ import DreamTeamPlayer from './models/player/DreamTeamPlayer';
 import PlayersParameters from './models/PlayersParameters'
 import CreatedSameTimeTeamExtended from './models/team/CreatedSameTimeTeamExtended'
 import TeamComparsion from './models/team/TeamComparsion'
+import LeagueUnitRequest from './models/request/LeagueUnitRequest'
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
@@ -229,14 +229,20 @@ export let getPlayerSalaryTsi = playersRequest<PlayerSalaryTSI>('playerTsiSalary
 
 export let getPlayerRatings = playersRequest<PlayerRating>('playerRatings')
 
-
 export let getPlayerInjuries = statisticsRequest<PlayerInjury>('playerInjuries')
 
 export let getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')
 
 export let getLeagueUnits = statisticsRequest<LeagueUnitRating>('leagueUnits')
 
-export let getTeamPositions = statisticsRequest<TeamPosition>('teamPositions')
+export function getTeamPositions(request: LevelRequest,
+        statisticsParameters: StatisticsParameters,
+        callback: (LoadingEnum: LoadingEnum, model?: LeagueUnitTeamStatHistoryInfo) => void) {
+    let params = createStatisticsParameters(statisticsParameters)
+    axios.get<LeagueUnitTeamStatHistoryInfo>(startUrl(request) + '/teamPositions?' + params.toString())
+        .then(response => callback(LoadingEnum.OK, response.data))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
 
 export function getTeamSalaryTSI(request: LevelRequest,
         statisticsParameters: StatisticsParameters,

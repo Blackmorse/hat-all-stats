@@ -27,8 +27,7 @@ trait TaskSchedulerFactory {
 class TaskScheduler @AssistedInject()(
                     @Assisted worldDetails: WorldDetails,
                     @Assisted taskExecutorActor: ActorRef,
-                    @Assisted matchType: MatchType.Value,
-                              alltidClient: AlltidClient) {
+                    @Assisted matchType: MatchType.Value) {
   private val firstLeagueId = 1000
   private val lastLeagueId = 100
   private val threeHoursMs = 1000L * 60 * 60 * 3

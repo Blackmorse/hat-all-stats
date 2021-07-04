@@ -13,8 +13,8 @@ case class Match(matchId: Long,
                  homeTeam: HomeTeam,
                  awayTeam: AwayTeam,
                  matchDate: Date,
-                 homeGoals: Int,
-                 awayGoals: Int)
+                 homeGoals: Option[Int],
+                 awayGoals: Option[Int])
 
 object Match extends BaseXmlMapper {
   implicit val reader: XmlReader[Match] = (
@@ -23,7 +23,7 @@ object Match extends BaseXmlMapper {
     (__ \ "HomeTeam").read[HomeTeam],
     (__ \ "AwayTeam").read[AwayTeam],
     (__ \ "MatchDate").read[String].map(date),
-    (__ \ "HomeGoals").read[Int],
-    (__ \ "AwayGoals").read[Int],
+    (__ \ "HomeGoals").read[Int].optional,
+    (__ \ "AwayGoals").read[Int].optional,
     ).mapN(apply _)
 }

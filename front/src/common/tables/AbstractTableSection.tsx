@@ -19,9 +19,8 @@ import { LoadingEnum } from '../enums/LoadingEnum';
 import { SelectorsEnum } from './SelectorsEnum'
 import PlayersParameters from '../../rest/models/PlayersParameters'
 
-interface ModelTableState<T> {
-    entities?: Array<T>,
-    isLastPage: boolean,
+interface ModelTableState<ResponseModel> {
+    model?: ResponseModel,
     selectedRow?: number
 }
 
@@ -39,8 +38,8 @@ export interface DataRequest {
 }
 
 
-abstract class AbstractTableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, Model> 
-        extends StatisticsSection<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<Model>, RestTableData<Model>, DataRequest> {
+abstract class AbstractTableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, RowModel, ResponseModel> 
+        extends StatisticsSection<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<ResponseModel>, ResponseModel, DataRequest> {
     private statsTypes: Array<StatsTypeEnum>
     private selectors: Array<SelectorsEnum>
     private fistOpening: boolean = true
@@ -91,7 +90,6 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                 playedInLastMatch: false
             },
             state: {
-                isLastPage: true,
                 selectedRow: (selectedRow === null) ? undefined: selectedRow
             }
         }
@@ -118,12 +116,13 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
 
     abstract columnHeaders(sortingState: SortingState): JSX.Element
 
-    abstract columnValues(index: number, model: Model): JSX.Element
+    abstract columnValues(index: number, model: RowModel): JSX.Element
 
-    stateFromResult(result?: RestTableData<Model>): ModelTableState<Model> {
+    abstract responseModelToRowModel(responseModel?: ResponseModel): RestTableData<RowModel>
+
+    stateFromResult(result?: ResponseModel): ModelTableState<ResponseModel> {
         return {
-            entities: (result) ? result.entities : this.state.state.entities,
-            isLastPage: (result) ? result.isLastPage : this.state.state.isLastPage,
+            model: result,
             selectedRow: (result && this.fistOpening) ? this.state.state.selectedRow : undefined
         }
     }
@@ -270,6 +269,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
     }
 
     renderSection(): JSX.Element {
+        let restTableData = this.responseModelToRowModel(this.state.state.model)
         let seasonSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.SEASON_SELECTOR) !== -1) {
             seasonSelector = <SeasonSelector currentSeason={this.state.dataRequest.statisticsParameters.season}
@@ -296,7 +296,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
 
         let navigatorProps = {
             pageNumber: this.state.dataRequest.statisticsParameters.page,
-            isLastPage: this.state.state.isLastPage
+            isLastPage: (restTableData === undefined) ? true : restTableData.isLastPage
         }
         
         let pageSelector = <></>
@@ -363,7 +363,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                         {this.createColumnHeaders()}
                     </thead>
                     <tbody>
-                        {this.state.state.entities?.map((entity, index) => 
+                        {restTableData?.entities?.map((entity, index) => 
                             <tr key={this.constructor.name + '_' + index} 
                                 className={((this.state.state.selectedRow !== undefined) && this.state.state.selectedRow === indexOffset + index) ? "selected_row" : ""}>
                                 {this.columnValues(indexOffset + index, entity)}
