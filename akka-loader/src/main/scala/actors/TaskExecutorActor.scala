@@ -44,6 +44,7 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
       tasks = beforeTasks ++ List(task) ++ afterTasks
     case ScheduleFinished =>
       tasks.foreach(task => logger.info(s"Scheduled loading of $task"))
+      notifyScheduled(tasks)
     case TaskFinished =>
       running = false
       val nextTaskOption = tasks.headOption
@@ -63,7 +64,7 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
             tasks = tasks.drop(1)
             running = true
             val league = worldDetails.leagueList.filter(_.leagueId == task.leagueId).head
-            notifyStarted(league)
+            notifyLeagueStarted(league)
             logger.info(s"Started league (${task.leagueId}, ${league.leagueName})")
 
             val mat = Source.single(task.leagueId).toMat(graph)(Keep.right).run()
@@ -85,7 +86,7 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                     self ! TaskFinished
                   case Success(_) =>
                     logger.info(s"(${updatedLeague.leagueId}, ${updatedLeague.leagueName}) successfully loaded")
-                    notifyFinished(updatedLeague)
+                    notifyLeagueFinished(updatedLeague)
                     self ! TaskFinished
                 }})
             }
@@ -97,9 +98,11 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
       }
   }
 
-  def notifyStarted(league: League)
+  def notifyScheduled(tasks: List[ScheduleTask])
 
-  def notifyFinished(league: League)
+  def notifyLeagueStarted(league: League)
+
+  def notifyLeagueFinished(league: League)
 
   def postProcessLoadedResults(league: League, matValue: MatValue): Future[_]
 }

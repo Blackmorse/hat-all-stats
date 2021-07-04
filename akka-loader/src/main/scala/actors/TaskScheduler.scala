@@ -9,8 +9,6 @@ import chpp.worlddetails.models.{League, WorldDetails}
 import com.google.inject.assistedinject.{Assisted, AssistedInject}
 
 import java.util.Date
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
 object TaskScheduler {
   val countriesToMinutesOffset = Map(
@@ -46,16 +44,11 @@ class TaskScheduler @AssistedInject()(
         else 0L
 
         val scheduledDate = new Date(dateTimeFunc(league).getTime + threeHoursMs
-          + minutesOffset * 60 * 1000 - 1000L*3600*24*7)
+          + minutesOffset * 60 * 1000)
         ScheduleTask(league.leagueId, scheduledDate)
       })
 
     tasks.foreach(task => taskExecutorActor ! task)
-
-    if (tasks.nonEmpty && matchType == MatchType.LEAGUE_MATCH) {
-      alltidClient.notifyScheduleInfo(tasks)
-      TimeUnit.SECONDS.sleep(3L) //TODO move notification to TaskExecutorActor?
-    }
 
     taskExecutorActor ! ScheduleFinished
   }

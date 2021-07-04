@@ -22,7 +22,9 @@ class CupExecutorActor[CupMat, Done](graph: Sink[Int, Future[Done]],
     playerStatsClickhouseClient.join(league, MatchType.CUP_MATCH)
   }
 
-  override def notifyStarted(league: League): Unit = ()
+  override def notifyLeagueStarted(league: League): Unit = ()
 
-  override def notifyFinished(league: League): Unit = ()
+  override def notifyLeagueFinished(league: League): Unit = ()
+
+  override def notifyScheduled(tasks: List[TaskExecutorActor.ScheduleTask]): Unit = ()
 }

@@ -41,11 +41,15 @@ class LeagueExecutorActor
     }
   }
 
-  override def notifyStarted(league: League): Unit = {
+  override def notifyLeagueStarted(league: League): Unit = {
     alltidClient.notifyCountryLoadingStarted(league)
   }
 
-  override def notifyFinished(league: League): Unit = {
+  override def notifyLeagueFinished(league: League): Unit = {
     alltidClient.notifyCountryLoadingFinished(league)
+  }
+
+  override def notifyScheduled(tasks: List[TaskExecutorActor.ScheduleTask]): Unit = {
+    alltidClient.notifyScheduleInfo(tasks)
   }
 }
