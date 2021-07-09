@@ -15,6 +15,7 @@ import '../common/elements/Trends.css'
 import { SelectorsEnum } from '../common/tables/SelectorsEnum';
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import RestTableData from '../rest/models/RestTableData';
+import TeamPositionsChart from './TeamPositionsChart'
 
 class TeamPositionsTable extends AbstractTableSection<LeagueUnitData, LeagueUnitLevelDataProps, LeagueUnitTeamStatsWithPositionDiff, LeagueUnitTeamStatHistoryInfo> {
         
@@ -81,6 +82,9 @@ class TeamPositionsTable extends AbstractTableSection<LeagueUnitData, LeagueUnit
         </>
     }
 
+    additionalSection(model?: LeagueUnitTeamStatHistoryInfo): JSX.Element {
+        return <TeamPositionsChart leagueUnitTeamStatHistoryInfo={model} />
+    }
 }
 
 export default TeamPositionsTable

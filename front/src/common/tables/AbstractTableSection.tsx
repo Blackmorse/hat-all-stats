@@ -268,6 +268,10 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         this.updateWithRequest(newDataRequest)
     }
 
+    additionalSection(model?: ResponseModel): JSX.Element {
+        return <></>
+    }
+
     renderSection(): JSX.Element {
         let restTableData = this.responseModelToRowModel(this.state.state.model)
         let seasonSelector = <></>
@@ -373,6 +377,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                 </table>
 
                 {pageSelector}
+                {this.additionalSection(this.state.state.model)}
                 </>
     }
 }

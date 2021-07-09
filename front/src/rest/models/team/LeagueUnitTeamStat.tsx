@@ -1,4 +1,5 @@
 export interface LeagueUnitTeamStat {
+    round: number,
     position: number,
     teamId: number,
     teamName: string,
