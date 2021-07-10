@@ -1,5 +1,5 @@
 import React from 'react';
-import StatisticsSection from '../../common/sections/StatisticsSection'
+import ExecutableStatisticsSection from '../../common/sections/ExecutableStatisticsSection'
 import TeamComparsion from '../../rest/models/team/TeamComparsion';
 import { LevelDataPropsWrapper } from '../../common/LevelDataProps'
 import TeamData from '../../rest/models/leveldata/TeamData'
@@ -18,7 +18,7 @@ interface State {
     teamComparsion?: TeamComparsion
 }
 
-class CompareTeamsPage extends StatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, TeamComparsion, number | undefined> {
+class CompareTeamsPage extends ExecutableStatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, TeamComparsion, number | undefined> {
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props, 'menu.comparsion_of_teams')
         

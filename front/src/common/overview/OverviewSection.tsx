@@ -1,7 +1,7 @@
 import React from 'react';
 import LevelData from '../../rest/models/leveldata/LevelData';
 import LevelDataProps from '../../common/LevelDataProps';
-import StatisticsSection from '../sections/StatisticsSection';
+import ExecutableStatisticsSection from '../sections/ExecutableStatisticsSection';
 import OverviewRequest from '../../rest/models/request/OverviewRequest';
 import '../../common/sections/StatisticsSection.css'
 import SeasonRoundSelector from './SeasonRoundSelector'
@@ -22,7 +22,7 @@ interface Request {
 }
 
 abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewProps extends OverviewSectionProps<Data, OverviewEntity>> 
-    extends StatisticsSection<OverviewProps, State<OverviewEntity>, OverviewEntity, Request> {
+    extends ExecutableStatisticsSection<OverviewProps, State<OverviewEntity>, OverviewEntity, Request> {
     isWorldData: boolean
 
     constructor(props: OverviewProps, title: string) {

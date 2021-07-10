@@ -1,5 +1,5 @@
 import React from 'react'
-import StatisticsSection from '../sections/StatisticsSection'
+import ExecutableStatisticsSection from '../sections/ExecutableStatisticsSection'
 import TeamSearchResult from '../../rest/models/TeamSearchResult'
 import { Translation } from 'react-i18next'
 import '../../i18n'
@@ -13,7 +13,7 @@ interface State {
     results?: Array<TeamSearchResult>,
 }
 
-class TeamSearchPage extends StatisticsSection<{}, State, Array<TeamSearchResult>, string> {
+class TeamSearchPage extends ExecutableStatisticsSection<{}, State, Array<TeamSearchResult>, string> {
     
     constructor(props: {}) {
         super(props, 'menu.team_search')

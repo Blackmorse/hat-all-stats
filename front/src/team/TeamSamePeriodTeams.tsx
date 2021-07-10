@@ -1,5 +1,5 @@
 import React from 'react';
-import StatisticsSection from '../common/sections/StatisticsSection'
+import ExecutableStatisticsSection from '../common/sections/ExecutableStatisticsSection'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps'
 import TeamData from '../rest/models/leveldata/TeamData'
 import TeamLevelDataProps from './TeamLevelDataProps'
@@ -17,7 +17,7 @@ interface State {
     teams?: Array<CreatedSameTimeTeamExtended>
 }
 
-class TeamSamePeriodTeams extends StatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, Array<CreatedSameTimeTeamExtended>, string> {
+class TeamSamePeriodTeams extends ExecutableStatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, Array<CreatedSameTimeTeamExtended>, string> {
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props, 'menu.created_same_time_teams')
         this.state = {

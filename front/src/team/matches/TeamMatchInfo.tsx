@@ -3,7 +3,6 @@ import TeamMatch from '../../rest/models/match/TeamMatch'
 import TeamMatchRatingsTable from './TeamMatchRatingsTable'
 import TeamLink from '../../common/links/TeamLink'
 import './TeamMatchInfo.css'
-import '../../common/sections/StatisticsSection.css'
 import StatisticsSection from '../../common/sections/StatisticsSection'
 import { LoadingEnum } from '../../common/enums/LoadingEnum'
 import { Translation } from 'react-i18next'
@@ -16,16 +15,11 @@ interface Props {
     teamMatch: TeamMatch
 }
 
-class TeamMatchInfo extends StatisticsSection<Props, {}, {}, {}> {
+class TeamMatchInfo extends StatisticsSection<Props> {
     
     constructor(props: Props) {
         super(props, <>{i18n.t('filter.round')} {props.teamMatch.round}</>)
 
-        this.state = {
-            loadingState: LoadingEnum.OK, 
-            dataRequest: {},
-            state: {}
-        }
     }
 
     executeDataRequest(dataRequest: {}, callback: (loadingState: LoadingEnum, result?: {} | undefined) => void): void {
@@ -36,7 +30,7 @@ class TeamMatchInfo extends StatisticsSection<Props, {}, {}, {}> {
         return {}
     }
 
-    renderSection() {
+    renderContent() {
         let teamMatch = this.props.teamMatch
         return  <Translation>{
             (t, { i18n }) => <div className="match">

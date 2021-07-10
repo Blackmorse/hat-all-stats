@@ -1,6 +1,6 @@
 import React from 'react';
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
-import StatisticsSection from '../sections/StatisticsSection'
+import ExecutableStatisticsSection from '../sections/ExecutableStatisticsSection'
 import LevelData from '../../rest/models/leveldata/LevelData'
 import { getPromotions } from '../../rest/Client'
 import PromotionWithType from '../../rest/models/promotions/Promotion'
@@ -17,7 +17,7 @@ interface State {
 }
 
 class PromotionsTable<Data extends LevelData, Props extends LevelDataProps<Data>> 
-        extends StatisticsSection<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<PromotionWithType>, {}> {
+        extends ExecutableStatisticsSection<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<PromotionWithType>, {}> {
    
     constructor(props: LevelDataPropsWrapper<Data, Props>) {
         super(props, 'menu.promotions')

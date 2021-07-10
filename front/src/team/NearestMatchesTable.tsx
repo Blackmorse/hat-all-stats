@@ -14,6 +14,7 @@ import Blur from '../common/widgets/Blur'
 import TeamLink from '../common/links/TeamLink'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import ExternalMatchLink from '../common/links/ExternalMatchLink';
+import StatisticsSection from '../common/sections/StatisticsSection';
 
 interface State {
     nearestMatches?: NearestMatches,
@@ -27,6 +28,7 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
         this.state = {loadingState: LoadingEnum.OK}
         this.componentDidMount=this.componentDidMount.bind(this)
         this.updateCurrent=this.updateCurrent.bind(this)
+        this.thiss=this.thiss.bind(this)
     }
 
     updateCurrent() {
@@ -67,6 +69,10 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
         </tr>
     }
 
+    private thiss() {
+        return this
+    }
+
     render() {
         let playedMatches: JSX.Element
         let upcomingMatches: JSX.Element
@@ -74,38 +80,37 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
             playedMatches = <Blur loadingState={this.state.loadingState} updateCallback={this.updateCurrent}/>
             upcomingMatches = <Blur loadingState={this.state.loadingState} updateCallback={this.updateCurrent}/>
         } else {
-            playedMatches =  <table className="statistics_table">
-            <tbody>{this.state.nearestMatches?.playedMatches.map(this.matchTableRow)}
-            </tbody></table>
-            upcomingMatches = <table className="statistics_table">
-            <tbody>{this.state.nearestMatches?.upcomingMatches.map(this.matchTableRow)}
-            </tbody></table>
+            let th = this
+            playedMatches = new  (class extends StatisticsSection {
+                renderContent() {
+                    return (
+                    <div className="statistics_section_inner">
+                        <table className="statistics_table">
+                            <tbody>{th.state.nearestMatches?.playedMatches.map(th.matchTableRow)}</tbody>
+                        </table>
+                    </div>
+                    )
+                }
+            })({}, 'matches.played_matches').render()
+            upcomingMatches = new (class extends StatisticsSection {
+                renderContent() {
+                    return <div className="statistics_section_inner">
+                    <table className="statistics_table">
+                        <tbody>{th.state.nearestMatches?.upcomingMatches.map(th.matchTableRow)}</tbody>
+                    </table>
+                </div>
+                }
+            })({}, 'matches.upcoming_matches').render()
         }        
 
 
         return  <Translation>
             {(t, { i18n}) => <div className="section_row">
             <div className="section_row_half_element">
-                <section className="statistics_section">
-                    <header className="statistics_header">
-                        <span className="statistics_header_triangle">&#x25BC; {t("matches.played_matches")}</span>
-                    </header>
-
-                    <div className="statistics_section_inner">
-                        {playedMatches}
-                    </div>
-                </section>
+                {playedMatches}
             </div>
             <div className="section_row_half_element">
-                <section className="statistics_section">
-                    <header className="statistics_header">
-                        <span className="statistics_header_triangle">&#x25BC; {t("matches.upcoming_matches")}</span>
-                    </header>
-
-                    <div className="statistics_section_inner">
-                        {upcomingMatches}
-                    </div>
-                </section>
+                {upcomingMatches}
             </div>
         </div>
     }

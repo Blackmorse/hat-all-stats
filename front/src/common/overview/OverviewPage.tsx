@@ -1,5 +1,5 @@
 import React from 'react';
-import StatisticsSection from "../sections/StatisticsSection";
+import ExecutableStatisticsSection from "../sections/ExecutableStatisticsSection";
 import TotalOverview from "../../rest/models/overview/TotalOverview";
 import { getTotalOverview } from '../../rest/Client'
 import LevelDataProps from '../LevelDataProps';
@@ -37,7 +37,7 @@ export interface LeagueId {
 }
 
 abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelDataProps<Data>> 
-        extends StatisticsSection<OverviewPageProps<Data, LevelProps>, State, TotalOverview, {}> {
+        extends ExecutableStatisticsSection<OverviewPageProps<Data, LevelProps>, State, TotalOverview, {}> {
     constructor(props: OverviewPageProps<Data, LevelProps>) {
         super(props, props.title)
         

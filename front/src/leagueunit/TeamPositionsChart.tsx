@@ -2,14 +2,18 @@ import React from 'react';
 import { LeagueUnitTeamStatHistoryInfo } from '../rest/models/team/LeagueUnitTeamStat';
 import i18n from '../i18n';
 import PlotlyChart from 'react-plotlyjs-ts';
+import StatisticsSection from '../common/sections/StatisticsSection';
 
 interface Props {
     leagueUnitTeamStatHistoryInfo?: LeagueUnitTeamStatHistoryInfo
 }
 
-class TeamPositionsChart extends React.Component<Props> {
+class TeamPositionsChart extends StatisticsSection<Props> {
+    constructor(props: Props) {
+        super(props, 'table.position')
+    }
 
-    render(): JSX.Element {
+    renderContent(): JSX.Element {
         if (this.props.leagueUnitTeamStatHistoryInfo === undefined) {
             return <></>
         }
@@ -56,12 +60,7 @@ class TeamPositionsChart extends React.Component<Props> {
             }
         }
         
-        return <div className="statistics_section">
-            <header className="statistics_header">
-                    <span className="statistics_header_triangle">&#x25BC; {i18n.t('table.position')}</span>
-                </header>
-            <PlotlyChart data={chartData} layout={layout} />
-            </div>
+        return <PlotlyChart data={chartData} layout={layout} />
     }
 }
 

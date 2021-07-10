@@ -8,7 +8,7 @@ import { Translation } from 'react-i18next'
 import '../i18n'
 import RankingTable, { RankingData } from './overview/RankingTable'
 import TeamRankingsStats from '../rest/models/team/TeamRankingsStats';
-import StatisticsSection from '../common/sections/StatisticsSection'
+import ExecutableStatisticsSection from '../common/sections/ExecutableStatisticsSection'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import RankingParametersProvider from '../common/ranking/RankingParametersProvider'
 
@@ -16,7 +16,7 @@ interface State {
     teamRankingsStats?: TeamRankingsStats
 }
 
-class TeamRankingsTable extends StatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, TeamRankingsStats, {}> {
+class TeamRankingsTable extends ExecutableStatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, TeamRankingsStats, {}> {
     
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props, "menu.team_rankings")

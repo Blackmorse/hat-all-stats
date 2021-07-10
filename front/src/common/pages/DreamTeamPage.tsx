@@ -1,7 +1,7 @@
 import React from 'react'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps';
-import StatisticsSection from '../sections/StatisticsSection';
+import ExecutableStatisticsSection from '../sections/ExecutableStatisticsSection';
 import { LoadingEnum } from '../enums/LoadingEnum';
 import DreamTeamPlayer from '../../rest/models/player/DreamTeamPlayer';
 import { getDreamTeam } from '../../rest/Client'
@@ -31,7 +31,7 @@ export interface DreamTeamPlayerPosition {
 }
 
 class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>> 
-    extends StatisticsSection<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<DreamTeamPlayer>, Request> {
+    extends ExecutableStatisticsSection<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<DreamTeamPlayer>, Request> {
 
     constructor(props: LevelDataPropsWrapper<Data, Props>) {
         super(props, 'menu.dream_team')

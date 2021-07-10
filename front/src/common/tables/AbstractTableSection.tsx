@@ -1,6 +1,5 @@
 import React from 'react';
 import './TableSection.css'
-import '../sections//StatisticsSection.css'
 import StatisticsParameters, { SortingDirection, StatsTypeEnum, StatsType } from '../../rest/models/StatisticsParameters'
 import RestTableData from '../../rest/models/RestTableData'
 import PageNavigator from '../elements/PageNavigator'
@@ -13,7 +12,7 @@ import PositionSelector from '../selectors/PositionSelector'
 import NationalitySelector from '../selectors/NationalitySelector'
 import AgeSelector from '../selectors/AgeSelector'
 import LevelData from '../../rest/models/leveldata/LevelData';
-import StatisticsSection from '../sections/StatisticsSection'
+import ExecutableStatisticsSection from '../sections/ExecutableStatisticsSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
 import { LoadingEnum } from '../enums/LoadingEnum';
 import { SelectorsEnum } from './SelectorsEnum'
@@ -39,7 +38,7 @@ export interface DataRequest {
 
 
 abstract class AbstractTableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, RowModel, ResponseModel> 
-        extends StatisticsSection<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<ResponseModel>, ResponseModel, DataRequest> {
+        extends ExecutableStatisticsSection<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<ResponseModel>, ResponseModel, DataRequest> {
     private statsTypes: Array<StatsTypeEnum>
     private selectors: Array<SelectorsEnum>
     private fistOpening: boolean = true

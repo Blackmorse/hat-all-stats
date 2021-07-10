@@ -1,5 +1,5 @@
 import React from 'react'
-import StatisticsSection from '../common/sections/StatisticsSection'
+import ExecutableStatisticsSection from '../common/sections/ExecutableStatisticsSection'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps';
 import TeamData from '../rest/models/leveldata/TeamData';
 import TeamLevelDataProps from './TeamLevelDataProps'
@@ -14,7 +14,7 @@ interface State {
     matches?: Array<TeamMatch>
 }
 
-class TeamMatches extends StatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, Array<TeamMatch>, {}> {
+class TeamMatches extends ExecutableStatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, Array<TeamMatch>, {}> {
     
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props, "menu.matches")
