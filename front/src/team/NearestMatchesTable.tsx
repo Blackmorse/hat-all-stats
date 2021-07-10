@@ -80,27 +80,8 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
             playedMatches = <Blur loadingState={this.state.loadingState} updateCallback={this.updateCurrent}/>
             upcomingMatches = <Blur loadingState={this.state.loadingState} updateCallback={this.updateCurrent}/>
         } else {
-            let th = this
-            playedMatches = new  (class extends StatisticsSection {
-                renderContent() {
-                    return (
-                    <div className="statistics_section_inner">
-                        <table className="statistics_table">
-                            <tbody>{th.state.nearestMatches?.playedMatches.map(th.matchTableRow)}</tbody>
-                        </table>
-                    </div>
-                    )
-                }
-            })({}, 'matches.played_matches').render()
-            upcomingMatches = new (class extends StatisticsSection {
-                renderContent() {
-                    return <div className="statistics_section_inner">
-                    <table className="statistics_table">
-                        <tbody>{th.state.nearestMatches?.upcomingMatches.map(th.matchTableRow)}</tbody>
-                    </table>
-                </div>
-                }
-            })({}, 'matches.upcoming_matches').render()
+            playedMatches = <PlayedMatches matchTableRow={this.matchTableRow} nearestMatches={this.state.nearestMatches}/>
+            upcomingMatches = <UpcomingMatches matchTableRow={this.matchTableRow} nearestMatches={this.state.nearestMatches} />
         }        
 
 
@@ -117,5 +98,43 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
     </Translation>
     }
 }
+
+interface MatchesProps {
+    nearestMatches?: NearestMatches
+    matchTableRow: (nm: NearestMatch) => JSX.Element
+}
+
+class PlayedMatches extends StatisticsSection<MatchesProps> {
+    constructor(props: MatchesProps) {
+        super(props, 'matches.played_matches')
+        this.state = {collapsed: false}
+    }
+
+    renderContent(): JSX.Element {
+        return (
+            <div className="statistics_section_inner">
+                <table className="statistics_table">
+                    <tbody>{this.props.nearestMatches?.playedMatches.map(this.props.matchTableRow)}</tbody>
+                </table>
+            </div>)
+    }
+}   
+
+class UpcomingMatches extends StatisticsSection<MatchesProps> {
+    constructor(props: MatchesProps) {
+        super(props, 'matches.upcoming_matches')
+        this.state = {collapsed: false}
+    }
+
+    renderContent(): JSX.Element {
+        return  <div className="statistics_section_inner">
+                    <table className="statistics_table">
+                        <tbody>{this.props.nearestMatches?.upcomingMatches.map(this.props.matchTableRow)}</tbody>
+                    </table>
+                </div>
+    }
+
+}
+
 
 export default NearestMatchesTable

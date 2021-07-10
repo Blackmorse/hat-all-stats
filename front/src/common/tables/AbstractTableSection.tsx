@@ -90,7 +90,8 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
             },
             state: {
                 selectedRow: (selectedRow === null) ? undefined: selectedRow
-            }
+            },
+            collapsed: false
         }
 
         this.pageSizeChanged=this.pageSizeChanged.bind(this);

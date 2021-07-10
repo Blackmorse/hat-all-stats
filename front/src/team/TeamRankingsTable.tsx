@@ -23,7 +23,8 @@ class TeamRankingsTable extends ExecutableStatisticsSection<LevelDataPropsWrappe
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {},
-            state: {}
+            state: {},
+            collapsed: false
         }
     }
 

@@ -25,7 +25,8 @@ class CompareTeamsPage extends ExecutableStatisticsSection<LevelDataPropsWrapper
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: props.queryParams.teamId,
-            state: {}
+            state: {},
+            collapsed: false
         }
     }
     

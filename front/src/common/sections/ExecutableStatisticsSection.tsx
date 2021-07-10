@@ -3,9 +3,9 @@ import Blur from '../widgets/Blur'
 import '../../i18n'
 import { LoadingEnum } from '../enums/LoadingEnum'
 import Bot from '../widgets/Bot'
-import StatisticsSection from './StatisticsSection';
+import StatisticsSection, { StatisticsSectionState } from './StatisticsSection';
 
-export interface LoadableState<State, DataRequest> {
+export interface LoadableState<State, DataRequest> extends StatisticsSectionState{
     loadingState: LoadingEnum,
     dataRequest: DataRequest,
     state: State

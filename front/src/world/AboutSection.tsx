@@ -9,6 +9,7 @@ class AboutSection extends StatisticsSection {
 
     constructor(props: {}) {
         super(props, <>About Hattid</>)
+        this.state={collapsed: false}
     }
 
     renderContent(): JSX.Element {

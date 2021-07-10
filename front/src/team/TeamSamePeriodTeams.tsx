@@ -23,7 +23,8 @@ class TeamSamePeriodTeams extends ExecutableStatisticsSection<LevelDataPropsWrap
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: 'season',
-            state: {}
+            state: {},
+            collapsed: false
         }
     }
 

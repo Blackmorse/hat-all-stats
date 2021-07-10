@@ -44,7 +44,8 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {},
-            state: {}
+            state: {},
+            collapsed: false
         }
     }
 

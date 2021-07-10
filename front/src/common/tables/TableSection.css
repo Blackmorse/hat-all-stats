@@ -55,22 +55,6 @@
     white-space: nowrap;
 }
 
-.statistics_header {
-    width: 100%;
-    height: 26px;
-    background: green;
-    margin-bottom: 5px;
-}
-
-.statistics_header_text {
-    color: white;
-}
-
-.statistics_header_triangle {
-    color: white;
-    margin-left: 10px;
-}
-
 .position {
     width: 20px;
 }

@@ -21,7 +21,8 @@ class TeamMatches extends ExecutableStatisticsSection<LevelDataPropsWrapper<Team
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {},
-            state: {}
+            state: {},
+            collapsed: false
         }
     }
 

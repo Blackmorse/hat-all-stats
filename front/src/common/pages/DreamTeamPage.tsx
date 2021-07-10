@@ -46,7 +46,8 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
             },
             state: {
                 formation: new Formation(4, 4, 2)
-            }
+            },
+            collapsed: false
         }
         this.statsTypeChanged=this.statsTypeChanged.bind(this)
         this.seasonChanged=this.seasonChanged.bind(this)

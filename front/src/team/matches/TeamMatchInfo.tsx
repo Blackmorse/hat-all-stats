@@ -19,7 +19,7 @@ class TeamMatchInfo extends StatisticsSection<Props> {
     
     constructor(props: Props) {
         super(props, <>{i18n.t('filter.round')} {props.teamMatch.round}</>)
-
+        this.state={collapsed: false}
     }
 
     executeDataRequest(dataRequest: {}, callback: (loadingState: LoadingEnum, result?: {} | undefined) => void): void {

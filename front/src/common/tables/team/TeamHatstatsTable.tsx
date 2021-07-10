@@ -42,7 +42,6 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
 
     columnValues(index: number, teamHatstats: TeamHatstats): JSX.Element {
         let teamSortingKey = teamHatstats.teamSortingKey
-        console.log(this.props.showCountryFlags)
         return <>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} 

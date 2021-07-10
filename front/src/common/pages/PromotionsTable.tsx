@@ -24,7 +24,8 @@ class PromotionsTable<Data extends LevelData, Props extends LevelDataProps<Data>
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {},
-            state: {}
+            state: {},
+            collapsed: false
         }
     }
 

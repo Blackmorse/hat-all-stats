@@ -20,7 +20,8 @@ class TeamSearchPage extends ExecutableStatisticsSection<{}, State, Array<TeamSe
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: "",
-            state: {}
+            state: {},
+            collapsed: false
         }
 
         this.changeHandler=this.changeHandler.bind(this)

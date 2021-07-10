@@ -11,6 +11,7 @@ interface Props {
 class TeamPositionsChart extends StatisticsSection<Props> {
     constructor(props: Props) {
         super(props, 'table.position')
+        this.state={collapsed: false}
     }
 
     renderContent(): JSX.Element {
