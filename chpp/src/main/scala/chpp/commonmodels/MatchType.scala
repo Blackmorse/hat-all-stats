@@ -1,4 +1,4 @@
-package chpp.matchesarchive.models
+package chpp.commonmodels
 
 object MatchType extends Enumeration {
   val LEAGUE_MATCH = Value("1")

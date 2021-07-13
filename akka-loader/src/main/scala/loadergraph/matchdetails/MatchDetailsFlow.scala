@@ -3,9 +3,10 @@ package loadergraph.matchdetails
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
+import chpp.commonmodels.MatchType
 import flows.{LogProgressFlow, MatchDetailsHttpFlow, MatchesArchiveHttpFlow}
 import chpp.matchdetails.MatchDetailsRequest
-import chpp.matchesarchive.models.{MatchType, MatchesArchive}
+import chpp.matchesarchive.models.MatchesArchive
 import chpp.matchesarchive.MatchesArchiveRequest
 import models.stream.{Match, StreamMatchDetails, StreamTeam}
 

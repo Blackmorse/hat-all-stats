@@ -1,11 +1,12 @@
 package service
 
+import chpp.teamdetails.TeamDetailsRequest
+import chpp.teamdetails.models.TeamDetails
 import databases.dao.RestClickhouseDAO
 import databases.requests.model.team.CreatedSameTimeTeam
 import databases.requests.teamdetails.TeamsCreatedSameTimeRequest
 import databases.requests.teamrankings.CompareTeamRankingsRequest
-import hattrick.Hattrick
-import models.clickhouse.TeamRankings
+import hattrick.ChppClient
 import models.web.TeamComparsion
 import play.api.libs.json.Json
 import play.api.mvc.QueryStringBindable
@@ -13,9 +14,8 @@ import service.leagueinfo.LeagueInfoService
 
 import java.util.Date
 import javax.inject.Inject
-import scala.collection.JavaConverters.asScalaBufferConverter
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 case class CreatedSameTimeTeamExtended(season: Int,
                                        round: Int,
@@ -58,7 +58,7 @@ object HattrickPeriod {
 
 class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
                              seasonsService: SeasonsService,
-                             hattrick: Hattrick,
+                             chppClient: ChppClient,
                              implicit val restClickhouseDAO: RestClickhouseDAO) {
 
   def teamsCreatedSamePeriod(period: HattrickPeriod, foundedDate: Date,
@@ -81,30 +81,26 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
   }
 
   def compareTwoTeams(teamId1: Long, teamId2: Long): Future[TeamComparsion] = {
-    val team1Future = Future(hattrick.api.teamDetails().teamID(teamId1).execute()
-      .getTeams.asScala
-      .filter(_.getTeamId == teamId1)
-      .head)
+    val team1Future = chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId1)))
+      .map(td => td.teams.filter(_.teamId == teamId1).head)
 
-    val team2Future = Future(hattrick.api.teamDetails().teamID(teamId2).execute()
-      .getTeams.asScala
-      .filter(_.getTeamId == teamId2)
-      .head)
+    val team2Future = chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId2)))
+      .map(td => td.teams.filter(_.teamId == teamId2).head)
 
     team1Future.zipWith(team2Future){case (team1, team2) =>
-      if (team1.getLeague.getLeagueId != team2.getLeague.getLeagueId) {
+      if (team1.league.leagueId != team2.league.leagueId) {
         throw new RuntimeException("unable to compare teams from different countries")
       }
-      val teamCreateRanges1 = seasonsService.getSeasonAndRoundRanges(team1.getFoundedDate)
-      val teamCreateRanges2 = seasonsService.getSeasonAndRoundRanges(team2.getFoundedDate)
+      val teamCreateRanges1 = seasonsService.getSeasonAndRoundRanges(team1.foundedDate)
+      val teamCreateRanges2 = seasonsService.getSeasonAndRoundRanges(team2.foundedDate)
       val (fromSeason, fromRound) = getCommonSeasonAndRound(teamCreateRanges1, teamCreateRanges2)
 
-      CompareTeamRankingsRequest.execute(team1.getTeamId, team2.getTeamId,
+      CompareTeamRankingsRequest.execute(team1.teamId, team2.teamId,
         fromSeason, fromRound)
       .map(_.groupBy(_.teamId))
       .map(map => TeamComparsion(
-        team1Rankings = map(team1.getTeamId).sortBy(t => (t.season, t.round)),
-        team2Rankings = map(team2.getTeamId).sortBy(t => (t.season, t.round))
+        team1Rankings = map(team1.teamId).sortBy(t => (t.season, t.round)),
+        team2Rankings = map(team2.teamId).sortBy(t => (t.season, t.round))
       ))
     }.flatten
   }

@@ -55,13 +55,13 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
         case Scheduled(_) => true
         case _ => false
       }).sortBy(_.loadingInfo.asInstanceOf[Scheduled].date).headOption
-        .map(leagueInfo => (leagueInfo.leagueId, leagueInfo.league.getEnglishName, leagueInfo.loadingInfo.asInstanceOf[Scheduled].date))
+        .map(leagueInfo => (leagueInfo.leagueId, leagueInfo.league.englishName, leagueInfo.loadingInfo.asInstanceOf[Scheduled].date))
 
       val currentCountry = leagueInfoCountries.find(_.loadingInfo match {
         case Loading => true
         case _ => false
       })
-        .map(leagueInfo => (leagueInfo.leagueId, leagueInfo.league.getEnglishName))
+        .map(leagueInfo => (leagueInfo.leagueId, leagueInfo.league.englishName))
 
       Some(WorldLoadingInfo(proceedCountries, nextCountry, currentCountry))
     }

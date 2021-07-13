@@ -5,7 +5,7 @@ import akka.Done
 import akka.stream.scaladsl.Sink
 import alltid.AlltidClient
 import chpp.OauthTokens
-import chpp.matchesarchive.models.MatchType
+import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.{League, WorldDetails}
 import clickhouse.{ClickhouseWriter, PlayerStatsClickhouseClient, TeamRankJoiner}
 import com.crobox.clickhouse.stream.Insert

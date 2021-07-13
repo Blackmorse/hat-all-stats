@@ -7,11 +7,11 @@ case class HomeAwayTeam(teamId: Long,
                         teamName: String,
                         goals: Int,
 
-                         dressUri: String,
+                        dressUri: String,
                         formation: String,
                         tacticType: Int,
                         tacticSkill: Int,
-                        ratingMidfied: Int,
+                        ratingMidfield: Int,
                         ratingRightDef: Int,
                         ratingLeftDef: Int,
                         ratingMidDef: Int,
@@ -19,7 +19,7 @@ case class HomeAwayTeam(teamId: Long,
                         ratingMidAtt: Int,
                         ratingLeftAtt: Int,
                         ratingIndirectSetPiecesDef: Int,
-                        ratingInderectSetPiecesAtt: Int,
+                        ratingIndirectSetPiecesAtt: Int,
                        )
 abstract class HomeAwayTeamBase {
   def readerBase(idFieldName: String, nameFieldName: String, goalsFieldName: String):

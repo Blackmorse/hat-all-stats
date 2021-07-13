@@ -151,7 +151,7 @@ object MatchDetailsCHModel {
       formation = currentTeam.formation,
       tacticType = currentTeam.tacticType,
       tacticSkill = currentTeam.tacticSkill,
-      ratingMidfield = currentTeam.ratingMidfied,
+      ratingMidfield = currentTeam.ratingMidfield,
       ratingLeftDef = currentTeam.ratingLeftDef,
       ratingMidDef = currentTeam.ratingMidDef,
       ratingRightDef = currentTeam.ratingRightDef,
@@ -159,14 +159,14 @@ object MatchDetailsCHModel {
       ratingMidAtt = currentTeam.ratingMidAtt,
       ratingRightAtt = currentTeam.ratingRightAtt,
       ratingIndirectSetPiecesDef = currentTeam.ratingIndirectSetPiecesDef,
-      ratingIndirectSetPiecesAtt = currentTeam.ratingInderectSetPiecesAtt,
+      ratingIndirectSetPiecesAtt = currentTeam.ratingIndirectSetPiecesAtt,
 
       oppositeTeamId = if(oppositeTeam.teamId < 0) 0 else oppositeTeam.teamId,
       oppositeTeamName = oppositeTeam.teamName,
       oppositeFormation = oppositeTeam.formation,
       oppositeTacticType = oppositeTeam.tacticType,
       oppositeTacticSkill = oppositeTeam.tacticSkill,
-      oppositeRatingMidfield = oppositeTeam.ratingMidfied,
+      oppositeRatingMidfield = oppositeTeam.ratingMidfield,
       oppositeRatingLeftDef = oppositeTeam.ratingLeftDef,
       oppositeRatingMidDef = oppositeTeam.ratingMidDef,
       oppositeRatingRightDef = oppositeTeam.ratingRightDef,
@@ -174,7 +174,7 @@ object MatchDetailsCHModel {
       oppositeRatingMidAtt = oppositeTeam.ratingMidAtt,
       oppositeRatingRightAtt = oppositeTeam.ratingRightAtt,
       oppositeRatingIndirectSetPiecesDef = oppositeTeam.ratingIndirectSetPiecesDef,
-      oppositeRatingIndirectSetPiecesAtt = oppositeTeam.ratingInderectSetPiecesAtt
+      oppositeRatingIndirectSetPiecesAtt = oppositeTeam.ratingIndirectSetPiecesAtt
     )
   }
 }

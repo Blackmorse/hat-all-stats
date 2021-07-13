@@ -1,10 +1,9 @@
 package chpp.matchdetails.models
 
 import java.util.Date
-
 import cats.syntax.all._
 import chpp.BaseXmlMapper
-import chpp.matchesarchive.models.MatchType
+import chpp.commonmodels.MatchType
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{XmlReader, __}
 

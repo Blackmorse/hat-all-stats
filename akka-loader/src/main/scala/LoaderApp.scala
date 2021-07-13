@@ -2,7 +2,7 @@ import actors.{ExecutorActorFactory, TaskScheduler, TaskSchedulerFactory}
 import actors.TaskExecutorActor.TryToExecute
 import akka.actor.ActorSystem
 import chpp.OauthTokens
-import chpp.matchesarchive.models.MatchType
+import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.League
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory

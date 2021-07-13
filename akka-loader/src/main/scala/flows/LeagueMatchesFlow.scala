@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.FlowShape
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge}
 import chpp.OauthTokens
-import chpp.matchesarchive.models.MatchType
+import chpp.commonmodels.MatchType
 import com.crobox.clickhouse.stream.Insert
 import com.typesafe.config.Config
 import loadergraph.matchdetails.{MatchDetailsCHModelFlow, MatchDetailsFlow}

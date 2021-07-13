@@ -1,6 +1,6 @@
 package service.leagueinfo
 
-import com.blackmorse.hattrick.api.worlddetails.model.League
+import chpp.worlddetails.models.League
 import models.clickhouse.HistoryInfo
 
 import scala.collection.mutable

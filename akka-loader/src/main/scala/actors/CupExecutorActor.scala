@@ -3,7 +3,7 @@ package actors
 import akka.Done
 import akka.stream.scaladsl.Sink
 import chpp.OauthTokens
-import chpp.matchesarchive.models.MatchType
+import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.{League, WorldDetails}
 import clickhouse.PlayerStatsClickhouseClient
 

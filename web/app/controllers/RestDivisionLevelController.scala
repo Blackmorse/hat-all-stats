@@ -17,7 +17,7 @@ import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.ControllerComponents
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
-import utils.Romans
+import utils.{CurrencyUtils, Romans}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -44,7 +44,7 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
                                             implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
   def getDivisionLevelData(leagueId: Int, divisionLevel: Int) = Action.async { implicit request =>
     val league = leagueInfoService.leagueInfo(leagueId).league
-    val leagueName = league.getEnglishName
+    val leagueName = league.englishName
     val leagueUnitsNumber = leagueInfoService.leagueNumbersMap(divisionLevel).max
     val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId)
 
@@ -54,10 +54,10 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
       divisionLevel = divisionLevel,
       divisionLevelName = Romans(divisionLevel),
       leagueUnitsNumber = leagueUnitsNumber,
-      seasonOffset = league.getSeasonOffset,
+      seasonOffset = league.seasonOffset,
       seasonRoundInfo = seasonRoundInfo,
-      currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
-      currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate,
+      currency = CurrencyUtils.currencyName(league.country),
+      currencyRate = CurrencyUtils.currencyRate(league.country),
       loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo,
       countries = leagueInfoService.idToStringCountryMap)
     Future(Ok(Json.toJson(restDivisionLevelData)))

@@ -1,4 +1,4 @@
-package chpp.teamdetails.models
+package chpp.commonmodels
 
 import cats.syntax.all._
 import com.lucidchart.open.xtract.XmlReader._

@@ -4,10 +4,14 @@ import java.util.Date
 
 import play.api.libs.json.Json
 
-case class NearestMatch(matchDate: Date, status: String,
-                        homeTeamId: Long, homeTeamName: String,
-                        homeGoals: Int, awayGoals: Int,
-                        awayTeamName: String, awayTeamId: Long,
+case class NearestMatch(matchDate: Date,
+                        status: String,
+                        homeTeamId: Long,
+                        homeTeamName: String,
+                        homeGoals: Option[Int],
+                        awayGoals: Option[Int],
+                        awayTeamName: String,
+                        awayTeamId: Long,
                         matchId: Long)
 
 object NearestMatch {

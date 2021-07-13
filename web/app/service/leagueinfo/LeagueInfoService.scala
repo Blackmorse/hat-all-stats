@@ -1,16 +1,19 @@
 package service.leagueinfo
 
+import chpp.worlddetails.WorldDetailsRequest
+import chpp.worlddetails.models.WorldDetails
 import databases.dao.ClickhouseDAO
-import hattrick.Hattrick
-
-import javax.inject.{Inject, Singleton}
+import hattrick.ChppClient
 import play.api.Configuration
 
-import collection.JavaConverters._
+import javax.inject.{Inject, Singleton}
 import scala.collection.mutable
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.DurationInt
 
 @Singleton
-class LeagueInfoService @Inject() (val hattrick: Hattrick,
+class LeagueInfoService @Inject() (val chppClient: ChppClient,
                                 val clickhouseDAO: ClickhouseDAO,
                                 val configuration: Configuration) {
   lazy val leagueNumbersMap = Map(1 -> Seq(1),
@@ -33,12 +36,13 @@ class LeagueInfoService @Inject() (val hattrick: Hattrick,
     leagueInfo.currentSeason(100)
   }
 
-  def getRelativeSeasonFromAbsolute(season: Int, leagueId: Int) = leagueInfo(leagueId).league.getSeasonOffset + season
+  def getRelativeSeasonFromAbsolute(season: Int, leagueId: Int): Int = leagueInfo(leagueId).league.seasonOffset + season
 
   val leagueInfo: LeaguesInfo = {
-    val leagueIdToCountryNameMap = hattrick.api.worldDetails().execute()
-      .getLeagueList.asScala.map(league => league.getLeagueId -> league)
-      .toMap
+    val leagueIdToCountryNameMap = Await.result(chppClient.execute[WorldDetails, WorldDetailsRequest](WorldDetailsRequest())
+      .map(_.leagueList.map(league => league.leagueId -> league)), 30.seconds)
+
+
     val leagueHistoryInfos = clickhouseDAO.historyInfo(None, None, None).groupBy(_.leagueId)
 
     val seq = for ((lId, league) <- leagueIdToCountryNameMap) yield {
@@ -54,12 +58,12 @@ class LeagueInfoService @Inject() (val hattrick: Hattrick,
         .getOrElse(leagueId -> LeagueInfo(leagueId, mutable.Map(), league, Finished))
     }
 
-    LeaguesInfo(seq)
+    LeaguesInfo(seq.toMap)
   }
 
-  val idToStringCountryMap = leagueInfo.leagueInfo
+  val idToStringCountryMap: Seq[(Int, String)] = leagueInfo.leagueInfo
     .toSeq
-    .map{case(leagueId, leagueInfo) => (leagueId, leagueInfo.league.getEnglishName)}
+    .map{case(leagueId, leagueInfo) => (leagueId, leagueInfo.league.englishName)}
     .sortBy(_._2)
 
   implicit def toMutable[T](map: Map[Int, T]): mutable.Map[Int, T] = {

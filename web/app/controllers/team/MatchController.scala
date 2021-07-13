@@ -2,7 +2,6 @@ package controllers
 
 import java.util.Date
 import databases.dao.ClickhouseDAO
-import hattrick.Hattrick
 
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{BaseController, ControllerComponents}
@@ -20,7 +19,6 @@ case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, date: Date,
 @Singleton
 class MatchController @Inject()(val controllerComponents: ControllerComponents,
                                 val clickhouseDAO: ClickhouseDAO,
-                                val hattrick: Hattrick,
                                 val similarMatchesService: SimilarMatchesService)  extends BaseController {
 
   def similarMatches(matchId: Long, accuracy: Double) = Action.async{ implicit request =>

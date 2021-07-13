@@ -10,14 +10,13 @@ import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsReque
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import hattrick.Hattrick
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
-import utils.Romans
+import utils.{CurrencyUtils, Romans}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -43,10 +42,10 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
 
   def getLeagueData(leagueId: Int): Action[AnyContent] =  Action.async { implicit request =>
       val league = leagueInfoService.leagueInfo(leagueId).league
-      val leagueName = league.getEnglishName
-      val numberOfDivisions = league.getNumberOfLevels
+      val leagueName = league.leagueName
+      val numberOfDivisions = league.numberOfLevels
       val divisionLevels = (1 to numberOfDivisions).map(Romans(_))
-      val seasonOffset = leagueInfoService.leagueInfo(leagueId).league.getSeasonOffset
+      val seasonOffset = leagueInfoService.leagueInfo(leagueId).league.seasonOffset
       val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId)
 
       val restLeagueData = RestLeagueData(
@@ -55,8 +54,8 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
         divisionLevels = divisionLevels,
         seasonOffset = seasonOffset,
         seasonRoundInfo = seasonRoundInfo,
-        currency = if (league.getCountry.getCurrencyName == null) "$" else league.getCountry.getCurrencyName,
-        currencyRate = if (league.getCountry.getCurrencyRate == null) 10.0d else league.getCountry.getCurrencyRate,
+        currency = CurrencyUtils.currencyName(league.country),
+        currencyRate = CurrencyUtils.currencyRate(league.country),
         loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo,
         countries = leagueInfoService.idToStringCountryMap)
       Future(Ok(Json.toJson(restLeagueData)))

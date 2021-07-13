@@ -1,9 +1,9 @@
 package chpp.teamdetails.models
 
 import java.util.Date
-
 import cats.syntax.all._
 import chpp.BaseXmlMapper
+import chpp.commonmodels.{League, PowerRating}
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{XmlReader, __}
 

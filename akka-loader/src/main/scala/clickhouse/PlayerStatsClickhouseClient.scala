@@ -1,7 +1,7 @@
 package clickhouse
 
 import akka.actor.ActorSystem
-import chpp.matchesarchive.models.MatchType
+import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.League
 import com.crobox.clickhouse.ClickhouseClient
 import com.typesafe.config.Config

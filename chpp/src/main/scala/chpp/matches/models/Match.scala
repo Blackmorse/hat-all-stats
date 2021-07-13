@@ -1,24 +1,25 @@
-package chpp.matchesarchive.models
+package chpp.matches.models
 
-import java.util.Date
+import chpp.commonmodels.MatchType
 import cats.syntax.all._
 import chpp.BaseXmlMapper
-import chpp.commonmodels.MatchType
 import com.lucidchart.open.xtract.XmlReader._
 import com.lucidchart.open.xtract.{XmlReader, __}
+
+import java.util.Date
 
 case class Match(matchId: Long,
                  homeTeam: HomeTeam,
                  awayTeam: AwayTeam,
                  matchDate: Date,
+                 sourceSystem: String,
                  matchType: MatchType.Value,
                  matchContextId: Int,
-                 matchRuleId: Int,
                  cupLevel: Int,
                  cupLevelIndex: Int,
-                 homeGoals: Int,
-                 awayGoals: Int
-                )
+                 homeGoals: Option[Int],
+                 awayGoals: Option[Int],
+                 status: String)
 
 object Match extends BaseXmlMapper {
   implicit val reader: XmlReader[Match] = (
@@ -26,12 +27,13 @@ object Match extends BaseXmlMapper {
     (__ \ "HomeTeam").read[HomeTeam],
     (__ \ "AwayTeam").read[AwayTeam],
     (__ \ "MatchDate").read[String].map(date),
+    (__ \ "SourceSystem").read[String],
     (__ \ "MatchType").read(enum(MatchType)),
     (__ \ "MatchContextId").read[Int],
-    (__ \ "MatchRuleId").read[Int],
     (__ \ "CupLevel").read[Int],
     (__ \ "CupLevelIndex").read[Int],
-    (__ \ "HomeGoals").read[Int],
-    (__ \ "AwayGoals").read[Int],
+    (__ \ "HomeGoals").read[Int].optional,
+    (__ \ "AwayGoals").read[Int].optional,
+    (__ \ "Status").read[String]
   ).mapN(apply _)
 }

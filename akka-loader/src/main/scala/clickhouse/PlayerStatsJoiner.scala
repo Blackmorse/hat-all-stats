@@ -1,6 +1,6 @@
 package clickhouse
 
-import chpp.matchesarchive.models.MatchType
+import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.League
 
 object PlayerStatsJoiner {

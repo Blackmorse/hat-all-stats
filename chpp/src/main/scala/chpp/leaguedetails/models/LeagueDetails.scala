@@ -8,7 +8,7 @@ import com.lucidchart.open.xtract.{XmlReader, __}
 
 case class LeagueDetails(leagueId: Int,
                          leagueName: String,
-                         leagueLevel: String,
+                         leagueLevel: Int,
                          maxLevel: Int,
                          leagueLevelUnitId: Int,
                          leagueLevelUnitName: String,
@@ -19,7 +19,7 @@ object LeagueDetails extends BaseXmlMapper {
   implicit val reader: XmlReader[LeagueDetails] = (
     (__ \ "LeagueID").read[Int],
     (__ \ "LeagueName").read[String],
-    (__ \ "LeagueLevel").read[String],
+    (__ \ "LeagueLevel").read[Int],
     (__ \ "MaxLevel").read[Int],
     (__ \ "LeagueLevelUnitID").read[Int],
     (__ \ "LeagueLevelUnitName").read[String],

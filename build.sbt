@@ -11,7 +11,6 @@ lazy val webDependencies = Seq(
   jdbc,
   caffeine,
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
-  "com.blackmorse.hattrick" % "api" % "0.0.13",
   "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3",
   "ai.x" %% "play-json-extensions" % "0.42.0",
   "org.playframework.anorm" %% "anorm" % "2.6.4",
