@@ -42,7 +42,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
 
   def getLeagueData(leagueId: Int): Action[AnyContent] =  Action.async { implicit request =>
       val league = leagueInfoService.leagueInfo(leagueId).league
-      val leagueName = league.leagueName
+      val leagueName = league.englishName
       val numberOfDivisions = league.numberOfLevels
       val divisionLevels = (1 to numberOfDivisions).map(Romans(_))
       val seasonOffset = leagueInfoService.leagueInfo(leagueId).league.seasonOffset
