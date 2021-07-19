@@ -53,6 +53,7 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
         .applyParameters(orderingKeyPath)
         .playedMinutes.greaterEqual(playedMinutes)
         .round(round)
+        .isLeagueMatch
       .sortBy(parameters.sortBy)
       .build, rowParser)
   }

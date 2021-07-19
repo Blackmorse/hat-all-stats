@@ -6,14 +6,18 @@ import databases.sqlbuilder.clause.ClauseEntry
 import java.text.SimpleDateFormat
 import java.util.Date
 
-trait Parameter {
+trait Parameter
+
+trait ValueParameter extends Parameter {
   val parameterNumber: Int
   val name: String
   def oper: String
   def value: ParameterValue
 }
 
-case class IntParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends Parameter {
+case class ConditionParameter(condition: String) extends Parameter
+
+case class IntParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends ValueParameter {
   private[sqlbuilder] var _oper: String = "="
   private[sqlbuilder] var _value: ParameterValue = _
 
@@ -55,7 +59,7 @@ case class IntParameter(parameterNumber: Int, name: String, clauseEntry: ClauseE
   override def value: ParameterValue = _value
 }
 
-case class LongParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends Parameter {
+case class LongParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends ValueParameter {
   var _oper: String = "="
   var _value: ParameterValue = _
 
@@ -80,7 +84,7 @@ case class LongParameter(parameterNumber: Int, name: String, clauseEntry: Clause
   override def value: ParameterValue = _value
 }
 
-case class StringParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends Parameter {
+case class StringParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends ValueParameter {
   var _oper = "="
   var _value: ParameterValue = _
 
@@ -98,7 +102,7 @@ case class StringParameter(parameterNumber: Int, name: String, clauseEntry: Clau
   override def value: ParameterValue = _value
 }
 
-case class DateParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends Parameter {
+case class DateParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends ValueParameter {
   var _oper = "="
   var _value: ParameterValue = _
   val format = new SimpleDateFormat("yyyy-MM-dd")
@@ -124,14 +128,3 @@ case class DateParameter(parameterNumber: Int, name: String, clauseEntry: Clause
 
   override def value: ParameterValue = _value
 }
-
-case class StringParameters(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) {
-  var _oper = "="
-  var _value: ParameterValue = _
-
-  def apply(value: String): ClauseEntry = {
-    this._value = value
-    clauseEntry
-  }
-}
-

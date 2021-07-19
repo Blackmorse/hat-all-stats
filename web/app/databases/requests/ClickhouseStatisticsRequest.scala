@@ -36,6 +36,7 @@ trait ClickhouseStatisticsRequest[T] extends ClickhouseRequest[T] {
         .applyParameters(parameters)
         .applyParameters(orderingKeyPath)
         .round(round)
+        .isLeagueMatch
       .sortBy(sortBy)
       .build, rowParser)
   }

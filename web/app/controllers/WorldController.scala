@@ -11,10 +11,10 @@ import hattrick.ChppClient
 import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
 import play.api.cache.AsyncCacheApi
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.LeagueInfoService
-import service.{OverviewStatsService, RequestCounterService}
+import service.RequestCounterService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,13 +23,12 @@ import scala.concurrent.Future
 case class TeamSearchResult(teamId: Long, teamName: String)
 
 object TeamSearchResult {
-  implicit val writes = Json.writes[TeamSearchResult]
+  implicit val writes: OWrites[TeamSearchResult] = Json.writes[TeamSearchResult]
 }
 
 @Singleton
 class WorldController @Inject() (val controllerComponents: ControllerComponents,
              implicit val restClickhouseDAO: RestClickhouseDAO,
-             val overviewStatsService: OverviewStatsService,
              val leagueInfoService: LeagueInfoService,
              val chppClient: ChppClient,
              val requestCounterService: RequestCounterService,

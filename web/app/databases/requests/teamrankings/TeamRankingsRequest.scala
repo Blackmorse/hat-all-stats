@@ -59,7 +59,7 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
         .season(orderingKeyPath.season)
         .leagueId(orderingKeyPath.leagueId)
         .teamId(orderingKeyPath.teamId)
-      .orderBy("rank_type", "round")
+      .orderByOldBuilder("rank_type", "round")
       .sortingDirection(Asc)
       .build, rowParser)
 }

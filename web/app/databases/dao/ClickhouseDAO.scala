@@ -38,6 +38,7 @@ class ClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContex
             .leagueId(leagueId)
             .season(season)
             .round(round)
+            .isLeagueMatch
         .build.as(HistoryInfo.mapper.*)
     }
   }

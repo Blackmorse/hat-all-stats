@@ -68,6 +68,7 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
         .applyParameters(parameters)
         .applyParameters(orderingKeyPath)
         .round.lessEqual(round)
+        .isLeagueMatch
       .sortBy(sortBy)
       .build, rowParser)
   }

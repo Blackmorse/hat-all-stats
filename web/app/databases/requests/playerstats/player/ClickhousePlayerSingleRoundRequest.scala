@@ -17,6 +17,7 @@ trait ClickhousePlayerSingleRoundRequest[T] extends ClickhousePlayerRequest[T] {
       .where
         .applyParameters(parameters)
         .applyParameters(orderingKeyPath)
+        .isLeagueMatch
         .round(round)
         .role(role.map(Roles.reverseMapping))
         .nationality(playersParameters.nationality)

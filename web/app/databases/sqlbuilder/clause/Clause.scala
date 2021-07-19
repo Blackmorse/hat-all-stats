@@ -1,8 +1,7 @@
 package databases.sqlbuilder.clause
 
-import anorm.{ParameterValue, Row, SimpleSql}
 import databases.requests.OrderingKeyPath
-import databases.sqlbuilder.{DateParameter, IntParameter, LongParameter, Parameter, SqlBuilder, StringParameter}
+import databases.sqlbuilder.{ConditionParameter, DateParameter, IntParameter, LongParameter, Parameter, SqlBuilder, StringParameter, ValueParameter}
 import models.web.RestStatisticsParameters
 
 import scala.collection.mutable
@@ -18,7 +17,6 @@ object ClauseEntry {
 
 class ClauseEntry(val sqlBuilder: SqlBuilder) {
   private[sqlbuilder] val parameters: mutable.Buffer[Parameter] = mutable.Buffer()
-  private[sqlbuilder] val params: mutable.Buffer[(String, ParameterValue)] = mutable.Buffer()
 
   def applyParameters(orderingKeyPath: OrderingKeyPath): this.type = {
     leagueId(orderingKeyPath.leagueId)
@@ -68,11 +66,33 @@ class ClauseEntry(val sqlBuilder: SqlBuilder) {
 
   def rankType = addParameter(StringParameter(sqlBuilder.parametersNumber, "rank_type", this))
 
+  def and(condition: String): ClauseEntry = {
+    parameters += ConditionParameter(condition)
+    this
+  }
+
+  def isLeagueMatch: ClauseEntry = {
+    val cupLevelParameter = IntParameter(sqlBuilder.parametersNumber, "cup_level", this)
+    cupLevelParameter(0)
+    addParameter(cupLevelParameter)
+    this
+  }
+
   def createSql: Option[String] = {
-    val whereParameters = parameters.filter(_.value != null)
+    val whereParameters = parameters.filter(parameter => {
+      parameter match {
+        case ConditionParameter(_) => true
+        case _ => parameter.asInstanceOf[ValueParameter].value != null
+      }
+    })
     if(whereParameters.nonEmpty) {
       Some(
-        whereParameters.map(parameter => s"${parameter.name} ${parameter.oper} {${parameter.name}_${parameter.parameterNumber}}").mkString(" AND ")
+        whereParameters.map {
+          case ConditionParameter(condition) => condition
+          case parameter =>
+            val valueParameter = parameter.asInstanceOf[ValueParameter]
+            s"${valueParameter.name} ${valueParameter.oper} {${valueParameter.name}_${valueParameter.parameterNumber}}"
+        }.mkString(" AND ")
       )
     } else {
       None
@@ -95,6 +115,8 @@ abstract class Clause(val sqlBuilder: SqlBuilder, val clauseType: String) {
   }
 
   private[databases] def parameters = entries.flatMap(_.parameters)
+
+  private[sqlbuilder] def initialized: Boolean = entries.nonEmpty
 
   override def toString: String = {
     val definedEntries = entries.map(_.createSql).filter(_.isDefined)

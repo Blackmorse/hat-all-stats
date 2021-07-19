@@ -17,6 +17,7 @@ trait ClickhousePlayerAggregateRoundRequest[T] extends ClickhousePlayerRequest[T
         .where
           .applyParameters(parameters)
           .applyParameters(orderingKeyPath)
+          .isLeagueMatch
         .having
           .round.lessEqual(round)
           .role(role.map(Roles.reverseMapping))

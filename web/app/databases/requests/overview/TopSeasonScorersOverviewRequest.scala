@@ -38,7 +38,7 @@ object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerS
       |        nationality
       |    FROM hattrick.player_stats
       |    __where__
-      |) AS inner
+      |)
       |GROUP BY
       |    player_id,
       |    first_name,
@@ -59,6 +59,7 @@ object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerS
         .leagueId(leagueId)
         .divisionLevel(divisionLevel)
         .round.lessEqual(round)
+        .isLeagueMatch
         .page(0)
         .pageSize(limit)
 

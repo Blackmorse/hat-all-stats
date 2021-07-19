@@ -77,6 +77,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
         .applyParameters(orderingKeyPath)
         .season(orderingKeyPath.season)
         .round(round)
+        .isLeagueMatch
       .build
 
     restClickhouseDAO.execute(build, rowParser)
