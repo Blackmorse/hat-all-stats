@@ -31,6 +31,9 @@ abstract class Layout<Props, State> extends React.Component<Props, State> {
                 <span className="suggestions_reports">
                     Any suggestions/bugs? <a className="aside_link" target="_tab" href="https://www.hattrick.org/goto.ashx?path=/MyHattrick/Inbox/?actionType=newMail%26userId=4040806">Contact me at Hattrick</a>
                 </span>
+                <span>
+                    <a className="aside_link" href="https://t.me/hattid_ht" target="_tab">Do you want to receive the latest news? Suggest a new feature? Join the telegram channel!</a>
+                </span>
                 <span className="language_links">
                     <button className="language_link_button" onClick={(e) => this.changeLanguage("en")}>en</button>
                     <button className="language_link_button" onClick={(e) => this.changeLanguage("es")}>es</button>

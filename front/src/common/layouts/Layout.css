@@ -97,7 +97,8 @@
 .aside_link:visited,
 .aside_link:active,
 .aside_link {
-    color: #779dff;
+    font-size: 15px;
+    color: #426cd8;
     text-decoration: underline;
 }
 
