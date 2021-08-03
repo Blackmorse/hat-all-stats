@@ -1,28 +1,20 @@
 package databases.requests.overview
 
 import anorm.RowParser
-import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseOverviewRequest
-import databases.requests.matchdetails.MatchTopHatstatsRequest
 import databases.requests.model.`match`.MatchTopHatstats
-import databases.requests.overview.TopHatstatsTeamOverviewRequest.rowParser
-import databases.sqlbuilder.SqlBuilder
-
-import scala.concurrent.Future
+import databases.sqlbuilder.{Select, SqlBuilder}
 
 object TopMatchesOverviewRequest extends ClickhouseOverviewRequest[MatchTopHatstats] {
-  override def sortBy: String = "sum_hatstats"
-
-  override val sql: String = MatchTopHatstatsRequest.oneRoundSql
-
   override val rowParser: RowParser[MatchTopHatstats] = MatchTopHatstats.mapper
 
-  override def execute(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int])
-                      (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[MatchTopHatstats]] = {
-    import SqlBuilder.implicits._
+  override def builder(season: Int,
+                       round: Int,
+                       leagueId: Option[Int],
+                       divisionLevel: Option[Int]): SqlBuilder = {
     import SqlBuilder.fields._
-    val builder = new SqlBuilder("", newApi = true)
-      .select("league_id",
+    import SqlBuilder.implicits._
+    Select("league_id",
         "league_unit_id",
         "league_unit_name",
         "team_id",
@@ -53,7 +45,5 @@ object TopMatchesOverviewRequest extends ClickhouseOverviewRequest[MatchTopHatst
       )
       .limitBy(1, "match_id")
       .limit(limit)
-
-    restClickhouseDAO.execute(builder.build, rowParser)
   }
 }

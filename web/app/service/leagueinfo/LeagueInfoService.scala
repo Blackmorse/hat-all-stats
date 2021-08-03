@@ -2,7 +2,8 @@ package service.leagueinfo
 
 import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.WorldDetails
-import databases.dao.ClickhouseDAO
+import databases.dao.RestClickhouseDAO
+import databases.requests.matchdetails.HistoryInfoRequest
 import hattrick.ChppClient
 import play.api.Configuration
 
@@ -14,8 +15,8 @@ import scala.concurrent.duration.DurationInt
 
 @Singleton
 class LeagueInfoService @Inject() (val chppClient: ChppClient,
-                                val clickhouseDAO: ClickhouseDAO,
-                                val configuration: Configuration) {
+                                   implicit val restClickhouseDAO: RestClickhouseDAO,
+                                   val configuration: Configuration) {
   lazy val leagueNumbersMap = Map(1 -> Seq(1),
     2 -> (1 to 4),
     3 -> (1 to 16),
@@ -43,7 +44,8 @@ class LeagueInfoService @Inject() (val chppClient: ChppClient,
       .map(_.leagueList.map(league => league.leagueId -> league)), 30.seconds)
 
 
-    val leagueHistoryInfos = clickhouseDAO.historyInfo(None, None, None).groupBy(_.leagueId)
+    val leagueHistoryInfos = Await.result(HistoryInfoRequest.execute(None, None, None), 1.minute)
+      .groupBy(_.leagueId)
 
     val seq = for ((lId, league) <- leagueIdToCountryNameMap) yield {
       val leagueId  = lId.toInt

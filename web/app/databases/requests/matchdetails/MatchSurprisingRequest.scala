@@ -1,73 +1,92 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
-import databases.requests.ClickhouseStatisticsRequest
 import databases.requests.model.`match`.MatchTopHatstats
-import hattid.LoddarStatsUtils
+import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
+import databases.sqlbuilder.{Select, SqlBuilder}
+import models.web.RestStatisticsParameters
 
+//TODO the same SQL Builders for oneRound and aggregate ?
 object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatstats] {
   override val sortingColumns: Seq[String] = Seq("abs_goals_difference",
     "abs_hatstats_difference", "abs_loddar_stats_difference")
 
-  override val aggregateSql: String =
-    s"""SELECT
-      |    league_id,
-      |    league_unit_id,
-      |    league_unit_name,
-      |    team_id,
-      |    team_name,
-      |    opposite_team_id,
-      |    opposite_team_name,
-      |    match_id,
-      |    is_home_match,
-      |    goals,
-      |    enemy_goals,
-      |    abs(goals - enemy_goals) as abs_goals_difference,
-      |    ((((((rating_midfield * 3) + rating_left_att) + rating_mid_att) + rating_right_att) + rating_left_def) + rating_right_def) + rating_mid_def AS hatstats,
-      |    ((((((opposite_rating_midfield * 3) + opposite_rating_left_att) + opposite_rating_right_att) + opposite_rating_mid_att) + opposite_rating_left_def) + opposite_rating_right_def) + opposite_rating_mid_def AS opposite_hatstats,
-      |    hatstats - opposite_hatstats as hatstats_difference,
-      |    abs(hatstats_difference) as abs_hatstats_difference,
-      |    ${LoddarStatsUtils.homeLoddarStats} as loddar_stats,
-      |    ${LoddarStatsUtils.awayLoddarStats} as opposite_loddar_stats,
-      |    abs(loddar_stats - opposite_loddar_stats) as abs_loddar_stats_difference
-      |FROM hattrick.match_details
-      |__where__ AND (((goals - enemy_goals) * hatstats_difference) < 0) AND (opposite_team_id != 0)
-      |ORDER BY
-      |   __sortBy__ __sortingDirection__,
-      |   team_id __sortingDirection__
-      |LIMIT 1 BY match_id
-      |__limit__
-      |""".stripMargin
-
-  override val oneRoundSql: String =
-    s"""SELECT
-      |    league_id,
-      |    league_unit_id,
-      |    league_unit_name,
-      |    team_id,
-      |    team_name,
-      |    opposite_team_id,
-      |    opposite_team_name,
-      |    match_id,
-      |    is_home_match,
-      |    goals,
-      |    enemy_goals,
-      |    abs(goals - enemy_goals) as abs_goals_difference,
-      |    ((((((rating_midfield * 3) + rating_left_att) + rating_mid_att) + rating_right_att) + rating_left_def) + rating_right_def) + rating_mid_def AS hatstats,
-      |    ((((((opposite_rating_midfield * 3) + opposite_rating_left_att) + opposite_rating_right_att) + opposite_rating_mid_att) + opposite_rating_left_def) + opposite_rating_right_def) + opposite_rating_mid_def AS opposite_hatstats,
-      |    hatstats - opposite_hatstats as hatstats_difference,
-      |    abs(hatstats_difference) as abs_hatstats_difference,
-      |    ${LoddarStatsUtils.homeLoddarStats} as loddar_stats,
-      |    ${LoddarStatsUtils.awayLoddarStats} as opposite_loddar_stats,
-      |    abs(loddar_stats - opposite_loddar_stats) as abs_loddar_stats_difference
-      |FROM hattrick.match_details
-      |__where__ AND (((goals - enemy_goals) * hatstats_difference) < 0)  AND (opposite_team_id != 0)
-      |ORDER BY
-      |   __sortBy__ __sortingDirection__,
-      |   team_id __sortingDirection__
-      |LIMIT 1 BY match_id
-      |__limit__
-      |""".stripMargin
-
   override val rowParser: RowParser[MatchTopHatstats] = MatchTopHatstats.mapper
+
+  override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
+                                parameters: RestStatisticsParameters,
+                                aggregateFuntion: SqlBuilder.func): SqlBuilder = {
+    import SqlBuilder.fields._
+    import SqlBuilder.implicits._
+    Select(
+        "league_id",
+        "league_unit_id",
+        "league_unit_name",
+        "team_id",
+        "team_name",
+        "opposite_team_id",
+        "opposite_team_name",
+        "match_id",
+        "is_home_match",
+        "goals",
+        "enemy_goals",
+        "abs(goals - enemy_goals)" as "abs_goals_difference",
+        hatstats as "hatstats",
+        oppositeHatstats as "opposite_hatstats",
+        "hatstats - opposite_hatstats" as "hatstats_difference",
+        "abs(hatstats_difference)" as "abs_hatstats_difference",
+        loddarStats as "loddar_stats",
+        oppositeLoddarStats as "opposite_loddar_stats",
+        "abs(loddar_stats - opposite_loddar_stats)" as "abs_loddar_stats_difference"
+      ).from("hattrick.match_details")
+      .where
+        .season(parameters.season)
+        .orderingKeyPath(orderingKeyPath)
+        .isLeagueMatch
+        .and("(((goals - enemy_goals) * hatstats_difference) < 0) AND (opposite_team_id != 0)")
+      .orderBy(
+        parameters.sortBy.to(parameters.sortingDirection),
+        "team_id".to(parameters.sortingDirection)
+      ).limitBy(1, "match_id")
+      .limit(page = parameters.page, pageSize = parameters.pageSize)
+  }
+
+  override def oneRoundBuilder(orderingKeyPath: OrderingKeyPath,
+                               parameters: RestStatisticsParameters,
+                               round: Int): SqlBuilder = {
+    import SqlBuilder.fields._
+    import SqlBuilder.implicits._
+    Select(
+        "league_id",
+        "league_unit_id",
+        "league_unit_name",
+        "team_id",
+        "team_name",
+        "opposite_team_id",
+        "opposite_team_name",
+        "match_id",
+        "is_home_match",
+        "goals",
+        "enemy_goals",
+        "abs(goals - enemy_goals)" as "abs_goals_difference",
+        hatstats as "hatstats",
+        oppositeHatstats as "opposite_hatstats",
+        "hatstats - opposite_hatstats" as "hatstats_difference",
+        "abs(hatstats_difference)" as "abs_hatstats_difference",
+        loddarStats as "loddar_stats",
+        oppositeLoddarStats as "opposite_loddar_stats",
+        "abs(loddar_stats - opposite_loddar_stats)" as "abs_loddar_stats_difference"
+      ).from("hattrick.match_details")
+      .where
+        .season(parameters.season)
+        .orderingKeyPath(orderingKeyPath)
+        .isLeagueMatch
+        .round(round)
+        .and("(((goals - enemy_goals) * hatstats_difference) < 0)  AND (opposite_team_id != 0)"
+      ).orderBy(
+        parameters.sortBy.to(parameters.sortingDirection),
+        "team_id".to(parameters.sortingDirection)
+      ).limitBy(1, "match_id")
+      .limit(page = parameters.page, pageSize = parameters.pageSize)
+  }
 }

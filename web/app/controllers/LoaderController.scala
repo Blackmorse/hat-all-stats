@@ -1,45 +1,47 @@
 package controllers
 
-import databases.dao.ClickhouseDAO
+import databases.dao.RestClickhouseDAO
+import databases.requests.matchdetails.HistoryInfoRequest
+import play.api.Logging
+import play.api.cache.AsyncCacheApi
+import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
+import service.leagueinfo.{Finished, LeagueInfoService, Loading, Scheduled}
 
 import java.util.Date
 import javax.inject.{Inject, Singleton}
-import play.api.Logging
-import play.api.cache.AsyncCacheApi
-import play.api.libs.json.{JsSuccess, Json}
-import play.api.mvc.{BaseController, ControllerComponents}
-import service.leagueinfo.{Finished, LeagueInfoService, Loading, Scheduled}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 case class LeagueTime(leagueId: Int, time: Date)
 
 object LeagueTime {
-  implicit val reads = Json.reads[LeagueTime]
+  implicit val reads: Reads[LeagueTime] = Json.reads[LeagueTime]
 }
 
 @Singleton
 class LoaderController @Inject()(val controllerComponents: ControllerComponents,
-                                 val clickhouseDAO: ClickhouseDAO,
+                                 implicit val restClickhouseDAO: RestClickhouseDAO,
                                  val leagueInfoService: LeagueInfoService,
                                  val cache: AsyncCacheApi)
     extends BaseController with Logging {
 
-  def leagueRound(season: Int, leagueId: Int, round: Int) = Action {
-    val roundInfos = clickhouseDAO
-      .historyInfo(leagueId = Some(leagueId), season = Some(season), round = Some(round))
+  def leagueRound(season: Int, leagueId: Int, round: Int): Action[AnyContent] = Action.async { implicit request =>
+    HistoryInfoRequest.execute(leagueId = Some(leagueId), season = Some(season), round = Some(round))
+      .map(roundInfos => {
+        leagueInfoService.leagueInfo.add(roundInfos)
+        leagueInfoService.leagueInfo(leagueId).loadingInfo = Finished
 
-    leagueInfoService.leagueInfo.add(roundInfos)
-    leagueInfoService.leagueInfo(leagueId).loadingInfo = Finished
-
-    //Salvador is the last league
-    if(leagueId == 100) {
-      cache.remove("overview.world")
-      leagueInfoService.leagueInfo.leagueInfo.values.foreach(leagueInfo => leagueInfo.loadingInfo = Finished)
-    }
-    cache.remove(s"overview.$leagueId")
-    Ok("")
+        //Salvador is the last league
+        if(leagueId == 100) {
+          cache.remove("overview.world")
+          leagueInfoService.leagueInfo.leagueInfo.values.foreach(leagueInfo => leagueInfo.loadingInfo = Finished)
+        }
+        cache.remove(s"overview.$leagueId")
+        Ok("")
+      })
   }
 
-  def scheduleInfo() = Action(parse.json) { request =>
+  def scheduleInfo(): Action[JsValue] = Action(parse.json) { request =>
 
     request.body.validate[Seq[LeagueTime]] match {
       case JsSuccess(schedules, _) =>
@@ -53,7 +55,7 @@ class LoaderController @Inject()(val controllerComponents: ControllerComponents,
     }
   }
 
-  def loadingStarted(leagueId: Int) = Action {
+  def loadingStarted(leagueId: Int): Action[AnyContent] = Action {
     leagueInfoService.leagueInfo(leagueId).loadingInfo = Loading
     Ok("")
   }

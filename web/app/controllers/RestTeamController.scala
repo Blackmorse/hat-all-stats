@@ -7,12 +7,12 @@ import chpp.teamdetails.TeamDetailsRequest
 import chpp.teamdetails.models.{Team, TeamDetails}
 import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.WorldDetails
-import databases.dao.{ClickhouseDAO, RestClickhouseDAO}
+import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamMatchesRequest}
 import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.player._
 import databases.requests.promotions.PromotionsRequest
-import databases.requests.teamrankings.TeamRankingsRequest
+import databases.requests.teamrankings.{HistoryTeamLeagueUnitInfoRequest, TeamRankingsRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattrick.ChppClient
 import models.clickhouse.{NearestMatch, TeamRankings}
@@ -21,8 +21,8 @@ import models.web.rest.LevelData.Rounds
 import models.web.{PlayersParameters, RestStatisticsParameters}
 import play.api.libs.json.{Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import service.{HattrickPeriod, TeamsService}
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
+import service.{HattrickPeriod, TeamsService}
 import utils.{CurrencyUtils, Romans}
 
 import java.util.Date
@@ -70,7 +70,6 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
                                     val chppClient: ChppClient,
                                     val leagueInfoService: LeagueInfoService,
                                     val teamsService: TeamsService,
-                                    implicit val clickhouseDAO: ClickhouseDAO,
                                     implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
 
   private def getTeamById(teamId: Long): Future[Either[Team, Team]] = {
@@ -117,17 +116,20 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   private def getDivisionLevelAndLeagueUnit(team: Team, season: Int): Future[(Int, Long)] = {
     chppClient.execute[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
       .map(_.leagueList.head)
-      .map(league => {
+      .flatMap(league => {
         val htRound = league.matchRound
 
         if(htRound == 16
           || leagueInfoService.leagueInfo.currentSeason(team.league.leagueId) > season
           || league.season - league.seasonOffset > season) {
-          val infoOpt = clickhouseDAO.historyTeamLeagueUnitInfo(season, team.league.leagueId, team.teamId)
-          infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
-            .getOrElse((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId))
+
+          HistoryTeamLeagueUnitInfoRequest.execute(season, team.league.leagueId, team.teamId)
+            .map(infoOpt => {
+              infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
+                .getOrElse((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId))
+            })
         } else {
-          (team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId.toLong)
+          Future((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId.toLong))
         }
       })
   }
@@ -135,9 +137,9 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
 
   private def stats[T](chRequest: ClickhouseStatisticsRequest[T],
-               teamId: Long,
-               restStatisticsParameters: RestStatisticsParameters)
-              (implicit writes: Writes[T]) = Action.async{ implicit request =>
+                       teamId: Long,
+                       restStatisticsParameters: RestStatisticsParameters)
+              (implicit writes: Writes[T]): Action[AnyContent] = Action.async{ implicit request =>
     getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
 
       getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)

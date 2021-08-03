@@ -4,58 +4,12 @@ import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.player.DreamTeamPlayer
-import databases.sqlbuilder.SqlBuilder
+import databases.sqlbuilder.{Field, NestedSelect, Select, SqlBuilder}
 import models.web.{Accumulate, Round, StatsType}
 
 import scala.concurrent.Future
 
 object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
-  val oneRoundSql =
-    s"""
-      |SELECT
-      |    league_id,
-      |    player_id,
-      |    first_name,
-      |    last_name,
-      |    team_id,
-      |    team_name,
-      |    league_unit_id,
-      |    league_unit_name,
-      |    round,
-      |    ${ClickhouseRequest.roleIdCase("role_id")} AS role,
-      |    rating,
-      |    rating_end_of_match,
-      |    nationality
-      |FROM hattrick.player_stats
-      |__where__ AND (role_id != 0)
-      |ORDER BY __sortBy__
-      |LIMIT 4 BY role
-      |""".stripMargin
-
-  val aggregateSql =
-    s"""SELECT * FROM (
-      |SELECT
-      |    league_id,
-      |    player_id,
-      |    first_name,
-      |    last_name,
-      |    team_id,
-      |    team_name,
-      |    league_unit_id,
-      |    league_unit_name,
-      |    round,
-      |    ${ClickhouseRequest.roleIdCase("role_id")} AS role,
-      |    rating,
-      |    rating_end_of_match,
-      |    nationality
-      |FROM hattrick.player_stats
-      |__where__ AND (role_id != 0)
-      |ORDER BY __sortBy__
-      |LIMIT 1 by role, player_id
-      |)
-      |LIMIT 4 BY role
-      |""".stripMargin
-
   override val rowParser: RowParser[DreamTeamPlayer] = DreamTeamPlayer.mapper
 
   def execute(orderingKeyPath: OrderingKeyPath, statsType: StatsType, sortBy: String)
@@ -64,22 +18,51 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
       throw new Exception("Unknown sorting field")
     }
 
-    val sortString = if (sortBy == "rating") "rating DESC, rating_end_of_match DESC"
-    else "rating_end_of_match DESC, rating DESC"
+    import SqlBuilder.implicits._
+    val fields: Seq[Field] = Seq("league_id",
+      "player_id",
+      "first_name",
+      "last_name",
+      "team_id",
+      "team_name",
+      "league_unit_id",
+      "league_unit_name",
+      "round",
+      ClickhouseRequest.roleIdCase("role_id") as "role",
+      "rating",
+      "rating_end_of_match",
+      "nationality")
 
-    val (sql, round) = statsType match {
-      case Accumulate => (aggregateSql, None)
-      case Round(r) => (oneRoundSql, Some(r))
+    val sortings = if (sortBy == "rating")
+      Seq("rating".desc, "rating_end_of_match".desc)
+      else
+      Seq("rating_end_of_match".desc, "rating".desc)
+
+    val builder = statsType match {
+      case Accumulate =>
+        Select("*").from(
+          NestedSelect(fields: _*).from("hattrick.player_stats")
+            .where
+              .orderingKeyPath(orderingKeyPath)
+              .season(orderingKeyPath.season)
+              .isLeagueMatch
+              .and("role_id != 0")
+            .orderBy(sortings: _*)
+            .limitBy(1, "role, player_id")
+        ).limitBy(4, "role")
+      case Round(r) =>
+        Select(fields: _*)
+          .from("hattrick.player_stats")
+          .where
+            .orderingKeyPath(orderingKeyPath)
+            .season(orderingKeyPath.season)
+            .isLeagueMatch
+            .round(r)
+            .and("role_id != 0")
+          .orderBy(sortings: _*)
+          .limitBy(4, "role")
     }
 
-    val build = SqlBuilder(sql.replace("__sortBy__", sortString))
-      .where
-        .applyParameters(orderingKeyPath)
-        .season(orderingKeyPath.season)
-        .round(round)
-        .isLeagueMatch
-      .build
-
-    restClickhouseDAO.execute(build, rowParser)
+    restClickhouseDAO.execute(builder.build, rowParser)
   }
 }

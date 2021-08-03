@@ -4,7 +4,7 @@ import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
 import databases.requests.model.team.CreatedSameTimeTeam
-import databases.sqlbuilder.SqlBuilder
+import databases.sqlbuilder.{Select, SqlBuilder}
 import service.DatesRange
 
 import scala.concurrent.Future
@@ -16,8 +16,7 @@ object TeamsCreatedSameTimeRequest extends ClickhouseRequest[CreatedSameTimeTeam
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[CreatedSameTimeTeam]] = {
 
     import SqlBuilder.implicits._
-    val builder = SqlBuilder("", newApi = true)
-      .select(
+    val builder = Select(
         "league_id",
         "team_id",
         "team_name",

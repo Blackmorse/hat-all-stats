@@ -1,33 +1,46 @@
 package databases.requests.playerstats.player
 
 import anorm.RowParser
-import databases.requests.ClickhouseRequest
+import databases.requests.model.Roles
+import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.player.PlayerSalaryTSI
+import databases.sqlbuilder.{Select, SqlBuilder}
+import models.web.{PlayersParameters, RestStatisticsParameters}
 
-object PlayerSalaryTSIRequest extends ClickhousePlayerSingleRoundRequest[PlayerSalaryTSI] {
+object PlayerSalaryTSIRequest extends ClickhousePlayerRequest[PlayerSalaryTSI] {
   override val sortingColumns: Seq[String] = Seq("age", "tsi", "salary")
 
-  override val oneRoundSql: String =
-    s"""
-      |SELECT
-      |    league_id,
-      |    team_name,
-      |    team_id,
-      |    league_unit_name,
-      |    league_unit_id,
-      |    player_id,
-      |    first_name,
-      |    last_name,
-      |    ((age * 112) + days)  AS age,
-      |    tsi,
-      |    salary,
-      |    nationality,
-      |    ${ClickhouseRequest.roleIdCase("role_id")} as role
-      |FROM hattrick.player_stats
-      |__where__
-      |ORDER BY
-      |    __sortBy__ __sortingDirection__,
-      |    player_id __sortingDirection__
-      |__limit__""".stripMargin
   override val rowParser: RowParser[PlayerSalaryTSI] = PlayerSalaryTSI.mapper
+
+  override def buildSql(orderingKeyPath: OrderingKeyPath, parameters: RestStatisticsParameters, playersParameters: PlayersParameters, role: Option[String], round: Int): SqlBuilder = {
+    import SqlBuilder.implicits._
+    Select(
+        "league_id",
+        "team_name",
+        "team_id",
+        "league_unit_name",
+        "league_unit_id",
+        "player_id",
+        "first_name",
+        "last_name",
+        "((age * 112) + days)" as "age",
+        "tsi",
+        "salary",
+        "nationality",
+        ClickhouseRequest.roleIdCase("role_id") as "role"
+      ).from("hattrick.player_stats")
+      .where
+        .season(parameters.season)
+        .orderingKeyPath(orderingKeyPath)
+        .isLeagueMatch
+        .round(round)
+        .role(role.map(Roles.reverseMapping))
+        .nationality(playersParameters.nationality)
+        .age.greaterEqual(playersParameters.minAge.map(_ * 112))
+        .age.lessEqual(playersParameters.maxAge.map(_ * 112 + 111))
+      .orderBy(
+        parameters.sortBy.to(parameters.sortingDirection),
+        "player_id".to(parameters.sortingDirection)
+      ).limit(page = parameters.page, pageSize = parameters.pageSize)
+  }
 }

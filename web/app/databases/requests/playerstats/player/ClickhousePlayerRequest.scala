@@ -11,8 +11,6 @@ import scala.concurrent.Future
 trait ClickhousePlayerRequest[T] extends ClickhouseRequest[T] {
   val sortingColumns: Seq[String]
 
-  val oneRoundSql: String
-
   def execute(orderingKeyPath: OrderingKeyPath,
               parameters: RestStatisticsParameters,
               playersParameters: PlayersParameters)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[T]] = {

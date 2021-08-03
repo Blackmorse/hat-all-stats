@@ -3,9 +3,6 @@ package databases.sqlbuilder
 import anorm.{NamedParameter, Row, SQL, SimpleSql}
 import databases.sqlbuilder.clause.{ClauseEntry, HavingClause, WhereClause}
 import hattid.LoddarStatsUtils
-import models.web.{Asc, Desc, SortingDirection}
-
-import scala.collection.mutable
 
 case class GroupBy(fields: Seq[String]) {
   override def toString: String = {
@@ -14,6 +11,26 @@ case class GroupBy(fields: Seq[String]) {
 }
 
 object SqlBuilder {
+  trait func {
+    def apply(field: Field): Field
+  }
+
+  object avg extends func {
+    override def apply(field: Field): Field = {
+      new Field(s"avg(${field.name})")
+    }
+  }
+
+  object max extends func {
+    override def apply(field: Field): Field = {
+      new Field(s"max(${field.name})")
+    }
+  }
+
+  object identity extends func {
+    override def apply(field: Field): Field = field
+  }
+
   object implicits {
     implicit def stringToField(string: String): Field =
       new Field(string)
@@ -23,24 +40,21 @@ object SqlBuilder {
   }
 
   object fields {
-    val hatstats = "rating_midfield * 3 + rating_left_att + rating_right_att + rating_mid_att + rating_left_def + rating_right_def + rating_mid_def"
-    val oppositeHatstats = "opposite_rating_midfield * 3 + opposite_rating_left_att + opposite_rating_right_att + opposite_rating_mid_att + opposite_rating_left_def + opposite_rating_right_def + opposite_rating_mid_def"
+    import SqlBuilder.implicits._
 
-    val loddarStats = LoddarStatsUtils.homeLoddarStats
-    val oppositeLoddarStats = LoddarStatsUtils.awayLoddarStats
+    val hatstats: Field = "rating_midfield * 3 + rating_left_att + rating_right_att + rating_mid_att + rating_left_def + rating_right_def + rating_mid_def"
+    val oppositeHatstats: Field = "opposite_rating_midfield * 3 + opposite_rating_left_att + opposite_rating_right_att + opposite_rating_mid_att + opposite_rating_left_def + opposite_rating_right_def + opposite_rating_mid_def"
+
+    val loddarStats: Field = LoddarStatsUtils.homeLoddarStats
+    val oppositeLoddarStats: Field = LoddarStatsUtils.awayLoddarStats
   }
 }
 
-case class SqlBuilder(baseSql: String,
-                      newApi: Boolean = false,
-                      name: String = "main"/*for the nested requests*/) {
+case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
 
   var parametersNumber = 0
-  private var page = 0
-  private var pageSize = 16
-  private var sortingDirection: String = "desc"
-  private var sortBy: Option[String] = None
-  private val orderBies = mutable.Buffer[String]()
+  private var page: Int = 0
+  private var pageSize: Int = 0
   private[sqlbuilder] val whereClause = new WhereClause(this)
   private[sqlbuilder] val havingClause = new HavingClause(this)
   private var _groupBy: GroupBy = _
@@ -74,87 +88,55 @@ case class SqlBuilder(baseSql: String,
     this
   }
 
-  def limitBy(number: Int, field: String) = {
+  def limit(page: Int, pageSize: Int): SqlBuilder = {
+    this.page = page
+    this.pageSize = pageSize
+    this
+  }
+
+  def limitBy(number: Int, field: String): SqlBuilder = {
     this.limitByNumber = number
     this.limitByField = Some(field)
     this
   }
 
-  def page(page: Int): SqlBuilder = {
-    this.page = page
-    this
-  }
-
-  def pageSize(pageSize: Int): SqlBuilder = {
-    this.pageSize = pageSize
-    this
-  }
-
-  def orderByOldBuilder(ob: String*): SqlBuilder = {
-    this.orderBies ++= ob
-    this
-  }
-
-  @deprecated(message = "use orderBy")
-  def sortBy(sb: String): SqlBuilder = {
-    this.sortBy = Some(sb)
-    this
-  }
-
-  def sortingDirection(direction: SortingDirection): SqlBuilder = {
-    this.sortingDirection = direction match {
-      case Desc => "desc"
-      case Asc => "asc"
-    }
-    this
-  }
-
   def build: SimpleSql[Row] = {
-    val finalSql = if (!this.newApi) {
+    val finalSql = buildStringSql()
 
-      val sql = baseSql.replace("__where__", whereClause.toString)
-        .replace("__having__", havingClause.toString)
-
-      val result = sql
-        .replace("__limit__", s" limit ${page * pageSize}, ${pageSize + 1}")
-        .replace("__sortingDirection__", sortingDirection)
-
-      val obs = orderBies.map(ob => s"$ob $sortingDirection").mkString(",")
-      val tr = if (orderBies.nonEmpty)
-        result.replace("__orderBy__", s" ORDER BY $obs")
-      else result.replace("__orderBy__", " ")
-
-      this.sortBy.map(sb => tr.replace("__sortBy__", sb)).getOrElse(tr)
-
-    } else {
-      buildNewApi()
-    }
+    val parameters = whereClause.parameters ++ havingClause.parameters ++ this._select.parameters
 
     SQL(finalSql)
-      .on((whereClause.parameters ++ havingClause.parameters).toSeq
+      .on(parameters.toSeq
         .filter(parameter => parameter.isInstanceOf[ValueParameter])
         .map(_.asInstanceOf[ValueParameter])
-        .map(parameter => NamedParameter.namedWithString((s"${parameter.name}_${parameter.parameterNumber}", parameter.value))): _*
+        .map(parameter => {
+          NamedParameter.namedWithString((s"${parameter.sqlBuilderName}_${parameter.name}_${parameter.parameterNumber}", parameter.value))
+        }): _*
       )
   }
 
-  private def buildNewApi(): String = {
+  def buildStringSql(): String = {
     val selectFrom = this._select.toString
     val where = if (whereClause.initialized) {
       whereClause.toString
-    }
+    } else ""
     val groupBy = if (this._groupBy != null) s" GROUP BY ${this._groupBy.toString}" else ""
-    val havingString = if (this.havingClause != null) {
+    val havingString = if (this.havingClause.initialized) {
       havingClause.toString
-    }
+    } else ""
     val orderBy = if (this._orderBy != null ) s" ORDER BY ${this._orderBy.toString}" else ""
 
-    s"$selectFrom " +
+    val limit = if (pageSize != 0 || page != 0) {
+      s"LIMIT ${pageSize * page}, ${pageSize + 1}"
+    } else {
+      ""
+    }
+   s"$selectFrom " +
       s"$where " +
       s"$groupBy " +
       s"$havingString " +
       s"$orderBy " +
       s"${this.limitByField.map(lField => s"LIMIT ${this.limitByNumber} BY $lField").getOrElse("")} " +
-      s" LIMIT ${page * pageSize}, ${pageSize + 1}"
+      s"$limit"
   }
 }

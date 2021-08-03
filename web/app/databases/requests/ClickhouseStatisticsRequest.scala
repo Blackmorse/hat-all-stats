@@ -9,9 +9,13 @@ import scala.concurrent.Future
 trait ClickhouseStatisticsRequest[T] extends ClickhouseRequest[T] {
   val sortingColumns: Seq[String]
 
-  val aggregateSql: String
+  def oneRoundBuilder(orderingKeyPath: OrderingKeyPath,
+                      parameters: RestStatisticsParameters,
+                      round: Int): SqlBuilder
 
-  val oneRoundSql: String
+  def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
+                       parameters: RestStatisticsParameters,
+                       aggregateFuntion: SqlBuilder.func): SqlBuilder
 
   def execute(orderingKeyPath: OrderingKeyPath,
               parameters: RestStatisticsParameters)
@@ -20,24 +24,12 @@ trait ClickhouseStatisticsRequest[T] extends ClickhouseRequest[T] {
     if(!sortingColumns.contains(sortBy))
       throw new Exception("Looks like SQL injection")
 
-    val sql = parameters.statsType match {
-      case MultiplyRoundsType(func) => aggregateSql.replace("__func__", func)
-      case Accumulate  => aggregateSql
-      case Round(_) => oneRoundSql
+    val sqlBuilder = parameters.statsType match {
+      case MultiplyRoundsType(_, func) => aggregateBuilder(orderingKeyPath, parameters, func)
+      case Accumulate => aggregateBuilder(orderingKeyPath, parameters, SqlBuilder.identity)
+      case Round(round) => oneRoundBuilder(orderingKeyPath, parameters, round)
     }
 
-    val round = parameters.statsType match {
-      case Round(r) => Some(r)
-      case _ => None
-    }
-
-    restClickhouseDAO.execute(SqlBuilder(sql)
-      .where
-        .applyParameters(parameters)
-        .applyParameters(orderingKeyPath)
-        .round(round)
-        .isLeagueMatch
-      .sortBy(sortBy)
-      .build, rowParser)
+    restClickhouseDAO.execute(sqlBuilder.build, rowParser)
   }
 }

@@ -1,47 +1,79 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
-import databases.requests.ClickhouseStatisticsRequest
 import databases.requests.model.league.LeagueUnitRating
-import hattid.LoddarStatsUtils
+import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
+import databases.sqlbuilder.{NestedSelect, Select, SqlBuilder}
+import databases.sqlbuilder.SqlBuilder.avg
+import models.web.RestStatisticsParameters
 
 object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitRating] {
   override val sortingColumns: Seq[String] = Seq("hatstats", "midfield", "defense", "attack", "loddar_stats")
 
   override val rowParser: RowParser[LeagueUnitRating] = LeagueUnitRating.leagueUnitRatingMapper
 
-  override val aggregateSql: String =
-    s"""select league_unit_id,
-          |league_unit_name,
-          |toInt32(__func__(hatstats)) as hatstats,
-          |toInt32(__func__(midfield)) as midfield,
-          |toInt32(__func__(defense)) as defense,
-          |toInt32(__func__(attack)) as attack,
-          |__func__(loddar_stats) as loddar_stats
-          | from
-          |   (select league_unit_id,
-          |     league_unit_name,
-          |     round,
-          |     toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats,
-          |     toInt32(avg(rating_midfield)) as midfield,
-          |     toInt32(avg((rating_right_def + rating_left_def + rating_mid_def))) as defense,
-          |     toInt32(avg((rating_right_att + rating_mid_att + rating_left_att))) as attack,
-          |     avg(${LoddarStatsUtils.homeLoddarStats}) as loddar_stats
-          |     from hattrick.match_details
-          |     __where__ and rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
-          |     group by league_unit_id, league_unit_name, round)
-          |group by league_unit_id, league_unit_name order by __sortBy__ __sortingDirection__, league_unit_id desc __limit__""".stripMargin
+  override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
+                                parameters: RestStatisticsParameters,
+                                aggregateFuntion: SqlBuilder.func): SqlBuilder = {
+    import SqlBuilder.fields._
+    import SqlBuilder.implicits._
+    Select(
+        "league_unit_id",
+        "league_unit_name",
+        aggregateFuntion("hatstats").toInt32 as "hatstats",
+        aggregateFuntion("midfield").toInt32 as "midfield",
+        aggregateFuntion("defense").toInt32 as "defense",
+        aggregateFuntion("attack").toInt32 as "attack",
+        aggregateFuntion("loddar_stats") as "loddar_stats"
+      ).from(
+        NestedSelect(
+            "league_unit_id",
+            "league_unit_name",
+            "round",
+            avg(hatstats).toInt32 as "hatstats",
+            avg("rating_midfield").toInt32 as "midfield",
+            avg("rating_right_def + rating_left_def + rating_mid_def").toInt32 as "defense",
+            avg("rating_right_att + rating_mid_att + rating_left_att").toInt32 as "attack",
+            avg(loddarStats) as "loddar_stats"
+          )
+          .from("hattrick.match_details")
+          .where
+            .season(parameters.season)
+            .orderingKeyPath(orderingKeyPath)
+            .isLeagueMatch
+            .and("rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0")
+          .groupBy("league_unit_id", "league_unit_name", "round")
+      ).groupBy("league_unit_id", "league_unit_name")
+      .orderBy(
+        parameters.sortBy.to(parameters.sortingDirection),
+        "league_unit_id".desc
+      ).limit(page = parameters.page, pageSize = parameters.pageSize)
+  }
 
-  override val oneRoundSql: String =
-        s"""select league_unit_id,
-         |     league_unit_name,
-         |     toInt32(avg(rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att)) as hatstats,
-         |     toInt32(avg(rating_midfield)) as midfield,
-         |     toInt32(avg((rating_right_def + rating_left_def + rating_mid_def))) as defense,
-         |     toInt32(avg((rating_right_att + rating_mid_att + rating_left_att))) as attack,
-         |     avg(${LoddarStatsUtils.homeLoddarStats}) as loddar_stats
-         |     from hattrick.match_details
-         |     __where__  AND rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0
-         |     group by league_unit_id, league_unit_name
-         | order by __sortBy__ __sortingDirection__, league_unit_id __sortingDirection__ __limit__""".stripMargin
+  override def oneRoundBuilder(orderingKeyPath: OrderingKeyPath,
+                               parameters: RestStatisticsParameters,
+                               round: Int): SqlBuilder = {
+    import SqlBuilder.fields._
+    import SqlBuilder.implicits._
+    Select(
+        "league_unit_id",
+        "league_unit_name",
+        avg(hatstats).toInt32 as "hatstats",
+        avg("rating_midfield").toInt32 as "midfield",
+        avg("rating_right_def + rating_left_def + rating_mid_def").toInt32 as "defense",
+        avg("rating_right_att + rating_mid_att + rating_left_att").toInt32 as "attack",
+        avg(loddarStats) as "loddar_stats"
+      ).from("hattrick.match_details")
+      .where
+        .season(parameters.season)
+        .orderingKeyPath(orderingKeyPath)
+        .round(round)
+        .isLeagueMatch
+        .and("rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0")
+      .groupBy("league_unit_id, league_unit_name")
+      .orderBy(
+        parameters.sortBy.to(parameters.sortingDirection),
+        "league_unit_id".to(parameters.sortingDirection)
+      ).limit(page = parameters.page, pageSize = parameters.pageSize)
+  }
 }

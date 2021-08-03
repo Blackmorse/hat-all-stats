@@ -1,27 +1,20 @@
 package databases.requests.overview
 
 import anorm.RowParser
-import databases.dao.RestClickhouseDAO
-import databases.requests.matchdetails.MatchSurprisingRequest
 import databases.requests.ClickhouseOverviewRequest
 import databases.requests.model.`match`.MatchTopHatstats
-import databases.sqlbuilder.SqlBuilder
-
-import scala.concurrent.Future
+import databases.sqlbuilder.{Select, SqlBuilder}
 
 object SurprisingMatchesOverviewRequest extends ClickhouseOverviewRequest[MatchTopHatstats] {
-  override val sql: String  = MatchSurprisingRequest.oneRoundSql
-
   override val rowParser: RowParser[MatchTopHatstats] = MatchTopHatstats.mapper
 
-  override def sortBy: String = "abs_hatstats_difference"
-
-  override def execute(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int])
-                      (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[MatchTopHatstats]] = {
-    import SqlBuilder.implicits._
+  override def builder(season: Int,
+                       round: Int,
+                       leagueId: Option[Int],
+                       divisionLevel: Option[Int]): SqlBuilder = {
     import SqlBuilder.fields._
-    val builder = new SqlBuilder("", newApi = true)
-      .select(
+    import SqlBuilder.implicits._
+    Select(
         "league_id",
         "league_unit_id",
         "league_unit_name",
@@ -57,7 +50,5 @@ object SurprisingMatchesOverviewRequest extends ClickhouseOverviewRequest[MatchT
       )
       .limitBy(1, "match_id")
       .limit(limit)
-
-    restClickhouseDAO.execute(builder.build, rowParser)
   }
 }

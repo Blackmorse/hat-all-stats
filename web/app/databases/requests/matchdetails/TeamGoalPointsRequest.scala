@@ -2,10 +2,10 @@ package databases.requests.matchdetails
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
-import databases.requests.{ClickhouseRequest, ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.model.team.TeamGoalPoints
-import databases.sqlbuilder.SqlBuilder
-import models.web.{Accumulate, MultiplyRoundsType, RestStatisticsParameters, Round}
+import databases.requests.{ClickhouseRequest, OrderingKeyPath}
+import databases.sqlbuilder.{Select, SqlBuilder}
+import models.web.{RestStatisticsParameters, Round}
 
 import scala.concurrent.Future
 
@@ -13,33 +13,7 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
   val sortingColumns: Seq[String] = Seq("won", "lost", "draw", "goals_for",
       "goals_against", "goals_difference", "points")
   val aggregateSql: String = ""
-  val oneRoundSql: String = """
-         |SELECT
-         |    any(league_id) as league,
-         |    team_id,
-         |    team_name,
-         |    league_unit_id,
-         |    league_unit_name,
-         |    sum(goals) AS goals_for,
-         |    sum(enemy_goals) AS goals_against,
-         |    goals_for  - goals_against as goals_difference,
-         |    countIf(goals > enemy_goals) AS won,
-         |    countIf(goals = enemy_goals) AS draw,
-         |    countIf(goals < enemy_goals) AS lost,
-         |    (3 * won) + draw AS points
-         |FROM hattrick.match_details
-         |__where__
-         |GROUP BY
-         |    team_name,
-         |    team_id,
-         |    league_unit_id,
-         |    league_unit_name
-         |__having__
-         |ORDER BY
-         |    __sortBy__ __sortingDirection__,
-         |    goals_difference __sortingDirection__,
-         |    team_id __sortingDirection__
-         |__limit__""".stripMargin
+  val oneRoundSql: String = ""
 
   override val rowParser: RowParser[TeamGoalPoints] = TeamGoalPoints.mapper
 
@@ -52,24 +26,45 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
     if(!sortingColumns.contains(sortBy))
       throw new Exception("Looks like SQL injection")
 
-    val (sql, round) = parameters.statsType match {
+    val (round, havingClause) = parameters.statsType match {
       case Round(r) =>
-        val tmp = oneRoundSql
-        if(playedAllMatches) {
+        if (playedAllMatches) {
           val matches = Math.min(r, currentRound)
-          (tmp.replace("__having__", s"HAVING count() >= $matches"), r)
+          (r, Some(s"count() >= $matches"))
         } else {
-          (tmp.replace("__having__", ""), r)
+          (r, None)
         }
     }
-
-    restClickhouseDAO.execute(SqlBuilder(sql)
+    import SqlBuilder.implicits._
+    val builder = Select(
+        "any(league_id)" as "league",
+        "team_id",
+        "team_name",
+        "league_unit_id",
+        "league_unit_name",
+        "sum(goals)" as "goals_for",
+        "sum(enemy_goals) as goals_against",
+        "goals_for - goals_against" as "goals_difference",
+        "countIf(goals > enemy_goals)" as "won",
+        "countIf(goals = enemy_goals)" as "draw",
+        "countIf(goals < enemy_goals)" as "lost",
+        "(3 * won) + draw" as "points"
+      ).from("hattrick.match_details")
       .where
-        .applyParameters(parameters)
-        .applyParameters(orderingKeyPath)
+        .orderingKeyPath(orderingKeyPath)
+        .season(parameters.season)
         .round.lessEqual(round)
         .isLeagueMatch
-      .sortBy(sortBy)
-      .build, rowParser)
+      .groupBy(
+        "team_name", "team_id", "league_unit_id", "league_unit_name"
+      )
+      .having.and(havingClause)
+      .orderBy(
+        sortBy.to(parameters.sortingDirection),
+        "goals_difference".to(parameters.sortingDirection),
+        "team_id".to(parameters.sortingDirection)
+      ).limit(page = parameters.page, pageSize = parameters.pageSize)
+
+    restClickhouseDAO.execute(builder.build, rowParser)
   }
 }

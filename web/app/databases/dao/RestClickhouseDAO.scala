@@ -1,7 +1,9 @@
 package databases.dao
 
+import akka.actor.ActorSystem
 import anorm.{Row, RowParser, SimpleSql}
 import play.api.db.DBApi
+import play.api.libs.concurrent.CustomExecutionContext
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
@@ -23,3 +25,5 @@ class RestClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionCo
     }
   }
 }
+
+class DatabaseExecutionContext @Inject()(system: ActorSystem) extends CustomExecutionContext(system, "database.clickhouse")

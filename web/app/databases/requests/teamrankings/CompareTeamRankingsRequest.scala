@@ -3,7 +3,6 @@ package databases.requests.teamrankings
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
-import databases.sqlbuilder.SqlBuilder
 import models.clickhouse.TeamRankings
 
 import scala.concurrent.Future
@@ -11,11 +10,9 @@ import scala.concurrent.Future
 object CompareTeamRankingsRequest extends ClickhouseRequest[TeamRankings] {
   override val rowParser: RowParser[TeamRankings] = TeamRankings.teamRankingsMapper
 
-  val request = TeamRankingsRequest.request
-
   def execute(teamId1: Long, teamId2: Long, fromSeason: Int, fromRound: Int)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamRankings]] = {
-    val builder = SqlBuilder(request)
+    val builder = TeamRankingsRequest.select
       //(season = fromSeason && round >= fromRound) OR (season >= fromSeason + 1) AND
       //(team_id = teamId1 OR team_id = teamId2) AND rank_type = league_id
       //-- with opened brackets

@@ -1,15 +1,12 @@
 package controllers
 
-import java.util.Date
-import databases.dao.ClickhouseDAO
-
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{BaseController, ControllerComponents}
-
 import models.clickhouse.TeamMatchInfo
 import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import service.SimilarMatchesService
 
+import java.util.Date
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, date: Date,
@@ -18,10 +15,9 @@ case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, date: Date,
 
 @Singleton
 class MatchController @Inject()(val controllerComponents: ControllerComponents,
-                                val clickhouseDAO: ClickhouseDAO,
                                 val similarMatchesService: SimilarMatchesService)  extends BaseController {
 
-  def similarMatches(matchId: Long, accuracy: Double) = Action.async{ implicit request =>
+  def similarMatches(matchId: Long, accuracy: Double): Action[AnyContent] = Action.async{ implicit request =>
     similarMatchesService.similarMatchesStats(matchId, accuracy)
       .map(similarMatchesStats =>
         similarMatchesStats.map(s => Ok(Json.toJson(s))).getOrElse(Ok("")))

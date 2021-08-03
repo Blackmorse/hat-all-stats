@@ -13,11 +13,12 @@ trait ValueParameter extends Parameter {
   val name: String
   def oper: String
   def value: ParameterValue
+  def sqlBuilderName: String
 }
 
 case class ConditionParameter(condition: String) extends Parameter
 
-case class IntParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends ValueParameter {
+case class IntParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry, sqlBuilderName: String) extends ValueParameter {
   private[sqlbuilder] var _oper: String = "="
   private[sqlbuilder] var _value: ParameterValue = _
 
@@ -59,7 +60,7 @@ case class IntParameter(parameterNumber: Int, name: String, clauseEntry: ClauseE
   override def value: ParameterValue = _value
 }
 
-case class LongParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends ValueParameter {
+case class LongParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry, sqlBuilderName: String) extends ValueParameter {
   var _oper: String = "="
   var _value: ParameterValue = _
 
@@ -84,7 +85,7 @@ case class LongParameter(parameterNumber: Int, name: String, clauseEntry: Clause
   override def value: ParameterValue = _value
 }
 
-case class StringParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends ValueParameter {
+case class StringParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry, sqlBuilderName: String) extends ValueParameter {
   var _oper = "="
   var _value: ParameterValue = _
 
@@ -102,7 +103,7 @@ case class StringParameter(parameterNumber: Int, name: String, clauseEntry: Clau
   override def value: ParameterValue = _value
 }
 
-case class DateParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry) extends ValueParameter {
+case class DateParameter(parameterNumber: Int, name: String, clauseEntry: ClauseEntry, sqlBuilderName: String) extends ValueParameter {
   var _oper = "="
   var _value: ParameterValue = _
   val format = new SimpleDateFormat("yyyy-MM-dd")

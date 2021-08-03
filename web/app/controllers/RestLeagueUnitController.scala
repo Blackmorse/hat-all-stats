@@ -117,8 +117,8 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
   }
 
   private def stats[T](chRequest: ClickhouseStatisticsRequest[T],
-               leagueUnitId: Int,
-               restStatisticsParameters: RestStatisticsParameters)
+                       leagueUnitId: Int,
+                       restStatisticsParameters: RestStatisticsParameters)
               (implicit writes: Writes[T]) = Action.async{ implicit request =>
     leagueUnitDataFromId(leagueUnitId).flatMap(leagueUnitData =>
       chRequest.execute(

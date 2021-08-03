@@ -9,7 +9,7 @@ trait ClickhouseRequest[T] {
 }
 
 object ClickhouseRequest {
-  def roleIdCase(fieldName: String) = {
+  def roleIdCase(fieldName: String): String = {
     val rolesList = (for(role <- Roles.all;
         id <- role.htIds) yield s"$id, ${role.internalId},")
       .mkString("\n")
