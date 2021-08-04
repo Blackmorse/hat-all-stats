@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "$(date) Starting backup upload to OneDrive"
+
 backup_name=$(ls {{ base_project_directory }}/backup | tail -1)
 previous_backup_name=$(ls {{ base_project_directory }}/backup | tail -2 | head -1)
 echo "Backup name: $backup_name"
@@ -62,3 +64,17 @@ if [ $RESULT -ne 0 ]; then
 fi
 
 curl -H "Authorization: bearer $ACCESS_TOKEN" -X DELETE "https://graph.microsoft.com/v1.0/me/drive/items/$HATTID_PREVIOUS_BACKUP_ID"
+
+ERROR_MSG=$(curl -H "Authorization: bearer $ACCESS_TOKEN" "https://graph.microsoft.com/v1.0/me/drive/root:/backups/Hattid/${backup_name}.tar.gz" | jq -r '.["error"]')
+
+if [[ "$ERROR_MSG" == "null" ]]; then
+   curl -X POST    \ 
+       -H 'Content-Type: application/json'   \
+       -d "{\"chat_id\": \"{{ loader.telegram.chatId }}\", \"text\": \"Backup uploading to OneDrive finished at $(date)\"}"  \
+           https://api.telegram.org/bot{{ loader.telegram.botToken }}/sendMessage 
+else
+  curl -X POST    \ 
+    -H 'Content-Type: application/json'   \
+    -d "{\"chat_id\": \"{{ loader.telegram.chatId }}\", \"text\": \"$(date) Error while uploading backup to OneDrive: $ERROR_MSG\"}"  \
+        https://api.telegram.org/bot{{ loader.telegram.botToken }}/sendMessage 
+fi

@@ -3,6 +3,11 @@
     path: "{{ base_project_directory }}/OneDrive"
     state: directory
 
+- name: create OneDrive upload logs directory
+  file:
+    path: "{{ base_project_directory }}/logs/upload_to_one_drive"
+    state: directory
+
 - name: copy script
   template:
     src: upload_to_onedrive.sh.j2
@@ -16,4 +21,4 @@
     weekday: "1"
     hour: "23"
     minute: "00"
-    job: "/bin/bash -c \"{{ base_project_directory }}/OneDrive/upload_to_onedrive.sh\""
+    job: "/bin/bash -c \"{{ base_project_directory }}/OneDrive/upload_to_onedrive.sh >> {{ base_project_directory }}/logs/upload_to_one_drive/logs.log 2>&1 \""

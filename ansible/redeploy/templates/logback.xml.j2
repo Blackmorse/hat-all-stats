@@ -14,9 +14,9 @@
           <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
               <level>DEBUG</level>
           </filter>
-          <file>{{ base_project_directory }}/logs/debug.log</file>
+          <file>{{ base_project_directory }}/logs/loader/debug.log</file>
           <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                  <fileNamePattern>{{ base_project_directory }}/logs/debug.%d{yyyy-ww}</fileNamePattern>
+                  <fileNamePattern>{{ base_project_directory }}/logs/loader/debug.%d{yyyy-ww}</fileNamePattern>
                   <maxHistory>4</maxHistory>
           </rollingPolicy>
           <encoder>
@@ -28,9 +28,9 @@
           <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
               <level>INFO</level>
           </filter>
-          <file>{{ base_project_directory }}/logs/info.log</file>
+          <file>{{ base_project_directory }}/logs/loader/info.log</file>
           <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                  <fileNamePattern>{{ base_project_directory }}/logs/info.%d{yyyy-ww}</fileNamePattern>
+                  <fileNamePattern>{{ base_project_directory }}/logs/loader/info.%d{yyyy-ww}</fileNamePattern>
                   <maxHistory>32</maxHistory>
           </rollingPolicy>
           <encoder>
@@ -42,9 +42,9 @@
           <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
               <level>ERROR</level>
           </filter>
-          <file>{{ base_project_directory }}/logs/error.log</file>
+          <file>{{ base_project_directory }}/logs/loader/error.log</file>
           <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                  <fileNamePattern>{{ base_project_directory }}/logs/error.%d{yyyy-ww}</fileNamePattern>
+                  <fileNamePattern>{{ base_project_directory }}/logs/loader/error.%d{yyyy-ww}</fileNamePattern>
                   <maxHistory>32</maxHistory>
           </rollingPolicy>
           <encoder>
@@ -64,4 +64,3 @@
   </root>
 
 </configuration>
-
