@@ -14,9 +14,9 @@ object PromotionsRequest extends ClickhouseRequest[Promotion] {
   def execute(orderingKeyPath: OrderingKeyPath, season: Int)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[Promotion]] = {
 
-    val divisionLevelCondition = orderingKeyPath.divisionLevel.map(level => s"AND (up_division_level = $level or up_division_level = ${level - 1})")
-    val hasLeagueUnitIdCondition = orderingKeyPath.leagueUnitId.map(id => s"AND (has(`going_down_teams.league_unit_id`, $id) OR has(`going_up_teams.league_unit_id`, $id))")
-    val hasTeamIdCondition = orderingKeyPath.teamId.map(id => s"AND (has(`going_down_teams.team_id`, $id) OR has(`going_up_teams.team_id`, $id) )")
+    val divisionLevelCondition = orderingKeyPath.divisionLevel.map(level => s"up_division_level = $level OR up_division_level = ${level - 1}")
+    val hasLeagueUnitIdCondition = orderingKeyPath.leagueUnitId.map(id => s"has(`going_down_teams.league_unit_id`, $id) OR has(`going_up_teams.league_unit_id`, $id)")
+    val hasTeamIdCondition = orderingKeyPath.teamId.map(id => s"has(`going_down_teams.team_id`, $id) OR has(`going_up_teams.team_id`, $id) ")
 
     import SqlBuilder.implicits._
     val newBuilder = Select(

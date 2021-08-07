@@ -84,10 +84,10 @@ class ClauseEntry(val sqlBuilder: SqlBuilder) {
     if(whereParameters.nonEmpty) {
       Some(
         whereParameters.map {
-          case ConditionParameter(condition) => condition
+          case ConditionParameter(condition) => s"($condition)"
           case parameter =>
             val valueParameter = parameter.asInstanceOf[ValueParameter]
-            s"${valueParameter.name} ${valueParameter.oper} {${sqlBuilder.name}_${valueParameter.name}_${valueParameter.parameterNumber}}"
+            s"(${valueParameter.name} ${valueParameter.oper} {${sqlBuilder.name}_${valueParameter.name}_${valueParameter.parameterNumber}})"
         }.mkString(" AND ")
       )
     } else {
