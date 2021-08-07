@@ -13,8 +13,8 @@ case class SearchRequest(searchType: Option[SearchType.Value] = None,
   override def createRequest()(implicit oauthTokens: OauthTokens): HttpRequest = {
     val map = RequestCreator.params("search", "1.2",
       "searchType" -> searchType,
-      "searchString" -> searchString,
-      "searchString2" -> searchString2,
+      "searchString" -> searchString.map(s => s.replace(" ", "%20")),
+      "searchString2" -> searchString2.map(s => s.replace(" ", "%20")),
       "searchID" -> searchId,
       "searchLeagueID" -> searchLeagueId,
       "pageIndex" -> pageIndex)
