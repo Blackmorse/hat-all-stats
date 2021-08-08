@@ -3,10 +3,10 @@
      src: hattrick-tests-application.conf.j2
      dest: "{{ base_project_directory }}/hat-all-stats/hattrick-tests/src/main/resources/application.conf"
 
-- name: cron hattrick-tests
-  cron:
-    name: "cron for executing hattrick tests"
-    weekday: "1"
-    hour: "12"
-    minute: "00"
-    job: "cd {{ base_project_directory }}/hat-all-stats && sbt hattrickTests/run"
+ - name: cron hattrick-tests
+   cron:
+     name: "cron for executing hattrick tests"
+     weekday: "1"
+     hour: "12"
+     minute: "00"
+     job: "cd {{ base_project_directory }}/hat-all-stats && sbt hattrickTests/run"

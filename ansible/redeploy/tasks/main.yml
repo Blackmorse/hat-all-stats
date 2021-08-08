@@ -14,3 +14,7 @@
  - include: 04-akka-loader.yml
    tags:
     - akka-loader
+
+ - include: 05-hattrick-tests.yml
+   tags:
+    - tests
