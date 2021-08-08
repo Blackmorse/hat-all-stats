@@ -41,7 +41,6 @@ lazy val akkaLoaderDependencies = Seq(
   "com.crobox.clickhouse" %% "client" % "0.9.19",
   "com.google.inject" % "guice" % guiceVersion,
   "com.google.inject.extensions" % "guice-assistedinject" % guiceVersion
-
 )
 
 lazy val akkaLoaderSetting = Seq(
@@ -56,6 +55,7 @@ lazy val chppSettings = Seq(
     "commons-codec" % "commons-codec" % "1.15",
     "com.lucidchart" %% "xtract" % "2.2.1",
     "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+    "com.typesafe.akka" %% "akka-stream" % akkaVersion //TODO  akka-streams instead of just akka-actor, because of strange errors with missing classes
   )
 )
 
@@ -74,5 +74,16 @@ lazy val web = (project in file("web"))
   .dependsOn(chpp)
   .settings(webSettings)
   .enablePlugins(PlayScala)
+
+lazy val hattrickTestsSettings = Seq(
+  libraryDependencies ++= Seq(
+    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+  )
+)
+
+lazy val hattrickTests = (project in file("hattrick-tests"))
+  .dependsOn(chpp)
+  .dependsOn(scalaCommon)
+  .settings(hattrickTestsSettings)
 
 
