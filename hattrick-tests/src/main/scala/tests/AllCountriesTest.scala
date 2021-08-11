@@ -36,18 +36,23 @@ object AllCountriesTest {
       testNumberOfCountries(worldDetails)
       testFirstAndLastLeague(worldDetails)
       testCupSchedule(worldDetails)
+      sendMessage("Countries tests succesfully passed!", botToken, chatId)
     } catch {
       case e: Exception =>
-        Await.result(Http().singleRequest(HttpRequest(
-          method = HttpMethods.POST,
-          uri = s"https://api.telegram.org/bot$botToken/sendMessage",
-          entity = HttpEntity(ContentTypes.`application/json`,
-            s"""{\"chat_id\":\"${chatId}\", \"text\": \"${e.getMessage}\"}"""
-          )
-        )), 1.minute)
+        sendMessage(e.getMessage, botToken, chatId)
     }
 
     actorSystem.terminate()
+  }
+
+  private def sendMessage(message: String, botToken: String, chatId: String)(implicit actorSystem: ActorSystem): Unit = {
+    Await.result(Http().singleRequest(HttpRequest(
+      method = HttpMethods.POST,
+      uri = s"https://api.telegram.org/bot$botToken/sendMessage",
+      entity = HttpEntity(ContentTypes.`application/json`,
+        s"""{\"chat_id\":\"$chatId\", \"text\": \"$message\"}"""
+      )
+    )), 1.minute)
   }
 
   private def testNumberOfCountries(worldDetails: WorldDetails): Unit = {

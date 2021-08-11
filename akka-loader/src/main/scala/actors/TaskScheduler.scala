@@ -3,7 +3,6 @@ package actors
 import actors.TaskExecutorActor.{ScheduleFinished, ScheduleTask}
 import actors.TaskScheduler.countriesToMinutesOffset
 import akka.actor.ActorRef
-import alltid.AlltidClient
 import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.{League, WorldDetails}
 import com.google.inject.assistedinject.{Assisted, AssistedInject}
