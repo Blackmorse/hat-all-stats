@@ -1,20 +1,21 @@
 package databases.requests.model.team
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 import anorm.SqlParser.get
-import anorm.~
+import anorm.{RowParser, ~}
 
 case class TeamSalaryTSI(teamSortingKey: TeamSortingKey,
                          tsi: Long,
                          salary: Long,
                          playersCount: Int,
                          avgSalary: Long,
-                         avgTsi: Long)
+                         avgTsi: Long,
+                         salaryPerTsi: Double)
 
 object TeamSalaryTSI {
-  implicit val writes = Json.writes[TeamSalaryTSI]
+  implicit val writes: OWrites[TeamSalaryTSI] = Json.writes[TeamSalaryTSI]
 
-  val mapper = {
+  val mapper: RowParser[TeamSalaryTSI] = {
     get[Int]("league") ~
     get[Long]("team_id") ~
     get[String]("team_name") ~
@@ -24,17 +25,24 @@ object TeamSalaryTSI {
     get[Long]("salary") ~
     get[Int]("players_count") ~
     get[Long]("avg_salary") ~
-    get[Long]("avg_tsi") map {
+    get[Long]("avg_tsi") ~
+    get[Double]("salary_per_tsi") map {
       case leagueId ~ teamId ~ teamName ~ leagueUnitId ~ leagueUnitName ~
-        tsi ~ salary ~ playersCount ~ avgSalary ~ avgTsi =>
-        val teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId)
+        tsi ~ salary ~ playersCount ~ avgSalary ~ avgTsi ~ salaryPerTsi =>
+        val teamSortingKey = TeamSortingKey(
+          teamId = teamId,
+          teamName = teamName,
+          leagueUnitId = leagueUnitId,
+          leagueUnitName = leagueUnitName,
+          leagueId = leagueId)
 
-        TeamSalaryTSI(teamSortingKey,
-          tsi,
-          salary,
-          playersCount,
-          avgSalary,
-          avgTsi)
+        TeamSalaryTSI(teamSortingKey = teamSortingKey,
+          tsi = tsi,
+          salary = salary,
+          playersCount = playersCount,
+          avgSalary = avgSalary,
+          avgTsi = avgTsi,
+          salaryPerTsi = salaryPerTsi)
     }
   }
 }

@@ -201,5 +201,7 @@
     "team.period": "Период",
     "team.date_of_foundation": "Дата основания",
 
-    "menu.comparsion_of_teams": "Сравнение команд"
+    "menu.comparsion_of_teams": "Сравнение команд",
+
+    "table.salary_per_tsi": "Зарплата/TSI"
 }

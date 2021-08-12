@@ -55,3 +55,8 @@ export function loddarStats(value: number): JSX.Element {
 export function salaryFormatter(value: number, currencyRate?: number): JSX.Element {
     return commasSeparated(Math.floor(value / ((currencyRate === undefined) ? 1 : currencyRate)))
 }
+
+export function doubleSalaryFormatter(value: number, currencyRate?: number): number {
+    let val = value / ((currencyRate === undefined) ? 1 : currencyRate)
+    return Math.ceil(val * 100) / 100
+}

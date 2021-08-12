@@ -10,7 +10,7 @@ import models.web.{RestStatisticsParameters, Round}
 import scala.concurrent.Future
 
 object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
-  val sortingColumns: Seq[String] = Seq("tsi", "salary", "players_count", "avg_salary", "avg_tsi")
+  val sortingColumns: Seq[String] = Seq("tsi", "salary", "players_count", "avg_salary", "avg_tsi", "salary_per_tsi")
 
   def execute(orderingKeyPath: OrderingKeyPath,
               parameters: RestStatisticsParameters,
@@ -36,7 +36,8 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
         "sum(salary)" as "salary",
         "count()" as "players_count",
         "salary / players_count".toInt64 as "avg_salary",
-        "tsi / players_count".toInt64 as "avg_tsi"
+        "tsi / players_count".toInt64 as "avg_tsi",
+        "salary / tsi" as "salary_per_tsi"
       ).from("hattrick.player_stats")
       .where
         .season(parameters.season)

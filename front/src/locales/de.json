@@ -200,5 +200,7 @@
     "team.period": "Zeitraum",
     "team.date_of_foundation": "Gründungsdatum",
 
-    "menu.comparsion_of_teams": "Vergleich der Mannschaften"
+    "menu.comparsion_of_teams": "Vergleich der Mannschaften",
+
+    "table.salary_per_tsi": "Gehalt/TSI"
 }

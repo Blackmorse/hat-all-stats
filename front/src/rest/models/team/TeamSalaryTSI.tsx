@@ -6,7 +6,8 @@ interface TeamSalaryTSI {
     salary: number,
     playersCount: number,
     avgSalary: number,
-    avgTsi: number
+    avgTsi: number,
+    salaryPerTsi: number
 }
 
 export default TeamSalaryTSI

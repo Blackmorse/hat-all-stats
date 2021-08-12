@@ -201,5 +201,7 @@
     "team.period": "Period",
     "team.date_of_foundation": "Date of foundation",
 
-    "menu.comparsion_of_teams": "Comparsion of teams"
+    "menu.comparsion_of_teams": "Comparsion of teams",
+
+    "table.salary_per_tsi": "Salary/TSI"
   }

@@ -9,7 +9,7 @@ import { Translation } from 'react-i18next'
 import ModelTableTh from '../../../common/elements/SortingTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
-import { commasSeparated, salaryFormatter } from '../../Formatters'
+import { commasSeparated, salaryFormatter, doubleSalaryFormatter } from '../../Formatters'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { LoadingEnum } from '../../enums/LoadingEnum'
 import RestTableData from '../../../rest/models/RestTableData'
@@ -50,6 +50,8 @@ class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataPro
                 <ModelTableTh title='table.average_tsi' sortingField='avg_tsi' sortingState={sortingState} />
                 <ModelTableTh title='table.average_salary' titlePostfix={', ' + this.props.levelDataProps.currency()} 
                     sortingField='avg_salary' sortingState={sortingState} />
+                <ModelTableTh title='table.salary_per_tsi' sortingField='salary_per_tsi' titlePostfix={', ' + this.props.levelDataProps.currency()}
+                    sortingState={sortingState} />
             </tr>
         }
         </Translation>
@@ -66,6 +68,7 @@ class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataPro
             <td className="value">{teamSalaryTSI.playersCount}</td>
             <td className="value">{commasSeparated(teamSalaryTSI.avgTsi)}</td>
             <td className="value">{salaryFormatter(teamSalaryTSI.avgSalary, this.props.levelDataProps.currencyRate())}</td>
+            <td className="value">{doubleSalaryFormatter(teamSalaryTSI.salaryPerTsi, this.props.levelDataProps.currencyRate())}</td>
         </>
     }
 }

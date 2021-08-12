@@ -202,5 +202,7 @@
     "team.period": "Periodo",
     "team.date_of_foundation": "Data di fondazione",
 
-    "menu.comparsion_of_teams": "Confronto delle squadre"
+    "menu.comparsion_of_teams": "Confronto delle squadre",
+
+    "table.salary_per_tsi": "Stipendio/TSI"
 }

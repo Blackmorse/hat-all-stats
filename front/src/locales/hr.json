@@ -201,5 +201,7 @@
     "team.period": "Razdoblje",
     "team.date_of_foundation": "Datum osnivanja",
 
-    "menu.comparsion_of_teams": "Usporedba timova"
+    "menu.comparsion_of_teams": "Usporedba timova",
+
+    "table.salary_per_tsi": "Plaća/TSI"
 }
