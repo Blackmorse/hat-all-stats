@@ -37,7 +37,7 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
         "count()" as "players_count",
         "salary / players_count".toInt64 as "avg_salary",
         "tsi / players_count".toInt64 as "avg_tsi",
-        "salary / tsi" as "salary_per_tsi"
+        "if(tsi = 0, 0, salary / tsi)" as "salary_per_tsi"
       ).from("hattrick.player_stats")
       .where
         .season(parameters.season)
