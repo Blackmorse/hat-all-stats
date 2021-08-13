@@ -42,6 +42,7 @@ abstract class Layout<Props, State> extends React.Component<Props, State> {
                     <button className="language_link_button" onClick={(e) => this.changeLanguage("it")}>it</button>
                     <button className="language_link_button" onClick={(e) => this.changeLanguage("ru")}>ru</button>
                     <button className="language_link_button" onClick={(e) => this.changeLanguage("tr")}>tr</button>
+                    <button className="language_link_button" onClick={(e) => this.changeLanguage("fa")}>fa</button>
                 </span>
             </aside>
             <header className="header">{this.topMenu()}</header>

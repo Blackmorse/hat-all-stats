@@ -7,6 +7,7 @@ import langHr from './locales/hr.json'
 import langEs from './locales/es.json'
 import langDe from './locales/de.json'
 import langTr from './locales/tr.json'
+import langFa from './locales/fa.json'
 
 // the translations
 // (tip move them in a JSON file and import them)
@@ -31,6 +32,9 @@ const resources = {
   },
   tr: {
     translation: langTr
+  },
+  fa: {
+    translation: langFa
   }
 };
 
