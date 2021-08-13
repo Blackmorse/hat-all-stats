@@ -84,13 +84,13 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
 
   def limit(limit: Int): SqlBuilder = {
     this.page = 0
-    this.pageSize = limit
+    this.pageSize = limit + 1
     this
   }
 
   def limit(page: Int, pageSize: Int): SqlBuilder = {
     this.page = page
-    this.pageSize = pageSize
+    this.pageSize = pageSize + 1
     this
   }
 
@@ -127,7 +127,7 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
     val orderBy = if (this._orderBy != null ) s" ORDER BY ${this._orderBy.toString}" else ""
 
     val limit = if (pageSize != 0 || page != 0) {
-      s"LIMIT ${pageSize * page}, ${pageSize + 1}"
+      s"LIMIT ${pageSize * page}, ${pageSize}"
     } else {
       ""
     }
