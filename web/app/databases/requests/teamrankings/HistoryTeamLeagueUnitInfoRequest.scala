@@ -22,6 +22,7 @@ object HistoryTeamLeagueUnitInfoRequest extends ClickhouseRequest[HistoryTeamLea
         .season(season)
         .leagueId(leagueId)
         .teamId(teamId)
+      .limit(1)
 
     restClickhouseDAO.executeSingleOpt(builder.build, rowParser)
   }
