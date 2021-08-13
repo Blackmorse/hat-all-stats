@@ -84,7 +84,7 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
 
   def limit(limit: Int): SqlBuilder = {
     this.page = 0
-    this.pageSize = limit + 1
+    this.pageSize = limit
     this
   }
 
