@@ -1,6 +1,6 @@
-package actors
+package executors
 
-import actors.LeagueExecutorActor.LeagueMat
+import executors.LeagueExecutorActor.LeagueMat
 import akka.Done
 import akka.stream.scaladsl.Sink
 import alltid.AlltidClient

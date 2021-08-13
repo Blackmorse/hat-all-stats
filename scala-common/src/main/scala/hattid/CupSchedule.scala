@@ -1,7 +1,7 @@
 package hattid
 
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.{Calendar, Date}
 
 case class ScheduleEntry(leagueId: Int, date: Date)
 
@@ -155,4 +155,27 @@ object CupSchedule {
     ScheduleEntry(165, format.parse("Jun 30 23:20:00 MSK 2021")),
     ScheduleEntry(1000, format.parse("Jul 13 17:00:00 MSK 2021"))
   )
+
+  def normalizeCupScheduleToDayOfWeek(cupSchedules: Seq[ScheduleEntry], dayOfWeek: Int): Seq[ScheduleEntry] = {
+    val c = Calendar.getInstance
+    c.set(Calendar.DAY_OF_WEEK, dayOfWeek)
+    val monday = c.getTime
+
+    cupSchedules
+      .map(cupSchedule => {
+        if (cupSchedule.date.before(monday)) {
+          var newDate = cupSchedule.date
+          while (newDate.before(monday)) {
+            newDate = new Date(newDate.getTime + 1000L * 60 * 60 * 24 * 7)
+          }
+          ScheduleEntry(cupSchedule.leagueId, newDate)
+        } else {
+          var newDate = cupSchedule.date
+          while (newDate.after(monday)) {
+            newDate = new Date(newDate.getTime - 1000L * 60 * 60 * 24 * 7)
+          }
+          ScheduleEntry(cupSchedule.leagueId, new Date(newDate.getTime + 1000L * 60 * 60 * 24 * 7))
+        }
+      })
+  }
 }

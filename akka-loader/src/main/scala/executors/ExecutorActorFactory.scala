@@ -1,4 +1,4 @@
-package actors
+package executors
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.stream.scaladsl.{Flow, Keep}

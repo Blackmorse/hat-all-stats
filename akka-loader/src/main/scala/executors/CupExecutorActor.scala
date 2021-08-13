@@ -1,4 +1,4 @@
-package actors
+package executors
 
 import akka.Done
 import akka.stream.scaladsl.Sink

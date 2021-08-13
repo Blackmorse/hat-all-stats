@@ -1,11 +1,9 @@
 package guice
 
-import actors.{TaskScheduler, TaskSchedulerFactory}
 import akka.actor.ActorSystem
 import chpp.OauthTokens
 import com.crobox.clickhouse.ClickhouseClient
 import com.google.inject.AbstractModule
-import com.google.inject.assistedinject.FactoryModuleBuilder
 import com.typesafe.config.Config
 
 class LoaderModule(config: Config, actorSystem: ActorSystem) extends AbstractModule {
@@ -21,9 +19,5 @@ class LoaderModule(config: Config, actorSystem: ActorSystem) extends AbstractMod
     bind(classOf[Config]).toInstance(config)
     bind(classOf[ClickhouseClient]).toInstance(new ClickhouseClient(Some(config)))
     bind(classOf[OauthTokens]).toInstance(oauthTokens)
-
-    install(new FactoryModuleBuilder()
-      .implement(classOf[TaskScheduler], classOf[TaskScheduler])
-      .build(classOf[TaskSchedulerFactory]))
   }
 }

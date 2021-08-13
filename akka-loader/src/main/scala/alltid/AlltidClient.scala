@@ -1,5 +1,5 @@
 package alltid
-import actors.TaskExecutorActor.ScheduleTask
+import executors.TaskExecutorActor.ScheduleTask
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest}

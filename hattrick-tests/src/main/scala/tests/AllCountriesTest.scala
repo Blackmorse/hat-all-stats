@@ -9,7 +9,7 @@ import chpp.{ChppRequestExecutor, OauthTokens}
 import com.typesafe.config.ConfigFactory
 import hattid.{CommonData, CupSchedule, ScheduleEntry}
 
-import java.util.{Calendar, Date}
+import java.util.Calendar
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -63,10 +63,10 @@ object AllCountriesTest {
 
   private def testCupSchedule(worldDetails: WorldDetails): Unit = {
 
-    val schedule = normalizeCupScheduleToDayOfWeek(CupSchedule.seq, Calendar.MONDAY)
+    val schedule = CupSchedule.normalizeCupScheduleToDayOfWeek(CupSchedule.seq, Calendar.MONDAY)
       .sortBy(_.date)
 
-    val worldDetailsSchedule = normalizeCupScheduleToDayOfWeek(worldDetails.leagueList
+    val worldDetailsSchedule = CupSchedule.normalizeCupScheduleToDayOfWeek(worldDetails.leagueList
       .map(league => ScheduleEntry(league.leagueId, league.cupMatchDate)), Calendar.MONDAY)
       .sortBy(_.date)
 
@@ -79,7 +79,7 @@ object AllCountriesTest {
   }
 
   private def testFirstAndLastLeague(worldDetails: WorldDetails): Unit = {
-    val schedule = normalizeCupScheduleToDayOfWeek(worldDetails.leagueList
+    val schedule = CupSchedule.normalizeCupScheduleToDayOfWeek(worldDetails.leagueList
       .map(league => ScheduleEntry(league.leagueId, league.seriesMatchDate)), Calendar.THURSDAY)
       .sortBy(_.date)
 
@@ -89,28 +89,5 @@ object AllCountriesTest {
     if (schedule.last.leagueId != 100) {
       throw new Exception(s"Now last league is ${schedule.last} instead of El Salvador!")
     }
-  }
-
-  private def normalizeCupScheduleToDayOfWeek(cupSchedules: Seq[ScheduleEntry], dayOfWeek: Int): Seq[ScheduleEntry] = {
-    val c = Calendar.getInstance
-    c.set(Calendar.DAY_OF_WEEK, dayOfWeek)
-    val monday = c.getTime
-
-    cupSchedules
-      .map(cupSchedule => {
-        if (cupSchedule.date.before(monday)) {
-          var newDate = cupSchedule.date
-          while (newDate.before(monday)) {
-            newDate = new Date(newDate.getTime + 1000L * 60 * 60 * 24 * 7)
-          }
-          ScheduleEntry(cupSchedule.leagueId, newDate)
-        } else {
-          var newDate = cupSchedule.date
-          while (newDate.after(monday)) {
-            newDate = new Date(newDate.getTime - 1000L * 60 * 60 * 24 * 7)
-          }
-          ScheduleEntry(cupSchedule.leagueId, new Date(newDate.getTime + 1000L * 60 * 60 * 24 * 7))
-        }
-      })
   }
 }

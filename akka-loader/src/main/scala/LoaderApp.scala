@@ -1,14 +1,13 @@
-import actors.{ExecutorActorFactory, TaskScheduler, TaskSchedulerFactory}
-import actors.TaskExecutorActor.TryToExecute
+import executors.ExecutorActorFactory
+import executors.TaskExecutorActor.TryToExecute
 import akka.actor.ActorSystem
 import chpp.OauthTokens
-import chpp.commonmodels.MatchType
-import chpp.worlddetails.models.League
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.Logger
 import guice.LoaderModule
 import org.slf4j.LoggerFactory
+import scheduler.{CupScheduler, LeagueScheduler}
 import utils.WorldDetailsSingleRequest
 
 import scala.concurrent.Await
@@ -39,24 +38,22 @@ object LoaderApp extends  App {
     .map(_.get)
     .toMap
 
-  val (taskExecutorActor, matchType, dateTimeFunc) = if (args(1) == "league") {
+  val (taskExecutorActor, scheduler) = if (args(1) == "league") {
     val taskExecutorActor = executorActorFactory.createLeagueExecutorActor(worldDetails)
-    (taskExecutorActor, MatchType.LEAGUE_MATCH, (league: League) => league.seriesMatchDate)
+    (taskExecutorActor, new LeagueScheduler(worldDetails, taskExecutorActor))
   } else if (args(1) == "cup") {
     val taskExecutorActor = executorActorFactory.createCupExecutorActor(worldDetails)
-    (taskExecutorActor, MatchType.CUP_MATCH, (league: League) => league.cupMatchDate)
+    (taskExecutorActor, new CupScheduler(worldDetails, taskExecutorActor))
   } else {
     throw new Exception(s"Unknown/unsupported ${args(1)} match type")
   }
 
-  val taskScheduler = injector.getInstance(classOf[TaskSchedulerFactory]).createTaskScheduler(worldDetails, taskExecutorActor, matchType)
-
   if (args(0) == "schedule") {
-    taskScheduler.schedule(dateTimeFunc)
+    scheduler.schedule()
   } else if (args(0) == "scheduleFrom") {
-    taskScheduler.scheduleFrom(args(2), dateTimeFunc)
+    scheduler.scheduleFrom(args(2))
   } else if (args(0) == "load") {
-    taskScheduler.load(args(2))
+    scheduler.load(args(2))
   } else {
     logger.error("Please specify one of available tasks: schedule, scheduleFrom, load")
     throw new IllegalArgumentException(s"Unknown args: ${args.mkString("Array(", ", ", ")")}")

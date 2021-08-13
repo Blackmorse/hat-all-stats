@@ -1,6 +1,6 @@
-package actors
+package executors
 
-import actors.TaskExecutorActor.{ScheduleFinished, ScheduleTask, TaskFinished, TryToExecute}
+import executors.TaskExecutorActor.{ScheduleFinished, ScheduleTask, TaskFinished, TryToExecute}
 import akka.actor.Actor
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import chpp.OauthTokens
