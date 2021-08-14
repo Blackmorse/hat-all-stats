@@ -31,6 +31,7 @@ object TeamsCreatedSameTimeRequest extends ClickhouseRequest[CreatedSameTimeTeam
         .round(currentRound)
         .foundedDate.greaterOrEqual(datesRange.min)
         .foundedDate.less(datesRange.max)
+      .limitBy(1, "team_id")
 
     restClickhouseDAO.execute(builder.build, rowParser)
   }
