@@ -55,11 +55,19 @@ lazy val chppSettings = Seq(
     "commons-codec" % "commons-codec" % "1.15",
     "com.lucidchart" %% "xtract" % "2.2.1",
     "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-    "com.typesafe.akka" %% "akka-stream" % akkaVersion //TODO  akka-streams instead of just akka-actor, because of strange errors with missing classes
+    "com.typesafe.akka" %% "akka-stream" % akkaVersion //TODO  akka-streams instead of just akka-actor, because of strange errors with missing classes (check that it's true oO)
+  )
+)
+
+lazy val scalaCommonSettings = Seq(
+  libraryDependencies ++= Seq(
+    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+    "com.typesafe.akka" %% "akka-stream" % akkaVersion //TODO  akka-streams instead of just akka-actor, because of strange errors with missing classes (check that it's true oO)
   )
 )
 
 lazy val scalaCommon = (project in file("scala-common"))
+  .settings(scalaCommonSettings)
 
 lazy val chpp = (project in file("chpp"))
   .settings(chppSettings)
@@ -75,15 +83,8 @@ lazy val web = (project in file("web"))
   .settings(webSettings)
   .enablePlugins(PlayScala)
 
-lazy val hattrickTestsSettings = Seq(
-  libraryDependencies ++= Seq(
-    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-  )
-)
-
 lazy val hattrickTests = (project in file("hattrick-tests"))
   .dependsOn(chpp)
   .dependsOn(scalaCommon)
-  .settings(hattrickTestsSettings)
 
 

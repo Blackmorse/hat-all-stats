@@ -14,7 +14,7 @@ import databases.requests.playerstats.player._
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamrankings.{HistoryTeamLeagueUnitInfoRequest, TeamRankingsRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import hattrick.ChppClient
+import webclients.ChppClient
 import models.clickhouse.{NearestMatch, TeamRankings}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds

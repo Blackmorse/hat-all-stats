@@ -1,4 +1,4 @@
-package hattrick
+package webclients
 
 import akka.actor.ActorSystem
 import chpp.{AbstractRequest, ChppRequestExecutor, OauthTokens}

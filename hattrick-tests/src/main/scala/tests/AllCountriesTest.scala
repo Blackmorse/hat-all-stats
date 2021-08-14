@@ -7,6 +7,8 @@ import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.WorldDetails
 import chpp.{ChppRequestExecutor, OauthTokens}
 import com.typesafe.config.ConfigFactory
+import hattid.telegram.TelegramClient
+import hattid.telegram.TelegramClient.TelegramCreds
 import hattid.{CommonData, CupSchedule, ScheduleEntry}
 
 import java.util.Calendar
@@ -16,7 +18,7 @@ import scala.concurrent.duration._
 object AllCountriesTest {
 
   def main(args: Array[String]): Unit = {
-    implicit val actorSystem = ActorSystem("TestsActorSystem")
+    implicit val actorSystem: ActorSystem = ActorSystem("TestsActorSystem")
 
     val config = ConfigFactory.load()
 
@@ -29,6 +31,7 @@ object AllCountriesTest {
     val chatId = config.getString("telegram.chatId")
 
     implicit val oauthTokens: OauthTokens = OauthTokens(authToken, authCustomerKey, clientSecret, tokenSecret)
+    implicit val telegramCreds: TelegramCreds = TelegramCreds(chatId = chatId, botToken = botToken)
 
     val worldDetails = Await.result(ChppRequestExecutor.execute(WorldDetailsRequest()), 1.minute)
 
@@ -36,23 +39,13 @@ object AllCountriesTest {
       testNumberOfCountries(worldDetails)
       testFirstAndLastLeague(worldDetails)
       testCupSchedule(worldDetails)
-      sendMessage("Countries tests succesfully passed!", botToken, chatId)
+      Await.result(TelegramClient.sendMessage("Countries tests succesfully passed!"), 1.minute)
     } catch {
       case e: Exception =>
-        sendMessage(e.getMessage, botToken, chatId)
+        Await.result(TelegramClient.sendMessage(e.getMessage), 1.minute)
     }
 
     actorSystem.terminate()
-  }
-
-  private def sendMessage(message: String, botToken: String, chatId: String)(implicit actorSystem: ActorSystem): Unit = {
-    Await.result(Http().singleRequest(HttpRequest(
-      method = HttpMethods.POST,
-      uri = s"https://api.telegram.org/bot$botToken/sendMessage",
-      entity = HttpEntity(ContentTypes.`application/json`,
-        s"""{\"chat_id\":\"$chatId\", \"text\": \"$message\"}"""
-      )
-    )), 1.minute)
   }
 
   private def testNumberOfCountries(worldDetails: WorldDetails): Unit = {

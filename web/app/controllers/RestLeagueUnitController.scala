@@ -16,7 +16,7 @@ import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattid.CommonData
-import hattrick.ChppClient
+import webclients.ChppClient
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web._

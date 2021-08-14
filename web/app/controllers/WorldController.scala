@@ -7,7 +7,7 @@ import databases.requests.OrderingKeyPath
 import databases.requests.matchdetails.{MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player.{PlayerRatingsRequest, PlayerSalaryTSIRequest}
-import hattrick.ChppClient
+import webclients.ChppClient
 import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
 import play.api.cache.AsyncCacheApi
 import play.api.i18n.I18nSupport

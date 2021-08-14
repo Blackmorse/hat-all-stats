@@ -27,6 +27,11 @@ db.default.url = "{{ clickhouse.jdbc_url }}"
 db.default.user= "{{ clickhouse.users.web.name }}"
 db.default.password="{{ clickhouse.users.web.password }}"
 
+telegram {
+  botToken = "{{ loader.telegram.botToken }}"
+  chatId = {{ loader.telegram.chatId }}
+}
+
 fixedConnectionPool = 20
 
 database.clickhouse {

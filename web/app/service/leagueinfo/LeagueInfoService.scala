@@ -4,7 +4,7 @@ import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.WorldDetails
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.HistoryInfoRequest
-import hattrick.ChppClient
+import webclients.ChppClient
 import play.api.Configuration
 
 import javax.inject.{Inject, Singleton}

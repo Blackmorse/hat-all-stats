@@ -6,7 +6,7 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.model.team.CreatedSameTimeTeam
 import databases.requests.teamdetails.TeamsCreatedSameTimeRequest
 import databases.requests.teamrankings.CompareTeamRankingsRequest
-import hattrick.ChppClient
+import webclients.ChppClient
 import models.web.TeamComparsion
 import play.api.libs.json.Json
 import play.api.mvc.QueryStringBindable

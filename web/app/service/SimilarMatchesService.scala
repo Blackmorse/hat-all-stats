@@ -5,7 +5,7 @@ import chpp.matchdetails.models.MatchDetails
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.SimilarMatchesRequest
 import databases.requests.model.`match`.SimilarMatchesStats
-import hattrick.ChppClient
+import webclients.ChppClient
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
