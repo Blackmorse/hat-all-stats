@@ -12,12 +12,12 @@ class HattidErrorHandler @Inject() (telegramClient: WebTelegramClient,
                                    ) extends PreferredMediaTypeHttpErrorHandler(
   "application/json" -> new HttpErrorHandler {
     override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
-      telegramClient.sendMessage(s"Web onClientError: $message")
+      telegramClient.sendMessage(s"${request.path}: \nWeb onClientError: $message")
       jsonHandler.onClientError(request, statusCode, message)
     }
 
     override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
-      telegramClient.sendMessage(s"Web onServerError: ${exception.getMessage}. Stack Trace: \n ${exception.getStackTrace.mkString("\n")}")
+      telegramClient.sendMessage(s"${request.path} \n\nWeb onServerError: ${exception.getMessage}. Stack Trace: \n ${exception.getStackTrace.mkString("\n")}")
       jsonHandler.onServerError(request, exception)
     }
   },
