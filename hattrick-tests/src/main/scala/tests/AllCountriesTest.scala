@@ -1,8 +1,6 @@
 package tests
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest}
 import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.WorldDetails
 import chpp.{ChppRequestExecutor, OauthTokens}
@@ -60,7 +58,7 @@ object AllCountriesTest {
       .sortBy(_.date)
 
     val worldDetailsSchedule = CupSchedule.normalizeCupScheduleToDayOfWeek(worldDetails.leagueList
-      .map(league => ScheduleEntry(league.leagueId, league.cupMatchDate)), Calendar.MONDAY)
+      .map(league => ScheduleEntry(league.leagueId, league.cupMatchDate.get)), Calendar.MONDAY)
       .sortBy(_.date)
 
     schedule.zip(worldDetailsSchedule)

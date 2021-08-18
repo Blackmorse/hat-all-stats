@@ -220,7 +220,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
           val round = leagueInfoService.leagueInfo.currentRound(leagueId)
           val leagueInfo = leagueInfoService.leagueInfo(leagueId)
           val leagueTeamsCount = leagueInfo.seasonInfo(season).roundInfo(round).divisionLevelInfo.values.map(_.count).sum
-          val divisionLevel = teamRankings.map(_.divisionLevel).headOption.getOrElse(team.leagueLevelUnit.leagueLevel.toInt)
+          val divisionLevel = teamRankings.map(_.divisionLevel).headOption.getOrElse(team.leagueLevelUnit.leagueLevel)
           val divisionLevelTeamsCount = leagueInfo.seasonInfo(season).roundInfo(round).divisionLevelInfo(divisionLevel).count
           val currencyRate = CurrencyUtils.currencyRate(leagueInfo.league.country)
           val currencyName = CurrencyUtils.currencyName(leagueInfo.league.country)

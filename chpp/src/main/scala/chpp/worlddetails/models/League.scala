@@ -24,7 +24,7 @@ case class League(leagueId: Int,
                   waitingUsers: Int,
                   trainingDate: Date,
                   economyDate: Date,
-                  cupMatchDate: Date,
+                  cupMatchDate: Option[Date],
                   seriesMatchDate: Date,
                   numberOfLevels: Int
                  )
@@ -48,7 +48,10 @@ object League extends BaseXmlMapper {
     (__ \ "WaitingUsers").read[Int],
     (__ \ "TrainingDate").read[String].map(date),
     (__ \ "EconomyDate").read[String].map(date),
-    (__ \ "CupMatchDate").read[String].map(date),
+    (__ \ "CupMatchDate").read[String].map{
+      case "" => None
+      case s => Some(date(s))
+    },
     (__ \ "SeriesMatchDate").read[String].map(date),
     (__ \ "NumberOfLevels").read[Int]
     ).mapN(apply _)
