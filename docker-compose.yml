@@ -1,4 +1,4 @@
-version: "3.7"
+version: "2.4"
 
 networks:
   hattrick_network:
@@ -28,11 +28,14 @@ services:
     networks:
      - hattrick_network
     volumes:
-     - ./web:/app
+     - ./:/app
      - ~/.m2:/root/.m2
      - ~/.sbt:/root/.sbt
      - ~/.ivy2:/root/.ivy2
-    command: bash -c "cd /app && sbt clean && sbt  -Dconfig.file=\"/app/conf/application-docker.conf\" \"run 9001\""
+     - ./build.properties:/app/project/build.properties #need to downgrade sbt version at docker. Bug: https://github.com/sbt/sbt/issues/6101#issuecomment-765106609
+    command: bash -c "cd /app && sbt clean && sbt -Dhttp.port=9001 -Dconfig.file=\"/app/web/conf/application-docker.conf\" web/run"
+    depends_on:
+     - hattrick-clickhouse
 
   hattid-front:
     image: node:16
@@ -44,6 +47,8 @@ services:
      - "3000:3000"
     networks:
      - hattrick_network
+    depends_on:
+     - hattid-web
     volumes:
      - ./front:/app
     command: bash -c "cd /app && npm install && REACT_APP_HATTID_SERVER_URL=http://localhost:9001 npm start"

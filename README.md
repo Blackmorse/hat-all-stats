@@ -7,4 +7,11 @@
  Hattid is like reincarnarion of <b>Alltid</b> - the site which primary goal is to collect statistical information about the [Hattrick](https://hattrick.org), including team, series, players stats, etc...
 
  ## Developing
- See [DEVELOP.md](DEVELOP.md) for information about deploying the project
+ Starting the project locally is very straightforward:
+```
+docker-compose up
+```
+from the project directory. <b>!Important!</b> Unfortunately, you need to fetch OAUTH keys to make the app working properly. Put them intro web/conf/application-docker.conf file. (Feel free to contact me for help with the keys: blackmorse@live.com)
+ 
+
+ More about the project and its deploying: [DEVELOP.md](DEVELOP.md) 
