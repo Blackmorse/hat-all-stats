@@ -153,7 +153,8 @@ object CupSchedule {
     ScheduleEntry(163, format.parse("Jun 30 18:15:00 MSK 2021")),
     ScheduleEntry(164, format.parse("Jun 17 00:15:00 MSK 2021")),
     ScheduleEntry(165, format.parse("Jun 30 23:20:00 MSK 2021")),
-    ScheduleEntry(1000, format.parse("Jul 13 17:00:00 MSK 2021"))
+    ScheduleEntry(1000, format.parse("Jul 13 17:00:00 MSK 2021")),
+    ScheduleEntry(1001, format.parse("Jul 13 17:00:00 MSK 2021"))
   )
 
   def normalizeCupScheduleToDayOfWeek(cupSchedules: Seq[ScheduleEntry], dayOfWeek: Int): Seq[ScheduleEntry] = {
