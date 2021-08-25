@@ -23,7 +23,9 @@ class CupScheduler(worldDetails: WorldDetails,
 
   override protected def scheduleFrom(leagueId: Int): Unit = {
     CupSchedule.normalizeCupScheduleToDayOfWeek(CupSchedule.seq, Calendar.MONDAY)
+      .sortBy(_.date)
       .dropWhile(_.leagueId != leagueId)
+      .map(se => ScheduleTask(se.leagueId, se.date))
       .foreach(task => taskExecutorActor ! task)
 
     taskExecutorActor ! ScheduleFinished

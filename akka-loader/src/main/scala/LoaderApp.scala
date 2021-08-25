@@ -31,12 +31,6 @@ object LoaderApp extends  App {
   val worldDetailsFuture = WorldDetailsSingleRequest.request(leagueId = None)
 
   private val worldDetails = Await.result(worldDetailsFuture, 30.seconds)
-  val countryMap = worldDetails.leagueList
-    .view
-    .map(league => league.country.map(country => (country.countryId, league.leagueId)))
-    .filter(_.isDefined)
-    .map(_.get)
-    .toMap
 
   val (taskExecutorActor, scheduler) = if (args(1) == "league") {
     val taskExecutorActor = executorActorFactory.createLeagueExecutorActor(worldDetails)
