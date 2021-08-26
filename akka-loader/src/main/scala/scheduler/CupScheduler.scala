@@ -25,7 +25,10 @@ class CupScheduler(worldDetails: WorldDetails,
     CupSchedule.normalizeCupScheduleToDayOfWeek(CupSchedule.seq, Calendar.MONDAY)
       .sortBy(_.date)
       .dropWhile(_.leagueId != leagueId)
-      .map(se => ScheduleTask(se.leagueId, se.date))
+      .map(scheduleEntry => {
+        val scheduledDate = new Date(scheduleEntry.date.getTime + threeHoursMs)
+        ScheduleTask(scheduleEntry.leagueId, scheduledDate)
+      })
       .foreach(task => taskExecutorActor ! task)
 
     taskExecutorActor ! ScheduleFinished
