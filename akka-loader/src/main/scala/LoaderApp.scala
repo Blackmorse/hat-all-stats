@@ -2,6 +2,7 @@ import executors.ExecutorActorFactory
 import executors.TaskExecutorActor.TryToExecute
 import akka.actor.ActorSystem
 import chpp.OauthTokens
+import clickhouse.TeamRankJoiner
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.Logger
@@ -16,14 +17,14 @@ import scala.concurrent.duration._
 object LoaderApp extends  App {
   private val logger = Logger(LoggerFactory.getLogger(this.getClass))
 
-  implicit val actorSystem = ActorSystem("LoaderActorSystem")
+  implicit val actorSystem: ActorSystem = ActorSystem("LoaderActorSystem")
   import actorSystem.dispatcher
 
   val config = ConfigFactory.load()
 
   val injector = Guice.createInjector(new LoaderModule(config, actorSystem))
 
-  implicit val oauthTokens = injector.getInstance(classOf[OauthTokens])
+  implicit val oauthTokens: OauthTokens = injector.getInstance(classOf[OauthTokens])
 
   val executorActorFactory: ExecutorActorFactory = injector
       .getInstance(classOf[ExecutorActorFactory])
@@ -31,6 +32,17 @@ object LoaderApp extends  App {
   val worldDetailsFuture = WorldDetailsSingleRequest.request(leagueId = None)
 
   private val worldDetails = Await.result(worldDetailsFuture, 30.seconds)
+
+  if (args(0) == "teamRankings") {
+    if (args.length == 2) {
+      Await.result(TeamRankJoiner.joinTeamRankings(config, worldDetails.leagueList.find(_.leagueName == args(1)).get), 3.minute)
+    } else if (args.length == 1) {
+      worldDetails.leagueList.foreach(league => {
+        Await.result(TeamRankJoiner.joinTeamRankings(config, league), 3.minute)
+      })
+    }
+    System.exit(0)
+  }
 
   val (taskExecutorActor, scheduler) = if (args(1) == "league") {
     val taskExecutorActor = executorActorFactory.createLeagueExecutorActor(worldDetails)

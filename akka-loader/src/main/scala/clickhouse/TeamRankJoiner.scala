@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Try}
 
-case class SqlRequestParam(field: String, fieldAlias: String, request: String)
+case class SqlRequestParam(field: String, fieldAlias: String, request: String, cupLevelField: Boolean)
 
 object TeamRankJoiner {
   private val logger = LoggerFactory.getLogger(this.getClass)
@@ -93,10 +93,12 @@ object TeamRankJoiner {
   def createSql(season: Int, leagueId: Int, round: Int, divisionLevel: Option[Int], database: String): String = {
     val field = "rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att"
     val field_alias = "hatstats"
-    val whereStatement = s"""(season = $season
+    def whereStatement(cupLevelField: Boolean) = s"""(season = $season
       |) AND (league_id =  $leagueId )
       | AND (round = $round )
-      |${divisionLevel.map(dl => s"AND (division_level = $dl)").getOrElse("")} """
+      |${divisionLevel.map(dl => s" AND (division_level = $dl)").getOrElse("")}
+      |${if (cupLevelField) s" AND (cup_level = 0)" else ""}
+      |"""
 
     val base_request = s"""SELECT
       |$base_fields
@@ -108,26 +110,26 @@ object TeamRankJoiner {
       |$base_fields
       |        $field AS $field_alias
       |    FROM $database.match_details
-      |    WHERE $whereStatement
+      |    WHERE ${whereStatement(true)}
       |    ORDER BY $field_alias DESC, team_id ASC
       |)
       |ORDER BY team_id ASC""".stripMargin
 
       val requestParams = Seq(
-        SqlRequestParam("rating_right_att + rating_mid_att + rating_left_att", "attack", match_details_request),
-        SqlRequestParam("rating_midfield", "midfield", match_details_request),
-        SqlRequestParam("rating_right_def + rating_left_def + rating_mid_def", "defense", match_details_request),
-        SqlRequestParam(LoddarStatsUtils.homeLoddarStats, "loddar_stats", match_details_request),
+        SqlRequestParam("rating_right_att + rating_mid_att + rating_left_att", "attack", match_details_request, cupLevelField = true),
+        SqlRequestParam("rating_midfield", "midfield", match_details_request, cupLevelField = true),
+        SqlRequestParam("rating_right_def + rating_left_def + rating_mid_def", "defense", match_details_request, cupLevelField = true),
+        SqlRequestParam(LoddarStatsUtils.homeLoddarStats, "loddar_stats", match_details_request, cupLevelField = true),
 
-        SqlRequestParam("sum(tsi)", "tsi", player_stats_request),
-        SqlRequestParam("sum(salary)", "salary", player_stats_request),
-        SqlRequestParam("sum(rating)", "rating", player_stats_request),
-        SqlRequestParam("sum(rating_end_of_match)", "rating_end_of_match", player_stats_request),
-        SqlRequestParam("avg((age * 112) + days)", "age", player_stats_request),
-        SqlRequestParam("sumIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury", player_stats_request),
-        SqlRequestParam("countIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury_count", player_stats_request),
+        SqlRequestParam("sum(tsi)", "tsi", player_stats_request, cupLevelField = true),
+        SqlRequestParam("sum(salary)", "salary", player_stats_request, cupLevelField = true),
+        SqlRequestParam("sum(rating)", "rating", player_stats_request, cupLevelField = true),
+        SqlRequestParam("sum(rating_end_of_match)", "rating_end_of_match", player_stats_request, cupLevelField = true),
+        SqlRequestParam("avg((age * 112) + days)", "age", player_stats_request, cupLevelField = true),
+        SqlRequestParam("sumIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury", player_stats_request, cupLevelField = true),
+        SqlRequestParam("countIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury_count", player_stats_request, cupLevelField = true),
 
-        SqlRequestParam("power_rating", "power_rating", team_details_request)
+        SqlRequestParam("power_rating", "power_rating", team_details_request, cupLevelField = false)
       )
 
       var newFields = "hatstats, hatstats_position"
@@ -141,7 +143,7 @@ object TeamRankJoiner {
 
         val sqlParamRequest = sqlRequestParam.request.replace("{field}", sqlRequestParam.field)
           .replace("{field_alias}", sqlRequestParam.fieldAlias)
-          .replace("{where}", whereStatement)
+          .replace("{where}", whereStatement(sqlRequestParam.cupLevelField))
           .replace("{database}", database)
 
         request = s"""SELECT $base_fields  $newFields FROM (

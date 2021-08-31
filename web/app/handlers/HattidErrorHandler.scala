@@ -12,7 +12,6 @@ class HattidErrorHandler @Inject() (telegramClient: WebTelegramClient,
                                    ) extends PreferredMediaTypeHttpErrorHandler(
   "application/json" -> new HttpErrorHandler {
     override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
-      telegramClient.sendMessage(s"${request.path}: \nWeb onClientError: $message")
       jsonHandler.onClientError(request, statusCode, message)
     }
 
