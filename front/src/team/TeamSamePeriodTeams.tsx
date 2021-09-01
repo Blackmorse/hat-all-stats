@@ -65,13 +65,15 @@ class TeamSamePeriodTeams extends ExecutableStatisticsSection<LevelDataPropsWrap
             </div>
             <table className="statistics_table">
                 <thead>
-                    <th className="value">{t('table.team')}</th>
-                    <th className="value">{t('table.league')}</th>
-                    <th className="value">{t('table.power_rating')}</th>
-                    <th className="value">{t('filter.season')}</th>
-                    <th className="value">{t('chart.round')}</th>
-                    <th className="value">{t('team.date_of_foundation')}</th>     
-                    <th></th>               
+                    <tr>
+                        <th className="value">{t('table.team')}</th>
+                        <th className="value">{t('table.league')}</th>
+                        <th className="value">{t('table.power_rating')}</th>
+                        <th className="value">{t('filter.season')}</th>
+                        <th className="value">{t('chart.round')}</th>
+                        <th className="value">{t('team.date_of_foundation')}</th>     
+                        <th></th>               
+                    </tr>
                 </thead>
                 <tbody>
                     {this.state.state.teams?.filter(team => team.createdSameTimeTeam.teamSortingKey.teamId !== this.props.levelDataProps.teamId())

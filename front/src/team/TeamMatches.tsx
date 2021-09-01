@@ -1,11 +1,10 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import ExecutableStatisticsSection from '../common/sections/ExecutableStatisticsSection'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps';
 import TeamData from '../rest/models/leveldata/TeamData';
 import TeamLevelDataProps from './TeamLevelDataProps'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import TeamMatch from '../rest/models/match/TeamMatch';
-import { Translation } from 'react-i18next'
 import '../i18n'
 import { getTeamMatches } from '../rest/Client'
 import TeamMatchInfo from './matches/TeamMatchInfo'
@@ -37,16 +36,11 @@ class TeamMatches extends ExecutableStatisticsSection<LevelDataPropsWrapper<Team
     }
 
     renderSection(): JSX.Element {
-        return <Translation>{
-            (t, { i18n }) => <>
+        return <Fragment>
                 {this.state.state.matches?.map(match => {
-                    return <>
-                        <TeamMatchInfo teamMatch={match}/>
-                    </>
+                    return <TeamMatchInfo teamMatch={match} key={'team_matches_info_' + match.matchId} />
                 })}
-            </>
-        }
-        </Translation>
+            </Fragment>
     }
 }
 

@@ -28,7 +28,7 @@ class AboutSection extends StatisticsSection {
             This is non-commercial project with no advertisments and It's maintained by my own money. I will appreciate any donations. Thanks!
         </p>
     
-    <p>
+    <span>
     <PayPalButton
         amount="5.00"
     
@@ -40,7 +40,7 @@ class AboutSection extends StatisticsSection {
         clientId: "AR1D88EuepqIo1C7LI6Qb7W_JTiagLEcyl2nAAVco-YTmOzw_ZvQZ_fyOWWwWcce7XdGH7kzQBDJZGcT"
     }}
 />
-    </p>
+    </span>
 </article>
     } 
 }

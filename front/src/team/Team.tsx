@@ -46,7 +46,7 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
         pagesMap.set(PagesEnum.PLAYER_INJURIES, 
             (props, queryParams) => <PlayerInjuriesTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_MATCHES,
-            (props, queryParams) => <TeamMatches levelDataProps={props} queryParams={queryParams}/>)
+            (props, queryParams) => <TeamMatches levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS, 
             (props, queryParams) => <MatchTopHatstatsTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.MATCH_SURPRISING, 

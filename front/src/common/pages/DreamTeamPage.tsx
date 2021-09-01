@@ -189,7 +189,11 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
             <div className="core_team">
                 <div className="core_team_column"></div>
                 <div className="core_team_column">
-                    {displayedKeepers.map(keeper => <DreamTeamPlayerCard dreamTeamPlayerPosition={keeper} showTeamCountryFlag={this.props.showCountryFlags}/>)}
+                    {displayedKeepers.map(keeper => 
+                        <DreamTeamPlayerCard dreamTeamPlayerPosition={keeper} 
+                                             showTeamCountryFlag={this.props.showCountryFlags}
+                                             key={'dream_team_player_' + keeper.player?.playerSortingKey.playerId} />
+                    )}
                 </div>
                 <div className="core_team_column"></div>
                 {/* def */}
@@ -197,7 +201,11 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
                     <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[0]} showTeamCountryFlag={this.props.showCountryFlags} />
                 </div>
                 <div className="core_team_column">
-                    {displayedDefs.map(def => <DreamTeamPlayerCard dreamTeamPlayerPosition={def} showTeamCountryFlag={this.props.showCountryFlags} />)}
+                    {displayedDefs.map(def => 
+                        <DreamTeamPlayerCard dreamTeamPlayerPosition={def} 
+                                             showTeamCountryFlag={this.props.showCountryFlags} 
+                                             key={'dream_team_player_' + def.player?.playerSortingKey.playerId}/>
+                    )}
                 </div>
                 <div className="core_team_column">
                     <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[1]} showTeamCountryFlag={this.props.showCountryFlags} />
@@ -207,7 +215,11 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
                     <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[0]} showTeamCountryFlag={this.props.showCountryFlags} />
                 </div>
                 <div className="core_team_column">
-                    {displayedMidfielders.map(midfielder => <DreamTeamPlayerCard dreamTeamPlayerPosition={midfielder} showTeamCountryFlag={this.props.showCountryFlags} />)}
+                    {displayedMidfielders.map(midfielder => 
+                        <DreamTeamPlayerCard dreamTeamPlayerPosition={midfielder} 
+                                             showTeamCountryFlag={this.props.showCountryFlags} 
+                                             key={'dream_team_player_' + midfielder.player?.playerSortingKey.playerId} />
+                    )}
                 </div>
                 <div className="core_team_column">
                 <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[1]} showTeamCountryFlag={this.props.showCountryFlags} />
@@ -215,7 +227,11 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
                 {/* attack */}
                 <div className="core_team_column"></div>
                 <div className="core_team_column">
-                    {displayedForwards.map(forward => <DreamTeamPlayerCard dreamTeamPlayerPosition={forward} showTeamCountryFlag={this.props.showCountryFlags} />)}
+                    {displayedForwards.map(forward => 
+                        <DreamTeamPlayerCard dreamTeamPlayerPosition={forward} 
+                                             showTeamCountryFlag={this.props.showCountryFlags} 
+                                             key={'dream_team_player_' + forward.player?.playerSortingKey.playerId} />
+                    )}
                 </div>
                 <div className="core_team_column"></div>
             </div>
