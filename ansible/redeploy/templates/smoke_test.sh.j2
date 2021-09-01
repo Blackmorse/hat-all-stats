@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl localhost:{{ web.port }}/api/health || curl -X POST -H 'Content-Type: application/json' -d "{\"chat_id\": \"{{ loader.telegram.chatId }}\", \"text\": \"Smoke test failed!!!\"}" https://api.telegram.org/bot{{ loader.telegram.botToken }}/sendMessage 

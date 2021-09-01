@@ -10,3 +10,17 @@
      hour: "12"
      minute: "00"
      job: "cd {{ base_project_directory }}/hat-all-stats && sbt hattrickTests/run"
+
+ - name: copy smoke test script
+   template:
+     src: smoke_test.sh.j2
+     dest: "{{ base_project_directory }}/smoke_test.sh"
+     mode: 0775
+
+ - name: cron smoke tests
+   cron:
+     name: "cron smoke tests"
+     weekday: "*"
+     hour: "*"
+     minute: "*"
+     job: "cd {{ base_project_directory }} && /bin/bash -c \"./smoke_test.sh\""
