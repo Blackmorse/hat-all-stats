@@ -27,3 +27,11 @@
      hour: "12"
      minute: "0"
      job: "java -Xmx6096m -Xms256m -jar {{ base_project_directory }}/hat-all-stats/akka-loader/target/scala-2.13/akka-loader-assembly-0.1.jar schedule league"
+
+ - name: cup cron for loader
+   cron:
+     name: "Akka cup loader cron"
+     weekday: "2"
+     hour: "12"
+     minute: "0"
+     job: "java -Xmx6096m -Xms256m -jar {{ base_project_directory }}/hat-all-stats/akka-loader/target/scala-2.13/akka-loader-assembly-0.1.jar schedule cup"
