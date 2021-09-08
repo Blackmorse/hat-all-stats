@@ -55,6 +55,8 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
   var parametersNumber = 0
   private var page: Int = 0
   private var pageSize: Int = 0
+  //TODO union with page-pageSize
+  private var limitSimple: Option[Int] = None
   private[sqlbuilder] val whereClause = new WhereClause(this)
   private[sqlbuilder] val havingClause = new HavingClause(this)
   private var _groupBy: GroupBy = _
@@ -83,8 +85,7 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
   }
 
   def limit(limit: Int): SqlBuilder = {
-    this.page = 0
-    this.pageSize = limit + 1
+    this.limitSimple = Some(limit)
     this
   }
 
@@ -102,7 +103,6 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
 
   def build: SimpleSql[Row] = {
     val finalSql = buildStringSql()
-    println(finalSql)
     val parameters = whereClause.parameters ++ havingClause.parameters ++ this._select.parameters
 
     SQL(finalSql)
@@ -127,7 +127,9 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
     val orderBy = if (this._orderBy != null ) s" ORDER BY ${this._orderBy.toString}" else ""
 
     val limit = if (pageSize != 0 || page != 0) {
-      s"LIMIT ${(pageSize - 1) * page}, ${pageSize}"
+      s"LIMIT ${(pageSize - 1) * page}, $pageSize"
+    } else if (limitSimple.isDefined) {
+      s"LIMIT ${limitSimple.get}"
     } else {
       ""
     }
