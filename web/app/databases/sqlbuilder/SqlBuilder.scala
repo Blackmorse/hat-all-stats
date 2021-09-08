@@ -102,7 +102,7 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
 
   def build: SimpleSql[Row] = {
     val finalSql = buildStringSql()
-
+    println(finalSql)
     val parameters = whereClause.parameters ++ havingClause.parameters ++ this._select.parameters
 
     SQL(finalSql)
@@ -127,7 +127,7 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
     val orderBy = if (this._orderBy != null ) s" ORDER BY ${this._orderBy.toString}" else ""
 
     val limit = if (pageSize != 0 || page != 0) {
-      s"LIMIT ${pageSize * page}, ${pageSize}"
+      s"LIMIT ${(pageSize - 1) * page}, ${pageSize}"
     } else {
       ""
     }
