@@ -37,6 +37,7 @@ object AllCountriesTest {
       testNumberOfCountries(worldDetails)
       testFirstAndLastLeague(worldDetails)
       testCupSchedule(worldDetails)
+      testDivisionLevels(worldDetails)
       Await.result(TelegramClient.sendMessage("Countries tests succesfully passed!"), 1.minute)
     } catch {
       case e: Exception =>
@@ -79,6 +80,13 @@ object AllCountriesTest {
     }
     if (schedule.last.leagueId != 100) {
       throw new Exception(s"Now last league is ${schedule.last} instead of El Salvador!")
+    }
+  }
+
+  private def testDivisionLevels(worldDetails: WorldDetails): Unit = {
+    if (worldDetails.leagueList.exists(_.numberOfLevels > 10)) {
+      throw new Exception(s"There is a leagues with more than 11 divisionLevels: " +
+        s"${worldDetails.leagueList.filter(_.numberOfLevels > 10).map(_.leagueId).mkString(",")}")
     }
   }
 }
