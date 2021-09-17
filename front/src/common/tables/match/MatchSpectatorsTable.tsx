@@ -8,11 +8,8 @@ import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import '../../../i18n'
 import { Translation } from 'react-i18next'
 import ModelTableTh from '../../elements/SortingTableTh'
-import TeamLink from '../../links/TeamLink'
-import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getMatchSpectators } from '../../../rest/Client';
-import { commasSeparated } from '../../Formatters'
-import ExternalMatchLink from '../../links/ExternalMatchLink';
+import MatchSpectatorsRow from '../rows/match/MatchSpectatorsRow'
 
 abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
     extends ClassicTableSection<Data, TableProps, MatchSpectators> {
@@ -35,20 +32,15 @@ abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends L
                 <th className="value"></th>
                 <th>{t('table.team')}</th>
                 <ModelTableTh title='matches.spectatos' sortingField='sold_total' sortingState={sortingState} />
+                <th/>
             </tr>
             }
         </Translation>
     }
 
-    columnValues(index: number, matchSpectators: MatchSpectators): JSX.Element {
-        return <>
-            <td>{index + 1}</td>
-            <td className="value"><LeagueUnitLink id={matchSpectators.homeTeam.leagueUnitId} text={matchSpectators.homeTeam.leagueUnitName} /></td>
-            <td className="value"><TeamLink id={matchSpectators.homeTeam.teamId} text={matchSpectators.homeTeam.teamName} /></td>
-            <td className="value">{matchSpectators.homeGoals} : {matchSpectators.awayGoals} <ExternalMatchLink id={matchSpectators.matchId} /></td>
-            <td className="value"><TeamLink id={matchSpectators.awayTeam.teamId} text={matchSpectators.awayTeam.teamName} /></td>           
-            <td className="value">{commasSeparated(matchSpectators.spectators)}</td>
-        </>
+    row(index: number, className: string, matchSpectators: MatchSpectators): JSX.Element {
+        return <MatchSpectatorsRow key={this.constructor.name + '_' + index } rowIndex={index} className={className} 
+            rowModel={matchSpectators}/>
     }
 }
 

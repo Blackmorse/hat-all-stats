@@ -1,11 +1,12 @@
 import React from 'react';
 import LevelData from '../../rest/models/leveldata/LevelData';
 import LevelDataProps from '../../common/LevelDataProps';
-import ExecutableStatisticsSection from '../sections/ExecutableStatisticsSection';
 import OverviewRequest from '../../rest/models/request/OverviewRequest';
 import '../../common/sections/StatisticsSection.css'
 import SeasonRoundSelector from './SeasonRoundSelector'
 import { LoadingEnum } from '../enums/LoadingEnum';
+import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent';
+import { SectionState } from '../sections/Section';
 
 export interface OverviewSectionProps<Data extends LevelData, OverviewEntity> {
     initialData?: OverviewEntity,
@@ -22,11 +23,12 @@ interface Request {
 }
 
 abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewProps extends OverviewSectionProps<Data, OverviewEntity>> 
-    extends ExecutableStatisticsSection<OverviewProps, State<OverviewEntity>, OverviewEntity, Request> {
+    extends ExecutableComponent<OverviewProps, State<OverviewEntity>, OverviewEntity, Request, 
+        LoadableState<State<OverviewEntity>, Request> & SectionState> {
     isWorldData: boolean
 
-    constructor(props: OverviewProps, title: string) {
-        super(props, title)
+    constructor(props: OverviewProps) {
+        super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {

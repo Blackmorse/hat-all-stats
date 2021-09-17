@@ -7,7 +7,7 @@ import LeagueUnitTopMenu from './LeagueUnitTopMenu';
 import { getLeagueUnitData } from '../rest/Client'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import TeamPositionsTable from './TeamPositionsTable';
-import TeamHatstatsTable from '../common/tables/team/TeamHatstatsTable';
+import {TeamHatstatsTableSection} from '../common/tables/team/TeamHatstatsTable';
 import PlayerGoalGamesTable from '../common/tables/player/PlayerGoalsGamesTable'
 import PlayerCardsTable from '../common/tables/player/PlayerCardsTable';
 import PlayerSalaryTsiTable from '../common/tables/player/PlayerSalaryTsiTable';
@@ -40,7 +40,7 @@ class LeagueUnit extends CountryLevelLayout<Props, LeagueUnitData, LeagueUnitLev
         pagesMap.set(PagesEnum.TEAM_HATSTATS, 
             (props, queryParams) => <>
                 <TeamPositionsTable levelDataProps={props} queryParams={queryParams} />
-                <TeamHatstatsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams}/>
+                <TeamHatstatsTableSection<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams}/>
                 </>)
         pagesMap.set(PagesEnum.DREAM_TEAM,
             (props, queryParams) => <DreamTeamPage<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)

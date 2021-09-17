@@ -1,7 +1,7 @@
 import React from 'react'
 import '../../i18n'
 import { Translation } from 'react-i18next'
-import OverviewTableSection, { OverviewTableSectionProps } from './OverviewTableSection'
+import OverviewTableSection from './OverviewTableSection'
 import LeagueUnitLink from '../links/LeagueUnitLink'
 import TeamLink from '../links/TeamLink'
 import LevelData from '../../rest/models/leveldata/LevelData';
@@ -9,11 +9,9 @@ import MatchAttendanceOverview from '../../rest/models/overview/MatchAttendanceO
 import { getTopMatchAttendance } from '../../rest/Client'
 import ExternalMatchLink from '../links/ExternalMatchLink'
 import { commasSeparated } from '../Formatters'
+import Section from '../sections/Section'
 
-class MatchAttendanceOverviewSection<Data extends LevelData> extends OverviewTableSection<Data, MatchAttendanceOverview> {
-    constructor(props: OverviewTableSectionProps<Data, MatchAttendanceOverview>) {
-        super(props, 'overview.attendance')
-    }
+class MatchAttendanceOverviewSectionBase<Data extends LevelData> extends OverviewTableSection<Data, MatchAttendanceOverview> {
     
     loadOverviewEntity = getTopMatchAttendance
 
@@ -56,4 +54,5 @@ class MatchAttendanceOverviewSection<Data extends LevelData> extends OverviewTab
     }
 }
 
+const MatchAttendanceOverviewSection = Section(MatchAttendanceOverviewSectionBase, _ => 'overview.attendance')
 export default MatchAttendanceOverviewSection

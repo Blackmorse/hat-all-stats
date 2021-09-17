@@ -1,8 +1,8 @@
 package databases.requests.model.`match`
 
-import anorm.~
+import anorm.{RowParser, ~}
 import anorm.SqlParser.get
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 
 case class SimilarMatchesStats(wins: Int,
                                draws: Int,
@@ -12,9 +12,9 @@ case class SimilarMatchesStats(wins: Int,
                                count: Int)
 
 object SimilarMatchesStats {
-  implicit val writes = Json.writes[SimilarMatchesStats]
+  implicit val writes: OWrites[SimilarMatchesStats] = Json.writes[SimilarMatchesStats]
 
-  val mapper = {
+  val mapper: RowParser[SimilarMatchesStats] = {
     get[Int]("wins") ~
     get[Int]("draws") ~
     get[Int]("loses") ~

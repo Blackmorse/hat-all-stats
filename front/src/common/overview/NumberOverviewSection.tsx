@@ -6,12 +6,10 @@ import { commasSeparated } from '../../common/Formatters'
 import { getNumberOverview } from '../../rest/Client'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import LevelData from '../../rest/models/leveldata/LevelData';
+import Section from '../sections/Section';
 
 
-class NumberOverviewSection<Data extends LevelData> extends OverviewSection<Data, NumberOverview, OverviewSectionProps<Data, NumberOverview>> {
-    constructor(props: OverviewSectionProps<Data, NumberOverview>) {
-        super(props, 'overview.numbers')
-    }
+class NumberOverviewSectionBase<Data extends LevelData> extends OverviewSection<Data, NumberOverview, OverviewSectionProps<Data, NumberOverview>> {
 
     loadOverviewEntity = getNumberOverview
 
@@ -50,4 +48,5 @@ class NumberOverviewSection<Data extends LevelData> extends OverviewSection<Data
     }
 }
 
+const NumberOverviewSection = Section(NumberOverviewSectionBase, _ => 'overview.numbers')
 export default NumberOverviewSection

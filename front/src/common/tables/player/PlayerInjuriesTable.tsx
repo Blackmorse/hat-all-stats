@@ -42,9 +42,9 @@ abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends Le
         </Translation>
     }
 
-    columnValues(index: number, playerInjury: PlayerInjury): JSX.Element {
+    row(index: number, className: string, playerInjury: PlayerInjury): JSX.Element {
         let playerSortingKey = playerInjury.playerSortingKey
-        return <>
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td className="value"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
@@ -52,7 +52,7 @@ abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends Le
             <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="value">{ageFormatter(playerInjury.age)}</td>
             <td className="value">{injuryFormatter(playerInjury.injury)}</td>
-        </>
+        </tr>
     }
 }
 

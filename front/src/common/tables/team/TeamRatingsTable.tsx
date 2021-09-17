@@ -38,15 +38,15 @@ abstract class TeamRatingsTable<Data extends LevelData, TableProps extends Level
         </Translation>
     }
 
-    columnValues(index: number, teamRating: TeamRating): JSX.Element {
+    row(index: number, className: string, teamRating: TeamRating): JSX.Element {
         let teamSortingKey = teamRating.teamSortingKey
-        return <>
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{ratingFormatter(teamRating.rating)}</td>
             <td className="value">{ratingFormatter(teamRating.ratingEndOfMatch)}</td>
-        </>
+        </tr>
     }
 }
 

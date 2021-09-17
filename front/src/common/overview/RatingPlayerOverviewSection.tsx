@@ -6,10 +6,11 @@ import '../../i18n'
 import i18n from '../../i18n';
 import { ratingFormatter } from '../../common/Formatters'
 import LevelData from '../../rest/models/leveldata/LevelData';
+import Section from '../sections/Section';
 
-class RatingPlayerOverviewSection<Data extends LevelData> extends PlayerOverviewSection<Data> {
+class RatingPlayerOverviewSectionBase<Data extends LevelData> extends PlayerOverviewSection<Data> {
     constructor(props: OverviewTableSectionProps<Data, PlayerStatOverview>) {
-        super(props, 'overview.top_rating_players',
+        super(props, 
         i18n.t('table.rating'))
     }
 
@@ -20,4 +21,5 @@ class RatingPlayerOverviewSection<Data extends LevelData> extends PlayerOverview
     }
 }
 
+const RatingPlayerOverviewSection = Section(RatingPlayerOverviewSectionBase, _ => 'overview.top_rating_players')
 export default RatingPlayerOverviewSection

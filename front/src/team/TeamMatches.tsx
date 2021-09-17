@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-import ExecutableStatisticsSection from '../common/sections/ExecutableStatisticsSection'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps';
 import TeamData from '../rest/models/leveldata/TeamData';
 import TeamLevelDataProps from './TeamLevelDataProps'
@@ -7,16 +6,19 @@ import { LoadingEnum } from '../common/enums/LoadingEnum';
 import TeamMatch from '../rest/models/match/TeamMatch';
 import '../i18n'
 import { getTeamMatches } from '../rest/Client'
-import TeamMatchInfo from './matches/TeamMatchInfo'
+import TeamMatchInfoSection from './matches/TeamMatchInfoSection'
+import ExecutableComponent, { LoadableState } from '../common/sections/ExecutableComponent';
+import Section, { SectionState } from '../common/sections/Section';
 
 interface State {
     matches?: Array<TeamMatch>
 }
 
-class TeamMatches extends ExecutableStatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, Array<TeamMatch>, {}> {
+class TeamMatchesBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
+    State, Array<TeamMatch>, {}, LoadableState<State, {}> & SectionState> {
     
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
-        super(props, "menu.matches")
+        super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {},
@@ -38,10 +40,11 @@ class TeamMatches extends ExecutableStatisticsSection<LevelDataPropsWrapper<Team
     renderSection(): JSX.Element {
         return <Fragment>
                 {this.state.state.matches?.map(match => {
-                    return <TeamMatchInfo teamMatch={match} key={'team_matches_info_' + match.matchId} />
+                    return <TeamMatchInfoSection teamMatch={match} key={'team_matches_info_' + match.matchId} />
                 })}
             </Fragment>
     }
 }
 
+const TeamMatches = Section(TeamMatchesBase, _ => 'menu.matches')
 export default TeamMatches

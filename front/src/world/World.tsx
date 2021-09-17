@@ -24,7 +24,7 @@ class World extends LevelLayout<Props, WorldData, LevelDataProps<WorldData>> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: WorldLevelDataProps, queryParams: QueryParams) => JSX.Element>()
         pagesMap.set(PagesEnum.OVERVIEW, 
-            (props, _queryParams) => <WorldOverviewPage levelDataProps={props} title='overview.world_overview'/>)
+            (props, _queryParams) => <WorldOverviewPage levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_HATSTATS,
             (props, queryParams) => <TeamHatstatsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
         pagesMap.set(PagesEnum.PLAYER_SALARY_TSI, 

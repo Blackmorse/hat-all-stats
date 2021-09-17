@@ -41,6 +41,8 @@ import PromotionWithType from './models/promotions/Promotion'
 import TeamSearchResult from './models/TeamSearchResult'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import TeamMatch from './models/match/TeamMatch'
+import SingleMatch from './models/match/SingleMatch'
+import SimilarMatchesStats from './models/match/SimilarMatchesStats'
 import MatchAttendanceOverview from './models/overview/MatchAttendanceOverview'
 import DreamTeamPlayer from './models/player/DreamTeamPlayer';
 import PlayersParameters from './models/PlayersParameters'
@@ -163,6 +165,19 @@ export function searchTeam(name: string,
 export function getTeamMatches(teamId: number, season: number,
        callback: (loadingEnum: LoadingEnum, results?: Array<TeamMatch>) => void) {
     axios.get<Array<TeamMatch>>('/api/team/' + teamId + '/teamMatches?season=' + season)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
+
+export function getSingleMatch(matchId: number, callback: (loadingEnum: LoadingEnum, result?: SingleMatch) => void) {
+    axios.get<SingleMatch>('/api/matches/singleMatch?matchId=' + matchId)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
+
+export function getSimilarMatchesStats(matchId: number, accuracy: number, 
+        callback: (loadingEnum: LoadingEnum, result?: SimilarMatchesStats) => void): void {
+    axios.get<SimilarMatchesStats>('/api/matches/similarMatches?matchId=' + matchId + '&accuracy=' + accuracy)
         .then(response => parseAxiosResponse(response, callback))
         .catch(e => callback(LoadingEnum.ERROR))
 }

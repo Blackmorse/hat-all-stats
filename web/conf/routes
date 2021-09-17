@@ -112,6 +112,7 @@ GET     /api/overview/topSeasonScorers   controllers.RestOverviewController.topS
 GET     /api/overview/worldData    controllers.RestOverviewController.getWorldData()
 
 GET     /api/matches/similarMatches controllers.MatchController.similarMatches(matchId: Long, accuracy: Double)
+GET     /api/matches/singleMatch    controllers.MatchController.singleMatch(matchId: Long)
 
 POST    /loader/leagueRound         controllers.LoaderController.leagueRound(season: Int, leagueId: Int, round: Int)
 POST    /loader/scheduleInfo        controllers.LoaderController.scheduleInfo()

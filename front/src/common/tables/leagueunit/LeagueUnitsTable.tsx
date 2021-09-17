@@ -37,8 +37,8 @@ class LeagueUnitsTable<Data extends LevelData, TableProps extends LevelDataProps
             </Translation> 
     }
 
-    columnValues(index: number, leagueUnitRating: LeagueUnitRating): JSX.Element {
-        return <>
+    row(index: number, className: string, leagueUnitRating: LeagueUnitRating): JSX.Element {
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td className="value"><LeagueUnitLink id={leagueUnitRating.leagueUnitId} text={leagueUnitRating.leagueUnitName}/></td>
             <td className="value">{leagueUnitRating.hatStats}</td>
@@ -46,7 +46,7 @@ class LeagueUnitsTable<Data extends LevelData, TableProps extends LevelDataProps
             <td className="value">{leagueUnitRating.defense}</td>
             <td className="value">{leagueUnitRating.attack}</td>
             <td className="value">{loddarStats(leagueUnitRating.loddarStats)}</td>
-        </>
+        </tr>
     }    
 }
 

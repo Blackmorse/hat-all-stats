@@ -40,7 +40,7 @@ class DivisionLevel extends CountryLevelLayout<Props, DivisionLevelData, Divisio
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: DivisionLevelDataProps, queryParams: QueryParams) => JSX.Element>()
         pagesMap.set(PagesEnum.OVERVIEW, 
-            (props, queryParams) => <DivisionLevelOverviewPage levelDataProps={props} title='' />)
+            (props, queryParams) => <DivisionLevelOverviewPage levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_HATSTATS,
             (props, queryParams) => <TeamHatstatsTable<DivisionLevelData, DivisionLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,

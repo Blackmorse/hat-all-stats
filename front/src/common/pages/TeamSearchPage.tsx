@@ -1,5 +1,4 @@
 import React from 'react'
-import ExecutableStatisticsSection from '../sections/ExecutableStatisticsSection'
 import TeamSearchResult from '../../rest/models/TeamSearchResult'
 import { Translation } from 'react-i18next'
 import '../../i18n'
@@ -8,15 +7,18 @@ import i18n from '../../i18n'
 import TeamLink from '../links/TeamLink'
 import './TeamSearchPage.css'
 import { LoadingEnum } from '../enums/LoadingEnum'
+import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent'
+import Section, { SectionState } from '../sections/Section'
 
 interface State {
     results?: Array<TeamSearchResult>,
 }
 
-class TeamSearchPage extends ExecutableStatisticsSection<{}, State, Array<TeamSearchResult>, string> {
+class TeamSearchPageBase extends 
+        ExecutableComponent<{}, State, Array<TeamSearchResult>, string, LoadableState<State, string> & SectionState> {
     
     constructor(props: {}) {
-        super(props, 'menu.team_search')
+        super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: "",
@@ -80,4 +82,5 @@ class TeamSearchPage extends ExecutableStatisticsSection<{}, State, Array<TeamSe
     }
 }
 
+const TeamSearchPage = Section(TeamSearchPageBase, _ => 'menu.team_search')
 export default TeamSearchPage

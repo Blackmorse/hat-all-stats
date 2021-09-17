@@ -12,6 +12,7 @@ import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { getTeamHatstats } from '../../../rest/Client';
 import { loddarStats } from '../../Formatters'
+import Section from '../../sections/Section';
 
 class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
         extends ClassicTableSection<Data, TableProps, TeamHatstats> {
@@ -40,9 +41,9 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
         </Translation>
     }
 
-    columnValues(index: number, teamHatstats: TeamHatstats): JSX.Element {
+    row(index: number, className: string, teamHatstats: TeamHatstats): JSX.Element {
         let teamSortingKey = teamHatstats.teamSortingKey
-        return <>
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} 
                 flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? teamSortingKey.leagueId : undefined} /></td>
@@ -52,9 +53,10 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
             <td className="value">{teamHatstats.defense}</td>
             <td className="value">{teamHatstats.attack}</td>
             <td className="value">{loddarStats(teamHatstats.loddarStats)}</td>
-        </>
+        </tr>
     }
 
 }
 
+export const TeamHatstatsTableSection = Section(TeamHatstatsTable)
 export default TeamHatstatsTable

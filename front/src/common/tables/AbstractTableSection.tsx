@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import './TableSection.css'
 import StatisticsParameters, { SortingDirection, StatsTypeEnum, StatsType } from '../../rest/models/StatisticsParameters'
 import RestTableData from '../../rest/models/RestTableData'
@@ -12,11 +12,12 @@ import PositionSelector from '../selectors/PositionSelector'
 import NationalitySelector from '../selectors/NationalitySelector'
 import AgeSelector from '../selectors/AgeSelector'
 import LevelData from '../../rest/models/leveldata/LevelData';
-import ExecutableStatisticsSection from '../sections/ExecutableStatisticsSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
 import { LoadingEnum } from '../enums/LoadingEnum';
 import { SelectorsEnum } from './SelectorsEnum'
 import PlayersParameters from '../../rest/models/PlayersParameters'
+import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent';
+import { SectionState } from '../sections/Section';
 
 interface ModelTableState<ResponseModel> {
     model?: ResponseModel,
@@ -38,16 +39,18 @@ export interface DataRequest {
 
 
 abstract class AbstractTableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, RowModel, ResponseModel> 
-        extends ExecutableStatisticsSection<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<ResponseModel>, ResponseModel, DataRequest> {
+        extends ExecutableComponent<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<ResponseModel>, ResponseModel, DataRequest,
+            LoadableState<ModelTableState<ResponseModel>, DataRequest> & SectionState> {
     private statsTypes: Array<StatsTypeEnum>
     private selectors: Array<SelectorsEnum>
     private fistOpening: boolean = true
 
     constructor(props: LevelDataPropsWrapper<Data, TableProps>, 
-            defaultSortingField: string, defaultStatsType: StatsType,
+            defaultSortingField: string, 
+            defaultStatsType: StatsType,
             statsTypes: Array<StatsTypeEnum>,
             selectors: Array<SelectorsEnum>) {
-        super(props, '')
+        super(props)
         this.statsTypes = statsTypes
         this.selectors = selectors
         
@@ -116,7 +119,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
 
     abstract columnHeaders(sortingState: SortingState): JSX.Element
 
-    abstract columnValues(index: number, model: RowModel): JSX.Element
+    abstract row(index: number, className: string, model: RowModel): JSX.Element
 
     abstract responseModelToRowModel(responseModel?: ResponseModel): RestTableData<RowModel>
 
@@ -368,10 +371,9 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                     </thead>
                     <tbody>
                         {restTableData?.entities?.map((entity, index) => 
-                            <tr key={this.constructor.name + '_' + index} 
-                                className={((this.state.state.selectedRow !== undefined) && this.state.state.selectedRow === indexOffset + index) ? "selected_row" : ""}>
-                                {this.columnValues(indexOffset + index, entity)}
-                            </tr>
+                            <Fragment key={this.constructor.name + '_' + index}>
+                                {this.row(indexOffset + index, ((this.state.state.selectedRow !== undefined) && this.state.state.selectedRow === indexOffset + index) ? "selected_row" : "", entity)}
+                            </Fragment>
                             )}
                     </tbody>
                 </table>

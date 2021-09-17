@@ -1,7 +1,6 @@
 import React from 'react'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps';
-import ExecutableStatisticsSection from '../sections/ExecutableStatisticsSection';
 import { LoadingEnum } from '../enums/LoadingEnum';
 import DreamTeamPlayer from '../../rest/models/player/DreamTeamPlayer';
 import { getDreamTeam } from '../../rest/Client'
@@ -14,6 +13,8 @@ import StatsTypeSelector from '../selectors/StatsTypeSelector'
 import SeasonSelector from '../selectors/SeasonSelector';
 import FormationSelector, { Formation } from '../selectors/FormationSelector'
 import { ratingFormatter } from '../Formatters'
+import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent';
+import Section, { SectionState } from '../sections/Section';
 
 interface State {
     dreamTeamPlayers?: Array<DreamTeamPlayer>,
@@ -30,11 +31,12 @@ export interface DreamTeamPlayerPosition {
     position: string
 }
 
-class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>> 
-    extends ExecutableStatisticsSection<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<DreamTeamPlayer>, Request> {
+class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Data>> 
+    extends ExecutableComponent<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<DreamTeamPlayer>, Request,
+        LoadableState<State, Request> & SectionState> {
 
     constructor(props: LevelDataPropsWrapper<Data, Props>) {
-        super(props, 'menu.dream_team')
+        super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {
@@ -251,4 +253,5 @@ class DreamTeamPage<Data extends LevelData, Props extends LevelDataProps<Data>>
     
 }
 
+const DreamTeamPage = Section(DreamTeamPageBase, _ => 'menu.dream_team')
 export default DreamTeamPage

@@ -1,21 +1,19 @@
-import React from 'react';
-import Blur from '../widgets/Blur'
-import '../../i18n'
-import { LoadingEnum } from '../enums/LoadingEnum'
-import Bot from '../widgets/Bot'
-import StatisticsSection, { StatisticsSectionState } from './StatisticsSection';
+import React from 'react'
+import { LoadingEnum } from '../enums/LoadingEnum';
+import Blur from '../widgets/Blur';
+import Bot from '../widgets/Bot';
 
-export interface LoadableState<State, DataRequest> extends StatisticsSectionState{
+export interface LoadableState<State, DataRequest> {
     loadingState: LoadingEnum,
     dataRequest: DataRequest,
     state: State
 }
 
-abstract class ExecutableExecutableStatisticsSection<Props, State, DataType, DataRequest> extends StatisticsSection<Props, LoadableState<State, DataRequest>> {
-
-    constructor(props: Props, title: string | JSX.Element) {
-        super(props, title)
-
+abstract class ExecutableComponent<Props, BaseState, DataType, DataRequest, State extends LoadableState<BaseState, DataRequest> = LoadableState<BaseState, DataRequest>>
+    extends React.Component<Props, State> {
+    
+    constructor(props: Props) {
+        super(props)
         this.update=this.update.bind(this)
         this.updateWithRequest=this.updateWithRequest.bind(this)
         this.stateFromResult=this.stateFromResult.bind(this)
@@ -26,7 +24,7 @@ abstract class ExecutableExecutableStatisticsSection<Props, State, DataType, Dat
 
     abstract executeDataRequest(dataRequest: DataRequest, callback: (loadingState: LoadingEnum, result?: DataType) => void): void
 
-    abstract stateFromResult(result?: DataType): State
+    abstract stateFromResult(result?: DataType): BaseState
 
     componentDidMount() {
         this.update()
@@ -39,16 +37,18 @@ abstract class ExecutableExecutableStatisticsSection<Props, State, DataType, Dat
     updateWithRequest(dataRequest: DataRequest): void {
         this.setState({
             loadingState: LoadingEnum.LOADING,
-            dataRequest: dataRequest
+            dataRequest: dataRequest,
+            state: this.state.state
         })
 
         this.executeDataRequest(dataRequest, (loadingStatus, result) => this.setState({
             loadingState: loadingStatus,
-            state: this.stateFromResult(result)
+            state: this.stateFromResult(result),
+            dataRequest: this.state.dataRequest
         }))
     }
 
-    renderContent() {
+    render() {
         if(this.state.loadingState === LoadingEnum.BOT) {
             return <Bot />
         }
@@ -59,6 +59,6 @@ abstract class ExecutableExecutableStatisticsSection<Props, State, DataType, Dat
                 {this.renderSection()}
         </>
     }
-} 
+}
 
-export default ExecutableExecutableStatisticsSection
+export default ExecutableComponent

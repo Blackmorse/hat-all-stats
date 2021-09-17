@@ -6,11 +6,11 @@ import '../../i18n'
 import i18n from '../../i18n'
 import { commasSeparated } from '../../common/Formatters'
 import LevelData from '../../rest/models/leveldata/LevelData'
+import Section from '../sections/Section'
 
-class SalaryTeamOverviewSection<Data extends LevelData> extends TeamOverviewSection<Data> {
+class SalaryTeamOverviewSectionBase<Data extends LevelData> extends TeamOverviewSection<Data> {
     constructor(props: OverviewTableSectionProps<Data, TeamStatOverview>) {
-        super(props, 'overview.top_salary_teams', 
-            i18n.t('table.salary') + ',' + props.levelDataProps.currency())
+        super(props, i18n.t('table.salary') + ',' + props.levelDataProps.currency())
     }
 
     loadOverviewEntity = getTopSalaryTeamsOverview
@@ -20,4 +20,5 @@ class SalaryTeamOverviewSection<Data extends LevelData> extends TeamOverviewSect
     }
 }
 
+const SalaryTeamOverviewSection = Section(SalaryTeamOverviewSectionBase, _ => 'overview.top_salary_teams')
 export default SalaryTeamOverviewSection

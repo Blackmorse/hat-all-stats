@@ -40,7 +40,7 @@ class League extends CountryLevelLayout<Props, LeagueData, LeagueLevelDataProps>
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: LeagueLevelDataProps, queryParams: QueryParams) => JSX.Element>()
         pagesMap.set(PagesEnum.OVERVIEW, 
-            (props, _queryParams) => <LeagueOverviewPage levelDataProps={props} title='' />)
+            (props, _queryParams) => <LeagueOverviewPage levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_HATSTATS, 
             (props, queryParams) => <TeamHatstatsTable<LeagueData, LeagueLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.LEAGUE_UNITS,

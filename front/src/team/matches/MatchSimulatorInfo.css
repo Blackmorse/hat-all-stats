@@ -1,0 +1,34 @@
+.simulator_span {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+}
+
+.result_span {
+    min-width: 30px;
+    padding-left: 15px;
+}
+
+.simulator_results {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.home_team_span {
+    background-color: #6ecdea;
+}
+
+.draw_span {
+    background-color: #dce3de;
+}
+
+.away_team_span {
+    background-color: #d15e5e;
+}
+
+.simulator_goals {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}

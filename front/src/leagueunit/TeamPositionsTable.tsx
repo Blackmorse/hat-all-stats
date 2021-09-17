@@ -16,8 +16,9 @@ import { SelectorsEnum } from '../common/tables/SelectorsEnum';
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import RestTableData from '../rest/models/RestTableData';
 import TeamPositionsChart from './TeamPositionsChart'
+import Section from '../common/sections/Section';
 
-class TeamPositionsTable extends AbstractTableSection<LeagueUnitData, LeagueUnitLevelDataProps, LeagueUnitTeamStatsWithPositionDiff, LeagueUnitTeamStatHistoryInfo> {
+class TeamPositionsTableBase extends AbstractTableSection<LeagueUnitData, LeagueUnitLevelDataProps, LeagueUnitTeamStatsWithPositionDiff, LeagueUnitTeamStatHistoryInfo> {
         
     constructor(props: LevelDataPropsWrapper<LeagueUnitData, LeagueUnitLevelDataProps>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
@@ -60,7 +61,7 @@ class TeamPositionsTable extends AbstractTableSection<LeagueUnitData, LeagueUnit
     }
 
 
-    columnValues(index: number, teamPositionWithDiff: LeagueUnitTeamStatsWithPositionDiff): JSX.Element {
+    row(index: number, className: string, teamPositionWithDiff: LeagueUnitTeamStatsWithPositionDiff): JSX.Element {
         let teamPosition = teamPositionWithDiff.leagueUnitTeamStat
         let trend: JSX.Element = <img src="/trend-gray.png" alt="same" />
         if(teamPositionWithDiff.positionDiff < 0) {
@@ -68,7 +69,7 @@ class TeamPositionsTable extends AbstractTableSection<LeagueUnitData, LeagueUnit
         } else if (teamPositionWithDiff.positionDiff > 0) {
             trend = <img className="trend_down" src="/trend-red.png" alt="down" />
         }
-        return <>
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td>{trend}</td>
             <td><TeamLink id={teamPosition.teamId} text={teamPosition.teamName} /></td>
@@ -79,7 +80,7 @@ class TeamPositionsTable extends AbstractTableSection<LeagueUnitData, LeagueUnit
             <td className="value">{teamPosition.scored}</td>
             <td className="value">{teamPosition.missed}</td>
             <td className="value">{teamPosition.points}</td>
-        </>
+        </tr>
     }
 
     additionalSection(model?: LeagueUnitTeamStatHistoryInfo): JSX.Element {
@@ -87,4 +88,5 @@ class TeamPositionsTable extends AbstractTableSection<LeagueUnitData, LeagueUnit
     }
 }
 
+const TeamPositionsTable = Section(TeamPositionsTableBase)
 export default TeamPositionsTable

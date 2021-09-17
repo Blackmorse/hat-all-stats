@@ -36,3 +36,9 @@
 .right_team_match_info {
     width: 180px;
 }
+
+.predict_match_info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

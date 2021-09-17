@@ -56,9 +56,9 @@ class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataPr
         </Translation>
     }
 
-    columnValues(index: number, teamRating: TeamGoalPoints): JSX.Element {
+    row(index: number, className: string, teamRating: TeamGoalPoints): JSX.Element {
         let teamSortingKey = teamRating.teamSortingKey
-        return <>
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
@@ -69,7 +69,7 @@ class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataPr
             <td className="value">{teamRating.goalsAgaints}</td>
             <td className="value">{teamRating.goalsDifference}</td>
             <td className="value">{teamRating.points}</td>
-        </>
+        </tr>
     }
 }
 

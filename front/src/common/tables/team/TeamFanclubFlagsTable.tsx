@@ -39,9 +39,9 @@ abstract class TeamFanclubFlagsTable<Data extends LevelData, TableProps extends 
         </Translation>
     }
 
-    columnValues(index: number, teamFanclubFlags: TeamFanclubFlags): JSX.Element {
+    row(index: number, className: string, teamFanclubFlags: TeamFanclubFlags): JSX.Element {
         let teamSortingKey = teamFanclubFlags.teamSortingKey
-        return <>
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
@@ -49,7 +49,7 @@ abstract class TeamFanclubFlagsTable<Data extends LevelData, TableProps extends 
             <td className="value">{teamFanclubFlags.homeFlags}</td>
             <td className="value">{teamFanclubFlags.awayFlags}</td>
             <td className="value">{teamFanclubFlags.allFlags}</td>
-        </>
+        </tr>
     }
 }
 

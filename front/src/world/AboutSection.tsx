@@ -1,18 +1,18 @@
 import React from 'react';
-import StatisticsSection from "../common/sections/StatisticsSection";
 import './About.css'
 import { PayPalButton } from "react-paypal-button-v2";
 import i18n from '../i18n'
 import { Link } from 'react-router-dom';
+import Section, { SectionState } from '../common/sections/Section';
 
-class AboutSection extends StatisticsSection {
+class AboutSectionBase extends React.Component<{}, SectionState> {
 
     constructor(props: {}) {
-        super(props, <>About Hattid</>)
+        super(props)
         this.state={collapsed: false}
     }
 
-    renderContent(): JSX.Element {
+    render(): JSX.Element {
         return  <article className="about_section">
         <p>Hattid (AlltidLike) is a tool for providing useful statistics for a <a href="https://hattrick.org" target="_tab">Hattrick</a> site. It consists of various types datasets about players, matches, teams, salaries etc.</p>
         <p>
@@ -44,5 +44,7 @@ class AboutSection extends StatisticsSection {
 </article>
     } 
 }
+
+const AboutSection = Section(AboutSectionBase, _ =>  <>About Hattid</>)
 
 export default AboutSection

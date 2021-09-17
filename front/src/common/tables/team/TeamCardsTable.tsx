@@ -39,15 +39,15 @@ abstract class TeamCardsTable<Data extends LevelData, TableProps extends LevelDa
         </Translation>
     }
 
-    columnValues(index: number, teamCards: TeamCards): JSX.Element {
+    row(index: number, className: string, teamCards: TeamCards): JSX.Element {
         let teamSortingKey = teamCards.teamSortingKey
-        return <>
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{yellowCards(teamCards.yellowCards)}</td>
             <td className="value">{redCards(teamCards.redCards)}</td>
-        </>
+        </tr>
     }
 }
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import ExecutableStatisticsSection from "../sections/ExecutableStatisticsSection";
 import TotalOverview from "../../rest/models/overview/TotalOverview";
 import { getTotalOverview } from '../../rest/Client'
 import LevelDataProps from '../LevelDataProps';
@@ -21,6 +20,8 @@ import LevelData from '../../rest/models/leveldata/LevelData';
 import { PagesEnum } from '../enums/PagesEnum';
 import HattidLink from '../links/HattidLink';
 import { LoadingEnum } from '../enums/LoadingEnum';
+import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent';
+import { SectionState } from '../sections/Section';
 
 
 interface State {
@@ -28,18 +29,19 @@ interface State {
 }
 
 interface OverviewPageProps<Data extends LevelData, LevelProps extends LevelDataProps<Data>> {
-    levelDataProps: LevelProps,
-    title: string
+    levelDataProps: LevelProps
 }
 
 export interface LeagueId {
     leagueId: number
 }
 
-abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelDataProps<Data>> 
-        extends ExecutableStatisticsSection<OverviewPageProps<Data, LevelProps>, State, TotalOverview, {}> {
+type OverviewState = LoadableState<State, {}> & SectionState
+
+abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelDataProps<Data>> extends
+        ExecutableComponent<OverviewPageProps<Data, LevelProps>, State, TotalOverview, {}, OverviewState> {
     constructor(props: OverviewPageProps<Data, LevelProps>) {
-        super(props, props.title)
+        super(props)
         
         this.state = {
             loadingState: LoadingEnum.OK,

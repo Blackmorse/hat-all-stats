@@ -6,11 +6,9 @@ import { getAveragesOverview } from '../../rest/Client'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import AveragesOverview from '../../rest/models/overview/AveragesOverview'
 import LevelData from '../../rest/models/leveldata/LevelData';
+import Section from '../sections/Section';
 
-class AveragesOverviewSection<Data extends LevelData> extends OverviewSection<Data, AveragesOverview, OverviewSectionProps<Data, AveragesOverview>> {
-    constructor(props: OverviewSectionProps<Data, AveragesOverview>) {
-        super(props, 'overview.averages')
-    }
+class AveragesOverviewSectionBase<Data extends LevelData> extends OverviewSection<Data, AveragesOverview, OverviewSectionProps<Data, AveragesOverview>> {
 
     loadOverviewEntity = getAveragesOverview
 
@@ -49,5 +47,7 @@ class AveragesOverviewSection<Data extends LevelData> extends OverviewSection<Da
         </Translation>
     }
 }
+
+const AveragesOverviewSection = Section(AveragesOverviewSectionBase, _ => 'overview.averages')
 
 export default AveragesOverviewSection

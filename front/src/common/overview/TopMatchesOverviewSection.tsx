@@ -1,13 +1,9 @@
-import MatchTopHatstats from '../../rest/models/match/MatchTopHatstats'
 import { getTopMatchesOverview } from '../../rest/Client'
 import MatchesOverviewSection from './MatchesOverviewSection'
-import { OverviewTableSectionProps } from './OverviewTableSection';
 import LevelData from '../../rest/models/leveldata/LevelData';
+import Section from '../sections/Section';
 
-class TopMatchesOverviewSection<Data extends LevelData> extends MatchesOverviewSection<Data> {
-    constructor(props: OverviewTableSectionProps<Data, MatchTopHatstats>) {
-        super(props, 'overview.top_matches')
-    }
+class TopMatchesOverviewSectionBase<Data extends LevelData> extends MatchesOverviewSection<Data> {
 
     valueFormatter(value: number): JSX.Element {
         throw new Error("Method not implemented.");
@@ -16,4 +12,5 @@ class TopMatchesOverviewSection<Data extends LevelData> extends MatchesOverviewS
     loadOverviewEntity = getTopMatchesOverview
 }
 
+const TopMatchesOverviewSection = Section(TopMatchesOverviewSectionBase, _ => 'overview.top_matches')
 export default TopMatchesOverviewSection

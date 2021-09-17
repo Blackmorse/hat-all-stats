@@ -1,36 +1,35 @@
 import React from 'react'
-import TeamMatch from '../../rest/models/match/TeamMatch'
+import { MatchRatings } from '../../rest/models/match/TeamMatch'
 import './TeamMatchRatingsTable.css'
 import TeamMatchTableRating from './TeamMatchTableRating'
 
 interface Props {
-    teamMatch: TeamMatch
+    homeMatchRatings: MatchRatings,
+    awayMatchRatings: MatchRatings
 }
 
 class TeamMatchRatingsTable extends React.Component<Props> {
     render() {
-        let teamMatch = this.props.teamMatch
-
         return <div className="team_match_ratings_table">
             <div className="defense_attack"> 
-                <TeamMatchTableRating homeRating={teamMatch.homeMatchRatings.ratingLeftDef} 
-                    awayRating={teamMatch.awayMatchRatings.ratingRightAtt} />
-                <TeamMatchTableRating homeRating={teamMatch.homeMatchRatings.ratingMidDef} 
-                    awayRating={teamMatch.awayMatchRatings.ratingMidAtt} />
-                <TeamMatchTableRating homeRating={teamMatch.homeMatchRatings.ratingRightDef} 
-                    awayRating={teamMatch.awayMatchRatings.ratingLeftAtt} />
+                <TeamMatchTableRating homeRating={this.props.homeMatchRatings.ratingLeftDef} 
+                    awayRating={this.props.awayMatchRatings.ratingRightAtt} />
+                <TeamMatchTableRating homeRating={this.props.homeMatchRatings.ratingMidDef} 
+                    awayRating={this.props.awayMatchRatings.ratingMidAtt} />
+                <TeamMatchTableRating homeRating={this.props.homeMatchRatings.ratingRightDef} 
+                    awayRating={this.props.awayMatchRatings.ratingLeftAtt} />
             </div>
             <div className="midfield">
-                <TeamMatchTableRating homeRating={teamMatch.homeMatchRatings.ratingMidfield} 
-                    awayRating={teamMatch.awayMatchRatings.ratingMidfield} />
+                <TeamMatchTableRating homeRating={this.props.homeMatchRatings.ratingMidfield} 
+                    awayRating={this.props.awayMatchRatings.ratingMidfield} />
             </div>
             <div className="defense_attack">
-                <TeamMatchTableRating homeRating={teamMatch.homeMatchRatings.ratingLeftAtt} 
-                    awayRating={teamMatch.awayMatchRatings.ratingRightDef} />
-                <TeamMatchTableRating homeRating={teamMatch.homeMatchRatings.ratingMidAtt} 
-                    awayRating={teamMatch.awayMatchRatings.ratingMidDef} />
-                <TeamMatchTableRating homeRating={teamMatch.homeMatchRatings.ratingRightAtt} 
-                    awayRating={teamMatch.awayMatchRatings.ratingLeftDef} />
+                <TeamMatchTableRating homeRating={this.props.homeMatchRatings.ratingLeftAtt} 
+                    awayRating={this.props.awayMatchRatings.ratingRightDef} />
+                <TeamMatchTableRating homeRating={this.props.homeMatchRatings.ratingMidAtt} 
+                    awayRating={this.props.awayMatchRatings.ratingMidDef} />
+                <TeamMatchTableRating homeRating={this.props.homeMatchRatings.ratingRightAtt} 
+                    awayRating={this.props.awayMatchRatings.ratingLeftDef} />
             </div>
         </div>
     }

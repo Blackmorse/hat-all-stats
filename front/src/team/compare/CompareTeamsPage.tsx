@@ -1,5 +1,4 @@
 import React from 'react';
-import ExecutableStatisticsSection from '../../common/sections/ExecutableStatisticsSection'
 import TeamComparsion from '../../rest/models/team/TeamComparsion';
 import { LevelDataPropsWrapper } from '../../common/LevelDataProps'
 import TeamData from '../../rest/models/leveldata/TeamData'
@@ -13,14 +12,18 @@ import CompareTeamsTable from './CompareTeamsTable'
 import { Translation } from 'react-i18next'
 import '../../i18n'
 import RankingParametersProvider from '../../common/ranking/RankingParametersProvider'
+import ExecutableComponent, { LoadableState } from '../../common/sections/ExecutableComponent';
+import Section, { SectionState } from '../../common/sections/Section';
 
 interface State {
     teamComparsion?: TeamComparsion
 }
 
-class CompareTeamsPage extends ExecutableStatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, TeamComparsion, number | undefined> {
-    constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
-        super(props, 'menu.comparsion_of_teams')
+class CompareTeamsPageBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
+    State, TeamComparsion, number | undefined, LoadableState<State, number | undefined> & SectionState> {
+    
+        constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
+        super(props)
         
         this.state = {
             loadingState: LoadingEnum.OK,
@@ -139,8 +142,7 @@ class CompareTeamsPage extends ExecutableStatisticsSection<LevelDataPropsWrapper
         }
         </Translation>
     }
-    
-
 }
 
+const CompareTeamsPage = Section(CompareTeamsPageBase, _ => 'menu.comparsion_of_teams')
 export default CompareTeamsPage

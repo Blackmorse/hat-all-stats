@@ -57,9 +57,9 @@ class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataPro
         </Translation>
     }
 
-    columnValues(index: number, teamSalaryTSI: TeamSalaryTSI): JSX.Element {
+    row(index: number, className: string, teamSalaryTSI: TeamSalaryTSI): JSX.Element {
         let teamSortingKey = teamSalaryTSI.teamSortingKey
-        return <>
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
@@ -69,7 +69,7 @@ class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataPro
             <td className="value">{commasSeparated(teamSalaryTSI.avgTsi)}</td>
             <td className="value">{salaryFormatter(teamSalaryTSI.avgSalary, this.props.levelDataProps.currencyRate())}</td>
             <td className="value">{doubleSalaryFormatter(teamSalaryTSI.salaryPerTsi, this.props.levelDataProps.currencyRate())}</td>
-        </>
+        </tr>
     }
 }
 

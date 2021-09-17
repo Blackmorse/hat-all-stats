@@ -8,18 +8,20 @@ import { Translation } from 'react-i18next'
 import '../i18n'
 import RankingTable, { RankingData } from './overview/RankingTable'
 import TeamRankingsStats from '../rest/models/team/TeamRankingsStats';
-import ExecutableStatisticsSection from '../common/sections/ExecutableStatisticsSection'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import RankingParametersProvider from '../common/ranking/RankingParametersProvider'
+import ExecutableComponent, { LoadableState } from '../common/sections/ExecutableComponent';
+import Section, { SectionState } from '../common/sections/Section';
 
 interface State {
     teamRankingsStats?: TeamRankingsStats
 }
 
-class TeamRankingsTable extends ExecutableStatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, TeamRankingsStats, {}> {
+class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
+    State, TeamRankingsStats, {}, LoadableState<State, {}> & SectionState> {
     
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
-        super(props, "menu.team_rankings")
+        super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {},
@@ -132,4 +134,5 @@ class TeamRankingsTable extends ExecutableStatisticsSection<LevelDataPropsWrappe
     }
 }
 
+const TeamRankingsTable = Section(TeamRankingsTableBase, _ => 'menu.team_rankings')
 export default TeamRankingsTable

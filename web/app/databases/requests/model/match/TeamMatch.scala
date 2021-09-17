@@ -1,10 +1,9 @@
 package databases.requests.model.`match`
 
 import java.util.Date
-
 import ai.x.play.json.Jsonx
 import databases.requests.model.team.TeamSortingKey
-import anorm.~
+import anorm.{RowParser, ~}
 import anorm.SqlParser.get
 import play.api.libs.json.{Json, OFormat}
 import ai.x.play.json.implicits._
@@ -34,14 +33,17 @@ case class MatchRatings(formation: String,
                          ratingLeftAtt: Int
                        )
 
+object MatchRatings {
+  implicit val encoder: BaseNameEncoder = BaseNameEncoder()
+  implicit val writesRatings: OFormat[MatchRatings] = Jsonx.formatCaseClass[MatchRatings]
+}
 
 object TeamMatch {
-  implicit val encoder = BaseNameEncoder()
-  implicit val sortingKey = Jsonx.formatCaseClass[TeamSortingKey]
-  implicit val writesRatings = Jsonx.formatCaseClass[MatchRatings]
+  implicit val encoder: BaseNameEncoder = BaseNameEncoder()
+  implicit val sortingKey: OFormat[TeamSortingKey] = Jsonx.formatCaseClass[TeamSortingKey]
   implicit val writes: OFormat[TeamMatch] = Jsonx.formatCaseClass[TeamMatch]
 
-  val mapper = {
+  val mapper: RowParser[TeamMatch] = {
     get[Int]("season") ~
     get[Int]("league_id") ~
     get[Date]("dt") ~

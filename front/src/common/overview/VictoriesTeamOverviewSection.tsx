@@ -6,11 +6,11 @@ import { getTopTeamVictories } from '../../rest/Client'
 import '../../i18n'
 import i18n from '../../i18n'
 import LevelData from '../../rest/models/leveldata/LevelData'
+import Section from '../sections/Section'
 
-class VictoriesTeamOverviewSection<Data extends LevelData> extends TeamOverviewSection<Data> {
+class VictoriesTeamOverviewSectionBase<Data extends LevelData> extends TeamOverviewSection<Data> {
     constructor(props: OverviewTableSectionProps<Data, TeamStatOverview>) {
-        super(props, 'overview.winning_streak', 
-            i18n.t('table.victories'))
+        super(props, i18n.t('table.victories'))
     }
 
     loadOverviewEntity = getTopTeamVictories
@@ -20,4 +20,5 @@ class VictoriesTeamOverviewSection<Data extends LevelData> extends TeamOverviewS
     }
 }
 
+const VictoriesTeamOverviewSection = Section(VictoriesTeamOverviewSectionBase, _ => 'overview.winning_streak')
 export default VictoriesTeamOverviewSection

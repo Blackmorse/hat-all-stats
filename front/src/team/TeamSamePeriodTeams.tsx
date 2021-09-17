@@ -1,5 +1,4 @@
 import React from 'react';
-import ExecutableStatisticsSection from '../common/sections/ExecutableStatisticsSection'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps'
 import TeamData from '../rest/models/leveldata/TeamData'
 import TeamLevelDataProps from './TeamLevelDataProps'
@@ -12,14 +11,18 @@ import LeagueUnitLink from '../common/links/LeagueUnitLink';
 import '../common/tables/TableSection.css'
 import { Translation } from 'react-i18next'
 import { PagesEnum } from '../common/enums/PagesEnum';
+import ExecutableComponent, { LoadableState } from '../common/sections/ExecutableComponent';
+import Section, { SectionState } from '../common/sections/Section';
 
 interface State {
     teams?: Array<CreatedSameTimeTeamExtended>
 }
 
-class TeamSamePeriodTeams extends ExecutableStatisticsSection<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, State, Array<CreatedSameTimeTeamExtended>, string> {
-    constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
-        super(props, 'menu.created_same_time_teams')
+class TeamSamePeriodTeamsBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
+    State, Array<CreatedSameTimeTeamExtended>, string, LoadableState<State, string> & SectionState> {
+    
+        constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
+        super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: 'season',
@@ -102,4 +105,5 @@ class TeamSamePeriodTeams extends ExecutableStatisticsSection<LevelDataPropsWrap
     }
 }
 
+const TeamSamePeriodTeams = Section(TeamSamePeriodTeamsBase, _ => 'menu.created_same_time_teams')
 export default TeamSamePeriodTeams

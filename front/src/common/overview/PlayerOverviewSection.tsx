@@ -10,10 +10,8 @@ import ExternalPlayerLink from '../links/ExternalPlayerLink'
 
 abstract class PlayerOverviewSection<Data extends LevelData> extends OverviewTableSection<Data, PlayerStatOverview> {
     valueTitle: string
-    constructor(props: OverviewTableSectionProps<Data, PlayerStatOverview>, 
-            title: string,
-            valueTitle: string) {
-        super(props, title)
+    constructor(props: OverviewTableSectionProps<Data, PlayerStatOverview>, valueTitle: string) {
+        super(props)
         this.valueTitle = valueTitle
     }
 

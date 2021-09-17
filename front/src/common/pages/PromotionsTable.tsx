@@ -1,6 +1,5 @@
 import React from 'react';
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
-import ExecutableStatisticsSection from '../sections/ExecutableStatisticsSection'
 import LevelData from '../../rest/models/leveldata/LevelData'
 import { getPromotions } from '../../rest/Client'
 import PromotionWithType from '../../rest/models/promotions/Promotion'
@@ -11,16 +10,19 @@ import DivisionLevelLink from '../links/DivisionLevelLink';
 import TeamLink from '../links/TeamLink';
 import LeagueUnitLink from '../links/LeagueUnitLink';
 import { LoadingEnum } from '../enums/LoadingEnum';
+import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent';
+import Section, { SectionState } from '../sections/Section';
 
 interface State {
     promotions?: Array<PromotionWithType>
 }
 
-class PromotionsTable<Data extends LevelData, Props extends LevelDataProps<Data>> 
-        extends ExecutableStatisticsSection<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<PromotionWithType>, {}> {
+class PromotionsTableBase<Data extends LevelData, Props extends LevelDataProps<Data>> 
+        extends ExecutableComponent<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<PromotionWithType>, {},
+            LoadableState<State, {}> & SectionState> {
    
     constructor(props: LevelDataPropsWrapper<Data, Props>) {
-        super(props, 'menu.promotions')
+        super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {},
@@ -101,4 +103,5 @@ class PromotionsTable<Data extends LevelData, Props extends LevelDataProps<Data>
 
 }
 
+const PromotionsTable = Section(PromotionsTableBase, _ => 'menu.promotions')
 export default PromotionsTable

@@ -6,11 +6,11 @@ import { OverviewTableSectionProps } from './OverviewTableSection';
 import '../../i18n'
 import i18n from '../../i18n';
 import LevelData from '../../rest/models/leveldata/LevelData';
+import Section from '../sections/Section';
 
-class SeasonScorersOverviewSection<Data extends LevelData> extends PlayerOverviewSection<Data> {
+class SeasonScorersOverviewSectionBase<Data extends LevelData> extends PlayerOverviewSection<Data> {
     constructor(props: OverviewTableSectionProps<Data, PlayerStatOverview>) {
-        super(props, 'overview.scorers',
-        i18n.t('overview.goals'))
+        super(props, i18n.t('overview.goals'))
     }
 
     loadOverviewEntity = getTopSeasonScorers
@@ -20,4 +20,5 @@ class SeasonScorersOverviewSection<Data extends LevelData> extends PlayerOvervie
     }
 }
 
+const SeasonScorersOverviewSection = Section(SeasonScorersOverviewSectionBase, _ => 'overview.scorers')
 export default SeasonScorersOverviewSection

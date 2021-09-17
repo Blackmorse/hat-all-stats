@@ -1,13 +1,9 @@
-import MatchTopHatstats from '../../rest/models/match/MatchTopHatstats'
 import { getSurprisingMatchesOverview } from '../../rest/Client'
 import MatchesOverviewSection from './MatchesOverviewSection'
-import { OverviewTableSectionProps } from './OverviewTableSection';
 import LevelData from '../../rest/models/leveldata/LevelData';
+import Section from '../sections/Section';
 
-class SurprisingMatchesOverviewSection<Data extends LevelData> extends MatchesOverviewSection<Data> {
-    constructor(props: OverviewTableSectionProps<Data, MatchTopHatstats>) {
-        super(props, 'overview.surprising_matches')
-    }
+class SurprisingMatchesOverviewSectionBase<Data extends LevelData> extends MatchesOverviewSection<Data> {
 
     valueFormatter(value: number): JSX.Element {
         throw new Error("Method not implemented.");
@@ -16,4 +12,5 @@ class SurprisingMatchesOverviewSection<Data extends LevelData> extends MatchesOv
     loadOverviewEntity = getSurprisingMatchesOverview
 }
 
+const SurprisingMatchesOverviewSection = Section(SurprisingMatchesOverviewSectionBase, _ => 'overview.surprising_matches')
 export default SurprisingMatchesOverviewSection

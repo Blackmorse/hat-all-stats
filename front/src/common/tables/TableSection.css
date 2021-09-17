@@ -38,6 +38,10 @@
     font-size: 0.9em;
 }
 
+.white_row {
+    background-color: white !important;
+}
+
 .statistics_table .value {
     text-align: center;
 }

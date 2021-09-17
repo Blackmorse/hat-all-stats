@@ -10,3 +10,7 @@
 .matches_result {
     width: 10%;
 }
+
+.nearest_matches_table td {
+    text-align: center;
+}

@@ -6,10 +6,11 @@ import { getTopHatstatsTeamsOverview } from '../../rest/Client'
 import '../../i18n'
 import i18n from '../../i18n'
 import LevelData from '../../rest/models/leveldata/LevelData'
+import Section from '../sections/Section'
 
-class HatstatsTeamOverviewSection<Data extends LevelData> extends TeamOverviewSection<Data> {
+class HatstatsTeamOverviewSectionBase<Data extends LevelData> extends TeamOverviewSection<Data> {
     constructor(props: OverviewTableSectionProps<Data, TeamStatOverview>) {
-        super(props, 'overview.top_teams', i18n.t('table.hatstats'))
+        super(props, i18n.t('table.hatstats'))
     }
 
     valueFormatter(value: number): JSX.Element {
@@ -19,4 +20,5 @@ class HatstatsTeamOverviewSection<Data extends LevelData> extends TeamOverviewSe
     loadOverviewEntity = getTopHatstatsTeamsOverview
 }
 
+const HatstatsTeamOverviewSection = Section(HatstatsTeamOverviewSectionBase, _ => 'overview.top_teams')
 export default HatstatsTeamOverviewSection

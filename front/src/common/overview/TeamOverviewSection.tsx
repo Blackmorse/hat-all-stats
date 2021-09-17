@@ -11,9 +11,8 @@ abstract class TeamOverviewSection<Data extends LevelData> extends OverviewTable
     valueTitle: string
     
     constructor(props: OverviewTableSectionProps<Data, TeamStatOverview>, 
-            title: string,
             valueTitle: string) {
-        super(props, title)
+        super(props)
         this.valueTitle = valueTitle
     }
 

@@ -14,7 +14,7 @@ import Blur from '../common/widgets/Blur'
 import TeamLink from '../common/links/TeamLink'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import ExternalMatchLink from '../common/links/ExternalMatchLink';
-import StatisticsSection from '../common/sections/StatisticsSection';
+import Section, { SectionState } from '../common/sections/Section';
 
 interface State {
     nearestMatches?: NearestMatches,
@@ -104,29 +104,31 @@ interface MatchesProps {
     matchTableRow: (nm: NearestMatch) => JSX.Element
 }
 
-class PlayedMatches extends StatisticsSection<MatchesProps> {
+class PlayedMatchesBase extends React.Component<MatchesProps, SectionState> {
     constructor(props: MatchesProps) {
-        super(props, 'matches.played_matches')
+        super(props)
         this.state = {collapsed: false}
     }
 
-    renderContent(): JSX.Element {
+    render(): JSX.Element {
         return (
             <div className="statistics_section_inner">
-                <table className="statistics_table">
+                <table className="statistics_table nearest_matches_table">
                     <tbody>{this.props.nearestMatches?.playedMatches.map(this.props.matchTableRow)}</tbody>
                 </table>
             </div>)
     }
-}   
+}
 
-class UpcomingMatches extends StatisticsSection<MatchesProps> {
+const PlayedMatches = Section(PlayedMatchesBase, _ => 'matches.played_matches')
+
+class UpcomingMatchesBase extends React.Component<MatchesProps, SectionState> {
     constructor(props: MatchesProps) {
-        super(props, 'matches.upcoming_matches')
+        super(props)
         this.state = {collapsed: false}
     }
 
-    renderContent(): JSX.Element {
+    render(): JSX.Element {
         return  <div className="statistics_section_inner">
                     <table className="statistics_table">
                         <tbody>{this.props.nearestMatches?.upcomingMatches.map(this.props.matchTableRow)}</tbody>
@@ -135,6 +137,8 @@ class UpcomingMatches extends StatisticsSection<MatchesProps> {
     }
 
 }
+
+const UpcomingMatches = Section(UpcomingMatchesBase, _ => 'matches.upcoming_matches')
 
 
 export default NearestMatchesTable

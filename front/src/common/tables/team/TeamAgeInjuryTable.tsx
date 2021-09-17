@@ -39,16 +39,16 @@ abstract class TeamAgeInjuryTable<Data extends LevelData, TableProps extends Lev
         </Translation>
     }
 
-    columnValues(index: number, teamAgeInjury: TeamAgeInjury): JSX.Element {
+    row(index: number, className: string, teamAgeInjury: TeamAgeInjury): JSX.Element {
         let teamSortingKey = teamAgeInjury.teamSortingKey
-        return <>
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{ageFormatter(teamAgeInjury.age)}</td>
             <td className="value">{injuryFormatter(teamAgeInjury.injury)}</td>
             <td className="value">{teamAgeInjury.injuryCount}</td>
-        </>
+        </tr>
     }
 }
 

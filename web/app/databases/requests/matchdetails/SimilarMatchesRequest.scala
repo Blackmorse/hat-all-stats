@@ -21,9 +21,9 @@ object SimilarMatchesRequest extends ClickhouseRequest[SimilarMatchesStats] {
         "countIf(goals > enemy_goals)" as "wins",
         "countIf(goals = enemy_goals)" as "draws",
         "countIf(goals < enemy_goals)" as "loses",
-        "avg(goals)" as "avg_goals_for",
-        "avg(enemy_goals)" as "avg_goals_against",
-        "count()" as "count"
+        "count()" as "count",
+        "if(count = 0, 0, avg(goals))" as "avg_goals_for",
+        "if(count = 0, 0, avg(enemy_goals))" as "avg_goals_against"
       ).from(
         NestedSelect(
             "match_id", "goals", "enemy_goals",

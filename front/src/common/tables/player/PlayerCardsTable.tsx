@@ -50,9 +50,9 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
         </Translation>
     }
 
-    columnValues(index: number, playerCards: PlayerCards): JSX.Element {
+    row(index: number, className: string, playerCards: PlayerCards): JSX.Element {
         let playerSortingKey = playerCards.playerSortingKey
-        return <>
+        return <tr className={className}>
             <td>{index + 1}</td>
             <td className="value"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId} /></td>
@@ -64,7 +64,7 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
             <td className="value">{playerCards.playedMinutes}</td>
             <td className="value">{yellowCards(playerCards.yellowCards)}</td>
             <td className="value">{redCards(playerCards.redCards)}</td>
-        </>
+        </tr>
     }
 }
 

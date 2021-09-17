@@ -203,5 +203,7 @@
 
     "menu.comparsion_of_teams": "Сравнение команд",
 
-    "table.salary_per_tsi": "Зарплата/TSI"
+    "table.salary_per_tsi": "Зарплата/TSI",
+
+    "match.check_result": "Сравнить результат!"
 }

@@ -6,12 +6,10 @@ import '../../i18n'
 import { Translation } from 'react-i18next'
 import { commasSeparated } from '../../common/Formatters'
 import LevelData from '../../rest/models/leveldata/LevelData';
+import Section from '../sections/Section';
 
-class FormationsOverviewSection<Data extends LevelData> extends OverviewSection<Data, Array<FormationsOverview>, OverviewSectionProps<Data, Array<FormationsOverview>>> {
-    constructor(props: OverviewSectionProps<Data, Array<FormationsOverview>>) {
-        super(props, 'overview.formations')
-    }
-    
+class FormationsOverviewSectionBase<Data extends LevelData> extends OverviewSection<Data, Array<FormationsOverview>, OverviewSectionProps<Data, Array<FormationsOverview>>> {
+   
     loadOverviewEntity = getFormationsOverview
 
     renderOverviewSection(data: Array<FormationsOverview>): JSX.Element {
@@ -35,4 +33,5 @@ class FormationsOverviewSection<Data extends LevelData> extends OverviewSection<
 
 }
 
+const FormationsOverviewSection = Section(FormationsOverviewSectionBase, _ => 'overview.formations')
 export default FormationsOverviewSection
