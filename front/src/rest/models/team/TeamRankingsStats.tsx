@@ -2,8 +2,8 @@ import TeamRanking from './TeamRanking'
 
 interface TeamRankingsStats {
     teamRankings: Array<TeamRanking>, 
-    leagueTeamsCount: number, 
-    divisionLevelTeamsCount: number,
+    leagueTeamsCounts: Array<[number, number]>, 
+    divisionLevelTeamsCounts: Array<[number, number]>,
     currencyRate: number,
     currencyName: string
 }

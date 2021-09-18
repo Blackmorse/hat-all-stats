@@ -132,9 +132,9 @@ function statisticsRequest<T>(path: string):
                 }
 }
 
-export function getTeamRankings(request: LevelRequest, 
+export function getTeamRankings(request: LevelRequest, season: number,
         callback: (loadingEnum: LoadingEnum, teamRankingsStats?: TeamRankingsStats) => void) {
-    axios.get<TeamRankingsStats>(startUrl(request) + '/teamRankings')
+    axios.get<TeamRankingsStats>(startUrl(request) + '/teamRankings?season=' + season)
         .then(response => parseAxiosResponse(response, callback))
         .catch(e => callback(LoadingEnum.ERROR))
 }

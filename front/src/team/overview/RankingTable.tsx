@@ -15,6 +15,7 @@ import RankingParameters from '../../common/ranking/RankingParameters';
 
 export interface RankingData {
     teamRankings: Array<TeamRanking>,
+    round: number,
     teamLevelDataProps: TeamLevelDataProps,
     leagueTeamsCount: number,
     divisionLevelTeamsCount: number
@@ -125,7 +126,7 @@ class RankingTable extends React.Component<Props, State> {
                             queryParams={{
                                 sortingField: this.props.rankingParameters.sortingField,
                                 selectedRow: positionFunc(lastLeagueRanking),
-                                round: this.props.rankingData.teamLevelDataProps.currentRound()
+                                round: this.props.rankingData.round
                             }}
                         />
                         /{this.props.rankingData.leagueTeamsCount}
@@ -138,7 +139,7 @@ class RankingTable extends React.Component<Props, State> {
                             queryParams={{
                                 sortingField: this.props.rankingParameters.sortingField,
                                 selectedRow: positionFunc(previousLeagueRanking),
-                                round: this.props.rankingData.teamLevelDataProps.currentRound() - 1
+                                round: this.props.rankingData.round - 1
                             }}
                         /> : <></>
                         }
@@ -161,7 +162,7 @@ class RankingTable extends React.Component<Props, State> {
                             queryParams={{
                                 sortingField: this.props.rankingParameters.sortingField, 
                                 selectedRow: positionFunc(lastDivisionLevelRanking),
-                                round: this.props.rankingData.teamLevelDataProps.currentRound()
+                                round: this.props.rankingData.round
                             }}
                         />/{this.props.rankingData.divisionLevelTeamsCount}
                     </td>
@@ -174,7 +175,7 @@ class RankingTable extends React.Component<Props, State> {
                             queryParams={{
                                 sortingField: this.props.rankingParameters.sortingField, 
                                 selectedRow: positionFunc(previousDivisionLevelRanking),
-                                round: this.props.rankingData.teamLevelDataProps.currentRound() - 1
+                                round: this.props.rankingData.round - 1
                             }}
                         /> : <></>
                     }

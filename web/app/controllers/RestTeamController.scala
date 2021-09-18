@@ -18,6 +18,7 @@ import webclients.ChppClient
 import models.clickhouse.{NearestMatch, TeamRankings}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
+import models.web.teams.RestTeamRankings
 import models.web.{PlayersParameters, RestStatisticsParameters}
 import play.api.libs.json.{Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -49,16 +50,6 @@ case class RestTeamData(leagueId: Int,
 object RestTeamData {
   implicit val writes: OWrites[RestTeamData] = Json.writes[RestTeamData]
 }
-
-object RestTeamRankings {
-  implicit val writes: OWrites[RestTeamRankings] = Json.writes[RestTeamRankings]
-}
-
-case class RestTeamRankings(teamRankings: Seq[TeamRankings],
-                            leagueTeamsCount: Int,
-                            divisionLevelTeamsCount: Int,
-                            currencyRate: Double,
-                            currencyName: String)
 
 case class NearestMatches(playedMatches: Seq[NearestMatch], upcomingMatches: Seq[NearestMatch])
 
@@ -207,27 +198,34 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
     stats(MatchSpectatorsRequest, teamId, restStatisticsParameters)
 
 
-  def teamRankings(teamId: Long): Action[AnyContent] = Action.async { implicit request =>
+  def teamRankings(teamId: Long, season: Int): Action[AnyContent] = Action.async { implicit request =>
     getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
       val leagueId = team.league.leagueId
-      val season = leagueInfoService.leagueInfo.currentSeason(leagueId)
 
       TeamRankingsRequest.execute(OrderingKeyPath(
         season = Some(season),
         leagueId = Some(leagueId),
         teamId = Some(teamId),
       )).map(teamRankings => {
-          val round = leagueInfoService.leagueInfo.currentRound(leagueId)
           val leagueInfo = leagueInfoService.leagueInfo(leagueId)
-          val leagueTeamsCount = leagueInfo.seasonInfo(season).roundInfo(round).divisionLevelInfo.values.map(_.count).sum
+
+          val leagueTeamsRoundToCounts = leagueInfo.seasonInfo(season).roundInfo
+            .map{case (round, roundInfo) =>
+              val leagueTeamsNumber = roundInfo.divisionLevelInfo.values.map(_.count).sum
+              (round, leagueTeamsNumber)
+            }.toSeq
           val divisionLevel = teamRankings.map(_.divisionLevel).headOption.getOrElse(team.leagueLevelUnit.leagueLevel)
-          val divisionLevelTeamsCount = leagueInfo.seasonInfo(season).roundInfo(round).divisionLevelInfo(divisionLevel).count
+          val divisionLevelTeamsCounts = leagueInfo.seasonInfo(season).roundInfo
+            .map{case (round, roundInfo) =>
+              (round, roundInfo.divisionLevelInfo(divisionLevel).count)
+            }.toSeq
+
           val currencyRate = CurrencyUtils.currencyRate(leagueInfo.league.country)
           val currencyName = CurrencyUtils.currencyName(leagueInfo.league.country)
 
           RestTeamRankings(teamRankings = teamRankings,
-            leagueTeamsCount = leagueTeamsCount,
-            divisionLevelTeamsCount = divisionLevelTeamsCount,
+            leagueTeamsCounts = leagueTeamsRoundToCounts,
+            divisionLevelTeamsCounts = divisionLevelTeamsCounts,
             currencyRate = currencyRate,
             currencyName = currencyName)
 

@@ -81,7 +81,7 @@ GET     /api/leagueUnit/:leagueUnitId/promotions   controllers.RestLeagueUnitCon
 GET     /api/leagueUnit/:leagueUnitId/dreamTeam         controllers.RestLeagueUnitController.dreamTeam(season: Int, leagueUnitId: Int, sortBy: String, statsType: models.web.StatsType)
 
 GET     /api/team/:teamId           controllers.RestTeamController.getTeamData(teamId: Long)
-GET     /api/team/:teamId/teamRankings      controllers.RestTeamController.teamRankings(teamId: Long)
+GET     /api/team/:teamId/teamRankings      controllers.RestTeamController.teamRankings(teamId: Long, season: Int)
 GET     /api/team/:teamId/nearestMatches    controllers.RestTeamController.nearestMatches(teamId: Long)
 GET     /api/team/:teamId/playerGoalGames   controllers.RestTeamController.playerGoalGames(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
 GET     /api/team/:teamId/playerCards   controllers.RestTeamController.playerCards(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
