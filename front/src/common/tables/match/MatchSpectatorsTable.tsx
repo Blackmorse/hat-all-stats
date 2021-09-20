@@ -39,7 +39,7 @@ abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends L
     }
 
     row(index: number, className: string, matchSpectators: MatchSpectators): JSX.Element {
-        return <MatchSpectatorsRow key={this.constructor.name + '_' + index } rowIndex={index} className={className} 
+        return <MatchSpectatorsRow key={this.constructor.name + '_' + matchSpectators.matchId } rowIndex={index} className={className} 
             rowModel={matchSpectators}/>
     }
 }

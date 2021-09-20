@@ -42,7 +42,7 @@ abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends L
     }
 
     row(index: number, className: string, matchHatstats: MatchTopHatstats): JSX.Element {
-        return <MatchSurprisingRow key={this.constructor.name + '_' + index } rowIndex={index} 
+        return <MatchSurprisingRow key={this.constructor.name + '_' + matchHatstats.matchId } rowIndex={index} 
             rowModel={matchHatstats} className={className} />
     }
 }

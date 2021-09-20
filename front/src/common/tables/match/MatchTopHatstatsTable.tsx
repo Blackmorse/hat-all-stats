@@ -42,7 +42,7 @@ abstract class MatchTopHatstatsTable<Data extends LevelData, TableProps extends 
     }
 
     row(index: number, className: string, matchHatstats: MatchTopHatstats): JSX.Element {
-        return <MatchTopHatstatsRow key={this.constructor.name + '_' + index } rowIndex={index} 
+        return <MatchTopHatstatsRow key={this.constructor.name + '_' + matchHatstats.matchId } rowIndex={index} 
             className={className} rowModel={matchHatstats} />
     }
 }

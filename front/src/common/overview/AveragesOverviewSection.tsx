@@ -18,24 +18,24 @@ class AveragesOverviewSectionBase<Data extends LevelData> extends OverviewSectio
             <table className="statistics_table">
                 <tbody>
                     <tr>
-                        <td className="value">{t('overview.average_hatstats')}</td>
-                        <td>{averageOverview.matchAverages.hatstats}</td>
+                        <td>{t('overview.average_hatstats')}</td>
+                        <td className="value">{averageOverview.matchAverages.hatstats}</td>
                     </tr>
                     <tr>
                         <td>{t('overview.average_spectators')}</td>
-                        <td>{commasSeparated(averageOverview.matchAverages.spectators)}</td>
+                        <td className="value">{commasSeparated(averageOverview.matchAverages.spectators)}</td>
                     </tr>
                     <tr>
                         <td>{t('overview.average_team_goals')}</td>
-                        <td>{Math.round(averageOverview.matchAverages.goals * 100) / 100}</td>
+                        <td className="value">{Math.round(averageOverview.matchAverages.goals * 100) / 100}</td>
                     </tr>
                     <tr>
                         <td>{t('overview.average_team_age')}</td>
-                        <td>{ageFormatter(averageOverview.teamPlayerAverages.age)}</td>
+                        <td className="value">{ageFormatter(averageOverview.teamPlayerAverages.age)}</td>
                     </tr>
                     <tr>
                         <td>{t('overview.average_team_salary')}</td>
-                        <td>{commasSeparated(averageOverview.teamPlayerAverages.salary / this.props.levelDataProps.currencyRate())} {this.props.levelDataProps.currency()}</td>
+                        <td className="value">{commasSeparated(averageOverview.teamPlayerAverages.salary / this.props.levelDataProps.currencyRate())} {this.props.levelDataProps.currency()}</td>
                     </tr>
                     <tr>
                         <td>{t('overview.average_team_stars')}</td>

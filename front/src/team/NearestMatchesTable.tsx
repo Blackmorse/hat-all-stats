@@ -130,7 +130,7 @@ class UpcomingMatchesBase extends React.Component<MatchesProps, SectionState> {
 
     render(): JSX.Element {
         return  <div className="statistics_section_inner">
-                    <table className="statistics_table">
+                    <table className="statistics_table nearest_matches_table">
                         <tbody>{this.props.nearestMatches?.upcomingMatches.map(this.props.matchTableRow)}</tbody>
                     </table>
                 </div>
