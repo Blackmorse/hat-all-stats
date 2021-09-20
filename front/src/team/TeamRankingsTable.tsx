@@ -104,6 +104,7 @@ class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<Te
             teamRankings: teamRankings,
             teamLevelDataProps: this.props.levelDataProps,
             round: this.state.state.round,
+            season: this.state.state.season,
             leagueTeamsCount: leagueTeamsCount[1],
             divisionLevelTeamsCount: divisionLevelTeamsCount[1],
         }
