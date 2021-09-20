@@ -1,7 +1,7 @@
 import TeamSortingKey from './TeamSortingKey'
 
 interface CreatedSameTimeTeam {
-    foundedDate: number,
+    foundedDate: Date,
     powerRating: number,
     teamSortingKey: TeamSortingKey
 }

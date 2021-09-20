@@ -1,3 +1,4 @@
+import moment from 'moment';
 import React from 'react';
 import './Formatters.css'
 
@@ -59,4 +60,12 @@ export function salaryFormatter(value: number, currencyRate?: number): JSX.Eleme
 export function doubleSalaryFormatter(value: number, currencyRate?: number): number {
     let val = value / ((currencyRate === undefined) ? 1 : currencyRate)
     return Math.ceil(val * 100) / 100
+}
+
+export function dateFormatter(value: Date): JSX.Element {
+    return <>{moment(value).format('DD.MM.YYYY')}</>
+}
+
+export function dateNumberFormatter(value: number): JSX.Element {
+    return <>{moment(value).format('DD.MM.YYYY')}</>
 }

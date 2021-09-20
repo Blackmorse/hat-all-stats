@@ -8,12 +8,12 @@ import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
-import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
+import databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
@@ -32,7 +32,7 @@ case class RestLeagueData(leagueId: Int,
                           countries: Seq[(Int, String)]) extends CountryLevelData
 
 object RestLeagueData {
-  implicit val writes = Json.writes[RestLeagueData]
+  implicit val writes: OWrites[RestLeagueData] = Json.writes[RestLeagueData]
 }
 
 @Singleton
@@ -80,49 +80,49 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
-  def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamHatstatsRequest, leagueId, restStatisticsParameters)
 
-  def leagueUnits(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def leagueUnits(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(LeagueUnitHatstatsRequest, leagueId, restStatisticsParameters)
 
-  def playerGoalGames(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters) =
+  def playerGoalGames(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[AnyContent] =
     playersRequest(PlayerGamesGoalsRequest, leagueId, restStatisticsParameters, playersParameters)
 
-  def playerCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters) =
+  def playerCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[AnyContent] =
     playersRequest(PlayerCardsRequest, leagueId, restStatisticsParameters, playersParameters)
 
-  def playerTsiSalary(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters) =
+  def playerTsiSalary(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[AnyContent] =
     playersRequest(PlayerSalaryTSIRequest, leagueId, restStatisticsParameters, playersParameters)
 
-  def playerRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters) =
+  def playerRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[AnyContent] =
     playersRequest(PlayerRatingsRequest, leagueId, restStatisticsParameters, playersParameters)
 
-  def playerInjuries(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def playerInjuries(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(PlayerInjuryRequest, leagueId, restStatisticsParameters)
 
-  def teamSalaryTsi(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean) = Action.async { implicit request =>
+  def teamSalaryTsi(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean): Action[AnyContent] = Action.async { implicit request =>
     TeamSalaryTSIRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)),
         restStatisticsParameters,
         playedInLastMatch)
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
-  def teamCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) = Action.async { implicit request =>
+  def teamCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = Action.async { implicit request =>
     TeamCardsRequest.execute(
       OrderingKeyPath(leagueId = Some(leagueId)),
       restStatisticsParameters)
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
-  def teamRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def teamRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamRatingsRequest, leagueId, restStatisticsParameters)
 
-  def teamAgeInjuries(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def teamAgeInjuries(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamAgeInjuryRequest, leagueId, restStatisticsParameters)
 
   def teamGoalPoints(leagueId: Int, restStatisticsParameters: RestStatisticsParameters,
-                     playedAllMatches: Boolean) = Action.async { implicit request =>
+                     playedAllMatches: Boolean): Action[AnyContent] = Action.async { implicit request =>
     TeamGoalPointsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)),
           restStatisticsParameters,
           playedAllMatches,
@@ -131,30 +131,34 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
-  def teamPowerRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def teamPowerRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamPowerRatingsRequest, leagueId, restStatisticsParameters)
 
-  def teamFanclubFlags(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def teamFanclubFlags(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamFanclubFlagsRequest, leagueId, restStatisticsParameters)
 
-  def teamStreakTrophies(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def teamStreakTrophies(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamStreakTrophiesRequest, leagueId, restStatisticsParameters)
 
-  def topMatches(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def topMatches(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(MatchTopHatstatsRequest, leagueId, restStatisticsParameters)
 
-  def surprisingMatches(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def surprisingMatches(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(MatchSurprisingRequest, leagueId, restStatisticsParameters)
 
-  def matchSpectators(leagueId: Int, restStatisticsParameters: RestStatisticsParameters) =
+  def matchSpectators(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(MatchSpectatorsRequest, leagueId, restStatisticsParameters)
 
-  def promotions(leagueId: Int) = Action.async { implicit request =>
+  def promotions(leagueId: Int): Action[AnyContent] = Action.async { implicit request =>
     PromotionsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), leagueInfoService.leagueInfo.currentSeason(leagueId))
       .map(PromotionWithType.convert).map(result => Ok(Json.toJson(result)))
   }
 
-  def dreamTeam(season: Int, leagueId: Int, sortBy: String, statsType: StatsType) = Action.async { implicit request =>
+  def oldestTeams(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = {
+    stats(OldestTeamsRequest, leagueId, restStatisticsParameters)
+  }
+
+  def dreamTeam(season: Int, leagueId: Int, sortBy: String, statsType: StatsType): Action[AnyContent] = Action.async { implicit request =>
     DreamTeamRequest.execute(OrderingKeyPath(season = Some(season), leagueId = Some(leagueId)),
       statsType,
       sortBy)

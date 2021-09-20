@@ -5,7 +5,6 @@ import TeamLevelDataProps from './TeamLevelDataProps'
 import CreatedSameTimeTeamExtended from '../rest/models/team/CreatedSameTimeTeamExtended';
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import { getCreatedSameTimeTeams } from '../rest/Client'
-import moment from 'moment'
 import TeamLink from '../common/links/TeamLink'
 import LeagueUnitLink from '../common/links/LeagueUnitLink';
 import '../common/tables/TableSection.css'
@@ -13,6 +12,7 @@ import { Translation } from 'react-i18next'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import ExecutableComponent, { LoadableState } from '../common/sections/ExecutableComponent';
 import Section, { SectionState } from '../common/sections/Section';
+import { dateFormatter } from '../common/Formatters';
 
 interface State {
     teams?: Array<CreatedSameTimeTeamExtended>
@@ -87,7 +87,7 @@ class TeamSamePeriodTeamsBase extends ExecutableComponent<LevelDataPropsWrapper<
                                 <td className="value">{team.createdSameTimeTeam.powerRating}</td>
                                 <td className="value">{team.season + this.props.levelDataProps.levelData.seasonOffset}</td>
                                 <td className="value">{team.round}</td>
-                                <td className="value">{moment(team.createdSameTimeTeam.foundedDate).format('DD.MM.YYYY')}</td>
+                                <td className="value">{dateFormatter(team.createdSameTimeTeam.foundedDate)}</td>
                                 <td className="value"><TeamLink text='Compare' 
                                     id={this.props.levelDataProps.teamId()} 
                                     page={PagesEnum.TEAM_COMPARSION}

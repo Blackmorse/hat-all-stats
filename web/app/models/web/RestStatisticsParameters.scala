@@ -4,7 +4,8 @@ import play.api.mvc.QueryStringBindable
 
 case class RestStatisticsParameters(page: Int,
                                     pageSize: Int,
-                                    sortBy: String, sortingDirection: SortingDirection,
+                                    sortBy: String,
+                                    sortingDirection: SortingDirection,
                                     statsType: StatsType,
                                     season: Int)
 

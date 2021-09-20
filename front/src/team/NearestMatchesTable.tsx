@@ -9,12 +9,12 @@ import TeamData from '../rest/models/leveldata/TeamData';
 import TeamLevelDataProps from './TeamLevelDataProps';
 import TeamRequest from '../rest/models/request/TeamRequest';
 import { getNearestMatches } from '../rest/Client'
-import moment from 'moment'
 import Blur from '../common/widgets/Blur'
 import TeamLink from '../common/links/TeamLink'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import ExternalMatchLink from '../common/links/ExternalMatchLink';
 import Section, { SectionState } from '../common/sections/Section';
+import { dateFormatter } from '../common/Formatters';
 
 interface State {
     nearestMatches?: NearestMatches,
@@ -62,7 +62,7 @@ class NearestMatchesTable extends React.Component<LevelDataPropsWrapper<TeamData
         }
 
         return <tr key={"nearest_match_" + nearestMatch.matchId}>
-            <td className="matches_date">{moment(nearestMatch.matchDate).format('DD.MM.YYYY')}</td>
+            <td className="matches_date">{dateFormatter(nearestMatch.matchDate)}</td>
             <td className="matches_team"><TeamLink text={nearestMatch.homeTeamName} id={nearestMatch.homeTeamId} forceRefresh={true}/></td>
             <td className="matches_result">{result} <ExternalMatchLink id={nearestMatch.matchId} /></td>
             <td className="matches_team"><TeamLink text={nearestMatch.awayTeamName} id={nearestMatch.awayTeamId} forceRefresh={true}/></td>

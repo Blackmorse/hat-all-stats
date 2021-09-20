@@ -26,6 +26,7 @@ import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
 import QueryParams from '../common/QueryParams';
 import PromotionsTable from '../common/pages/PromotionsTable';
 import DreamTeamPage from '../common/pages/DreamTeamPage';
+import OldestTeamsTable from '../common/tables/team/OldestTeamsTable';
 
 
 interface MatchParams {
@@ -68,6 +69,8 @@ class LeagueUnit extends CountryLevelLayout<Props, LeagueUnitData, LeagueUnitLev
             (props, queryParams) => <TeamFanclubFlagsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES,
             (props, queryParams) => <TeamStreakTrophiesTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
+        pagesMap.set(PagesEnum.OLDEST_TEAMS,
+            (props, queryParams) => <OldestTeamsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS,
             (props, queryParams) => <MatchTopHatstatsTable<LeagueUnitData, LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams} />) 
         pagesMap.set(PagesEnum.MATCH_SURPRISING,

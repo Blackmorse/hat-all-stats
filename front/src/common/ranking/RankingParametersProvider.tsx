@@ -1,6 +1,6 @@
 import RankingParameters from "./RankingParameters";
 import i18n from "../../i18n";
-import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter, salaryFormatter, loddarStats } from '../Formatters'
+import { commasSeparated, ageFormatter, ratingFormatter, injuryFormatter, salaryFormatter, loddarStats, dateNumberFormatter } from '../Formatters'
 import { PagesEnum } from "../enums/PagesEnum";
 
 class RankingParametersProvider {
@@ -147,6 +147,17 @@ class RankingParametersProvider {
             formatter: loddarStats,
             sortingField: 'loddar_stats',
             page: PagesEnum.TEAM_HATSTATS
+        }
+    }
+
+    static FOUNDED_DATE(): RankingParameters {
+        return {
+            title: i18n.t('team.date_of_foundation'),
+            positionFunc: teamRanking => teamRanking.foundedPosition,
+            valueFunc: teamRanking => new Date(teamRanking.founded).getTime(),
+            formatter: dateNumberFormatter,
+            sortingField: 'founded_date',
+            page: PagesEnum.OLDEST_TEAMS
         }
     }
 }

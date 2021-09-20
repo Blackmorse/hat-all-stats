@@ -27,6 +27,7 @@ import TeamGoalPoints from './models/team/TeamGoalPoints'
 import TeamPowerRating from './models/team/TeamPowerRating'
 import TeamFanclubFlags from './models/team/TeamFanclubFlags'
 import TeamStreakTrophies from './models/team/TeamStreakTrophies'
+import OldestTeam from './models/team/OldestTeam'
 import MatchTopHatstats from './models/match/MatchTopHatstats'
 import MatchSpectators from './models/match/MatchSpectators'
 import WorldData from './models/leveldata/WorldData';
@@ -274,6 +275,8 @@ export let getTeamCards = statisticsRequest<TeamCards>('teamCards')
 export let getTeamRatings = statisticsRequest<TeamRating>('teamRatings')
 
 export let getTeamAgeInjuries = statisticsRequest<TeamAgeInjury>('teamAgeInjuries')
+
+export let getOldestTeams = statisticsRequest<OldestTeam>('oldestTeams')
 
 export function getTeamGoalPoints(request: LevelRequest,
         statisticsParameters: StatisticsParameters,

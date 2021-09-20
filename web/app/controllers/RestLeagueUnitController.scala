@@ -13,7 +13,7 @@ import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
-import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
+import databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattid.CommonData
 import webclients.ChppClient
@@ -211,6 +211,9 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
 
   def matchSpectators(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(MatchSpectatorsRequest, leagueUnitId, restStatisticsParameters)
+
+  def oldestTeams(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+    stats(OldestTeamsRequest, leagueUnitId, restStatisticsParameters)
 
   def teamPositions(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = Action.async{ implicit request =>
     chppClient.execute[LeagueDetails, LeagueDetailsRequest](LeagueDetailsRequest(leagueUnitId = Some(leagueUnitId)))

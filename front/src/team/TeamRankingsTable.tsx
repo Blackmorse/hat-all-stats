@@ -183,6 +183,10 @@ class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<Te
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.LODDAR_STATS()}
                         />
+                        <RankingTable
+                            rankingData={rankingData}
+                            rankingParameters={RankingParametersProvider.FOUNDED_DATE()}
+                        />
                     </div>
                 </div>
             </>

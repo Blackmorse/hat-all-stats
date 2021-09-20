@@ -6,6 +6,8 @@ import ai.x.play.json.{BaseNameEncoder, Jsonx}
 import play.api.libs.json.{Json, OFormat}
 import ai.x.play.json.implicits._
 
+import java.util.Date
+
 case class TeamRankings(teamId: Long,
                         teamName: String,
                         divisionLevel: Int,
@@ -37,7 +39,9 @@ case class TeamRankings(teamId: Long,
                         injuryCount: Int,
                         injuryCountPosition: Int,
                         powerRating: Int,
-                        powerRatingPosition: Int
+                        powerRatingPosition: Int,
+                        founded: Date,
+                        foundedPosition: Int
                        )
 
 object TeamRankings {
@@ -76,13 +80,15 @@ object TeamRankings {
     get[Int]("injury_count") ~
     get[Int]("injury_count_position") ~
     get[Int]("power_rating") ~
-    get[Int]("power_rating_position") map {
+    get[Int]("power_rating_position") ~
+    get[Date]("founded") ~
+    get[Int]("founded_position") map {
       case teamId ~ teamName ~ divisionLevel ~ season ~ round ~ rankType ~ hatstats ~ hatstatsPosition ~ attack ~
         attackPosition ~ midfield ~ midfieldPosition ~
         defense ~ defensePosition ~ loddarStats ~ loddarStatsPosition ~ tsi ~ tsiPosition ~ salary ~ salaryPosition ~
         rating ~ ratingPosition ~ ratingEndOfMatch ~ ratingEndOfMatchPosition ~
         age ~ agePosition ~ injury ~ injuryPosition ~ injuryCount ~ injuryCountPosition  ~
-        powerRating ~ powerRatingPosition =>
+        powerRating ~ powerRatingPosition ~ founded ~ foundedPosition =>
         TeamRankings(teamId = teamId,
           teamName = teamName,
           divisionLevel = divisionLevel,
@@ -114,7 +120,9 @@ object TeamRankings {
           injuryCount = injuryCount,
           injuryCountPosition = injuryCountPosition,
           powerRating = powerRating,
-          powerRatingPosition = powerRatingPosition
+          powerRatingPosition = powerRatingPosition,
+          founded = founded,
+          foundedPosition = foundedPosition
         )
     }
   }

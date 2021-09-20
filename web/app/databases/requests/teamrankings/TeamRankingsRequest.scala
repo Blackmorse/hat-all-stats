@@ -44,7 +44,9 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
       "injury_count",
       "injury_count_position",
       "power_rating",
-      "power_rating_position"
+      "power_rating_position",
+      "founded",
+      "founded_position"
     ).from("hattrick.team_rankings")
 
   override val rowParser: RowParser[TeamRankings] = TeamRankings.teamRankingsMapper

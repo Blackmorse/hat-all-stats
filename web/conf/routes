@@ -34,6 +34,7 @@ GET     /api/league/:leagueId/teamStreakTrophies       controllers.RestLeagueCon
 GET     /api/league/:leagueId/topMatches       controllers.RestLeagueController.topMatches(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/surprisingMatches       controllers.RestLeagueController.surprisingMatches(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/matchSpectators       controllers.RestLeagueController.matchSpectators(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/oldestTeams       controllers.RestLeagueController.oldestTeams(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/promotions        controllers.RestLeagueController.promotions(leagueId: Int)
 GET     /api/league/:leagueId/dreamTeam         controllers.RestLeagueController.dreamTeam(season: Int, leagueId: Int, sortBy: String, statsType: models.web.StatsType)
 
@@ -56,6 +57,7 @@ GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamStreakTrophies  c
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/topMatches  controllers.RestDivisionLevelController.topMatches(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/surprisingMatches  controllers.RestDivisionLevelController.surprisingMatches(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/matchSpectators  controllers.RestDivisionLevelController.matchSpectators(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/league/:leagueId/divisionLevel/:divisionLevel/oldestTeams      controllers.RestDivisionLevelController.oldestTeams(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/promotions  controllers.RestDivisionLevelController.promotions(leagueId: Int, divisionLevel: Int)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/dreamTeam         controllers.RestDivisionLevelController.dreamTeam(season: Int, leagueId: Int, divisionLevel: Int, sortBy: String, statsType: models.web.StatsType)
 
@@ -77,6 +79,7 @@ GET     /api/leagueUnit/:leagueUnitId/teamStreakTrophies   controllers.RestLeagu
 GET     /api/leagueUnit/:leagueUnitId/topMatches   controllers.RestLeagueUnitController.topMatches(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/surprisingMatches   controllers.RestLeagueUnitController.surprisingMatches(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/matchSpectators   controllers.RestLeagueUnitController.matchSpectators(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/leagueInit/:leagueUnitId/oldestTeams       controllers.RestLeagueUnitController.oldestTeams(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/promotions   controllers.RestLeagueUnitController.promotions(leagueUnitId: Int)
 GET     /api/leagueUnit/:leagueUnitId/dreamTeam         controllers.RestLeagueUnitController.dreamTeam(season: Int, leagueUnitId: Int, sortBy: String, statsType: models.web.StatsType)
 

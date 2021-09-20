@@ -9,7 +9,11 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Try}
 
-case class SqlRequestParam(field: String, fieldAlias: String, request: String, cupLevelField: Boolean)
+case class SqlRequestParam(field: String,
+                           fieldAlias: String,
+                           request: String,
+                           cupLevelField: Boolean,
+                           direction: String = "DESC")
 
 object TeamRankJoiner {
   private val logger = LoggerFactory.getLogger(this.getClass)
@@ -65,7 +69,7 @@ object TeamRankJoiner {
     |        {field} AS {field_alias}
     |    FROM {database}.team_details
     |    WHERE {where}
-    |    ORDER BY {field_alias} DESC, team_id ASC
+    |    ORDER BY {field_alias} {direction}, team_id ASC
     |)
     |ORDER BY team_id ASC""".stripMargin
 
@@ -129,7 +133,9 @@ object TeamRankJoiner {
         SqlRequestParam("sumIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury", player_stats_request, cupLevelField = true),
         SqlRequestParam("countIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury_count", player_stats_request, cupLevelField = true),
 
-        SqlRequestParam("power_rating", "power_rating", team_details_request, cupLevelField = false)
+
+        SqlRequestParam("power_rating", "power_rating", team_details_request, cupLevelField = false),
+        SqlRequestParam("founded_date", "founded", team_details_request, cupLevelField = false, direction = "ASC")
       )
 
       var newFields = "hatstats, hatstats_position"
@@ -145,6 +151,7 @@ object TeamRankJoiner {
           .replace("{field_alias}", sqlRequestParam.fieldAlias)
           .replace("{where}", whereStatement(sqlRequestParam.cupLevelField))
           .replace("{database}", database)
+          .replace("{direction}", sqlRequestParam.direction)
 
         request = s"""SELECT $base_fields  $newFields FROM (
           |$request) as  ${oldTablePrefix}_${oldFieldAlias}_table LEFT JOIN (

@@ -26,6 +26,7 @@ import TeamStreakTrophiesTable from '../common/tables/team/TeamStreakTrophiesTab
 import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable';
 import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
+import OldestTeamsTable from '../common/tables/team/OldestTeamsTable'
 import PromotionsTable from '../common/pages/PromotionsTable'
 import QueryParams from '../common/QueryParams';
 import DreamTeamPage from '../common/pages/DreamTeamPage';
@@ -73,6 +74,8 @@ class League extends CountryLevelLayout<Props, LeagueData, LeagueLevelDataProps>
             (props, queryParams) => <TeamFanclubFlagsTable<LeagueData, LeagueLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES,
             (props, queryParams) => <TeamStreakTrophiesTable<LeagueData, LeagueLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        pagesMap.set(PagesEnum.OLDEST_TEAMS,
+            (props, queryParams) => <OldestTeamsTable<LeagueData, LeagueLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS,
             (props, queryParams) => <MatchTopHatstatsTable<LeagueData, LeagueLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.MATCH_SURPRISING,

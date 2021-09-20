@@ -137,6 +137,11 @@ class CompareTeamsPageBase extends ExecutableComponent<LevelDataPropsWrapper<Tea
                     teamLevelDataProps={this.props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.LODDAR_STATS()}
                 />
+                <CompareTeamsTable 
+                    teamComparsion={teamComparsion}
+                    teamLevelDataProps={this.props.levelDataProps} 
+                    rankingParameters={RankingParametersProvider.FOUNDED_DATE()}
+                />
             </div>
             </>
         }

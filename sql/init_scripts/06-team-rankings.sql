@@ -35,7 +35,9 @@ CREATE TABLE hattrick.team_rankings
     `injury_count` Int8,
     `injury_count_position` UInt32,
     `power_rating` UInt16,
-    `power_rating_position` UInt32
+    `power_rating_position` UInt32,
+    `founded` Date,
+    `founded_position` UInt32
 )
 ENGINE = MergeTree()
 ORDER BY (league_id, team_id, season, round)

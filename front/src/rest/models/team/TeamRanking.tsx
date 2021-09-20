@@ -30,7 +30,9 @@ interface TeamRanking {
     injuryCount: number,
     injuryCountPosition: number,
     powerRating: number,
-    powerRatingPosition: number
+    powerRatingPosition: number,
+    founded: Date,
+    foundedPosition: number
 }
 
 export default TeamRanking

@@ -14,8 +14,7 @@ import databases.requests.playerstats.player._
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamrankings.{HistoryTeamLeagueUnitInfoRequest, TeamRankingsRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import webclients.ChppClient
-import models.clickhouse.{NearestMatch, TeamRankings}
+import models.clickhouse.NearestMatch
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web.teams.RestTeamRankings
@@ -25,6 +24,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
 import service.{HattrickPeriod, TeamsService}
 import utils.{CurrencyUtils, Romans}
+import webclients.ChppClient
 
 import java.util.Date
 import javax.inject.Inject
