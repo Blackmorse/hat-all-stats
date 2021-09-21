@@ -2,6 +2,8 @@ package controllers
 
 import chpp.search.SearchRequest
 import chpp.search.models.{Search, SearchType}
+import chpp.teamdetails.TeamDetailsRequest
+import chpp.teamdetails.models.TeamDetails
 import databases.dao.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
 import databases.requests.matchdetails.{MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
@@ -39,6 +41,16 @@ class WorldController @Inject() (val controllerComponents: ControllerComponents,
   def searchByName(name: String): Action[AnyContent] = Action.async { implicit request =>
     chppClient.execute[Search, SearchRequest](SearchRequest(searchType = Some(SearchType.TEAMS), searchString = Some(name)))
       .map(results => results.searchResults.map(result => TeamSearchResult(result.resultId, result.resultName)))
+      .map(r => Ok(Json.toJson(r)))
+  }
+
+  def searchById(id: Long): Action[AnyContent] = Action.async { implicit request =>
+    chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(id)))
+      .map(result => {
+        result.teams
+          .filter(_.teamId == id)
+          .map(team => TeamSearchResult(team.teamId, team.teamName))
+      })
       .map(r => Ok(Json.toJson(r)))
   }
 

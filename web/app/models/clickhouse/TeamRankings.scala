@@ -1,10 +1,9 @@
 package models.clickhouse
 
+import ai.x.play.json.{BaseNameEncoder, Jsonx}
 import anorm.SqlParser.get
 import anorm.~
-import ai.x.play.json.{BaseNameEncoder, Jsonx}
-import play.api.libs.json.{Json, OFormat}
-import ai.x.play.json.implicits._
+import play.api.libs.json.OFormat
 
 import java.util.Date
 

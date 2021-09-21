@@ -3,6 +3,7 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
 GET     /api/teamSearchByName       controllers.WorldController.searchByName(name: String)
+GET     /api/teamSearchById         controllers.WorldController.searchById(id: Long)
 GET     /api/league/:leagueId/leagueUnitName/:leagueUnitName    controllers.RestLeagueUnitController.leagueUnitIdByName(leagueUnitName: String, leagueId: Int)
 
 GET     /api/health                     controllers.WorldController.health()

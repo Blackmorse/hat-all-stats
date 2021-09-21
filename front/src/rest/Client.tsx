@@ -163,6 +163,13 @@ export function searchTeam(name: string,
         .catch(e => callback(LoadingEnum.ERROR))
 }
 
+export function searchTeamById(id: number, 
+        callback: (loadingEnum: LoadingEnum, results?: Array<TeamSearchResult>) => void): void {
+    axios.get<Array<TeamSearchResult>>('/api/teamSearchById?id=' + id)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
+
 export function getTeamMatches(teamId: number, season: number,
        callback: (loadingEnum: LoadingEnum, results?: Array<TeamMatch>) => void) {
     axios.get<Array<TeamMatch>>('/api/team/' + teamId + '/teamMatches?season=' + season)
