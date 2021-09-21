@@ -89,19 +89,20 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
 
     team1Future.zipWith(team2Future){case (team1, team2) =>
       if (team1.league.leagueId != team2.league.leagueId) {
-        throw new RuntimeException("unable to compare teams from different countries")
-      }
-      val teamCreateRanges1 = seasonsService.getSeasonAndRoundRanges(team1.foundedDate)
-      val teamCreateRanges2 = seasonsService.getSeasonAndRoundRanges(team2.foundedDate)
-      val (fromSeason, fromRound) = getCommonSeasonAndRound(teamCreateRanges1, teamCreateRanges2)
+        Future(TeamComparsion(List(), List()))
+      } else {
+        val teamCreateRanges1 = seasonsService.getSeasonAndRoundRanges(team1.foundedDate)
+        val teamCreateRanges2 = seasonsService.getSeasonAndRoundRanges(team2.foundedDate)
+        val (fromSeason, fromRound) = getCommonSeasonAndRound(teamCreateRanges1, teamCreateRanges2)
 
-      CompareTeamRankingsRequest.execute(team1.teamId, team2.teamId,
-        fromSeason, fromRound)
-      .map(_.groupBy(_.teamId))
-      .map(map => TeamComparsion(
-        team1Rankings = map(team1.teamId).sortBy(t => (t.season, t.round)),
-        team2Rankings = map(team2.teamId).sortBy(t => (t.season, t.round))
-      ))
+        CompareTeamRankingsRequest.execute(team1.teamId, team2.teamId,
+          fromSeason, fromRound)
+          .map(_.groupBy(_.teamId))
+          .map(map => TeamComparsion(
+            team1Rankings = map(team1.teamId).sortBy(t => (t.season, t.round)),
+            team2Rankings = map(team2.teamId).sortBy(t => (t.season, t.round))
+          ))
+      }
     }.flatten
   }
 

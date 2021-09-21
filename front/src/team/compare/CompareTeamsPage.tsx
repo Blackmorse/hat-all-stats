@@ -14,6 +14,7 @@ import '../../i18n'
 import RankingParametersProvider from '../../common/ranking/RankingParametersProvider'
 import ExecutableComponent, { LoadableState } from '../../common/sections/ExecutableComponent';
 import Section, { SectionState } from '../../common/sections/Section';
+import i18n from '../../i18n';
 
 interface State {
     teamComparsion?: TeamComparsion
@@ -51,6 +52,11 @@ class CompareTeamsPageBase extends ExecutableComponent<LevelDataPropsWrapper<Tea
     renderSection(): JSX.Element {
         if (this.state.state.teamComparsion === undefined) {
             return <></>
+        }
+
+        if (this.state.state.teamComparsion.team1Rankings.length === 0 ||
+                this.state.state.teamComparsion.team2Rankings.length === 0) {
+            return <>{i18n.t('team.unable_to_compare')}</>
         }
               
         let teamComparsion = this.state.state.teamComparsion

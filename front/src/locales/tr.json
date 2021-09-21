@@ -205,5 +205,7 @@
 
   "table.salary_per_tsi": "Maaş/TSI",
 
-  "match.check_result": "Sonuçları karşılaştırın!"
+  "match.check_result": "Sonuçları karşılaştırın!",
+
+  "team.unable_to_compare": "Takımlar karşılaştırılamıyor. Muhtemelen farklı ülkelerdendirler."
 }

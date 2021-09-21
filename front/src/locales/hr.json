@@ -205,5 +205,7 @@
 
     "table.salary_per_tsi": "Plaća/TSI",
 
-    "match.check_result": "Usporedite rezultat!"
+    "match.check_result": "Usporedite rezultat!",
+
+    "team.unable_to_compare": "Nije moguće usporediti timove. Vjerojatno su iz različitih zemalja"
 }

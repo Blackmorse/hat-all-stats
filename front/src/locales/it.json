@@ -206,5 +206,7 @@
 
     "table.salary_per_tsi": "Stipendio/TSI",
 
-    "match.check_result": "Confronta il risultato!"
+    "match.check_result": "Confronta il risultato!",
+
+    "team.unable_to_compare": "Impossibile confrontare le squadre. Probabilmente sono di paesi diversi"
 }

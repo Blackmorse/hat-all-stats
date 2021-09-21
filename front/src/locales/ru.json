@@ -205,5 +205,7 @@
 
     "table.salary_per_tsi": "Зарплата/TSI",
 
-    "match.check_result": "Сравнить результат!"
+    "match.check_result": "Сравнить результат!",
+
+    "team.unable_to_compare": "Невозможно сравнить команды. Возможно, они из разных стран"
 }

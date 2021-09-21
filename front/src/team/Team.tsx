@@ -21,6 +21,7 @@ import PromotionsTable from '../common/pages/PromotionsTable';
 import TeamMatches from './TeamMatches'
 import TeamSamePeriodTeams from './TeamSamePeriodTeams'
 import CompareTeamsPage from './compare/CompareTeamsPage'
+import CompareSearchSection from './compare/CompareSearchSection'
 
 interface MatchParams {
     teamId: string
@@ -32,6 +33,7 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
     constructor(props: Props) {
         const pagesMap = new Map<PagesEnum, (props: TeamLevelDataProps, queryParams: QueryParams) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_OVERVIEW, (props, queryParams) => <>
+                    <CompareSearchSection levelDataProps={props}/>
                     <NearestMatchesTable levelDataProps={props} queryParams={queryParams}/>
                     <TeamRankingsTable levelDataProps={props} queryParams={queryParams}/>
                 </>)

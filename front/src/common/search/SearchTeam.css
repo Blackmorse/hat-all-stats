@@ -1,0 +1,11 @@
+.search_results {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.search_section {
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+}
