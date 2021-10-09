@@ -7,7 +7,7 @@ import { Translation } from 'react-i18next'
 import Section from '../../common/sections/Section';
 import NearestMatchesTable from './NearestMatchesTable'
 import { LoadingEnum } from '../../common/enums/LoadingEnum';
-import ExecutableComponent, { LoadableState } from '../../common/sections/ExecutableComponent';
+import ExecutableComponent from '../../common/sections/ExecutableComponent';
 import TeamRequest from '../../rest/models/request/TeamRequest';
 import { getNearestMatches } from '../../rest/Client'
 
@@ -20,7 +20,7 @@ interface State {
     nearestMatches?: NearestMatches,
 }
 
-class PlayedAndUpcomingMatchesTable extends ExecutableComponent<Props, State, NearestMatches, TeamRequest, LoadableState<State, TeamRequest>> {
+class PlayedAndUpcomingMatchesTable extends ExecutableComponent<Props, State, NearestMatches, TeamRequest> {
     constructor(props: Props) {
         super(props)
         this.state = {
@@ -28,8 +28,7 @@ class PlayedAndUpcomingMatchesTable extends ExecutableComponent<Props, State, Ne
             dataRequest: {
                 type: 'TeamRequest',
                 teamId: this.props.teamId
-            },
-            state: {}
+            }
         }
     }
 
@@ -47,10 +46,10 @@ class PlayedAndUpcomingMatchesTable extends ExecutableComponent<Props, State, Ne
         const PlayedNearestMatches = Section(NearestMatchesTable, _ => 'matches.played_matches')
         const UpcomingNearestMatches = Section(NearestMatchesTable, _ => 'matches.upcoming_matches')
 
-        if (this.state.state.nearestMatches === undefined) {
+        if (this.state.nearestMatches === undefined) {
             return <></>
         }
-        let nearestMatches = this.state.state.nearestMatches
+        let nearestMatches = this.state.nearestMatches
         return  <Translation>
             {(t, { i18n}) => <div className="section_row">
             <div className="section_row_half_element">

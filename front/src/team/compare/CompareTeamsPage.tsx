@@ -11,7 +11,7 @@ import CompareTeamsTable from './CompareTeamsTable'
 import { Translation } from 'react-i18next'
 import '../../i18n'
 import RankingParametersProvider from '../../common/ranking/RankingParametersProvider'
-import ExecutableComponent, { LoadableState } from '../../common/sections/ExecutableComponent';
+import ExecutableComponent from '../../common/sections/ExecutableComponent';
 import Section, { SectionState } from '../../common/sections/Section';
 import i18n from '../../i18n';
 
@@ -20,7 +20,7 @@ interface State {
 }
 
 class CompareTeamsPageBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
-    State, TeamComparsion, number | undefined, LoadableState<State, number | undefined> & SectionState> {
+    State & SectionState, TeamComparsion, number | undefined> {
     
         constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props)
@@ -28,7 +28,6 @@ class CompareTeamsPageBase extends ExecutableComponent<LevelDataPropsWrapper<Tea
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: props.queryParams.teamId,
-            state: {},
             collapsed: false
         }
     }
@@ -42,23 +41,24 @@ class CompareTeamsPageBase extends ExecutableComponent<LevelDataPropsWrapper<Tea
         }
     }
 
-    stateFromResult(result?: TeamComparsion): State {
+    stateFromResult(result?: TeamComparsion): State & SectionState {
         return {
-            teamComparsion: result
+            teamComparsion: result,
+            collapsed: this.state.collapsed
         }
     }
 
     renderSection(): JSX.Element {
-        if (this.state.state.teamComparsion === undefined) {
+        if (this.state.teamComparsion === undefined) {
             return <></>
         }
 
-        if (this.state.state.teamComparsion.team1Rankings.length === 0 ||
-                this.state.state.teamComparsion.team2Rankings.length === 0) {
+        if (this.state.teamComparsion.team1Rankings.length === 0 ||
+                this.state.teamComparsion.team2Rankings.length === 0) {
             return <>{i18n.t('team.unable_to_compare')}</>
         }
               
-        let teamComparsion = this.state.state.teamComparsion
+        let teamComparsion = this.state.teamComparsion
         return <Translation>{
             (t, { i18n }) => <>
             <div className="section_row">

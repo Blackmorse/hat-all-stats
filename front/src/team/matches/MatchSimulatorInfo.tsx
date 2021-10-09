@@ -2,7 +2,7 @@ import React from 'react'
 import { LoadingEnum } from '../../common/enums/LoadingEnum'
 import SimilarMatchesStats from '../../rest/models/match/SimilarMatchesStats'
 import { getSimilarMatchesByRatings } from '../../rest/Client'
-import ExecutableComponent, { LoadableState } from '../../common/sections/ExecutableComponent'
+import ExecutableComponent from '../../common/sections/ExecutableComponent'
 import { SectionState } from '../../common/sections/Section'
 import './MatchSimulatorInfo.css'
 import i18n from '../../i18n'
@@ -16,15 +16,13 @@ interface State {
     similarMatchesStats?: SimilarMatchesStats
 }
 
-class MatchSimulatorInfo extends ExecutableComponent<Props, State, SimilarMatchesStats, SingleMatch, 
-    LoadableState<State, SingleMatch> & SectionState> {
+class MatchSimulatorInfo extends ExecutableComponent<Props, State & SectionState, SimilarMatchesStats, SingleMatch> {
     
     constructor(props: Props) {
         super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: props.singleMatch,
-            state: {},
             collapsed: false
         }
     }
@@ -35,16 +33,19 @@ class MatchSimulatorInfo extends ExecutableComponent<Props, State, SimilarMatche
             callback: (loadingState: LoadingEnum, result?: SimilarMatchesStats) => void): void {
                 getSimilarMatchesByRatings(dataRequest, 0.1, callback)
     }
-    stateFromResult(result?: SimilarMatchesStats): State {
-        return {similarMatchesStats: result}
+    stateFromResult(result?: SimilarMatchesStats): State & SectionState {
+        return {
+            similarMatchesStats: result,
+            collapsed: this.state.collapsed
+        }
     }
 
     renderSection() {
-        if (this.state.state.similarMatchesStats === undefined) {
-            return <button onClick={() => this.update()}>{i18n.t('match.check_result')}</button>
+        if (this.state.similarMatchesStats === undefined) {
+            return <button onClick={() => this.update()}>{i18n.t('team.simulate_match')}</button>
         }
 
-        let stats = this.state.state.similarMatchesStats
+        let stats = this.state.similarMatchesStats
 
         let homeRate = Math.floor(100 * stats.wins / (stats.wins + stats.draws + stats.loses))
         let drawRate = Math.floor(100 * stats.draws / (stats.wins + stats.draws + stats.loses))
@@ -58,13 +59,13 @@ class MatchSimulatorInfo extends ExecutableComponent<Props, State, SimilarMatche
         return <div className="simulator_span">
             <div className="simulator_results">
                 <span className="home_team_span result_span" style={{width: homeRate.toString() + '%'}}>
-                    {this.state.state.similarMatchesStats.wins}
+                    {this.state.similarMatchesStats.wins}
                 </span> 
                 <span className="draw_span result_span" style={{width: drawRate.toString() + '%'}}>
-                    {this.state.state.similarMatchesStats.draws}
+                    {this.state.similarMatchesStats.draws}
                 </span>
                 <span className="away_team_span result_span" style={{width: awayRate.toString() + '%'}}>
-                    {this.state.state.similarMatchesStats.loses}
+                    {this.state.similarMatchesStats.loses}
                 </span>
             </div>
             <div className="simulator_goals">

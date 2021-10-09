@@ -10,7 +10,7 @@ import LeagueUnitLink from '../common/links/LeagueUnitLink';
 import '../common/tables/TableSection.css'
 import { Translation } from 'react-i18next'
 import { PagesEnum } from '../common/enums/PagesEnum';
-import ExecutableComponent, { LoadableState } from '../common/sections/ExecutableComponent';
+import ExecutableComponent from '../common/sections/ExecutableComponent';
 import Section, { SectionState } from '../common/sections/Section';
 import { dateFormatter } from '../common/Formatters';
 
@@ -19,14 +19,13 @@ interface State {
 }
 
 class TeamSamePeriodTeamsBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
-    State, Array<CreatedSameTimeTeamExtended>, string, LoadableState<State, string> & SectionState> {
+    State & SectionState, Array<CreatedSameTimeTeamExtended>, string> {
     
         constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: 'season',
-            state: {},
             collapsed: false
         }
     }
@@ -36,9 +35,10 @@ class TeamSamePeriodTeamsBase extends ExecutableComponent<LevelDataPropsWrapper<
             this.props.levelDataProps.levelData.foundedDate, dataRequest, callback)
     }
 
-    stateFromResult(result?: Array<CreatedSameTimeTeamExtended>): State {
+    stateFromResult(result?: Array<CreatedSameTimeTeamExtended>): State & SectionState {
         return {
             teams: result,
+            collapsed: this.state.collapsed
         }
     }
 
@@ -49,7 +49,7 @@ class TeamSamePeriodTeamsBase extends ExecutableComponent<LevelDataPropsWrapper<
     }
     
     renderSection(): JSX.Element {
-        if (this.state.state.teams === undefined) {
+        if (this.state.teams === undefined) {
             return <></>
         }
 
@@ -79,7 +79,7 @@ class TeamSamePeriodTeamsBase extends ExecutableComponent<LevelDataPropsWrapper<
                     </tr>
                 </thead>
                 <tbody>
-                    {this.state.state.teams?.filter(team => team.createdSameTimeTeam.teamSortingKey.teamId !== this.props.levelDataProps.teamId())
+                    {this.state.teams?.filter(team => team.createdSameTimeTeam.teamSortingKey.teamId !== this.props.levelDataProps.teamId())
                         .map(team => {
                             return <tr key={this.constructor.name + '_' + team.createdSameTimeTeam.teamSortingKey.teamId}>
                                 <td><TeamLink text={team.createdSameTimeTeam.teamSortingKey.teamName} id={team.createdSameTimeTeam.teamSortingKey.teamId}/></td>

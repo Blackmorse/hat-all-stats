@@ -9,7 +9,7 @@ import RankingTable, { RankingData } from './overview/RankingTable'
 import TeamRankingsStats from '../rest/models/team/TeamRankingsStats';
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import RankingParametersProvider from '../common/ranking/RankingParametersProvider'
-import ExecutableComponent, { LoadableState } from '../common/sections/ExecutableComponent';
+import ExecutableComponent from '../common/sections/ExecutableComponent';
 import Section, { SectionState } from '../common/sections/Section';
 import StatsTypeSelector from '../common/selectors/StatsTypeSelector';
 import { StatsType, StatsTypeEnum } from '../rest/models/StatisticsParameters';
@@ -23,17 +23,15 @@ interface State {
 }
 
 class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
-    State, TeamRankingsStats, number, LoadableState<State, number> & SectionState> {
+    State & SectionState, TeamRankingsStats, number> {
     
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: this.props.levelDataProps.currentSeason(),
-            state: {
-                round: props.levelDataProps.currentRound(),
-                season: props.levelDataProps.currentSeason()
-            },
+            round: props.levelDataProps.currentRound(),
+            season: props.levelDataProps.currentSeason(),
             collapsed: false
         }
 
@@ -47,31 +45,32 @@ class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<Te
         getTeamRankings(teamRequest, dataRequest, callback)
     }
 
-    stateFromResult(result?: TeamRankingsStats | undefined): State {
+    stateFromResult(result?: TeamRankingsStats | undefined): State & SectionState {
         if (result !== undefined) {
             let rounds = result.teamRankings.map(x => x.round)
             let maxRound = Math.max(...rounds)
 
             return {
-                teamRankingsStats: (result) ? result : this.state.state.teamRankingsStats,
+                teamRankingsStats: (result) ? result : this.state.teamRankingsStats,
                 round: maxRound,
-                season: this.state.dataRequest
+                season: this.state.dataRequest,
+                collapsed: this.state.collapsed
             }
         } else {
             return {
-                teamRankingsStats: this.state.state.teamRankingsStats,
-                round: this.state.state.round,
-                season: this.state.dataRequest
+                teamRankingsStats: this.state.teamRankingsStats,
+                round: this.state.round,
+                season: this.state.dataRequest,
+                collapsed: this.state.collapsed
             }
         }
         
     }
 
     roundChanged(statType: StatsType) {
-        let newRound = statType.roundNumber as number
-        let newState = Object.assign({}, this.state)
-        newState.state.round = newRound
-
+        let newState = {
+            round: statType.roundNumber!
+        }
         this.setState(newState)
     }
 
@@ -80,7 +79,7 @@ class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<Te
     }
 
     renderSection(): JSX.Element {
-        let teamRankingsStats = this.state.state.teamRankingsStats
+        let teamRankingsStats = this.state.teamRankingsStats
         if(this.state.loadingState === LoadingEnum.LOADING || 
             teamRankingsStats === undefined ||
              this.state.loadingState === LoadingEnum.ERROR) {
@@ -88,14 +87,14 @@ class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<Te
         }
 
 
-        let teamRankings = teamRankingsStats.teamRankings.filter(tr => tr.round <= this.state.state.round)
+        let teamRankings = teamRankingsStats.teamRankings.filter(tr => tr.round <= this.state.round)
 
         if (teamRankings.length === 0 ) {
             return <></>
         }
 
-        let leagueTeamsCount = teamRankingsStats.leagueTeamsCounts.find(x => x[0] === this.state.state.round)
-        let divisionLevelTeamsCount = teamRankingsStats.divisionLevelTeamsCounts.find(x => x[0] === this.state.state.round)
+        let leagueTeamsCount = teamRankingsStats.leagueTeamsCounts.find(x => x[0] === this.state.round)
+        let divisionLevelTeamsCount = teamRankingsStats.divisionLevelTeamsCounts.find(x => x[0] === this.state.round)
         if (leagueTeamsCount === undefined || divisionLevelTeamsCount === undefined) {
             throw new Error("Unknown round")
         }      
@@ -103,22 +102,22 @@ class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<Te
         let rankingData: RankingData = {
             teamRankings: teamRankings,
             teamLevelDataProps: this.props.levelDataProps,
-            round: this.state.state.round,
-            season: this.state.state.season,
+            round: this.state.round,
+            season: this.state.season,
             leagueTeamsCount: leagueTeamsCount[1],
             divisionLevelTeamsCount: divisionLevelTeamsCount[1],
         }
 
         return <>
                 <div className="table_settings_team_rankings">
-                    <SeasonSelector currentSeason={this.state.state.season}
+                    <SeasonSelector currentSeason={this.state.season}
                         seasonOffset={this.props.levelDataProps.levelData.seasonOffset}
                         seasons={this.props.levelDataProps.seasons()}
                         callback={this.seasonChanged}
                     />
                     <StatsTypeSelector statsTypes={[StatsTypeEnum.ROUND]}
                         rounds={(teamRankingsStats as TeamRankingsStats).leagueTeamsCounts.map(x => x[0])}
-                        selectedStatType={{statType: StatsTypeEnum.ROUND, roundNumber: this.state.state.round}}
+                        selectedStatType={{statType: StatsTypeEnum.ROUND, roundNumber: this.state.round}}
                         onChanged={this.roundChanged}
                     />
                 </div>
@@ -130,7 +129,7 @@ class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<Te
                         />
                         <RankingTable
                             rankingData={rankingData}
-                            rankingParameters={RankingParametersProvider.SALARY(this.state.state.teamRankingsStats?.currencyRate, this.state.state.teamRankingsStats?.currencyName)} 
+                            rankingParameters={RankingParametersProvider.SALARY(this.state.teamRankingsStats?.currencyRate, this.state.teamRankingsStats?.currencyName)} 
                         />
                         <RankingTable 
                             rankingData={rankingData}

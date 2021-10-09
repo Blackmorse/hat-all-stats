@@ -10,7 +10,7 @@ import DivisionLevelLink from '../links/DivisionLevelLink';
 import TeamLink from '../links/TeamLink';
 import LeagueUnitLink from '../links/LeagueUnitLink';
 import { LoadingEnum } from '../enums/LoadingEnum';
-import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent';
+import ExecutableComponent from '../sections/ExecutableComponent';
 import Section, { SectionState } from '../sections/Section';
 
 interface State {
@@ -18,15 +18,13 @@ interface State {
 }
 
 class PromotionsTableBase<Data extends LevelData, Props extends LevelDataProps<Data>> 
-        extends ExecutableComponent<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<PromotionWithType>, {},
-            LoadableState<State, {}> & SectionState> {
+        extends ExecutableComponent<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State & SectionState, Array<PromotionWithType>, {}> {
    
     constructor(props: LevelDataPropsWrapper<Data, Props>) {
         super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {},
-            state: {},
             collapsed: false
         }
     }
@@ -35,9 +33,10 @@ class PromotionsTableBase<Data extends LevelData, Props extends LevelDataProps<D
         getPromotions(this.props.levelDataProps.createLevelRequest(), callback)
     }
 
-    stateFromResult(result?: Array<PromotionWithType>): State {
+    stateFromResult(result?: Array<PromotionWithType>): State & SectionState {
         return {
-            promotions: (result) ? result : this.state.state.promotions
+            promotions: (result) ? result : this.state.promotions,
+            collapsed: this.state.collapsed
         }
     }
 
@@ -45,7 +44,7 @@ class PromotionsTableBase<Data extends LevelData, Props extends LevelDataProps<D
         return <Translation>
             {(t, { i18n }) =>
         <div className="promotions_content">
-            {this.state.state.promotions?.map(promotionWithType => {
+            {this.state.promotions?.map(promotionWithType => {
                 return <React.Fragment key={'promotions_table_entry' + promotionWithType.upDivisionLevelName + '_' + promotionWithType.downDivisionLevelName + '_' + promotionWithType.promoteType}>
                     <span className="promotion_type">
                         <DivisionLevelLink leagueId={this.props.levelDataProps.leagueId()} divisionLevel={promotionWithType.upDivisionLevel} text={promotionWithType.upDivisionLevelName + ' '} forceRefresh={true}/>

@@ -16,7 +16,7 @@ import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
 import { LoadingEnum } from '../enums/LoadingEnum';
 import { SelectorsEnum } from './SelectorsEnum'
 import PlayersParameters from '../../rest/models/PlayersParameters'
-import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent';
+import ExecutableComponent from '../sections/ExecutableComponent';
 import { SectionState } from '../sections/Section';
 
 interface ModelTableState<ResponseModel> {
@@ -39,8 +39,7 @@ export interface DataRequest {
 
 
 abstract class AbstractTableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, RowModel, ResponseModel> 
-        extends ExecutableComponent<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<ResponseModel>, ResponseModel, DataRequest,
-            LoadableState<ModelTableState<ResponseModel>, DataRequest> & SectionState> {
+        extends ExecutableComponent<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<ResponseModel> & SectionState, ResponseModel, DataRequest> {
     private statsTypes: Array<StatsTypeEnum>
     private selectors: Array<SelectorsEnum>
     private fistOpening: boolean = true
@@ -91,9 +90,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                 },
                 playedInLastMatch: false
             },
-            state: {
-                selectedRow: (selectedRow === null) ? undefined: selectedRow
-            },
+            selectedRow: (selectedRow === null) ? undefined: selectedRow,
             collapsed: false
         }
 
@@ -123,35 +120,47 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
 
     abstract responseModelToRowModel(responseModel?: ResponseModel): RestTableData<RowModel>
 
-    stateFromResult(result?: ResponseModel): ModelTableState<ResponseModel> {
+    stateFromResult(result?: ResponseModel): ModelTableState<ResponseModel> & SectionState {
         return {
             model: result,
-            selectedRow: (result && this.fistOpening) ? this.state.state.selectedRow : undefined
+            selectedRow: (result && this.fistOpening) ? this.state.selectedRow : undefined,
+            collapsed: this.state.collapsed
+        }
+    }
+
+
+    private mutateStatisticsParameters(mutate: any): DataRequest {
+        return {
+            ...this.state.dataRequest,
+            statisticsParameters: {
+                ...this.state.dataRequest.statisticsParameters,
+                ...mutate
+            }
+        }
+    }
+
+    private mutatePlayerParameters(mutate: any): DataRequest {
+        return {
+            ...this.state.dataRequest,
+            playersParameters: {
+                ...this.state.dataRequest.playersParameters,
+                ...mutate
+            }
         }
     }
 
     pageSelected(pageNumber: number) {
-        let newDataRequest = Object.assign({}, this.state.dataRequest)
-
-        let newStatisticsParameters = Object.assign({}, this.state.dataRequest.statisticsParameters)
-        newStatisticsParameters.page = pageNumber
-
-        newDataRequest.statisticsParameters = newStatisticsParameters
-
         this.fistOpening = false
 
+        let newDataRequest = this.mutateStatisticsParameters({page: pageNumber})
         this.updateWithRequest(newDataRequest)
     }
 
     pageSizeChanged(pageSize: number) {
-        let newDataRequest = Object.assign({}, this.state.dataRequest)
-
-        let newStatisticsParameters = Object.assign({}, this.state.dataRequest.statisticsParameters)
-        newStatisticsParameters.pageSize = pageSize
-        newStatisticsParameters.page = 0
-
-        newDataRequest.statisticsParameters = newStatisticsParameters
-
+        let newDataRequest = this.mutateStatisticsParameters({
+            pageSize: pageSize,
+            page: 0
+        })
         this.fistOpening = false
 
         Cookies.set('hattid_page_size', pageSize.toString(), { sameSite: "Lax", expires: 180 })
@@ -160,10 +169,6 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
     }
 
     sortingChanged(sortingField: string) {
-        let newDataRequest = Object.assign({}, this.state.dataRequest)
-
-        let newStatisticsParameters = Object.assign({}, this.state.dataRequest.statisticsParameters)
-        
         let newSortingDirection: SortingDirection
         if( this.state.dataRequest.statisticsParameters.sortingField === sortingField ) {
             if ( this.state.dataRequest.statisticsParameters.sortingDirection === SortingDirection.DESC ) {
@@ -175,10 +180,10 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
             newSortingDirection = SortingDirection.DESC
         }
 
-        newStatisticsParameters.sortingField = sortingField
-        newStatisticsParameters.sortingDirection = newSortingDirection
-
-        newDataRequest.statisticsParameters = newStatisticsParameters
+        let newDataRequest = this.mutateStatisticsParameters({
+            sortingField: sortingField,
+            sortingDirection: newSortingDirection
+        })
 
         this.fistOpening = false
 
@@ -186,12 +191,9 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
     }
 
     statTypeChanged(statType: StatsType) {
-        let newDataRequest = Object.assign({}, this.state.dataRequest)
-
-        let newStatisticsParameters = Object.assign({}, this.state.dataRequest.statisticsParameters)
-        newStatisticsParameters.statsType = statType
-
-        newDataRequest.statisticsParameters = newStatisticsParameters
+        let newDataRequest = this.mutateStatisticsParameters({
+            statsType: statType
+        })
 
         this.fistOpening = false
 
@@ -199,12 +201,9 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
     }
 
     seasonChanged(season: number) {
-        let newDataRequest = Object.assign({}, this.state.dataRequest)
-
-        let newStatisticsParameters = Object.assign({}, this.state.dataRequest.statisticsParameters)
-        newStatisticsParameters.season = season
-
-        newDataRequest.statisticsParameters = newStatisticsParameters
+        let newDataRequest = this.mutateStatisticsParameters({
+            season: season
+        })
 
         this.fistOpening = false
 
@@ -212,9 +211,9 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
     }
 
     playedAllMatchesChanged(playedAllMatches: boolean) {
-        let newDataRequest = Object.assign({}, this.state.dataRequest)
-
-        newDataRequest.playedAllMatches = playedAllMatches
+        let newDataRequest = this.mutateStatisticsParameters({
+            playedAllMatches: playedAllMatches
+        })
 
         this.fistOpening = false
 
@@ -222,12 +221,9 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
     }
 
     roleChanged(role?: string) {
-        let newDataRequest = Object.assign({}, this.state.dataRequest)
-
-        let newPlayersParameters = Object.assign({}, this.state.dataRequest.playersParameters)
-        newPlayersParameters.role = role
-
-        newDataRequest.playersParameters = newPlayersParameters
+        let newDataRequest = this.mutatePlayerParameters({
+            role: role
+        })
 
         this.fistOpening = false
 
@@ -235,27 +231,19 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
     }
 
     nationalityChanged(nationality?: number) {
-        let newDataRequest = Object.assign({}, this.state.dataRequest)
-
-        let newPlayersParameters = Object.assign({}, this.state.dataRequest.playersParameters)
-        newPlayersParameters.nationality = nationality
-
-        newDataRequest.playersParameters = newPlayersParameters
-
+        let newDataRequest = this.mutatePlayerParameters({
+            nationality: nationality
+        })
         this.fistOpening = false
 
         this.updateWithRequest(newDataRequest)
     }
 
     minMaxAgeChanged(minMax: [number?, number?]) {
-        let newDataRequest = Object.assign({}, this.state.dataRequest)
-
-        let newPlayersParameters = Object.assign({}, this.state.dataRequest.playersParameters)
-        newPlayersParameters.minAge = minMax[0]
-        newPlayersParameters.maxAge = minMax[1]
-
-        newDataRequest.playersParameters = newPlayersParameters
-
+        let newDataRequest = this.mutatePlayerParameters({
+            minAge: minMax[0],
+            maxAge: minMax[1]
+        })
         this.fistOpening = false
 
         this.updateWithRequest(newDataRequest)
@@ -276,7 +264,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
     }
 
     renderSection(): JSX.Element {
-        let restTableData = this.responseModelToRowModel(this.state.state.model)
+        let restTableData = this.responseModelToRowModel(this.state.model)
         let seasonSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.SEASON_SELECTOR) !== -1) {
             seasonSelector = <SeasonSelector currentSeason={this.state.dataRequest.statisticsParameters.season}
@@ -372,14 +360,14 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
                     <tbody>
                         {restTableData?.entities?.map((entity, index) => 
                             <Fragment key={this.constructor.name + '_' + index}>
-                                {this.row(indexOffset + index, ((this.state.state.selectedRow !== undefined) && this.state.state.selectedRow === indexOffset + index) ? "selected_row" : "", entity)}
+                                {this.row(indexOffset + index, ((this.state.selectedRow !== undefined) && this.state.selectedRow === indexOffset + index) ? "selected_row" : "", entity)}
                             </Fragment>
                             )}
                     </tbody>
                 </table>
 
                 {pageSelector}
-                {this.additionalSection(this.state.state.model)}
+                {this.additionalSection(this.state.model)}
                 </>
     }
 }

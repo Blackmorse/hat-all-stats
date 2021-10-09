@@ -13,7 +13,7 @@ import StatsTypeSelector from '../selectors/StatsTypeSelector'
 import SeasonSelector from '../selectors/SeasonSelector';
 import FormationSelector, { Formation } from '../selectors/FormationSelector'
 import { ratingFormatter } from '../Formatters'
-import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent';
+import ExecutableComponent from '../sections/ExecutableComponent';
 import Section, { SectionState } from '../sections/Section';
 
 interface State {
@@ -32,8 +32,7 @@ export interface DreamTeamPlayerPosition {
 }
 
 class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Data>> 
-    extends ExecutableComponent<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State, Array<DreamTeamPlayer>, Request,
-        LoadableState<State, Request> & SectionState> {
+    extends ExecutableComponent<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State & SectionState, Array<DreamTeamPlayer>, Request> {
 
     constructor(props: LevelDataPropsWrapper<Data, Props>) {
         super(props)
@@ -46,9 +45,7 @@ class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Dat
                 },
                 season: props.levelDataProps.currentSeason(),
             },
-            state: {
-                formation: new Formation(4, 4, 2)
-            },
+            formation: new Formation(4, 4, 2),
             collapsed: false
         }
         this.statsTypeChanged=this.statsTypeChanged.bind(this)
@@ -62,10 +59,11 @@ class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Dat
             dataRequest.season, dataRequest.statsType, "rating", callback)
     }
 
-    stateFromResult(result?: Array<DreamTeamPlayer>): State {
+    stateFromResult(result?: Array<DreamTeamPlayer>): State & SectionState {
         return {
-            dreamTeamPlayers: (result) ? result : this.state.state.dreamTeamPlayers,
-            formation: this.state.state.formation
+            dreamTeamPlayers: (result) ? result : this.state.dreamTeamPlayers,
+            formation: this.state.formation,
+            collapsed: this.state.collapsed
         }
     }
 
@@ -88,10 +86,9 @@ class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Dat
     }
 
     formationChanged(formation: Formation) {
-        let newState = Object.assign({}, this.state.state)
-        newState.formation = formation
         this.setState({
-            state: newState
+            ...this.state,
+            formation: formation
         })
     }
 
@@ -144,23 +141,23 @@ class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Dat
     }
 
     renderSection(): JSX.Element {
-        if (this.state.state.dreamTeamPlayers === undefined) {
+        if (this.state.dreamTeamPlayers === undefined) {
             return <></>
         }
         
-        let keepers = this.state.state.dreamTeamPlayers.filter(player => player.role === 'keeper')
-        let defenders = this.state.state.dreamTeamPlayers.filter(player => player.role === 'defender')
-        let wingbacks = this.state.state.dreamTeamPlayers.filter(player => player.role === 'wingback')
-        let midfielders = this.state.state.dreamTeamPlayers.filter(player => player.role === 'midfielder')
-        let wingers = this.state.state.dreamTeamPlayers.filter(player => player.role === 'winger')
-        let forwards = this.state.state.dreamTeamPlayers.filter(player => player.role === 'forward')
+        let keepers = this.state.dreamTeamPlayers.filter(player => player.role === 'keeper')
+        let defenders = this.state.dreamTeamPlayers.filter(player => player.role === 'defender')
+        let wingbacks = this.state.dreamTeamPlayers.filter(player => player.role === 'wingback')
+        let midfielders = this.state.dreamTeamPlayers.filter(player => player.role === 'midfielder')
+        let wingers = this.state.dreamTeamPlayers.filter(player => player.role === 'winger')
+        let forwards = this.state.dreamTeamPlayers.filter(player => player.role === 'forward')
 
         let displayedKeepers = this.forwardsKeeper(keepers, 1, i18n.t('dream_team.keeper'))
-        let displayedWingbacks = this.wings(wingbacks, this.state.state.formation.defenders, i18n.t('dream_team.wingback'))
-        let displayedDefs = this.centers(defenders, this.state.state.formation.defenders, i18n.t('dream_team.defender'))
-        let displayedWings = this.wings(wingers, this.state.state.formation.midfielders, i18n.t('dream_team.winger'))
-        let displayedMidfielders = this.centers(midfielders, this.state.state.formation.midfielders, i18n.t('dream_team.midfielder'))
-        let displayedForwards = this.forwardsKeeper(forwards, this.state.state.formation.forwards, i18n.t('dream_team.forward'))
+        let displayedWingbacks = this.wings(wingbacks, this.state.formation.defenders, i18n.t('dream_team.wingback'))
+        let displayedDefs = this.centers(defenders, this.state.formation.defenders, i18n.t('dream_team.defender'))
+        let displayedWings = this.wings(wingers, this.state.formation.midfielders, i18n.t('dream_team.winger'))
+        let displayedMidfielders = this.centers(midfielders, this.state.formation.midfielders, i18n.t('dream_team.midfielder'))
+        let displayedForwards = this.forwardsKeeper(forwards, this.state.formation.forwards, i18n.t('dream_team.forward'))
 
         let sumStars = 0
         sumStars += this.starsOfPlayers(displayedKeepers)
@@ -176,7 +173,7 @@ class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Dat
                     <span className="dream_team_stats_total">{i18n.t('dream_team.total')}:</span> {ratingFormatter(sumStars)}
                 </div>
                 <nav className="selectors_nav">
-                    <FormationSelector currentFormation={this.state.state.formation}
+                    <FormationSelector currentFormation={this.state.formation}
                         callback={this.formationChanged} />
                     <SeasonSelector currentSeason={this.state.dataRequest.season}
                         seasonOffset={this.props.levelDataProps.levelData.seasonOffset} 

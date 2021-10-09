@@ -15,14 +15,13 @@ interface State {
 }
 
 class TeamMatchInfoExecutableSectionBase extends 
-    ExecutableComponent<Props, State, SingleMatch, number, LoadableState<State, number> & SectionState> {
+    ExecutableComponent<Props, State & SectionState, SingleMatch, number> {
 
     constructor(props: Props) {
         super(props, )
         this.state={
             loadingState: LoadingEnum.OK,
             collapsed: false,
-            state: {},
             dataRequest: props.matchId
         }
     }
@@ -31,30 +30,31 @@ class TeamMatchInfoExecutableSectionBase extends
         getSingleMatch(dataRequest, callback)
     }
 
-    stateFromResult(result?: SingleMatch): State {
+    stateFromResult(result?: SingleMatch): State & SectionState {
         return {
-            singleMatch: result
+            singleMatch: result,
+            collapsed: this.state.collapsed
         }
     }
 
     renderSection(): JSX.Element {
-        if (this.state.state.singleMatch === undefined) {
+        if (this.state.singleMatch === undefined) {
             return <></>
         }
-        return <TeamMatchInfo singleMatch={this.state.state.singleMatch}/>
+        return <TeamMatchInfo singleMatch={this.state.singleMatch}/>
     }
 }
 
-function sectionTitle(props: Props, state: LoadableState<State, number>): JSX.Element {
-    if (state.state.singleMatch === undefined) {
+function sectionTitle(props: Props, state: LoadableState<number> & State & SectionState): JSX.Element {
+    if (state.singleMatch === undefined) {
         return <></>
     }
     return <>
-        {state.state.singleMatch.homeTeamName} - {state.state.singleMatch.awayTeamName}
+        {state.singleMatch.homeTeamName} - {state.singleMatch.awayTeamName}
     </>
 }
 
-type TeamMatchSectionState = LoadableState<State, number> & SectionState
+type TeamMatchSectionState = LoadableState<number> & State & SectionState
 const TeamMatchInfoExecutableSection = Section<Props, TeamMatchSectionState, GSection<Props, TeamMatchSectionState>>(
             TeamMatchInfoExecutableSectionBase, sectionTitle)
 

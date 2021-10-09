@@ -5,7 +5,7 @@ import OverviewRequest from '../../rest/models/request/OverviewRequest';
 import '../../common/sections/StatisticsSection.css'
 import SeasonRoundSelector from './SeasonRoundSelector'
 import { LoadingEnum } from '../enums/LoadingEnum';
-import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent';
+import ExecutableComponent from '../sections/ExecutableComponent';
 import { SectionState } from '../sections/Section';
 
 export interface OverviewSectionProps<Data extends LevelData, OverviewEntity> {
@@ -23,8 +23,7 @@ interface Request {
 }
 
 abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewProps extends OverviewSectionProps<Data, OverviewEntity>> 
-    extends ExecutableComponent<OverviewProps, State<OverviewEntity>, OverviewEntity, Request, 
-        LoadableState<State<OverviewEntity>, Request> & SectionState> {
+    extends ExecutableComponent<OverviewProps, State<OverviewEntity> & SectionState, OverviewEntity, Request> {
     isWorldData: boolean
 
     constructor(props: OverviewProps) {
@@ -35,9 +34,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
                 season: props.levelDataProps.currentSeason(),
                 round: props.levelDataProps.currentRound()
             },
-            state: {
-                data: props.initialData
-            },
+            data: props.initialData,
             collapsed: false
         }
 
@@ -61,14 +58,15 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
         this.loadOverviewEntity(request, callback)
     }
 
-    stateFromResult(result?: OverviewEntity): State<OverviewEntity> {
+    stateFromResult(result?: OverviewEntity): State<OverviewEntity> & SectionState {
         return {
-            data: (result) ? result : this.state.state.data
+            data: (result) ? result : this.state.data,
+            collapsed: this.state.collapsed
         }
     }
 
     renderSection(): JSX.Element {
-        let data = this.state.state.data
+        let data = this.state.data
         if (data) {
             let dataDefined = data
             return <div className="statistics_section_inner">

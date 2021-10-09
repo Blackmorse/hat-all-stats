@@ -3,14 +3,13 @@ import { LoadingEnum } from '../enums/LoadingEnum';
 import Blur from '../widgets/Blur';
 import Bot from '../widgets/Bot';
 
-export interface LoadableState<State, DataRequest> {
+export interface LoadableState<DataRequest> {
     loadingState: LoadingEnum,
-    dataRequest: DataRequest,
-    state: State
+    dataRequest: DataRequest
 }
 
-abstract class ExecutableComponent<Props, BaseState, DataType, DataRequest, State extends LoadableState<BaseState, DataRequest> = LoadableState<BaseState, DataRequest>>
-    extends React.Component<Props, State> {
+abstract class ExecutableComponent<Props, State, DataType, DataRequest>
+    extends React.Component<Props, State & LoadableState<DataRequest>> {
     
     constructor(props: Props) {
         super(props)
@@ -24,7 +23,7 @@ abstract class ExecutableComponent<Props, BaseState, DataType, DataRequest, Stat
 
     abstract executeDataRequest(dataRequest: DataRequest, callback: (loadingState: LoadingEnum, result?: DataType) => void): void
 
-    abstract stateFromResult(result?: DataType): BaseState
+    abstract stateFromResult(result?: DataType): State
 
     componentDidMount() {
         this.update()
@@ -36,15 +35,15 @@ abstract class ExecutableComponent<Props, BaseState, DataType, DataRequest, Stat
 
     updateWithRequest(dataRequest: DataRequest): void {
         this.setState({
+            ...this.state,
             loadingState: LoadingEnum.LOADING,
             dataRequest: dataRequest,
-            state: this.state.state
         })
 
         this.executeDataRequest(dataRequest, (loadingStatus, result) => this.setState({
             loadingState: loadingStatus,
-            state: this.stateFromResult(result),
-            dataRequest: this.state.dataRequest
+            dataRequest: this.state.dataRequest,
+            ...this.stateFromResult(result)
         }))
     }
 

@@ -7,7 +7,7 @@ import TeamMatch from '../rest/models/match/TeamMatch';
 import '../i18n'
 import { getTeamMatches } from '../rest/Client'
 import TeamMatchInfoSection from './matches/TeamMatchInfoSection'
-import ExecutableComponent, { LoadableState } from '../common/sections/ExecutableComponent';
+import ExecutableComponent from '../common/sections/ExecutableComponent';
 import Section, { SectionState } from '../common/sections/Section';
 
 interface State {
@@ -15,14 +15,13 @@ interface State {
 }
 
 class TeamMatchesBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
-    State, Array<TeamMatch>, {}, LoadableState<State, {}> & SectionState> {
+    State & SectionState, Array<TeamMatch>, {}> {
     
     constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
         super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {},
-            state: {},
             collapsed: false
         }
     }
@@ -31,15 +30,16 @@ class TeamMatchesBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData
         getTeamMatches(this.props.levelDataProps.teamId(), this.props.levelDataProps.currentSeason(), callback)
     }
 
-    stateFromResult(result?: Array<TeamMatch>): State {
+    stateFromResult(result?: Array<TeamMatch>): State & SectionState {
         return {
-            matches: (result) ? result : this.state.state.matches
+            matches: (result) ? result : this.state.matches,
+            collapsed: this.state.collapsed
         }
     }
 
     renderSection(): JSX.Element {
         return <Fragment>
-                {this.state.state.matches?.map(match => {
+                {this.state.matches?.map(match => {
                     return <TeamMatchInfoSection teamMatch={match} key={'team_matches_info_' + match.matchId} />
                 })}
             </Fragment>

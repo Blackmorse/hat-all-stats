@@ -1,5 +1,5 @@
 import React from 'react'
-import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent'
+import ExecutableComponent from '../sections/ExecutableComponent'
 import TeamSearchResult from '../../rest/models/TeamSearchResult'
 import { SectionState } from '../sections/Section'
 import { LoadingEnum } from '../enums/LoadingEnum'
@@ -20,7 +20,7 @@ interface Props {
 type DataRequest = {search: string, searchType: TeamSearchType}
 
 class SearchTeam extends 
-        ExecutableComponent<Props, {}, Array<TeamSearchResult>, DataRequest, LoadableState<{}, DataRequest> & SectionState> {
+        ExecutableComponent<Props, SectionState, Array<TeamSearchResult>, DataRequest> {
     
     constructor(props: Props) {
         super(props)
@@ -30,7 +30,6 @@ class SearchTeam extends
                 searchType: TeamSearchType.NAME,
                 search: ""
             },
-            state: {},
             collapsed: false
         }
 
@@ -54,9 +53,9 @@ class SearchTeam extends
         callback(LoadingEnum.OK, [])   
     }
     
-    stateFromResult(result?: TeamSearchResult[]): {} {
+    stateFromResult(result?: TeamSearchResult[]): SectionState {
         this.props.callback(result)
-        return {}
+        return {collapsed: this.state.collapsed}
     }
 
     textChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {

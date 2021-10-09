@@ -20,7 +20,7 @@ import LevelData from '../../rest/models/leveldata/LevelData';
 import { PagesEnum } from '../enums/PagesEnum';
 import HattidLink from '../links/HattidLink';
 import { LoadingEnum } from '../enums/LoadingEnum';
-import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent';
+import ExecutableComponent from '../sections/ExecutableComponent';
 import { SectionState } from '../sections/Section';
 
 
@@ -36,17 +36,16 @@ export interface LeagueId {
     leagueId: number
 }
 
-type OverviewState = LoadableState<State, {}> & SectionState
+// type OverviewState = LoadableState<State, {}> & SectionState
 
 abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelDataProps<Data>> extends
-        ExecutableComponent<OverviewPageProps<Data, LevelProps>, State, TotalOverview, {}, OverviewState> {
+        ExecutableComponent<OverviewPageProps<Data, LevelProps>, State & SectionState, TotalOverview, {}> {
     constructor(props: OverviewPageProps<Data, LevelProps>) {
         super(props)
         
         this.state = {
             loadingState: LoadingEnum.OK,
             dataRequest: {},
-            state: {},
             collapsed: false
         }
     }
@@ -56,42 +55,43 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
         getTotalOverview(request, callback)
     }
 
-    stateFromResult(result?: TotalOverview): State {
+    stateFromResult(result?: TotalOverview): State & SectionState {
         return {
-            totalOverview: (result) ? result : this.state.state.totalOverview
+            totalOverview: (result) ? result : this.state.totalOverview,
+            collapsed: this.state.collapsed
         }
     }
 
     abstract linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): (text: string | JSX.Element, season: number, round: number, entity: Entity) => HattidLink<any>
 
     renderSection(): JSX.Element {
-        if (!this.state.state.totalOverview) {
+        if (!this.state.totalOverview) {
             return <></>
         } else {
             return <>
             <div className="section_row"> 
                 <div className="section_row_one_third_element">
                     <NumberOverviewSection<Data> 
-                        initialData={this.state.state.totalOverview?.numberOverview} 
+                        initialData={this.state.totalOverview?.numberOverview} 
                         levelDataProps={this.props.levelDataProps}
                     />
                 </div>
                 <div className="section_row_one_third_element">
                     <FormationsOverviewSection<Data> 
-                        initialData={this.state.state.totalOverview?.formations} 
+                        initialData={this.state.totalOverview?.formations} 
                         levelDataProps={this.props.levelDataProps}
                     />
                 </div>
                 <div className="section_row_one_third_element">
                     <AveragesOverviewSection<Data>  
-                        initialData={this.state.state.totalOverview?.averageOverview} 
+                        initialData={this.state.totalOverview?.averageOverview} 
                         levelDataProps={this.props.levelDataProps}
                     />
                 </div>
             </div>
             <div className="section_row"> 
                 <SurprisingMatchesOverviewSection<Data>  
-                    initialData={this.state.state.totalOverview?.surprisingMatches} 
+                    initialData={this.state.totalOverview?.surprisingMatches} 
                     levelDataProps={this.props.levelDataProps}
                        linkProvider={this.linkProviderFunc(PagesEnum.MATCH_SURPRISING, 'abs_hatstats_difference')} 
                     />
@@ -99,14 +99,14 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
             <div className="section_row"> 
                 <div className="section_row_half_element">
                     <HatstatsTeamOverviewSection<Data>  
-                        initialData={this.state.state.totalOverview?.topHatstatsTeams} 
+                        initialData={this.state.totalOverview?.topHatstatsTeams} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.TEAM_HATSTATS, 'hatstats')} 
                     />
                  </div>
                <div className="section_row_half_element">
                     <SalaryTeamOverviewSection<Data>  
-                        initialData={this.state.state.totalOverview?.topSalaryTeams} 
+                        initialData={this.state.totalOverview?.topSalaryTeams} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.TEAM_SALARY_TSI, 'salary')}
                     />
@@ -114,7 +114,7 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
             </div>
             <div className="section_row"> 
                 <TopMatchesOverviewSection<Data>  
-                    initialData={this.state.state.totalOverview?.topMatches} 
+                    initialData={this.state.totalOverview?.topMatches} 
                     levelDataProps={this.props.levelDataProps}
                     linkProvider={this.linkProviderFunc(PagesEnum.MATCH_TOP_HATSTATS, 'sum_hatstats')} 
                 />
@@ -122,14 +122,14 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
              <div className="section_row"> 
                 <div className="section_row_half_element">
                     <SalaryPlayerOverviewSection<Data>  
-                        initialData={this.state.state.totalOverview?.topSalaryPlayers} 
+                        initialData={this.state.totalOverview?.topSalaryPlayers} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.PLAYER_SALARY_TSI, 'salary')}
                     />
                 </div>
                 <div className="section_row_half_element">
                     <RatingPlayerOverviewSection<Data>  
-                        initialData={this.state.state.totalOverview?.topRatingPlayers} 
+                        initialData={this.state.totalOverview?.topRatingPlayers} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.PLAYER_RATINGS, 'rating')}        
                     />
@@ -137,7 +137,7 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
             </div>
             <div className="section_row">
                 <MatchAttendanceOverviewSection
-                    initialData={this.state.state.totalOverview?.topMatchAttendance}
+                    initialData={this.state.totalOverview?.topMatchAttendance}
                     levelDataProps={this.props.levelDataProps}
                     linkProvider={this.linkProviderFunc(PagesEnum.MATCH_SPECTATORS, 'sold_total')}
                 />
@@ -145,14 +145,14 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
             <div className="section_row">
                 <div className="section_row_half_element">
                     <VictoriesTeamOverviewSection
-                        initialData={this.state.state.totalOverview?.topTeamVictories}
+                        initialData={this.state.totalOverview?.topTeamVictories}
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.TEAM_STREAK_TROPHIES, 'number_of_victories')}
                     />
                 </div>
                 <div className="section_row_half_element">
                     <SeasonScorersOverviewSection
-                        initialData={this.state.state.totalOverview?.topSeasonScorers}
+                        initialData={this.state.totalOverview?.topSeasonScorers}
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.PLAYER_GOAL_GAMES, 'scored')}
                     />
