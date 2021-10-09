@@ -207,5 +207,8 @@
 
     "match.check_result": "¡Compare el resultado!",
 
-    "team.unable_to_compare": "No se pueden comparar equipos. Probablemente sean de diferentes países"
+    "team.unable_to_compare": "Incapaz de comparar equipos. Probablemente sean de diferentes países o uno de los equipos sea bot",
+
+    "team.analyzer": "Analizador",
+    "team.simulate_match": "Simular partido"
 }

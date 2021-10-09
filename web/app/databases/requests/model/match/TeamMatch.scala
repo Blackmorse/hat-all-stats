@@ -30,7 +30,9 @@ case class MatchRatings(formation: String,
                          ratingLeftDef: Int,
                          ratingRightAtt: Int,
                          ratingMidAtt: Int,
-                         ratingLeftAtt: Int
+                         ratingLeftAtt: Int,
+                         ratingIndirectSetPiecesDef: Int,
+                         ratingIndirectSetPiecesAtt: Int
                        )
 
 object MatchRatings {
@@ -71,13 +73,17 @@ object TeamMatch {
     get[Int]("rating_right_att") ~
     get[Int]("rating_mid_att") ~
     get[Int]("rating_left_att") ~
+    get[Int]("rating_indirect_set_pieces_def") ~
+    get[Int]("rating_indirect_set_pieces_att") ~
     get[Int]("opposite_rating_midfield") ~
     get[Int]("opposite_rating_left_def") ~
     get[Int]("opposite_rating_mid_def") ~
     get[Int]("opposite_rating_right_def") ~
     get[Int]("opposite_rating_left_att") ~
     get[Int]("opposite_rating_mid_att") ~
-    get[Int]("opposite_rating_right_att") map {
+    get[Int]("opposite_rating_right_att") ~
+    get[Int]("opposite_rating_indirect_set_pieces_def") ~
+    get[Int]("opposite_rating_indirect_set_pieces_att") map {
       case season ~ leagueId ~ date ~ round ~
         teamName ~ teamId ~ leagueUnitName ~ leagueUnitId ~
         oppositeTeamName ~ oppositeTeamId ~ matchId ~ isHomeMatch ~
@@ -85,20 +91,41 @@ object TeamMatch {
         tacticType ~ tacticSkill ~ oppositeTacticType ~ oppositeTacticSkill ~
         ratingMidfield ~ ratingRightDef ~ ratingMidDef ~ ratingLeftDef ~
         ratingRightAtt ~ ratingMidAtt ~ ratingLeftAtt ~
+        ratingIndirectSetPiecesDef ~ ratingIndirectSetPiecesAtt ~
+
         oppositeRatingMidfield ~ oppositeRatingLeftDef ~ oppositeRatingMidDef ~
         oppositeRatingRightDef ~ oppositeRatingLeftAtt ~ oppositeRatingMidAtt ~
-        oppositeRatingRightAtt =>
+        oppositeRatingRightAtt ~ oppositeRatingIndirectSetPiecesDef ~ oppositeRatingIndirectSetPiecesAtt =>
           val team = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId)
           val oppositeTeam = TeamSortingKey(oppositeTeamId, oppositeTeamName, leagueUnitId, leagueUnitName, leagueId)
 
-          val matchRatings = MatchRatings(formation, tacticType, tacticSkill,
-            ratingMidfield, ratingRightDef, ratingMidDef, ratingLeftDef,
-            ratingRightAtt, ratingMidAtt, ratingLeftAtt)
+          val matchRatings = MatchRatings(
+            formation = formation,
+            tacticType = tacticType,
+            tacticSkill = tacticSkill,
+            ratingMidfield = ratingMidfield,
+            ratingRightDef = ratingRightDef,
+            ratingMidDef = ratingMidDef,
+            ratingLeftDef = ratingLeftDef,
+            ratingRightAtt = ratingRightAtt,
+            ratingMidAtt = ratingMidAtt,
+            ratingLeftAtt = ratingLeftAtt,
+            ratingIndirectSetPiecesDef = ratingIndirectSetPiecesDef,
+            ratingIndirectSetPiecesAtt = ratingIndirectSetPiecesAtt)
 
-          val oppositeMatchRatings = MatchRatings(oppositeFormation, oppositeTacticType, oppositeTacticSkill,
-            oppositeRatingMidfield, oppositeRatingLeftDef, oppositeRatingMidDef,
-              oppositeRatingRightDef, oppositeRatingLeftAtt, oppositeRatingMidAtt,
-              oppositeRatingRightAtt)
+          val oppositeMatchRatings = MatchRatings(
+            formation = oppositeFormation,
+            tacticType = oppositeTacticType,
+            tacticSkill = oppositeTacticSkill,
+            ratingMidfield = oppositeRatingMidfield,
+            ratingLeftDef = oppositeRatingLeftDef,
+            ratingMidDef = oppositeRatingMidDef,
+            ratingRightDef = oppositeRatingRightDef,
+            ratingLeftAtt = oppositeRatingLeftAtt,
+            ratingMidAtt = oppositeRatingMidAtt,
+            ratingRightAtt = oppositeRatingRightAtt,
+            ratingIndirectSetPiecesDef = oppositeRatingIndirectSetPiecesDef,
+            ratingIndirectSetPiecesAtt = oppositeRatingIndirectSetPiecesAtt)
 
           val (homeTeam, awayTeam) = if(isHomeMatch == "home") (team, oppositeTeam) else (oppositeTeam, team)
           val (homeMatchRatings, awayMatchRatings) = if(isHomeMatch == "home") (matchRatings, oppositeMatchRatings) else (oppositeMatchRatings, matchRatings)

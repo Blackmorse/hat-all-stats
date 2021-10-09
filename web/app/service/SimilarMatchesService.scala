@@ -5,6 +5,7 @@ import chpp.matchdetails.models.MatchDetails
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.SimilarMatchesRequest
 import databases.requests.model.`match`.SimilarMatchesStats
+import models.web.matches.SingleMatch
 import webclients.ChppClient
 
 import javax.inject.{Inject, Singleton}
@@ -17,6 +18,15 @@ class SimilarMatchesService @Inject()
                                        implicit val restClickhouseDAO: RestClickhouseDAO){
   def similarMatchesStats(matchId: Long, accuracy: Double): Future[Option[SimilarMatchesStats]] = {
     chppClient.execute[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(matchId)))
-      .flatMap(matchDetails => SimilarMatchesRequest.execute(matchDetails, accuracy))
+      .flatMap(matchDetails => {
+        val singleMatch = SingleMatch.fromHomeAwayTeams(
+          homeTeam = matchDetails.matc.homeTeam,
+          awayTeam = matchDetails.matc.awayTeam,
+          homeGoals = Some(matchDetails.matc.homeTeam.goals),
+          awayGoals = Some(matchDetails.matc.awayTeam.goals),
+          matchId = Some(matchDetails.matc.matchId))
+
+        SimilarMatchesRequest.execute(singleMatch, accuracy)
+      })
   }
 }

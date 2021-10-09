@@ -5,7 +5,6 @@ import TeamData from '../../rest/models/leveldata/TeamData'
 import TeamLevelDataProps from '../TeamLevelDataProps'
 import { LoadingEnum } from '../../common/enums/LoadingEnum';
 import { getTeamsComparsion } from '../../rest/Client'
-import '../NearestMatchesTable.css'
 import '../overview/RankingTable.css'
 import './CompareTeamsPage.css'
 import CompareTeamsTable from './CompareTeamsTable'

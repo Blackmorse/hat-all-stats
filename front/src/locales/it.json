@@ -208,5 +208,8 @@
 
     "match.check_result": "Confronta il risultato!",
 
-    "team.unable_to_compare": "Impossibile confrontare le squadre. Probabilmente sono di paesi diversi"
+    "team.unable_to_compare": "Impossibile confrontare le squadre. Probabilmente provengono da paesi diversi o una delle squadre è bot",
+
+    "team.analyzer": "Analizzatore",
+    "team.simulate_match": "Simula partita"
 }

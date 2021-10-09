@@ -13,7 +13,7 @@ import LeagueUnitData from './models/leveldata/LeagueUnitData';
 import { LeagueUnitTeamStatHistoryInfo } from './models/team/LeagueUnitTeamStat';
 import TeamData from './models/leveldata/TeamData'
 import TeamRankingsStats from './models/team/TeamRankingsStats'
-import { NearestMatches } from './models/match/NearestMatch';
+import NearestMatch, { NearestMatches } from './models/match/NearestMatch';
 import PlayerGoalGames from './models/player/PlayerGoalsGames'
 import PlayerCards from './models/player/PlayerCards'
 import PlayerSalaryTSI from './models/player/PlayerSalaryTSI'
@@ -50,6 +50,7 @@ import PlayersParameters from './models/PlayersParameters'
 import CreatedSameTimeTeamExtended from './models/team/CreatedSameTimeTeamExtended'
 import TeamComparsion from './models/team/TeamComparsion'
 import LeagueUnitRequest from './models/request/LeagueUnitRequest'
+import MatchOpponentCombinedInfo from './models/analyzer/MatchOpponentCombinedInfo'
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
@@ -141,12 +142,10 @@ export function getTeamRankings(request: LevelRequest, season: number,
 }
 
 export function getNearestMatches(request: TeamRequest, 
-        callback: (nearestMatches: NearestMatches) => void,
-        onError: () => void) {
+        callback: (loadingEnum: LoadingEnum, nearestMatches?: NearestMatches) => void) {
     axios.get<NearestMatches>('/api/team/' + request.teamId + "/nearestMatches")
-        .then(response => response.data)
-        .then(nearestMatches => callback(nearestMatches))
-        .catch(e => onError())
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
 }
 
 export function getPromotions(levelRequest: LevelRequest, 
@@ -190,6 +189,12 @@ export function getSimilarMatchesStats(matchId: number, accuracy: number,
         .catch(e => callback(LoadingEnum.ERROR))
 }
 
+export function getSimilarMatchesByRatings(singleMatch: SingleMatch, accuracy: number,
+        callback: (loadingEnum: LoadingEnum, result?: SimilarMatchesStats) => void): void {
+    axios.post<SimilarMatchesStats>('/api/matches/similarMatchesByRatings?accuracy=' + accuracy, singleMatch)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
 export function getDreamTeam(request: LevelRequest, season: number, statType: StatsType, sortBy: string,
         callback: (loadingEnum: LoadingEnum, players?: Array<DreamTeamPlayer>) => void,) {
     var values: any = {}
@@ -209,6 +214,28 @@ export function getDreamTeam(request: LevelRequest, season: number, statType: St
         .catch(e => callback(LoadingEnum.ERROR))
 
 }
+
+export function teamAndOpponentMatches(teamId: number, 
+        callback: (loadingEnum: LoadingEnum, matchOpponentCombinedInfo?: MatchOpponentCombinedInfo) => void) {
+    axios.get<MatchOpponentCombinedInfo>('/api/team/analyzer/teamAndOpponentMatches?teamId=' + teamId)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
+
+export function opponentTeamMatches(teamId: number,
+        callback: (loadingEnum: LoadingEnum, matches?: Array<NearestMatch>) => void) {
+    axios.get<Array<NearestMatch>>('/api/team/analyzer/opponentTeamMatches?teamId=' + teamId)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
+
+export function combineMatches(firstTeamId: number, firstMatchId: number, secondTeamId: number, secondMatchId: number,
+            callback: (loadingEnum: LoadingEnum, result?: SingleMatch) => void) {
+    axios.get<SingleMatch>(`/api/team/analyzer/combineMatches?firstTeamId=${firstTeamId}&firstMatchId=${firstMatchId}&secondTeamId=${secondTeamId}&secondMatchId=${secondMatchId}`)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
+
 
 export function getCreatedSameTimeTeams(leagueId: number, foundedDate: number, period: string,
         callback: (loadingEnum: LoadingEnum, results?: Array<CreatedSameTimeTeamExtended>) => void) {

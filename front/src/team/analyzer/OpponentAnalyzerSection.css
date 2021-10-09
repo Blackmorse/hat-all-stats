@@ -1,0 +1,15 @@
+.opponent_analyzer_section {
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
+}
+
+.analyze_side_secton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.analyzer_opponent_name {
+    margin: 5px;
+}

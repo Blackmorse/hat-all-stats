@@ -7,7 +7,6 @@ import { getTeamData } from '../rest/Client'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import TeamTopMenu from './TeamTopMenu'
 import TeamRankingsTable from './TeamRankingsTable'
-import NearestMatchesTable from './NearestMatchesTable'
 import PlayerGoalsGamesTable from '../common/tables/player/PlayerGoalsGamesTable';
 import PlayerCardsTable from '../common/tables/player/PlayerCardsTable';
 import PlayerSalaryTsiTable from '../common/tables/player/PlayerSalaryTsiTable';
@@ -22,6 +21,8 @@ import TeamMatches from './TeamMatches'
 import TeamSamePeriodTeams from './TeamSamePeriodTeams'
 import CompareTeamsPage from './compare/CompareTeamsPage'
 import CompareSearchSection from './compare/CompareSearchSection'
+import PlayedAndUpcomingMatchesTable from './matches/PlayedAndUpcomingMatchesTable'
+import OpponentAnalyzerSection from './analyzer/OpponentAnalyzerSection'
 
 interface MatchParams {
     teamId: string
@@ -34,7 +35,7 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
         const pagesMap = new Map<PagesEnum, (props: TeamLevelDataProps, queryParams: QueryParams) => JSX.Element>()
         pagesMap.set(PagesEnum.TEAM_OVERVIEW, (props, queryParams) => <>
                     <CompareSearchSection levelDataProps={props}/>
-                    <NearestMatchesTable levelDataProps={props} queryParams={queryParams}/>
+                    <OpponentAnalyzerSection props={props}/>
                     <TeamRankingsTable levelDataProps={props} queryParams={queryParams}/>
                 </>)
         pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES, 
@@ -48,7 +49,10 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
         pagesMap.set(PagesEnum.PLAYER_INJURIES, 
             (props, queryParams) => <PlayerInjuriesTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.TEAM_MATCHES,
-            (props, queryParams) => <TeamMatches levelDataProps={props} queryParams={queryParams} />)
+            (props, queryParams) => <>
+                <PlayedAndUpcomingMatchesTable teamId={props.teamId()}/> 
+                <TeamMatches levelDataProps={props} queryParams={queryParams} />
+            </>)
         pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS, 
             (props, queryParams) => <MatchTopHatstatsTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
         pagesMap.set(PagesEnum.MATCH_SURPRISING, 
@@ -81,6 +85,7 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
             onError: () => void): void {
         getTeamData(Number(this.props.match.params.teamId), callback, onError)
     }
+
     topMenu(): JSX.Element {
         return <TeamTopMenu teamData={this.state.levelData}/>
     }

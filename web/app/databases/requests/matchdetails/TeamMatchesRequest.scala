@@ -41,13 +41,17 @@ object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
         "rating_right_att",
         "rating_mid_att",
         "rating_left_att",
+        "rating_indirect_set_pieces_def",
+        "rating_indirect_set_pieces_att",
         "opposite_rating_midfield",
         "opposite_rating_left_def",
         "opposite_rating_mid_def",
         "opposite_rating_right_def",
         "opposite_rating_left_att",
         "opposite_rating_mid_att",
-        "opposite_rating_right_att"
+        "opposite_rating_right_att",
+        "opposite_rating_indirect_set_pieces_def",
+        "opposite_rating_indirect_set_pieces_att"
       ).from("hattrick.match_details")
       .where
         .orderingKeyPath(orderingKeyPath)

@@ -206,5 +206,8 @@
 
     "match.check_result": "Ergebnis vergleichen!",
 
-    "team.unable_to_compare": "Teams können nicht verglichen werden. Wahrscheinlich kommen sie aus verschiedenen Ländern"
+    "team.unable_to_compare": "Teams können nicht verglichen werden. Wahrscheinlich kommen sie aus den verschiedenen Ländern oder eines der Teams ist Bot",
+
+    "team.analyzer": "Analysator",
+    "team.simulate_match": "Spiel simulieren"
 }

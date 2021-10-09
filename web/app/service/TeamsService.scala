@@ -88,7 +88,8 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
       .map(td => td.teams.filter(_.teamId == teamId2).head)
 
     team1Future.zipWith(team2Future){case (team1, team2) =>
-      if (team1.league.leagueId != team2.league.leagueId) {
+      if (team1.league.leagueId != team2.league.leagueId ||
+          team1.teamId == 0L || team2.teamId == 0L) {
         Future(TeamComparsion(List(), List()))
       } else {
         val teamCreateRanges1 = seasonsService.getSeasonAndRoundRanges(team1.foundedDate)

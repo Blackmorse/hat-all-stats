@@ -241,11 +241,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
     .map(response => {
       val matches = response.team.matchList
         .filter(_.matchType == MatchType.LEAGUE_MATCH)
-        .map(matc => NearestMatch(matc.matchDate, matc.status,
-          matc.homeTeam.homeTeamId, matc.homeTeam.homeTeamName,
-          matc.homeGoals, matc.awayGoals,
-          matc.awayTeam.awayTeamName, matc.awayTeam.awayTeamId,
-          matc.matchId))
+        .map(NearestMatch.chppMatchToNearestMatch)
 
       val playedMatches = matches
         .filter(_.status == "FINISHED")
@@ -255,7 +251,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
       val upcomingMatches = matches.filter(_.status == "UPCOMING")
         .sortBy(_.matchDate)
         .take(3)
-      Ok(Json.toJson(NearestMatches(playedMatches.toSeq, upcomingMatches.toSeq)))
+      Ok(Json.toJson(NearestMatches(playedMatches, upcomingMatches)))
     })
   }
 

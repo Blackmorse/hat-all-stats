@@ -1,0 +1,32 @@
+.match_selector {
+    width: 70%;
+    border-collapse: collapse; 
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.match_selected {
+    background-color: rgba(11, 55, 136, 0.548) !important;
+    margin: 5px;
+    border-style: dashed;
+    border-color: black;
+    border-width: 3px;
+}
+
+.selected_team {
+    color: rgb(153, 17, 17);
+}
+
+.info_icon {
+    width: 12px;
+}
+
+.team_match_info_tooltip {
+    position: absolute; 
+    width: 650px; 
+    top: 0;
+    left: -650px;
+    background: white;
+    z-index: 3;
+    box-shadow: 3px 2px 2px black;
+}

@@ -10,7 +10,9 @@ export interface MatchRatings {
     ratingLeftDef: number,
     ratingRightAtt: number,
     ratingMidAtt: number,
-    ratingLeftAtt: number
+    ratingLeftAtt: number,
+    ratingIndirectSetPiecesDef: number,
+    ratingIndirectSetPiecesAtt: number
 }
 
 interface TeamMatch {

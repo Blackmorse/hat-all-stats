@@ -2,9 +2,11 @@ package controllers
 
 import chpp.matchdetails.MatchDetailsRequest
 import chpp.matchdetails.models.MatchDetails
-import databases.requests.model.`match`.MatchRatings
+import databases.dao.RestClickhouseDAO
+import databases.requests.matchdetails.SimilarMatchesRequest
 import models.clickhouse.TeamMatchInfo
-import play.api.libs.json.{Json, OWrites}
+import models.web.matches.SingleMatch
+import play.api.libs.json.{JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import service.SimilarMatchesService
 import webclients.ChppClient
@@ -12,34 +14,31 @@ import webclients.ChppClient
 import java.util.Date
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, date: Date,
                         homeTeamId: Long, homeTeamName: String, homeTeamGoals: Int,
                         awayTeamId: Long, awayTeamName: String, awayTeamGoals: Int)
 
-case class SingleMatch(homeTeamName: String,
-                       homeTeamId: Long,
-                       homeGoals: Int,
-                       awayTeamName: String,
-                       awayTeamId: Long,
-                       awayGoals: Int,
-                       matchId: Long,
-                       homeMatchRatings: MatchRatings,
-                       awayMatchRatings: MatchRatings)
-
-object SingleMatch {
-  implicit val writes: OWrites[SingleMatch] = Json.writes[SingleMatch]
-}
-
 @Singleton
 class MatchController @Inject()(val controllerComponents: ControllerComponents,
                                 val similarMatchesService: SimilarMatchesService,
-                                val chppClient: ChppClient) extends BaseController {
+                                val chppClient: ChppClient,
+                                implicit val restClickhouseDAO: RestClickhouseDAO) extends BaseController {
 
   def similarMatches(matchId: Long, accuracy: Double): Action[AnyContent] = Action.async { implicit request =>
     similarMatchesService.similarMatchesStats(matchId, accuracy)
       .map(similarMatchesStats =>
         similarMatchesStats.map(s => Ok(Json.toJson(s))).getOrElse(Ok("")))
+  }
+
+  def similarMatchesByRatings(accuracy: Double): Action[JsValue] = Action(parse.json).async { implicit request =>
+    (request.body.validate[SingleMatch] match {
+      case JsSuccess(singleMatch, _) => Right(singleMatch)
+      case _ => Left(())
+    }).map(singleMatch => SimilarMatchesRequest.execute(singleMatch, accuracy))
+      .map(statsFuture => statsFuture.map(stats => Ok(Json.toJson(stats))))
+      .getOrElse(Future(BadRequest("")))
   }
 
   def singleMatch(matchId: Long): Action[AnyContent] = Action.async { implicit request =>
@@ -48,37 +47,12 @@ class MatchController @Inject()(val controllerComponents: ControllerComponents,
         val matc = matchDetails.matc
         val homeTeam = matc.homeTeam
         val awayTeam = matc.awayTeam
-        val singleMatch = SingleMatch(homeTeamName = homeTeam.teamName,
-          homeTeamId = homeTeam.teamId,
-          homeGoals = homeTeam.goals,
-          awayTeamName = awayTeam.teamName,
-          awayTeamId = awayTeam.teamId,
-          awayGoals = awayTeam.goals,
-          matchId = matc.matchId,
-          homeMatchRatings = MatchRatings(
-            formation = homeTeam.formation,
-            tacticType = homeTeam.tacticType,
-            tacticSkill = homeTeam.tacticSkill,
-            ratingMidfield = homeTeam.ratingMidfield,
-            ratingRightDef = homeTeam.ratingRightDef,
-            ratingMidDef = homeTeam.ratingMidDef,
-            ratingLeftDef = homeTeam.ratingLeftDef,
-            ratingRightAtt = homeTeam.ratingRightAtt,
-            ratingMidAtt = homeTeam.ratingMidAtt,
-            ratingLeftAtt = homeTeam.ratingLeftAtt
-          ),
-          awayMatchRatings = MatchRatings(
-            formation = awayTeam.formation,
-            tacticType = awayTeam.tacticType,
-            tacticSkill = awayTeam.tacticSkill,
-            ratingMidfield = awayTeam.ratingMidfield,
-            ratingRightDef = awayTeam.ratingRightDef,
-            ratingMidDef = awayTeam.ratingMidDef,
-            ratingLeftDef = awayTeam.ratingLeftDef,
-            ratingRightAtt = awayTeam.ratingRightAtt,
-            ratingMidAtt = awayTeam.ratingMidAtt,
-            ratingLeftAtt = awayTeam.ratingLeftAtt
-          ))
+        val singleMatch = SingleMatch.fromHomeAwayTeams(
+          homeTeam = homeTeam,
+          awayTeam = awayTeam,
+          homeGoals = Some(homeTeam.goals),
+          awayGoals = Some(awayTeam.goals),
+          matchId = Some(matc.matchId))
         Ok(Json.toJson(singleMatch))
       })
   }

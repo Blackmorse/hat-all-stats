@@ -207,5 +207,8 @@
 
   "match.check_result": "Sonuçları karşılaştırın!",
 
-  "team.unable_to_compare": "Takımlar karşılaştırılamıyor. Muhtemelen farklı ülkelerdendirler."
+  "team.unable_to_compare": "Takımlar karşılaştırılamıyor. Muhtemelen farklı ülkelerdendirler veya takımlardan biri bottur.",
+
+  "team.analyzer": "Analizör",
+  "team.simulate_match": "Maçı simüle et"
 }

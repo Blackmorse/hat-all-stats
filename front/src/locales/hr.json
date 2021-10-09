@@ -207,5 +207,8 @@
 
     "match.check_result": "Usporedite rezultat!",
 
-    "team.unable_to_compare": "Nije moguće usporediti timove. Vjerojatno su iz različitih zemalja"
+    "team.unable_to_compare": "Nije moguće usporediti timove. Vjerojatno su iz različitih zemalja ili je jedan od timova bot",
+
+    "team.analyzer": "Analizator",
+    "team.simulate_match": "Simulirajte podudaranje"
 }

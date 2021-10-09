@@ -1,28 +1,29 @@
 import React from 'react'
 import { LoadingEnum } from '../../common/enums/LoadingEnum'
 import SimilarMatchesStats from '../../rest/models/match/SimilarMatchesStats'
-import { getSimilarMatchesStats } from '../../rest/Client'
+import { getSimilarMatchesByRatings } from '../../rest/Client'
 import ExecutableComponent, { LoadableState } from '../../common/sections/ExecutableComponent'
 import { SectionState } from '../../common/sections/Section'
 import './MatchSimulatorInfo.css'
 import i18n from '../../i18n'
+import SingleMatch from '../../rest/models/match/SingleMatch'
 
 interface Props {
-    matchId: number
+    singleMatch: SingleMatch
 }
 
 interface State {
     similarMatchesStats?: SimilarMatchesStats
 }
 
-class MatchSimulatorInfo extends ExecutableComponent<Props, State, SimilarMatchesStats, number, 
-    LoadableState<State, number> & SectionState> {
+class MatchSimulatorInfo extends ExecutableComponent<Props, State, SimilarMatchesStats, SingleMatch, 
+    LoadableState<State, SingleMatch> & SectionState> {
     
     constructor(props: Props) {
         super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
-            dataRequest: props.matchId,
+            dataRequest: props.singleMatch,
             state: {},
             collapsed: false
         }
@@ -30,9 +31,9 @@ class MatchSimulatorInfo extends ExecutableComponent<Props, State, SimilarMatche
 
     componentDidMount() {}
 
-    executeDataRequest(dataRequest: number, 
+    executeDataRequest(dataRequest: SingleMatch, 
             callback: (loadingState: LoadingEnum, result?: SimilarMatchesStats) => void): void {
-        getSimilarMatchesStats(dataRequest, 0.1, callback)
+                getSimilarMatchesByRatings(dataRequest, 0.1, callback)
     }
     stateFromResult(result?: SimilarMatchesStats): State {
         return {similarMatchesStats: result}
@@ -71,7 +72,7 @@ class MatchSimulatorInfo extends ExecutableComponent<Props, State, SimilarMatche
                     {Math.round(stats.avgGoalsFor * 10) / 10}
                 </span>
                 <span className="goals_title">
-                    Goals
+                    {i18n.t('overview.goals')}
                 </span>
                 <span className="away_goals">
                     {Math.round(stats.avgGoalsAgainst * 10) / 10}

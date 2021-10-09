@@ -99,6 +99,9 @@ GET     /api/team/:teamId/promotions   controllers.RestTeamController.promotions
 GET     /api/team/:teamId/teamMatches   controllers.RestTeamController.teamMatches(teamId: Long, season: Int)
 GET     /api/team/stats/teamsFoundedSameDate  controllers.RestTeamController.teamsFoundedSameDate(period: service.HattrickPeriod, leagueId: Int, foundedDate: Long)
 GET     /api/team/stats/compareTeams        controllers.RestTeamController.compareTeams(teamId1: Long, teamId2: Long)
+GET     /api/team/analyzer/teamAndOpponentMatches       controllers.AnalyzerController.currentTeamAndOpponentTeamMatches(teamId: Long)
+GET     /api/team/analyzer/opponentTeamMatches      controllers.AnalyzerController.opponentTeamMatches(teamId: Long)
+GET     /api/team/analyzer/combineMatches       controllers.AnalyzerController.combineMatches(firstTeamId: Long, firstMatchId: Long, secondTeamId: Long, secondMatchId: Long)
 
 GET     /api/overview/numberOverview    controllers.RestOverviewController.numberOverview(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/formations    controllers.RestOverviewController.formations(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
@@ -116,6 +119,7 @@ GET     /api/overview/topSeasonScorers   controllers.RestOverviewController.topS
 GET     /api/overview/worldData    controllers.RestOverviewController.getWorldData()
 
 GET     /api/matches/similarMatches controllers.MatchController.similarMatches(matchId: Long, accuracy: Double)
+POST     /api/matches/similarMatchesByRatings controllers.MatchController.similarMatchesByRatings(accuracy: Double)
 GET     /api/matches/singleMatch    controllers.MatchController.singleMatch(matchId: Long)
 
 POST    /loader/leagueRound         controllers.LoaderController.leagueRound(season: Int, leagueId: Int, round: Int)
