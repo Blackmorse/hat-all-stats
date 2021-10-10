@@ -9,6 +9,7 @@ import databases.requests.OrderingKeyPath
 import databases.requests.matchdetails.{MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player.{PlayerRatingsRequest, PlayerSalaryTSIRequest}
+import databases.requests.teamdetails.OldestTeamsRequest
 import webclients.ChppClient
 import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
 import play.api.cache.AsyncCacheApi
@@ -88,6 +89,11 @@ class WorldController @Inject() (val controllerComponents: ControllerComponents,
 
   def surprisingMatches(restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = Action.async { implicit request =>
     MatchSurprisingRequest.execute(OrderingKeyPath(), restStatisticsParameters)
+      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+  }
+
+  def oldestTeams(restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = Action.async { implicit request =>
+    OldestTeamsRequest.execute(OrderingKeyPath(), restStatisticsParameters)
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 

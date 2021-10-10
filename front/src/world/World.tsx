@@ -16,6 +16,7 @@ import PlayerRatingsTable from '../common/tables/player/PlayerRatingsTable';
 import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable';
 import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import DreamTeamPage from '../common/pages/DreamTeamPage';
+import OldestTeamsTable from '../common/tables/team/OldestTeamsTable';
 
 
 interface Props extends RouteComponentProps<{}>{}
@@ -27,6 +28,8 @@ class World extends LevelLayout<Props, WorldData, LevelDataProps<WorldData>> {
             (props, _queryParams) => <WorldOverviewPage levelDataProps={props} />)
         pagesMap.set(PagesEnum.TEAM_HATSTATS,
             (props, queryParams) => <TeamHatstatsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
+        pagesMap.set(PagesEnum.OLDEST_TEAMS,
+            (props, queryParams) => <OldestTeamsTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
         pagesMap.set(PagesEnum.PLAYER_SALARY_TSI, 
             (props, queryParams) => <PlayerSalaryTsiTable<WorldData, WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
         pagesMap.set(PagesEnum.PLAYER_RATINGS, 

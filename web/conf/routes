@@ -15,6 +15,7 @@ GET     /api/world/playerRatings        controllers.WorldController.playerRating
 GET     /api/world/topMatches           controllers.WorldController.topMatches(restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/world/surprisingMatches    controllers.WorldController.surprisingMatches(restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/world/dreamTeam            controllers.WorldController.dreamTeam(season: Int, sortBy: String, statsType: models.web.StatsType)
+GET     /api/world/oldestTeams    controllers.WorldController.oldestTeams(restStatisticsParameters: models.web.RestStatisticsParameters)
 
 GET     /api/league/:leagueId                 controllers.RestLeagueController.getLeagueData(leagueId: Int)
 GET     /api/league/:leagueId/teamHatstats      controllers.RestLeagueController.teamHatstats(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)

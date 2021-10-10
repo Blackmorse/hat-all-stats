@@ -39,7 +39,8 @@ abstract class OldestTeamsTable<Data extends LevelData, TableProps extends Level
         let teamSortingKey = team.teamSortingKey
         return <tr className={className}>
             <td>{index + 1}</td>
-            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
+            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} 
+                flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? teamSortingKey.leagueId : undefined}/></td>
             <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
             <td className="value">{dateFormatter(team.foundedDate)}</td>
         </tr>
