@@ -80,7 +80,7 @@ GET     /api/leagueUnit/:leagueUnitId/teamStreakTrophies   controllers.RestLeagu
 GET     /api/leagueUnit/:leagueUnitId/topMatches   controllers.RestLeagueUnitController.topMatches(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/surprisingMatches   controllers.RestLeagueUnitController.surprisingMatches(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/matchSpectators   controllers.RestLeagueUnitController.matchSpectators(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
-GET     /api/leagueInit/:leagueUnitId/oldestTeams       controllers.RestLeagueUnitController.oldestTeams(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/leagueUnit/:leagueUnitId/oldestTeams       controllers.RestLeagueUnitController.oldestTeams(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/promotions   controllers.RestLeagueUnitController.promotions(leagueUnitId: Int)
 GET     /api/leagueUnit/:leagueUnitId/dreamTeam         controllers.RestLeagueUnitController.dreamTeam(season: Int, leagueUnitId: Int, sortBy: String, statsType: models.web.StatsType)
 
