@@ -13,7 +13,7 @@ class CupScheduler(worldDetails: WorldDetails,
     CupSchedule.normalizeCupScheduleToDayOfWeek(CupSchedule.seq, Calendar.MONDAY)
       .filter(_.date.after(new Date()))
       .map(scheduleEntry => {
-        val scheduledDate = new Date(scheduleEntry.date.getTime + threeHoursMs)
+        val scheduledDate = new Date(scheduleEntry.date.getTime + threeHoursMs + 1000L * 60 * 60) //TODO quick fix for winter time!
         ScheduleTask(scheduleEntry.leagueId, scheduledDate)
       })
       .foreach(task => taskExecutorActor ! task)
@@ -26,7 +26,7 @@ class CupScheduler(worldDetails: WorldDetails,
       .sortBy(_.date)
       .dropWhile(_.leagueId != leagueId)
       .map(scheduleEntry => {
-        val scheduledDate = new Date(scheduleEntry.date.getTime + threeHoursMs)
+        val scheduledDate = new Date(scheduleEntry.date.getTime + threeHoursMs + 1000L * 60 * 60) //TODO quick fix for winter time!
         ScheduleTask(scheduleEntry.leagueId, scheduledDate)
       })
       .foreach(task => taskExecutorActor ! task)
