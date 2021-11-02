@@ -62,12 +62,14 @@ object AllCountriesTest {
       .map(league => ScheduleEntry(league.leagueId, league.cupMatchDate.get)), Calendar.MONDAY)
       .sortBy(_.date)
 
-    schedule.zip(worldDetailsSchedule)
-      .foreach{case (original, worldDetails) =>
-        if (original.date != worldDetails.date) {
-          throw new Exception(s"Cup schedule has been changed. Backup: $original. World details: $worldDetails")
-        }
-      }
+    val changes = schedule.zip(worldDetailsSchedule)
+      .filter{case (original, worldDetails) => original.date != worldDetails.date}
+      .map{case (original, worldDetails) =>
+        s"Cup schedule has been changed. Backup: $original. World details: $worldDetails"}
+
+    if (changes.nonEmpty) {
+      throw new Exception(changes.mkString("\n"))
+    }
   }
 
   private def testFirstAndLastLeague(worldDetails: WorldDetails): Unit = {
