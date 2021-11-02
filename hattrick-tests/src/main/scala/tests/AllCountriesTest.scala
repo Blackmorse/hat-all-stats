@@ -68,7 +68,7 @@ object AllCountriesTest {
         s"Cup schedule has been changed. Backup: $original. World details: $worldDetails"}
 
     if (changes.nonEmpty) {
-      throw new Exception(changes.mkString("\n"))
+      throw new Exception(s"${changes.head}.\n ... \n Total ${changes.size}")
     }
   }
 
