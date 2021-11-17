@@ -118,8 +118,19 @@ GET     /api/overview/matchAttendance   controllers.RestOverviewController.topMa
 GET     /api/overview/topVictories   controllers.RestOverviewController.topTeamVictories(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/topSeasonScorers   controllers.RestOverviewController.topSeasonScorers(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/worldData    controllers.RestOverviewController.getWorldData()
+GET     /api/overview/teamNumbersChart  controllers.RestOverviewController.teamNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/playerNumbersChart  controllers.RestOverviewController.playerNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/goalNumbersChart  controllers.RestOverviewController.goalNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/injuryNumbersChart  controllers.RestOverviewController.injuryNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/yellowCardNumbersChart  controllers.RestOverviewController.yellowCardNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/redCardNumbersChart  controllers.RestOverviewController.redCardNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/formationsChart  controllers.RestOverviewController.formationsChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/averageHatstatNumbersChart  controllers.RestOverviewController.averageHatstatNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/averageSpectatorNumbersChart  controllers.RestOverviewController.averageSpectatorNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/averageGoalNumbersChart  controllers.RestOverviewController.averageGoalNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 
 GET     /api/matches/similarMatches controllers.MatchController.similarMatches(matchId: Long, accuracy: Double)
++ nocsrf
 POST     /api/matches/similarMatchesByRatings controllers.MatchController.similarMatchesByRatings(accuracy: Double)
 GET     /api/matches/singleMatch    controllers.MatchController.singleMatch(matchId: Long)
 

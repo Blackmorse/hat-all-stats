@@ -4,6 +4,7 @@ import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.WorldDetails
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.HistoryInfoRequest
+import hattid.CommonData
 import webclients.ChppClient
 import play.api.Configuration
 
@@ -30,11 +31,11 @@ class LeagueInfoService @Inject() (val chppClient: ChppClient,
 
   def lastFullRound(): Int = {
     //Salvador has last league matches
-    leagueInfo.currentRound(100)
+    leagueInfo.currentRound(CommonData.LAST_SERIES_LEAGUE_ID)
   }
 
   def lastFullSeason(): Int = {
-    leagueInfo.currentSeason(100)
+    leagueInfo.currentSeason(CommonData.LAST_SERIES_LEAGUE_ID)
   }
 
   def getRelativeSeasonFromAbsolute(season: Int, leagueId: Int): Int = leagueInfo(leagueId).league.seasonOffset + season

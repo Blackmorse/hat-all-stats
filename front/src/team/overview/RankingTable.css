@@ -46,16 +46,6 @@
     overflow: hidden;
 }
 
-.chart_img {
-    height: 15px;
-    margin-left: 10px;
-    background-color: white;
-}
-
-.chart_img:hover {
-    cursor: pointer;
-}
-
 .ranking_table {
     height: 120px;
     width: 100%;

@@ -1,8 +1,8 @@
-package databases.requests.overview.model
+package databases.requests.model.overview
 
-import play.api.libs.json.Json
 import anorm.SqlParser.get
 import anorm.~
+import play.api.libs.json.Json
 
 case class NumberOverview(numberOfTeams:Int,
                           numberOfPlayers: Int,

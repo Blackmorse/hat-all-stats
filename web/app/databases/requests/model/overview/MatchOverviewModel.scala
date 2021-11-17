@@ -2,7 +2,7 @@ package databases.requests.model.overview
 
 import java.util.Date
 import anorm.SqlParser.get
-import anorm.~
+import anorm.{RowParser, ~}
 
 case class MatchOverviewModel(leagueId: Int, leagueUnitId: Int, leagueUnitName: String,
                               teamId: Long, teamName: String, oppositeTeamId: Long, oppositeTeamName: String,
@@ -10,7 +10,7 @@ case class MatchOverviewModel(leagueId: Int, leagueUnitId: Int, leagueUnitName: 
                               date: Date, value: Int, oppositeValue: Int)
 
 object MatchOverviewModel {
-  val mapper = {
+  val mapper: RowParser[MatchOverviewModel] = {
     get[Int]("league_id") ~
     get[Int]("league_unit_id") ~
     get[String]("league_unit_name") ~

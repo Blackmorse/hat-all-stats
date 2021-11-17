@@ -2,7 +2,7 @@ package databases.requests.overview
 
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
-import databases.requests.overview.model.TeamStatOverview
+import databases.requests.model.overview.TeamStatOverview
 import databases.sqlbuilder.{Select, SqlBuilder}
 
 object TopHatstatsTeamOverviewRequest extends ClickhouseOverviewRequest[TeamStatOverview] {

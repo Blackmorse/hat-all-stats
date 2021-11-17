@@ -36,6 +36,6 @@ class TeamMatchInfoComponent extends React.Component<Props, SectionState> {
 }
 
 const TeamMatchInfoSection = Section<Props, SectionState, GSection<Props, SectionState>>(TeamMatchInfoComponent, 
-    (p) => <>{i18n.t('filter.round')} {p.teamMatch.round}</>)
+    (p) => { return {header: <>{i18n.t('filter.round')} {p.teamMatch.round}</> } })
 
 export default TeamMatchInfoSection

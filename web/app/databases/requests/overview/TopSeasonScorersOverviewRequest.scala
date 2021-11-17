@@ -2,7 +2,7 @@ package databases.requests.overview
 
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
-import databases.requests.overview.model.PlayerStatOverview
+import databases.requests.model.overview.PlayerStatOverview
 import databases.sqlbuilder.{NestedSelect, Select, SqlBuilder}
 
 object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerStatOverview] {

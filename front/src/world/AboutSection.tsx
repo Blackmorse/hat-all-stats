@@ -45,6 +45,6 @@ class AboutSectionBase extends React.Component<{}, SectionState> {
     } 
 }
 
-const AboutSection = Section(AboutSectionBase, _ =>  <>About Hattid</>)
+const AboutSection = Section(AboutSectionBase, _ => { return {header: <>About Hattid</> } })
 
 export default AboutSection

@@ -7,6 +7,9 @@ import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import AveragesOverview from '../../rest/models/overview/AveragesOverview'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import Section from '../sections/Section';
+import ChartLink from '../charts/ChartLink';
+import NumbersChart from './charts/NumbersChart';
+import { averageHatstatNumbersChart, averageSpectatorNumbersChart, averageGoalNumbersChart } from '../../rest/Client'
 
 class AveragesOverviewSectionBase<Data extends LevelData> extends OverviewSection<Data, AveragesOverview, OverviewSectionProps<Data, AveragesOverview>> {
 
@@ -19,15 +22,37 @@ class AveragesOverviewSectionBase<Data extends LevelData> extends OverviewSectio
                 <tbody>
                     <tr>
                         <td>{t('overview.average_hatstats')}</td>
-                        <td className="value">{averageOverview.matchAverages.hatstats}</td>
+                        <td>
+                            <ChartLink chartContent={() => 
+                                <NumbersChart title={t('overview.average_hatstats')} 
+                                    requestFunc={averageHatstatNumbersChart} 
+                                    levelRequest={this.props.levelDataProps.createLevelRequest()} />} />
+                       
+                            {averageOverview.matchAverages.hatstats}
+                        </td>
                     </tr>
                     <tr>
                         <td>{t('overview.average_spectators')}</td>
-                        <td className="value">{commasSeparated(averageOverview.matchAverages.spectators)}</td>
+                        <td>
+                            <ChartLink chartContent={() => 
+                                <NumbersChart title={t('overview.average_spectators')} 
+                                    requestFunc={averageSpectatorNumbersChart} 
+                                    levelRequest={this.props.levelDataProps.createLevelRequest()} />} />
+                       
+                            {commasSeparated(averageOverview.matchAverages.spectators)}
+                        </td>
                     </tr>
                     <tr>
                         <td>{t('overview.average_team_goals')}</td>
-                        <td className="value">{Math.round(averageOverview.matchAverages.goals * 100) / 100}</td>
+                        <td>
+                            <ChartLink chartContent={() => 
+                                <NumbersChart title={t('overview.average_team_goals')} 
+                                    requestFunc={averageGoalNumbersChart} 
+                                    levelRequest={this.props.levelDataProps.createLevelRequest()}
+                                    numberFormatter={n => n / 100} />} />
+                       
+                            {Math.round(averageOverview.matchAverages.goals * 100) / 100}
+                        </td>
                     </tr>
                     <tr>
                         <td>{t('overview.average_team_age')}</td>
@@ -48,6 +73,6 @@ class AveragesOverviewSectionBase<Data extends LevelData> extends OverviewSectio
     }
 }
 
-const AveragesOverviewSection = Section(AveragesOverviewSectionBase, _ => 'overview.averages')
+const AveragesOverviewSection = Section(AveragesOverviewSectionBase, (props: OverviewSectionProps<LevelData, AveragesOverview>, state) => 'overview.averages' )
 
 export default AveragesOverviewSection

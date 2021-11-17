@@ -7,11 +7,14 @@ import '../../common/elements/Trends.css'
 import TeamLevelDataProps from '../TeamLevelDataProps';
 import LeagueLink from '../../common/links/LeagueLink';
 import DivisionLevelLink from '../../common/links/DivisionLevelLink';
-import ChartWindow from './ChartWindow'
 import { toRoman } from "../../common/Utils"
 import DiffPosition from '../../common/widgets/DiffPosition'
 import DiffValue from '../../common/widgets/DiffValue'
 import RankingParameters from '../../common/ranking/RankingParameters';
+import '../../common/charts/Charts.css'
+import ChartLink from '../../common/charts/ChartLink';
+import ValueRankingsChart from './ValueRankingsChart';
+import PositionRankingChart from './PositionRankingChart';
 
 export interface RankingData {
     teamRankings: Array<TeamRanking>,
@@ -27,22 +30,27 @@ interface Props {
     rankingParameters: RankingParameters
 }
 
-interface State {
-    chart: boolean
-}
-
-class RankingTable extends React.Component<Props, State> {
-    
+class RankingTable extends React.Component<Props>{
     constructor(props: Props) {
         super(props)
-        this.state = {chart: false}
-        this.closeWindow=this.closeWindow.bind(this)
+        this.chartContent = this.chartContent.bind(this)
     }
 
-    closeWindow() {
-        this.setState({
-            chart: false
-        })
+    chartContent(): JSX.Element {
+        return <>
+            <ValueRankingsChart 
+                leagueRankings={this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rankType === "league_id")}
+                valueFunc={this.props.rankingParameters.valueFunc}
+                title={this.props.rankingParameters.title}
+                formatterFunc={this.props.rankingParameters.yAxisFunc}
+                />
+            <PositionRankingChart 
+                leagueRankings={this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rankType === "league_id")}
+                divisionLevelRankings={this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rankType === "division_level")}
+                positionFunc={this.props.rankingParameters.positionFunc}
+                teamLevelDataProps={this.props.rankingData.teamLevelDataProps}
+            />
+        </>
     }
 
     render() {
@@ -88,19 +96,8 @@ class RankingTable extends React.Component<Props, State> {
         <span className="ranking">
             <span className="ranking_name">
                 {this.props.rankingParameters.title}
-                <img className="chart_img" src='/chart.svg' onClick={() => this.setState({chart: !this.state.chart})} alt=" chart"/>
+                {<ChartLink chartContent={this.chartContent} />}
             </span>
-            {(this.state.chart) ? 
-                <ChartWindow callback={this.closeWindow}
-                    divisionLevelRankings={divisionLevelRankings}
-                    leagueRankings={leagueRankings}
-                    valueFunc={this.props.rankingParameters.valueFunc}
-                    positionFunc={this.props.rankingParameters.positionFunc}
-                    title={this.props.rankingParameters.title} 
-                    teamLevelDataProps={this.props.rankingData.teamLevelDataProps}
-                    yAxisfunc={this.props.rankingParameters.yAxisFunc}
-                /> 
-                : <></>}
             <table className="ranking_table">
                 <tbody>
                 <tr className="ranking_row">

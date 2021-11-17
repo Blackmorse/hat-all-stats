@@ -7,6 +7,8 @@ import { Translation } from 'react-i18next'
 import { commasSeparated } from '../../common/Formatters'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import Section from '../sections/Section';
+import ChartLink from '../charts/ChartLink';
+import FormationsChart from './charts/FormationsChart';
 
 class FormationsOverviewSectionBase<Data extends LevelData> extends OverviewSection<Data, Array<FormationsOverview>, OverviewSectionProps<Data, Array<FormationsOverview>>> {
    
@@ -33,5 +35,9 @@ class FormationsOverviewSectionBase<Data extends LevelData> extends OverviewSect
 
 }
 
-const FormationsOverviewSection = Section(FormationsOverviewSectionBase, _ => 'overview.formations')
+const FormationsOverviewSection = Section(FormationsOverviewSectionBase, (props: OverviewSectionProps<LevelData, Array<FormationsOverview>>, state) => {
+    return {
+        header: 'overview.formations',
+        additionalElement: <ChartLink chartContent={() => <FormationsChart levelRequest={props.levelDataProps.createLevelRequest()} />} />
+    }  } )
 export default FormationsOverviewSection

@@ -1,4 +1,4 @@
-package databases.requests.overview.model
+package databases.requests.model.overview
 
 import anorm.SqlParser.get
 import anorm.~

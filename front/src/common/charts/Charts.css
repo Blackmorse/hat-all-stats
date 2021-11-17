@@ -1,3 +1,15 @@
+.chart_img {
+    height: 15px;
+    margin-left: 10px;
+    margin-right: 2px;
+    background-color: white;
+    border: 1px solid black;
+}
+
+.chart_img:hover {
+    cursor: pointer;
+}
+
 .window {
     width: 100%;
     height: 100%; 
@@ -21,8 +33,8 @@
     flex-direction: row;
 }
 
-.js-plotly-plot {
-    width: 50%;
+.plotly_wrapper {
+    width: 100%;
 }
 
 .close::before {

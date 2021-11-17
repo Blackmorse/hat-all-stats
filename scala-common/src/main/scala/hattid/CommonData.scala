@@ -1,6 +1,9 @@
 package hattid
 
 object CommonData {
+  //Salvador(?) is the last league to load. World round depends on it
+  val LAST_SERIES_LEAGUE_ID = 100
+
   lazy val higherLeagueMap: Map[Int, CommonLeagueUnitInfo] = {
     Map(
       1 -> CommonLeagueUnitInfo(1, "Allsvenskan"),

@@ -5,9 +5,12 @@ import DiffValue from '../../common/widgets/DiffValue'
 import LeagueLink from '../../common/links/LeagueLink';
 import TeamLevelDataProps from '../TeamLevelDataProps';
 import '../overview/RankingTable.css'
-import CompareTeamsChartWindow from './CompareTeamsChartWindow'
 import RankingParameters from '../../common/ranking/RankingParameters'
 import TeamLink from '../../common/links/TeamLink';
+import '../../common/charts/Charts.css'
+import ChartLink from '../../common/charts/ChartLink'
+import CompareTeamsValuesChart from './CompareTeamsValuesChart';
+import CompareTeamsPositionsChart from './CompareTeamsPositionsChart';
 
 interface Props {
     teamComparsion: TeamComparsion,
@@ -16,22 +19,27 @@ interface Props {
     diffFormatter?: (value: number) => JSX.Element
 }
 
-interface State {
-    chart: boolean
-}
 
-class CompareTeamsTable extends React.Component<Props, State> {
+class CompareTeamsTable extends React.Component<Props> {
 
     constructor(props: Props) {
         super(props)
-        this.state = {chart: false}
-        this.closeWindow=this.closeWindow.bind(this)
+        this.chartContent = this.chartContent.bind(this)
     }
 
-    closeWindow() {
-        this.setState({
-            chart: false
-        })
+    chartContent(): JSX.Element {
+        return <>
+        <CompareTeamsValuesChart 
+            teamComparsion={this.props.teamComparsion}
+            valueFunc={this.props.rankingParameters.valueFunc}
+            title={this.props.rankingParameters.title}
+            formatterFunc={this.props.rankingParameters.yAxisFunc}
+        />
+        <CompareTeamsPositionsChart 
+            teamComparsion={this.props.teamComparsion}
+            positionFunc={this.props.rankingParameters.positionFunc}
+            teamLevelDataProps={this.props.teamLevelDataProps}
+        /></>
     }
 
     render() {
@@ -121,18 +129,8 @@ class CompareTeamsTable extends React.Component<Props, State> {
         <span className="ranking">
         <span className="ranking_name">
             {this.props.rankingParameters.title}
-            <img className="chart_img" src='/chart.svg' onClick={() => this.setState({chart: !this.state.chart})} alt=" chart"/>
+            {<ChartLink chartContent={this.chartContent} />}
         </span>
-        {(this.state.chart) ? 
-                <CompareTeamsChartWindow callback={this.closeWindow}
-                    teamComparsion={this.props.teamComparsion}
-                    valueFunc={this.props.rankingParameters.valueFunc}
-                    positionsFunc={this.props.rankingParameters.positionFunc}
-                    title={this.props.rankingParameters.title}
-                    teamLevelDataProps={this.props.teamLevelDataProps}
-                    yAxisFunc={this.props.rankingParameters.yAxisFunc}
-                /> 
-                : <></>}
         <div className="comparsion_gridtable">
             <div className="first_line comparsion_gridtable_entry">
 

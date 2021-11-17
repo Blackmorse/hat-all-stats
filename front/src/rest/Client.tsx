@@ -51,6 +51,8 @@ import CreatedSameTimeTeamExtended from './models/team/CreatedSameTimeTeamExtend
 import TeamComparsion from './models/team/TeamComparsion'
 import LeagueUnitRequest from './models/request/LeagueUnitRequest'
 import MatchOpponentCombinedInfo from './models/analyzer/MatchOpponentCombinedInfo'
+import NumbersChartModel from './models/overview/NumbersChartModel'
+import FormationChartModel from './models/overview/FormationChartModel'
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
@@ -334,6 +336,60 @@ export let getMatchesTopHatstats = statisticsRequest<MatchTopHatstats>('topMatch
 export let getSurprisingMatches = statisticsRequest<MatchTopHatstats>('surprisingMatches')
 
 export let getMatchSpectators = statisticsRequest<MatchSpectators>('matchSpectators')
+
+
+//Chart numbers section
+export let teamNumbersChart = numbersChart('teamNumbersChart')
+
+export let playerNumbersChart = numbersChart('playerNumbersChart')
+
+export let goalNumbersChart = numbersChart('goalNumbersChart')
+
+export let injuryNumbersChart = numbersChart('injuryNumbersChart')
+
+export let yellowCardNumbersChart = numbersChart('yellowCardNumbersChart')
+
+export let redCardNumbersChart = numbersChart('redCardNumbersChart')
+
+export let averageHatstatNumbersChart = numbersChart('averageHatstatNumbersChart')
+
+export let averageSpectatorNumbersChart = numbersChart('averageSpectatorNumbersChart')
+
+export let averageGoalNumbersChart = numbersChart('averageGoalNumbersChart')
+
+function numbersChart(path: string): 
+    (request: LevelRequest, callback: (loadingEnum: LoadingEnum, entities?: Array<NumbersChartModel>) => void) => void {
+        return function(request: LevelRequest, callback: (loadingEnum: LoadingEnum, entities?: Array<NumbersChartModel>) => void) {
+            let params = createLevelRequestParameters(request)
+            
+            axios.get<Array<NumbersChartModel>>('/api/overview/' + path + '' + params)
+                .then(response => parseAxiosResponse(response, callback))
+                .catch(e => callback(LoadingEnum.ERROR))
+        }
+    }
+
+export function formationsChart(request: LevelRequest, callback: (loadingEnum: LoadingEnum, entities?: Array<FormationChartModel>) => void): void {
+    let params = createLevelRequestParameters(request)
+
+    axios.get<Array<FormationChartModel>>('/api/overview/formationsChart' + params)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(e => callback(LoadingEnum.ERROR))
+}
+
+
+function createLevelRequestParameters(leveRequest: LevelRequest): string {
+    let params: string
+    if (leveRequest.type === 'WorldRequest') {
+        params = ''
+    } else if (leveRequest.type === 'LeagueRequest') {
+        params = '?leagueId=' + (leveRequest as LeagueRequest).leagueId
+    } else if (leveRequest.type === 'DivisionLevelRequest') {
+        params = '?leagueId=' + (leveRequest as DivisionLevelRequest).leagueId + '&divisionLevel=' + (leveRequest as DivisionLevelRequest).divisionLevel
+    } else {
+        throw new Error('Unknown request type for teamNumbersChart')
+    }
+    return params
+}
 
 function requestOverview<T>(path: string):
     (overviewRequest: OverviewRequest, 

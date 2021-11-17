@@ -1,9 +1,9 @@
-package databases.requests.overview.model
+package databases.requests.model.overview
 
-import databases.requests.model.team.TeamSortingKey
-import play.api.libs.json.Json
 import anorm.SqlParser.get
 import anorm.~
+import databases.requests.model.team.TeamSortingKey
+import play.api.libs.json.Json
 
 case class TeamStatOverview(leagueId: Int, teamSortingKey: TeamSortingKey,
                             value: Int)

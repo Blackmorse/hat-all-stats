@@ -3,10 +3,13 @@ import NumberOverview from '../../rest/models/overview/NumberOverview'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import { commasSeparated } from '../../common/Formatters'
-import { getNumberOverview } from '../../rest/Client'
+import { teamNumbersChart, playerNumbersChart, getNumberOverview, goalNumbersChart, injuryNumbersChart, redCardNumbersChart, yellowCardNumbersChart } from '../../rest/Client'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import Section from '../sections/Section';
+import '../charts/Charts.css'
+import ChartLink from '../charts/ChartLink';
+import NumbersChart from './charts/NumbersChart'
 
 
 class NumberOverviewSectionBase<Data extends LevelData> extends OverviewSection<Data, NumberOverview, OverviewSectionProps<Data, NumberOverview>> {
@@ -19,27 +22,63 @@ class NumberOverviewSectionBase<Data extends LevelData> extends OverviewSection<
                 <tbody>
                 <tr>
                     <td>{t('overview.number_of_teams')}</td>
-                    <td>{commasSeparated(data.numberOfTeams)}</td>
+                    <td>
+                        <ChartLink chartContent={() => 
+                            <NumbersChart title={t('overview.number_of_teams')} 
+                                    requestFunc={teamNumbersChart} 
+                                    levelRequest={this.props.levelDataProps.createLevelRequest()} />} />
+                        {commasSeparated(data.numberOfTeams)}
+                    </td>
                 </tr>
                 <tr>
                     <td>{t('overview.number_of_players')}</td>
-                    <td>{commasSeparated(data.numberOfPlayers)}</td>
+                    <td>
+                        <ChartLink chartContent={() => 
+                            <NumbersChart title={t('overview.number_of_players')} 
+                                    requestFunc={playerNumbersChart} 
+                                    levelRequest={this.props.levelDataProps.createLevelRequest()} />} />
+                        {commasSeparated(data.numberOfPlayers)}
+                    </td>
                 </tr>
                 <tr>
                     <td>{t('overview.number_of_goals')}</td>
-                    <td>{commasSeparated(data.goals)}</td>
+                    <td>
+                        <ChartLink chartContent={() => 
+                            <NumbersChart title={t('overview.number_of_goals')} 
+                                    requestFunc={goalNumbersChart} 
+                                    levelRequest={this.props.levelDataProps.createLevelRequest()} />} />
+                        {commasSeparated(data.goals)}
+                    </td>
                 </tr>
                 <tr>
                     <td>{t('overview.number_of_injuried')}</td>
-                    <td>{commasSeparated(data.injuried)}</td>
+                    <td>
+                        <ChartLink chartContent={() => 
+                            <NumbersChart title={t('overview.number_of_injuried')} 
+                                    requestFunc={injuryNumbersChart} 
+                                    levelRequest={this.props.levelDataProps.createLevelRequest()} />} />
+                        {commasSeparated(data.injuried)}
+                    </td>
                 </tr>
                 <tr>
                     <td>{t('overview.number_of_yellow')}</td>
-                    <td>{commasSeparated(data.yellowCards)}</td>
+                    <td>
+                        <ChartLink chartContent={() => 
+                            <NumbersChart title={t('overview.number_of_yellow')} 
+                                    requestFunc={yellowCardNumbersChart} 
+                                    levelRequest={this.props.levelDataProps.createLevelRequest()} />} />
+                        {commasSeparated(data.yellowCards)}
+                    </td>
                 </tr>
                 <tr>
                     <td>{t('overview.number_of_red')}</td>
-                    <td>{commasSeparated(data.redCards)}</td>
+                    <td>
+                        <ChartLink chartContent={() => 
+                            <NumbersChart title={t('overview.number_of_red')} 
+                                    requestFunc={redCardNumbersChart} 
+                                    levelRequest={this.props.levelDataProps.createLevelRequest()} />} />
+                        {commasSeparated(data.redCards)}
+                    </td>
                 </tr>
                 </tbody>
             </table>

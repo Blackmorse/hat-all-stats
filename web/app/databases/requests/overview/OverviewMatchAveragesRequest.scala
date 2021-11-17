@@ -2,7 +2,7 @@ package databases.requests.overview
 
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
-import databases.requests.overview.model.OverviewMatchAverages
+import databases.requests.model.overview.OverviewMatchAverages
 import databases.sqlbuilder.{Select, SqlBuilder}
 
 object OverviewMatchAveragesRequest extends ClickhouseOverviewRequest[OverviewMatchAverages] {

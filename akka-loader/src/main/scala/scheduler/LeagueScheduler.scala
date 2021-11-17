@@ -3,13 +3,14 @@ package scheduler
 import executors.TaskExecutorActor.{ScheduleFinished, ScheduleTask}
 import akka.actor.ActorRef
 import chpp.worlddetails.models.WorldDetails
+import hattid.CommonData
 import scheduler.LeagueScheduler.{countriesToMinutesOffset, firstLeagueId, lastLeagueId}
 
 import java.util.Date
 
 object LeagueScheduler {
   private val firstLeagueId = 1000
-  private val lastLeagueId = 100
+  private val lastLeagueId = CommonData.LAST_SERIES_LEAGUE_ID
 
   val countriesToMinutesOffset = Map(
     24 -> 90L,  //Poland

@@ -45,13 +45,13 @@ class TeamMatchInfoExecutableSectionBase extends
     }
 }
 
-function sectionTitle(props: Props, state: LoadableState<number> & State & SectionState): JSX.Element {
+function sectionTitle(props: Props, state: LoadableState<number> & State & SectionState): {header: JSX.Element} {
     if (state.singleMatch === undefined) {
-        return <></>
+        return {header: <></>}
     }
-    return <>
+    return {header: <>
         {state.singleMatch.homeTeamName} - {state.singleMatch.awayTeamName}
-    </>
+    </>}
 }
 
 type TeamMatchSectionState = LoadableState<number> & State & SectionState

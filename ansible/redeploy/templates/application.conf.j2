@@ -6,9 +6,11 @@ play.filters.enabled += play.filters.hosts.AllowedHostsFilter
 play.filters.hosts.routeModifiers.whiteList = []
 play.filters.hosts.routeModifiers.blackList = ["{{ loader.loader_url }}"]
 
-play.filters.enabled += "play.filters.cors.CORSFilter"
-play.filters.cors.pathPrefixes += "/api"
-play.filters.cors.allowedHttpMethods = ["GET"]
+play.filters.enabled += "play.filters.csrf.CSRFFilter"
+
+#play.filters.enabled += "play.filters.cors.CORSFilter"
+#play.filters.cors.pathPrefixes += "/api"
+#play.filters.cors.allowedHttpMethods = ["GET", "POST"]
 
 play.http.filters=controllers.Filters
 

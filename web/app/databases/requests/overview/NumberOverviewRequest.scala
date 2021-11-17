@@ -2,7 +2,7 @@ package databases.requests.overview
 
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
-import databases.requests.overview.model.NumberOverview
+import databases.requests.model.overview.NumberOverview
 import databases.sqlbuilder.{Select, SqlBuilder}
 
 object NumberOverviewRequest extends ClickhouseOverviewRequest[NumberOverview] {

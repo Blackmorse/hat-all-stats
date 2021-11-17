@@ -1,4 +1,4 @@
-package databases.requests.overview.model
+package databases.requests.model.overview
 
 import databases.requests.model.`match`.MatchTopHatstats
 import play.api.libs.json.Json

@@ -2,7 +2,7 @@ package databases.requests.overview
 
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
-import databases.requests.overview.model.OverviewTeamPlayerAverages
+import databases.requests.model.overview.OverviewTeamPlayerAverages
 import databases.sqlbuilder.{NestedSelect, Select, SqlBuilder}
 
 object OverviewTeamPlayerAveragesRequest extends ClickhouseOverviewRequest[OverviewTeamPlayerAverages] {

@@ -63,7 +63,9 @@ class CompareTeamsValuesChart extends React.Component<Props> {
             }
         }
 
-        return <PlotlyChart data={chartData} layout={layout} />        
+        return <div className="plotly_wrapper">
+            <PlotlyChart data={chartData} layout={layout} />        
+            </div>
     }
 }
 

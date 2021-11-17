@@ -2,7 +2,7 @@ package databases.requests.overview
 
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
-import databases.requests.overview.model.FormationsOverview
+import databases.requests.model.overview.FormationsOverview
 import databases.sqlbuilder.{Select, SqlBuilder}
 
 

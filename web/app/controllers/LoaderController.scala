@@ -2,6 +2,7 @@ package controllers
 
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.HistoryInfoRequest
+import hattid.CommonData
 import play.api.Logging
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
@@ -32,7 +33,7 @@ class LoaderController @Inject()(val controllerComponents: ControllerComponents,
         leagueInfoService.leagueInfo(leagueId).loadingInfo = Finished
 
         //Salvador is the last league
-        if(leagueId == 100) {
+        if(leagueId == CommonData.LAST_SERIES_LEAGUE_ID) {
           cache.remove("overview.world")
           leagueInfoService.leagueInfo.leagueInfo.values.foreach(leagueInfo => leagueInfo.loadingInfo = Finished)
         }
