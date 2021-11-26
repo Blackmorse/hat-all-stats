@@ -2,8 +2,8 @@ package service
 
 import databases.dao.RestClickhouseDAO
 import databases.requests.model.`match`.MatchTopHatstats
-import databases.requests.model.overview.{AveragesOverview, FormationsOverview, MatchAttendanceOverview, NumberOverview, PlayerStatOverview, TeamStatOverview, TotalOverview}
-import databases.requests.overview.{FormationsOverviewRequest, NumberOverviewRequest, OverviewMatchAveragesRequest, OverviewTeamPlayerAveragesRequest, SurprisingMatchesOverviewRequest, TopAttendanceMatchesOverviewRequest, TopHatstatsTeamOverviewRequest, TopMatchesOverviewRequest, TopRatingPlayerOverviewRequest, TopSalaryPlayerOverviewRequest, TopSalaryTeamOverviewRequest, TopSeasonScorersOverviewRequest, TopVictoriesTeamsOverviewRequest}
+import databases.requests.model.overview.{AveragesOverview, FormationsOverview, MatchAttendanceOverview, NumberOverview, NumberOverviewPlayerStats, PlayerStatOverview, TeamStatOverview, TotalOverview}
+import databases.requests.overview.{FormationsOverviewRequest, NewTeamsOverviewRequest, NumberOverviewRequest, OverviewMatchAveragesRequest, OverviewTeamPlayerAveragesRequest, SurprisingMatchesOverviewRequest, TopAttendanceMatchesOverviewRequest, TopHatstatsTeamOverviewRequest, TopMatchesOverviewRequest, TopRatingPlayerOverviewRequest, TopSalaryPlayerOverviewRequest, TopSalaryTeamOverviewRequest, TopSeasonScorersOverviewRequest, TopVictoriesTeamsOverviewRequest}
 
 import javax.inject.{Inject, Singleton}
 import play.api.cache.AsyncCacheApi
@@ -26,7 +26,12 @@ class RestOverviewStatsService @Inject()
   def numberOverview(season: Int, round: Int,
                      leagueId: Option[Int], divisionLevel: Option[Int]): Future[NumberOverview] = {
     val name = cacheName("numberOverview", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(NumberOverviewRequest.execute(season, round, leagueId, divisionLevel).map(_.head))
+    cache.getOrElseUpdate(name, 28 days){
+      for {
+        numbers <- NumberOverviewRequest.execute(season, round, leagueId, divisionLevel).map(_.head)
+        newTeams <- NewTeamsOverviewRequest.execute(season, round, leagueId, divisionLevel).map(_.head)
+      } yield NumberOverview(numbers, newTeams)
+    }
   }
 
   def formations(season: Int, round: Int,
@@ -101,18 +106,18 @@ class RestOverviewStatsService @Inject()
 
   def totalOverview(season: Int, round: Int,
                     leagueId: Option[Int], divisionLevel: Option[Int]): Future[TotalOverview] = {
-    for(numberOverviewData <- numberOverview(season, round, leagueId, divisionLevel);
-        formationsData <- formations(season, round, leagueId, divisionLevel);
-        averageOverviewData <- averageOverview(season, round, leagueId, divisionLevel);
-        surprisingMatchesData <- surprisingMatches(season, round, leagueId, divisionLevel);
-        topHatstatsTeamsData <- topHatstatsTeams(season, round, leagueId, divisionLevel);
-        topSalaryTeamsData <- topSalaryTeams(season, round, leagueId, divisionLevel);
-        topMatchesData <- topMatches(season, round, leagueId, divisionLevel);
-        topSalaryPlayersData <- topSalaryPlayers(season, round, leagueId, divisionLevel);
-        topRatingPlayersData <- topRatingPlayers(season, round, leagueId, divisionLevel);
+    for(numberOverviewData     <- numberOverview(season, round, leagueId, divisionLevel);
+        formationsData         <- formations(season, round, leagueId, divisionLevel);
+        averageOverviewData    <- averageOverview(season, round, leagueId, divisionLevel);
+        surprisingMatchesData  <- surprisingMatches(season, round, leagueId, divisionLevel);
+        topHatstatsTeamsData   <- topHatstatsTeams(season, round, leagueId, divisionLevel);
+        topSalaryTeamsData     <- topSalaryTeams(season, round, leagueId, divisionLevel);
+        topMatchesData         <- topMatches(season, round, leagueId, divisionLevel);
+        topSalaryPlayersData   <- topSalaryPlayers(season, round, leagueId, divisionLevel);
+        topRatingPlayersData   <- topRatingPlayers(season, round, leagueId, divisionLevel);
         topMatchAttendanceData <- topMatchAttendance(season, round, leagueId, divisionLevel);
-        topTeamVictoriesData <- topTeamVictories(season, round, leagueId, divisionLevel);
-        topSeasonScorersData <- topSeasonScorers(season, round, leagueId, divisionLevel)) yield
+        topTeamVictoriesData   <- topTeamVictories(season, round, leagueId, divisionLevel);
+        topSeasonScorersData   <- topSeasonScorers(season, round, leagueId, divisionLevel)) yield
 
       TotalOverview(numberOverview = numberOverviewData,
         formations = formationsData,

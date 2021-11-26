@@ -211,5 +211,7 @@
     "team.unable_to_compare": "Impossibile confrontare le squadre. Probabilmente provengono da paesi diversi o una delle squadre è bot",
 
     "team.analyzer": "Analizzatore",
-    "team.simulate_match": "Simula partita"
+    "team.simulate_match": "Simula partita",
+
+    "overview.number_of_new_teams": "Numero di nuove squadre"
 }

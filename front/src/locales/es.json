@@ -210,5 +210,7 @@
     "team.unable_to_compare": "Incapaz de comparar equipos. Probablemente sean de diferentes países o uno de los equipos sea bot",
 
     "team.analyzer": "Analizador",
-    "team.simulate_match": "Simular partido"
+    "team.simulate_match": "Simular partido",
+
+    "overview.number_of_new_teams": "Número de equipos nuevos"
 }

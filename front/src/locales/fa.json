@@ -210,5 +210,7 @@
     "team.unable_to_compare": "امکان مقایسه تیم ها وجود ندارد. احتمالاً آنها از کشورهای مختلف هستند یا یکی از تیم ها ربات است",
 
     "team.analyzer": "تحلیلگر",
-    "team.simulate_match": "شبیه سازی مسابقه"
+    "team.simulate_match": "شبیه سازی مسابقه",
+
+    "overview.number_of_new_teams": "تعداد تیم های جدید"
   }

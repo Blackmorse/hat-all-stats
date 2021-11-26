@@ -1,7 +1,7 @@
 package databases.requests.model.overview
 
 import databases.requests.model.`match`.MatchTopHatstats
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 
 case class TotalOverview(numberOverview: NumberOverview,
                          formations: List[FormationsOverview],
@@ -16,5 +16,5 @@ case class TotalOverview(numberOverview: NumberOverview,
                          topTeamVictories: List[TeamStatOverview],
                          topSeasonScorers: List[PlayerStatOverview])
 object TotalOverview {
-  implicit val writes = Json.writes[TotalOverview]
+  implicit val writes: OWrites[TotalOverview] = Json.writes[TotalOverview]
 }

@@ -35,7 +35,7 @@ class OrderByField(val name: String) {
 
   override def toString: String = {
     val directionString = this._direction match {
-      case Asc => "ASC"
+      case Asc => ""
       case Desc => "DESC"
     }
     s"$name $directionString"

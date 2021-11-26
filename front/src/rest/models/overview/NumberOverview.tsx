@@ -4,7 +4,8 @@ interface NumberOverview {
     injuried: number,
     goals: number,
     yellowCards: number,
-    redCards: number
+    redCards: number,
+    numberOfNewTeams: number
 }
 
 export default NumberOverview

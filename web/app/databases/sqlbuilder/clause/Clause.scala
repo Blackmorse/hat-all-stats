@@ -15,7 +15,7 @@ object ClauseEntry {
   implicit def clause(clauseEntry: ClauseEntry): Clause = clauseEntry.sqlBuilder.whereClause
 }
 
-class ClauseEntry(val sqlBuilder: SqlBuilder) {
+case class ClauseEntry(sqlBuilder: SqlBuilder) {
   private[sqlbuilder] val parameters: mutable.Buffer[Parameter] = mutable.Buffer()
 //rename
   def orderingKeyPath(orderingKeyPath: OrderingKeyPath): this.type = {

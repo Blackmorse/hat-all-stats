@@ -210,5 +210,7 @@
     "team.unable_to_compare": "Unable to compare teams. Probably they are from the different countries or one of the teams is bot",
 
     "team.analyzer": "Analyzer",
-    "team.simulate_match": "Simulate the match"
+    "team.simulate_match": "Simulate the match",
+
+    "overview.number_of_new_teams": "Number of new teams"
   }

@@ -357,6 +357,8 @@ export let averageSpectatorNumbersChart = numbersChart('averageSpectatorNumbersC
 
 export let averageGoalNumbersChart = numbersChart('averageGoalNumbersChart')
 
+export let newTeamNumbersChart = numbersChart('newTeamNumbersChart')
+
 function numbersChart(path: string): 
     (request: LevelRequest, callback: (loadingEnum: LoadingEnum, entities?: Array<NumbersChartModel>) => void) => void {
         return function(request: LevelRequest, callback: (loadingEnum: LoadingEnum, entities?: Array<NumbersChartModel>) => void) {

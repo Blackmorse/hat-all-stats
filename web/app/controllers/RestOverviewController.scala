@@ -2,7 +2,7 @@ package controllers
 
 import databases.dao.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
-import databases.requests.overview.charts.{AverageGoalsChartRequest, AverageSpectatorsChartRequest, FormationsChartRequest, GoalsNumberOverviewChartRequest, InjuriesNumberOverviewChartRequest, NumbersOverviewChartRequest, PlayersNumberOverviewChartRequest, RedCardsNumberOverviewRequest, TeamsNumberOverviewChartRequest, YellowCardsNumberOverviewRequest}
+import databases.requests.overview.charts.{AverageGoalsChartRequest, AverageSpectatorsChartRequest, FormationsChartRequest, GoalsNumberOverviewChartRequest, InjuriesNumberOverviewChartRequest, NewTeamsNumberChartRequest, NumbersOverviewChartRequest, PlayersNumberOverviewChartRequest, RedCardsNumberOverviewRequest, TeamsNumberOverviewChartRequest, YellowCardsNumberOverviewRequest}
 
 import java.util.Date
 import javax.inject.Inject
@@ -192,4 +192,14 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
 
   def averageGoalNumbersChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] =
     numbersChart(AverageGoalsChartRequest)(leagueId, divisionLevel)
+
+  def newTeamNumbersChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async {
+    val currentRound = leagueId.map(lid => leagueInfoService.leagueInfo.currentRound(lid)).getOrElse(leagueInfoService.lastFullRound())
+    val currentSeason = leagueId.map(lid => leagueInfoService.leagueInfo.currentSeason(lid)).getOrElse(leagueInfoService.lastFullSeason())
+    NewTeamsNumberChartRequest.execute(
+      orderingKeyPath = OrderingKeyPath(leagueId = leagueId, divisionLevel = divisionLevel),
+      currentRound = currentRound,
+      currentSeason = currentSeason
+    ).map(newTeams => Ok(Json.toJson(newTeams)))
+  }
 }

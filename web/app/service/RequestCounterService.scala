@@ -11,7 +11,7 @@ class RequestCounterService @Inject()() {
   val startTime = new Date()
   val hoRequestsCounter = new AtomicLong(0L)
 
-  def hoRequest = hoRequestsCounter.incrementAndGet()
+  def hoRequest: Long = hoRequestsCounter.incrementAndGet()
 
-  def getHoRequests = (hoRequestsCounter.get(), startTime.toString)
+  def getHoRequests: (Long, String) = (hoRequestsCounter.get(), startTime.toString)
 }

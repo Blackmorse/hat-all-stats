@@ -14,7 +14,6 @@ trait NumbersOverviewChartRequest extends OverviewChartRequest[NumbersChartModel
 
   protected val table: String
   protected val aggregateFunction: String
-  protected val condition: Option[String]
 
   def execute(orderingKeyPath: OrderingKeyPath, currentSeason: Int, currentRound: Int)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[NumbersChartModel]] = {
@@ -30,7 +29,6 @@ trait NumbersOverviewChartRequest extends OverviewChartRequest[NumbersChartModel
         .season.greaterEqual(START_SEASON)
         .round.lessEqual(MAX_ROUND)
         .and(s" NOT (season = $currentSeason and round > $currentRound)")
-        .and(condition)
       .groupBy("season", "round")
       .orderBy("season".asc, "round".asc)
 

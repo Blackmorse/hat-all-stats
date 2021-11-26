@@ -4,6 +4,8 @@ import anorm.{NamedParameter, Row, SQL, SimpleSql}
 import databases.sqlbuilder.clause.{ClauseEntry, HavingClause, WhereClause}
 import hattid.LoddarStatsUtils
 
+import scala.collection.mutable
+
 case class GroupBy(fields: Seq[String]) {
   override def toString: String = {
     fields.mkString(", ")
@@ -50,7 +52,21 @@ object SqlBuilder {
   }
 }
 
-case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
+case class With(sqlBuilder: SqlBuilder) {
+  def as(alias: String, builderName: String = "main"): WithSelect = {
+    WithSelect(sqlBuilder, alias, builderName)
+  }
+}
+
+case class WithSelect(sqlBuilder: SqlBuilder, alias: String, builderName: String) {
+  def select(fields: Field*): From = {
+    val selectSqlBuilder = new SqlBuilder(builderName)
+    selectSqlBuilder.withSelect = Some(this)
+    selectSqlBuilder.select(fields: _*)
+  }
+}
+
+case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
 
   var parametersNumber = 0
   private var page: Int = 0
@@ -64,6 +80,7 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
   private var _select: Select = _
   private var limitByNumber = 0
   private var limitByField: Option[String] = None
+  var withSelect: Option[WithSelect] = None
 
   def select: Select = {
     this._select = new Select(this)
@@ -101,9 +118,11 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
     this
   }
 
+  def parameters: mutable.Buffer[Parameter] = this.withSelect.map(ws => ws.sqlBuilder.parameters).getOrElse(mutable.Buffer()) ++ whereClause.parameters ++ havingClause.parameters ++ this._select.parameters
+
   def build: SimpleSql[Row] = {
     val finalSql = buildStringSql()
-    val parameters = whereClause.parameters ++ havingClause.parameters ++ this._select.parameters
+    val parameters = this.parameters
 
     SQL(finalSql)
       .on(parameters.toSeq
@@ -116,6 +135,8 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
   }
 
   def buildStringSql(): String = {
+    val withClause = this.withSelect.map(ws => "WITH (" + ws.sqlBuilder.buildStringSql() + ") AS " + ws.alias + " ").getOrElse("")
+
     val selectFrom = this._select.toString
     val where = if (whereClause.initialized) {
       whereClause.toString
@@ -133,7 +154,8 @@ case class SqlBuilder(name: String = "main"/*for the nested requests*/) {
     } else {
       ""
     }
-   s"$selectFrom " +
+    withClause +
+      s"$selectFrom " +
       s"$where " +
       s"$groupBy " +
       s"$havingString " +

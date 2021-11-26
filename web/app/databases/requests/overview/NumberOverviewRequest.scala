@@ -2,12 +2,12 @@ package databases.requests.overview
 
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
-import databases.requests.model.overview.NumberOverview
+import databases.requests.model.overview.NumberOverviewPlayerStats
 import databases.sqlbuilder.{Select, SqlBuilder}
 
-object NumberOverviewRequest extends ClickhouseOverviewRequest[NumberOverview] {
+object NumberOverviewRequest extends ClickhouseOverviewRequest[NumberOverviewPlayerStats] {
 
-  override val rowParser: RowParser[NumberOverview] = NumberOverview.mapper
+  override val rowParser: RowParser[NumberOverviewPlayerStats] = NumberOverviewPlayerStats.mapper
 
   override def builder(season: Int,
                        round: Int,

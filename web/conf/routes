@@ -128,6 +128,7 @@ GET     /api/overview/formationsChart  controllers.RestOverviewController.format
 GET     /api/overview/averageHatstatNumbersChart  controllers.RestOverviewController.averageHatstatNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/averageSpectatorNumbersChart  controllers.RestOverviewController.averageSpectatorNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/averageGoalNumbersChart  controllers.RestOverviewController.averageGoalNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
+GET     /api/overview/newTeamNumbersChart  controllers.RestOverviewController.newTeamNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 
 GET     /api/matches/similarMatches controllers.MatchController.similarMatches(matchId: Long, accuracy: Double)
 + nocsrf

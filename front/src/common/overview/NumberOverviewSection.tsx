@@ -3,7 +3,7 @@ import NumberOverview from '../../rest/models/overview/NumberOverview'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import { commasSeparated } from '../../common/Formatters'
-import { teamNumbersChart, playerNumbersChart, getNumberOverview, goalNumbersChart, injuryNumbersChart, redCardNumbersChart, yellowCardNumbersChart } from '../../rest/Client'
+import { teamNumbersChart, playerNumbersChart, getNumberOverview, goalNumbersChart, injuryNumbersChart, redCardNumbersChart, yellowCardNumbersChart, newTeamNumbersChart } from '../../rest/Client'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import LevelData from '../../rest/models/leveldata/LevelData';
 import Section from '../sections/Section';
@@ -28,6 +28,16 @@ class NumberOverviewSectionBase<Data extends LevelData> extends OverviewSection<
                                     requestFunc={teamNumbersChart} 
                                     levelRequest={this.props.levelDataProps.createLevelRequest()} />} />
                         {commasSeparated(data.numberOfTeams)}
+                    </td>
+                </tr>
+                <tr>
+                    <td>{t('overview.number_of_new_teams')}</td>
+                    <td>
+                        <ChartLink chartContent={() => 
+                            <NumbersChart title={t('overview.number_of_new_teams')} 
+                                    requestFunc={newTeamNumbersChart} 
+                                    levelRequest={this.props.levelDataProps.createLevelRequest()} />} />
+                        {commasSeparated(data.numberOfNewTeams)}
                     </td>
                 </tr>
                 <tr>

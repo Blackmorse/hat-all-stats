@@ -1,8 +1,16 @@
 package databases.sqlbuilder
 
+import scala.collection.mutable
+
 object NestedSelect {
   def apply(fields: Field*): From = {
     new SqlBuilder("nested_req").select(fields: _*)
+  }
+}
+
+object WSelect {
+  def apply(fields: Field*): From = {
+    new SqlBuilder("with").select(fields: _*)
   }
 }
 
@@ -22,7 +30,8 @@ class Select(sqlBuild: SqlBuilder) {
 
   def parameters: Seq[Parameter] =
     if (this.from._innerSqlBuilder != null) {
-      (this.from._innerSqlBuilder.whereClause.parameters ++ this.from._innerSqlBuilder.havingClause.parameters).toSeq
+      (this.from._innerSqlBuilder.whereClause.parameters ++ this.from._innerSqlBuilder.havingClause.parameters ++
+        this.from._innerSqlBuilder.withSelect.map(ws => ws.sqlBuilder.parameters).getOrElse(mutable.Buffer())).toSeq
     } else {
       Seq()
     }
