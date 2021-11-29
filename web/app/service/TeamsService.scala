@@ -8,7 +8,7 @@ import databases.requests.teamdetails.TeamsCreatedSameTimeRequest
 import databases.requests.teamrankings.CompareTeamRankingsRequest
 import webclients.ChppClient
 import models.web.TeamComparsion
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 import play.api.mvc.QueryStringBindable
 import service.leagueinfo.LeagueInfoService
 
@@ -22,7 +22,7 @@ case class CreatedSameTimeTeamExtended(season: Int,
                                        createdSameTimeTeam: CreatedSameTimeTeam)
 
 object CreatedSameTimeTeamExtended {
-  implicit val writes = Json.writes[CreatedSameTimeTeamExtended]
+  implicit val writes: OWrites[CreatedSameTimeTeamExtended] = Json.writes[CreatedSameTimeTeamExtended]
 }
 
 
@@ -32,7 +32,7 @@ case object Round extends HattrickPeriod
 case object Season extends HattrickPeriod
 
 object HattrickPeriod {
-  implicit def queryStringBindable(implicit stringBuilder: QueryStringBindable[String]) = new QueryStringBindable[HattrickPeriod] {
+  implicit def queryStringBindable(implicit stringBuilder: QueryStringBindable[String]): QueryStringBindable[HattrickPeriod] = new QueryStringBindable[HattrickPeriod] {
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, HattrickPeriod]] = {
       stringBuilder.bind("period", params)
         .map(periodEither => periodEither.flatMap(period =>{
@@ -82,14 +82,15 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
 
   def compareTwoTeams(teamId1: Long, teamId2: Long): Future[TeamComparsion] = {
     val team1Future = chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId1)))
-      .map(td => td.teams.filter(_.teamId == teamId1).head)
 
     val team2Future = chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId2)))
-      .map(td => td.teams.filter(_.teamId == teamId2).head)
 
-    team1Future.zipWith(team2Future){case (team1, team2) =>
+    team1Future.zipWith(team2Future){case (teamDetails1, teamDetails2) =>
+      val team1 = teamDetails1.teams.filter(_.teamId == teamId1).head
+      val team2 = teamDetails2.teams.filter(_.teamId == teamId2).head
+
       if (team1.league.leagueId != team2.league.leagueId ||
-          team1.teamId == 0L || team2.teamId == 0L) {
+          teamDetails1.user.userId == 0 || teamDetails2.user.userId == 0) {
         Future(TeamComparsion(List(), List()))
       } else {
         val teamCreateRanges1 = seasonsService.getSeasonAndRoundRanges(team1.foundedDate)
