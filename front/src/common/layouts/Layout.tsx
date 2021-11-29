@@ -5,6 +5,7 @@ import '../../i18n'
 import i18n from '../../i18n';
 import Cookies from 'js-cookie';
 import { YMInitializer } from 'react-yandex-metrika';
+import {  Col, Container, Row } from 'react-bootstrap'
 
 abstract class Layout<Props, State> extends React.Component<Props, State> {
     
@@ -25,9 +26,16 @@ abstract class Layout<Props, State> extends React.Component<Props, State> {
         }
         return <Translation>
         { (t, { i18n }) => 
-        <div className='main_frame'>
-            <YMInitializer accounts={[67069579]} />
-            <aside className="top_links">
+        // <div className='main_frame'>
+             
+            //  <Container>
+             <>
+                 <header>
+                    <YMInitializer accounts={[67069579]} />
+                    {this.topMenu()}
+                
+             
+            {/*<aside className="top_links">
                 <span className="suggestions_reports">
                     Any suggestions/bugs? <a className="aside_link" target="_tab" href="https://www.hattrick.org/goto.ashx?path=/MyHattrick/Inbox/?actionType=newMail%26userId=4040806">Contact me at Hattrick</a>
                 </span>
@@ -57,8 +65,24 @@ abstract class Layout<Props, State> extends React.Component<Props, State> {
             </main>
             <footer className="credentials">
                 Powered by React, Scala Play & ClickHouse. <a className="aside_link" target="_tab" href="https://github.com/Blackmorse/hat-all-stats">GitHub</a>
-            </footer>
-        </div>
+            </footer> 
+
+    // </div>*/}
+     </header>
+     <Container  d-flex fluid>
+        <Row>
+            <Col lg={3} md={3} xs={4} className="m-3 mt-2">
+                {this.leftMenu()}
+            </Col>
+            <Col lg={8} md={7} xs={7}>
+                {this.content()}
+            </Col>
+        </Row>
+
+     </Container>
+       
+
+        </>
         }
         </Translation>
     }

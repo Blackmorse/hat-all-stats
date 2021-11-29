@@ -46,7 +46,8 @@
     text-align: center;
 }
 
-.card {
+/* TODO bootstrap rename */
+.card_TODO {
     display: inline-block;
     width: 8px;
     height: 15px;

@@ -1,5 +1,6 @@
 body {
-  background: #dcf7d5;
+  /* background: #dcf7d5; */
+  /* padding-top: 98px; */
 }
 
 .main_frame {
@@ -9,3 +10,5 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+

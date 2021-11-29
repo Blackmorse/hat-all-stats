@@ -1,3 +1,9 @@
+.overflow-text {
+    text-overflow: ellipsis;
+    overflow: hidden; 
+    white-space: nowrap;
+}
+
 .header_inner {
     display: flex;
     align-items: center;
@@ -44,9 +50,9 @@
     text-decoration: none;
 }
 
-.href_select {
+/* .href_select {
     margin: 0 5px;
-}
+} */
 
 .right_header_links {
     margin-left: auto;
@@ -65,7 +71,7 @@
 }
 
 .logo {
-    height: 100%;
+    /* height: 100%; */
 }
 
 .logo_href {

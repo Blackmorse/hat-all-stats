@@ -1,3 +1,9 @@
+.left_menu_list a:hover,
+.left_menu_list a:focus {
+  background-color: #d2f4ea;
+}
+
+
 .left_side_inner {
     display: flex;
     flex-direction: column;

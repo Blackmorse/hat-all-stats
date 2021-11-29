@@ -132,9 +132,9 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
             <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH && /*TODO */  p !== PagesEnum.TEAM_COMPARSION))} 
                     callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
                     title='menu.statistics'/>
-            <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
+            {/* <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
                     callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
-                    title='menu.team_search' />
+                    title='menu.team_search' /> */}
         </>
     }
 

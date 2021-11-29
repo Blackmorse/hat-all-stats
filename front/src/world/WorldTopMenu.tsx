@@ -4,6 +4,8 @@ import TopMenu from '../common/menu/TopMenu'
 import WorldData from '../rest/models/leveldata/WorldData'
 import { Translation } from 'react-i18next'
 import '../i18n'
+import i18n from '../i18n'
+import { Col, Form, Row } from 'react-bootstrap'
 
 interface Props {
     worldData?: WorldData,
@@ -32,19 +34,33 @@ class WorldTopMenu extends TopMenu<Props> {
         }</Translation>
     }
 
+    //TODO bootstrap rename
+    sectionLinksNew(): Array<{href: string, text: string}> {
+        return [
+            {href: '/about', text: i18n.t('menu.about')},
+            {href: '/worldOverview', text: i18n.t('overview.world_overview')}
+        ]
+    }
+
     onChanged = (event: React.FormEvent<HTMLSelectElement>) => {
         this.props.callback(Number(event.currentTarget.value))
       }
 
     selectBox(): JSX.Element {
-        return <select className="href_select" onChange={this.onChanged}>
+        return <Form>
+            {/* <Row className="align-items-center"> */}
+            {/* <Col xs="auto" > */}
+            <Form.Select  size="sm" className="mt-3 mb-3 pr-3 me-md-5" max-width="200" onChange={this.onChanged}>
             <option value={undefined}>Select...</option>
             {this.props.worldData?.countries.map(countryInfo => {
                 return <option value={countryInfo[0]} key={'league_select_' + countryInfo[0]}>
                     {countryInfo[1]}
                 </option>
             })}
-        </select>
+        </Form.Select>
+        {/* </Col> */}
+        {/* </Row> */}
+        </Form> 
     }
 }
 

@@ -2,6 +2,7 @@ import React from 'react'
 import { PagesEnum } from "../enums/PagesEnum";
 import Mappings from '../enums/Mappings'
 import { Link } from 'react-router-dom';
+import { NavLink } from 'react-bootstrap'
 import './TableLink.css'
 import QueryParams from '../QueryParams';
 
@@ -10,7 +11,8 @@ export interface LinkProps {
     tableLink?: boolean,
     page?: PagesEnum,
     queryParams?: QueryParams,
-    forceRefresh?: boolean
+    forceRefresh?: boolean,
+    className?: string
 }
 
 abstract class HattidLink<Props extends LinkProps> extends React.Component<Props, {}> {
@@ -47,8 +49,10 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
         let queryParams = new URLSearchParams(parameters).toString()
 
         let className: string
-        if(this.props.tableLink !== undefined) {
-            className = (this.props.tableLink) ? "table_link" : "left_bar_link page"
+        if (this.props.className !== undefined) {
+            className = this.props.className!
+        } else if(this.props.tableLink !== undefined) {
+            className = (this.props.tableLink) ? "table_link" : "menu_link link-dark rounded m-0 p-0 w-75"
         } else {
             className = "table_link"
         }
@@ -62,11 +66,11 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
 
         return <> 
             {this.additionalContent()}
-            <Link className={className} 
-                to={this.baseString() + '?' + queryParams}
+            <NavLink className="p-0"
+                href={this.baseString() + '?' + queryParams}
                 onClick={cback} >
-                    {this.props.text}
-            </Link>
+                    <u className={className} >{this.props.text}</u>
+            </NavLink>
             
         </>
     }
