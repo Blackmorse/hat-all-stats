@@ -71,7 +71,7 @@ abstract class Layout<Props, State> extends React.Component<Props, State> {
      </header>
      <Container  d-flex fluid>
         <Row>
-            <Col lg={3} md={3} xs={4} className="m-3 mt-2">
+            <Col lg={3} md={4} xs={4} className="m-3 mt-2">
                 {this.leftMenu()}
             </Col>
             <Col lg={8} md={7} xs={7}>

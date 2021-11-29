@@ -87,7 +87,7 @@ class Team extends CountryLevelLayout<Props, TeamData, TeamLevelDataProps> {
     }
 
     topMenu(): JSX.Element {
-        return <TeamTopMenu teamData={this.state.levelData}/>
+        return <TeamTopMenu data={this.state.levelData}/>
     }
 
 }

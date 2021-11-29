@@ -104,7 +104,7 @@ class League extends CountryLevelLayout<Props, LeagueData, LeagueLevelDataProps>
     }
     
     topMenu(): JSX.Element {
-        return <LeagueTopMenu leagueData={this.state.levelData}
+        return <LeagueTopMenu data={this.state.levelData}
             callback={divisionLevel => {this.props.history.push('/league/' + this.state.levelData?.leagueId + '/divisionLevel/' + divisionLevel)}}/>
     }
 }

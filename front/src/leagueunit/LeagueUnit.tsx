@@ -106,7 +106,7 @@ class LeagueUnit extends CountryLevelLayout<Props, LeagueUnitData, LeagueUnitLev
     }
 
     topMenu(): JSX.Element {
-        return <LeagueUnitTopMenu leagueUnitData={this.state.levelData}
+        return <LeagueUnitTopMenu data={this.state.levelData}
           callback={this.teamIdSelected} />
     }
 

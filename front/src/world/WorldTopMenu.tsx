@@ -8,11 +8,11 @@ import i18n from '../i18n'
 import { Col, Form, Row } from 'react-bootstrap'
 
 interface Props {
-    worldData?: WorldData,
+    data?: WorldData,
     callback: (leagueId: number) => void
 }
 
-class WorldTopMenu extends TopMenu<Props> {
+class WorldTopMenu extends TopMenu<WorldData, Props> {
     links(): [string, string?][] {
         return []
     }
@@ -48,18 +48,14 @@ class WorldTopMenu extends TopMenu<Props> {
 
     selectBox(): JSX.Element {
         return <Form>
-            {/* <Row className="align-items-center"> */}
-            {/* <Col xs="auto" > */}
-            <Form.Select  size="sm" className="mt-3 mb-3 pr-3 me-md-5" max-width="200" onChange={this.onChanged}>
+            <Form.Select  size="sm" className="mt-3 mb-3 pr-3 me-md-5" max-width="100" onChange={this.onChanged}>
             <option value={undefined}>Select...</option>
-            {this.props.worldData?.countries.map(countryInfo => {
+            {this.props.data?.countries.map(countryInfo => {
                 return <option value={countryInfo[0]} key={'league_select_' + countryInfo[0]}>
                     {countryInfo[1]}
                 </option>
             })}
         </Form.Select>
-        {/* </Col> */}
-        {/* </Row> */}
         </Form> 
     }
 }

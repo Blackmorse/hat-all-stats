@@ -35,7 +35,7 @@ class AboutLayout extends Layout<Props, State> {
     }
 
     topMenu(): JSX.Element {
-        return <WorldTopMenu worldData={this.state.levelData} 
+        return <WorldTopMenu data={this.state.levelData} 
             callback={this.leagueIdSelected}/>
     }
     content(): JSX.Element {
