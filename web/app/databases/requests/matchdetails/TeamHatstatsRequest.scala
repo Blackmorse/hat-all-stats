@@ -61,7 +61,8 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
         .season(parameters.season)
         .orderingKeyPath(orderingKeyPath)
         .isLeagueMatch
-        .and(s"$hatstats + $oppositeHatstats != 0")
+        .and(s"rating_midfield * 3 + rating_left_att + rating_right_att + rating_mid_att + rating_left_def + rating_right_def + rating_mid_def + " +
+          s"opposite_rating_midfield * 3 + opposite_rating_left_att + opposite_rating_right_att + opposite_rating_mid_att + opposite_rating_left_def + opposite_rating_right_def + opposite_rating_mid_def != 0")
       .groupBy(
         "team_id",
         "league_unit_id",
