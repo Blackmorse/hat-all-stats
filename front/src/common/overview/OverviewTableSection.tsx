@@ -32,14 +32,14 @@ abstract class OverviewTableSection<Data extends LevelData, Entity>
             leagueNameFunc = (id) => undefined
         }
         
-        return <table className="statistics_table">
+        return <div className='table-responsive'><table className="table table-striped table-rounded table-sm small text-center">
             <thead>
                 {this.tableheader()}
             </thead>
             <tbody>
                 {entities.map(entity => this.tableRow(entity, leagueNameFunc))}
             </tbody>
-        </table>
+        </table></div>
     }
 }
 

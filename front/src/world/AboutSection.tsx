@@ -4,8 +4,9 @@ import { PayPalButton } from "react-paypal-button-v2";
 import i18n from '../i18n'
 import { Link } from 'react-router-dom';
 import Section, { SectionState } from '../common/sections/Section';
+import { Card } from 'react-bootstrap';
 
-class AboutSectionBase extends React.Component<{}, SectionState> {
+class AboutSection extends React.Component<{}, SectionState> {
 
     constructor(props: {}) {
         super(props)
@@ -13,7 +14,10 @@ class AboutSectionBase extends React.Component<{}, SectionState> {
     }
 
     render(): JSX.Element {
-        return  <article className="about_section">
+        return  <Card className="mt-3 shadow">
+            <Card.Header className="lead">About Hattid</Card.Header>
+            <Card.Body>
+        <article className="about_section">
         <p>Hattid (AlltidLike) is a tool for providing useful statistics for a <a href="https://hattrick.org" target="_tab">Hattrick</a> site. It consists of various types datasets about players, matches, teams, salaries etc.</p>
         <p>
             This site is divided into 5 levels, so you separately have an access for World, Country, Division (I, II, III ...), League and Team statistics. Currently information is available only for league matches and updates once a week via Hattrick CHPP.
@@ -42,9 +46,9 @@ class AboutSectionBase extends React.Component<{}, SectionState> {
 />
     </span>
 </article>
+</Card.Body>
+</Card>
     } 
 }
-
-const AboutSection = Section(AboutSectionBase, _ => { return {header: <>About Hattid</> } })
 
 export default AboutSection

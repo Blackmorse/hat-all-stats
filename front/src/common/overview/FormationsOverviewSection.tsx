@@ -20,12 +20,12 @@ class FormationsOverviewSectionBase<Data extends LevelData> extends OverviewSect
 
         let top6 = data.slice(0, 6)
         return <Translation>
-        {(t, { i18n}) => <table className="statistics_table">
+        {(t, { i18n}) => <table className="table table-striped table-rounded table-sm small text-center">
             <tbody>
                 {top6.map(formation => {
                 return <tr key={'overview_formation_' + formation.formation}>
-                    <td className="value">{formation.formation}</td>
-                    <td className="value">{commasSeparated(formation.count)} ({Math.floor((formation.count / totalFormations) * 100)}%)</td>
+                    <td>{formation.formation}</td>
+                    <td>{commasSeparated(formation.count)} ({Math.floor((formation.count / totalFormations) * 100)}%)</td>
                 </tr>})}
             </tbody>
     </table>

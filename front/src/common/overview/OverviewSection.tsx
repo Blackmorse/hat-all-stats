@@ -69,7 +69,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
         let data = this.state.data
         if (data) {
             let dataDefined = data
-            return <div className="statistics_section_inner">
+            return <>
                 
                 {this.renderOverviewSection(dataDefined)}
                 <SeasonRoundSelector 
@@ -78,7 +78,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
                     round={this.state.dataRequest.round}
                     seasonRoundInfo={this.props.levelDataProps.seasonRoundInfo()}
                     callback={(season, round) => this.updateWithRequest({season: season, round: round})} />
-            </div>
+            </>
         } else {
             return <></>
         }

@@ -23,12 +23,12 @@ class MatchAttendanceOverviewSectionBase<Data extends LevelData> extends Overvie
     tableheader(): JSX.Element {
         return <Translation>
         {(t, { i18n}) =>  <tr>
-                    {(this.isWorldData)  ? <th className="value">{t('overview.country')}</th> : <></>}
-                    <th className="value">{t('table.league')}</th>
-                    <th className="value">{t('matches.spectatos')}</th>
-                    <th className="value">{t('table.team')}</th>
+                    {(this.isWorldData)  ? <th>{t('overview.country')}</th> : <></>}
+                    <th>{t('table.league')}</th>
+                    <th>{t('matches.spectatos')}</th>
+                    <th>{t('table.team')}</th>
                     <th></th>
-                    <th className="value">{t('table.team')}</th>
+                    <th>{t('table.team')}</th>
                 </tr>
         }
         </Translation>
@@ -37,19 +37,19 @@ class MatchAttendanceOverviewSectionBase<Data extends LevelData> extends Overvie
     tableRow(matc: MatchAttendanceOverview, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
         return <tr key={'match_attendance_overview_section_' + matc.matchId}>
             {leagueNameFunc(matc.leagueId)}
-            <td className="value">
+            <td>
                 <LeagueUnitLink id={matc.homeTeams.leagueUnitId} text={matc.homeTeams.leagueUnitName} />
             </td>
-            <td className="value">
+            <td>
                 {this.props.linkProvider(commasSeparated(matc.spectators), this.state.dataRequest.season, this.state.dataRequest.round, matc).render()}
             </td>
-            <td className="value">
+            <td>
                 <TeamLink id={matc.homeTeams.teamId} text={matc.homeTeams.teamName}/>
                 </td>
-            <td className="value">
+            <td>
                 {matc.homeGoals} : {matc.awayGoals} <ExternalMatchLink id={matc.matchId}/>
             </td>
-            <td className="value"><TeamLink id={matc.awayTeam.teamId} text={matc.awayTeam.teamName}/></td>
+            <td><TeamLink id={matc.awayTeam.teamId} text={matc.awayTeam.teamName}/></td>
         </tr>
     }
 }

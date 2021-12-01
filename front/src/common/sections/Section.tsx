@@ -1,4 +1,5 @@
 import React from 'react'
+import { Card } from 'react-bootstrap';
 import '../../i18n'
 import i18n from '../../i18n'
 import './StatisticsSection.css'
@@ -49,18 +50,19 @@ export default function Section<P, S extends SectionState, TBase extends GSectio
                 additionalElement = titleBase.additionalElement === undefined? <></> : titleBase.additionalElement
             }
     
-            let triangle = (this.state.collapsed) ? <>&#x25BA;</> : <>&#x25BC;</>
-            return <section className="statistics_section">         
-                <header className="statistics_header">
-                        <span className="statistics_header_title_with_triangle" onClick={this.collapse}>
-                            {triangle} <span className="statistics_header_title">{title}</span>
-                        </span>
-                        {additionalElement}
-                </header>
-                <span className={(this.state.collapsed) ? 'hidden' : ''}>
-                    {super.render()}
-                </span>
-            </section>
+            let triangle = (!this.state.collapsed) ? <i className="bi bi-caret-down-fill"></i> : <i className="bi bi-caret-right-fill"></i>
+
+            return <Card className="shadow-sm">
+                <Card.Header className="lead"  onClick={this.collapse}>
+                    {triangle} <a className="link-dark section-cursor"> {title}</a> 
+                    {additionalElement}
+                </Card.Header>
+                <Card.Body className="p-2">
+                    <span className={(this.state.collapsed) ? 'd-none' : ''}>
+                        {super.render()}
+                    </span>
+                </Card.Body>
+            </Card>
         }
     }
 }

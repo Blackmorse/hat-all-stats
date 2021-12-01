@@ -1,0 +1,7 @@
+.link-dark:hover {
+    text-decoration: none !important; 
+}
+
+.section-cursor {
+    cursor: text;
+}

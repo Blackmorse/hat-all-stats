@@ -7,7 +7,7 @@ import HattidLink from '../common/links/HattidLink';
 import Section from '../common/sections/Section';
 
 
-class WorldOverviewPageBase extends OverviewPage<WorldData, WorldLevelDataProps> {
+class WorldOverviewPage extends OverviewPage<WorldData, WorldLevelDataProps> {
     linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): 
             (text: string | JSX.Element, season: number, round: number, entity: Entity) => HattidLink<any> {       
         return (text: string | JSX.Element, season: number, round: number, entity: Entity) => {
@@ -24,7 +24,5 @@ class WorldOverviewPageBase extends OverviewPage<WorldData, WorldLevelDataProps>
         }        
     }
 }
-
-const WorldOverviewPage = Section(WorldOverviewPageBase, _ => 'overview.world_overview')
 
 export default WorldOverviewPage

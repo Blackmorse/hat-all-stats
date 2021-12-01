@@ -22,6 +22,7 @@ import HattidLink from '../links/HattidLink';
 import { LoadingEnum } from '../enums/LoadingEnum';
 import ExecutableComponent from '../sections/ExecutableComponent';
 import { SectionState } from '../sections/Section';
+import { Col, Row } from 'react-bootstrap';
 
 
 interface State {
@@ -35,8 +36,6 @@ interface OverviewPageProps<Data extends LevelData, LevelProps extends LevelData
 export interface LeagueId {
     leagueId: number
 }
-
-// type OverviewState = LoadableState<State, {}> & SectionState
 
 abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelDataProps<Data>> extends
         ExecutableComponent<OverviewPageProps<Data, LevelProps>, State & SectionState, TotalOverview, {}> {
@@ -69,95 +68,101 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
             return <></>
         } else {
             return <>
-            <div className="section_row"> 
-                <div className="section_row_one_third_element">
+            <Row className="mb-2"> 
+                <Col lg={4}>
                     <NumberOverviewSection<Data> 
                         initialData={this.state.totalOverview?.numberOverview} 
                         levelDataProps={this.props.levelDataProps}
                     />
-                </div>
-                <div className="section_row_one_third_element">
+                </Col>
+                <Col lg={4}>
                     <FormationsOverviewSection<Data> 
                         initialData={this.state.totalOverview?.formations} 
                         levelDataProps={this.props.levelDataProps}
                     />
-                </div>
-                <div className="section_row_one_third_element">
+                </Col>
+                <Col lg={4}>
                     <AveragesOverviewSection<Data>  
                         initialData={this.state.totalOverview?.averageOverview} 
                         levelDataProps={this.props.levelDataProps}
                     />
-                </div>
-            </div>
-            <div className="section_row"> 
-                <SurprisingMatchesOverviewSection<Data>  
-                    initialData={this.state.totalOverview?.surprisingMatches} 
-                    levelDataProps={this.props.levelDataProps}
-                       linkProvider={this.linkProviderFunc(PagesEnum.MATCH_SURPRISING, 'abs_hatstats_difference')} 
+                </Col>
+            </Row>
+            <Row className="mb-2"> 
+                <Col>
+                    <SurprisingMatchesOverviewSection<Data>  
+                        initialData={this.state.totalOverview?.surprisingMatches} 
+                        levelDataProps={this.props.levelDataProps}
+                        linkProvider={this.linkProviderFunc(PagesEnum.MATCH_SURPRISING, 'abs_hatstats_difference')} 
                     />
-            </div>
-            <div className="section_row"> 
-                <div className="section_row_half_element">
+                </Col>
+            </Row>
+            <Row className="mb-2"> 
+                <Col lg={6} >
                     <HatstatsTeamOverviewSection<Data>  
                         initialData={this.state.totalOverview?.topHatstatsTeams} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.TEAM_HATSTATS, 'hatstats')} 
                     />
-                 </div>
-               <div className="section_row_half_element">
+                 </Col>
+               <Col lg={6}>
                     <SalaryTeamOverviewSection<Data>  
                         initialData={this.state.totalOverview?.topSalaryTeams} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.TEAM_SALARY_TSI, 'salary')}
                     />
-                </div>
-            </div>
-            <div className="section_row"> 
-                <TopMatchesOverviewSection<Data>  
-                    initialData={this.state.totalOverview?.topMatches} 
-                    levelDataProps={this.props.levelDataProps}
-                    linkProvider={this.linkProviderFunc(PagesEnum.MATCH_TOP_HATSTATS, 'sum_hatstats')} 
-                />
-            </div>
-             <div className="section_row"> 
-                <div className="section_row_half_element">
+                </Col>
+            </Row>
+            <Row className="mb-2"> 
+                <Col>
+                    <TopMatchesOverviewSection<Data>  
+                        initialData={this.state.totalOverview?.topMatches} 
+                        levelDataProps={this.props.levelDataProps}
+                        linkProvider={this.linkProviderFunc(PagesEnum.MATCH_TOP_HATSTATS, 'sum_hatstats')} 
+                    />
+                </Col>
+            </Row>
+             <Row className="mb-2"> 
+                <Col lg={6}>
                     <SalaryPlayerOverviewSection<Data>  
                         initialData={this.state.totalOverview?.topSalaryPlayers} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.PLAYER_SALARY_TSI, 'salary')}
                     />
-                </div>
-                <div className="section_row_half_element">
+                </Col>
+                <Col lg={6}>
                     <RatingPlayerOverviewSection<Data>  
                         initialData={this.state.totalOverview?.topRatingPlayers} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.PLAYER_RATINGS, 'rating')}        
                     />
-                </div> 
-            </div>
-            <div className="section_row">
-                <MatchAttendanceOverviewSection
-                    initialData={this.state.totalOverview?.topMatchAttendance}
-                    levelDataProps={this.props.levelDataProps}
-                    linkProvider={this.linkProviderFunc(PagesEnum.MATCH_SPECTATORS, 'sold_total')}
-                />
-            </div>
-            <div className="section_row">
-                <div className="section_row_half_element">
+                </Col> 
+            </Row>
+            <Row className="mb-2">
+                <Col>
+                    <MatchAttendanceOverviewSection
+                        initialData={this.state.totalOverview?.topMatchAttendance}
+                        levelDataProps={this.props.levelDataProps}
+                        linkProvider={this.linkProviderFunc(PagesEnum.MATCH_SPECTATORS, 'sold_total')}
+                    />
+                </Col>
+            </Row>
+            <Row className="mb-2">
+                <Col lg={6}>
                     <VictoriesTeamOverviewSection
                         initialData={this.state.totalOverview?.topTeamVictories}
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.TEAM_STREAK_TROPHIES, 'number_of_victories')}
                     />
-                </div>
-                <div className="section_row_half_element">
+                </Col>
+                <Col lg={6}>
                     <SeasonScorersOverviewSection
                         initialData={this.state.totalOverview?.topSeasonScorers}
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.PLAYER_GOAL_GAMES, 'scored')}
                     />
-                </div>
-            </div>
+                </Col>
+            </Row>
         </>
         }
         

@@ -10,6 +10,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Translation } from 'react-i18next'
 import LeftMenu from '../../common/menu/LeftMenu'
+import { Card } from 'react-bootstrap'
 
 export interface LevelLayoutState<Data extends LevelData> {
     leaguePage: PagesEnum,
@@ -164,10 +165,10 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
         return <Translation>{
             (t, { i18n }) => <>
                 {errorPopup}
-                <header className="content_header">{t(this.state.leaguePage)}</header>
-                <div className="content_body">
-                    {res}
-                </div>
+                <Card className="mt-3 shadow">
+                    <Card.Header className="lead">{t(this.state.leaguePage)}</Card.Header>
+                    <Card.Body>{res}</Card.Body>
+                </Card>
             </>
             }
             </Translation>
