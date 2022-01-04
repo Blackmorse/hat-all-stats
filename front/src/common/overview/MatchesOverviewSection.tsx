@@ -11,16 +11,16 @@ abstract class MatchesOverviewSection<Data extends LevelData> extends OverviewTa
     tableheader(): JSX.Element {
         return <Translation>
             {(t, { i18n}) =>  <tr>
-                        {(this.isWorldData)  ? <th className="value"></th> : <></>}
-                        <th className="value">{t('table.league')}</th>
-                        <th className="value">{t('table.team')}</th>
-                        <th className="value">{t('table.loddar_stats')}</th>
-                        <th className="value">{t('table.hatstats')}</th>
-                        <th></th>
-                        <th className="value">{t('table.hatstats')}</th>
-                        <th className="value">{t('table.loddar_stats')}</th>
-                        <th className="value">{t('table.team')}</th>
                         <th/>
+                        {(this.isWorldData)  ? <th></th> : <></>}
+                        <th>{t('table.league')}</th>
+                        <th>{t('table.team')}</th>
+                        <th>{t('table.loddar_stats')}</th>
+                        <th>{t('table.hatstats')}</th>
+                        <th></th>
+                        <th>{t('table.hatstats')}</th>
+                        <th>{t('table.loddar_stats')}</th>
+                        <th>{t('table.team')}</th>
                     </tr>
             }
             </Translation>

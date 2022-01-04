@@ -41,9 +41,9 @@ class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataPr
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
+                <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.win_abbr' sortingField='won' poppedHint={t('table.win')} sortingState={sortingState} />
                 <ModelTableTh title='table.lose_abbr' sortingField='lost' poppedHint={t('table.lose')} sortingState={sortingState} />
                 <ModelTableTh title='table.draw_abbr' sortingField='draw' poppedHint={t('table.draw')} sortingState={sortingState} />
@@ -61,14 +61,14 @@ class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataPr
         return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="value">{teamRating.won}</td>
-            <td className="value">{teamRating.lost}</td>
-            <td className="value">{teamRating.draw}</td>
-            <td className="value">{teamRating.goalsFor}</td>
-            <td className="value">{teamRating.goalsAgaints}</td>
-            <td className="value">{teamRating.goalsDifference}</td>
-            <td className="value">{teamRating.points}</td>
+            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
+            <td className="text-center">{teamRating.won}</td>
+            <td className="text-center">{teamRating.lost}</td>
+            <td className="text-center">{teamRating.draw}</td>
+            <td className="text-center">{teamRating.goalsFor}</td>
+            <td className="text-center">{teamRating.goalsAgaints}</td>
+            <td className="text-center">{teamRating.goalsDifference}</td>
+            <td className="text-center">{teamRating.points}</td>
         </tr>
     }
 }

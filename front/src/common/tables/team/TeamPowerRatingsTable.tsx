@@ -27,9 +27,9 @@ abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends 
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
+                <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.power_rating' sortingField='power_rating' sortingState={sortingState} />
             </tr>
         }
@@ -41,8 +41,8 @@ abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends 
         return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="value">{teamPowerRating.powerRating}</td>
+            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
+            <td className="text-center">{teamPowerRating.powerRating}</td>
         </tr>
     }
 }

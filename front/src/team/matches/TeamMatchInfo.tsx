@@ -1,7 +1,6 @@
 import React from 'react'
 import TeamMatchRatingsTable from './TeamMatchRatingsTable'
 import TeamLink from '../../common/links/TeamLink'
-import './TeamMatchInfo.css'
 import { Translation } from 'react-i18next'
 import '../../i18n'
 import TeamMatchMetaInfo from './TeamMatchMetaInfo'
@@ -9,6 +8,7 @@ import ExternalMatchLink from '../../common/links/ExternalMatchLink'
 import SingleMatch from '../../rest/models/match/SingleMatch'
 import MatchSimulatorInfo from './MatchSimulatorInfo'
 import { SectionState } from '../../common/sections/Section'
+import { Col, Container, Row } from 'react-bootstrap'
 
 interface Props {
     singleMatch: SingleMatch,
@@ -25,33 +25,33 @@ class TeamMatchInfo extends React.Component<Props, SectionState> {
         let singleMatch = this.props.singleMatch
         
         return  <Translation>{
-            (t, { i18n }) => <div className="match">
-            <div className="top_match_info">
-                <span className="top_match_info_left_link">
+            (t, { i18n }) => <div>
+            <Row className='mb-2'>
+                <Col lg={5} className='text-center'>
                     <TeamLink id={singleMatch.homeTeamId} text={singleMatch.homeTeamName} forceRefresh={true}/>
-                </span>
-                <span>
+                </Col>
+                <Col lg={2} className='text-center'>
                     {singleMatch.homeGoals} - {singleMatch.awayGoals} 
                     {(singleMatch.matchId !== undefined) ? <ExternalMatchLink id={singleMatch.matchId} /> : <></>}
-                    </span> 
-                <span className="top_match_info_right_link">
+                </Col>
+                <Col lg={5} className='text-center'>
                     <TeamLink id={singleMatch.awayTeamId} text={singleMatch.awayTeamName} forceRefresh={true}/>
-                </span>
-            </div>
-            <div className="predict_match_info">                
-            {(this.props.hideSimulator) ? <></> : <MatchSimulatorInfo singleMatch={singleMatch}/>}
-            </div>
-            <div className="bottom_match_info">
-                <div className="left_team_match_info">
+                </Col>
+            </Row>
+            <Container d-flex className='d-flex justify-content-center'>    
+                {(this.props.hideSimulator) ? <></> : <MatchSimulatorInfo singleMatch={singleMatch}/>}
+            </Container>
+            <Row className='d-flex flex-row justify-content-around align-items-center'>
+                <Col lg={3} md={12} className='d-flex justify-content-center'>
                     <TeamMatchMetaInfo matchRatings={singleMatch.homeMatchRatings}/>                  
-                </div>
-                <div className="middle_team_match_info">
+                </Col>
+                <Col lg={6} md={12} className='d-flex justify-content-center'>
                     <TeamMatchRatingsTable homeMatchRatings={singleMatch.homeMatchRatings} awayMatchRatings={singleMatch.awayMatchRatings} />
-                </div>
-                <div className="right_team_match_info">
+                </Col>
+                <Col lg={3} md={12} className='d-flex justify-content-center'>
                     <TeamMatchMetaInfo matchRatings={singleMatch.awayMatchRatings}/>
-                </div>
-            </div>
+                </Col>
+            </Row>
         </div>
         }
         </Translation>

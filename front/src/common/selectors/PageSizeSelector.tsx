@@ -1,5 +1,7 @@
 import React from 'react';
 import './PageSizeSelector.css'
+import { Translation } from 'react-i18next'
+import '../../i18n'
 
 interface PageSizeProperties {
     selectedSize: number,
@@ -10,8 +12,9 @@ class PageSizeSelector extends React.Component<PageSizeProperties> {
     sizes: Array<number> = [8, 16, 32, 64]
 
     render() {
-        return <div className="page_size">
-            <span className="page_size_title">page_size:</span>
+        return <Translation>{
+            (t, { i18n }) =><div className="d-flex flex-row align-items-end">
+            <span className="very-small-font ms-auto mx-2 my-xs-2 my-sm-2 my-lg-0 my-md-0">{t('filter.page_size')}</span>
             {this.sizes.map(size => {
                 return <button 
                         key={"page_size_button_" + size}
@@ -22,6 +25,8 @@ class PageSizeSelector extends React.Component<PageSizeProperties> {
                 </button>
             })}
         </div>
+    }
+    </Translation>
     }
 }
 

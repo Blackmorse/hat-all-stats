@@ -2,23 +2,24 @@ import React from 'react'
 import DivisionLevelData from '../rest/models/leveldata/DivisionLevelData'
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu';
+import { Form } from 'react-bootstrap';
 
 
 interface Props {
-    divisionLevelData?: DivisionLevelData,
+    data?: DivisionLevelData,
     callback: (leagueUnitName: string) => void
 }
 
-class DivisionLevelTopMenu extends TopMenu<Props> {
-    
+class DivisionLevelTopMenu extends TopMenu<DivisionLevelData, Props> {
+
     onChanged = (event: React.FormEvent<HTMLSelectElement>) => {
-        this.props.callback(this.props.divisionLevelData?.divisionLevelName + '.' + event.currentTarget.value)
+        this.props.callback(this.props.data?.divisionLevelName + '.' + event.currentTarget.value)
       }
 
     links(): [string, string?][] {
       return [
-        ["/league/" + this.props.divisionLevelData?.leagueId, this.props.divisionLevelData?.leagueName],
-        ["/league/" + this.props.divisionLevelData?.leagueId + "/divisionLevel/" + this.props.divisionLevelData?.divisionLevel, this.props.divisionLevelData?.divisionLevelName]
+        ["/league/" + this.props.data?.leagueId, this.props.data?.leagueName],
+        ["/league/" + this.props.data?.leagueId + "/divisionLevel/" + this.props.data?.divisionLevel, this.props.data?.divisionLevelName]
       ]
     }
 
@@ -26,12 +27,14 @@ class DivisionLevelTopMenu extends TopMenu<Props> {
       return undefined;
     }
     selectBox(): JSX.Element {
-      return <select className="href_select" onChange={this.onChanged}>
+      return <Form>
+        <Form.Select  size="sm" className="mt-3 mb-3 pr-3" max-width="200" onChange={this.onChanged}>
                 <option value={undefined}>Select...</option>
-                {Array.from(Array(this.props.divisionLevelData?.leagueUnitsNumber), (_, i) => i + 1).map(leagueUnit => {
+                {Array.from(Array(this.props.data?.leagueUnitsNumber), (_, i) => i + 1).map(leagueUnit => {
                     return <option key={'division_leve_top_menu_' + leagueUnit} value={leagueUnit}>{leagueUnit}</option>
                 })}
-            </select>
+            </Form.Select>
+          </Form>
     }
 }
 

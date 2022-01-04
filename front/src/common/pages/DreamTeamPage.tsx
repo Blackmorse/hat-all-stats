@@ -6,7 +6,6 @@ import DreamTeamPlayer from '../../rest/models/player/DreamTeamPlayer';
 import { getDreamTeam } from '../../rest/Client'
 import { StatsType, StatsTypeEnum } from '../../rest/models/StatisticsParameters';
 import DreamTeamPlayerCard from './dreamteam/DreamTeamPlayerCard'
-import './DreamTeamPage.css'
 import '../../i18n'
 import i18n from '../../i18n';
 import StatsTypeSelector from '../selectors/StatsTypeSelector'
@@ -15,6 +14,7 @@ import FormationSelector, { Formation } from '../selectors/FormationSelector'
 import { ratingFormatter } from '../Formatters'
 import ExecutableComponent from '../sections/ExecutableComponent';
 import Section, { SectionState } from '../sections/Section';
+import { Col, Container, Row } from 'react-bootstrap';
 
 interface State {
     dreamTeamPlayers?: Array<DreamTeamPlayer>,
@@ -144,7 +144,7 @@ class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Dat
         if (this.state.dreamTeamPlayers === undefined) {
             return <></>
         }
-        
+
         let keepers = this.state.dreamTeamPlayers.filter(player => player.role === 'keeper')
         let defenders = this.state.dreamTeamPlayers.filter(player => player.role === 'defender')
         let wingbacks = this.state.dreamTeamPlayers.filter(player => player.role === 'wingback')
@@ -167,13 +167,13 @@ class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Dat
         sumStars += this.starsOfPlayers(displayedMidfielders)
         sumStars += this.starsOfPlayers(displayedForwards)
 
-        return <div className="dream_team_page">
-            <div className="stats_and_selectors_div">
-                <div className="dream_team_stats">
-                    <span className="dream_team_stats_total">{i18n.t('dream_team.total')}:</span> {ratingFormatter(sumStars)}
-                </div>
-                <nav className="selectors_nav">
-                    <FormationSelector currentFormation={this.state.formation}
+        return <div>
+            <Row>
+                <Col lg={4} className="d-flex flex-row mb-2">
+                    <span className="me-2">{i18n.t('dream_team.total')}:</span> {ratingFormatter(sumStars)}
+                </Col>
+                <Col lg={8} md={10} sm={12} className='d-flex flex-row'>
+                    <div className='ms-auto d-flex flex-column flex-xs-column flex-sm-column flex-md-row flex-lg-row'><FormationSelector currentFormation={this.state.formation}
                         callback={this.formationChanged} />
                     <SeasonSelector currentSeason={this.state.dataRequest.season}
                         seasonOffset={this.props.levelDataProps.levelData.seasonOffset} 
@@ -183,68 +183,85 @@ class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Dat
                         statsTypes={[StatsTypeEnum.ROUND, StatsTypeEnum.ACCUMULATE]}
                         selectedStatType={this.state.dataRequest.statsType}
                         onChanged={this.statsTypeChanged}/>
-                </nav>
-            </div>
-            <div className="core_team">
-                <div className="core_team_column"></div>
-                <div className="core_team_column">
-                    {displayedKeepers.map(keeper => 
+                        </div>
+                </Col>
+            </Row>
+            <Row className='justify-content-around my-3'>
+                <Col lg={2} className=""></Col>
+                    {displayedKeepers.map(keeper => <Col lg={2}>
                         <DreamTeamPlayerCard dreamTeamPlayerPosition={keeper} 
                                              showTeamCountryFlag={this.props.showCountryFlags}
                                              key={'dream_team_player_' + keeper.player?.playerSortingKey.playerId} />
+                                        </Col>
                     )}
-                </div>
-                <div className="core_team_column"></div>
-                {/* def */}
-                <div className="core_team_column">
+                <Col lg={2}></Col>
+            </Row>
+            {/* defenders */}
+            <Row className='justify-content-around align-items-stretch my-3'>
+                <Col className='mx-0' lg={2}>
                     <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[0]} showTeamCountryFlag={this.props.showCountryFlags} />
-                </div>
-                <div className="core_team_column">
-                    {displayedDefs.map(def => 
+                </Col>
+                    {displayedDefs.map(def => <Col lg={2} className='mx-0'>
                         <DreamTeamPlayerCard dreamTeamPlayerPosition={def} 
                                              showTeamCountryFlag={this.props.showCountryFlags} 
                                              key={'dream_team_player_' + def.player?.playerSortingKey.playerId}/>
+                                             </Col>
                     )}
-                </div>
-                <div className="core_team_column">
+                <Col lg={2}  className='mx-0'>
                     <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[1]} showTeamCountryFlag={this.props.showCountryFlags} />
-                </div>
-                {/* mid */}
-                <div className="core_team_column">
+                </Col>
+            </Row>
+            {/* mid */}
+            <Row className='justify-content-around align-items-stretch my-3'>
+                <Col className='mx-0' lg={2}>
                     <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[0]} showTeamCountryFlag={this.props.showCountryFlags} />
-                </div>
-                <div className="core_team_column">
-                    {displayedMidfielders.map(midfielder => 
+                </Col>
+                
+                    {displayedMidfielders.map(midfielder => <Col className='mx-0' lg={2}  >
                         <DreamTeamPlayerCard dreamTeamPlayerPosition={midfielder} 
                                              showTeamCountryFlag={this.props.showCountryFlags} 
                                              key={'dream_team_player_' + midfielder.player?.playerSortingKey.playerId} />
+                                </Col>
                     )}
-                </div>
-                <div className="core_team_column">
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[1]} showTeamCountryFlag={this.props.showCountryFlags} />
-                </div>
+                
+                <Col className='mx-0' lg={2}>
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[1]} showTeamCountryFlag={this.props.showCountryFlags} />
+                </Col>
+            </Row>
                 {/* attack */}
-                <div className="core_team_column"></div>
-                <div className="core_team_column">
-                    {displayedForwards.map(forward => 
-                        <DreamTeamPlayerCard dreamTeamPlayerPosition={forward} 
-                                             showTeamCountryFlag={this.props.showCountryFlags} 
-                                             key={'dream_team_player_' + forward.player?.playerSortingKey.playerId} />
-                    )}
-                </div>
-                <div className="core_team_column"></div>
-            </div>
-            <div className="substitutions_separator">
+            <Row className='justify-content-around align-items-stretch my-3'>
+                <Col className='mx-0' lg={2}></Col>
+                {displayedForwards.map(forward => <Col className='mx-0' lg={2}>
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={forward} 
+                                            showTeamCountryFlag={this.props.showCountryFlags} 
+                                            key={'dream_team_player_' + forward.player?.playerSortingKey.playerId} />
+                            </Col>
+                )}
+                <Col className='mx-0' lg={2}></Col>
+            </Row>
+            <Container fluid className="shadow-sm my-3 text-center bg-light border">
                 {i18n.t('dream_team.substitions')}
-            </div>
-            <div className="substitutions">
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: keepers[1], position: i18n.t('dream_team.keeper')}} showTeamCountryFlag={this.props.showCountryFlags}/>
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingbacks[displayedWingbacks.length], position: i18n.t('dream_team.wingback')}} showTeamCountryFlag={this.props.showCountryFlags}/>
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: defenders[displayedDefs.length], position: i18n.t('dream_team.defender')}}  showTeamCountryFlag={this.props.showCountryFlags}/>
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: midfielders[displayedMidfielders.length], position: i18n.t('dream_team.midfielder')}} showTeamCountryFlag={this.props.showCountryFlags}/>
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: forwards[displayedForwards.length], position: i18n.t('dream_team.forward')}} showTeamCountryFlag={this.props.showCountryFlags}/>
-                <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingers[displayedWings.length], position: i18n.t('dream_team.winger')}} showTeamCountryFlag={this.props.showCountryFlags}/>
-            </div>
+            </Container>
+            <Row>
+                <Col lg={2}>
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: keepers[1], position: i18n.t('dream_team.keeper')}} showTeamCountryFlag={this.props.showCountryFlags}/>
+                </Col>
+                <Col lg={2}>
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingbacks[displayedWingbacks.length], position: i18n.t('dream_team.wingback')}} showTeamCountryFlag={this.props.showCountryFlags}/>
+                </Col>
+                <Col lg={2}>
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: defenders[displayedDefs.length], position: i18n.t('dream_team.defender')}}  showTeamCountryFlag={this.props.showCountryFlags}/>
+                </Col>
+                <Col lg={2}>
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: midfielders[displayedMidfielders.length], position: i18n.t('dream_team.midfielder')}} showTeamCountryFlag={this.props.showCountryFlags}/>
+                </Col>
+                <Col lg={2}>
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: forwards[displayedForwards.length], position: i18n.t('dream_team.forward')}} showTeamCountryFlag={this.props.showCountryFlags}/>
+                </Col>
+                <Col lg={2}>
+                    <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingers[displayedWings.length], position: i18n.t('dream_team.winger')}} showTeamCountryFlag={this.props.showCountryFlags}/>
+                </Col>
+            </Row>
         </div>
     }
     

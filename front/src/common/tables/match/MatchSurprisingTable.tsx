@@ -26,16 +26,16 @@ abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends L
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
-                <th className="value">{t('table.league')}</th>
-                <th className="value">{t('table.team')}</th>
+                <th/>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="text-center">{t('table.league')}</th>
+                <th className="text-center">{t('table.team')}</th>
                 <ModelTableTh title='table.loddar_stats' sortingField='abs_loddar_stats_difference' sortingState={sortingState} />
                 <ModelTableTh title='table.hatstats' sortingField='abs_hatstats_difference' sortingState={sortingState} />
                 <ModelTableTh title='overview.goals' sortingField='abs_goals_difference' sortingState={sortingState} />
                 <ModelTableTh title='table.hatstats' sortingField='abs_hatstats_difference' sortingState={sortingState} />
                 <ModelTableTh title='table.loddar_stats' sortingField='abs_loddar_stats_difference' sortingState={sortingState} />
-                <th className="value">{t('table.team')}</th>
-                <th/>
+                <th className="text-center">{t('table.team')}</th>
             </tr>
             }
         </Translation>

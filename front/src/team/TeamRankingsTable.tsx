@@ -14,7 +14,7 @@ import Section, { SectionState } from '../common/sections/Section';
 import StatsTypeSelector from '../common/selectors/StatsTypeSelector';
 import { StatsType, StatsTypeEnum } from '../rest/models/StatisticsParameters';
 import SeasonSelector from '../common/selectors/SeasonSelector';
-import './TeamRankingsTable.css'
+import { Col, Container, Row } from 'react-bootstrap';
 
 interface State {
     teamRankingsStats?: TeamRankingsStats,
@@ -109,7 +109,7 @@ class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<Te
         }
 
         return <>
-                <div className="table_settings_team_rankings">
+                <Container className='d-flex flex-row mb-2'>
                     <SeasonSelector currentSeason={this.state.season}
                         seasonOffset={this.props.levelDataProps.levelData.seasonOffset}
                         seasons={this.props.levelDataProps.seasons()}
@@ -120,75 +120,101 @@ class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<Te
                         selectedStatType={{statType: StatsTypeEnum.ROUND, roundNumber: this.state.round}}
                         onChanged={this.roundChanged}
                     />
-                </div>
-                <div className="rankings_grid">
-                    <div className="rankings_grid_row">
+                </Container>
+                <Row>
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.HATSTATS()}
                         />
+                    </Col>
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.SALARY(this.state.teamRankingsStats?.currencyRate, this.state.teamRankingsStats?.currencyName)} 
                         />
+                    </Col>
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.TSI()}
                         />
-                    </div>
-                    <div className="rankings_grid_row">
+                    </Col>
+                {/* </Row>
+                <Row> */}
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.ATTACK()}  
                         />
+                    </Col>
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.DEFENSE()}
                         />
+                    </Col>
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.MIDFIELD()}
                         />
-                    </div>
-                    <div className="rankings_grid_row">
+                    </Col>
+                {/* </Row>
+                <Row> */}
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.AGE()}
                         />
+                    </Col>
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.RATING()}
                         />
+                    </Col>
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.RATING_END_OF_MATCH()}
                         />
-                    </div>
-                    <div className="rankings_grid_row">
+                    </Col>
+                {/* </Row>
+                <Row> */}
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.POWER_RATINGS()}
                         />
+                    </Col>
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.INJURY()}                               
                         />
+                    </Col>
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.INJURY_COUNT()}
                         />
-                    </div>
-                    <div className="rankings_grid_row">
+                    </Col>
+                {/* </Row>
+                <Row> */}
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable 
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.LODDAR_STATS()}
                         />
+                    </Col>
+                    <Col lg={4} md={6} className='my-2'>
                         <RankingTable
                             rankingData={rankingData}
                             rankingParameters={RankingParametersProvider.FOUNDED_DATE()}
                         />
-                    </div>
-                </div>
+                    </Col>
+                </Row>
             </>
     }
 }

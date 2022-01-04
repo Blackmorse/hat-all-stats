@@ -1,0 +1,43 @@
+$dark: #0a720a;
+
+$card-cap-bg: rgba($dark, 0.1) ;
+
+$table-striped-bg: rgba(#7a860a, 0.1) ;
+
+$pagination-color:                  $dark;
+
+$pagination-focus-color:            $dark;
+$pagination-active-color:           white;
+$pagination-active-bg:              $dark;
+$pagination-active-border-color:    $dark;
+
+$pagination-hover-color: $dark;
+$pagination-hover-border-color:     $dark;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+
+.link-dark:hover {
+    text-decoration: none !important; 
+}
+
+.link-dark {
+    color: black !important;
+}
+
+.left-menu-link {
+    text-decoration: none !important;
+}
+
+.left-menu-link:hover {
+    text-decoration: underline !important;
+}
+
+.collapse_button {
+    background: rgba(#0a720a, 0.1) ;
+}
+
+.logo:hover {
+    background: #00981ec2;
+    box-shadow: 3px 3px 3px 3px #00981ec2;
+}

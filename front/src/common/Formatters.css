@@ -1,34 +1,16 @@
-.statistics_table .yellow {
-    background: yellow;
-}
-
- .statistics_table .red {
-    background: red;
-}
-
-.mult {
-    font-size: 0.6em;
-    align-self: flex-end;
-  }
-  
-  .star {
+.star {
     width: 20px;
     height: 20px;
   }
+
+
+
+.player_card_rotate {
+  -webkit-transform: rotate(20deg);
+  -moz-transform: rotate(20deg);
+  -ms-transform: rotate(20deg);
+  -o-transform: rotate(20deg);
+  transform: rotate(20deg);
+}
   
-  .rating {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    /*flex-wrap: wrap;*/
-  }
-  
-  .rating_container {
-    display: flex;
-  }
-  
-  .injury_line {
-    stroke: rgb(255, 0, 0);
-    stroke-width:2
-  }
-  
+   

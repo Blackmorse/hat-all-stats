@@ -17,12 +17,12 @@ abstract class PlayerOverviewSection<Data extends LevelData> extends OverviewTab
 
     tableheader(): JSX.Element {
         return  <Translation>
-            {(t, { i18n }) => <tr>{(this.isWorldData) ? <th className="value"></th> : <></>}
-                    <th className="value">{t('table.league')}</th>
-                    <th className="value">{t('table.team')}</th>
+            {(t, { i18n }) => <tr>{(this.isWorldData) ? <th></th> : <></>}
+                    <th>{t('table.league')}</th>
+                    <th>{t('table.team')}</th>
 
-                    <th className="value">{t('table.player')}</th>
-                    <th className="value">{this.valueTitle}</th>
+                    <th>{t('table.player')}</th>
+                    <th>{this.valueTitle}</th>
                 </tr>
             } 
             </Translation>
@@ -32,14 +32,14 @@ abstract class PlayerOverviewSection<Data extends LevelData> extends OverviewTab
         
         return <tr key={'player_overview_' + playerStat.playerSortingKey.playerId}>
             {leagueNameFunc(playerStat.leagueId)}
-            <td className="value">
+            <td>
                 <LeagueUnitLink id={playerStat.playerSortingKey.leagueUnitId} text={playerStat.playerSortingKey.leagueUnitName} />
             </td>
-            <td className="value">
+            <td>
                 <TeamLink id={playerStat.playerSortingKey.teamId} text={playerStat.playerSortingKey.teamName} />
             </td>
-            <td className="value">{playerStat.playerSortingKey.firstName} {playerStat.playerSortingKey.lastName} <ExternalPlayerLink id={playerStat.playerSortingKey.playerId} /></td>
-            <td className="value">
+            <td>{playerStat.playerSortingKey.firstName} {playerStat.playerSortingKey.lastName} <ExternalPlayerLink id={playerStat.playerSortingKey.playerId} /></td>
+            <td>
                 {this.props.linkProvider(this.valueFormatter(playerStat.value), this.state.dataRequest.season, this.state.dataRequest.round, playerStat).render()}
             </td>
         </tr>

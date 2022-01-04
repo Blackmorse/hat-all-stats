@@ -1,7 +1,5 @@
 import React from 'react';
 import { NearestMatches } from '../../rest/models/match/NearestMatch'
-import './NearestMatchesTable.css'
-import '../../common/sections/StatisticsSection.css'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import Section from '../../common/sections/Section';
@@ -10,6 +8,7 @@ import { LoadingEnum } from '../../common/enums/LoadingEnum';
 import ExecutableComponent from '../../common/sections/ExecutableComponent';
 import TeamRequest from '../../rest/models/request/TeamRequest';
 import { getNearestMatches } from '../../rest/Client'
+import { Row, Col } from 'react-bootstrap';
 
 
 interface Props {
@@ -51,14 +50,14 @@ class PlayedAndUpcomingMatchesTable extends ExecutableComponent<Props, State, Ne
         }
         let nearestMatches = this.state.nearestMatches
         return  <Translation>
-            {(t, { i18n}) => <div className="section_row">
-            <div className="section_row_half_element">
-                <PlayedNearestMatches nearestMatches={nearestMatches.playedMatches} />
-            </div>
-            <div className="section_row_half_element">
-                <UpcomingNearestMatches nearestMatches={nearestMatches.upcomingMatches} />
-            </div>
-        </div>
+            {(t, { i18n}) => <Row>
+                <Col lg={6} className='my-1'>
+                    <PlayedNearestMatches nearestMatches={nearestMatches.playedMatches} />
+                </Col>
+                <Col lg={6} className='my-1'>
+                    <UpcomingNearestMatches nearestMatches={nearestMatches.upcomingMatches} />
+                </Col>
+            </Row>
     }
     </Translation>
     }

@@ -4,13 +4,13 @@ import DiffPosition from '../../common/widgets/DiffPosition'
 import DiffValue from '../../common/widgets/DiffValue'
 import LeagueLink from '../../common/links/LeagueLink';
 import TeamLevelDataProps from '../TeamLevelDataProps';
-import '../overview/RankingTable.css'
 import RankingParameters from '../../common/ranking/RankingParameters'
 import TeamLink from '../../common/links/TeamLink';
 import '../../common/charts/Charts.css'
 import ChartLink from '../../common/charts/ChartLink'
 import CompareTeamsValuesChart from './CompareTeamsValuesChart';
 import CompareTeamsPositionsChart from './CompareTeamsPositionsChart';
+import { Card, Col, Row } from 'react-bootstrap';
 
 interface Props {
     teamComparsion: TeamComparsion,
@@ -125,82 +125,84 @@ class CompareTeamsTable extends React.Component<Props> {
             />
         }
 
-        return <div className="section_row_half_element">
-        <span className="ranking">
-        <span className="ranking_name">
+        return <Card className='mb-3'>
+        <Card.Header className='text-center'>
             {this.props.rankingParameters.title}
             {<ChartLink chartContent={this.chartContent} />}
-        </span>
-        <div className="comparsion_gridtable">
-            <div className="first_line comparsion_gridtable_entry">
-
-            </div>
-            <div className="first_line comparsion_gridtable_entry">
-                <TeamLink id={team1LastRanking.teamId} text={team1LastRanking.teamName} forceRefresh />
-            </div>
-            <div className="first_line comparsion_gridtable_entry">
-                <TeamLink id={team2LastRanking.teamId} text={team2LastRanking.teamName} forceRefresh />
-            </div>
-            <div className="comparsion_gridtable_entry comparsion_parameter_name">
-                {this.props.rankingParameters.title}
-            </div>
-            <div className="comparsion_gridtable_entry comparsion_data_cell">
-                <span className="value_data">
-                    {this.props.rankingParameters.formatter(this.props.rankingParameters.valueFunc(team1LastRanking))}
-                </span>
-                <span className="diff_data">
-                    <span className="comparsion_ranking_row_diff">{team1PreviousValueDiff}</span>
-                </span>
-            </div>
-            <div className="comparsion_gridtable_entry comparsion_data_cell">
-                <span className="value_data">
-                    {this.props.rankingParameters.formatter(this.props.rankingParameters.valueFunc(team2LastRanking))}
-                </span>
-                <span className="diff_data">
-                    <span className="comparsion_ranking_row_diff">{team2PreviousValueDiff}</span>
-                </span>
-            </div>
-            <div className="comparsion_gridtable_entry comparsion_parameter_name">
-                <LeagueLink id={this.props.teamLevelDataProps.leagueId()} text={this.props.teamLevelDataProps.levelData.leagueName} />
-
-            </div>
-            <div className="comparsion_gridtable_entry comparsion_data_cell">
-                <span className="value_data">
-                    <LeagueLink id={this.props.teamLevelDataProps.leagueId()} 
-                        tableLink={true}
-                        text={(this.props.rankingParameters.positionFunc(team1LastRanking) + 1).toString()}
-                        page={this.props.rankingParameters.page} 
-                        queryParams={{
-                            sortingField: this.props.rankingParameters.sortingField,
-                            selectedRow: this.props.rankingParameters.positionFunc(team1LastRanking),
-                            round: team1LastRanking.round
-                        }}
-                    />
-                </span>
-                <span className="diff_data">
-                    <span className="comparsion_ranking_row_diff">{team1PreviousPositionDiff}</span>
-                </span>
-            </div>
-            <div className="comparsion_gridtable_entry comparsion_data_cell">
-                <span className="value_data">                  
-                    <LeagueLink id={this.props.teamLevelDataProps.leagueId()} 
-                        tableLink={true}
-                        text={(this.props.rankingParameters.positionFunc(team2LastRanking) + 1).toString()}
-                        page={this.props.rankingParameters.page} 
-                        queryParams={{
-                            sortingField: this.props.rankingParameters.sortingField,
-                            selectedRow: this.props.rankingParameters.positionFunc(team2LastRanking),
-                            round: team2LastRanking.round
-                        }}
-                    />
-                </span>
-                <span className="diff_data">
-                    <span className="comparsion_ranking_row_diff">{team2PreviousPositionDiff}</span>
-                </span>
-            </div>
-        </div>
-    </span>
-    </div>
+        </Card.Header>
+        <Card.Body>
+            <Row>
+                <Col></Col>
+                <Col className='text-center'>
+                    <TeamLink id={team1LastRanking.teamId} text={team1LastRanking.teamName} forceRefresh />
+                </Col>
+                <Col className='text-center'>
+                    <TeamLink id={team2LastRanking.teamId} text={team2LastRanking.teamName} forceRefresh />
+                </Col>
+            </Row>
+            <hr className='mt-1 mb-3'/>
+            <Row className='mb-2'>
+                <Col className='very-small-font text-center'>
+                    {this.props.rankingParameters.title}
+                </Col>
+                <Col className='d-flex flex-row align-items-center justify-content-center'>
+                    <span className='me-1 small-font'>
+                        {this.props.rankingParameters.formatter(this.props.rankingParameters.valueFunc(team1LastRanking))}
+                    </span>
+                    <span>
+                        <span className='very-small-font'>{team1PreviousValueDiff}</span>
+                    </span>
+                </Col>
+                <Col className='d-flex flex-row align-items-center justify-content-center'>
+                    <span className='me-1 small-font'>
+                        {this.props.rankingParameters.formatter(this.props.rankingParameters.valueFunc(team2LastRanking))}
+                    </span>
+                    <span>
+                        <span className='very-small-font'>{team2PreviousValueDiff}</span>
+                    </span>
+                </Col>
+            </Row>
+            <Row>
+                <Col className='very-small-font text-center'>
+                    <LeagueLink id={this.props.teamLevelDataProps.leagueId()} text={this.props.teamLevelDataProps.levelData.leagueName} />
+                </Col>
+                <Col className='d-flex flex-row align-items-center justify-content-center'>
+                    <span className="me-1 small-font">
+                        <LeagueLink id={this.props.teamLevelDataProps.leagueId()} 
+                            tableLink={true}
+                            text={(this.props.rankingParameters.positionFunc(team1LastRanking) + 1).toString()}
+                            page={this.props.rankingParameters.page} 
+                            queryParams={{
+                                sortingField: this.props.rankingParameters.sortingField,
+                                selectedRow: this.props.rankingParameters.positionFunc(team1LastRanking),
+                                round: team1LastRanking.round
+                            }}
+                        />
+                    </span>
+                    <span className='very-small-font'>
+                        <span>{team1PreviousPositionDiff}</span>
+                    </span>
+                </Col>
+                <Col className='d-flex flex-row align-items-center justify-content-center'>
+                    <span className='me-1 small-font'>                  
+                        <LeagueLink id={this.props.teamLevelDataProps.leagueId()} 
+                            tableLink={true}
+                            text={(this.props.rankingParameters.positionFunc(team2LastRanking) + 1).toString()}
+                            page={this.props.rankingParameters.page} 
+                            queryParams={{
+                                sortingField: this.props.rankingParameters.sortingField,
+                                selectedRow: this.props.rankingParameters.positionFunc(team2LastRanking),
+                                round: team2LastRanking.round
+                            }}
+                        />
+                    </span>
+                    <span className='very-small-font'>
+                        <span>{team2PreviousPositionDiff}</span>
+                    </span>
+                </Col>
+            </Row>
+        </Card.Body>
+    </Card>
     }
 }
 

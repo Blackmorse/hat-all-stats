@@ -4,10 +4,8 @@ import { PagesEnum } from '../common/enums/PagesEnum';
 import DivisionLevelLink from '../common/links/DivisionLevelLink';
 import HattidLink from '../common/links/HattidLink';
 import DivisionLevelData from '../rest/models/leveldata/DivisionLevelData';
-import Section from '../common/sections/Section';
 
-
-class DivisionLevelOverviewPageBase extends OverviewPage<DivisionLevelData, DivisionLevelDataProps> {
+class DivisionLevelOverviewPage extends OverviewPage<DivisionLevelData, DivisionLevelDataProps> {
     linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): 
             (text: string | JSX.Element, season: number, round: number, entity: Entity) => HattidLink<any> {       
         return (text: string | JSX.Element, season:number, round: number, entity: Entity) => {
@@ -26,7 +24,5 @@ class DivisionLevelOverviewPageBase extends OverviewPage<DivisionLevelData, Divi
         }        
     }
 }
-
-const DivisionLevelOverviewPage = Section(DivisionLevelOverviewPageBase)
 
 export default DivisionLevelOverviewPage

@@ -11,6 +11,7 @@ import CookieWidget from './CookieWidget'
 import LeagueRedirect from './common/redirect/LeagueRedirect'
 import LeagueUnitRedirect from './common/redirect/LeagueUnitRedirect'
 import TeamRedirect from './common/redirect/TeamRedirect'
+import './main.css'
 
 class App extends React.Component{
 

@@ -113,7 +113,7 @@ class DivisionLevel extends CountryLevelLayout<Props, DivisionLevelData, Divisio
     }
 
     topMenu(): JSX.Element {
-        return <DivisionLevelTopMenu divisionLevelData={this.state.levelData} 
+        return <DivisionLevelTopMenu data={this.state.levelData} 
             callback={this.leagueUnitSelected}/>
     }
 }

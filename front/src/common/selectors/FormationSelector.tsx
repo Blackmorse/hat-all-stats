@@ -2,6 +2,7 @@ import React from 'react'
 import './Selector.css'
 import '../../i18n'
 import { Translation } from 'react-i18next'
+import { Form } from 'react-bootstrap'
 
 export class Formation {
     defenders: number
@@ -57,9 +58,9 @@ class FormationSelector extends React.Component<FormationSelectorProps> {
     render() {
         return <Translation>
             { (t, { i18n }) =>
-            <div className="selector_div">
-                <span className="selector_div_entry">{t('matches.formation')}:</span>
-                <select className="selector_div_entry" value={this.props.currentFormation.toString()}
+            <div className="d-flex flex-row align-items-center mx-2  my-xs-2 my-sm-2 my-lg-0 my-md-0">
+                <span className='me-1'>{t('matches.formation')}:</span>
+                <Form.Select size='sm' value={this.props.currentFormation.toString()}
                     onChange={this.onChanged}>
                     {this.formations.map(formation => {
                         return <option key={"formation_selector_" + formation.toString()}
@@ -68,7 +69,7 @@ class FormationSelector extends React.Component<FormationSelectorProps> {
                         </option>
                     })}
                 
-                </select>
+                </Form.Select>
             </div>
         }
         </Translation>

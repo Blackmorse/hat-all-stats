@@ -1,5 +1,4 @@
 import React from 'react'
-import './CountryImage.css'
 
 interface Props {
     countryId: number,
@@ -12,9 +11,13 @@ class CountryImage extends React.Component<Props> {
             return <></>
         }
         let offset = (this.props.countryId === 1000) ? 0 : this.props.countryId * 20
-        return <img className="country_image"
+        return <img className=" border me-1 border-secondary" 
             src="/dot.gif" 
-            style={{background: "url(/flags.gif) -" + offset + "px 0"}}
+            style={{
+                background: "url(/flags.gif) -" + offset + "px 0",
+                width: '22px',
+                height: '14px'
+            }}
             alt={this.props.text}
             title={this.props.text}/>
     }

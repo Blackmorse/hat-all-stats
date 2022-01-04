@@ -23,10 +23,10 @@
 
 .team_match_info_tooltip {
     position: absolute; 
-    width: 650px; 
+    width: 700px; 
     top: 0;
-    left: -650px;
+    left: -700px;
     background: white;
     z-index: 3;
-    box-shadow: 3px 2px 2px black;
+    box-shadow: 3px 2px 2px gray;
 }

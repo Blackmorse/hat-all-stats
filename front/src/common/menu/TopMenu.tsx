@@ -1,16 +1,20 @@
 import React from 'react'
 import './TopMenu.css'
-import { Link } from 'react-router-dom';
-import ContentLoader from 'react-content-loader'
+import { Link } from 'react-router-dom'
+import { Navbar, Container, Image, Nav, NavLink} from 'react-bootstrap'
 
-abstract class TopMenu<Props> extends React.Component<Props> {
+interface TopMenuProps<Data> {
+    data?: Data
+}
+
+abstract class TopMenu<Data, Props extends TopMenuProps<Data>> extends React.Component<Props> {
 
     abstract links(): Array<[string, string?]>
 
     abstract selectBox(): JSX.Element | undefined
 
-    sectionLinks(): JSX.Element | undefined {
-        return undefined
+    sectionLinks(): Array<{href: string, text: string}> {
+        return []
     }
 
     abstract externalLink(): JSX.Element | undefined
@@ -19,39 +23,42 @@ abstract class TopMenu<Props> extends React.Component<Props> {
        let selectBox = this.selectBox()
        let links = this.links()
        let arrow = <>&#8674;</>
-       let placeholder = <ContentLoader 
-            speed={1}
-            width={80}
-            height={80}
-            viewBox="0 0 100 70"
-            backgroundColor="#008000"
-            foregroundColor="#00aa00"   
-            >
-            <rect x="8" y="8" rx="10" ry="10" width="77" height="50" />
-        </ContentLoader>
 
-       return <div className="header_inner">
-           {this.links().map((link, index) => {
-               return <React.Fragment key={'top_menu_link_' + index} >
-                    <Link className="header_link" to={link[0]} >
-                        <span className="header_link_text">{(link[1]) ? link[1] : placeholder}</span>
-                    </Link>
-                    {(index === links.length - 1) ? <span className="header_link external">{this.externalLink()}</span> : <></>}
-                    <span>{(index !== links.length - 1 || selectBox) ? arrow : <></>}</span>
-                </React.Fragment>
-           })}
-            {selectBox}
-            <span className="right_header_links">
-                <span className="right_header_section_links">
-                    {this.sectionLinks()}    
-                </span>
-                <Link className="logo_href" to="/">
-                    <img className="logo" src="/logo.png" alt="AlltidLike"/>
-                </Link>
-            </span>
-            
-            
-        </div>
+       let placeholder = <span className="placeholder-glow"><span className="placeholder placeholder-lg w-100 bg-light rounded" style={{minWidth: "70px"}}></span></span>
+        
+
+       return <Container fluid>
+            {/* ATTENTION! It's flex-row-REVERSE! Hard to understand! */}
+            <Navbar bg="dark" className="navbar-dark rounded"  expand="md" >
+                <Container  fluid d-flex className="flex-row-reverse" >
+                    <Navbar.Brand><Link to='/about'><Image  width="300"   src="/logo.png" alt="AlltidLike" className="logo d-inline-block align-top rounded" /></Link></Navbar.Brand>
+                    <Navbar.Toggle aria-controls="topmenu-navbar" /> 
+
+                    <Navbar.Collapse id='topmenu-navbar' >
+                        <ul className='navbar-nav me-auto d-flex text-light align-items-lg-center'>                           
+                            {links.map((link, index) => {
+                                return <li className='nav-item mx-md-1 h4 d-flex flex-row align-items-center mb-0'>                                 
+                                    <NavLink href={link[0]} >
+                                        {(link[1]) ? link[1] : placeholder}
+                                    </NavLink>
+                                    <span className="d-none d-sm-none d-md-block">{(index !== links.length - 1  || selectBox) ? arrow : <></>}</span>
+                                </li>
+                            })}
+
+                            <li className="nav-item h4 d-flex align-items-center mb-0" >
+                                {(this.props.data !== undefined) ? selectBox : placeholder}
+                            </li>
+
+                            {this.sectionLinks().map(link => {
+                                    return <li className="nav-item mx-3 d-flex align-items-center h4">
+                                            <Nav.Link className="d-flex overflow-text" href={link.href}><strong>{link.text}</strong></Nav.Link>
+                                        </li>
+                                })}
+                        </ul>
+                    </Navbar.Collapse>                   
+                </Container>
+            </Navbar>
+        </Container>
    }
 }
 

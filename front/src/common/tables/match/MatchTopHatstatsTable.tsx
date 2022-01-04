@@ -26,16 +26,16 @@ abstract class MatchTopHatstatsTable<Data extends LevelData, TableProps extends 
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
-                <th className="value">{t('table.league')}</th>
-                <th>{t('table.team')}</th>
+                <th/>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="text-center">{t('table.league')}</th>
+                <th className="text-center">{t('table.team')}</th>
                 <ModelTableTh title='table.loddar_stats' sortingField='sum_loddar_stats' sortingState={sortingState} />
                 <ModelTableTh title='table.hatstats' sortingField='sum_hatstats' sortingState={sortingState} />
                 <th></th>
                 <ModelTableTh title='table.hatstats' sortingField='sum_hatstats' sortingState={sortingState} />
                 <ModelTableTh title='table.loddar_stats' sortingField='sum_loddar_stats' sortingState={sortingState} />
-                <th>{t('table.team')}</th>
-                <th/>
+                <th className="text-center">{t('table.team')}</th>
             </tr>
             }
         </Translation>

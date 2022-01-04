@@ -44,10 +44,10 @@ class TeamPositionsTableBase extends AbstractTableSection<LeagueUnitData, League
         return <Translation>
             {(t, { i18n }) => 
                 <tr>
-                    <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                    <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                     <th></th>
                     <th>{t('table.team')}</th>
-                    <th className="value hint" popped-hint={t('table.games')}>{t('table.games_abbr')}</th>
+                    <th className="text-center hint" popped-hint={t('table.games')}>{t('table.games_abbr')}</th>
                     <SortingTableTh poppedHint={t('table.win')} title='table.win_abbr' sortingField='win' sortingState={sortingState}/>
                     <SortingTableTh poppedHint={t('table.draw')} title='table.draw_abbr' sortingField='draw' sortingState={sortingState} />
                     <SortingTableTh poppedHint={t('table.lose')} title='table.lose_abbr' sortingField='lost' sortingState={sortingState} />
@@ -73,13 +73,13 @@ class TeamPositionsTableBase extends AbstractTableSection<LeagueUnitData, League
             <td>{index + 1}</td>
             <td>{trend}</td>
             <td><TeamLink id={teamPosition.teamId} text={teamPosition.teamName} /></td>
-            <td className="value">{teamPosition.games}</td>
-            <td className="value">{teamPosition.win}</td>
-            <td className="value">{teamPosition.draw}</td>
-            <td className="value">{teamPosition.lost}</td>
-            <td className="value">{teamPosition.scored}</td>
-            <td className="value">{teamPosition.missed}</td>
-            <td className="value">{teamPosition.points}</td>
+            <td className="text-center">{teamPosition.games}</td>
+            <td className="text-center">{teamPosition.win}</td>
+            <td className="text-center">{teamPosition.draw}</td>
+            <td className="text-center">{teamPosition.lost}</td>
+            <td className="text-center">{teamPosition.scored}</td>
+            <td className="text-center">{teamPosition.missed}</td>
+            <td className="text-centers">{teamPosition.points}</td>
         </tr>
     }
 

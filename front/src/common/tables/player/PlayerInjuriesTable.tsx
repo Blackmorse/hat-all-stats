@@ -30,7 +30,7 @@ abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends Le
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
@@ -46,12 +46,12 @@ abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends Le
         let playerSortingKey = playerInjury.playerSortingKey
         return <tr className={className}>
             <td>{index + 1}</td>
-            <td className="value"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
+            <td className="text-center"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
-            <td className="value">{ageFormatter(playerInjury.age)}</td>
-            <td className="value">{injuryFormatter(playerInjury.injury)}</td>
+            <td className="text-center"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
+            <td className="text-center">{ageFormatter(playerInjury.age)}</td>
+            <td className="text-center">{injuryFormatter(playerInjury.injury)}</td>
         </tr>
     }
 }

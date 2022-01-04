@@ -1,14 +1,21 @@
 .team_match_ratings_table {
     padding: 10px 10px 20px;
     margin: 15px;
-    height: 150px;
+    height: 230px;
+    width: 90%;
     display: flex;
     flex-direction: row;
     background-color: green;
+    box-shadow: 5px 5px 5px gray;
+}
+
+.team_match_ratings_table > div {
+    width: 33%;
 }
 
 .defense_attack {
     display: flex;
+    flex-grow: 1;
     flex-direction: column;
 }
 

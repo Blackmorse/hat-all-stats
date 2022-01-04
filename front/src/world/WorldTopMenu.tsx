@@ -1,16 +1,16 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import TopMenu from '../common/menu/TopMenu'
 import WorldData from '../rest/models/leveldata/WorldData'
-import { Translation } from 'react-i18next'
 import '../i18n'
+import i18n from '../i18n'
+import { Form } from 'react-bootstrap'
 
 interface Props {
-    worldData?: WorldData,
+    data?: WorldData,
     callback: (leagueId: number) => void
 }
 
-class WorldTopMenu extends TopMenu<Props> {
+class WorldTopMenu extends TopMenu<WorldData, Props> {
     links(): [string, string?][] {
         return []
     }
@@ -19,17 +19,11 @@ class WorldTopMenu extends TopMenu<Props> {
         return undefined
     }
 
-    sectionLinks(): JSX.Element | undefined {
-        return <Translation>{
-            (t, { i18n }) => <>
-            <span className="right_header_section_link">
-                <Link className="header_link" to="/about">{t('menu.about')}</Link>
-                </span>
-            <span className="right_header_section_link">
-                <Link className="header_link" to="/worldOverview">{t('overview.world_overview')}</Link>
-            </span>
-        </>
-        }</Translation>
+    sectionLinks(): Array<{href: string, text: string}> {
+        return [
+            {href: '/about', text: i18n.t('menu.about')},
+            {href: '/worldOverview', text: i18n.t('overview.world_overview')}
+        ]
     }
 
     onChanged = (event: React.FormEvent<HTMLSelectElement>) => {
@@ -37,14 +31,16 @@ class WorldTopMenu extends TopMenu<Props> {
       }
 
     selectBox(): JSX.Element {
-        return <select className="href_select" onChange={this.onChanged}>
+        return <Form>
+            <Form.Select  size="sm" className="my-1 pr-3 me-md-5" max-width="100" onChange={this.onChanged}>
             <option value={undefined}>Select...</option>
-            {this.props.worldData?.countries.map(countryInfo => {
+            {this.props.data?.countries.map(countryInfo => {
                 return <option value={countryInfo[0]} key={'league_select_' + countryInfo[0]}>
                     {countryInfo[1]}
                 </option>
             })}
-        </select>
+        </Form.Select>
+        </Form> 
     }
 }
 

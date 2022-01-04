@@ -1,5 +1,4 @@
 import React from 'react'
-import './ExternalLink.css'
 
 interface Props {
     id: number,
@@ -14,9 +13,9 @@ abstract class ExternalLink extends React.Component<Props> {
     render() {
         let img: JSX.Element
         if (this.props.black === undefined || this.props.black) {
-            img = <img className="external_table_img" src="/external-link.svg" alt="external_link"/>
+            img = <img style={{width: '10px', height: '10px'}} src="/external-link.svg" alt={this.path()}/>
         } else {
-            img = <img className="external_table_img" src="/external-link-white.svg" alt="external_link"/>
+            img = <img style={{width: '10px', height: '10px'}} src="/external-link-white.svg" alt={this.path()}/>
         }
         return <a href={this.basePath + this.path()} target="_tab">{img}</a>
     }

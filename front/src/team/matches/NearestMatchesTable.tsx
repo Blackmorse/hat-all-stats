@@ -23,21 +23,19 @@ class NearestMatchesTable extends React.Component<Props, SectionState> {
             result = "-:-"
         }
 
-        return <tr key={"nearest_match_" + nearestMatch.matchId}>
-            <td className="matches_date">{dateFormatter(nearestMatch.matchDate)}</td>
-            <td className="matches_team"><TeamLink text={nearestMatch.homeTeamName} id={nearestMatch.homeTeamId} forceRefresh={true}/></td>
-            <td className="matches_result">{result} <ExternalMatchLink id={nearestMatch.matchId} /></td>
-            <td className="matches_team"><TeamLink text={nearestMatch.awayTeamName} id={nearestMatch.awayTeamId} forceRefresh={true}/></td>
+        return <tr key={'nearest_match_' + nearestMatch.matchId}>
+            <td>{dateFormatter(nearestMatch.matchDate)}</td>
+            <td><TeamLink text={nearestMatch.homeTeamName} id={nearestMatch.homeTeamId} forceRefresh={true}/></td>
+            <td>{result} <ExternalMatchLink id={nearestMatch.matchId} /></td>
+            <td><TeamLink text={nearestMatch.awayTeamName} id={nearestMatch.awayTeamId} forceRefresh={true}/></td>
         </tr>
     }
 
     render(): JSX.Element {
-        return (
-            <div className="statistics_section_inner">
-                <table className="statistics_table nearest_matches_table">
+        return  <table className='table table-striped table-rounded table-sm small text-center'>
                     <tbody>{this.props.nearestMatches.map(this.matchTableRow)}</tbody>
-                </table>
-            </div>)
+            </table>
+           
     }
 }
 

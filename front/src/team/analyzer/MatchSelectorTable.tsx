@@ -44,7 +44,7 @@ class MatchSelectorTable extends React.Component<Props, State> {
 
 
         getSingleMatch(matchId, 
-            (loadingEnum, result) => {
+            (_loadingEnum, result) => {
                 let cache = [...this.state.matchesCache]
                 if (result !== undefined) {
                     cache.push(result)
@@ -71,19 +71,20 @@ class MatchSelectorTable extends React.Component<Props, State> {
         let TeamMatchInfoSection = Section(TeamMatchInfo)
 
         return <>
-        <table className="statistics_table match_selector" >
+        <table className='table table-striped table-rounded table-sm small text-center w-75 border table-hover' >
         <tbody>
+            <tr></tr>
         {this.props.matches.map((match) => 
             <tr className={match.matchId === this.props.selectedMatchId ? "match_selected" : undefined} 
                     onClick={() => this.onClick(match.matchId)} >
-                <td className={match.homeTeamId === this.props.selectedTeamId ? "value selected_team" : "value"}>{match.homeTeamName}</td>
-                <td className="value">{match.homeGoals} : {match.awayGoals}</td>
-                <td className={match.awayTeamId === this.props.selectedTeamId ? "value selected_team" : "value"}>{match.awayTeamName}</td>
+                <td className={match.homeTeamId === this.props.selectedTeamId ? "text-success" : ""}>{match.homeTeamName}</td>
+                <td className="">{match.homeGoals} : {match.awayGoals}</td>
+                <td className={match.awayTeamId === this.props.selectedTeamId ? "text-success" : ""}>{match.awayTeamName}</td>
                 <td style={{position: 'relative'}}>
-                    <img className="info_icon" src='/info.svg' alt='info'
+                    <i className="bi bi-info-circle"
                         onMouseOver={() => this.onMouseIn(match.matchId)}
                         onMouseOut={this.onMouseOut}
-                    />
+                    ></i>
                     {match.matchId === this.state.expandedMatch?.matchId ? 
                         <div className="team_match_info_tooltip">
                             <TeamMatchInfoSection singleMatch={this.state.expandedMatch} hideSimulator/> 

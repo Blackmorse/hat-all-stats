@@ -34,13 +34,13 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
-                <th className="value"></th>
-                <th>{t('table.age')}</th>
+                <th className='text-center'>{t('table.league')}</th>
+                <th className='text-center'></th>
+                <th className='text-center'>{t('table.age')}</th>
                 <ModelTableTh title='table.games' sortingField='games' sortingState={sortingState} />
                 <ModelTableTh title='table.minutes' sortingField='played' sortingState={sortingState} />
                 <ModelTableTh title='table.yellow_cards' sortingField='yellow_cards' sortingState={sortingState} />
@@ -54,16 +54,16 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
         let playerSortingKey = playerCards.playerSortingKey
         return <tr className={className}>
             <td>{index + 1}</td>
-            <td className="value"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
+            <td className="text-center"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId} /></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
-            <td className="value">{i18n.t(Mappings.roleToTranslationMap.get(playerCards.role) || '')}</td>
-            <td className="value">{ageFormatter(playerCards.age)}</td>
-            <td className="value">{playerCards.games}</td>
-            <td className="value">{playerCards.playedMinutes}</td>
-            <td className="value">{yellowCards(playerCards.yellowCards)}</td>
-            <td className="value">{redCards(playerCards.redCards)}</td>
+            <td className="text-center"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
+            <td className="text-center">{i18n.t(Mappings.roleToTranslationMap.get(playerCards.role) || '')}</td>
+            <td className="text-center">{ageFormatter(playerCards.age)}</td>
+            <td className="text-center">{playerCards.games}</td>
+            <td className="text-center">{playerCards.playedMinutes}</td>
+            <td className="text-center">{yellowCards(playerCards.yellowCards)}</td>
+            <td className="text-center">{redCards(playerCards.redCards)}</td>
         </tr>
     }
 }

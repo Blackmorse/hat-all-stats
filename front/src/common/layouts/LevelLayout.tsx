@@ -10,6 +10,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Translation } from 'react-i18next'
 import LeftMenu from '../../common/menu/LeftMenu'
+import { Card } from 'react-bootstrap'
 
 export interface LevelLayoutState<Data extends LevelData> {
     leaguePage: PagesEnum,
@@ -81,7 +82,8 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
             this.state = {
                 leaguePage: Array.from(pagesMap)[0][0], 
                 queryParams: queryParams,
-                isError: false
+                isError: false,
+                collapsed: false
             }
         } else {
             let page = Mappings.queryParamToPageMap.getValue(pageString)
@@ -89,13 +91,15 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
                 this.state = {
                     leaguePage: page, 
                     queryParams: queryParams,
-                    isError: false
+                    isError: false,
+                    collapsed: false
                 }
             } else {
                 this.state = {
                     leaguePage: Array.from(pagesMap)[0][0], 
                     queryParams: queryParams,
-                    isError: false
+                    isError: false,
+                    collapsed: false
                 }
             }
         }       
@@ -134,7 +138,7 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
                     title='menu.statistics'/>
             <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
                     callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
-                    title='menu.team_search' />
+                    title='menu.team_search' /> 
         </>
     }
 
@@ -164,10 +168,10 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
         return <Translation>{
             (t, { i18n }) => <>
                 {errorPopup}
-                <header className="content_header">{t(this.state.leaguePage)}</header>
-                <div className="content_body">
-                    {res}
-                </div>
+                <Card className="mt-3 shadow">
+                    <Card.Header className="lead">{t(this.state.leaguePage)}</Card.Header>
+                    <Card.Body>{res}</Card.Body>
+                </Card>
             </>
             }
             </Translation>

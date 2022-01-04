@@ -19,7 +19,9 @@ interface State {
 class AboutLayout extends Layout<Props, State> {
     constructor(props: Props) {
         super(props)
-        this.state = {}
+        this.state = {
+            collapsed: false
+        }
 
         this.leagueIdSelected=this.leagueIdSelected.bind(this)
     }
@@ -35,7 +37,7 @@ class AboutLayout extends Layout<Props, State> {
     }
 
     topMenu(): JSX.Element {
-        return <WorldTopMenu worldData={this.state.levelData} 
+        return <WorldTopMenu data={this.state.levelData} 
             callback={this.leagueIdSelected}/>
     }
     content(): JSX.Element {

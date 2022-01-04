@@ -27,9 +27,9 @@ abstract class TeamFanclubFlagsTable<Data extends LevelData, TableProps extends 
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
+                <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.fanclub_size' sortingField='fanclub_size' sortingState={sortingState} />
                 <ModelTableTh title='table.home_flags' sortingField='home_flags' sortingState={sortingState} />
                 <ModelTableTh title='table.away_flags' sortingField='away_flags' sortingState={sortingState} />
@@ -44,11 +44,11 @@ abstract class TeamFanclubFlagsTable<Data extends LevelData, TableProps extends 
         return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="value">{teamFanclubFlags.fanclubSize}</td>
-            <td className="value">{teamFanclubFlags.homeFlags}</td>
-            <td className="value">{teamFanclubFlags.awayFlags}</td>
-            <td className="value">{teamFanclubFlags.allFlags}</td>
+            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
+            <td className="text-center">{teamFanclubFlags.fanclubSize}</td>
+            <td className="text-center">{teamFanclubFlags.homeFlags}</td>
+            <td className="text-center">{teamFanclubFlags.awayFlags}</td>
+            <td className="text-center">{teamFanclubFlags.allFlags}</td>
         </tr>
     }
 }

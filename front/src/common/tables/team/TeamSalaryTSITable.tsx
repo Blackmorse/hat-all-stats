@@ -40,9 +40,9 @@ class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataPro
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
+                <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.tsi' sortingField='tsi' sortingState={sortingState} />
                 <ModelTableTh title='table.salary' sortingField='salary' titlePostfix={', ' + this.props.levelDataProps.currency()}
                      sortingState={sortingState} />
@@ -62,13 +62,13 @@ class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataPro
         return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="value">{commasSeparated(teamSalaryTSI.tsi)}</td>
-            <td className="value">{salaryFormatter(teamSalaryTSI.salary, this.props.levelDataProps.currencyRate())}</td>
-            <td className="value">{teamSalaryTSI.playersCount}</td>
-            <td className="value">{commasSeparated(teamSalaryTSI.avgTsi)}</td>
-            <td className="value">{salaryFormatter(teamSalaryTSI.avgSalary, this.props.levelDataProps.currencyRate())}</td>
-            <td className="value">{doubleSalaryFormatter(teamSalaryTSI.salaryPerTsi, this.props.levelDataProps.currencyRate())}</td>
+            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
+            <td className="text-center">{commasSeparated(teamSalaryTSI.tsi)}</td>
+            <td className="text-center">{salaryFormatter(teamSalaryTSI.salary, this.props.levelDataProps.currencyRate())}</td>
+            <td className="text-center">{teamSalaryTSI.playersCount}</td>
+            <td className="text-center">{commasSeparated(teamSalaryTSI.avgTsi)}</td>
+            <td className="text-center">{salaryFormatter(teamSalaryTSI.avgSalary, this.props.levelDataProps.currencyRate())}</td>
+            <td className="text-center">{doubleSalaryFormatter(teamSalaryTSI.salaryPerTsi, this.props.levelDataProps.currencyRate())}</td>
         </tr>
     }
 }

@@ -28,9 +28,9 @@ abstract class TeamRatingsTable<Data extends LevelData, TableProps extends Level
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
+                <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.rating' sortingField='rating' sortingState={sortingState} />
                 <ModelTableTh title='table.rating_end_of_match' sortingField='rating_end_of_match' sortingState={sortingState} />
             </tr>
@@ -43,9 +43,9 @@ abstract class TeamRatingsTable<Data extends LevelData, TableProps extends Level
         return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="value">{ratingFormatter(teamRating.rating)}</td>
-            <td className="value">{ratingFormatter(teamRating.ratingEndOfMatch)}</td>
+            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
+            <td className="text-center">{ratingFormatter(teamRating.rating)}</td>
+            <td className="text-center">{ratingFormatter(teamRating.ratingEndOfMatch)}</td>
         </tr>
     }
 }

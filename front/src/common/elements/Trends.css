@@ -1,7 +1,13 @@
 .trend_down {
     transform: rotate(45deg);
+
 }
 
 .trend_up {
     transform: rotate(-45deg);
+}
+
+.trend {
+    width: 10px;
+    height: 10px;
 }

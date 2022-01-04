@@ -26,13 +26,13 @@ abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends L
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
-                <th className="value">{t('table.league')}</th>
-                <th>{t('table.team')}</th>
-                <th className="value"></th>
-                <th>{t('table.team')}</th>
-                <ModelTableTh title='matches.spectatos' sortingField='sold_total' sortingState={sortingState} />
                 <th/>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="text-center">{t('table.league')}</th>
+                <th className="text-center">{t('table.team')}</th>
+                <th className="value"></th>
+                <th className="text-center">{t('table.team')}</th>
+                <ModelTableTh title='matches.spectatos' sortingField='sold_total' sortingState={sortingState} />
             </tr>
             }
         </Translation>

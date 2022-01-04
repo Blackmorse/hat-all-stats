@@ -2,7 +2,6 @@ import React from 'react';
 import LevelData from '../../rest/models/leveldata/LevelData';
 import LevelDataProps from '../../common/LevelDataProps';
 import OverviewRequest from '../../rest/models/request/OverviewRequest';
-import '../../common/sections/StatisticsSection.css'
 import SeasonRoundSelector from './SeasonRoundSelector'
 import { LoadingEnum } from '../enums/LoadingEnum';
 import ExecutableComponent from '../sections/ExecutableComponent';
@@ -69,7 +68,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
         let data = this.state.data
         if (data) {
             let dataDefined = data
-            return <div className="statistics_section_inner">
+            return <>
                 
                 {this.renderOverviewSection(dataDefined)}
                 <SeasonRoundSelector 
@@ -78,7 +77,7 @@ abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewP
                     round={this.state.dataRequest.round}
                     seasonRoundInfo={this.props.levelDataProps.seasonRoundInfo()}
                     callback={(season, round) => this.updateWithRequest({season: season, round: round})} />
-            </div>
+            </>
         } else {
             return <></>
         }

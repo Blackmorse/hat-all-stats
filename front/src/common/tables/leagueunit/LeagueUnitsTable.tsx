@@ -25,8 +25,8 @@ class LeagueUnitsTable<Data extends LevelData, TableProps extends LevelDataProps
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>{
             (t, { i18n }) => <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>              
-                <th className="value">{t('table.league')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>              
+                <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.hatstats' sortingField='hatstats'  sortingState={sortingState}/>
                 <ModelTableTh title='table.midfield' sortingField='midfield' sortingState={sortingState}/>
                 <ModelTableTh title='table.defense' sortingField='defense' sortingState={sortingState}/>
@@ -40,12 +40,12 @@ class LeagueUnitsTable<Data extends LevelData, TableProps extends LevelDataProps
     row(index: number, className: string, leagueUnitRating: LeagueUnitRating): JSX.Element {
         return <tr className={className}>
             <td>{index + 1}</td>
-            <td className="value"><LeagueUnitLink id={leagueUnitRating.leagueUnitId} text={leagueUnitRating.leagueUnitName}/></td>
-            <td className="value">{leagueUnitRating.hatStats}</td>
-            <td className="value">{leagueUnitRating.midfield * 3}</td>
-            <td className="value">{leagueUnitRating.defense}</td>
-            <td className="value">{leagueUnitRating.attack}</td>
-            <td className="value">{loddarStats(leagueUnitRating.loddarStats)}</td>
+            <td className="text-center"><LeagueUnitLink id={leagueUnitRating.leagueUnitId} text={leagueUnitRating.leagueUnitName}/></td>
+            <td className="text-center">{leagueUnitRating.hatStats}</td>
+            <td className="text-center">{leagueUnitRating.midfield * 3}</td>
+            <td className="text-center">{leagueUnitRating.defense}</td>
+            <td className="text-center">{leagueUnitRating.attack}</td>
+            <td className="text-center">{loddarStats(leagueUnitRating.loddarStats)}</td>
         </tr>
     }    
 }

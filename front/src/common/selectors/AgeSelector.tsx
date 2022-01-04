@@ -14,9 +14,9 @@ class AgeSelector extends React.Component<Props> {
     render() {
         return <Translation>
         { (t, { i18n }) =>
-        <div className="selector_div" style={{width: '200px'}}>
-            <span className="selector_div_entry">{t('table.age')}:</span>
-            <span className="selector_div_entry" style={{width: '100%', transform: 'translate(7px, 11px)'}}>
+        <div className='d-flex flex-row align-items-center mx-2 my-xs-2 my-sm-2 my-lg-0 my-md-0' style={{width: '200px'}}>
+            <span>{t('table.age')}:</span>
+            <span style={{width: '100%', transform: 'translate(7px, 11px)'}}>
                 <TwoThumbs callback={this.props.callback}/>
             </span>
         </div>

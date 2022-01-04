@@ -1,10 +1,11 @@
 import React from 'react';
-import './LeftMenu.css'
 import { PagesEnum } from '../enums/PagesEnum'
 import { MenuGroupsEnum } from '../enums/MenuGroupsEnum'
 import { Translation } from 'react-i18next'
 import '../../i18n'
 import Mappings from '../enums/Mappings'
+import { Card } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 interface Props {
     callback: (page: PagesEnum) => void;
@@ -75,23 +76,27 @@ class LeftMenu extends React.Component<Props, State> {
         
         return <Translation>{
             (t, { i18n }) =>
-            <div className="left_side_inner">
-                <div className="left_bar">
-                    <header className="left_bar_header">{t(this.props.title)}</header>
-                    <section className="left_bar_links">
-                        {Array.from(groups.keys()).map(group => {
-                            return <React.Fragment key={'left_menu_group_button' + group}>
-                                <button className="left_bar_link group" onClick={() => this.showHide(group)}>
-                                    {(stateMap.get(group) ? down : right)} {t(group)}
-                                </button>
-                                {(stateMap.get(group)) ? groups.get(group)?.map(page => {
-                                    return <button key={'left_menu_button_' + page} className="left_bar_link page" onClick={() => this.props.callback(page)}>{t(page)}</button>
-                                }) : <></>}
-                            </React.Fragment>
-                        })}
-                    </section>
-                </div>
-            </div>
+            <Card className="mb-3 shadow">
+                <Card.Header className="lead">{t(this.props.title)}</Card.Header>
+                <Card.Body>
+                    {Array.from(groups.keys()).map((group, indexGroup) => {
+                        return <>
+                            <button className="btn btn-toggle align-items-center rounded collapsed ps-0 pb-0"
+                                onClick={() => this.showHide(group)}>
+                                {(stateMap.get(group) ? down : right)} {t(group)}
+                            </button>
+                            <div className='collapse show' id={indexGroup + '_collapse'}>
+                                <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 mb-1 small ms-4"> 
+                                    {(stateMap.get(group)) ? groups.get(group)?.map(page => {
+                                        return <li><Link to="#" className="left-menu-link link-dark rounded"
+                                            onClick={() => this.props.callback(page)}>{t(page)}</Link></li>
+                                    }) : <></>}
+                                </ul>
+                            </div>
+                        </>
+                    })}
+                </Card.Body>
+            </Card>
         }
         </Translation>
     }

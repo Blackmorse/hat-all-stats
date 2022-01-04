@@ -66,7 +66,7 @@ class World extends LevelLayout<Props, WorldData, LevelDataProps<WorldData>> {
     }
 
     topMenu(): JSX.Element {
-        return <WorldTopMenu worldData={this.state.levelData} 
+        return <WorldTopMenu data={this.state.levelData} 
             callback={this.leagueIdSelected}/>
     }
 

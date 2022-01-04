@@ -33,7 +33,7 @@ abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends Lev
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
@@ -51,15 +51,15 @@ abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends Lev
         let playerSortingKey = playerRating.playerSortingKey
         return <tr className={className}>
             <td>{index + 1}</td>
-            <td className="value"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
+            <td className="text-center"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} 
                 flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? playerSortingKey.teamLeagueId : undefined}/></td>
-            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
-            <td className="value">{i18n.t(Mappings.roleToTranslationMap.get(playerRating.role) || '')}</td>
-            <td className="value">{ageFormatter(playerRating.age)}</td>
-            <td className="value">{ratingFormatter(playerRating.rating)}</td>
-            <td className="value">{ratingFormatter(playerRating.ratingEndOfMatch)}</td>
+            <td className="text-center"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
+            <td className="text-center">{i18n.t(Mappings.roleToTranslationMap.get(playerRating.role) || '')}</td>
+            <td className="text-center">{ageFormatter(playerRating.age)}</td>
+            <td className="text-center">{ratingFormatter(playerRating.rating)}</td>
+            <td className="text-center">{ratingFormatter(playerRating.ratingEndOfMatch)}</td>
         </tr>
     }
 }

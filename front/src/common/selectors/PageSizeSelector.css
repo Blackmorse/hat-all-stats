@@ -1,3 +1,11 @@
+.very-small-font {
+    font-size: 0.7em;
+}
+
+.small-font {
+    font-size: 0.9em;
+}
+
 .page_size {
     width: 100%;
     display: flex;

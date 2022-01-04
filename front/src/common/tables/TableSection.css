@@ -1,67 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Baloo+Thambi+2&display=swap');
 
-.table_settings_div {
-    display: flex;
-    justify-content: space-between;
-}
-
-.players_settings_div {
-    display: flex;
-    justify-content: flex-start;
-}
-
-.statistics_table {
-    width: 100%;
-    border-spacing: 0px;
-}
-
-.statistics_table th {
-    font-family: 'Open Sans', sans-serif;
-    font-size: 0.9em;
-    background: #bbf0c9;
-    text-align: left;
-    height: 25px;
-    padding: 0 5px;
-}
-
-.statistics_table > tbody > tr:nth-child(2n) {
-    background-color: #dce3de;
-}
-
-.statistics_table > tbody > tr > td:nth-child(1) {
-    padding-left: 5px;
-}
-
-.statistics_table td {
-    font-family: 'Baloo Thambi 2', cursive;
-    font-size: 0.9em;
-}
-
-.white_row {
-    background-color: white !important;
-}
-
-.statistics_table .value {
-    text-align: center;
-}
-
-.card {
-    display: inline-block;
-    width: 8px;
-    height: 15px;
-    transform: rotate(20deg);
-}
-
-.statistics_table .league {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.position {
-    width: 20px;
-}
 
 .hint {
     position: relative;

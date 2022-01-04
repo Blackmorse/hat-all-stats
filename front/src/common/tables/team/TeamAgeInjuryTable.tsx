@@ -28,9 +28,9 @@ abstract class TeamAgeInjuryTable<Data extends LevelData, TableProps extends Lev
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
+                <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.age' sortingField='age' sortingState={sortingState} />
                 <ModelTableTh title='table.total_injury_weeks' sortingField='injury' sortingState={sortingState} />
                 <ModelTableTh title='table.total_injury_number' sortingField='injury_count' sortingState={sortingState} />
@@ -44,10 +44,10 @@ abstract class TeamAgeInjuryTable<Data extends LevelData, TableProps extends Lev
         return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="value">{ageFormatter(teamAgeInjury.age)}</td>
-            <td className="value">{injuryFormatter(teamAgeInjury.injury)}</td>
-            <td className="value">{teamAgeInjury.injuryCount}</td>
+            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
+            <td className="text-center">{ageFormatter(teamAgeInjury.age)}</td>
+            <td className="text-center">{injuryFormatter(teamAgeInjury.injury)}</td>
+            <td className="text-center">{teamAgeInjury.injuryCount}</td>
         </tr>
     }
 }

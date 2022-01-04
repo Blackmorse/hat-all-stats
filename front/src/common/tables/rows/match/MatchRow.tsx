@@ -1,5 +1,6 @@
 import React from 'react'
 import TeamMatchInfoExecutableSection from '../../../../team/matches/TeamMatchInfoExecutableSection'
+import '../../../links/TableLink.css'
 
 export interface TableRowProps<RowModel> {
     rowIndex: number,
@@ -24,18 +25,18 @@ abstract class MatchRow<RowModel extends {matchId: number}, Props extends TableR
         let columns = this.columns(this.props.rowIndex, this.props.rowModel)
         if (!this.state.expanded) {
             return <tr className={this.props.className}>
-                {columns}
-                <td>
-                    <img style={{width: '20px'}} alt='expand' className="logo" src="/expand.svg" onClick={() => this.setState({expanded: !this.state.expanded})}/>
+                <td>                   
+                    <i className='bi bi-caret-right-fill table_link' onClick={() => this.setState({expanded: !this.state.expanded})}></i>
                 </td>
+                {columns}
             </tr>
         } else {
             return <>
                 <tr className={this.props.className}>
-                    {columns}
                     <td>
-                        <img style={{width: '20px', transform: "rotate(180deg)"}} alt='expand' className="logo" src="/expand.svg" onClick={() => this.setState({expanded: !this.state.expanded})}/>
+                        <i className='bi bi-caret-down-fill table_link' onClick={() => this.setState({expanded: !this.state.expanded})}></i>
                     </td>
+                    {columns}
                 </tr>
                 <tr className='white_row'>
                     <td colSpan={columns.length + 1}>

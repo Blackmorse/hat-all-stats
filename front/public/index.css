@@ -1,0 +1,11 @@
+.section-cursor {
+    cursor: text;
+}
+
+.very-small-font {
+    font-size: 0.7em;
+}
+
+.small-font {
+    font-size: 0.8em;
+}

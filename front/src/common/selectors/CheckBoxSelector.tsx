@@ -17,9 +17,13 @@ class CheckBoxSelector extends React.Component<Props> {
 
     render() {
         return <Translation>
-        { (t, { i18n }) => <div className="selector_div">
-            <input type="checkbox" id={"checkbox_" + this.props.title} defaultChecked={this.props.value} onChange={this.onChanged} />
-                <label htmlFor={"checkbox_" + this.props.title} className="selector_div_entry">{t(this.props.title)}</label>
+        { (t, { i18n }) => <div className='d-flex flex-row align-items-center mx-2 my-xs-2 my-sm-2 my-lg-0 my-md-0'>
+            <input type="checkbox" 
+                className='me-1'
+                id={"checkbox_" + this.props.title} 
+                defaultChecked={this.props.value} 
+                onChange={this.onChanged} />
+            <label htmlFor={"checkbox_" + this.props.title} className="selector_div_entry">{t(this.props.title)}</label>
         </div>
         }
         </Translation>

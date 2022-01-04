@@ -54,7 +54,8 @@ class TeamSamePeriodTeamsBase extends ExecutableComponent<LevelDataPropsWrapper<
         }
 
         return  <Translation>{
-            (t, { i18n }) => <><div className="table_settings_div">
+            (t, { i18n }) => <div className='table-responsive'>
+            <div>
                 <div className="selector_div">
                     <span className="selector_div_entry">
                         {t('team.period')}:
@@ -66,15 +67,15 @@ class TeamSamePeriodTeamsBase extends ExecutableComponent<LevelDataPropsWrapper<
                     </select>
                 </div>
             </div>
-            <table className="statistics_table">
+            <table className="table table-striped table-rounded table-sm small">
                 <thead>
                     <tr>
-                        <th className="value">{t('table.team')}</th>
-                        <th className="value">{t('table.league')}</th>
-                        <th className="value">{t('table.power_rating')}</th>
-                        <th className="value">{t('filter.season')}</th>
-                        <th className="value">{t('chart.round')}</th>
-                        <th className="value">{t('team.date_of_foundation')}</th>     
+                        <th className="text-center">{t('table.team')}</th>
+                        <th className="text-center">{t('table.league')}</th>
+                        <th className="text-center">{t('table.power_rating')}</th>
+                        <th className="text-center">{t('filter.season')}</th>
+                        <th className="text-center">{t('chart.round')}</th>
+                        <th className="text-center">{t('team.date_of_foundation')}</th>     
                         <th></th>               
                     </tr>
                 </thead>
@@ -83,12 +84,12 @@ class TeamSamePeriodTeamsBase extends ExecutableComponent<LevelDataPropsWrapper<
                         .map(team => {
                             return <tr key={this.constructor.name + '_' + team.createdSameTimeTeam.teamSortingKey.teamId}>
                                 <td><TeamLink text={team.createdSameTimeTeam.teamSortingKey.teamName} id={team.createdSameTimeTeam.teamSortingKey.teamId}/></td>
-                                <td className="value"><LeagueUnitLink id={team.createdSameTimeTeam.teamSortingKey.leagueUnitId} text={team.createdSameTimeTeam.teamSortingKey.leagueUnitName} /></td>
-                                <td className="value">{team.createdSameTimeTeam.powerRating}</td>
-                                <td className="value">{team.season + this.props.levelDataProps.levelData.seasonOffset}</td>
-                                <td className="value">{team.round}</td>
-                                <td className="value">{dateFormatter(team.createdSameTimeTeam.foundedDate)}</td>
-                                <td className="value"><TeamLink text='Compare' 
+                                <td className="text-center"><LeagueUnitLink id={team.createdSameTimeTeam.teamSortingKey.leagueUnitId} text={team.createdSameTimeTeam.teamSortingKey.leagueUnitName} /></td>
+                                <td className="text-center">{team.createdSameTimeTeam.powerRating}</td>
+                                <td className="text-center">{team.season + this.props.levelDataProps.levelData.seasonOffset}</td>
+                                <td className="text-center">{team.round}</td>
+                                <td className="text-center">{dateFormatter(team.createdSameTimeTeam.foundedDate)}</td>
+                                <td className="text-center"><TeamLink text='Compare' 
                                     id={this.props.levelDataProps.teamId()} 
                                     page={PagesEnum.TEAM_COMPARSION}
                                     queryParams={{
@@ -99,7 +100,7 @@ class TeamSamePeriodTeamsBase extends ExecutableComponent<LevelDataPropsWrapper<
                         })}
                 </tbody>
             </table>
-            </>
+            </div>
         }
         </Translation>
     }

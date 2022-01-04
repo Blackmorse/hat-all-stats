@@ -27,9 +27,9 @@ abstract class TeamStreakTrophiesTable<Data extends LevelData, TableProps extend
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
+                <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.trophies' sortingField='trophies_number' sortingState={sortingState} />
                 <ModelTableTh title='table.victories' sortingField='number_of_victories' sortingState={sortingState} />
                 <ModelTableTh title='table.undefeated' sortingField='number_of_undefeated' sortingState={sortingState} />
@@ -43,10 +43,10 @@ abstract class TeamStreakTrophiesTable<Data extends LevelData, TableProps extend
         return <tr className={className}>
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="value">{teamStreakTrophies.trophiesNumber}</td>
-            <td className="value">{teamStreakTrophies.numberOfVictories}</td>
-            <td className="value">{teamStreakTrophies.numberOfUndefeated}</td>
+            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
+            <td className="text-center">{teamStreakTrophies.trophiesNumber}</td>
+            <td className="text-center">{teamStreakTrophies.numberOfVictories}</td>
+            <td className="text-center">{teamStreakTrophies.numberOfUndefeated}</td>
         </tr>
     }
 }

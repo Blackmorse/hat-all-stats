@@ -18,6 +18,7 @@ import { SelectorsEnum } from './SelectorsEnum'
 import PlayersParameters from '../../rest/models/PlayersParameters'
 import ExecutableComponent from '../sections/ExecutableComponent';
 import { SectionState } from '../sections/Section';
+import { Col, Container, Row } from 'react-bootstrap';
 
 interface ModelTableState<ResponseModel> {
     model?: ResponseModel,
@@ -267,26 +268,32 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         let restTableData = this.responseModelToRowModel(this.state.model)
         let seasonSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.SEASON_SELECTOR) !== -1) {
-            seasonSelector = <SeasonSelector currentSeason={this.state.dataRequest.statisticsParameters.season}
-                seasonOffset={this.props.levelDataProps.levelData.seasonOffset}
-                seasons={this.props.levelDataProps.seasons()}
-                callback={this.seasonChanged}/>
+            seasonSelector = <Col lg={3} md={6}>
+                    <SeasonSelector currentSeason={this.state.dataRequest.statisticsParameters.season}
+                    seasonOffset={this.props.levelDataProps.levelData.seasonOffset}
+                    seasons={this.props.levelDataProps.seasons()}
+                    callback={this.seasonChanged}/>
+                </Col>
         }
 
         let statsTypeSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.STATS_TYPE_SELECTOR) !== -1) {
-            statsTypeSelector = <StatsTypeSelector  statsTypes={this.statsTypes}
-                rounds={this.props.levelDataProps.rounds(this.state.dataRequest.statisticsParameters.season)}
-                selectedStatType={this.state.dataRequest.statisticsParameters.statsType}
-                onChanged={this.statTypeChanged}
-                />
+            statsTypeSelector = <Col lg={3} md={6}>
+                    <StatsTypeSelector statsTypes={this.statsTypes}
+                        rounds={this.props.levelDataProps.rounds(this.state.dataRequest.statisticsParameters.season)}
+                        selectedStatType={this.state.dataRequest.statisticsParameters.statsType}
+                        onChanged={this.statTypeChanged}
+                    />
+                </Col>
         }
 
         let pageSizeSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.PAGE_SIZE_SELECTOR) !== -1) {
-            pageSizeSelector = <PageSizeSelector 
-                selectedSize={this.state.dataRequest.statisticsParameters.pageSize}
-                linkAction={this.pageSizeChanged}/>
+            pageSizeSelector = <Col lg={2} md={3} className='ms-auto'>
+                <PageSizeSelector 
+                    selectedSize={this.state.dataRequest.statisticsParameters.pageSize}
+                    linkAction={this.pageSizeChanged}/>
+                </Col>
         }
 
         let navigatorProps = {
@@ -304,11 +311,13 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
 
         let playedAllMatchesSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.PLAYED_ALL_MATCHES_SELECTOR) !== -1) {
-            playedAllMatchesSelector = <CheckBoxSelector 
-                value={this.state.dataRequest.playedAllMatches}
-                callback={this.playedAllMatchesChanged}
-                title='filter.full_season'
-                />
+            playedAllMatchesSelector = <Col lg={2} md={4}>
+                <CheckBoxSelector 
+                    value={this.state.dataRequest.playedAllMatches}
+                    callback={this.playedAllMatchesChanged}
+                    title='filter.full_season'
+                    />
+                </Col>
         }
 
         let playerPositionsSelector = <></>
@@ -333,27 +342,35 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
 
         let playedInLastMatchSelector = <></>
         if(this.selectors.indexOf(SelectorsEnum.PLAYED_IN_LAST_MATCH_SELECTOR) !== -1) {
-            playedInLastMatchSelector = <CheckBoxSelector
-                value={this.state.dataRequest.playedInLastMatch}
-                callback={this.playedInLastMatchChanged}
-                title='filter.played_in_last_match' />
+            playedInLastMatchSelector = <Col lg={2} md={5}>
+                <CheckBoxSelector
+                    value={this.state.dataRequest.playedInLastMatch}
+                    callback={this.playedInLastMatchChanged}
+                    title='filter.played_in_last_match' />
+                </Col>
         }
 
         let indexOffset = this.state.dataRequest.statisticsParameters.pageSize * this.state.dataRequest.statisticsParameters.page 
-        return <>
-                <div className="table_settings_div">
+        return <Container className='table-responsive'>
+                <Row>
                     {seasonSelector}
                     {statsTypeSelector}
                     {playedAllMatchesSelector}
                     {playedInLastMatchSelector}
                     {pageSizeSelector}
-                </div>
-                <div className="players_settings_div">
-                    {playerPositionsSelector}
-                    {nationalitySelector}
-                    {ageSelector}
-                </div>
-                <table className="statistics_table">
+                </Row>
+                <Row>
+                    <Col lg={3} md={6} className='d-flex align-items-center'>
+                        {playerPositionsSelector}
+                    </Col>
+                    <Col lg={3} md={6} className='d-flex align-items-center'>
+                        {nationalitySelector}
+                    </Col>
+                    <Col lg={3} md={6} className='d-flex align-items-center'>
+                        {ageSelector}
+                    </Col>
+                </Row>
+                <table className="table table-striped table-rounded table-sm small">
                     <thead>
                         {this.createColumnHeaders()}
                     </thead>
@@ -368,7 +385,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
 
                 {pageSelector}
                 {this.additionalSection(this.state.model)}
-                </>
+                </Container>
     }
 }
 

@@ -2,6 +2,7 @@ import React from 'react'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import './Selector.css'
+import { Form } from 'react-bootstrap'
 
 interface Props {
     value?: number,
@@ -30,16 +31,16 @@ class NationalitySelector extends React.Component<Props> {
     render() {
         return <Translation>
         { (t, { i18n }) =>
-            <div className="selector_div">
-                <span className="selector_div_entry">{t('filter.nationality')}</span>
-                <select className="selector_div_entry" defaultValue={this.props.value}
+            <div className='d-flex flex-row align-items-center mx-2  my-xs-2 my-sm-2 my-lg-0 my-md-0'>
+                <span className='me-1'>{t('filter.nationality')}</span>
+                <Form.Select size='sm' defaultValue={this.props.value}
                         onChange={this.onChanged}>
                     {this.nationalities.map(nationality => {
                         return <option value={nationality} key={'select_nationality_' + nationality}>
                             {this.props.countryMap.get(nationality || 0)}
                         </option>
                     })}
-                </select>
+                </Form.Select>
             </div>
         }
         </Translation>

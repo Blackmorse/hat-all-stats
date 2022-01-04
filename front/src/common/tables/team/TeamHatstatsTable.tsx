@@ -28,9 +28,9 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
+                <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.hatstats' sortingField='hatstats' sortingState={sortingState} />
                 <ModelTableTh title='table.midfield' sortingField='midfield' sortingState={sortingState} />
                 <ModelTableTh title='table.defense' sortingField='defense' sortingState={sortingState} />
@@ -47,12 +47,12 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} 
                 flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? teamSortingKey.leagueId : undefined} /></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="value">{teamHatstats.hatStats}</td>
-            <td className="value">{teamHatstats.midfield * 3}</td>
-            <td className="value">{teamHatstats.defense}</td>
-            <td className="value">{teamHatstats.attack}</td>
-            <td className="value">{loddarStats(teamHatstats.loddarStats)}</td>
+            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
+            <td className="text-center">{teamHatstats.hatStats}</td>
+            <td className="text-center">{teamHatstats.midfield * 3}</td>
+            <td className="text-center">{teamHatstats.defense}</td>
+            <td className="text-center">{teamHatstats.attack}</td>
+            <td className="text-center">{loddarStats(teamHatstats.loddarStats)}</td>
         </tr>
     }
 

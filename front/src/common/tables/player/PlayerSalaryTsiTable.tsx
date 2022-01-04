@@ -32,7 +32,7 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
             {
             (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
@@ -50,15 +50,15 @@ abstract class PlayerSalaryTsiTable<Data extends LevelData, TableProps extends L
         let playerSortingKey = playerSalaryTSI.playerSortingKey
         return <tr className={className}>
             <td>{index + 1}</td>
-            <td className="value"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
+            <td className="text-center"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
             <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} 
                flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? playerSortingKey.teamLeagueId : undefined} /></td>
-            <td className="value"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
-            <td className="value">{i18n.t(Mappings.roleToTranslationMap.get(playerSalaryTSI.role) || '')}</td>
-            <td className="value">{ageFormatter(playerSalaryTSI.age)}</td>
-            <td className="value">{commasSeparated(playerSalaryTSI.tsi)}</td>
-            <td className="value">{salaryFormatter(playerSalaryTSI.salary, this.props.levelDataProps.currencyRate())}</td>
+            <td className="text-center"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
+            <td className="text-center">{i18n.t(Mappings.roleToTranslationMap.get(playerSalaryTSI.role) || '')}</td>
+            <td className="text-center">{ageFormatter(playerSalaryTSI.age)}</td>
+            <td className="text-center">{commasSeparated(playerSalaryTSI.tsi)}</td>
+            <td className="text-center">{salaryFormatter(playerSalaryTSI.salary, this.props.levelDataProps.currencyRate())}</td>
         </tr>
     }
 }

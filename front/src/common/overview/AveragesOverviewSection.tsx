@@ -18,7 +18,7 @@ class AveragesOverviewSectionBase<Data extends LevelData> extends OverviewSectio
     renderOverviewSection(averageOverview: AveragesOverview): JSX.Element {
         return <Translation>
         {(t, { i18n}) =>
-            <table className="statistics_table">
+            <table className="table table-striped table-rounded table-sm small text-center">
                 <tbody>
                     <tr>
                         <td>{t('overview.average_hatstats')}</td>

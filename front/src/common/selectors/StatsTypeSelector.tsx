@@ -3,6 +3,7 @@ import { StatsTypeEnum, StatsType } from '../../rest/models/StatisticsParameters
 import './Selector.css'
 import '../../i18n'
 import { Translation } from 'react-i18next'
+import { Form } from 'react-bootstrap';
 
 interface StatsTypeSelectorProps {
     rounds: Array<number>
@@ -54,15 +55,15 @@ class StatsTypeSelector extends React.Component<StatsTypeSelectorProps> {
 
         return <Translation>
             { (t, { i18n }) =>
-            <div className="selector_div">
-                <span className="selector_div_entry">{t('filter.round')}</span>
-                <select className="selector_div_entry" onChange={this.onChanged} 
+            <div className='d-flex flex-row align-items-center mx-2 my-xs-2 my-sm-2 my-lg-0 my-md-0'>
+                <span className="me-1">{t('filter.round')}</span>
+                <Form.Select size='sm' onChange={this.onChanged} 
                     value={this.props.selectedStatType.statType.toString() + ((this.props.selectedStatType.roundNumber) ? ":" + this.props.selectedStatType.roundNumber : "")}>
                     {avgOption}
                     {maxOption}
                     {accumulateOption}
                     {roundOptions}
-                </select>
+                </Form.Select>
             </div>
             }
         </Translation>

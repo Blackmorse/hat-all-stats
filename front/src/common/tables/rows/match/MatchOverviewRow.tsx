@@ -19,28 +19,28 @@ class MatchOverviewRow extends MatchRow<MatchTopHatstats, Props> {
         let country = this.props.leagueNameFunc(matc.homeTeam.leagueId)
         return [
             (country === undefined ) ? <></> : country ,
-            <td className="value">
+            <td className="text-center">
                 <LeagueUnitLink id={matc.homeTeam.leagueUnitId} text={matc.homeTeam.leagueUnitName} />
             </td>,
-            <td className="value">
+            <td className="text-center">
                 <TeamLink id={matc.homeTeam.teamId} text={matc.homeTeam.teamName}/>
                 </td>,
-            <td className="value">
+            <td className="text-center">
                 {this.props.linkProvider(loddarStats(matc.homeLoddarStats), this.props.request.season, this.props.request.round, matc).render()}
             </td>,
-            <td className="value">
+            <td className="text-center">
                 {this.props.linkProvider(matc.homeHatstats.toString(), this.props.request.season, this.props.request.round, matc).render()}
             </td>,
-            <td className="value">
+            <td className="text-center">
                 {matc.homeGoals} : {matc.awayGoals} <ExternalMatchLink id={matc.matchId}/>
             </td>,
-            <td className="value">
+            <td className="text-center">
                 {this.props.linkProvider(matc.awayHatstats.toString(), this.props.request.season, this.props.request.round, matc).render()}
             </td>,
-            <td className="value">
+            <td className="text-center">
                 {this.props.linkProvider(loddarStats(matc.awayLoddarStats), this.props.request.season, this.props.request.round, matc).render()}
             </td>,
-            <td className="value"><TeamLink id={matc.awayTeam.teamId} text={matc.awayTeam.teamName}/></td>
+            <td className="text-center"><TeamLink id={matc.awayTeam.teamId} text={matc.awayTeam.teamName}/></td>
         ]
     }
 

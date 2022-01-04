@@ -26,9 +26,9 @@ abstract class OldestTeamsTable<Data extends LevelData, TableProps extends Level
         return <Translation> 
             { (t, { i18n }) =>
             <tr>
-                <th className="position hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
                 <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
+                <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='team.date_of_foundation' sortingField='founded_date' sortingState={sortingState}/>
             </tr>
             }
@@ -41,8 +41,8 @@ abstract class OldestTeamsTable<Data extends LevelData, TableProps extends Level
             <td>{index + 1}</td>
             <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} 
                 flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? teamSortingKey.leagueId : undefined}/></td>
-            <td className="value"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="value">{dateFormatter(team.foundedDate)}</td>
+            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
+            <td className="text-center">{dateFormatter(team.foundedDate)}</td>
         </tr>
     }
 }

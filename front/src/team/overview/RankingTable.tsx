@@ -2,7 +2,6 @@ import React from 'react';
 import TeamRanking from '../../rest/models/team/TeamRanking'
 import { Translation } from 'react-i18next'
 import '../../i18n'
-import './RankingTable.css'
 import '../../common/elements/Trends.css'
 import TeamLevelDataProps from '../TeamLevelDataProps';
 import LeagueLink from '../../common/links/LeagueLink';
@@ -15,6 +14,7 @@ import '../../common/charts/Charts.css'
 import ChartLink from '../../common/charts/ChartLink';
 import ValueRankingsChart from './ValueRankingsChart';
 import PositionRankingChart from './PositionRankingChart';
+import { Card, Col, Row } from 'react-bootstrap';
 
 export interface RankingData {
     teamRankings: Array<TeamRanking>,
@@ -69,7 +69,7 @@ class RankingTable extends React.Component<Props>{
 
         let diffValueContent: JSX.Element
         let divisionLevelDiffPositionContent: JSX.Element
-        if (previousDivisionLevelRanking) {
+        if (previousDivisionLevelRanking !== undefined) {
             divisionLevelDiffPositionContent = <DiffPosition
                 positionFunc={positionFunc}
                 previousRanking={previousDivisionLevelRanking}
@@ -77,7 +77,7 @@ class RankingTable extends React.Component<Props>{
                 />
 
             diffValueContent = <DiffValue
-                formatter={formatter}
+                 formatter={formatter}
                  valueFunc={valueFunc}
                  previousRanking={previousDivisionLevelRanking}
                  lastRanking={lastDivisionLevelRanking} />
@@ -93,30 +93,31 @@ class RankingTable extends React.Component<Props>{
 
             return <Translation>{
                 (t, { i18n }) => 
-        <span className="ranking">
-            <span className="ranking_name">
+        <Card>
+            <Card.Header className='text-center'>
                 {this.props.rankingParameters.title}
                 {<ChartLink chartContent={this.chartContent} />}
-            </span>
-            <table className="ranking_table">
-                <tbody>
-                <tr className="ranking_row">
-                    <td className="ranking_row_name">{this.props.rankingParameters.title}</td>
-                    <td className="ranking_row_value">{formatter(valueFunc(lastDivisionLevelRanking))}</td>
-                    <td className="ranking_row_diff">
-                        <div className="ranking_row_diff_value">
-                            {diffValueContent}
-                        </div>
-                    </td>
-                </tr>
-                <tr className="ranking_row">
-                    <td className="ranking_row_name">
+            </Card.Header>
+            <Card.Body>
+                <Row className='my-1'>
+                    <Col className='d-flex justify-content-end'>
+                        <span className='very-small-font'>
+                            {this.props.rankingParameters.title}
+                        </span>
+                    </Col>
+                    <Col className='small-font text-center d-flex align-items-center justify-content-center'>{formatter(valueFunc(lastDivisionLevelRanking))}</Col>
+                    <Col className='d-flex align-items-center'>
+                        <span className='very-small-font d-flex flex-row align-items-center'>{diffValueContent}</span>
+                    </Col>
+                </Row>
+                <Row className='my-1'>
+                    <Col className='very-small-font d-flex justify-content-end'>
                         <LeagueLink  tableLink={true}
                             id={this.props.rankingData.teamLevelDataProps.leagueId()}
                             text={this.props.rankingData.teamLevelDataProps.levelData.leagueName}
                             />
-                    </td>
-                    <td className="ranking_row_value">
+                    </Col>
+                    <Col className='text-center small-font'>
                         <LeagueLink id={this.props.rankingData.teamLevelDataProps.leagueId()} 
                             tableLink={true}
                             text={(positionFunc(lastLeagueRanking) + 1).toString()} 
@@ -129,8 +130,8 @@ class RankingTable extends React.Component<Props>{
                             }}
                         />
                         /{this.props.rankingData.leagueTeamsCount}
-                    </td>
-                    <td className="ranking_row_diff">
+                    </Col>
+                    <Col className='very-small-font'>
                         {(previousLeagueRanking) ? <LeagueLink id={this.props.rankingData.teamLevelDataProps.leagueId()} 
                             tableLink={true}
                             text={leagueDiffPositionContent} 
@@ -143,17 +144,17 @@ class RankingTable extends React.Component<Props>{
                             }}
                         /> : <></>
                         }
-                    </td>
-                </tr>
-                <tr className="ranking_row">
-                    <td className="ranking_row_name">
+                    </Col>
+                </Row>
+                <Row className='my-1'>
+                    <Col className='very-small-font d-flex justify-content-end'>
                         <DivisionLevelLink
                             leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
                             divisionLevel={lastDivisionLevelRanking.divisionLevel}
                             text={toRoman(lastDivisionLevelRanking.divisionLevel)}
                             />
-                    </td>
-                    <td className="ranking_row_value">
+                    </Col>
+                    <Col className='text-center small-font'>
                         <DivisionLevelLink 
                             leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
                             divisionLevel={lastDivisionLevelRanking.divisionLevel}
@@ -166,8 +167,8 @@ class RankingTable extends React.Component<Props>{
                                 season: this.props.rankingData.season
                             }}
                         />/{this.props.rankingData.divisionLevelTeamsCount}
-                    </td>
-                    <td className="ranking_row_diff">
+                    </Col>
+                    <Col className='very-small-font'>
                     {(previousDivisionLevelRanking) ? <DivisionLevelLink 
                             leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
                             divisionLevel={this.props.rankingData.teamLevelDataProps.levelData.divisionLevel}
@@ -181,11 +182,10 @@ class RankingTable extends React.Component<Props>{
                             }}
                         /> : <></>
                     }
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </span>
+                    </Col>
+                </Row>
+            </Card.Body>
+        </Card>
         }
         </Translation>
     }

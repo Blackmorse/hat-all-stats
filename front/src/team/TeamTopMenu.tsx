@@ -5,19 +5,19 @@ import TopMenu from '../common/menu/TopMenu';
 import ExternalTeamLink from '../common/links/ExternalTeamLink'
 
 interface Props {
-    teamData?: TeamData
+    data?: TeamData
 }
 
-class TeamTopMenu extends TopMenu<Props> {
+class TeamTopMenu extends TopMenu<TeamData, Props> {
     externalLink(): JSX.Element | undefined {
-        return <ExternalTeamLink id={this.props.teamData?.teamId || 0} black={false} />
+        return <ExternalTeamLink id={this.props.data?.teamId || 0} black={false} />
     }
     links(): [string, string?][] {
         return [
-            ["/league/" + this.props.teamData?.leagueId, this.props.teamData?.leagueName],
-            ["/league/" + this.props.teamData?.leagueId + "/divisionLevel/" + this.props.teamData?.divisionLevel, this.props.teamData?.divisionLevelName],
-            ["/leagueUnit/" + this.props.teamData?.leagueUnitId, this.props.teamData?.leagueUnitName],
-            ["/team/" + this.props.teamData?.teamId, this.props.teamData?.teamName]
+            ["/league/" + this.props.data?.leagueId, this.props.data?.leagueName],
+            ["/league/" + this.props.data?.leagueId + "/divisionLevel/" + this.props.data?.divisionLevel, this.props.data?.divisionLevelName],
+            ["/leagueUnit/" + this.props.data?.leagueUnitId, this.props.data?.leagueUnitName],
+            ["/team/" + this.props.data?.teamId, this.props.data?.teamName]
         ]
     }
 

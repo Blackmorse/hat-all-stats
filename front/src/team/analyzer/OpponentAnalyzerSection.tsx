@@ -4,8 +4,6 @@ import ExecutableComponent, { LoadableState } from '../../common/sections/Execut
 import MatchOpponentCombinedInfo from '../../rest/models/analyzer/MatchOpponentCombinedInfo'
 import { teamAndOpponentMatches, combineMatches, opponentTeamMatches } from '../../rest/Client'
 import TeamLevelDataProps from '../TeamLevelDataProps'
-import '../../common/sections/StatisticsSection.css'
-import './OpponentAnalyzerSection.css'
 import '../../common/tables/TableSection.css'
 import Section, { SectionState } from '../../common/sections/Section'
 import MatchSelectorTable from './MatchSelectorTable'
@@ -13,6 +11,7 @@ import NearestMatch from '../../rest/models/match/NearestMatch'
 import SingleMatch from '../../rest/models/match/SingleMatch'
 import TeamMatchInfo from '../matches/TeamMatchInfo'
 import Blur from '../../common/widgets/Blur'
+import { Col, Form, Row } from 'react-bootstrap'
 
 interface Props {
     props: TeamLevelDataProps
@@ -217,25 +216,25 @@ class OpponentAnalyzerSectionBase extends ExecutableComponent<Props, State & Sec
             () => this.updateSelectedOpponentMatch(this.state.selectedOpponentMatchId!))
 
         return  <>
-        <div className="opponent_analyzer_section">
-            <div className="section_row_half_element analyze_side_secton">
-                <div className="analyzer_opponent_name">
+        <Row>
+            <Col className='d-flex flex-column align-items-center'>
+                <div className='mb-1'>
                     {this.props.props.levelData.teamName}
                 </div>
                 {originMatchesTable}
-            </div>
-            <div className="section_row_half_element analyze_side_secton">
-            <div className="analyzer_opponent_name">
-                <select defaultValue={this.state.selectedNextOpponent?.[0]} onChange={this.opponentChanged}>
-                    {this.state.nextOpponents?.map(team =>
-                        <option value={team[0]}>{team[1]}</option>)}
-                </select>
-            </div> 
+            </Col>
+            <Col className='d-flex flex-column align-items-center'>
+                <div className='mb-1'>
+                    <Form.Select size='sm' defaultValue={this.state.selectedNextOpponent?.[0]} onChange={this.opponentChanged}>
+                        {this.state.nextOpponents?.map(team =>
+                            <option value={team[0]}>{team[1]}</option>)}
+                    </Form.Select>
+                </div> 
                 
                 {opponentMatchesTable}
-            </div>
+            </Col>
             
-        </div>
+        </Row>
         {simulatedMatchElement}
         </>
     }

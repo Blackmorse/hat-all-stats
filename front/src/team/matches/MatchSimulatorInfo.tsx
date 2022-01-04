@@ -7,6 +7,7 @@ import { SectionState } from '../../common/sections/Section'
 import './MatchSimulatorInfo.css'
 import i18n from '../../i18n'
 import SingleMatch from '../../rest/models/match/SingleMatch'
+import { Col, Container, Row } from 'react-bootstrap'
 
 interface Props {
     singleMatch: SingleMatch
@@ -42,7 +43,7 @@ class MatchSimulatorInfo extends ExecutableComponent<Props, State & SectionState
 
     renderSection() {
         if (this.state.similarMatchesStats === undefined) {
-            return <button onClick={() => this.update()}>{i18n.t('team.simulate_match')}</button>
+            return <button className='btn btn-success' onClick={() => this.update()}>{i18n.t('team.simulate_match')}</button>
         }
 
         let stats = this.state.similarMatchesStats
@@ -56,29 +57,25 @@ class MatchSimulatorInfo extends ExecutableComponent<Props, State & SectionState
             awayRate = 33
         }
 
-        return <div className="simulator_span">
-            <div className="simulator_results">
-                <span className="home_team_span result_span" style={{width: homeRate.toString() + '%'}}>
+        return <div className='w-75'>
+            <Container className='d-flex justify-content-center'>
+                <span className='home_team_span result_span' style={{width: homeRate.toString() + '%'}}>
                     {this.state.similarMatchesStats.wins}
                 </span> 
-                <span className="draw_span result_span" style={{width: drawRate.toString() + '%'}}>
+                <span className='draw_span result_span' style={{width: drawRate.toString() + '%'}}>
                     {this.state.similarMatchesStats.draws}
                 </span>
-                <span className="away_team_span result_span" style={{width: awayRate.toString() + '%'}}>
+                <span className='away_team_span result_span' style={{width: awayRate.toString() + '%'}}>
                     {this.state.similarMatchesStats.loses}
                 </span>
-            </div>
-            <div className="simulator_goals">
-                <span className="home_goals">
-                    {Math.round(stats.avgGoalsFor * 10) / 10}
-                </span>
-                <span className="goals_title">
-                    {i18n.t('overview.goals')}
-                </span>
-                <span className="away_goals">
-                    {Math.round(stats.avgGoalsAgainst * 10) / 10}
-                </span>
-            </div>
+            </Container>
+            <Container className='mt-2'>
+                <Row className='px-3'>
+                   <Col lg={4}>{Math.round(stats.avgGoalsFor * 10) / 10}</Col> 
+                   <Col className='text-center' lg={4}>{i18n.t('overview.goals')}</Col> 
+                   <Col className='text-end' lg={4}>{Math.round(stats.avgGoalsAgainst * 10) / 10}</Col> 
+                </Row>
+            </Container>
         </div>
     }
 }
