@@ -1,3 +1,4 @@
+import { isMobile } from 'react-device-detect'
 import LevelData from '../../rest/models/leveldata/LevelData'
 import LevelDataProps from '../LevelDataProps'
 import { PagesEnum } from '../enums/PagesEnum'
@@ -77,13 +78,14 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
         let queryParams = this.parseQueryParams(params)
         
         let pageString = params.get('page')
-
+        
+        let collapsed = isMobile
         if (pageString === null) {
             this.state = {
                 leaguePage: Array.from(pagesMap)[0][0], 
                 queryParams: queryParams,
                 isError: false,
-                collapsed: false
+                collapsed: collapsed
             }
         } else {
             let page = Mappings.queryParamToPageMap.getValue(pageString)
@@ -92,14 +94,14 @@ abstract class LevelLayout<Props, Data extends LevelData, TableProps extends Lev
                     leaguePage: page, 
                     queryParams: queryParams,
                     isError: false,
-                    collapsed: false
+                    collapsed: collapsed
                 }
             } else {
                 this.state = {
                     leaguePage: Array.from(pagesMap)[0][0], 
                     queryParams: queryParams,
                     isError: false,
-                    collapsed: false
+                    collapsed: collapsed
                 }
             }
         }       

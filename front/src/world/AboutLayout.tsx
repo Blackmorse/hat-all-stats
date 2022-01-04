@@ -1,4 +1,5 @@
 import React from 'react';
+import { isMobile } from 'react-device-detect'
 import { RouteComponentProps } from 'react-router';
 import Layout from '../common/layouts/Layout';
 import { getWorldData } from '../rest/Client'
@@ -20,7 +21,7 @@ class AboutLayout extends Layout<Props, State> {
     constructor(props: Props) {
         super(props)
         this.state = {
-            collapsed: false
+            collapsed: isMobile
         }
 
         this.leagueIdSelected=this.leagueIdSelected.bind(this)
