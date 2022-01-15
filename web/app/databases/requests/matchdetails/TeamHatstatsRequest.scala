@@ -61,7 +61,9 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
         .season(parameters.season)
         .orderingKeyPath(orderingKeyPath)
         .isLeagueMatch
-        .and(s"$hatstats != 0")
+          //Seems like scala bug: sometimes replaces s"$hatstats != 0" with s"$hatstats as hatstats != 0"
+//        .and(s"$hatstats != 0")
+        .and("rating_midfield * 3 + rating_left_att + rating_right_att + rating_mid_att + rating_left_def + rating_right_def + rating_mid_def != 0")
       .groupBy(
         "team_id",
         "league_unit_id",

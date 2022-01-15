@@ -3,7 +3,8 @@ interface QueryParams {
     selectedRow?: number,
     season?: number,
     round?: number,
-    teamId?: number
+    teamId?: number,
+    pageString?: string
 }
 
 export default QueryParams

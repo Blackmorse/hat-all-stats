@@ -1,183 +1,138 @@
-import { isMobile } from 'react-device-detect'
+import React, {useEffect, useState} from 'react'
+import {Card} from 'react-bootstrap'
+import {useTranslation} from 'react-i18next'
+import {Link} from 'react-router-dom'
+import LeftMenu from '../../common/menu/LeftMenu'
 import LevelData from '../../rest/models/leveldata/LevelData'
+import Mappings from '../enums/Mappings'
+import {PagesEnum} from '../enums/PagesEnum'
 import LevelDataProps from '../LevelDataProps'
-import { PagesEnum } from '../enums/PagesEnum'
 import QueryParams from '../QueryParams'
 import Layout from './Layout'
-import TeamSearchPage from '../pages/TeamSearchPage'
-import Mappings from '../enums/Mappings'
-import '../../i18n'
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { Translation } from 'react-i18next'
-import LeftMenu from '../../common/menu/LeftMenu'
-import { Card } from 'react-bootstrap'
 
-export interface LevelLayoutState<Data extends LevelData> {
-    leaguePage: PagesEnum,
-    levelData?: Data,
-    queryParams: QueryParams,
-    isError: boolean
+
+function parseQueryParams(): QueryParams {
+    let params = new URLSearchParams(window.location.search);
+
+    let sortingFieldParams = params.get('sortingField')
+    let sortingField: string | undefined = undefined
+    if (sortingFieldParams !== null) {
+        sortingField = sortingFieldParams
+    }
+
+    let selectedRowParams = params.get('row')
+    let selectedRow: number | undefined = undefined
+    if (selectedRowParams !== null) {
+        selectedRow = Number(selectedRowParams)
+    }
+   
+    let roundParams = params.get('round')
+    let round: number | undefined = undefined
+    if(roundParams !== null) {
+        round = Number(roundParams)
+    }
+
+    let seasonParams = params.get('season')
+    let season: number | undefined = undefined
+    if(seasonParams !== null) {
+        season = Number(seasonParams)
+    }
+
+    let teamIdParams = params.get('teamId')
+    let teamId: number | undefined = undefined
+    if(teamIdParams !== null) {
+        teamId = Number(teamIdParams)
+    }
+
+        
+    let pageStringParams = params.get('page')
+    let pageString: string | undefined = undefined
+    if(pageStringParams !== null) {
+        pageString = pageStringParams
+    }
+
+    return {
+        sortingField: sortingField,
+        selectedRow: selectedRow,
+        round: round,
+        season: season,
+        teamId: teamId,
+        pageString: pageString
+    }
 }
 
-abstract class LevelLayout<Props, Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-        extends Layout<Props, LevelLayoutState<Data>>{
-    private firstTime: boolean = true
-    
-    pagesMap = new Map<PagesEnum, (props: TableProps, queryParams: QueryParams) => JSX.Element>()
+export interface BaseLevelLayoutProps<Data extends LevelData, TableProps extends LevelDataProps<Data>> {
+    pagesMap: Map<PagesEnum, (props: TableProps, queryParams: QueryParams) => JSX.Element>
+    topMenu: (data?: Data) => JSX.Element
+    fetchLevelData: (callback: (data: Data) => void, onError: () => void) => void
+    makeModelProps: (levelData: Data) => TableProps
+    documentTitle: (data: Data) => string
+}
 
-    parseQueryParams: (paramss: URLSearchParams) =>  QueryParams = function(paramss: URLSearchParams) {
+interface Props<Data extends LevelData, TableProps extends LevelDataProps<Data>> extends BaseLevelLayoutProps<Data, TableProps> {
+    topLeftMenu: (data: Data, onPageChange: (page: PagesEnum) => void) => JSX.Element
+}
 
-        let params = new URLSearchParams(window.location.search);
+const LevelLayout = <Data extends LevelData, TableProps extends LevelDataProps<Data>>(props: Props<Data, TableProps>) => {
+    const t = useTranslation().t
+    const [ queryParams ] = useState(parseQueryParams())
+    //TODO 
+    const [ page, setPage ] = useState((queryParams.pageString === undefined) ? 
+        Array.from(props.pagesMap)[0][0] : Mappings.queryParamToPageMap.getValue(queryParams.pageString))
+    const [ isError, setIsError ] = useState(false)
+    const [ levelData, setLevelData ] = useState(undefined as Data | undefined)
 
-        let sortingFieldParams = params.get('sortingField')
-        let sortingField: string | undefined = undefined
-        if (sortingFieldParams !== null) {
-            sortingField = sortingFieldParams
-        }
+    useEffect(() => {
+        props.fetchLevelData(data => {
+            setLevelData(data)
+            setIsError(false)
+            document.title = props.documentTitle(data) + ' - AlltidLike'
+        },
+        () => setIsError(true))
+    }, [])
 
-        let selectedRowParams = params.get('row')
-        let selectedRow: number | undefined = undefined
-        if (selectedRowParams !== null) {
-            selectedRow = Number(selectedRowParams)
-        }
-       
-        let roundParams = params.get('round')
-        let round: number | undefined = undefined
-        if(roundParams !== null) {
-            round = Number(roundParams)
-        }
-
-        let seasonParams = params.get('season')
-        let season: number | undefined = undefined
-        if(seasonParams !== null) {
-            season = Number(seasonParams)
-        }
-
-        let teamIdParams = params.get('teamId')
-        let teamId: number | undefined = undefined
-        if(teamIdParams !== null) {
-            teamId = Number(teamIdParams)
-        }
-        return {
-            sortingField: sortingField,
-            selectedRow: selectedRow,
-            round: round,
-            season: season,
-            teamId: teamId 
-        }
-    }
-
-    constructor(props: Props,
-        pagesMap: Map<PagesEnum, (props: TableProps, queryParams: QueryParams) => JSX.Element>) {
-        super(props)
-        pagesMap.set(PagesEnum.TEAM_SEARCH, (props, queryParams) => <TeamSearchPage />)
-        this.pagesMap = pagesMap
-
-        let params = new URLSearchParams(window.location.search);    
-        let queryParams = this.parseQueryParams(params)
-        
-        let pageString = params.get('page')
-        
-        let collapsed = isMobile
-        if (pageString === null) {
-            this.state = {
-                leaguePage: Array.from(pagesMap)[0][0], 
-                queryParams: queryParams,
-                isError: false,
-                collapsed: collapsed
-            }
-        } else {
-            let page = Mappings.queryParamToPageMap.getValue(pageString)
-            if (page) {
-                this.state = {
-                    leaguePage: page, 
-                    queryParams: queryParams,
-                    isError: false,
-                    collapsed: collapsed
-                }
-            } else {
-                this.state = {
-                    leaguePage: Array.from(pagesMap)[0][0], 
-                    queryParams: queryParams,
-                    isError: false,
-                    collapsed: collapsed
-                }
-            }
-        }       
-    }
-    
-    abstract makeModelProps(levelData: Data): TableProps
-
-    abstract fetchLevelData(props: Props, callback: (data: Data) => void, onError: () => void): void
-
-    abstract documentTitle(data: Data): string
-
-    componentDidMount() {
-        const oldState = this.state
-        this.fetchLevelData(this.props, data => {
-            document.title = this.documentTitle(data) + ' - AlltidLike'
-            this.setState({
-                leaguePage: oldState.leaguePage,
-                levelData: data,
-                isError: false
-            })
-        }, () => this.setState({
-            leaguePage: this.state.leaguePage,
-            levelData: this.state.levelData,
-            queryParams: this.state.queryParams,
-            isError: true
-        }))
-    }
-
-    abstract topLeftMenu(): JSX.Element
-
-    leftMenu(): JSX.Element {
-        return <>
-            {this.topLeftMenu()}
-            <LeftMenu pages={Array.from(this.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH && /*TODO */  p !== PagesEnum.TEAM_COMPARSION))} 
-                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
+    let leftMenu = <>
+            {(levelData !== undefined) ? props.topLeftMenu(levelData, setPage): <></>}
+            <LeftMenu pages={Array.from(props.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH && /*TODO */  p !== PagesEnum.TEAM_COMPARSION))} 
+                    callback={leaguePage => setPage(leaguePage)}
                     title='menu.statistics'/>
             <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
-                    callback={leaguePage =>{this.setState({leaguePage: leaguePage})}}
+                    callback={leaguePage => setPage(leaguePage)}
                     title='menu.team_search' /> 
         </>
-    }
 
-    content() {
-        let errorPopup: JSX.Element
-        if (this.state.isError) {
-            errorPopup = <div className="error_popup">
+    let errorPopup: JSX.Element
+    if (isError) {
+        errorPopup = <div className="error_popup">
             <img src="/warning.gif" className="warning_img" alt="warning" />
             <span>
-                Error! Page doesn't exist or internal error occured. 
-                Try to <button className="warning_link" onClick={() => window.location.reload(true)}> reload </button> or return to the <Link className="warning_link" to="/">main page</Link>
+                Error! Page doesnt exist or internal error occured. 
+                Try to <button className="warning_link" onClick={() => window.location.reload()}> reload </button> or return to the <Link className="warning_link" to="/">main page</Link>
             </span>
         </div>
-        } else {
-            errorPopup = <></>
-        }
-        let res: JSX.Element
-        let jsxFunction = this.pagesMap.get(this.state.leaguePage)
-        if (this.state.levelData && jsxFunction) {
-            let queryParams = (this.firstTime) ? this.state.queryParams : {}
-            // let queryParams = this.state.queryParams
-            res = jsxFunction(this.makeModelProps(this.state.levelData), queryParams)
-            this.firstTime = false
-        } else {
-            res = <></>
-        }
-        return <Translation>{
-            (t, { i18n }) => <>
-                {errorPopup}
-                <Card className="mt-3 shadow">
-                    <Card.Header className="lead">{t(this.state.leaguePage)}</Card.Header>
-                    <Card.Body>{res}</Card.Body>
-                </Card>
-            </>
-            }
-            </Translation>
+    } else {
+        errorPopup = <></>
     }
+    let res: JSX.Element
+    let jsxFunction = props.pagesMap.get(page)
+    if (levelData && jsxFunction) {
+        res = jsxFunction(props.makeModelProps(levelData), queryParams)
+    } else {
+        res = <></>
+    }
+    let content = <>
+            {errorPopup}
+            <Card className="mt-3 shadow">
+                <Card.Header className="lead">{t(page)}</Card.Header>
+                <Card.Body>{res}</Card.Body>
+            </Card>
+        </>
+
+    return <Layout 
+            leftMenu={leftMenu}
+            topMenu={props.topMenu(levelData)}
+            content={content}
+        />
 }
 
 export default LevelLayout

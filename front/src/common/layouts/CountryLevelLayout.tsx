@@ -5,27 +5,23 @@ import CountryLevelData from '../../rest/models/leveldata/CountryLevelData'
 import LeftMenu from '../../common/menu/LeftMenu'
 import '../../i18n'
 import './CountryLevelLayout.css'
-import QueryParams from '../QueryParams'
 import CurrentCountryInfoMenu from '../menu/CurrentCountryInfoMenu'
-import LevelLayout from './LevelLayout'
+import LevelLayout, {BaseLevelLayoutProps} from './LevelLayout'
 
-export interface CountryLevelLayoutState<Data extends CountryLevelData> {
-    leaguePage: PagesEnum,
-    levelData?: Data,
-    queryParams: QueryParams,
-    isError: boolean
-}
+interface Props<Data extends CountryLevelData, TableProps extends LevelDataProps<Data>> extends BaseLevelLayoutProps<Data, TableProps> {}
 
-abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TableProps extends LevelDataProps<Data>> extends LevelLayout<Props, Data, TableProps> {
-    topLeftMenu(): JSX.Element {
+
+const CountryLevelLayout = <Data extends CountryLevelData, TableProps extends LevelDataProps<Data>>(props: Props<Data, TableProps>) => {
+
+    function topLeftMenu(levelData: Data, onPageChange: (page: PagesEnum) => void): JSX.Element {
         let promotionsMenu: JSX.Element = <></>
         let currentCountryInfoMenu = <></>
-        if(this.state.levelData ) {
-            let modelProps = this.makeModelProps(this.state.levelData)
+        if(levelData ) {
+            let modelProps = props.makeModelProps(levelData)
             currentCountryInfoMenu = <CurrentCountryInfoMenu levelDataProps={modelProps}/>
             if(modelProps.currentRound() >= 14) {
                 promotionsMenu = <LeftMenu pages={[PagesEnum.PROMOTIONS]}
-                    callback={leaguePage => {this.setState({leaguePage: leaguePage})}} 
+                    callback={onPageChange} 
                     title='menu.promotions' />
             }
         } 
@@ -34,6 +30,11 @@ abstract class CountryLevelLayout<Props, Data extends CountryLevelData, TablePro
                 {promotionsMenu}
             </>
     }
+
+    return <LevelLayout
+            topLeftMenu={topLeftMenu}
+            {...props} 
+        />
 }
 
 export default CountryLevelLayout

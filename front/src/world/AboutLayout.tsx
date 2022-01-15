@@ -1,65 +1,35 @@
-import React from 'react';
-import { isMobile } from 'react-device-detect'
-import { RouteComponentProps } from 'react-router';
+import React, {useEffect, useState} from 'react';
+import {useHistory} from 'react-router';
 import Layout from '../common/layouts/Layout';
-import { getWorldData } from '../rest/Client'
+import '../i18n';
+import {getWorldData} from '../rest/Client';
 import WorldData from '../rest/models/leveldata/WorldData';
-import WorldTopMenu from './WorldTopMenu'
-import WorldLeftLoadingMenu from './WorldLeftLoadingMenu'
-import WorldLeftMenu from './WorldLeftMenu'
-import './About.css'
-import '../i18n'
-import AboutSection from './AboutSection'
+import './About.css';
+import AboutSection from './AboutSection';
+import WorldLeftLoadingMenu from './WorldLeftLoadingMenu';
+import WorldLeftMenu from './WorldLeftMenu';
+import WorldTopMenu from './WorldTopMenu';
 
-interface Props extends RouteComponentProps<{}> {}
+const AboutLayout = () => {
+    const [levelData, setLevelData] = useState(undefined as WorldData | undefined)
+    const history = useHistory()
+    useEffect(() => {
+        getWorldData(worldData => setLevelData(worldData), () => {})    
+    }, [])
 
-interface State {
-    levelData?: WorldData
-}
-
-class AboutLayout extends Layout<Props, State> {
-    constructor(props: Props) {
-        super(props)
-        this.state = {
-            collapsed: isMobile
-        }
-
-        this.leagueIdSelected=this.leagueIdSelected.bind(this)
+    function leagueIdSelected(leagueId: number) {
+        history.push('/league/' + leagueId)
     }
 
-    componentDidMount() {
-        getWorldData(worldData => {
-            this.setState({levelData: worldData})
-        }, () => {})
-    }
-
-    leagueIdSelected(leagueId: number) {
-        this.props.history.push('/league/' + leagueId)
-    }
-
-    topMenu(): JSX.Element {
-        return <WorldTopMenu data={this.state.levelData} 
-            callback={this.leagueIdSelected}/>
-    }
-    content(): JSX.Element {
-        return <AboutSection />
-    }
-    leftMenu(): JSX.Element {
-        return <>
-            <WorldLeftLoadingMenu worldData={this.state.levelData}/>
-            <WorldLeftMenu worldData={this.state.levelData}/>
-        </>
-    }
+    return <Layout 
+        topMenu={<WorldTopMenu data={levelData} 
+            callback={leagueIdSelected}/>}
+            leftMenu={<>
+                <WorldLeftLoadingMenu worldData={levelData}/>
+                <WorldLeftMenu worldData={levelData}/>
+            </>}
+        content={<AboutSection />}
+        />
 }
 
 export default AboutLayout
-
-
-
-
-
-
-
-
-
-
