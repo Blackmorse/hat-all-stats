@@ -5,7 +5,7 @@ import LevelRequest from '../../../rest/models/request/LevelRequest';
 import { LoadingEnum } from '../../enums/LoadingEnum';
 import { formationsChart } from '../../../rest/Client'
 import i18n from '../../../i18n';
-import PlotlyChart from 'react-plotlyjs-ts';
+import PlotlyChart from 'react-plotly.js';
 import '../../charts/Charts.css'
 
 interface Props {

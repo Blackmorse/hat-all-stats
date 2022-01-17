@@ -1,7 +1,7 @@
 import React from 'react';
 import { LeagueUnitTeamStatHistoryInfo } from '../rest/models/team/LeagueUnitTeamStat';
 import i18n from '../i18n';
-import PlotlyChart from 'react-plotlyjs-ts';
+import PlotlyChart from 'react-plotly.js';
 import Section, { SectionState } from '../common/sections/Section';
 
 interface Props {

@@ -1,6 +1,6 @@
 import TeamRanking from '../../rest/models/team/TeamRanking'
 import React from 'react';
-import PlotlyChart from 'react-plotlyjs-ts';
+import PlotlyChart from 'react-plotly.js';
 import i18n from '../../i18n';
 
 interface Props {

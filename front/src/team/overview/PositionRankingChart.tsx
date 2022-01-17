@@ -1,6 +1,6 @@
 import React from 'react'
 import TeamRanking from '../../rest/models/team/TeamRanking'
-import PlotlyChart from 'react-plotlyjs-ts';
+import PlotlyChart from 'react-plotly.js';
 import TeamLevelDataProps from '../TeamLevelDataProps';
 import i18n from '../../i18n';
 import { toRoman } from "../../common/Utils"

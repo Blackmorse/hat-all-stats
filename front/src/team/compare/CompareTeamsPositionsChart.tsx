@@ -1,5 +1,5 @@
 import React from 'react';
-import PlotlyChart from 'react-plotlyjs-ts';
+import PlotlyChart from 'react-plotly.js';
 import TeamComparsion from '../../rest/models/team/TeamComparsion';
 import TeamRanking from '../../rest/models/team/TeamRanking';
 import TeamLevelDataProps from '../TeamLevelDataProps';

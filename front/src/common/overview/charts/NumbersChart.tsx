@@ -4,7 +4,7 @@ import NumbersChartModel from '../../../rest/models/overview/NumbersChartModel'
 import { LoadingEnum } from '../../enums/LoadingEnum';
 import LevelRequest from '../../../rest/models/request/LevelRequest';
 import i18n from '../../../i18n';
-import PlotlyChart from 'react-plotlyjs-ts';
+import PlotlyChart from 'react-plotly.js';
 import '../../charts/Charts.css'
 
 interface Props {
