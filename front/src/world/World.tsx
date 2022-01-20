@@ -1,7 +1,7 @@
 import React from 'react'
 import { getWorldData } from '../rest/Client'
 import WorldTopMenu from './WorldTopMenu'
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import WorldLevelDataProps from './WorldLevelDataProps'
 import WorldLeftLoadingMenu from './WorldLeftLoadingMenu'
 import WorldData from '../rest/models/leveldata/WorldData'
@@ -12,10 +12,10 @@ import pages from './WorldPages';
 
 const World = () => {
     let pagesMap = pages()
-    const history = useHistory() 
+    const navigate = useNavigate() 
 
     function leagueIdSelected(leagueId: number) {
-        history.push('/league/' + leagueId)
+        navigate('/league/' + leagueId)
     }
 
     return <LevelLayout<WorldData, LevelDataProps<WorldData>>

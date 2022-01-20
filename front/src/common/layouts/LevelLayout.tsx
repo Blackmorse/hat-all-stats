@@ -78,7 +78,7 @@ const LevelLayout = <Data extends LevelData, TableProps extends LevelDataProps<D
     const [ queryParams ] = useState(parseQueryParams())
     //TODO 
     const [ page, setPage ] = useState((queryParams.pageString === undefined) ? 
-        Array.from(props.pagesMap)[0][0] : Mappings.queryParamToPageMap.getValue(queryParams.pageString))
+        Array.from(props.pagesMap)[0][0] : Mappings.queryParamToPageMap.get(queryParams.pageString))
     const [ isError, setIsError ] = useState(false)
     const [ levelData, setLevelData ] = useState(undefined as Data | undefined)
 
@@ -114,7 +114,7 @@ const LevelLayout = <Data extends LevelData, TableProps extends LevelDataProps<D
         errorPopup = <></>
     }
     let res: JSX.Element
-    let jsxFunction = props.pagesMap.get(page)
+    let jsxFunction = props.pagesMap.get(page!)
     if (levelData && jsxFunction) {
         res = jsxFunction(props.makeModelProps(levelData), queryParams)
     } else {
@@ -123,7 +123,7 @@ const LevelLayout = <Data extends LevelData, TableProps extends LevelDataProps<D
     let content = <>
             {errorPopup}
             <Card className="mt-3 shadow">
-                <Card.Header className="lead">{t(page)}</Card.Header>
+                <Card.Header className="lead">{t(page!)}</Card.Header>
                 <Card.Body>{res}</Card.Body>
             </Card>
         </>

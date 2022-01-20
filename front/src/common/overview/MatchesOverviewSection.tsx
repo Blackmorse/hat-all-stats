@@ -29,7 +29,7 @@ abstract class MatchesOverviewSection<Data extends LevelData> extends OverviewTa
     tableRow(matc: MatchTopHatstats, leagueNameFunc: (id: number) => JSX.Element): JSX.Element {
         return <MatchOverviewRow rowIndex={0} rowModel={matc} request={this.state.dataRequest}
             linkProvider={this.props.linkProvider} leagueNameFunc={leagueNameFunc} className="" 
-            key={'match_overview_section_' + matc.matchId}/>
+            key={'match_hatstats_overview_section_' + matc.matchId + '_' + Math.random()}/>
     }
 }
 

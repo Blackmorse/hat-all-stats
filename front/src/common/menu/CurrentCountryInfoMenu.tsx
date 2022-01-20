@@ -24,7 +24,7 @@ class CurrentCountryInfoMenu<Data extends CountryLevelData> extends React.Compon
                 <Card className="mb-3 shadow">
                     <Card.Header className="lead">{this.props.levelDataProps.levelData.leagueName}</Card.Header>
                     <Card.Body>
-                        <Container d-flex className='flex-column'>
+                        <Container d-flex='true' className='flex-column'>
                             <div>{t('filter.season')}: {this.props.levelDataProps.offsettedSeason()} </div>
                             <div className='mb-2'>{t('filter.round')} {this.props.levelDataProps.currentRound()}</div>
                             <div>{dateString}</div>

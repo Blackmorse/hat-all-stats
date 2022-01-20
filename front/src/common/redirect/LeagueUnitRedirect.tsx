@@ -1,17 +1,15 @@
-import React from 'react'
-import { RouteComponentProps } from 'react-router';
+import React, {useEffect} from 'react'
+import {useNavigate} from 'react-router';
 
-class LeagueUnitRedirect extends React.Component<RouteComponentProps> {
-    constructor(props: RouteComponentProps) {
-        super(props)
+const LeagueUnitRedirect = () => {
+    const navigate = useNavigate()
+
+    useEffect(() => {
         let params = new URLSearchParams(window.location.search);
         let leagueUnitId = params.get('leagueUnitId')
-        this.props.history.push('/leagueUnit/' + leagueUnitId)
-    }
-
-    render() {
-        return <></>
-    }
+        navigate('/leagueUnit/' + leagueUnitId)
+    })
+    return <></>
 }
 
 export default LeagueUnitRedirect

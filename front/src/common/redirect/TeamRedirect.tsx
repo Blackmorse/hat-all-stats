@@ -1,17 +1,14 @@
-import React from 'react'
-import { RouteComponentProps } from 'react-router';
+import {useNavigate} from "react-router";
+import React, {useEffect} from 'react'
 
-class TeamRedirect extends React.Component<RouteComponentProps> {
-    constructor(props: RouteComponentProps) {
-        super(props)
+const TeamRedirect = () => { 
+    const navigate = useNavigate()
+    useEffect(() => {
         let params = new URLSearchParams(window.location.search);
         let teamId = params.get('teamId')
-        this.props.history.push('/team/' + teamId)
-    }
-
-    render() {
-        return <></>
-    }
+        navigate('/team/' + teamId)
+    })
+    return <></>
 }
 
 export default TeamRedirect

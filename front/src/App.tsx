@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import {  Route, BrowserRouter as Router, Switch } from 'react-router-dom'
+import {  Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import League from './league/League'
 import DivisionLevel from './divisionlevel/DivisionLevel'
 import LeagueUnit from './leagueunit/LeagueUnit'
@@ -18,18 +18,18 @@ class App extends React.Component{
   render() {
     return (<>
     <Router>
-      <Switch>
-        <Route exact path="/" component={AboutLayout} />
-        <Route exact path="/about" component={AboutLayout} />
-        <Route exact path="/worldOverview" component={World} />
-        <Route exact path="/league" component={LeagueRedirect} />
-        <Route exact path="/league/:leagueId" component={League} />
-        <Route exact path="/league/:leagueId/divisionLevel/:divisionLevel"  component={DivisionLevel}/>
-        <Route exact path="/leagueLevelUnit" component={LeagueUnitRedirect} />
-        <Route exact path="/leagueUnit/:leagueUnitId" component={LeagueUnit}/>
-        <Route exact path="/team/teamOverview" component={TeamRedirect}/>
-        <Route exact path="/team/:teamId" component={Team}/>
-      </Switch>
+      <Routes>
+        <Route path="/" element={<AboutLayout />} />
+        <Route path="/about" element={<AboutLayout />} />
+        <Route path="/worldOverview" element={<World />} />
+        <Route path="/league" element={<LeagueRedirect />} />
+        <Route path="/league/:leagueId" element={<League />} />
+        <Route path="/league/:leagueId/divisionLevel/:divisionLevel"  element={<DivisionLevel />}/>
+        <Route path="/leagueLevelUnit" element={<LeagueUnitRedirect />} />
+        <Route path="/leagueUnit/:leagueUnitId" element={<LeagueUnit />}/>
+        <Route path="/team/teamOverview" element={<TeamRedirect />}/>
+        <Route path="/team/:teamId" element={<Team />}/>
+      </Routes>
       </Router>
       <CookieWidget />
       </>

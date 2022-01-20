@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import { PagesEnum } from '../enums/PagesEnum'
 import { MenuGroupsEnum } from '../enums/MenuGroupsEnum'
 import { Translation } from 'react-i18next'
@@ -80,7 +80,7 @@ class LeftMenu extends React.Component<Props, State> {
                 <Card.Header className="lead">{t(this.props.title)}</Card.Header>
                 <Card.Body>
                     {Array.from(groups.keys()).map((group, indexGroup) => {
-                        return <>
+                        return <Fragment key={'left_menu_' + indexGroup}>
                             <button className="btn btn-toggle align-items-center rounded collapsed ps-0 pb-0"
                                 onClick={() => this.showHide(group)}>
                                 {(stateMap.get(group) ? down : right)} {t(group)}
@@ -88,12 +88,12 @@ class LeftMenu extends React.Component<Props, State> {
                             <div className='collapse show' id={indexGroup + '_collapse'}>
                                 <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 mb-1 small ms-4"> 
                                     {(stateMap.get(group)) ? groups.get(group)?.map(page => {
-                                        return <li><Link to="#" className="left-menu-link link-dark rounded"
+                                        return <li key={'left_menu_' + indexGroup + '_' + page}><Link to="#" className="left-menu-link link-dark rounded"
                                             onClick={() => this.props.callback(page)}>{t(page)}</Link></li>
                                     }) : <></>}
                                 </ul>
                             </div>
-                        </>
+                        </Fragment>
                     })}
                 </Card.Body>
             </Card>

@@ -24,7 +24,7 @@ abstract class OverviewTableSection<Data extends LevelData, Entity>
 
         if (this.isWorldData) {
             let nameMap = this.props.levelDataProps.countriesMap()
-            leagueNameFunc = (id) => <td className="value">
+            leagueNameFunc = (id) => <td key={'match_row_' + id + '_' + Math.random()} className="value">
                     <LeagueLink id={id} text={<CountryImage countryId={id} text={nameMap.get(id)} />}/>
                     
                 </td>

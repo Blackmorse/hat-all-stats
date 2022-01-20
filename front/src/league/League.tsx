@@ -1,5 +1,5 @@
 import React from 'react';
-import {useHistory, useParams} from 'react-router';
+import { useMatch, useNavigate} from 'react-router';
 import CountryLevelLayout from '../common/layouts/CountryLevelLayout';
 import {getLeagueData} from '../rest/Client';
 import LeagueData from '../rest/models/leveldata/LeagueData';
@@ -7,13 +7,9 @@ import LeagueLevelDataProps from './LeagueLevelDataProps';
 import pages from './LeaguePages';
 import LeagueTopMenu from './LeagueTopMenu';
 
-interface MatchParams {
-    leagueId: string;
-}
-
 const League = () => {
-    const history = useHistory()
-    const { leagueId } = useParams<MatchParams>()
+    const navigate = useNavigate()
+    const params = useMatch('league/:league')
 
     let pagesMap = pages()
 
@@ -21,8 +17,8 @@ const League = () => {
     return <CountryLevelLayout<LeagueData, LeagueLevelDataProps>
             pagesMap={pagesMap}
             topMenu={(levelData) => <LeagueTopMenu data={levelData}
-                callback={divisionLevel => {history.push('/league/' + leagueId + '/divisionLevel/' + divisionLevel)}}/>}
-            fetchLevelData={(callback, onError) => getLeagueData(Number(leagueId), callback, onError)}
+                callback={divisionLevel => {navigate('/league/' + params?.params.league + '/divisionLevel/' + divisionLevel)}}/>}
+            fetchLevelData={(callback, onError) => getLeagueData(Number(params?.params.league), callback, onError)}
             documentTitle={(data) => data.leagueName}
             makeModelProps={data => new LeagueLevelDataProps(data)}
         />

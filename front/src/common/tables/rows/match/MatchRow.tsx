@@ -25,7 +25,7 @@ abstract class MatchRow<RowModel extends {matchId: number}, Props extends TableR
         let columns = this.columns(this.props.rowIndex, this.props.rowModel)
         if (!this.state.expanded) {
             return <tr className={this.props.className}>
-                <td>                   
+                <td key={'match_row' + this.props.rowModel.matchId + '_' + Math.random()}>                   
                     <i className='bi bi-caret-right-fill table_link' onClick={() => this.setState({expanded: !this.state.expanded})}></i>
                 </td>
                 {columns}
@@ -33,13 +33,13 @@ abstract class MatchRow<RowModel extends {matchId: number}, Props extends TableR
         } else {
             return <>
                 <tr className={this.props.className}>
-                    <td>
+                    <td key={'match_row' + this.props.rowModel.matchId + '_' + Math.random()}>
                         <i className='bi bi-caret-down-fill table_link' onClick={() => this.setState({expanded: !this.state.expanded})}></i>
                     </td>
                     {columns}
                 </tr>
                 <tr className='white_row'>
-                    <td colSpan={columns.length + 1}>
+                    <td colSpan={columns.length + 1} key={'match_row' + this.props.rowModel.matchId + '_' + Math.random()}>
                         <TeamMatchInfoExecutableSection matchId={this.props.rowModel.matchId} />
                     </td>
                 </tr>

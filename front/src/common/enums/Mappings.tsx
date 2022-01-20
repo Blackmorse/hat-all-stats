@@ -1,6 +1,6 @@
 import { PagesEnum } from './PagesEnum'
 import { MenuGroupsEnum } from './MenuGroupsEnum'
-import { BiDirectionalMap } from 'bi-directional-map/dist';
+import BiMap from 'ts-bidirectional-map';
 
 class Mappings {
     static groupMap: Map<PagesEnum, MenuGroupsEnum> = 
@@ -46,8 +46,16 @@ class Mappings {
 
     static PAGE = 'page'
 
-    static queryParamToPageMap: BiDirectionalMap<string, PagesEnum> = 
-        new BiDirectionalMap([
+    static createBiMap<K, V>(arr: Array<[K, V]>): BiMap<K, V> {
+        let biMap = new BiMap<K, V>()
+        arr.forEach(a => {
+            biMap.set(a[0], a[1])
+        })
+        return biMap
+    }
+
+    static queryParamToPageMap: BiMap<string, PagesEnum> = 
+        Mappings.createBiMap([
             ['leagueUnits', PagesEnum.LEAGUE_UNITS],
             ['teamHatstats', PagesEnum.TEAM_HATSTATS],
             ['teamOverview', PagesEnum.TEAM_OVERVIEW],

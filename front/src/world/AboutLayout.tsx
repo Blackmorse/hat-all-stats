@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useHistory} from 'react-router';
+import { useNavigate } from 'react-router';
 import Layout from '../common/layouts/Layout';
 import '../i18n';
 import {getWorldData} from '../rest/Client';
@@ -12,13 +12,13 @@ import WorldTopMenu from './WorldTopMenu';
 
 const AboutLayout = () => {
     const [levelData, setLevelData] = useState(undefined as WorldData | undefined)
-    const history = useHistory()
+    const navigate = useNavigate()
     useEffect(() => {
         getWorldData(worldData => setLevelData(worldData), () => {})    
     }, [])
 
     function leagueIdSelected(leagueId: number) {
-        history.push('/league/' + leagueId)
+        navigate('/league/' + leagueId)
     }
 
     return <Layout 
