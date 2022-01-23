@@ -157,8 +157,29 @@ object CupSchedule {
     ScheduleEntry(1001, format.parse("Jul 13 17:00:00 MSK 2021"))
   )
 
+  def isSummerTimeNow(): Boolean = {
+    val now = Calendar.getInstance()
+
+
+    val lastSundayOfMarch = Calendar.getInstance()
+    lastSundayOfMarch.set(Calendar.MONTH, Calendar.APRIL)
+    lastSundayOfMarch.add(Calendar.DAY_OF_MONTH, -1);
+    while(lastSundayOfMarch.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+      lastSundayOfMarch.add(Calendar.DAY_OF_MONTH, -1)
+    }
+
+    val lastSundayOfOctober = Calendar.getInstance()
+    lastSundayOfOctober.set(Calendar.MONTH, Calendar.OCTOBER)
+    lastSundayOfOctober.add(Calendar.DAY_OF_MONTH, -1);
+    while(lastSundayOfOctober.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+      lastSundayOfOctober.add(Calendar.DAY_OF_MONTH, -1)
+    }
+
+    now.after(lastSundayOfMarch) && now.before(lastSundayOfOctober)
+  }
   def normalizeCupScheduleToDayOfWeek(cupSchedules: Seq[ScheduleEntry], dayOfWeek: Int): Seq[ScheduleEntry] = {
     val c = Calendar.getInstance
+
     c.set(Calendar.DAY_OF_WEEK, dayOfWeek)
     val monday = c.getTime
 

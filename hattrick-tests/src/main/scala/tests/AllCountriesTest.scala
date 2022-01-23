@@ -5,11 +5,12 @@ import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.WorldDetails
 import chpp.{ChppRequestExecutor, OauthTokens}
 import com.typesafe.config.ConfigFactory
+import hattid.CupSchedule.isSummerTimeNow
 import hattid.telegram.TelegramClient
 import hattid.telegram.TelegramClient.TelegramCreds
 import hattid.{CommonData, CupSchedule, ScheduleEntry}
 
-import java.util.Calendar
+import java.util.{Calendar, Date}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -36,8 +37,8 @@ object AllCountriesTest {
     try {
       testNumberOfCountries(worldDetails)
       testFirstAndLastLeague(worldDetails)
-      testCupSchedule(worldDetails)
       testDivisionLevels(worldDetails)
+      testCupSchedule(worldDetails)
       Await.result(TelegramClient.sendMessage("Countries tests succesfully passed!"), 1.minute)
     } catch {
       case e: Exception =>
@@ -58,8 +59,12 @@ object AllCountriesTest {
     val schedule = CupSchedule.normalizeCupScheduleToDayOfWeek(CupSchedule.seq, Calendar.MONDAY)
       .sortBy(_.date)
 
-    val worldDetailsSchedule = CupSchedule.normalizeCupScheduleToDayOfWeek(worldDetails.leagueList
-      .map(league => ScheduleEntry(league.leagueId, league.cupMatchDate.get)), Calendar.MONDAY)
+    val dayLightSavingOffset = if (CupSchedule.isSummerTimeNow()) 0L else 1000L * 60 * 60
+
+    val worldDetailsSchedule = CupSchedule.normalizeCupScheduleToDayOfWeek(
+          worldDetails.leagueList
+          .map(league => ScheduleEntry(league.leagueId, new Date(league.cupMatchDate.get.getTime + dayLightSavingOffset))),
+        Calendar.MONDAY)
       .sortBy(_.date)
 
     val changes = schedule.zip(worldDetailsSchedule)
