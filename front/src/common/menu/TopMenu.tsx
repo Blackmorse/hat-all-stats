@@ -41,6 +41,7 @@ abstract class TopMenu<Data, Props extends TopMenuProps<Data>> extends React.Com
                                     <NavLink href={link[0]} >
                                         {(link[1]) ? link[1] : placeholder}
                                     </NavLink>
+                                    {(index === links.length - 1) ? <span className='me-2' >{this.externalLink()}</span> : <></>}
                                     <span className="d-none d-sm-none d-md-block">{(index !== links.length - 1  || selectBox) ? arrow : <></>}</span>
                                 </li>
                             })}
