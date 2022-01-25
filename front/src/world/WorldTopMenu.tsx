@@ -1,47 +1,39 @@
 import React from 'react'
 import TopMenu from '../common/menu/TopMenu'
 import WorldData from '../rest/models/leveldata/WorldData'
-import '../i18n'
-import i18n from '../i18n'
 import { Form } from 'react-bootstrap'
+import {useNavigate} from 'react-router'
+import {useTranslation} from 'react-i18next'
 
-interface Props {
-    data?: WorldData,
-    callback: (leagueId: number) => void
-}
+const WorldTopMenu = (props: {data?: WorldData}) => {
+    const t = useTranslation().t
+    let navigate = useNavigate()
 
-class WorldTopMenu extends TopMenu<WorldData, Props> {
-    links(): [string, string?][] {
-        return []
-    }
+    let sectionLinks = [
+        {href: '/about', text: t('menu.about')},
+        {href: '/worldOverview', text: t('overview.world_overview')}
+    ]
 
-    externalLink(): JSX.Element | undefined {
-        return undefined
-    }
-
-    sectionLinks(): Array<{href: string, text: string}> {
-        return [
-            {href: '/about', text: i18n.t('menu.about')},
-            {href: '/worldOverview', text: i18n.t('overview.world_overview')}
-        ]
-    }
-
-    onChanged = (event: React.FormEvent<HTMLSelectElement>) => {
-        this.props.callback(Number(event.currentTarget.value))
-      }
-
-    selectBox(): JSX.Element {
-        return <Form>
-            <Form.Select  size="sm" className="my-1 pr-3 me-md-5" max-width="100" onChange={this.onChanged}>
+    let selectBox = <Form>
+            <Form.Select  size="sm" className="my-1 pr-3 me-md-5" max-width="100" 
+                    onChange={(e: React.FormEvent<HTMLSelectElement>) => navigate('/league/' + Number(e.currentTarget.value))}>
             <option value={undefined}>Select...</option>
-            {this.props.data?.countries.map(countryInfo => {
+            {props.data?.countries.map(countryInfo => {
                 return <option value={countryInfo[0]} key={'league_select_' + countryInfo[0]}>
                     {countryInfo[1]}
                 </option>
             })}
         </Form.Select>
-        </Form> 
-    }
+    </Form> 
+
+
+    return <TopMenu 
+        selectBox={selectBox}
+        data={props.data}
+        links={[]}
+        sectionLinks={sectionLinks}
+    />
 }
 
 export default WorldTopMenu
+

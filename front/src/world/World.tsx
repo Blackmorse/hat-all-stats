@@ -1,7 +1,6 @@
 import React from 'react'
 import { getWorldData } from '../rest/Client'
 import WorldTopMenu from './WorldTopMenu'
-import { useNavigate } from 'react-router';
 import WorldLevelDataProps from './WorldLevelDataProps'
 import WorldLeftLoadingMenu from './WorldLeftLoadingMenu'
 import WorldData from '../rest/models/leveldata/WorldData'
@@ -12,15 +11,10 @@ import pages from './WorldPages';
 
 const World = () => {
     let pagesMap = pages()
-    const navigate = useNavigate() 
-
-    function leagueIdSelected(leagueId: number) {
-        navigate('/league/' + leagueId)
-    }
 
     return <LevelLayout<WorldData, LevelDataProps<WorldData>>
             pagesMap={pagesMap}
-            topMenu={(levelData => <WorldTopMenu data={levelData} callback={leagueIdSelected}  />)}
+            topMenu={(levelData => <WorldTopMenu data={levelData} />)}
             topLeftMenu={leveData => <WorldLeftLoadingMenu worldData={leveData} />}
             fetchLevelData={(callback, onError) => getWorldData(callback, onError)}
             makeModelProps={levelData => new WorldLevelDataProps(levelData)}

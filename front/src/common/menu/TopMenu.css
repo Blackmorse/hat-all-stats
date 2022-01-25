@@ -3,3 +3,8 @@
     overflow: hidden; 
     white-space: nowrap;
 }
+
+.neighboor_league_unit_link:hover {
+    opacity: 0.5;
+    cursor: pointer;
+}

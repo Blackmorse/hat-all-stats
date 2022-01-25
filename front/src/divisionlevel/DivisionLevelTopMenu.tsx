@@ -3,39 +3,46 @@ import DivisionLevelData from '../rest/models/leveldata/DivisionLevelData'
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu';
 import { Form } from 'react-bootstrap';
+import {useNavigate} from 'react-router';
+import {getLeagueUnitIdByName} from '../rest/Client';
 
+const DivisionLevelTopMenu = (props: {data?: DivisionLevelData}) => {
+    let navigate = useNavigate()
 
-interface Props {
-    data?: DivisionLevelData,
-    callback: (leagueUnitName: string) => void
-}
-
-class DivisionLevelTopMenu extends TopMenu<DivisionLevelData, Props> {
-
-    onChanged = (event: React.FormEvent<HTMLSelectElement>) => {
-        this.props.callback(this.props.data?.divisionLevelName + '.' + event.currentTarget.value)
-      }
-
-    links(): [string, string?][] {
-      return [
-        ["/league/" + this.props.data?.leagueId, this.props.data?.leagueName],
-        ["/league/" + this.props.data?.leagueId + "/divisionLevel/" + this.props.data?.divisionLevel, this.props.data?.divisionLevelName]
+    let links = [
+        {
+            href: "/league/" + props.data?.leagueId, 
+            content: props.data?.leagueName
+        },
+        {
+            href: "/league/" + props.data?.leagueId + "/divisionLevel/" + props.data?.divisionLevel, 
+            content: props.data?.divisionLevelName
+        }
       ]
+
+    let onChanged = (e: React.FormEvent<HTMLSelectElement>) => { 
+        getLeagueUnitIdByName(Number(props.data?.leagueId), props.data?.divisionLevelName + '.' + e.currentTarget.value, id => {
+            navigate('/leagueUnit/' + id)
+        })
+        
     }
 
-    externalLink(): JSX.Element | undefined {
-      return undefined;
-    }
-    selectBox(): JSX.Element {
-      return <Form>
-        <Form.Select  size="sm" className="mt-3 mb-3 pr-3" max-width="200" onChange={this.onChanged}>
+    let selectBox = <Form>
+        <Form.Select  size="sm" className="mt-3 mb-3 pr-3" max-width="200" 
+            onChange={onChanged}>
                 <option value={undefined}>Select...</option>
-                {Array.from(Array(this.props.data?.leagueUnitsNumber), (_, i) => i + 1).map(leagueUnit => {
+                {Array.from(Array(props.data?.leagueUnitsNumber), (_, i) => i + 1).map(leagueUnit => {
                     return <option key={'division_leve_top_menu_' + leagueUnit} value={leagueUnit}>{leagueUnit}</option>
                 })}
             </Form.Select>
           </Form>
-    }
+
+    return <TopMenu
+            data={props.data}
+            selectBox={selectBox}
+            links={links}
+            sectionLinks={[]}
+        />
 }
 
 export default DivisionLevelTopMenu

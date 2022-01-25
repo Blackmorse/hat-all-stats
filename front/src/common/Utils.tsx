@@ -49,3 +49,47 @@ export function toRoman(division: number): string {
     }
     return ""
 }
+
+function splitLeagueUnit(leagueUnit: string): [string, number?] {
+    let split = leagueUnit.split('.')
+    if (split.length !== 2) {
+        return [leagueUnit]
+    }
+    if (isNaN(Number(split[1]))) {
+        return [leagueUnit]
+    }
+    return [split[0], Number(split[1])]
+}
+
+let numberLeagueUnitsMap: Map<string, number> = new Map<string, number>([
+    ['II', 4],
+    ['III', 16],
+    ['IV', 64],
+    ['V', 256],
+    ['VI', 1024],
+    ['VII', 1024],
+    ['VIII', 2048],
+    ['IX', 2048]
+])
+
+export function nextLeagueUnit(leagueUnit: string): string | undefined {
+    let [division, leagueUnitNumber] = splitLeagueUnit(leagueUnit)
+    if (leagueUnitNumber === undefined) {
+        return undefined
+    }
+    if (leagueUnitNumber === numberLeagueUnitsMap.get(division)) {
+        return undefined
+    }
+    return division + '.' + (leagueUnitNumber + 1)
+}
+
+export function previousLeagueUnit(leagueUnit: string): string | undefined {
+    let [division, leagueUnitNumber] = splitLeagueUnit(leagueUnit)
+    if (leagueUnitNumber === undefined) {
+        return undefined
+    }
+    if (leagueUnitNumber === 1) {
+        return undefined
+    }
+    return division + '.' + (leagueUnitNumber -1 )
+}

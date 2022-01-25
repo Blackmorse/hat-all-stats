@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import { useNavigate } from 'react-router';
 import Layout from '../common/layouts/Layout';
 import '../i18n';
 import {getWorldData} from '../rest/Client';
@@ -12,18 +11,12 @@ import WorldTopMenu from './WorldTopMenu';
 
 const AboutLayout = () => {
     const [levelData, setLevelData] = useState(undefined as WorldData | undefined)
-    const navigate = useNavigate()
     useEffect(() => {
         getWorldData(worldData => setLevelData(worldData), () => {})    
     }, [])
 
-    function leagueIdSelected(leagueId: number) {
-        navigate('/league/' + leagueId)
-    }
-
     return <Layout 
-        topMenu={<WorldTopMenu data={levelData} 
-            callback={leagueIdSelected}/>}
+        topMenu={<WorldTopMenu data={levelData} />}
             leftMenu={<>
                 <WorldLeftLoadingMenu worldData={levelData}/>
                 <WorldLeftMenu worldData={levelData}/>
