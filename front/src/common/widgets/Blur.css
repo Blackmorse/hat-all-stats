@@ -3,7 +3,7 @@
     width: 100%;
     height: 100%;
     background: rgba(220, 220, 220, 0.7);
-    z-index: 2;
+    z-index: 100;
 }
 
 .blur_loader {
