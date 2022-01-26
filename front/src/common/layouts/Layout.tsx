@@ -68,7 +68,7 @@ const Layout = (props: Props) => {
     return <>
                  <header>
                     <YMInitializer accounts={[67069579]} />
-                    <Container fluid style={{height: '25px'}} className='d-flex mb-1'>
+                    <Container fluid className='d-flex mb-1'>
                         <div className='me-auto ms-2'>
                             Follow me: 
                             <a className='ms-1' target='_tab' href='https://www.hattrick.org/goto.ashx?path=/MyHattrick/Inbox/?actionType=newMail%26userId=4040806'>
