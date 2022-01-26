@@ -18,20 +18,20 @@ class TeamMatchMetaInfo extends React.Component<Props> {
             >
             <tbody>
                 <tr>
-                    <td className='text-center'>{t('table.hatstats')}</td>
-                    <td className='text-end ' style={{whiteSpace: 'nowrap'}}>{matchRatings.ratingMidfield * 3 + matchRatings.ratingLeftAtt + matchRatings.ratingMidAtt + matchRatings.ratingRightAtt + matchRatings.ratingLeftDef + matchRatings.ratingMidDef + matchRatings.ratingRightDef}</td>
+                    <td className='text-center align-middle'>{t('table.hatstats')}</td>
+                    <td className='text-end ' >{matchRatings.ratingMidfield * 3 + matchRatings.ratingLeftAtt + matchRatings.ratingMidAtt + matchRatings.ratingRightAtt + matchRatings.ratingLeftDef + matchRatings.ratingMidDef + matchRatings.ratingRightDef}</td>
                 </tr>
                 <tr>
-                    <td className='text-center'>{t('matches.formation')}</td>
-                    <td className='text-end' style={{whiteSpace: 'nowrap'}}>{matchRatings.formation}</td>
+                    <td className='text-center align-middle'>{t('matches.formation')}</td>
+                    <td className='text-end' >{matchRatings.formation}</td>
                 </tr>
                 <tr>
-                    <td className='text-center'>{t('match.tactic')}</td>
-                    <td className='text-end' style={{whiteSpace: 'nowrap'}}>{t(Mappings.tacticType.get(matchRatings.tacticType) || '')}</td>
+                    <td className='text-center align-middle'>{t('match.tactic')}</td>
+                    <td className='text-end' >{t(Mappings.tacticType.get(matchRatings.tacticType) || '')}</td>
                 </tr>
                 <tr>
-                    <td className='text-center'>{t('match.tactic_skill')}</td>
-                    <td className='text-end' style={{whiteSpace: 'nowrap'}}>{matchRatings.tacticSkill}</td>
+                    <td className='text-center align-middle'>{t('match.tactic_skill')}</td>
+                    <td className='text-end' >{matchRatings.tacticSkill}</td>
                 </tr>
             </tbody>
         </table>
