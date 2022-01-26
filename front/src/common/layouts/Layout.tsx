@@ -51,10 +51,10 @@ const Layout = (props: Props) => {
 
     let body = (!collapsed) ? <Container  d-flex='true' fluid>
         <Row>
-            <Col lg={3} md={4} xs={4}>
+            <Col lg={3} md={4} xs={12} sm={12}>
                 {collapsibleLeftMenu}
             </Col>
-            <Col lg={9} md={8} xs={8}>
+            <Col lg={9} md={8} xs={12} sm={12}>
                 {props.content}
             </Col>
         </Row>
