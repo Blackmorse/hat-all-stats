@@ -17,6 +17,7 @@ import { LoadingEnum } from '../common/enums/LoadingEnum';
 import RestTableData from '../rest/models/RestTableData';
 import TeamPositionsChart from './TeamPositionsChart'
 import Section from '../common/sections/Section';
+import HattidTooltip from '../common/elements/HattidTooltip';
 
 class TeamPositionsTableBase extends AbstractTableSection<LeagueUnitData, LeagueUnitLevelDataProps, LeagueUnitTeamStatsWithPositionDiff, LeagueUnitTeamStatHistoryInfo> {
         
@@ -44,16 +45,21 @@ class TeamPositionsTableBase extends AbstractTableSection<LeagueUnitData, League
         return <Translation>
             {(t, { i18n }) => 
                 <tr>
-                    <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                    <HattidTooltip
+                        poppedHint={t('table.position')}
+                        content={<th>{t('table.position_abbr')}</th>}
+                    />
                     <th></th>
                     <th>{t('table.team')}</th>
-                    <th className="text-center hint" popped-hint={t('table.games')}>{t('table.games_abbr')}</th>
+                    <HattidTooltip
+                        poppedHint={t('table.games')}
+                        content={<th className="text-center">{t('table.games_abbr')}</th>}
+                    />
                     <SortingTableTh poppedHint={t('table.win')} title='table.win_abbr' sortingField='win' sortingState={sortingState}/>
                     <SortingTableTh poppedHint={t('table.draw')} title='table.draw_abbr' sortingField='draw' sortingState={sortingState} />
                     <SortingTableTh poppedHint={t('table.lose')} title='table.lose_abbr' sortingField='lost' sortingState={sortingState} />
                     <SortingTableTh poppedHint={t('table.goals_for')} title='table.goals_for_abbr' sortingField='scored' sortingState={sortingState} />
                     <SortingTableTh poppedHint={t('table.goals_against')} title='table.goals_against_abbr' sortingField='missed' sortingState={sortingState} />
-                
                     <SortingTableTh title='table.points' sortingField='points' sortingState={sortingState} />
                 </tr>
             }
@@ -79,7 +85,7 @@ class TeamPositionsTableBase extends AbstractTableSection<LeagueUnitData, League
             <td className="text-center">{teamPosition.lost}</td>
             <td className="text-center">{teamPosition.scored}</td>
             <td className="text-center">{teamPosition.missed}</td>
-            <td className="text-centers">{teamPosition.points}</td>
+            <td className="text-center">{teamPosition.points}</td>
         </tr>
     }
 

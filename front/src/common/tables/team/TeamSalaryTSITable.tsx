@@ -14,6 +14,7 @@ import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { LoadingEnum } from '../../enums/LoadingEnum'
 import RestTableData from '../../../rest/models/RestTableData'
 import { SelectorsEnum } from '../SelectorsEnum';
+import HattidTooltip from '../../elements/HattidTooltip';
 
 class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
     extends AbstractTableSection<Data, TableProps, TeamSalaryTSI, RestTableData<TeamSalaryTSI>> {
@@ -40,7 +41,10 @@ class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataPro
             {
             (t, { i18n }) =>
             <tr>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.tsi' sortingField='tsi' sortingState={sortingState} />

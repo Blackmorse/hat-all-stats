@@ -17,6 +17,7 @@ import LeagueLink from '../../links/LeagueLink';
 import CountryImage from '../../elements/CountryImage';
 import Mappings from '../../enums/Mappings';
 import i18n from '../../../i18n';
+import HattidTooltip from '../../elements/HattidTooltip';
 
 abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
         extends PlayersTableSection<Data, TableProps, PlayerRating> {
@@ -33,7 +34,10 @@ abstract class PlayerRatingsTable<Data extends LevelData, TableProps extends Lev
             {
             (t, { i18n }) =>
             <tr>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>

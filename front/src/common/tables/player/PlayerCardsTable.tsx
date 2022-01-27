@@ -18,6 +18,7 @@ import LeagueLink from '../../links/LeagueLink';
 import Mappings from '../../enums/Mappings';
 import i18n from '../../../i18n';
 import { ageFormatter } from '../../Formatters'
+import HattidTooltip from '../../elements/HattidTooltip';
 
 abstract class PlayerCardsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends PlayersTableSection<Data, TableProps, PlayerCards> {
@@ -34,7 +35,10 @@ abstract class PlayerCardsTable<Data extends LevelData, TableProps extends Level
             {
             (t, { i18n }) =>
             <tr>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>

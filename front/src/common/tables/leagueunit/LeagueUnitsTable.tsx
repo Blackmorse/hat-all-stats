@@ -11,6 +11,7 @@ import LevelData from '../../../rest/models/leveldata/LevelData';
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { getLeagueUnits } from '../../../rest/Client'
 import { loddarStats } from '../../Formatters'
+import HattidTooltip from '../../elements/HattidTooltip';
 
 class LeagueUnitsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
         extends ClassicTableSection<Data, TableProps ,LeagueUnitRating> {
@@ -25,7 +26,10 @@ class LeagueUnitsTable<Data extends LevelData, TableProps extends LevelDataProps
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>{
             (t, { i18n }) => <tr>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>              
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>              }
+                />
                 <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.hatstats' sortingField='hatstats'  sortingState={sortingState}/>
                 <ModelTableTh title='table.midfield' sortingField='midfield' sortingState={sortingState}/>

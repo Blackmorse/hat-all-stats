@@ -1,8 +1,9 @@
 import React from 'react';
-import { Translation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom';
 import '../../i18n'
 import { SortingDirection } from '../../rest/models/StatisticsParameters';
+import HattidTooltip from './HattidTooltip'
 
 interface SortingState {
     callback: (sortBy: string) => void,
@@ -18,18 +19,17 @@ interface ThProps {
     poppedHint?: string
 }
 
-class SortingTableTh extends React.Component<ThProps> {
-    render() {
-        return <Translation>
-            {(t, { i18n }) =>
-                <th className={(this.props.poppedHint) ? "text-center hint" : "text-center"} popped-hint={this.props.poppedHint} >
-                    <Link className="link-dark" to='#' onClick={() => this.props.sortingState.callback(this.props.sortingField)}>{t(this.props.title) + ((this.props.titlePostfix) ? this.props.titlePostfix : '')}</Link>
-                    {(this.props.sortingField === this.props.sortingState.currentSorting && this.props.sortingState.sortingDirection === SortingDirection.DESC) ? "↓" : ""}
-                    {(this.props.sortingField === this.props.sortingState.currentSorting && this.props.sortingState.sortingDirection === SortingDirection.ASC) ? "↑" : ""}
-                </th>
-            }
-        </Translation>
-    }
+const SortingTableTh = (props: ThProps) => {
+    const t = useTranslation().t
+
+    return  <th className='text-center' >
+          <HattidTooltip
+                poppedHint={props.poppedHint}
+                content={<Link className="link-dark" to='#' onClick={() => props.sortingState.callback(props.sortingField)}>{t(props.title) + ((props.titlePostfix) ? props.titlePostfix : '')}</Link>}
+            />
+            {(props.sortingField === props.sortingState.currentSorting && props.sortingState.sortingDirection === SortingDirection.DESC) ? "↓" : ""}
+            {(props.sortingField === props.sortingState.currentSorting && props.sortingState.sortingDirection === SortingDirection.ASC) ? "↑" : ""}
+            </th>
 }
 
 export default SortingTableTh;

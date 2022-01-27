@@ -10,6 +10,7 @@ import { Translation } from 'react-i18next'
 import ModelTableTh from '../../elements/SortingTableTh'
 import { getMatchSpectators } from '../../../rest/Client';
 import MatchSpectatorsRow from '../rows/match/MatchSpectatorsRow'
+import HattidTooltip from '../../elements/HattidTooltip';
 
 abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
     extends ClassicTableSection<Data, TableProps, MatchSpectators> {
@@ -27,7 +28,10 @@ abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends L
             (t, { i18n }) =>
             <tr>
                 <th/>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th className="text-center">{t('table.league')}</th>
                 <th className="text-center">{t('table.team')}</th>
                 <th className="value"></th>

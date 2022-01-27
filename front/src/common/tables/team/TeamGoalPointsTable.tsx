@@ -13,6 +13,7 @@ import TeamGoalPoints from '../../../rest/models/team/TeamGoalPoints';
 import { SelectorsEnum } from '../SelectorsEnum';
 import { LoadingEnum } from '../../enums/LoadingEnum'
 import RestTableData from '../../../rest/models/RestTableData';
+import HattidTooltip from '../../elements/HattidTooltip';
 
 class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends AbstractTableSection<Data, TableProps, TeamGoalPoints, RestTableData<TeamGoalPoints>> {    
@@ -41,7 +42,10 @@ class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataPr
             {
             (t, { i18n }) =>
             <tr>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.win_abbr' sortingField='won' poppedHint={t('table.win')} sortingState={sortingState} />

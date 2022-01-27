@@ -10,6 +10,7 @@ import { Translation } from 'react-i18next'
 import ModelTableTh from '../../elements/SortingTableTh'
 import { getSurprisingMatches } from '../../../rest/Client';
 import MatchSurprisingRow from '../rows/match/MatchSurprisingRow'
+import HattidTooltip from '../../elements/HattidTooltip';
 
 abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
     extends ClassicTableSection<Data, TableProps, MatchTopHatstats> {
@@ -27,7 +28,10 @@ abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends L
             (t, { i18n }) =>
             <tr>
                 <th/>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th className="text-center">{t('table.league')}</th>
                 <th className="text-center">{t('table.team')}</th>
                 <ModelTableTh title='table.loddar_stats' sortingField='abs_loddar_stats_difference' sortingState={sortingState} />

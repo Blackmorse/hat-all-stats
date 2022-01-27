@@ -13,6 +13,7 @@ import TeamLink from '../../links/TeamLink'
 import { getTeamHatstats } from '../../../rest/Client';
 import { loddarStats } from '../../Formatters'
 import Section from '../../sections/Section';
+import HattidTooltip from '../../elements/HattidTooltip';
 
 class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
         extends ClassicTableSection<Data, TableProps, TeamHatstats> {
@@ -28,7 +29,10 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
             {
             (t, { i18n }) =>
             <tr>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.hatstats' sortingField='hatstats' sortingState={sortingState} />

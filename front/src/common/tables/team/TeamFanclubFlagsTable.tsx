@@ -11,6 +11,7 @@ import ModelTableTh from '../../elements/SortingTableTh'
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import TeamFanclubFlags from '../../../rest/models/team/TeamFanclubFlags';
+import HattidTooltip from '../../elements/HattidTooltip';
 
 abstract class TeamFanclubFlagsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
     extends ClassicTableSection<Data, TableProps, TeamFanclubFlags> {
@@ -27,7 +28,10 @@ abstract class TeamFanclubFlagsTable<Data extends LevelData, TableProps extends 
             {
             (t, { i18n }) =>
             <tr>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.fanclub_size' sortingField='fanclub_size' sortingState={sortingState} />

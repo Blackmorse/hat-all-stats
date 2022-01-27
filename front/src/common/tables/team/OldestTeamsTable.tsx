@@ -11,6 +11,7 @@ import ModelTableTh from '../../../common/elements/SortingTableTh'
 import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { dateFormatter } from '../../Formatters'
+import HattidTooltip from '../../elements/HattidTooltip'
 
 abstract class OldestTeamsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
     extends ClassicTableSection<Data, TableProps, OldestTeam> {
@@ -26,7 +27,10 @@ abstract class OldestTeamsTable<Data extends LevelData, TableProps extends Level
         return <Translation> 
             { (t, { i18n }) =>
             <tr>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='team.date_of_foundation' sortingField='founded_date' sortingState={sortingState}/>

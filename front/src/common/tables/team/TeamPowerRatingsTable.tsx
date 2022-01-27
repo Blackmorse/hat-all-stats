@@ -11,6 +11,7 @@ import TeamLink from '../../links/TeamLink'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { getTeamPowerRatings } from '../../../rest/Client';
 import TeamPowerRating from '../../../rest/models/team/TeamPowerRating';
+import HattidTooltip from '../../elements/HattidTooltip';
 
 abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
     extends ClassicTableSection<Data, TableProps, TeamPowerRating> {
@@ -27,7 +28,10 @@ abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends 
             {
             (t, { i18n }) =>
             <tr>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
                 <ModelTableTh title='table.power_rating' sortingField='power_rating' sortingState={sortingState} />

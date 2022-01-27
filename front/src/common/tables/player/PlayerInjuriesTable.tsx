@@ -15,6 +15,7 @@ import { injuryFormatter, ageFormatter } from '../../Formatters'
 import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 import LeagueLink from '../../links/LeagueLink';
 import CountryImage from '../../elements/CountryImage';
+import HattidTooltip from '../../elements/HattidTooltip';
 
 abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
         extends ClassicTableSection<Data, TableProps, PlayerInjury>{
@@ -30,7 +31,10 @@ abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends Le
             {
             (t, { i18n }) =>
             <tr>
-                <th className="hint" popped-hint={t('table.position')}>{t('table.position_abbr')}</th>
+                <HattidTooltip 
+                    poppedHint={t('table.position')}
+                    content={<th>{t('table.position_abbr')}</th>}
+                />
                 <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
