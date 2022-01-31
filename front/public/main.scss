@@ -14,6 +14,10 @@ $pagination-active-border-color:    $dark;
 $pagination-hover-color: $dark;
 $pagination-hover-border-color:     $dark;
 
+$table-active-bg:             rgba(yellow, 0.5);
+$nav-link-color:             black;
+$nav-link-hover-color:              $dark;
+
 @import "../node_modules/bootstrap/scss/bootstrap";
 
 

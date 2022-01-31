@@ -211,5 +211,7 @@
     "team.analyzer": "Analysator",
     "team.simulate_match": "Spiel simulieren",
 
-    "overview.number_of_new_teams": "Anzahl neuer Teams"
+    "overview.number_of_new_teams": "Anzahl neuer Teams",
+
+    "team.compare": "Vergleichen"
 }

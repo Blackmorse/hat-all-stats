@@ -1,6 +1,5 @@
 import React from 'react';
 import { StatsTypeEnum, StatsType } from '../../rest/models/StatisticsParameters'
-import './Selector.css'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import { Form } from 'react-bootstrap';

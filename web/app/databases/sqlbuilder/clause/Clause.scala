@@ -53,7 +53,7 @@ case class ClauseEntry(sqlBuilder: SqlBuilder) {
 
   def playedMinutes = addParameter(IntParameter(sqlBuilder.parametersNumber, "played_minutes", this, sqlBuilder.name))
 
-  def foundedDate = addParameter(DateParameter(sqlBuilder.parametersNumber, "founded_date", this, sqlBuilder.name))
+  def founded = addParameter(DateParameter(sqlBuilder.parametersNumber, "founded", this, sqlBuilder.name))
 
   def rankType = addParameter(StringParameter(sqlBuilder.parametersNumber, "rank_type", this, sqlBuilder.name))
 

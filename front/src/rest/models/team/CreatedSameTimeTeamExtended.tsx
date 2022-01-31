@@ -1,6 +1,17 @@
 import TeamSortingKey from './TeamSortingKey'
 
-interface CreatedSameTimeTeam {
+export interface CreatedSameTimeTeam {
+    hatstats: number,
+    attack: number,
+    midfield: number,
+    defense: number,
+    loddarStats: number,
+    tsi: number,
+    salary: number,
+    rating: number,
+    ratingEndOfMatch: number,
+    age: number,
+    injury: number,
     foundedDate: Date,
     powerRating: number,
     teamSortingKey: TeamSortingKey

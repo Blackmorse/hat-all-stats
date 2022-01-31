@@ -12,7 +12,7 @@ import scala.concurrent.Future
 object TeamsCreatedSameTimeRequest extends ClickhouseRequest[CreatedSameTimeTeam] {
   override val rowParser: RowParser[CreatedSameTimeTeam] = CreatedSameTimeTeam.createdSameTimeTeamMapper
 
-  def execute(leagueId: Int, currentRound: Int, datesRange: DatesRange)
+  def execute(leagueId: Int, currentSeason: Int, currentRound: Int, datesRange: DatesRange)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[CreatedSameTimeTeam]] = {
 
     import SqlBuilder.implicits._
@@ -22,15 +22,27 @@ object TeamsCreatedSameTimeRequest extends ClickhouseRequest[CreatedSameTimeTeam
         "team_name",
         "league_unit_id",
         "league_unit_name",
-        "founded_date",
-        "power_rating"
+        "hatstats",
+        "attack",
+        "midfield",
+        "defense",
+        "loddar_stats",
+        "tsi",
+        "salary",
+        "rating",
+        "rating_end_of_match",
+        "age",
+        "injury",
+        "power_rating",
+        "founded"
       )
-      .from("hattrick.team_details")
+      .from("hattrick.team_rankings")
       .where
         .leagueId(leagueId)
+        .season(currentSeason)
         .round(currentRound)
-        .foundedDate.greaterOrEqual(datesRange.min)
-        .foundedDate.less(datesRange.max)
+        .founded.greaterOrEqual(datesRange.min)
+        .founded.less(datesRange.max)
       .limitBy(1, "team_id")
 
     restClickhouseDAO.execute(builder.build, rowParser)

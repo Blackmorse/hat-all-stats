@@ -1,5 +1,4 @@
 import React from 'react'
-import './Selector.css'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import { Form } from 'react-bootstrap'

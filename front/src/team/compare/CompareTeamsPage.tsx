@@ -10,7 +10,7 @@ import { Translation } from 'react-i18next'
 import '../../i18n'
 import RankingParametersProvider from '../../common/ranking/RankingParametersProvider'
 import ExecutableComponent from '../../common/sections/ExecutableComponent';
-import Section, { SectionState } from '../../common/sections/Section';
+import { SectionState } from '../../common/sections/Section';
 import i18n from '../../i18n';
 import { Col, Row } from 'react-bootstrap';
 
@@ -18,7 +18,7 @@ interface State {
     teamComparsion?: TeamComparsion
 }
 
-class CompareTeamsPageBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
+class CompareTeamsPage extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
     State & SectionState, TeamComparsion, number | undefined> {
     
         constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
@@ -167,5 +167,4 @@ class CompareTeamsPageBase extends ExecutableComponent<LevelDataPropsWrapper<Tea
     }
 }
 
-const CompareTeamsPage = Section(CompareTeamsPageBase, _ => 'menu.comparsion_of_teams')
 export default CompareTeamsPage

@@ -64,6 +64,7 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
   def teamsCreatedSamePeriod(period: HattrickPeriod, foundedDate: Date,
                              leagueId: Int): Future[List[CreatedSameTimeTeamExtended]] = {
     val round = leagueInfoService.leagueInfo(leagueId).currentRound()
+    val season = leagueInfoService.leagueInfo(leagueId).currentSeason()
     val ranges = seasonsService.getSeasonAndRoundRanges(foundedDate)
 
     val range = period match {
@@ -71,7 +72,7 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
       case Season => ranges.seasonRange
     }
 
-    TeamsCreatedSameTimeRequest.execute(leagueId, round, range)
+    TeamsCreatedSameTimeRequest.execute(leagueId, season, round, range)
       .map(list => list.map(cstt => {
         val sameTeamRanges = seasonsService.getSeasonAndRoundRanges(cstt.foundedDate)
         CreatedSameTimeTeamExtended(season = ranges.season,

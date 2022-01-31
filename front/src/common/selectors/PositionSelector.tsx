@@ -1,7 +1,6 @@
 import React from 'react'
 import '../../i18n'
 import { Translation } from 'react-i18next'
-import './Selector.css'
 import { Form } from 'react-bootstrap'
 
 interface Props {

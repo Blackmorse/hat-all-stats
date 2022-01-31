@@ -1,5 +1,4 @@
 import React from 'react'
-import './Selector.css'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 
@@ -23,7 +22,7 @@ class CheckBoxSelector extends React.Component<Props> {
                 id={"checkbox_" + this.props.title} 
                 defaultChecked={this.props.value} 
                 onChange={this.onChanged} />
-            <label htmlFor={"checkbox_" + this.props.title} className="selector_div_entry">{t(this.props.title)}</label>
+            <label htmlFor={"checkbox_" + this.props.title}>{t(this.props.title)}</label>
         </div>
         }
         </Translation>

@@ -212,5 +212,7 @@
     "team.analyzer": "تحلیلگر",
     "team.simulate_match": "شبیه سازی مسابقه",
 
-    "overview.number_of_new_teams": "تعداد تیم های جدید"
+    "overview.number_of_new_teams": "تعداد تیم های جدید",
+
+    "team.compare": "مقایسه کنید"
   }

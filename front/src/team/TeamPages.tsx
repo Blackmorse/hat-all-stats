@@ -19,7 +19,7 @@ import PlayedAndUpcomingMatchesTable from './matches/PlayedAndUpcomingMatchesTab
 import TeamLevelDataProps from './TeamLevelDataProps';
 import TeamMatches from './TeamMatches';
 import TeamRankingsTable from './TeamRankingsTable';
-import TeamSamePeriodTeams from './TeamSamePeriodTeams';
+import TeamSamePeriodTeams from './sameperiod/TeamSamePeriodTeam';
 
 export default function pages(): Map<PagesEnum, (props: TeamLevelDataProps, queryParams: QueryParams) => JSX.Element> {
     const pagesMap = new Map<PagesEnum, (props: TeamLevelDataProps, queryParams: QueryParams) => JSX.Element>()

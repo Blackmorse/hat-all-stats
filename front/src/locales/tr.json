@@ -212,5 +212,7 @@
   "team.analyzer": "Analizör",
   "team.simulate_match": "Maçı simüle et",
 
-  "overview.number_of_new_teams": "Yeni takım sayısı"
+  "overview.number_of_new_teams": "Yeni takım sayısı",
+
+  "team.compare": "Karşılaştırmak"
 }

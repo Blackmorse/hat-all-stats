@@ -15,7 +15,7 @@ import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamrankings.{HistoryTeamLeagueUnitInfoRequest, TeamRankingsRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import models.clickhouse.NearestMatch
-import models.web.rest.CountryLevelData
+import models.web.rest.{CountryLevelData, RestTeamData}
 import models.web.rest.LevelData.Rounds
 import models.web.teams.RestTeamRankings
 import models.web.{PlayersParameters, RestStatisticsParameters}
@@ -30,26 +30,6 @@ import java.util.Date
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-
-case class RestTeamData(leagueId: Int,
-                        leagueName: String,
-                        divisionLevel: Int,
-                        divisionLevelName: String,
-                        leagueUnitId: Long,
-                        leagueUnitName: String,
-                        teamId: Long,
-                        teamName: String,
-                        foundedDate: Long,
-                        seasonOffset: Int,
-                        seasonRoundInfo: Seq[(Int, Rounds)],
-                        currency: String,
-                        currencyRate: Double,
-                        loadingInfo: LoadingInfo,
-                        countries: Seq[(Int, String)]) extends CountryLevelData
-
-object RestTeamData {
-  implicit val writes: OWrites[RestTeamData] = Json.writes[RestTeamData]
-}
 
 case class NearestMatches(playedMatches: Seq[NearestMatch], upcomingMatches: Seq[NearestMatch])
 

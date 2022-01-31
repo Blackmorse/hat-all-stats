@@ -6,6 +6,17 @@ import anorm.~
 import play.api.libs.json.Json
 
 case class CreatedSameTimeTeam(teamSortingKey: TeamSortingKey,
+                               hatstats: Int,
+                               attack: Int,
+                               midfield: Int,
+                               defense: Int,
+                               loddarStats: Double,
+                               tsi: Int,
+                               salary: Int,
+                               rating: Int,
+                               ratingEndOfMatch: Int,
+                               age: Double,
+                               injury: Int,
                                foundedDate: Date,
                                powerRating: Int)
 
@@ -18,10 +29,37 @@ object CreatedSameTimeTeam {
     get[String]("team_name") ~
     get[Long]("league_unit_id") ~
     get[String]("league_unit_name") ~
-    get[Date]("founded_date") ~
+    get[Int]("hatstats") ~
+    get[Int]("attack") ~
+    get[Int]("midfield") ~
+    get[Int]("defense") ~
+    get[Double]("loddar_stats") ~
+    get[Int]("tsi") ~
+    get[Int]("salary") ~
+    get[Int]("rating") ~
+    get[Int]("rating_end_of_match") ~
+    get[Double]("age") ~
+    get[Int]("injury") ~
+    get[Date]("founded") ~
     get[Int]("power_rating") map {
-      case leagueId ~ teamId ~ teamName ~ leagueUnitId ~ leagueUnitName
-        ~ foundedDate ~ powerRating =>
+      case leagueId ~
+        teamId ~
+        teamName ~
+        leagueUnitId ~
+        leagueUnitName ~
+        hatstats ~
+        attack ~
+        midfield ~
+        defense ~
+        loddarStats ~
+        tsi ~
+        salary ~
+        rating ~
+        ratingEndOfMatch ~
+        age ~
+        injury ~
+        foundedDate ~
+        powerRating =>
         CreatedSameTimeTeam(
           teamSortingKey = TeamSortingKey(
             teamId = teamId,
@@ -30,6 +68,17 @@ object CreatedSameTimeTeam {
             leagueUnitName = leagueUnitName,
             leagueId = leagueId
           ),
+          hatstats = hatstats,
+          attack = attack,
+          midfield = midfield,
+          defense = defense,
+          loddarStats = loddarStats,
+          tsi = tsi,
+          salary = salary,
+          rating = rating,
+          ratingEndOfMatch = ratingEndOfMatch,
+          age = age,
+          injury = injury,
           foundedDate = foundedDate,
           powerRating = powerRating
         )

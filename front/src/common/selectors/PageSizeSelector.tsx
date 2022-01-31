@@ -1,6 +1,6 @@
 import React from 'react';
-import './PageSizeSelector.css'
 import { Translation } from 'react-i18next'
+import './PageSizeSelector.css'
 import '../../i18n'
 
 interface PageSizeProperties {

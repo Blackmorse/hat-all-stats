@@ -212,5 +212,7 @@
     "team.analyzer": "Analizator",
     "team.simulate_match": "Simulirajte podudaranje",
 
-    "overview.number_of_new_teams": "Broj novih timova"
+    "overview.number_of_new_teams": "Broj novih timova",
+
+    "team.compare": "Usporedi"
 }
