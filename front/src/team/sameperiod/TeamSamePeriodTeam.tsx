@@ -39,6 +39,18 @@ const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamData, TeamLevelDat
                         ]}
                     />
                 </Tab>
+                <Tab eventKey='hatstats' title={t('table.hatstats')}>
+                    <TeamSamePeriodTeamsTable
+                        data={data}
+                        levelDataPropsWrapper={props}
+                        rowsWithTitle={[
+                            {title: t('table.hatstats'), rowFunc: cstt => cstt.hatstats, valueFunc: cstt => cstt.hatstats},
+                            {title: t('table.midfield'), rowFunc: cstt => cstt.midfield, valueFunc: cstt => cstt.midfield},
+                            {title: t('table.defense'), rowFunc: cstt => cstt.defense, valueFunc: cstt => cstt.defense},
+                            {title: t('table.attack'), rowFunc: cstt => cstt.attack, valueFunc: cstt => cstt.attack},
+                        ]}
+                    />
+                </Tab>
                 <Tab eventKey='tsi_salary' title={t('menu.team_salary_tsi')}>
                     <TeamSamePeriodTeamsTable 
                         data={data}

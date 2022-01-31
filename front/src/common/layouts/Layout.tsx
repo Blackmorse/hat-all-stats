@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, Fragment} from 'react'
 import { YMInitializer } from 'react-yandex-metrika';
 import {  Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
@@ -49,7 +49,9 @@ const Layout = (props: Props) => {
             
         </div>
 
-    let body = (!collapsed) ? <Container  d-flex='true' fluid>
+    let direction = (i18n.language === 'fa') ? 'rtl' : 'ltr'
+
+    let body = (!collapsed) ? <Container d-flex='true' dir={direction} fluid>
         <Row>
             <Col lg={3} md={4} xs={12} sm={12}>
                 {collapsibleLeftMenu}
@@ -65,8 +67,8 @@ const Layout = (props: Props) => {
          <div className='w-100'>{props.content}</div>
      </Container>
 
-    return <>
-                 <header>
+    return <Fragment>
+                 <header dir={direction}>
                     <YMInitializer accounts={[67069579]} />
                     <Container fluid className='d-flex mb-1'>
                         <div className='me-auto ms-2'>
@@ -100,6 +102,6 @@ const Layout = (props: Props) => {
                  <footer className='container-fluid small-font text-muted d-flex'>
                     <span className='ms-auto me-2'>Powered by React, Scala Play & ClickHouse. <a className="aside_link" target="_tab" href="https://github.com/Blackmorse/hat-all-stats">GitHub</a></span>
                  </footer>  
-        </>
+        </Fragment>
 }
  export default Layout

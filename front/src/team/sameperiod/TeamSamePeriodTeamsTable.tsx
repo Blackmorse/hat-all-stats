@@ -55,8 +55,8 @@ const TeamSamePeriodTeamsTable = (props: Props) => {
                                         setSorting([rowWithTitle.title, rowWithTitle.valueFunc, SortingDirection.DESC])
                                     }
                                 },
-                                currentSorting: '',
-                                sortingDirection: SortingDirection.ASC
+                                currentSorting: sortingField,
+                                sortingDirection: sortingDirection
                             }}
                         />
                     } ) }
