@@ -27,8 +27,8 @@
     "menu.fanclub_flags": "هواداران/پرچم‌ها",
     "menu.streak_trophies": "برد پیاپی/کاپ‌ها",
 
-    "table.position_abbr": "ج",
-    "table.position": "جایگاه",
+    "table.position_abbr": "پ",
+    "table.position": "پست",
     "table.league": "لیگ",
     "table.hatstats": "HatStats",
     "table.midfield": "هافبک",
@@ -174,14 +174,14 @@
     "world.loading": " در حال بارگیری...",
     "world.scheduled": " برنامه‌ریزی شده برای: ",
 
-    "menu.dream_team": "تیم رویایی",
+    "menu.dream_team": "ترکیب رویایی",
     "dream_team.keeper": "دروازه‌بان",
     "dream_team.wingback": "مدافع کنار",
     "dream_team.defender": "مدافع وسط",
     "dream_team.winger": "هافبک کنار",
     "dream_team.midfielder": "هافبک وسط",
     "dream_team.forward": "مهاجم",
-    "dream_team.substitions": "تعویض‌ها",
+    "dream_team.substitions": "ذخیره‌ها",
     "dream_team.undefined": "",
 
     "filter.full_season": "تمام بازی‌های فصل بازی کرده",
