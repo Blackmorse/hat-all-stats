@@ -2,7 +2,7 @@
 - name: start docker
   docker_container: 
     name: clickhouse-server-hattrick
-    image: yandex/clickhouse-server:20.11
+    image: yandex/clickhouse-server:22.1.3.7
     restart_policy: always
     volumes:
       - "{{ base_project_directory }}/clickhouse/volume:/var/lib/clickhouse"
