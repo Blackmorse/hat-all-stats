@@ -6,6 +6,13 @@ object LoddarStatsUtils {
   lazy val awayLoddarStats: String = loddarStats("opposite_")
 
   private def loddarStats(prefix: String): String =
+    s"loddar_stats($prefix${"rating_midfield"}, $prefix${"rating_mid_def"}, $prefix${"rating_left_def"}, $prefix${"rating_right_def"}, " +
+      s"$prefix${"rating_mid_att"}, $prefix${"rating_left_att"}, $prefix${"rating_right_att"}, " +
+      s"$prefix${"tactic_skill"})"
+
+
+  //Not used. It has been moved into Clickhouse UDFs. See sql/init_scripts/11-loddar_stats.sql
+  private def loddarStatsOld(prefix: String): String =
     s"""
        |multiIf(${prefix}tactic_type = 2, ${ca(prefix)},
        |        ${prefix}tactic_type = 4, ${attackWings(prefix)},
