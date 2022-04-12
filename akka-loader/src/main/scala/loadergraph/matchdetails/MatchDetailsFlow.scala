@@ -4,11 +4,13 @@ import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
 import chpp.commonmodels.MatchType
-import flows.{LogProgressFlow, MatchDetailsHttpFlow, MatchesArchiveHttpFlow}
+import flows.{LogProgressFlow, MatchDetailsHttpFlow, MatchesArchiveHttpFlow, MatchesHttpFlow}
 import chpp.matchdetails.MatchDetailsRequest
+import chpp.matches.MatchesRequest
 import chpp.matchesarchive.models.MatchesArchive
 import chpp.matchesarchive.MatchesArchiveRequest
 import models.stream.{Match, StreamMatchDetails, StreamTeam}
+import chpp.matches.models.Matches
 
 import java.util.Date
 import scala.concurrent.ExecutionContext
@@ -18,9 +20,9 @@ object MatchDetailsFlow {
               executionContext: ExecutionContext): Flow[StreamTeam, StreamMatchDetails, _] = {
     Flow[StreamTeam]
       .filter(_.userId != 0)
-      .map(team => (MatchesArchiveRequest(teamId = Some(team.id)), team))
+      .map(team => (MatchesRequest(teamId = Some(team.id)), team))
       .async
-      .via(MatchesArchiveHttpFlow())
+      .via(MatchesHttpFlow())
       .map{case(matchesArchive, team) => lastMatch(matchesArchive, team, matchType)}
       .flatMapConcat(matchOpt => matchOpt.map(matc => Source.single(matc)).getOrElse(Source.empty[Match]))
       .map(matc => (MatchDetailsRequest(matchId = Some(matc.id)), matc))
@@ -32,11 +34,12 @@ object MatchDetailsFlow {
       .via(LogProgressFlow("Match Details", Some(_.matc.team.leagueUnit.league.activeTeams)))
   }
 
-  private def lastMatch(matchesArchive: MatchesArchive, team: StreamTeam, matchType: MatchType.Value) = {
+  private def lastMatch(matchesArchive: Matches, team: StreamTeam, matchType: MatchType.Value): Option[Match] = {
     val sevenDaysAgo = new Date(System.currentTimeMillis() - 1000L * 3600 * 24 * 7)
     Option(matchesArchive.team.matchList)
       .flatMap(matchList =>
         matchList.filter(_.matchType == matchType)
+          .filter(_.status == "FINISHED")
           .filter(matc => matc.matchDate.after(sevenDaysAgo))
           .sortBy(_.matchDate).reverse
           .headOption
