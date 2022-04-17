@@ -11,8 +11,10 @@
 - include: 04-cron-local-backup.yml
   tags:
    - cron
+   - backup
 
 - include: 05-cron-onedrive.yml
   tags:
    - cron
    - remote-cron
+   - backup

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+echo "$(date) Starting backup upload to OneDrive"
+
+backup_name=$(ls {{ base_project_directory }}/backup | tail -1)
+previous_backup_name=$(ls {{ base_project_directory }}/backup | tail -2 | head -1)
+echo "Backup name: $backup_name"
+echo "Previous backup: $previous_backup_name"
+
+tar -cvzf {{ base_project_directory }}/OneDrive/$backup_name.tar.gz {{ base_project_directory }}/backup/$backup_name 
+
+
+HATTID_PREVIOUS_BACKUP_ID=$(curl -H "Authorization: bearer $ACCESS_TOKEN" "https://graph.microsoft.com/v1.0/me/drive/root:/backups/Hattid/$previous_backup_name.tar.gz" | jq -r '.["id"]')
+HATTID_BACKUP_FOLDER_ID=$(curl -H "Authorization: bearer $ACCESS_TOKEN" "https://graph.microsoft.com/v1.0/me/drive/root:/backups/Hattid" | jq -r '.["id"]')
+
+echo "Hattid backup file id: $HATTID_PREVIOUS_BACKUP_ID"
+echo "Hattid backup folder id: $HATTID_BACKUP_FOLDER_ID"
+
+cp {{ base_project_directory }}/OneDrive/$backup_name.tar.gz {{ base_project_directory }}/../Yandex.Disk/backups/Hattid/
+
+yandex-disk start
+
+
+
+rm {{ base_project_directory }}/OneDrive/$backup_name.tar.gz
+
+yandex-disk publish backups/Hattid/$backup_name.tar.gz
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo "Error"
+  exit 1
+fi
+ERROR_MSG=$(curl -H "Authorization: bearer $ACCESS_TOKEN" "https://graph.microsoft.com/v1.0/me/drive/root:/backups/Hattid/${backup_name}.tar.gz" | jq -r '.["error"]')
+
+if [[ "$RESULT" -eq 0 ]]; then
+   curl -X POST -H 'Content-Type: application/json' -d "{\"chat_id\": \"{{ loader.telegram.chatId }}\", \"text\": \"Backup uploading to Yandex finished at $(date)\"}" https://api.telegram.org/bot{{ loader.telegram.botToken }}/sendMessage 
+else
+   curl -X POST -H 'Content-Type: application/json' -d "{\"chat_id\": \"{{ loader.telegram.chatId }}\", \"text\": \"$(date) Error while uploading backup to Yandex\"}" https://api.telegram.org/bot{{ loader.telegram.botToken }}/sendMessage 
+fi
