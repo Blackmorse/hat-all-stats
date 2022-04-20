@@ -10,7 +10,7 @@
 
 - name: copy script
   template:
-    src: upload_to_onedrive.sh.j2
+    src: upload_to_onedrive_yandex.sh.j2
     dest: "{{ base_project_directory }}/OneDrive/upload_to_onedrive_yandex.sh"
     mode: 0775
 
