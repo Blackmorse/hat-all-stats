@@ -57,7 +57,7 @@ object AllCountriesTest {
   private def testCupSchedule(worldDetails: WorldDetails): Unit = {
 
     val schedule = CupSchedule.normalizeCupScheduleToDayOfWeek(CupSchedule.seq, Calendar.MONDAY)
-      .sortBy(_.date)
+      .sortBy(_.leagueId)
 
     val dayLightSavingOffset = if (CupSchedule.isSummerTimeNow()) 0L else 1000L * 60 * 60
 
@@ -65,7 +65,7 @@ object AllCountriesTest {
           worldDetails.leagueList
           .map(league => ScheduleEntry(league.leagueId, new Date(league.cupMatchDate.get.getTime + dayLightSavingOffset))),
         Calendar.MONDAY)
-      .sortBy(_.date)
+      .sortBy(_.leagueId)
 
     val changes = schedule.zip(worldDetailsSchedule)
       .filter{case (original, worldDetails) => original.date != worldDetails.date}

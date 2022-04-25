@@ -155,7 +155,7 @@ object CupSchedule {
     ScheduleEntry(165, format.parse("Jun 30 23:20:00 MSK 2021")),
     ScheduleEntry(1000, format.parse("Jul 13 17:00:00 MSK 2021")),
     ScheduleEntry(1001, format.parse("Jul 13 17:00:00 MSK 2021")),
-    ScheduleEntry(1002, format.parse("Apr 05 18:00:00 MSK 2021"))
+    ScheduleEntry(1002, format.parse("Apr 06 18:00:00 MSK 2021"))
   )
 
   def isSummerTimeNow(): Boolean = {
