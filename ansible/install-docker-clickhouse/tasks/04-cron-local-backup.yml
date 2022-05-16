@@ -6,7 +6,7 @@
     weekday: "1"
     hour: "18"
     minute: "0"
-    job: "mkdir {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d) && cp -r  {{ base_project_directory }}/clickhouse/ {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d)"
+    job: "mkdir {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d) && cp -r  {{ base_project_directory }}/clickhouse/ {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d) ; chown {{ hostUser }}:{{ hostUser }} {{ base_project_directory }}/backup/$(date +\\%Y\\%m\\%d) -R"
 
 - name: cron for deleting old clickhouse backups
   become: true

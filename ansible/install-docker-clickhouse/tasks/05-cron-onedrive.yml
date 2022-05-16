@@ -15,7 +15,6 @@
     mode: 0775
 
 - name: cron onedrive
-  become: true
   cron:
     name: "cron for uploading to Onedrive"
     weekday: "1"
