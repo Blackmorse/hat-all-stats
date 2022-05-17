@@ -4,6 +4,11 @@
     path: "{{ base_project_directory }}/clickhouse/volume"
     state: directory
 
+- name: create clickhouse config directory
+  file:
+    path: "{{ base_project_directory }}/clickhouse/config.d"
+    state: directory
+
 - name: copy users.xml
   template:
     src: users.xml.j2
@@ -13,3 +18,8 @@
   template:
     src: config.xml.j2
     dest: "{{ base_project_directory }}/clickhouse/config.xml"
+
+- name: copy z_log_disable.xml
+  template:
+    src: z_log_disable.xml
+    dest: "{{ base_project_directory }}/clickhouse/config.d/z_log_disable.xml"

@@ -8,6 +8,7 @@
       - "{{ base_project_directory }}/clickhouse/volume:/var/lib/clickhouse"
       - "{{ base_project_directory }}/clickhouse/users.xml:/etc/clickhouse-server/users.xml"
       - "{{ base_project_directory }}/clickhouse/config.xml:/etc/clickhouse-server/config.xml"
+      - "{{ base_project_directory }}/clickhouse/config.d/z_log_disable.xml:/etc/clickhouse-server/config.d/z_log_disable.xml"
     ulimits:
       - nofile:262144:262144
     ports:

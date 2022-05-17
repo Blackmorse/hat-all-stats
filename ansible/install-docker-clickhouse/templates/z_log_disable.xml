@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<yandex>
+        <asynchronous_metric_log remove="1"/>
+        <metric_log remove="1"/>
+</yandex>
