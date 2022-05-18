@@ -1,12 +1,12 @@
 package models.clickhouse
 
 import anorm.SqlParser.get
-import anorm.~
+import anorm.{RowParser, ~}
 
 case class HistoryInfo(season: Int, leagueId: Int, round: Int, divisionLevel: Int, count: Int)
 
 object HistoryInfo {
-  val mapper = {
+  val mapper: RowParser[HistoryInfo] = {
     get[Int]("season") ~
     get[Int]("league_id") ~
     get[Int]("division_level") ~

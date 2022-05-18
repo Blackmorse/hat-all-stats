@@ -2,6 +2,7 @@ package controllers
 
 import databases.dao.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
+import databases.requests.model.overview.TotalOverview
 import databases.requests.overview.charts.{AverageGoalsChartRequest, AverageSpectatorsChartRequest, FormationsChartRequest, GoalsNumberOverviewChartRequest, InjuriesNumberOverviewChartRequest, NewTeamsNumberChartRequest, NumbersOverviewChartRequest, PlayersNumberOverviewChartRequest, RedCardsNumberOverviewRequest, TeamsNumberOverviewChartRequest, YellowCardsNumberOverviewRequest}
 
 import java.util.Date
@@ -140,8 +141,16 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
   }
 
   def totalOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
-    restOverviewStatsService.totalOverview(season, round, leagueId, divisionLevel)
-      .map(totalOverview => Ok(Json.toJson(totalOverview)))
+    //in case divisionLevel or league is Empty - return nothing
+    if (leagueId.isDefined && !leagueInfoService.leagueInfo.leagueInfo.contains(leagueId.get)
+    ||
+      leagueId.isDefined && divisionLevel.isDefined
+            && !leagueInfoService.leagueInfo(leagueId.get).seasonInfo(season).roundInfo(round).divisionLevelInfo.contains(divisionLevel.get)) {
+      Future(Ok(Json.toJson(TotalOverview.empty())))
+    } else {
+      restOverviewStatsService.totalOverview(season, round, leagueId, divisionLevel)
+        .map(totalOverview => Ok(Json.toJson(totalOverview)))
+    }
   }
 
   private def numbersChart(request: NumbersOverviewChartRequest)(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async {

@@ -17,4 +17,39 @@ case class TotalOverview(numberOverview: NumberOverview,
                          topSeasonScorers: List[PlayerStatOverview])
 object TotalOverview {
   implicit val writes: OWrites[TotalOverview] = Json.writes[TotalOverview]
+
+  def empty(): TotalOverview =
+    TotalOverview(
+      numberOverview = NumberOverview(
+        numberOfTeams = 0,
+        numberOfPlayers = 0,
+        injuried = 0,
+        goals = 0,
+        yellowCards = 0,
+        redCards = 0,
+        numberOfNewTeams = 0
+      ),
+      formations = List(),
+      averageOverview = AveragesOverview(
+        matchAverages = OverviewMatchAverages(
+          hatstats = 0,
+          spectators = 0,
+          goals = 0
+        ),
+        teamPlayerAverages = OverviewTeamPlayerAverages(
+          age = 0,
+          salary = 0,
+          rating = 0
+        )
+      ),
+      surprisingMatches = List(),
+      topHatstatsTeams = List(),
+      topSalaryTeams = List(),
+      topMatches = List(),
+      topSalaryPlayers = List(),
+      topRatingPlayers = List(),
+      topMatchAttendance = List(),
+      topTeamVictories = List(),
+      topSeasonScorers = List()
+    )
 }

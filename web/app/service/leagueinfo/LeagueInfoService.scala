@@ -18,7 +18,7 @@ import scala.concurrent.duration.DurationInt
 class LeagueInfoService @Inject() (val chppClient: ChppClient,
                                    implicit val restClickhouseDAO: RestClickhouseDAO,
                                    val configuration: Configuration) {
-  lazy val leagueNumbersMap = Map(1 -> Seq(1),
+  lazy val leagueNumbersMap: Map[Int, Seq[Int]] = Map(1 -> Seq(1),
     2 -> (1 to 4),
     3 -> (1 to 16),
     4 -> (1 to 64),

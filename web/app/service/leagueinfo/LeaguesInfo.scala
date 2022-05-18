@@ -8,7 +8,7 @@ import scala.collection.mutable
 case class LeaguesInfo(leagueInfo: Map[Int, LeagueInfo]) {
   def apply(leagueId: Int): LeagueInfo = leagueInfo(leagueId)
 
-  def seasonRoundInfo(leagueId: Int) = {
+  def seasonRoundInfo(leagueId: Int): Seq[(Int, Seq[Int])] = {
     leagueInfo(leagueId).seasonInfo
       .map{case(season, seasonInfo) => (season, seasonInfo.roundInfo.keys.toSeq.sorted)}
       .toSeq
