@@ -40,6 +40,7 @@ const TeamSamePeriodTeamsTable = (props: Props) => {
     return <table className="table table-striped table-rounded table-sm small">
             <thead>
                 <tr>
+                    <th></th>
                     <th className="text-center">{t('table.team')}</th>
                     <th className="text-center">{t('table.league')}</th>
                     {props.rowsWithTitle.map(rowWithTitle =>{
@@ -66,8 +67,9 @@ const TeamSamePeriodTeamsTable = (props: Props) => {
                 </tr>
             </thead>
             <tbody>
-                {sortData().map(team => {
+                {sortData().map((team, index) => {
                         return <tr className={(team.createdSameTimeTeam.teamSortingKey.teamId === props.levelDataPropsWrapper.levelDataProps.teamId()) ? 'selected_row' : ''} key={'TeamSamePeriodTeams_' + team.createdSameTimeTeam.teamSortingKey.teamId}>
+                            <td>{index + 1}</td>
                             <td><TeamLink text={team.createdSameTimeTeam.teamSortingKey.teamName} id={team.createdSameTimeTeam.teamSortingKey.teamId}/></td>
                             <td className="text-center"><LeagueUnitLink id={team.createdSameTimeTeam.teamSortingKey.leagueUnitId} text={team.createdSameTimeTeam.teamSortingKey.leagueUnitName} /></td>
                             {props.rowsWithTitle.map(rowWithTitle => {
