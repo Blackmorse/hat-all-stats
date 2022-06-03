@@ -30,6 +30,7 @@ trait HattrickPeriod
 
 case object Round extends HattrickPeriod
 case object Season extends HattrickPeriod
+case class Weeks(weeksNumber: Int) extends HattrickPeriod
 
 object HattrickPeriod {
   implicit def queryStringBindable(implicit stringBuilder: QueryStringBindable[String]): QueryStringBindable[HattrickPeriod] = new QueryStringBindable[HattrickPeriod] {
@@ -40,6 +41,15 @@ object HattrickPeriod {
             Right(Round)
           } else if (period == "season") {
             Right(Season)
+          } else if(period == "weeks") {
+            stringBuilder.bind("weeksNumber", params)
+              .map(weeksNumberEither => weeksNumberEither.flatMap(weeksNumberString => {
+                if (weeksNumberString forall Character.isDigit) {
+                  Right(Weeks(weeksNumberString.toInt))
+                } else {
+                  Left("Invalid weeks number format")
+                }
+              })).getOrElse(Left("weeksNumber are not specified"))
           } else {
             Left("Unknown period type. Available values: season, round")
           }
@@ -70,12 +80,13 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
     val range = period match {
       case Round => ranges.roundRange
       case Season => ranges.seasonRange
+      case Weeks(weeksNumber) => seasonsService.getWeeksRange(foundedDate, weeksNumber)
     }
 
     TeamsCreatedSameTimeRequest.execute(leagueId, season, round, range)
       .map(list => list.map(cstt => {
         val sameTeamRanges = seasonsService.getSeasonAndRoundRanges(cstt.foundedDate)
-        CreatedSameTimeTeamExtended(season = ranges.season,
+        CreatedSameTimeTeamExtended(season = sameTeamRanges.season,
           round = sameTeamRanges.round,
           createdSameTimeTeam = cstt)
       }))

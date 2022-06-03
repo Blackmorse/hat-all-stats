@@ -214,5 +214,7 @@
 
     "overview.number_of_new_teams": "Broj novih timova",
 
-    "team.compare": "Usporedi"
+    "team.compare": "Usporedi",
+
+    "filter.weeks_within": "Unutar # tjedana"
 }

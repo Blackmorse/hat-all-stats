@@ -1,5 +1,5 @@
 import React from 'react'
-import CreatedSameTimeTeamExtended from '../../rest/models/team/CreatedSameTimeTeamExtended';
+import CreatedSameTimeTeamExtended, {CreatedSameTimeTeamRequest} from '../../rest/models/team/CreatedSameTimeTeamExtended';
 import { useTranslation } from 'react-i18next'
 import { LevelDataPropsWrapper } from '../../common/LevelDataProps'
 import TeamData from '../../rest/models/leveldata/TeamData'
@@ -13,12 +13,18 @@ import {ageFormatter, injuryFormatter, ratingFormatter, salaryFormatter} from '.
 const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) => {
     const t = useTranslation().t
 
-    const onChanged = (event: React.FormEvent<HTMLSelectElement>, setRequest: (request: string) => void) => {
-        let period = event.currentTarget.value
-        setRequest(period)
+    const onChanged = (event: React.FormEvent<HTMLSelectElement>, setRequest: (request: CreatedSameTimeTeamRequest) => void) => {
+        let periodString = event.currentTarget.value
+        let split = periodString.split('_')
+
+        if (split.length === 1) {
+            setRequest({ period: split[0] as 'season' | 'round' })
+        } else {
+            setRequest( { period: split[0] as 'weeks', weeksNumber: Number(split[1])} )
+        }
     }
 
-    const content = (setRequest: (request: string) => void, data?: Array<CreatedSameTimeTeamExtended>) => { 
+    const content = (setRequest: (request: CreatedSameTimeTeamRequest) => void, data?: Array<CreatedSameTimeTeamExtended>) => { 
         return <div className='table-responsive'>
             <Form className='d-flex flex-row align-items-center mb-2' max-width='200'>
                 <span className='me-2 align-middle'>{t('team.period')}:</span>
@@ -26,7 +32,9 @@ const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamData, TeamLevelDat
                         onChange={e => onChanged(e, setRequest)}>
                     <option value="round">{t('chart.round')}</option>
                     <option value="season">{t('filter.season')}</option>
-
+                    {Array.from(Array(16), (_, index) => index + 1).map(round => 
+                        <option value={"weeks_" + round}>{t('filter.weeks_within').replace('#', round.toString())}</option>
+                    )}
                 </Form.Select>
             </Form>
             <Tabs id="same-periods-tabs">
@@ -85,8 +93,8 @@ const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamData, TeamLevelDat
             </div>
     }
 
-    return <ExecutableComponent<string, Array<CreatedSameTimeTeamExtended>> 
-        initialRequest='season'
+    return <ExecutableComponent<CreatedSameTimeTeamRequest, Array<CreatedSameTimeTeamExtended>> 
+        initialRequest={ {period: 'season'} }
         content={content}
         executeRequest={(request, callback) => {
             getCreatedSameTimeTeams(props.levelDataProps.leagueId(), props.levelDataProps.levelData.foundedDate,

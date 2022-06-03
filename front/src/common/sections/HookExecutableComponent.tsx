@@ -13,7 +13,7 @@ const ExecutableComponent = <Request, Response>(props: Props<Request, Response>)
     const [data, setData] = useState(undefined as Response | undefined)
     const [loadingEnum, setLoadingEnum] = useState(LoadingEnum.LOADING)
     const [request, setRequest] = useState(props.initialRequest)
-    const [updateCounter, setUpdateCounter] = useState(0) //To update after failes, because request is not updated
+    const [updateCounter, setUpdateCounter] = useState(0) //To update after failures, because request is not updated
 
     useEffect(() => {
         setLoadingEnum(LoadingEnum.LOADING)

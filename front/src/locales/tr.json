@@ -214,5 +214,7 @@
 
   "overview.number_of_new_teams": "Yeni takım sayısı",
 
-  "team.compare": "Karşılaştırmak"
+  "team.compare": "Karşılaştırmak",
+
+  "filter.weeks_within": "# hafta içinde"
 }

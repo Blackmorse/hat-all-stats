@@ -53,6 +53,7 @@ import LeagueUnitRequest from './models/request/LeagueUnitRequest'
 import MatchOpponentCombinedInfo from './models/analyzer/MatchOpponentCombinedInfo'
 import NumbersChartModel from './models/overview/NumbersChartModel'
 import FormationChartModel from './models/overview/FormationChartModel'
+import { CreatedSameTimeTeamRequest } from './models/team/CreatedSameTimeTeamExtended'
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
@@ -221,38 +222,46 @@ export function teamAndOpponentMatches(teamId: number,
         callback: (loadingEnum: LoadingEnum, matchOpponentCombinedInfo?: MatchOpponentCombinedInfo) => void) {
     axios.get<MatchOpponentCombinedInfo>('/api/team/analyzer/teamAndOpponentMatches?teamId=' + teamId)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function opponentTeamMatches(teamId: number,
         callback: (loadingEnum: LoadingEnum, matches?: Array<NearestMatch>) => void) {
     axios.get<Array<NearestMatch>>('/api/team/analyzer/opponentTeamMatches?teamId=' + teamId)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function combineMatches(firstTeamId: number, firstMatchId: number, secondTeamId: number, secondMatchId: number,
             callback: (loadingEnum: LoadingEnum, result?: SingleMatch) => void) {
     axios.get<SingleMatch>(`/api/team/analyzer/combineMatches?firstTeamId=${firstTeamId}&firstMatchId=${firstMatchId}&secondTeamId=${secondTeamId}&secondMatchId=${secondMatchId}`)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 
-export function getCreatedSameTimeTeams(leagueId: number, foundedDate: number, period: string,
+export function getCreatedSameTimeTeams(leagueId: number, foundedDate: number, request: CreatedSameTimeTeamRequest,
         callback: (loadingEnum: LoadingEnum, results?: Array<CreatedSameTimeTeamExtended>) => void) {
+    var values: any = {}
+    values.period = request.period
+    if (request.weeksNumber !== undefined) {
+        values.weeksNumber = request.weeksNumber
+    }
+    let periodParams = new URLSearchParams(values).toString()
+
     axios.get<Array<CreatedSameTimeTeamExtended>>('/api/team/stats/teamsFoundedSameDate?leagueId=' + leagueId + 
-            '&foundedDate=' + foundedDate + '&period=' + period)
+            '&foundedDate=' + foundedDate + '&' + periodParams)
         .then(response => callback(LoadingEnum.OK, response.data))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
+
+    return new URLSearchParams(values).toString()
 }
 
 export function getTeamsComparsion(team1Id: number, team2Id: number,
         callback: (LoadingEnum: LoadingEnum, result?: TeamComparsion) => void) {
     axios.get<TeamComparsion>('/api/team/stats/compareTeams?teamId1=' + team1Id + '&teamId2=' + team2Id)
         .then(response => callback(LoadingEnum.OK, response.data))
-        .catch(e => callback(LoadingEnum.ERROR))
-
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 function playersRequest<T>(path: string): 
@@ -269,7 +278,7 @@ function playersRequest<T>(path: string):
                     let playerParams = createPlayersParameters(playersParameters)
                     axios.get<RestTableData<T>>(startUrl(request) + '/' + path + '?' + params.toString() + '&' + playerParams)
                         .then(response => parseAxiosResponse(response, callback))
-                        .catch(e => callback(LoadingEnum.ERROR))
+                        .catch(_e => callback(LoadingEnum.ERROR))
                 }
 }
 

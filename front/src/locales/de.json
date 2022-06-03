@@ -213,5 +213,8 @@
 
     "overview.number_of_new_teams": "Anzahl neuer Teams",
 
-    "team.compare": "Vergleichen"
+    "team.compare": "Vergleichen",
+
+    "filter.weeks_within": "Innerhalb von # Wochen"
 }
+

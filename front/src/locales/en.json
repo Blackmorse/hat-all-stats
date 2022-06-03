@@ -214,5 +214,7 @@
 
     "overview.number_of_new_teams": "Number of new teams",
 
-    "team.compare": "Compare"
+    "team.compare": "Compare",
+
+    "filter.weeks_within": "Within # weeks"
   }

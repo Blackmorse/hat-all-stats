@@ -209,10 +209,12 @@
 
     "team.unable_to_compare": "Невозможно сравнить команды. Возможно, они из разных стран",
 
-    "team.analyzer": "Невозможно сравнить команды. Возможно они из разных стран или одна из команд - бот",
+    "team.analyzer": "Анализатор",
     "team.simulate_match": "Симуляция матча",
 
     "overview.number_of_new_teams": "Количество новых команд",
 
-    "team.compare": "Сравнить"
+    "team.compare": "Сравнить",
+
+    "filter.weeks_within": "В течение # недель"
 }

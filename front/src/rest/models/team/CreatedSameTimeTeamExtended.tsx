@@ -22,3 +22,8 @@ export default interface CreatedSameTimeTeamExtended {
     season: number,
     round: number
 }
+
+export interface CreatedSameTimeTeamRequest {
+    period: 'round' | 'season' | 'weeks'
+    weeksNumber?: number
+}

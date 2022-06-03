@@ -43,4 +43,11 @@ class SeasonsService @Inject()() {
       seasonRange = DatesRange(firstDayOfSeason, firstDayOfNextSeason),
       roundRange = DatesRange(firstDayOfRound, firstDayOfNextRound))
   }
+
+  def getWeeksRange(date: Date, weeksNumber: Int): DatesRange = {
+    val minDate = new Date(date.getTime - weekMs * weeksNumber)
+    val maxDate = new Date(date.getTime + weekMs * weeksNumber)
+
+    DatesRange(minDate, maxDate)
+  }
 }
