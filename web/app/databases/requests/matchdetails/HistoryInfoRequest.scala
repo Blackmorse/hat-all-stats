@@ -3,8 +3,9 @@ package databases.requests.matchdetails
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
-import databases.sqlbuilder.Select
+import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import models.clickhouse.HistoryInfo
+import sqlbuilder.{Select, SqlBuilder}
 
 import scala.concurrent.Future
 
@@ -14,8 +15,14 @@ object HistoryInfoRequest extends ClickhouseRequest[HistoryInfo] {
   def execute(leagueId: Option[Int],
               season: Option[Int],
               round: Option[Int])(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[HistoryInfo]] = {
-    import databases.sqlbuilder.SqlBuilder.implicits._
-    val builder = Select(
+    restClickhouseDAO.execute(builder(leagueId, season, round).sqlWithParameters().build, rowParser)
+  }
+
+  def builder(leagueId: Option[Int],
+              season: Option[Int],
+              round: Option[Int]): SqlBuilder = {
+    import sqlbuilder.SqlBuilder.implicits._
+    Select(
         "season",
         "league_id",
         "division_level",
@@ -38,6 +45,5 @@ object HistoryInfoRequest extends ClickhouseRequest[HistoryInfo] {
         "division_level".asc,
         "round".asc
     )
-    restClickhouseDAO.execute(builder.build, rowParser)
   }
 }

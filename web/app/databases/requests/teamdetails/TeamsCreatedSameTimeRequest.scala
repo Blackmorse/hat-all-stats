@@ -3,9 +3,10 @@ package databases.requests.teamdetails
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
+import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import databases.requests.model.team.CreatedSameTimeTeam
-import databases.sqlbuilder.{Select, SqlBuilder}
 import service.DatesRange
+import sqlbuilder.Select
 
 import scala.concurrent.Future
 
@@ -15,7 +16,7 @@ object TeamsCreatedSameTimeRequest extends ClickhouseRequest[CreatedSameTimeTeam
   def execute(leagueId: Int, currentSeason: Int, currentRound: Int, datesRange: DatesRange)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[CreatedSameTimeTeam]] = {
 
-    import SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
         "league_id",
         "team_id",
@@ -45,6 +46,6 @@ object TeamsCreatedSameTimeRequest extends ClickhouseRequest[CreatedSameTimeTeam
         .founded.less(datesRange.max)
       .limitBy(1, "team_id")
 
-    restClickhouseDAO.execute(builder.build, rowParser)
+    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
   }
 }

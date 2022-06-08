@@ -2,10 +2,11 @@ package databases.requests.overview.charts
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.implicits.{ClauseEntryExtended, SqlWithParametersExtended}
 import databases.requests.OrderingKeyPath
 import databases.requests.model.overview.FormationChartModel
 import databases.requests.overview.OverviewChartRequest
-import databases.sqlbuilder.Select
+import sqlbuilder.Select
 
 import scala.concurrent.Future
 
@@ -14,7 +15,7 @@ object FormationsChartRequest extends OverviewChartRequest[FormationChartModel] 
 
   def execute(orderingKeyPath: OrderingKeyPath, currentSeason: Int, currentRound: Int)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[FormationChartModel]] = {
-    import databases.sqlbuilder.SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
       "formation",
       "season",
@@ -32,6 +33,6 @@ object FormationsChartRequest extends OverviewChartRequest[FormationChartModel] 
       .orderBy("season".asc, "round".asc)
       .limitBy(10, "(season, round)")
 
-    restClickhouseDAO.execute(builder.build, rowParser)
+    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
   }
 }

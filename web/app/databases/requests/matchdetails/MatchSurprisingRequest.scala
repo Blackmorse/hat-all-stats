@@ -1,10 +1,12 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
+import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.`match`.MatchTopHatstats
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.sqlbuilder.{Select, SqlBuilder}
+import databases.sql.Fields.{hatstats, loddarStats, oppositeHatstats, oppositeLoddarStats}
 import models.web.RestStatisticsParameters
+import sqlbuilder.{Select, SqlBuilder, functions}
 
 //TODO the same SQL Builders for oneRound and aggregate ?
 object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatstats] {
@@ -15,8 +17,7 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFuntion: SqlBuilder.func): SqlBuilder = {
-    import SqlBuilder.fields._
+                                aggregateFuntion: functions.func): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
         "league_id",
@@ -45,8 +46,8 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
         .isLeagueMatch
         .and("(((goals - enemy_goals) * hatstats_difference) < 0) AND (opposite_team_id != 0)")
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
-        "team_id".to(parameters.sortingDirection)
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "team_id".to(parameters.sortingDirection.toSql)
       ).limitBy(1, "match_id")
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }
@@ -54,7 +55,6 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
   override def oneRoundBuilder(orderingKeyPath: OrderingKeyPath,
                                parameters: RestStatisticsParameters,
                                round: Int): SqlBuilder = {
-    import SqlBuilder.fields._
     import SqlBuilder.implicits._
     Select(
         "league_id",
@@ -84,8 +84,8 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
         .round(round)
         .and("(((goals - enemy_goals) * hatstats_difference) < 0)  AND (opposite_team_id != 0)"
       ).orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
-        "team_id".to(parameters.sortingDirection)
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "team_id".to(parameters.sortingDirection.toSql)
       ).limitBy(1, "match_id")
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }

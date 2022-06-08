@@ -3,8 +3,8 @@ package databases.requests.overview
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
 import databases.requests.model.overview.NumberOverviewTeamDetails
-import databases.sqlbuilder.{SqlBuilder, WSelect, With}
 import hattid.CommonData
+import sqlbuilder.{SqlBuilder, WSelect, With}
 
 object NewTeamsOverviewRequest extends ClickhouseOverviewRequest[NumberOverviewTeamDetails] {
   override val rowParser: RowParser[NumberOverviewTeamDetails] = NumberOverviewTeamDetails.mapper

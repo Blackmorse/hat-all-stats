@@ -2,9 +2,10 @@ package databases.requests.matchdetails
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.implicits.{ClauseEntryExtended, SqlWithParametersExtended}
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.`match`.TeamMatch
-import databases.sqlbuilder.{Select, SqlBuilder}
+import sqlbuilder.Select
 
 import scala.concurrent.Future
 
@@ -12,7 +13,7 @@ object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
   override val rowParser: RowParser[TeamMatch] = TeamMatch.mapper
 
   def execute(season: Int, orderingKeyPath: OrderingKeyPath)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamMatch]] = {
-    import SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
         "season",
         "league_id",
@@ -58,6 +59,6 @@ object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
         .season(season)
       .orderBy("round".asc)
 
-    restClickhouseDAO.execute(builder.build, rowParser)
+    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
   }
 }

@@ -1,6 +1,9 @@
 package databases.requests.overview.charts
 
+import sqlbuilder.functions.avg
+import sqlbuilder.SqlBuilder.implicits._
+
 object AverageGoalsChartRequest extends NumbersOverviewChartRequest {
   override protected val table: String = "hattrick.match_details"
-  override protected val aggregateFunction: String = "toInt32(avg(goals) * 100)"
+  override protected val aggregateFunction: String = (avg("goals") * 100).toInt32.toString
 }

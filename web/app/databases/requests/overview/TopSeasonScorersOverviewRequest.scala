@@ -3,7 +3,7 @@ package databases.requests.overview
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
 import databases.requests.model.overview.PlayerStatOverview
-import databases.sqlbuilder.{NestedSelect, Select, SqlBuilder}
+import sqlbuilder.{NestedSelect, Select, SqlBuilder}
 
 object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerStatOverview] {
   override val rowParser: RowParser[PlayerStatOverview] = PlayerStatOverview.mapper

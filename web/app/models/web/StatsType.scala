@@ -1,11 +1,11 @@
 package models.web
 
-import databases.sqlbuilder.SqlBuilder
 import play.api.mvc.QueryStringBindable
+import sqlbuilder.{SqlBuilder, functions}
 
 abstract class StatsType
 
-case class MultiplyRoundsType(function: String, aggregateFunction: SqlBuilder.func) extends StatsType {
+case class MultiplyRoundsType(function: String, aggregateFunction: functions.func) extends StatsType {
   override def toString: String = function
 }
 
@@ -13,9 +13,9 @@ object Accumulate extends StatsType {
   override def toString: String = "all"
 }
 
-object Avg extends MultiplyRoundsType("avg", SqlBuilder.avg)
+object Avg extends MultiplyRoundsType("avg", functions.avg)
 
-object Max extends MultiplyRoundsType("max", SqlBuilder.max)
+object Max extends MultiplyRoundsType("max", functions.max)
 
 
 case class Round(round: Int) extends StatsType {

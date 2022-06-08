@@ -1,10 +1,12 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
+import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.`match`.MatchTopHatstats
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.sqlbuilder.{Select, SqlBuilder}
+import databases.sql.Fields._
 import models.web.RestStatisticsParameters
+import sqlbuilder.{Select, SqlBuilder, functions}
 
 object MatchTopHatstatsRequest extends ClickhouseStatisticsRequest[MatchTopHatstats] {
   override val sortingColumns: Seq[String] = Seq("sum_hatstats", "sum_loddar_stats")
@@ -13,8 +15,7 @@ object MatchTopHatstatsRequest extends ClickhouseStatisticsRequest[MatchTopHatst
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFuntion: SqlBuilder.func): SqlBuilder = {
-    import SqlBuilder.fields._
+                                aggregateFuntion: functions.func): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
         "league_id",
@@ -40,8 +41,8 @@ object MatchTopHatstatsRequest extends ClickhouseStatisticsRequest[MatchTopHatst
         .orderingKeyPath(orderingKeyPath)
         .isLeagueMatch
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
-        "team_id".to(parameters.sortingDirection)
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "team_id".to(parameters.sortingDirection.toSql)
       ).limitBy(1, "match_id")
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }
@@ -49,7 +50,6 @@ object MatchTopHatstatsRequest extends ClickhouseStatisticsRequest[MatchTopHatst
   override def oneRoundBuilder(orderingKeyPath: OrderingKeyPath,
                                parameters: RestStatisticsParameters,
                                round: Int): SqlBuilder = {
-    import SqlBuilder.fields._
     import SqlBuilder.implicits._
     Select(
         "league_id",
@@ -76,8 +76,8 @@ object MatchTopHatstatsRequest extends ClickhouseStatisticsRequest[MatchTopHatst
         .isLeagueMatch
         .round(round)
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
-        "team_id".to(parameters.sortingDirection)
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "team_id".to(parameters.sortingDirection.toSql)
       ).limitBy(1, "match_id")
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }

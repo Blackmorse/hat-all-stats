@@ -7,7 +7,7 @@
  - name: build web distribution
    shell: 
      chdir: "{{ base_project_directory }}/hat-all-stats"
-     cmd: sbt web/clean web/dist
+     cmd: sbt web/test web/clean web/dist
 
  - name: unzip distribution
    shell:

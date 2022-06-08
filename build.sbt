@@ -72,6 +72,8 @@ lazy val scalaCommon = (project in file("scala-common"))
 lazy val chpp = (project in file("chpp"))
   .settings(chppSettings)
 
+lazy val sqlBuilder = (project in file("sqlBuilder"))
+
 lazy val akkaLoader = (project in file("akka-loader"))
   .dependsOn(scalaCommon)
   .dependsOn(chpp)
@@ -80,6 +82,7 @@ lazy val akkaLoader = (project in file("akka-loader"))
 lazy val web = (project in file("web"))
   .dependsOn(scalaCommon)
   .dependsOn(chpp)
+  .dependsOn(sqlBuilder)
   .settings(webSettings)
   .enablePlugins(PlayScala)
 

@@ -3,7 +3,7 @@ package databases.requests.overview
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
 import databases.requests.model.overview.FormationsOverview
-import databases.sqlbuilder.{Select, SqlBuilder}
+import sqlbuilder.{Select, SqlBuilder}
 
 
 object FormationsOverviewRequest extends ClickhouseOverviewRequest[FormationsOverview] {

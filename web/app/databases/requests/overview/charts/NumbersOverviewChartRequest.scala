@@ -2,10 +2,11 @@ package databases.requests.overview.charts
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
-import databases.requests.{ClickhouseRequest, OrderingKeyPath}
+import databases.requests.ClickhouseRequest.implicits.{ClauseEntryExtended, SqlWithParametersExtended}
+import databases.requests.OrderingKeyPath
 import databases.requests.model.overview.NumbersChartModel
 import databases.requests.overview.OverviewChartRequest
-import databases.sqlbuilder.Select
+import sqlbuilder.{Select, SqlBuilder}
 
 import scala.concurrent.Future
 
@@ -17,8 +18,13 @@ trait NumbersOverviewChartRequest extends OverviewChartRequest[NumbersChartModel
 
   def execute(orderingKeyPath: OrderingKeyPath, currentSeason: Int, currentRound: Int)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[NumbersChartModel]] = {
-    import databases.sqlbuilder.SqlBuilder.implicits._
-    val builder = Select(
+
+    restClickhouseDAO.execute(builder(orderingKeyPath, currentSeason, currentRound).sqlWithParameters().build, rowParser)
+  }
+
+  def builder(orderingKeyPath: OrderingKeyPath, currentSeason: Int, currentRound: Int): SqlBuilder = {
+    import sqlbuilder.SqlBuilder.implicits._
+    Select(
       "season",
       "round",
       aggregateFunction as "count")
@@ -31,7 +37,5 @@ trait NumbersOverviewChartRequest extends OverviewChartRequest[NumbersChartModel
         .and(s" NOT (season = $currentSeason and round > $currentRound)")
       .groupBy("season", "round")
       .orderBy("season".asc, "round".asc)
-
-    restClickhouseDAO.execute(builder.build, rowParser)
   }
 }

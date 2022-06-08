@@ -2,11 +2,14 @@ package databases.requests.overview.charts
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.implicits.{ClauseEntryExtended, SqlWithParametersExtended}
 import databases.requests.OrderingKeyPath
 import databases.requests.model.overview.NumbersChartModel
 import databases.requests.overview.OverviewChartRequest
-import databases.sqlbuilder.{Select, WSelect, With}
+import sqlbuilder.functions.max
+import sqlbuilder.{Select, SqlBuilder, WSelect, With}
 
+//TODO ?!
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -14,20 +17,28 @@ object NewTeamsNumberChartRequest extends OverviewChartRequest[NumbersChartModel
   override val rowParser: RowParser[NumbersChartModel] = NumbersChartModel.mapper
 
   override def execute(orderingKeyPath: OrderingKeyPath,
+    currentSeason: Int,
+    currentRound: Int)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[NumbersChartModel]] = {
+
+    restClickhouseDAO.execute(builder(orderingKeyPath, currentSeason, currentRound).sqlWithParameters().build, rowParser)
+      .map(numbers => numbers.filterNot(ncm => ncm.season == currentSeason && ncm.round > currentRound)) //filter out, because WITH FILL will fill out current season up to 14 round
+  }
+
+  def builder(orderingKeyPath: OrderingKeyPath,
                        currentSeason: Int,
-                       currentRound: Int)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[NumbersChartModel]] = {
+                       currentRound: Int): SqlBuilder = {
 
 
-    import databases.sqlbuilder.SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits._
 
-    val builder = Select(
+    Select(
       "season",
       "round",
       "count()" as "count"
     ).from(
       With(
         WSelect(
-          "max(dt)"
+          max("dt")
         ).from("hattrick.match_details")
           .where
             .season(currentSeason)
@@ -48,9 +59,6 @@ object NewTeamsNumberChartRequest extends OverviewChartRequest[NumbersChartModel
           .orderingKeyPath(orderingKeyPath)
           .and("diff <= multiIf(round = 1, 21, 7)")
     ).groupBy("season", "round")
-      .orderBy(s"season ASC WITH FILL TO $currentSeason + 1".asc, "round ASC WITH FILL TO 14 + 1".asc) //TODO asc because it's remove ASC/DESC from sql query (ASC by default)
-
-    restClickhouseDAO.execute(builder.build, rowParser)
-      .map(numbers => numbers.filterNot(ncm => ncm.season == currentSeason && ncm.round > currentRound)) //filter out, because WITH FILL will fill out current season up to 14 round
+      .orderBy(s"season".asc.withFillTo(s"$currentSeason + 1"), "round".asc.withFillTo("14 + 1"))
   }
 }

@@ -3,8 +3,9 @@ package databases.requests.teamrankings
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
-import databases.sqlbuilder.{Select, SqlBuilder}
+import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import models.clickhouse.HistoryTeamLeagueUnitInfo
+import sqlbuilder.Select
 
 import scala.concurrent.Future
 
@@ -13,7 +14,7 @@ object HistoryTeamLeagueUnitInfoRequest extends ClickhouseRequest[HistoryTeamLea
 
   def execute(season: Int, leagueId: Int, teamId: Long)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[Option[HistoryTeamLeagueUnitInfo]] = {
-    import SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
         "division_level",
         "league_unit_id"
@@ -24,6 +25,6 @@ object HistoryTeamLeagueUnitInfoRequest extends ClickhouseRequest[HistoryTeamLea
         .teamId(teamId)
       .limit(1)
 
-    restClickhouseDAO.executeSingleOpt(builder.build, rowParser)
+    restClickhouseDAO.executeSingleOpt(builder.sqlWithParameters().build, rowParser)
   }
 }

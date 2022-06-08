@@ -1,8 +1,6 @@
-package databases.sqlbuilder
+package sqlbuilder
 
-import anorm.{NamedParameter, Row, SQL, SimpleSql}
-import databases.sqlbuilder.clause.{ClauseEntry, HavingClause, WhereClause}
-import hattid.LoddarStatsUtils
+import sqlbuilder.clause.{ClauseEntry, HavingClause, WhereClause}
 
 import scala.collection.mutable
 
@@ -13,42 +11,12 @@ case class GroupBy(fields: Seq[String]) {
 }
 
 object SqlBuilder {
-  trait func {
-    def apply(field: Field): Field
-  }
-
-  object avg extends func {
-    override def apply(field: Field): Field = {
-      new Field(s"avg(${field.name})")
-    }
-  }
-
-  object max extends func {
-    override def apply(field: Field): Field = {
-      new Field(s"max(${field.name})")
-    }
-  }
-
-  object identity extends func {
-    override def apply(field: Field): Field = field
-  }
-
   object implicits {
     implicit def stringToField(string: String): Field =
       new Field(string)
 
     implicit def stringToOrderByField(field: String): OrderByField =
       new OrderByField(field)
-  }
-
-  object fields {
-    import SqlBuilder.implicits._
-
-    val hatstats: Field = "rating_midfield * 3 + rating_left_att + rating_right_att + rating_mid_att + rating_left_def + rating_right_def + rating_mid_def"
-    val oppositeHatstats: Field = "opposite_rating_midfield * 3 + opposite_rating_left_att + opposite_rating_right_att + opposite_rating_mid_att + opposite_rating_left_def + opposite_rating_right_def + opposite_rating_mid_def"
-
-    val loddarStats: Field = LoddarStatsUtils.homeLoddarStats
-    val oppositeLoddarStats: Field = LoddarStatsUtils.awayLoddarStats
   }
 }
 
@@ -65,6 +33,8 @@ case class WithSelect(sqlBuilder: SqlBuilder, alias: String, builderName: String
     selectSqlBuilder.select(fields: _*)
   }
 }
+
+case class SqlWithParameters(sql: String, parameters: Seq[Parameter])
 
 case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
 
@@ -120,18 +90,11 @@ case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
 
   def parameters: mutable.Buffer[Parameter] = this.withSelect.map(ws => ws.sqlBuilder.parameters).getOrElse(mutable.Buffer()) ++ whereClause.parameters ++ havingClause.parameters ++ this._select.parameters
 
-  def build: SimpleSql[Row] = {
-    val finalSql = buildStringSql()
-    val parameters = this.parameters
-
-    SQL(finalSql)
-      .on(parameters.toSeq
-        .filter(parameter => parameter.isInstanceOf[ValueParameter])
-        .map(_.asInstanceOf[ValueParameter])
-        .map(parameter => {
-          NamedParameter.namedWithString((s"${parameter.sqlBuilderName}_${parameter.name}_${parameter.parameterNumber}", parameter.value))
-        }): _*
-      )
+  def sqlWithParameters(): SqlWithParameters = {
+    SqlWithParameters(
+      sql = buildStringSql(),
+      parameters = this.parameters.toSeq
+    )
   }
 
   def buildStringSql(): String = {

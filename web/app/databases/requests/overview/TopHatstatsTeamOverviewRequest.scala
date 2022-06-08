@@ -3,7 +3,8 @@ package databases.requests.overview
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
 import databases.requests.model.overview.TeamStatOverview
-import databases.sqlbuilder.{Select, SqlBuilder}
+import databases.sql.Fields.hatstats
+import sqlbuilder.{Select, SqlBuilder}
 
 object TopHatstatsTeamOverviewRequest extends ClickhouseOverviewRequest[TeamStatOverview] {
   override val rowParser: RowParser[TeamStatOverview] = TeamStatOverview.mapper
@@ -12,7 +13,6 @@ object TopHatstatsTeamOverviewRequest extends ClickhouseOverviewRequest[TeamStat
                        round: Int,
                        leagueId: Option[Int],
                        divisionLevel: Option[Int]): SqlBuilder = {
-    import SqlBuilder.fields._
     import SqlBuilder.implicits._
     Select(
         "league_id",

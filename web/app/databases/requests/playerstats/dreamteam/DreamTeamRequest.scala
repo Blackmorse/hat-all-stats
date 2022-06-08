@@ -2,10 +2,11 @@ package databases.requests.playerstats.dreamteam
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.implicits.{ClauseEntryExtended, SqlWithParametersExtended}
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.player.DreamTeamPlayer
-import databases.sqlbuilder.{Field, NestedSelect, Select, SqlBuilder}
 import models.web.{Accumulate, Round, StatsType}
+import sqlbuilder.{Field, NestedSelect, Select}
 
 import scala.concurrent.Future
 
@@ -18,7 +19,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
       throw new Exception("Unknown sorting field")
     }
 
-    import SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits._
     val fields: Seq[Field] = Seq("league_id",
       "player_id",
       "first_name",
@@ -63,6 +64,6 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
           .limitBy(4, "role")
     }
 
-    restClickhouseDAO.execute(builder.build, rowParser)
+    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
   }
 }

@@ -3,7 +3,7 @@ package databases.requests.overview
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
 import databases.requests.model.overview.OverviewTeamPlayerAverages
-import databases.sqlbuilder.{NestedSelect, Select, SqlBuilder}
+import sqlbuilder.{NestedSelect, Select, SqlBuilder}
 
 object OverviewTeamPlayerAveragesRequest extends ClickhouseOverviewRequest[OverviewTeamPlayerAverages] {
   override val rowParser: RowParser[OverviewTeamPlayerAverages] = OverviewTeamPlayerAverages.mapper
@@ -29,7 +29,6 @@ object OverviewTeamPlayerAveragesRequest extends ClickhouseOverviewRequest[Overv
           .leagueId(leagueId)
           .divisionLevel(divisionLevel)
           .isLeagueMatch
-          .limit(page = 0, pageSize = limit)
         .groupBy("team_id")
     )
   }

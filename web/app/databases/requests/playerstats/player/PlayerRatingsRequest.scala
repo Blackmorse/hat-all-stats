@@ -1,11 +1,12 @@
 package databases.requests.playerstats.player
 
 import anorm.RowParser
+import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.Roles
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.player.PlayerRating
-import databases.sqlbuilder.{Select, SqlBuilder}
 import models.web.{PlayersParameters, RestStatisticsParameters}
+import sqlbuilder.{Select, SqlBuilder}
 
 object PlayerRatingsRequest extends ClickhousePlayerRequest[PlayerRating]{
   override val sortingColumns: Seq[String] = Seq("age", "rating", "rating_end_of_match")
@@ -42,8 +43,8 @@ object PlayerRatingsRequest extends ClickhousePlayerRequest[PlayerRating]{
         .age.greaterEqual(playersParameters.minAge.map(_ * 112))
         .age.lessEqual(playersParameters.maxAge.map(_ * 112 + 111))
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
-        "player_id".to(parameters.sortingDirection)
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "player_id".to(parameters.sortingDirection.toSql)
       ).limit(page = parameters.page, pageSize = parameters.pageSize)
   }
 }

@@ -3,8 +3,8 @@ package databases.requests.teamdetails
 import anorm.RowParser
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import databases.requests.model.team.OldestTeam
-import databases.sqlbuilder.{Select, SqlBuilder}
 import models.web.{RestStatisticsParameters, Round}
+import sqlbuilder.{Select, SqlBuilder, functions}
 
 object OldestTeamsRequest extends ClickhouseStatisticsRequest[OldestTeam] {
   override val sortingColumns: Seq[String] = Seq("founded_date")
@@ -13,6 +13,7 @@ object OldestTeamsRequest extends ClickhouseStatisticsRequest[OldestTeam] {
                                parameters: RestStatisticsParameters,
                                round: Int): SqlBuilder = {
     import SqlBuilder.implicits._
+    import databases.requests.ClickhouseRequest.implicits._
     Select(
       "league_id",
       "team_id",
@@ -26,13 +27,13 @@ object OldestTeamsRequest extends ClickhouseStatisticsRequest[OldestTeam] {
       .orderingKeyPath(orderingKeyPath)
       .round(parameters.statsType.asInstanceOf[Round].round)
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection.reverse),
-        "team_id".to(parameters.sortingDirection.reverse)
+        parameters.sortBy.to(parameters.sortingDirection.reverse.toSql),
+        "team_id".to(parameters.sortingDirection.reverse.toSql)
       )
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }
 
-  override def aggregateBuilder(orderingKeyPath: OrderingKeyPath, parameters: RestStatisticsParameters, aggregateFuntion: SqlBuilder.func): SqlBuilder =
+  override def aggregateBuilder(orderingKeyPath: OrderingKeyPath, parameters: RestStatisticsParameters, aggregateFuntion: functions.func): SqlBuilder =
     throw new UnsupportedOperationException("No aggregate allowed for OldestTeamsRequest")
 
   override val rowParser: RowParser[OldestTeam] = OldestTeam.mapper

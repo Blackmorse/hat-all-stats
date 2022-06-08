@@ -3,8 +3,9 @@ package databases.requests.playerstats.player
 import anorm.RowParser
 import databases.requests.model.player.PlayerInjury
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.sqlbuilder.{Select, SqlBuilder}
 import models.web.RestStatisticsParameters
+import sqlbuilder.{Select, SqlBuilder, functions}
+import databases.requests.ClickhouseRequest
 
 object PlayerInjuryRequest extends ClickhouseStatisticsRequest[PlayerInjury] {
   override val sortingColumns: Seq[String] = Seq("age", "injury")
@@ -15,6 +16,7 @@ object PlayerInjuryRequest extends ClickhouseStatisticsRequest[PlayerInjury] {
                                parameters: RestStatisticsParameters,
                                round: Int): SqlBuilder = {
     import SqlBuilder.implicits._
+    import ClickhouseRequest.implicits._
     Select(
         "league_id",
         "team_name",
@@ -33,13 +35,13 @@ object PlayerInjuryRequest extends ClickhouseStatisticsRequest[PlayerInjury] {
         .orderingKeyPath(orderingKeyPath)
         .round(round)
         .isLeagueMatch
-      .orderBy(parameters.sortBy.to(parameters.sortingDirection),
-        "player_id".to(parameters.sortingDirection))
+      .orderBy(parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "player_id".to(parameters.sortingDirection.toSql))
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFunction: SqlBuilder.func): SqlBuilder =
+                                aggregateFunction: functions.func): SqlBuilder =
     throw new UnsupportedOperationException("No aggregation allowed for PlayerInjuryRequest")
 }

@@ -1,7 +1,8 @@
 package databases.requests
 
 import databases.dao.RestClickhouseDAO
-import databases.sqlbuilder.SqlBuilder
+import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
+import sqlbuilder.SqlBuilder
 
 import scala.concurrent.Future
 
@@ -12,6 +13,6 @@ trait ClickhouseOverviewRequest[T] extends ClickhouseRequest[T] {
 
   def execute(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int])
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[T]] = {
-    restClickhouseDAO.execute(builder(season, round, leagueId, divisionLevel).build, rowParser)
+    restClickhouseDAO.execute(builder(season, round, leagueId, divisionLevel).sqlWithParameters().build, rowParser)
   }
 }

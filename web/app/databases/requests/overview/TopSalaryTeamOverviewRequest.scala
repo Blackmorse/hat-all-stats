@@ -3,7 +3,7 @@ package databases.requests.overview
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
 import databases.requests.model.overview.TeamStatOverview
-import databases.sqlbuilder.{Select, SqlBuilder}
+import sqlbuilder.{Select, SqlBuilder}
 
 object TopSalaryTeamOverviewRequest extends ClickhouseOverviewRequest[TeamStatOverview] {
   override val rowParser: RowParser[TeamStatOverview] = TeamStatOverview.mapper

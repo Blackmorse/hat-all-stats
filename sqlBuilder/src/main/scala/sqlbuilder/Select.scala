@@ -1,4 +1,4 @@
-package databases.sqlbuilder
+package sqlbuilder
 
 import scala.collection.mutable
 
@@ -57,8 +57,15 @@ class Field (val name: String) {
     this
   }
 
+  def *(n: Int): Field = {
+    val field = new Field(s"$name * $n")
+    field.alias = alias
+    field
+  }
+
   def toInt32: Field = function("toInt32")
   def toInt64: Field = function("toInt64")
+  def toUInt16: Field = function("toUInt16")
 
   private def function(functionName: String): Field = {
     val res = new Field(s"$functionName($name)")

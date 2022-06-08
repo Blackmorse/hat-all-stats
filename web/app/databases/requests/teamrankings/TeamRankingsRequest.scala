@@ -2,9 +2,10 @@ package databases.requests.teamrankings
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
-import databases.sqlbuilder.{Select, SqlBuilder}
 import models.clickhouse.TeamRankings
+import sqlbuilder.{Select, SqlBuilder}
 
 import scala.concurrent.Future
 
@@ -62,6 +63,6 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
         "rank_type".asc,
         "round".asc
       )
-      .build, rowParser)
+      .sqlWithParameters().build, rowParser)
   }
 }

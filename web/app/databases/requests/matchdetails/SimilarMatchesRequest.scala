@@ -3,9 +3,10 @@ package databases.requests.matchdetails
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
+import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import databases.requests.model.`match`.SimilarMatchesStats
-import databases.sqlbuilder.{NestedSelect, Select, SqlBuilder}
 import models.web.matches.SingleMatch
+import sqlbuilder.{NestedSelect, Select}
 
 import scala.concurrent.Future
 
@@ -17,7 +18,7 @@ object SimilarMatchesRequest extends ClickhouseRequest[SimilarMatchesStats] {
     val homeTeamRatings = singleMatch.homeMatchRatings
     val awayTeamRatings = singleMatch.awayMatchRatings
 
-    import SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
         "countIf(goals > enemy_goals)" as "wins",
         "countIf(goals = enemy_goals)" as "draws",
@@ -69,7 +70,7 @@ object SimilarMatchesRequest extends ClickhouseRequest[SimilarMatchesStats] {
                |)""".stripMargin)
     )
 
-    restClickhouseDAO.executeSingleOpt(builder.build, rowParser)
+    restClickhouseDAO.executeSingleOpt(builder.sqlWithParameters().build, rowParser)
   }
 
   private def rates(value1: Int, value2: Int, field1: String, field2: String): String = {

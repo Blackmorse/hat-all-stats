@@ -3,7 +3,8 @@ package databases.requests.overview
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
 import databases.requests.model.`match`.MatchTopHatstats
-import databases.sqlbuilder.{Select, SqlBuilder}
+import databases.sql.Fields._
+import sqlbuilder.{Select, SqlBuilder}
 
 object SurprisingMatchesOverviewRequest extends ClickhouseOverviewRequest[MatchTopHatstats] {
   override val rowParser: RowParser[MatchTopHatstats] = MatchTopHatstats.mapper
@@ -12,7 +13,6 @@ object SurprisingMatchesOverviewRequest extends ClickhouseOverviewRequest[MatchT
                        round: Int,
                        leagueId: Option[Int],
                        divisionLevel: Option[Int]): SqlBuilder = {
-    import SqlBuilder.fields._
     import SqlBuilder.implicits._
     Select(
         "league_id",

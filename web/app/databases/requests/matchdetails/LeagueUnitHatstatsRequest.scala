@@ -1,11 +1,13 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
+import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.league.LeagueUnitRating
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.sqlbuilder.{NestedSelect, Select, SqlBuilder}
-import databases.sqlbuilder.SqlBuilder.avg
+import databases.sql.Fields.{hatstats, loddarStats}
 import models.web.RestStatisticsParameters
+import sqlbuilder.functions.avg
+import sqlbuilder.{NestedSelect, Select, SqlBuilder, functions}
 
 object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitRating] {
   override val sortingColumns: Seq[String] = Seq("hatstats", "midfield", "defense", "attack", "loddar_stats")
@@ -14,8 +16,7 @@ object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitR
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFuntion: SqlBuilder.func): SqlBuilder = {
-    import SqlBuilder.fields._
+                                aggregateFuntion: functions.func): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
         "league_unit_id",
@@ -45,7 +46,7 @@ object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitR
           .groupBy("league_unit_id", "league_unit_name", "round")
       ).groupBy("league_unit_id", "league_unit_name")
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
         "league_unit_id".desc
       ).limit(page = parameters.page, pageSize = parameters.pageSize)
   }
@@ -53,7 +54,6 @@ object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitR
   override def oneRoundBuilder(orderingKeyPath: OrderingKeyPath,
                                parameters: RestStatisticsParameters,
                                round: Int): SqlBuilder = {
-    import SqlBuilder.fields._
     import SqlBuilder.implicits._
     Select(
         "league_unit_id",
@@ -72,8 +72,8 @@ object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitR
         .and("rating_midfield + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att != 0")
       .groupBy("league_unit_id, league_unit_name")
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
-        "league_unit_id".to(parameters.sortingDirection)
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "league_unit_id".to(parameters.sortingDirection.toSql)
       ).limit(page = parameters.page, pageSize = parameters.pageSize)
   }
 }

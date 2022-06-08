@@ -1,10 +1,12 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
+import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.`match`.MatchSpectators
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.sqlbuilder.{Select, SqlBuilder}
 import models.web.RestStatisticsParameters
+import org.graalvm.compiler.hotspot.replacements.HotSpotReplacementsUtil.pageSize
+import sqlbuilder.{Select, SqlBuilder, functions}
 
 object MatchSpectatorsRequest extends ClickhouseStatisticsRequest[MatchSpectators] {
   override val sortingColumns: Seq[String] = Seq("sold_total")
@@ -36,15 +38,15 @@ object MatchSpectatorsRequest extends ClickhouseStatisticsRequest[MatchSpectator
         .isLeagueMatch
         .round(round)
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
-        "team_id".to(parameters.sortingDirection)
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "team_id".to(parameters.sortingDirection.toSql)
       ).limitBy(1, "match_id")
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFuntion: SqlBuilder.func): SqlBuilder = {
+                                aggregateFuntion: functions.func): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
         "league_id",
@@ -65,8 +67,8 @@ object MatchSpectatorsRequest extends ClickhouseStatisticsRequest[MatchSpectator
         .orderingKeyPath(orderingKeyPath)
         .isLeagueMatch
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
-        "team_id".to(parameters.sortingDirection)
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "team_id".to(parameters.sortingDirection.toSql)
       ).limitBy(1, "match_id")
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }

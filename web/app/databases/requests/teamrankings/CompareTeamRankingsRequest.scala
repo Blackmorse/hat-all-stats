@@ -3,6 +3,7 @@ package databases.requests.teamrankings
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
+import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import models.clickhouse.TeamRankings
 
 import scala.concurrent.Future
@@ -35,6 +36,6 @@ object CompareTeamRankingsRequest extends ClickhouseRequest[TeamRankings] {
          .teamId(teamId2)
          .rankType("league_id")
 
-    restClickhouseDAO.execute(builder.build, rowParser)
+    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
   }
 }

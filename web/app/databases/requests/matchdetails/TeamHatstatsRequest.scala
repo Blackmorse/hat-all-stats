@@ -1,10 +1,12 @@
 package databases.requests.matchdetails
 
 import anorm.RowParser
+import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.team.TeamHatstats
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
-import databases.sqlbuilder.{Select, SqlBuilder}
+import databases.sql.Fields.{hatstats, loddarStats}
 import models.web.RestStatisticsParameters
+import sqlbuilder.{Select, SqlBuilder, functions}
 
 object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
   override val sortingColumns: Seq[String] = Seq("hatstats", "midfield", "defense", "attack", "loddar_stats")
@@ -13,7 +15,6 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
   override def oneRoundBuilder(orderingKeyPath: OrderingKeyPath,
                                parameters: RestStatisticsParameters,
                                round: Int): SqlBuilder = {
-    import SqlBuilder.fields._
     import SqlBuilder.implicits._
     Select("team_id",
         "league_id" as "league",
@@ -33,7 +34,7 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
         .round(round)
         .isLeagueMatch
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
         "team_id".asc)
       .limit(page = parameters.page, pageSize = parameters.pageSize)
 
@@ -41,8 +42,7 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFunction: SqlBuilder.func): SqlBuilder = {
-    import SqlBuilder.fields._
+                                aggregateFunction: functions.func): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
         "team_id",
@@ -69,7 +69,7 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
         "league_unit_id",
         "league_unit_name")
       .orderBy(
-        parameters.sortBy.to(parameters.sortingDirection),
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
         "team_id".asc)
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }

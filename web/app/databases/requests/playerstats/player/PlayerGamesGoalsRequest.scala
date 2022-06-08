@@ -1,11 +1,12 @@
 package databases.requests.playerstats.player
 
 import anorm.RowParser
+import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.Roles
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.player.PlayerGamesGoals
-import databases.sqlbuilder.{Select, SqlBuilder}
 import models.web.{PlayersParameters, RestStatisticsParameters}
+import sqlbuilder.{Select, SqlBuilder}
 
 object PlayerGamesGoalsRequest extends ClickhousePlayerRequest[PlayerGamesGoals]{
   override val sortingColumns: Seq[String] = Seq("games", "played", "scored", "goal_rate")
@@ -46,8 +47,8 @@ object PlayerGamesGoalsRequest extends ClickhousePlayerRequest[PlayerGamesGoals]
         .nationality(playersParameters.nationality)
         .age.greaterEqual(playersParameters.minAge.map(_ * 112))
         .age.lessEqual(playersParameters.maxAge.map(_ * 112 + 111))
-      .orderBy(parameters.sortBy.to(parameters.sortingDirection),
-        "player_id".to(parameters.sortingDirection))
+      .orderBy(parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "player_id".to(parameters.sortingDirection.toSql))
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }
 }

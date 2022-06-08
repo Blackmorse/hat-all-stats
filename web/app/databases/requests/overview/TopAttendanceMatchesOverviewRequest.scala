@@ -3,7 +3,7 @@ package databases.requests.overview
 import anorm.RowParser
 import databases.requests.ClickhouseOverviewRequest
 import databases.requests.model.overview.MatchAttendanceOverview
-import databases.sqlbuilder.{Select, SqlBuilder}
+import sqlbuilder.{Select, SqlBuilder}
 
 object TopAttendanceMatchesOverviewRequest extends ClickhouseOverviewRequest[MatchAttendanceOverview] {
   override val rowParser: RowParser[MatchAttendanceOverview] = MatchAttendanceOverview.mapper

@@ -1,8 +1,6 @@
-package databases.sqlbuilder.clause
+package sqlbuilder.clause
 
-import databases.requests.OrderingKeyPath
-import databases.sqlbuilder.{ConditionParameter, DateParameter, IntParameter, LongParameter, Parameter, SqlBuilder, StringParameter, ValueParameter}
-import models.web.RestStatisticsParameters
+import sqlbuilder.{ConditionParameter, DateParameter, IntParameter, LongParameter, Parameter, SqlBuilder, StringParameter, ValueParameter}
 
 import scala.collection.mutable
 
@@ -17,15 +15,6 @@ object ClauseEntry {
 
 case class ClauseEntry(sqlBuilder: SqlBuilder) {
   private[sqlbuilder] val parameters: mutable.Buffer[Parameter] = mutable.Buffer()
-//rename
-  def orderingKeyPath(orderingKeyPath: OrderingKeyPath): this.type = {
-    leagueId(orderingKeyPath.leagueId)
-    divisionLevel(orderingKeyPath.divisionLevel)
-    leagueUnitId(orderingKeyPath.leagueUnitId)
-    teamId(orderingKeyPath.teamId)
-
-    this
-  }
 
   private def addParameter[T <: Parameter](parameter: T): T = {
     sqlBuilder.parametersNumber += 1
@@ -33,29 +22,29 @@ case class ClauseEntry(sqlBuilder: SqlBuilder) {
     parameter
   }
 
-  def season = addParameter(IntParameter(sqlBuilder.parametersNumber, "season", this, sqlBuilder.name))
+  def season: IntParameter = addParameter(IntParameter(sqlBuilder.parametersNumber, "season", this, sqlBuilder.name))
 
-  def leagueId = addParameter(IntParameter(sqlBuilder.parametersNumber, "league_id", this, sqlBuilder.name))
+  def leagueId: IntParameter = addParameter(IntParameter(sqlBuilder.parametersNumber, "league_id", this, sqlBuilder.name))
 
-  def divisionLevel = addParameter(IntParameter(sqlBuilder.parametersNumber, "division_level", this, sqlBuilder.name))
+  def divisionLevel: IntParameter = addParameter(IntParameter(sqlBuilder.parametersNumber, "division_level", this, sqlBuilder.name))
 
-  def leagueUnitId = addParameter(LongParameter(sqlBuilder.parametersNumber, "league_unit_id", this, sqlBuilder.name))
+  def leagueUnitId: LongParameter = addParameter(LongParameter(sqlBuilder.parametersNumber, "league_unit_id", this, sqlBuilder.name))
 
-  def teamId = addParameter(LongParameter(sqlBuilder.parametersNumber, "team_id", this, sqlBuilder.name))
+  def teamId: LongParameter = addParameter(LongParameter(sqlBuilder.parametersNumber, "team_id", this, sqlBuilder.name))
 
-  def round = addParameter(IntParameter(sqlBuilder.parametersNumber, "round", this, sqlBuilder.name))
+  def round: IntParameter = addParameter(IntParameter(sqlBuilder.parametersNumber, "round", this, sqlBuilder.name))
 
-  def role = addParameter(IntParameter(sqlBuilder.parametersNumber, "role", this, sqlBuilder.name))
+  def role: IntParameter = addParameter(IntParameter(sqlBuilder.parametersNumber, "role", this, sqlBuilder.name))
 
-  def nationality = addParameter( IntParameter(sqlBuilder.parametersNumber, "nationality", this, sqlBuilder.name))
+  def nationality: IntParameter = addParameter(IntParameter(sqlBuilder.parametersNumber, "nationality", this, sqlBuilder.name))
 
-  def age = addParameter(IntParameter(sqlBuilder.parametersNumber, "age", this, sqlBuilder.name))
+  def age: IntParameter = addParameter(IntParameter(sqlBuilder.parametersNumber, "age", this, sqlBuilder.name))
 
-  def playedMinutes = addParameter(IntParameter(sqlBuilder.parametersNumber, "played_minutes", this, sqlBuilder.name))
+  def playedMinutes: IntParameter = addParameter(IntParameter(sqlBuilder.parametersNumber, "played_minutes", this, sqlBuilder.name))
 
-  def founded = addParameter(DateParameter(sqlBuilder.parametersNumber, "founded", this, sqlBuilder.name))
+  def founded: DateParameter = addParameter(DateParameter(sqlBuilder.parametersNumber, "founded", this, sqlBuilder.name))
 
-  def rankType = addParameter(StringParameter(sqlBuilder.parametersNumber, "rank_type", this, sqlBuilder.name))
+  def rankType: StringParameter = addParameter(StringParameter(sqlBuilder.parametersNumber, "rank_type", this, sqlBuilder.name))
 
   def and(condition: String): ClauseEntry = {
     parameters += ConditionParameter(condition)
@@ -78,7 +67,7 @@ case class ClauseEntry(sqlBuilder: SqlBuilder) {
     val whereParameters = parameters.filter(parameter => {
       parameter match {
         case ConditionParameter(_) => true
-        case _ => parameter.asInstanceOf[ValueParameter].value != null
+        case _ => parameter.asInstanceOf[ValueParameter[Any]].value.isDefined
       }
     })
     if(whereParameters.nonEmpty) {
@@ -86,7 +75,7 @@ case class ClauseEntry(sqlBuilder: SqlBuilder) {
         whereParameters.map {
           case ConditionParameter(condition) => s"($condition)"
           case parameter =>
-            val valueParameter = parameter.asInstanceOf[ValueParameter]
+            val valueParameter = parameter.asInstanceOf[ValueParameter[Any]]
             s"(${valueParameter.name} ${valueParameter.oper} {${sqlBuilder.name}_${valueParameter.name}_${valueParameter.parameterNumber}})"
         }.mkString(" AND ")
       )
@@ -110,7 +99,7 @@ abstract class Clause(val sqlBuilder: SqlBuilder, val clauseType: String) {
     entry
   }
 
-  private[databases] def parameters = entries.flatMap(_.parameters)
+  private[sqlbuilder] def parameters = entries.flatMap(_.parameters)
 
   private[sqlbuilder] def initialized: Boolean = entries.nonEmpty
 

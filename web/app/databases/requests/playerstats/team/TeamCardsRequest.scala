@@ -2,10 +2,11 @@ package databases.requests.playerstats.team
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.implicits.{ClauseEntryExtended, SqlWithParametersExtended}
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.team.TeamCards
-import databases.sqlbuilder.{Select, SqlBuilder}
 import models.web.{RestStatisticsParameters, Round}
+import sqlbuilder.Select
 
 import scala.concurrent.Future
 
@@ -25,7 +26,7 @@ object TeamCardsRequest extends ClickhouseRequest[TeamCards] {
       case Round(r) => r
     }
 
-    import SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
         "any(league_id)" as "league",
         "argMax(team_name, round)" as "team_name",
@@ -41,10 +42,10 @@ object TeamCardsRequest extends ClickhouseRequest[TeamCards] {
         .round.lessEqual(round)
       .groupBy("team_id", "league_unit_id", "league_unit_name")
       .orderBy(
-        sortBy.to(parameters.sortingDirection),
+        sortBy.to(parameters.sortingDirection.toSql),
         "team_id".asc
       ).limit(page = parameters.page, pageSize = parameters.pageSize)
 
-    restClickhouseDAO.execute(builder.build, rowParser)
+    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
   }
 }

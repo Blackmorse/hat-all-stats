@@ -2,9 +2,10 @@ package databases.requests.playerstats.player
 
 import databases.requests.model.Roles
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
-import databases.sqlbuilder.SqlBuilder
 import models.web.{PlayersParameters, RestStatisticsParameters, Round}
+import sqlbuilder.SqlBuilder
 
 import scala.concurrent.Future
 
@@ -28,7 +29,7 @@ trait ClickhousePlayerRequest[T] extends ClickhouseRequest[T] {
                             playersParameters = playersParameters,
                             role = role,
                             round = round)
-    restClickhouseDAO.execute(builder.build, rowParser)
+    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
   }
 
   def buildSql(orderingKeyPath: OrderingKeyPath,
