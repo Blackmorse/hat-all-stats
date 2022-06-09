@@ -3,7 +3,7 @@ package controllers
 import databases.dao.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
 import databases.requests.model.overview.TotalOverview
-import databases.requests.overview.charts.{AverageGoalsChartRequest, AverageSpectatorsChartRequest, FormationsChartRequest, GoalsNumberOverviewChartRequest, InjuriesNumberOverviewChartRequest, NewTeamsNumberChartRequest, NumbersOverviewChartRequest, PlayersNumberOverviewChartRequest, RedCardsNumberOverviewRequest, TeamsNumberOverviewChartRequest, YellowCardsNumberOverviewRequest}
+import databases.requests.overview.charts.{AverageGoalsChartRequest, AverageHatstatsChartRequest, AverageSpectatorsChartRequest, FormationsChartRequest, GoalsNumberOverviewChartRequest, InjuriesNumberOverviewChartRequest, NewTeamsNumberChartRequest, NumbersOverviewChartRequest, PlayersNumberOverviewChartRequest, RedCardsNumberOverviewRequest, TeamsNumberOverviewChartRequest, YellowCardsNumberOverviewRequest}
 
 import java.util.Date
 import javax.inject.Inject
@@ -194,7 +194,7 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
   }
 
   def averageHatstatNumbersChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] =
-    numbersChart(AverageGoalsChartRequest)(leagueId, divisionLevel)
+    numbersChart(AverageHatstatsChartRequest)(leagueId, divisionLevel)
 
   def averageSpectatorNumbersChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] =
     numbersChart(AverageSpectatorsChartRequest)(leagueId, divisionLevel)
