@@ -23,6 +23,7 @@ object ClickhouseTests {
     ).from("hattrick.match_details")
       .where
       .season(season)
+      .isLeagueMatch
       .groupBy("league_id", "division_level", "round")
 
     val results = builder.sqlWithParameters().build.as(Count.mapper.*)
@@ -59,6 +60,7 @@ object ClickhouseTests {
     .where
       .season(season)
       .round(round)
+      .isLeagueMatch
     .groupBy("league_id", "division_level", "round")
 
     val matchDetailsBuilder = builderFunc("hattrick.match_details")
@@ -103,6 +105,7 @@ object ClickhouseTests {
         .where
         .season(season)
         .round(round)
+        .isLeagueMatch
 
     val teamsFromMatchDetailsBuilder = uniqTeamsBuilderFunc("hattrick.match_details")
     val teamsFromPlayerStatsBuilder = uniqTeamsBuilderFunc("hattrick.player_stats")
