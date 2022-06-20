@@ -108,12 +108,11 @@ object ClickhouseTests {
         .where
         .season(season)
         .round(round)
-        .isLeagueMatch
 
     val teamsFromMatchDetailsBuilder = uniqTeamsBuilderFunc("hattrick.match_details").isLeagueMatch
     val teamsFromPlayerStatsBuilder = uniqTeamsBuilderFunc("hattrick.player_stats").isLeagueMatch
     val teamsFromTeamRankingsBuilder = uniqTeamsBuilderFunc("hattrick.team_rankings")
-    val teamsFromTeamDetailsBuilder = uniqTeamsBuilderFunc("hattrick.team_rankings")
+    val teamsFromTeamDetailsBuilder = uniqTeamsBuilderFunc("hattrick.team_details")
 
 
     val teamsFromMatchDetails = teamsFromMatchDetailsBuilder.sqlWithParameters().build
