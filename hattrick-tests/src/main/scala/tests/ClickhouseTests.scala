@@ -51,20 +51,23 @@ object ClickhouseTests {
     val season = worldDetails.leagueList.find(_.leagueId == 1000).map(league => league.season - league.seasonOffset).get
     val round = worldDetails.leagueList.find(_.leagueId == 1000).get.matchRound - 1
 
-    val builderFunc = (table: String) => Select(
-      "league_id",
-      "division_level",
-      "round",
-      "count()" as "cnt")
-    .from(table)
-    .where
-      .season(season)
-      .round(round)
-      .isLeagueMatch
-    .groupBy("league_id", "division_level", "round")
+    val builderFunc = (table: String, checkForLeagueMatch: Boolean) => {
+      val builder = Select(
+        "league_id",
+        "division_level",
+        "round",
+        "count()" as "cnt")
+        .from(table)
+        .where
+        .season(season)
+        .round(round)
 
-    val matchDetailsBuilder = builderFunc("hattrick.match_details")
-    val teamRankingsBuilder = builderFunc("hattrick.team_rankings")
+      val result = if (checkForLeagueMatch) builder.isLeagueMatch else builder
+      result.groupBy("league_id", "division_level", "round")
+    }
+
+    val matchDetailsBuilder = builderFunc("hattrick.match_details", true)
+    val teamRankingsBuilder = builderFunc("hattrick.team_rankings", false)
 
     val matchDetailsCounts = matchDetailsBuilder.sqlWithParameters().build
       .as(Count.mapper.*)
@@ -107,8 +110,8 @@ object ClickhouseTests {
         .round(round)
         .isLeagueMatch
 
-    val teamsFromMatchDetailsBuilder = uniqTeamsBuilderFunc("hattrick.match_details")
-    val teamsFromPlayerStatsBuilder = uniqTeamsBuilderFunc("hattrick.player_stats")
+    val teamsFromMatchDetailsBuilder = uniqTeamsBuilderFunc("hattrick.match_details").isLeagueMatch
+    val teamsFromPlayerStatsBuilder = uniqTeamsBuilderFunc("hattrick.player_stats").isLeagueMatch
     val teamsFromTeamRankingsBuilder = uniqTeamsBuilderFunc("hattrick.team_rankings")
     val teamsFromTeamDetailsBuilder = uniqTeamsBuilderFunc("hattrick.team_rankings")
 
