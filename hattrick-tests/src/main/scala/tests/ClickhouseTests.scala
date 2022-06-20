@@ -30,7 +30,8 @@ object ClickhouseTests {
     results.groupBy(_.leagueId).foreach{ case (leagueId, leagueCounts) =>
       leagueCounts.groupBy(_.divisionLevel).foreach{case (divisionLevel, divisionLevelCounts) =>
         if(!(1 to round).forall(r => divisionLevelCounts.exists(_.round == r))) {
-          throw new Exception(s"Inconsistency for leagueId $leagueId, divisionLevel $divisionLevel(there at least one divisionLevel-round is missing): $divisionLevelCounts")
+          throw new Exception(s"Inconsistency for leagueId $leagueId, divisionLevel $divisionLevel" +
+            s"(at least one divisionLevel-round is missing): ${divisionLevelCounts.sortBy(_.round)}")
         }
         for (r <- 2 to round) {
           val previousRoundCount = divisionLevelCounts.find(_.round == r - 1).get.cnt
