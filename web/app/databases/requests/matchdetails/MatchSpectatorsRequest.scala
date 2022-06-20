@@ -5,7 +5,6 @@ import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.`match`.MatchSpectators
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import models.web.RestStatisticsParameters
-import org.graalvm.compiler.hotspot.replacements.HotSpotReplacementsUtil.pageSize
 import sqlbuilder.{Select, SqlBuilder, functions}
 
 object MatchSpectatorsRequest extends ClickhouseStatisticsRequest[MatchSpectators] {

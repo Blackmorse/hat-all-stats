@@ -17,6 +17,10 @@ object functions {
     }
   }
 
+  object uniqExact {
+    def apply(field: Field): Field = new Field(s"uniqExact(${field.name})")
+  }
+
   object max extends func {
     override def apply(field: Field): Field = {
       new Field(s"max(${field.name})")

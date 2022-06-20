@@ -6,14 +6,17 @@ trapExit := false
 ThisBuild / scalaVersion := "2.13.5"
 ThisBuild / organization := "com.blackmorse.hattrick"
 
+val clickhouseVersion = "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
+val anormVersion = "org.playframework.anorm" %% "anorm" % "2.6.4"
+
 lazy val webDependencies = Seq(
   guice,
   jdbc,
   caffeine,
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
-  "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3",
+  clickhouseVersion,
   "ai.x" %% "play-json-extensions" % "0.42.0",
-  "org.playframework.anorm" %% "anorm" % "2.6.4",
+  anormVersion
 )
 
 lazy val webSettings = Seq(
@@ -66,6 +69,13 @@ lazy val scalaCommonSettings = Seq(
   )
 )
 
+lazy val testSettings = Seq(
+  libraryDependencies ++= Seq(
+    clickhouseVersion,
+    anormVersion
+  )
+)
+
 lazy val scalaCommon = (project in file("scala-common"))
   .settings(scalaCommonSettings)
 
@@ -73,6 +83,11 @@ lazy val chpp = (project in file("chpp"))
   .settings(chppSettings)
 
 lazy val sqlBuilder = (project in file("sqlBuilder"))
+  .settings(Seq(
+    libraryDependencies ++= Seq(
+      anormVersion
+    )
+  ))
 
 lazy val akkaLoader = (project in file("akka-loader"))
   .dependsOn(scalaCommon)
@@ -89,5 +104,7 @@ lazy val web = (project in file("web"))
 lazy val hattrickTests = (project in file("hattrick-tests"))
   .dependsOn(chpp)
   .dependsOn(scalaCommon)
+  .dependsOn(sqlBuilder)
+  .settings(testSettings)
 
 

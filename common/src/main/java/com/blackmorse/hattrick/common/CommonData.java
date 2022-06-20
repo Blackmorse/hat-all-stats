@@ -20,6 +20,7 @@ public class CommonData {
         leagueLevelNumberTeams.put(7, 1024);
         leagueLevelNumberTeams.put(8, 2048);
         leagueLevelNumberTeams.put(9, 2048);
+        leagueLevelNumberTeams.put(10, 4096);
     }
 
     static {
@@ -222,7 +223,7 @@ public class CommonData {
         higherLeagueMap.put(164, new CommonLeagueUnitInfo(258666L, "I.1"));
         higherLeagueMap.put(165, new CommonLeagueUnitInfo(258687L, "I.1"));
         higherLeagueMap.put(1000, new CommonLeagueUnitInfo(256687L, "I.1"));
-        
-        
+        higherLeagueMap.put(1001, new CommonLeagueUnitInfo(258900L, "I.1"));
+        higherLeagueMap.put(1002, new CommonLeagueUnitInfo(260265L, "I.1"));
     }
 }
