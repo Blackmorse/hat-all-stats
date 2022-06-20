@@ -4,7 +4,7 @@ import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 
 case class Count(leagueId: Int, divisionLevel: Int, round: Int, cnt: Long) {
-  override def toString: String = s"""leagueId: $leagueId, divisionLevel: $divisionLevel, round: $round, cnt: $cnt"""
+  override def toString: String = s"""Count(leagueId: $leagueId, divisionLevel: $divisionLevel, round: $round, cnt: $cnt)"""
 }
 
 object Count {

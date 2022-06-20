@@ -37,7 +37,7 @@ object ClickhouseTests {
           val currentRoundCount = divisionLevelCounts.find(_.round == r + 1).get.cnt
 
           if(Math.abs(previousRoundCount - currentRoundCount) > currentRoundCount * 0.15) {
-            throw new Exception(s"Suspicious teams number difference: $divisionLevelCounts")
+            throw new Exception(s"Suspicious teams number difference for rounds ${r - 1} and $r: ${divisionLevelCounts.sortBy(_.round)}")
           }
         }
       }
