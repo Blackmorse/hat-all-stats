@@ -2,7 +2,7 @@ package databases.requests.playerstats.dreamteam
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
-import databases.requests.ClickhouseRequest.implicits.{ClauseEntryExtended, SqlWithParametersExtended}
+import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.player.DreamTeamPlayer
 import models.web.{Accumulate, Round, StatsType}

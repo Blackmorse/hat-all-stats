@@ -2,7 +2,6 @@ package databases.requests.promotions
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
-import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import databases.requests.model.promotions.Promotion
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import sqlbuilder.Select

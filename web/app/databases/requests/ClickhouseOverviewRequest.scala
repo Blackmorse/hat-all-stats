@@ -1,7 +1,6 @@
 package databases.requests
 
 import databases.dao.RestClickhouseDAO
-import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import sqlbuilder.SqlBuilder
 
 import scala.concurrent.Future

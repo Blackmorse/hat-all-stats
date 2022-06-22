@@ -3,7 +3,6 @@ package databases.requests.matchdetails
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
-import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import models.clickhouse.HistoryInfo
 import sqlbuilder.{Select, SqlBuilder}
 

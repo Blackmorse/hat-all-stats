@@ -3,7 +3,6 @@ package databases.requests.teamrankings
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
-import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import models.clickhouse.HistoryTeamLeagueUnitInfo
 import sqlbuilder.Select
 

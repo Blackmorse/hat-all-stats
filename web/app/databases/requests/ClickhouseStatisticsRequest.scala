@@ -1,7 +1,6 @@
 package databases.requests
 
 import databases.dao.RestClickhouseDAO
-import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import models.web.{Accumulate, MultiplyRoundsType, RestStatisticsParameters, Round}
 import sqlbuilder.{SqlBuilder, functions}
 

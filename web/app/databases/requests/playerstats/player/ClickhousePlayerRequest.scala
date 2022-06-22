@@ -2,7 +2,6 @@ package databases.requests.playerstats.player
 
 import databases.requests.model.Roles
 import databases.dao.RestClickhouseDAO
-import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import models.web.{PlayersParameters, RestStatisticsParameters, Round}
 import sqlbuilder.SqlBuilder

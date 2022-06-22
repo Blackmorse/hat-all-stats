@@ -3,7 +3,6 @@ package databases.requests.matchdetails
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
-import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import databases.requests.model.`match`.SimilarMatchesStats
 import models.web.matches.SingleMatch
 import sqlbuilder.{NestedSelect, Select}

@@ -2,7 +2,7 @@ package databases.requests.matchdetails
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
-import databases.requests.ClickhouseRequest.implicits.{ClauseEntryExtended, SqlWithParametersExtended}
+import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.team.TeamGoalPoints
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import models.web.{RestStatisticsParameters, Round}

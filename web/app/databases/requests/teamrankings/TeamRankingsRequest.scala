@@ -2,7 +2,6 @@ package databases.requests.teamrankings
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
-import databases.requests.ClickhouseRequest.implicits.SqlWithParametersExtended
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import models.clickhouse.TeamRankings
 import sqlbuilder.{Select, SqlBuilder}
