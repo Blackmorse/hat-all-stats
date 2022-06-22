@@ -9,3 +9,9 @@ telegram {
   botToken = "{{ loader.telegram.botToken }}"
   chatId = {{ loader.telegram.chatId }}
 }
+
+database {
+  url = "{{ clickhouse.jdbc_url }}"
+  username = {{ clickhouse.users.web.name }}
+  password = {{ clickhouse.users.web.password }}
+}
