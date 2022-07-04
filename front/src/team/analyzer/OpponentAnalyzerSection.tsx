@@ -1,17 +1,17 @@
 import React from 'react'
-import { LoadingEnum } from '../../common/enums/LoadingEnum'
-import ExecutableComponent, { LoadableState } from '../../common/sections/ExecutableComponent'
+import {Col, Form, Row} from 'react-bootstrap'
+import {useTranslation} from 'react-i18next'
+import {LoadingEnum} from '../../common/enums/LoadingEnum'
+import ExecutableComponent from '../../common/sections/HookExecutableComponent'
+import Section from '../../common/sections/HookSection'
+import Blur from '../../common/widgets/Blur'
+import {combineMatches, opponentTeamMatches, teamAndOpponentMatches} from '../../rest/Client'
 import MatchOpponentCombinedInfo from '../../rest/models/analyzer/MatchOpponentCombinedInfo'
-import { teamAndOpponentMatches, combineMatches, opponentTeamMatches } from '../../rest/Client'
-import TeamLevelDataProps from '../TeamLevelDataProps'
-import '../../common/tables/TableSection.css'
-import Section, { SectionState } from '../../common/sections/Section'
-import MatchSelectorTable from './MatchSelectorTable'
 import NearestMatch from '../../rest/models/match/NearestMatch'
 import SingleMatch from '../../rest/models/match/SingleMatch'
 import TeamMatchInfo from '../matches/TeamMatchInfo'
-import Blur from '../../common/widgets/Blur'
-import { Col, Form, Row } from 'react-bootstrap'
+import TeamLevelDataProps from '../TeamLevelDataProps'
+import MatchSelectorTable from './MatchSelectorTable'
 
 interface Props {
     props: TeamLevelDataProps
@@ -24,6 +24,11 @@ interface OriginTeamAndMatches {
     matches: Array<NearestMatch>
 }
 
+interface LoadingState<Data> {
+    loadingEnum: LoadingEnum,
+    data?: Data
+}
+
 interface State {
     originTeamAndMatches?: OriginTeamAndMatches,
     selectedOriginMatchId?: number,
@@ -33,18 +38,166 @@ interface State {
     selectedOpponentMatchId?: number,
     simulatedMatch: LoadingState<SingleMatch>
 }
-
 type TeamId = number
 
-interface LoadingState<Data> {
-    loadingEnum: LoadingEnum,
-    data?: Data
+function showStateElement<Data>(loadingState: LoadingState<Data>, 
+        dataElement: (data: Data) => JSX.Element,
+        updateOnError: () => void): JSX.Element | undefined {
+    return <>
+        <Blur loadingState={loadingState.loadingEnum}
+                updateCallback={updateOnError} />
+        {loadingState.data === undefined ? undefined : dataElement(loadingState.data)}
+        </>
 }
 
-class OpponentAnalyzerSectionBase extends ExecutableComponent<Props, State & SectionState, MatchOpponentCombinedInfo, TeamId> {
-    constructor(props: Props) {
-        super(props)
-        this.state = {
+const OpponentAnalyzerSection = (props: Props) => {
+    const i18n = useTranslation().i18n
+
+    const updateSelectedOriginMatch = (matchId: number, state: State, setState: (st: State) => void) => {
+        let selectedNextOpponent = state.selectedNextOpponent
+        if (selectedNextOpponent !== undefined && state.selectedOpponentMatchId !== undefined) {
+            let newState: State = {
+                ...state,
+                selectedOriginMatchId: matchId,
+                simulatedMatch: {loadingEnum: LoadingEnum.LOADING}
+            }
+            setState(newState)
+
+            combineMatches(props.props.teamId(), matchId, selectedNextOpponent[0], state.selectedOpponentMatchId,
+                (loadingEnum, result) => {
+
+                    let newState: State = {
+                        ...state,
+                        selectedOriginMatchId: matchId,
+                        simulatedMatch: {
+                            data: result,
+                            loadingEnum: loadingEnum
+                        }
+                    }
+                    setState(newState)
+                })
+        } else {
+            let newState: State = {
+                ...state,
+                selectedOriginMatchId: matchId
+            }
+            setState(newState)
+        }
+    }
+
+    const updateSelectedOpponentMatch = (matchId: number, state: State, setState: (st: State) => void) => {      
+        if(state.selectedOriginMatchId !== undefined && state.selectedNextOpponent !== undefined) {
+            let newState: State = {
+                ...state,
+                selectedOpponentMatchId: matchId,
+                simulatedMatch: {loadingEnum: LoadingEnum.LOADING},
+            }
+            setState(newState)
+        
+            combineMatches(props.props.teamId(), state.selectedOriginMatchId, state.selectedNextOpponent[0], matchId,
+                (loadingEnum, result) => {
+                    let newStateInner: State = {
+                        ...newState,
+                        simulatedMatch: {
+                            loadingEnum: loadingEnum,
+                            data: result
+                        }
+                    }
+                    setState(newStateInner)
+                })
+        } else {
+            let newState: State = {
+                ...state,
+                selectedOpponentMatchId: matchId
+            }
+            setState(newState)
+        }
+    }
+
+    const opponentChanged = (event: React.FormEvent<HTMLSelectElement> | number, state: State, setState: (st: State) => void) => {
+        let teamNumber = typeof(event) === 'number' ? event : Number(event.currentTarget.value)
+        if (state.nextOpponents !== undefined) {
+            let team = state.nextOpponents.find(team => team[0] === teamNumber) as Team  
+
+            let newState: State  = {
+                ...state,
+                playedOpponentMatches: {loadingEnum: LoadingEnum.LOADING},
+                selectedNextOpponent: team
+            }
+            setState(newState)
+
+            opponentTeamMatches(teamNumber, (loadingEnum, matches) => {        
+                let newState: State = {
+                    ...state,
+                    selectedNextOpponent: team,
+                    playedOpponentMatches: {
+                        loadingEnum: loadingEnum,
+                        data: matches
+                    },
+                    selectedOpponentMatchId: undefined,
+                    simulatedMatch: {
+                        loadingEnum: LoadingEnum.OK
+                    }
+                }
+                setState(newState)
+            })
+        }
+    }
+
+    const content = (_setRequest: (request: TeamId) => void, setState: (state: State) => void, currentState: State) => {
+        let originTeamAndMatches = currentState.originTeamAndMatches
+        let originMatchesTable: JSX.Element | undefined = undefined
+        if (originTeamAndMatches !== undefined && originTeamAndMatches.matches.length > 0 && currentState.selectedOriginMatchId !== undefined) {
+            originMatchesTable = <MatchSelectorTable matches={originTeamAndMatches.matches} 
+                selectedMatchId={currentState.selectedOriginMatchId}
+                selectedTeamId={props.props.teamId()}
+                callback={matchId => updateSelectedOriginMatch(matchId, currentState, setState)}/>
+        }
+        
+        let opponentMatchesTable: JSX.Element | undefined = undefined
+        if (currentState.selectedNextOpponent !== undefined) { 
+
+            opponentMatchesTable = showStateElement(currentState.playedOpponentMatches,    
+                (data) => 
+                    <MatchSelectorTable matches={data} 
+                        selectedMatchId={currentState.selectedOpponentMatchId}
+                        selectedTeamId={currentState.selectedNextOpponent![0]}
+                        callback={matchId => updateSelectedOpponentMatch(matchId, currentState, setState)} />,
+                () => opponentChanged(currentState.selectedNextOpponent![0], currentState, setState))
+        }
+
+//        const TeamMatchInfoSection = Section(TeamMatchInfo, _ => 'team.simulate_match')
+
+        let simulatedMatchElement = showStateElement(currentState.simulatedMatch, 
+            (singleMatch) => <Section element={<TeamMatchInfo singleMatch={singleMatch}/>} title={i18n.t('team.simulate_match')}/>,
+            () => updateSelectedOpponentMatch(currentState.selectedOpponentMatchId!, currentState, setState))
+
+        return  <>
+        <Row>
+            <Col className='d-flex flex-column align-items-center'>
+                <div className='mb-1'>
+                    {props.props.levelData.teamName}
+                </div>
+                {originMatchesTable}
+            </Col>
+            <Col className='d-flex flex-column align-items-center'>
+                <div className='mb-1'>
+                    <Form.Select size='sm' defaultValue={currentState.selectedNextOpponent?.[0]} onChange={event => opponentChanged(event, currentState, setState)}>
+                        {currentState.nextOpponents?.map(team =>
+                            <option value={team[0]}>{team[1]}</option>)}
+                    </Form.Select>
+                </div> 
+                
+                {opponentMatchesTable}
+            </Col>
+            
+        </Row>
+        {simulatedMatchElement}
+        </>
+
+    }
+
+    const initialState = {
             collapsed: false,
             loadingState: LoadingEnum.OK,
             dataRequest: props.props.teamId(),
@@ -52,22 +205,14 @@ class OpponentAnalyzerSectionBase extends ExecutableComponent<Props, State & Sec
             playedOpponentMatches: {loadingEnum: LoadingEnum.LOADING}         
         }
 
-        this.updateSelectedOriginMatch = this.updateSelectedOriginMatch.bind(this)
-        this.updateSelectedOpponentMatch = this.updateSelectedOpponentMatch.bind(this)
-        this.opponentChanged = this.opponentChanged.bind(this)
-    }
-
-    executeDataRequest(dataRequest: number, callback: (loadingState: LoadingEnum, result?: MatchOpponentCombinedInfo) => void): void {
-        teamAndOpponentMatches(dataRequest, callback)
-    }
-
-    stateFromResult(result?: MatchOpponentCombinedInfo): State & SectionState {
+    const stateFromResult = (result?: MatchOpponentCombinedInfo, currentState?: State) => {
         if (result === undefined) {
-            return this.state
+            return currentState === undefined ? initialState : currentState
         }
-        return {
+
+        let newState: State = {
             originTeamAndMatches: {
-                team: [this.props.props.teamId(), this.props.props.levelData.teamName],
+                team: [props.props.teamId(), props.props.levelData.teamName],
                 matches: result.currentTeamPlayedMatches
             },
             selectedOriginMatchId: result.currentTeamPlayedMatches.length === 0 ? undefined : result.currentTeamPlayedMatches[result.currentTeamPlayedMatches.length - 1].matchId,
@@ -81,165 +226,21 @@ class OpponentAnalyzerSectionBase extends ExecutableComponent<Props, State & Sec
             simulatedMatch: {
                 loadingEnum: LoadingEnum.OK,
                 data: result.simulatedMatch
-            },
-            collapsed: this.state.collapsed
-        }
-    }
-
-    static showStateElement<Data>(loadingState: LoadingState<Data>, 
-            dataElement: (data: Data) => JSX.Element,
-            updateOnError: () => void): JSX.Element | undefined {
-        return <>
-            <Blur loadingState={loadingState.loadingEnum}
-                    updateCallback={updateOnError} />
-            {loadingState.data === undefined ? undefined : dataElement(loadingState.data)}
-            </>
-    }
-
-    updateSelectedOriginMatch(matchId: number) {
-        let selectedNextOpponent = this.state.selectedNextOpponent
-        if (selectedNextOpponent !== undefined && this.state.selectedOpponentMatchId !== undefined) {
-            let newState: LoadableState<TeamId> & State & SectionState = {
-                ...this.state,
-                selectedOriginMatchId: matchId,
-                simulatedMatch: {loadingEnum: LoadingEnum.LOADING}
             }
-            this.setState(newState)
-
-            combineMatches(this.props.props.teamId(), matchId, selectedNextOpponent[0], this.state.selectedOpponentMatchId,
-                (loadingEnum, result) => {
-
-                    let newState: LoadableState<TeamId> & State & SectionState = {
-                        ...this.state,
-                        selectedOriginMatchId: matchId,
-                        simulatedMatch: {
-                            data: result,
-                            loadingEnum: loadingEnum
-                        }
-                    }
-                    this.setState(newState)
-                })
-        } else {
-            let newState: LoadableState<TeamId> & State & SectionState = {
-                ...this.state,
-                selectedOriginMatchId: matchId
-            }
-            this.setState(newState)
         }
+
+        return newState
     }
 
-    updateSelectedOpponentMatch(matchId: number) {      
-        if(this.state.selectedOriginMatchId !== undefined && this.state.selectedNextOpponent !== undefined) {
-            let newState: LoadableState<TeamId> & State & SectionState = {
-                ...this.state,
-                selectedOpponentMatchId: matchId,
-                simulatedMatch: {loadingEnum: LoadingEnum.LOADING}
-            }
-            this.setState(newState)
-        
-            combineMatches(this.props.props.teamId(), this.state.selectedOriginMatchId, this.state.selectedNextOpponent[0], matchId,
-                (loadingEnum, result) => {
-                    let newState: LoadableState<TeamId> & State & SectionState = {
-                        ...this.state,
-                        simulatedMatch: {
-                            loadingEnum: loadingEnum,
-                            data: result
-                        }
-                    }
-                    this.setState(newState)
-                })
-        } else {
-            let newState: LoadableState<TeamId>& State & SectionState = {
-                ...this.state,
-                selectedOpponentMatchId: matchId
-            }
-            this.setState(newState)
-        }
-    }
-
-    opponentChanged(event: React.FormEvent<HTMLSelectElement> | number) {
-        let teamNumber = typeof(event) === 'number' ? event : Number(event.currentTarget.value)
-        if (this.state.nextOpponents !== undefined) {
-            let team = this.state.nextOpponents.find(team => team[0] === teamNumber) as Team  
-
-            let newState: LoadableState<TeamId> & State & SectionState  = {
-                ...this.state,
-                playedOpponentMatches: {loadingEnum: LoadingEnum.LOADING},
-                selectedNextOpponent: team
-            }
-            this.setState(newState)
-
-            opponentTeamMatches(teamNumber, (loadingEnum, matches) => {        
-                let newState: LoadableState<TeamId> & State & SectionState = {
-                    ...this.state,
-                    selectedNextOpponent: team,
-                    playedOpponentMatches: {
-                        loadingEnum: loadingEnum,
-                        data: matches
-                    },
-                    selectedOpponentMatchId: undefined,
-                    simulatedMatch: {
-                        loadingEnum: LoadingEnum.OK
-                    }
-                }
-                this.setState(newState)
-            })
-        }
-    }
-
-    renderSection(): JSX.Element {
-        let originTeamAndMatches = this.state.originTeamAndMatches
-        let originMatchesTable: JSX.Element | undefined = undefined
-        if (originTeamAndMatches !== undefined && originTeamAndMatches.matches.length > 0 && this.state.selectedOriginMatchId !== undefined) {
-            originMatchesTable = <MatchSelectorTable matches={originTeamAndMatches.matches} 
-                selectedMatchId={this.state.selectedOriginMatchId}
-                selectedTeamId={this.props.props.teamId()}
-                callback={this.updateSelectedOriginMatch}/>
-        }
-        
-        let opponentMatchesTable: JSX.Element | undefined = undefined
-        if (this.state.selectedNextOpponent !== undefined) { 
-
-            opponentMatchesTable = OpponentAnalyzerSection.showStateElement(this.state.playedOpponentMatches,    
-                (data) => 
-                    <MatchSelectorTable matches={data} 
-                        selectedMatchId={this.state.selectedOpponentMatchId}
-                        selectedTeamId={this.state.selectedNextOpponent![0]}
-                        callback={this.updateSelectedOpponentMatch} />,
-                () => this.opponentChanged(this.state.selectedNextOpponent![0]))
-        }
-
-        const TeamMatchInfoSection = Section(TeamMatchInfo, _ => 'team.simulate_match')
-
-        let simulatedMatchElement = OpponentAnalyzerSection.showStateElement(this.state.simulatedMatch, 
-            (singleMatch) => <TeamMatchInfoSection singleMatch={singleMatch}/>,
-            () => this.updateSelectedOpponentMatch(this.state.selectedOpponentMatchId!))
-
-        return  <>
-        <Row>
-            <Col className='d-flex flex-column align-items-center'>
-                <div className='mb-1'>
-                    {this.props.props.levelData.teamName}
-                </div>
-                {originMatchesTable}
-            </Col>
-            <Col className='d-flex flex-column align-items-center'>
-                <div className='mb-1'>
-                    <Form.Select size='sm' defaultValue={this.state.selectedNextOpponent?.[0]} onChange={this.opponentChanged}>
-                        {this.state.nextOpponents?.map(team =>
-                            <option value={team[0]}>{team[1]}</option>)}
-                    </Form.Select>
-                </div> 
-                
-                {opponentMatchesTable}
-            </Col>
-            
-        </Row>
-        {simulatedMatchElement}
-        </>
-    }
+    return <ExecutableComponent<TeamId, MatchOpponentCombinedInfo, State> 
+        initialRequest={props.props.teamId()}
+        responseToState={stateFromResult}
+        content={content}
+        executeRequest={(request, callback) => {
+            teamAndOpponentMatches(request, callback) 
+        }}
+        sectionTitle={i18n.t('')}
+    />
 }
-
-const OpponentAnalyzerSection = Section(OpponentAnalyzerSectionBase, _ => 'team.analyzer')
 
 export default OpponentAnalyzerSection

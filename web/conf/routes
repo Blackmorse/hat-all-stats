@@ -30,6 +30,7 @@ GET     /api/league/:leagueId/teamCards       controllers.RestLeagueController.t
 GET     /api/league/:leagueId/teamRatings       controllers.RestLeagueController.teamRatings(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/teamAgeInjuries       controllers.RestLeagueController.teamAgeInjuries(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/teamGoalPoints       controllers.RestLeagueController.teamGoalPoints(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters, playedAllMatches: Boolean ?= false)
+
 GET     /api/league/:leagueId/teamPowerRatings       controllers.RestLeagueController.teamPowerRatings(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/teamFanclubFlags       controllers.RestLeagueController.teamFanclubFlags(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/teamStreakTrophies       controllers.RestLeagueController.teamStreakTrophies(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)

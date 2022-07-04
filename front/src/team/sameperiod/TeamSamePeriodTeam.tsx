@@ -24,7 +24,7 @@ const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamData, TeamLevelDat
         }
     }
 
-    const content = (setRequest: (request: CreatedSameTimeTeamRequest) => void, data?: Array<CreatedSameTimeTeamExtended>) => { 
+    const content = (setRequest: (request: CreatedSameTimeTeamRequest) => void, _: (state: Array<CreatedSameTimeTeamExtended>) => void, data?: Array<CreatedSameTimeTeamExtended>) => { 
         return <div className='table-responsive'>
             <Form className='d-flex flex-row align-items-center mb-2' max-width='200'>
                 <span className='me-2 align-middle'>{t('team.period')}:</span>
@@ -95,6 +95,7 @@ const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamData, TeamLevelDat
 
     return <ExecutableComponent<CreatedSameTimeTeamRequest, Array<CreatedSameTimeTeamExtended>> 
         initialRequest={ {period: 'season'} }
+        responseToState={response => response || []}
         content={content}
         executeRequest={(request, callback) => {
             getCreatedSameTimeTeams(props.levelDataProps.leagueId(), props.levelDataProps.levelData.foundedDate,

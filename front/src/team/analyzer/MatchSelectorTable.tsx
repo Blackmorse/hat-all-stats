@@ -1,5 +1,5 @@
 import React from 'react'
-import Section from '../../common/sections/Section';
+import Section from '../../common/sections/HookSection';
 import { getSingleMatch } from '../../rest/Client';
 import NearestMatch from '../../rest/models/match/NearestMatch';
 import SingleMatch from '../../rest/models/match/SingleMatch';
@@ -68,7 +68,6 @@ class MatchSelectorTable extends React.Component<Props, State> {
         if (this.props.matches.length === 0) {
             return <></>
         }
-        let TeamMatchInfoSection = Section(TeamMatchInfo)
 
         return <>
         <table className='table table-striped table-rounded table-sm small text-center w-75 border table-hover' >
@@ -87,7 +86,7 @@ class MatchSelectorTable extends React.Component<Props, State> {
                     ></i>
                     {match.matchId === this.state.expandedMatch?.matchId ? 
                         <div className="team_match_info_tooltip">
-                            <TeamMatchInfoSection singleMatch={this.state.expandedMatch} hideSimulator/> 
+                            <Section element={<TeamMatchInfo singleMatch={this.state.expandedMatch} hideSimulator/>} title={''} /> 
                         </div>
                         : <></>}
                 </td>
