@@ -67,9 +67,11 @@ const Layout = (props: Props) => {
          <div className='w-100'>{props.content}</div>
      </Container>
 
+     let metrika = (process.env.MODE !== undefined && process.env.mode === 'DEV') ? <></> : <YMInitializer accounts={[67069579]} /> 
+
     return <Fragment>
                  <header dir={direction}>
-                    <YMInitializer accounts={[67069579]} />
+                    {metrika}
                     <Container fluid className='d-flex mb-1'>
                         <div className='me-auto ms-2'>
                             Follow me: 

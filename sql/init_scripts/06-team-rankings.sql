@@ -1,4 +1,4 @@
-CREATE TABLE hattrick.team_rankings
+ CREATE TABLE IF NOT EXISTS hattrick.team_rankings
 (
     `rank_type` Enum8('league_id' = 0, 'division_level' = 1),
     `season` UInt8,

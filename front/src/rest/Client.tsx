@@ -63,7 +63,7 @@ export function getLeagueData(leagueId: number,
     axios.get<LeagueData>('/api/league/' + leagueId)
         .then(response => response.data)
         .then(callback)
-        .catch(e => onError())
+        .catch(_e => onError())
 }
 
 export function getDivisionLevelData(leagueId: number, divisionLevel: number, 

@@ -1,4 +1,4 @@
-CREATE TABLE hattrick.request_log
+ CREATE TABLE IF NOT EXISTS hattrick.request_log
 (
     `event_time` DateTime,
     `url` String,

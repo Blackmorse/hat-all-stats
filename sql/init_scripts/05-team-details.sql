@@ -1,4 +1,4 @@
-CREATE TABLE hattrick.team_details
+ CREATE TABLE IF NOT EXISTS hattrick.team_details
 (
 	    `season` UInt8,
 	    `league_id` UInt16,
