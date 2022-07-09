@@ -2,6 +2,7 @@ import executors.ExecutorActorFactory
 import executors.TaskExecutorActor.TryToExecute
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import chpp.playerdetails.PlayerDetailsRequest
 import chpp.{ChppRequestExecutor, OauthTokens}
 import chpp.teamdetails.TeamDetailsRequest
 import chpp.teamdetails.models.TeamDetails

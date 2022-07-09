@@ -1,33 +1,26 @@
 package controllers
 
-import chpp.commonmodels.MatchType
-import chpp.matches.MatchesRequest
-import chpp.matches.models.Matches
-import chpp.teamdetails.TeamDetailsRequest
-import chpp.teamdetails.models.{Team, TeamDetails}
-import chpp.worlddetails.WorldDetailsRequest
-import chpp.worlddetails.models.WorldDetails
+import chpp.teamdetails.models.Team
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamMatchesRequest}
 import databases.requests.model.promotions.PromotionWithType
-import databases.requests.playerstats.player._
+import databases.requests.playerstats.player.stats._
 import databases.requests.promotions.PromotionsRequest
-import databases.requests.teamrankings.{HistoryTeamLeagueUnitInfoRequest, TeamRankingsRequest}
+import databases.requests.teamrankings.TeamRankingsRequest
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import models.clickhouse.NearestMatch
-import models.web.rest.{CountryLevelData, RestTeamData}
-import models.web.rest.LevelData.Rounds
+import models.web.rest.RestTeamData
 import models.web.teams.RestTeamRankings
 import models.web.{PlayersParameters, RestStatisticsParameters}
 import play.api.libs.json.{Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import service.leagueinfo.{LeagueInfoService, LoadingInfo}
-import service.{HattrickPeriod, TeamsService}
+import service.leagueinfo.LeagueInfoService
+import service.{ChppService, HattrickPeriod, TeamsService}
 import utils.{CurrencyUtils, Romans}
-import webclients.ChppClient
 
 import java.util.Date
 import javax.inject.Inject
+//TODO
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -38,19 +31,10 @@ object NearestMatches {
 }
 
 class RestTeamController @Inject() (val controllerComponents: ControllerComponents,
-                                    val chppClient: ChppClient,
                                     val leagueInfoService: LeagueInfoService,
                                     val teamsService: TeamsService,
+                                    val chppService: ChppService,
                                     implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
-
-  private def getTeamById(teamId: Long): Future[Either[Team, Team]] = {
-    chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
-      .map(teamDetails => {
-        val team = teamDetails.teams.filter(_.teamId == teamId).head
-        if (teamDetails.user.userId == 0L) Left(team)
-        else Right(team)
-      })
-  }
 
   private def getRestTeamData(team: Team) = {
     val league = leagueInfoService.leagueInfo(team.league.leagueId).league
@@ -75,7 +59,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   }
 
   def getTeamData(teamId: Long): Action[AnyContent] = Action.async {
-    getTeamById(teamId)
+    chppService.getTeamById(teamId)
       .map(teamEither => teamEither.map(team => {
         getRestTeamData(team)
       })).map( {
@@ -84,26 +68,6 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
     })
   }
 
-  private def getDivisionLevelAndLeagueUnit(team: Team, season: Int): Future[(Int, Long)] = {
-    chppClient.execute[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
-      .map(_.leagueList.head)
-      .flatMap(league => {
-        val htRound = league.matchRound
-
-        if(htRound == 16
-          || leagueInfoService.leagueInfo.currentSeason(team.league.leagueId) > season
-          || league.season - league.seasonOffset > season) {
-
-          HistoryTeamLeagueUnitInfoRequest.execute(season, team.league.leagueId, team.teamId)
-            .map(infoOpt => {
-              infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
-                .getOrElse((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId))
-            })
-        } else {
-          Future((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId.toLong))
-        }
-      })
-  }
 
 
 
@@ -111,9 +75,9 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
                        teamId: Long,
                        restStatisticsParameters: RestStatisticsParameters)
               (implicit writes: Writes[T]): Action[AnyContent] = Action.async{ implicit request =>
-    getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
+    chppService.getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
 
-      getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
+      chppService.getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
         .flatMap { case (divisionLevel: Int, leagueUnitId: Long) =>
           chRequest.execute(
             OrderingKeyPath(
@@ -129,14 +93,14 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
     })
   }
 
-  private def playersRequest[T](plRequest: ClickhousePlayerRequest[T],
+  private def playersRequest[T](plRequest: ClickhousePlayerStatsRequest[T],
                                 teamId: Long,
                                 restStatisticsParameters: RestStatisticsParameters,
                                 playersParameters: PlayersParameters)(implicit writes: Writes[T]) =
     Action.async{ implicit request =>
-      getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
+      chppService.getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
 
-        getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
+        chppService.getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
           .flatMap{  case (divisionLevel: Int, leagueUnitId: Long) =>
             plRequest.execute(
               OrderingKeyPath(
@@ -179,7 +143,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
 
   def teamRankings(teamId: Long, season: Int): Action[AnyContent] = Action.async { implicit request =>
-    getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
+    chppService.getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
       val leagueId = team.league.leagueId
 
       TeamRankingsRequest.execute(OrderingKeyPath(
@@ -217,29 +181,15 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   }
 
   def nearestMatches(teamId: Long): Action[AnyContent] = Action.async { implicit request =>
-    chppClient.execute[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
-    .map(response => {
-      val matches = response.team.matchList
-        .filter(_.matchType == MatchType.LEAGUE_MATCH)
-        .map(NearestMatch.chppMatchToNearestMatch)
-
-      val playedMatches = matches
-        .filter(_.status == "FINISHED")
-        .sortBy(_.matchDate)
-        .takeRight(3)
-
-      val upcomingMatches = matches.filter(_.status == "UPCOMING")
-        .sortBy(_.matchDate)
-        .take(3)
-      Ok(Json.toJson(NearestMatches(playedMatches, upcomingMatches)))
-    })
+    chppService.nearestMatches(teamId)
+      .map(matches => Ok(Json.toJson(matches)))
   }
 
   def promotions(teamId: Long): Action[AnyContent] = Action.async{ implicit request =>
-    getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
+    chppService.getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
       val season = leagueInfoService.leagueInfo.currentSeason(team.league.leagueId)
 
-      getDivisionLevelAndLeagueUnit(team, season)
+      chppService.getDivisionLevelAndLeagueUnit(team, season)
         .flatMap { case (divisionLevel: Int, leagueUnitId: Long) =>
           PromotionsRequest.execute(
             OrderingKeyPath(leagueId = Some(team.league.leagueId),
@@ -255,8 +205,8 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   }
 
   def teamMatches(teamId: Long, season: Int): Action[AnyContent] = Action.async(implicit request =>
-    getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
-      getDivisionLevelAndLeagueUnit(team, season)
+    chppService.getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
+      chppService.getDivisionLevelAndLeagueUnit(team, season)
         .flatMap { case (divisionLevel: Int, leagueUnitId: Long) =>
 
           TeamMatchesRequest.execute(season, OrderingKeyPath(leagueId = Some(team.league.leagueId),

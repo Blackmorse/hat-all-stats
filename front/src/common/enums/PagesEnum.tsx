@@ -25,5 +25,6 @@ export enum PagesEnum {
     DREAM_TEAM = "menu.dream_team",
     CREATED_SAME_TIME_TEAMS = "menu.created_same_time_teams",
     TEAM_COMPARSION = "menu.comparsion_of_teams",
-    OLDEST_TEAMS = "team.date_of_foundation"
+    OLDEST_TEAMS = "team.date_of_foundation",
+    PLAYER_DETAILS = "player.player_details"
 }

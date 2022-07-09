@@ -7,6 +7,7 @@ import CountryImage from '../../elements/CountryImage';
 import LeagueLink from '../../links/LeagueLink';
 import { DreamTeamPlayerPosition } from '../DreamTeamPage'
 import { Card } from 'react-bootstrap';
+import PlayerLink from '../../links/PlayerLink';
 
 interface Props {
     dreamTeamPlayerPosition?: DreamTeamPlayerPosition,
@@ -28,7 +29,7 @@ class DreamTeamPlayerCard extends React.Component<Props> {
                         text={<CountryImage countryId={this.props.dreamTeamPlayerPosition.player.playerSortingKey.nationality} />}/>  
                 </span>
                 <span className='text-center'>
-                    {this.props.dreamTeamPlayerPosition.player?.playerSortingKey.firstName} {this.props.dreamTeamPlayerPosition.player.playerSortingKey.lastName}
+                    <PlayerLink id={this.props.dreamTeamPlayerPosition.player!.playerSortingKey.playerId} text={this.props.dreamTeamPlayerPosition.player?.playerSortingKey.firstName + ' ' + this.props.dreamTeamPlayerPosition.player.playerSortingKey.lastName} />
                     {<ExternalPlayerLink id={this.props.dreamTeamPlayerPosition.player?.playerSortingKey.playerId}/>}
                 </span>
                 <span className='text-center'>

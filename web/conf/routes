@@ -105,6 +105,9 @@ GET     /api/team/analyzer/teamAndOpponentMatches       controllers.AnalyzerCont
 GET     /api/team/analyzer/opponentTeamMatches      controllers.AnalyzerController.opponentTeamMatches(teamId: Long)
 GET     /api/team/analyzer/combineMatches       controllers.AnalyzerController.combineMatches(firstTeamId: Long, firstMatchId: Long, secondTeamId: Long, secondMatchId: Long)
 
+GET     /api/player/:playerId           controllers.RestPlayerController.getPlayerData(playerId: Long)
+GET     /api/player/:playerId/playerDetails     controllers.RestPlayerController.getPlayerHistory(playerId: Long)
+
 GET     /api/overview/numberOverview    controllers.RestOverviewController.numberOverview(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/formations    controllers.RestOverviewController.formations(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/averagesOverview    controllers.RestOverviewController.averagesOverview(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)

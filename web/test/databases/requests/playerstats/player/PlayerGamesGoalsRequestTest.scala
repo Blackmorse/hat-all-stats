@@ -4,6 +4,7 @@ import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import models.web.{Accumulate, Asc, PlayersParameters, RestStatisticsParameters}
 import org.scalatest.{FunSuite, Matchers}
 import common.StringExt.StringExt
+import databases.requests.playerstats.player.stats.PlayerGamesGoalsRequest
 
 class PlayerGamesGoalsRequestTest extends FunSuite with Matchers {
   test("Test having clause") {

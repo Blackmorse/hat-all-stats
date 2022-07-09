@@ -2,6 +2,7 @@ CREATE USER IF NOT EXISTS {{ clickhouse.users.web.name }} IDENTIFIED WITH PLAINT
 GRANT SELECT on {{ loader.databaseName }}.* TO {{ clickhouse.users.web.name }};
 GRANT INSERT on {{ loader.databaseName }}.request_log TO {{ clickhouse.users.web.name }};
 GRANT INSERT on {{ loader.databaseName }}.request_log_buffer TO {{ clickhouse.users.web.name }};
+ALTER USER {{ clickhouse.users.web.name }} SETTINGS allow_experimental_projection_optimization = 1;
 
 CREATE USER IF NOT EXISTS {{ clickhouse.users.loader.name }} IDENTIFIED WITH PLAINTEXT_PASSWORD BY '{{ clickhouse.users.loader.password }}';
 GRANT INSERT, SELECT on {{ loader.databaseName }}.* TO {{ clickhouse.users.loader.name }};

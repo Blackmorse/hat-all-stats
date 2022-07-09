@@ -8,7 +8,7 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
 import databases.requests.matchdetails.{MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
-import databases.requests.playerstats.player.{PlayerRatingsRequest, PlayerSalaryTSIRequest}
+import databases.requests.playerstats.player.stats.{PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import databases.requests.teamdetails.OldestTeamsRequest
 import webclients.ChppClient
 import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}

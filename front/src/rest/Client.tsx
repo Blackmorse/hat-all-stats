@@ -54,6 +54,8 @@ import MatchOpponentCombinedInfo from './models/analyzer/MatchOpponentCombinedIn
 import NumbersChartModel from './models/overview/NumbersChartModel'
 import FormationChartModel from './models/overview/FormationChartModel'
 import { CreatedSameTimeTeamRequest } from './models/team/CreatedSameTimeTeamExtended'
+import PlayerDetails from './models/player/PlayerDetails';
+import PlayerData from './models/leveldata/PlayerData';
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
@@ -260,6 +262,19 @@ export function getCreatedSameTimeTeams(leagueId: number, foundedDate: number, r
 export function getTeamsComparsion(team1Id: number, team2Id: number,
         callback: (LoadingEnum: LoadingEnum, result?: TeamComparsion) => void) {
     axios.get<TeamComparsion>('/api/team/stats/compareTeams?teamId1=' + team1Id + '&teamId2=' + team2Id)
+        .then(response => callback(LoadingEnum.OK, response.data))
+        .catch(_e => callback(LoadingEnum.ERROR))
+}
+
+export function getPlayerData(playerId: number, callback: (result: PlayerData) => void, onError: () => void) {
+    axios.get<PlayerData>('/api/player/' + playerId)
+        .then(response => response.data)
+        .then(callback)
+        .catch(onError)
+}
+
+export function playerDetails(playerId: number, callback: (loadingEnum: LoadingEnum, result?: PlayerDetails) => void) {
+    axios.get<PlayerDetails>('/api/player/' + playerId + 'playerDetails')
         .then(response => callback(LoadingEnum.OK, response.data))
         .catch(_e => callback(LoadingEnum.ERROR))
 }
