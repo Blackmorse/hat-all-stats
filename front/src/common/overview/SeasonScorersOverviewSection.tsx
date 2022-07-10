@@ -5,11 +5,10 @@ import PlayerStatOverview from '../../rest/models/overview/PlayerStatOverview';
 import { OverviewTableSectionProps } from './OverviewTableSection';
 import '../../i18n'
 import i18n from '../../i18n';
-import LevelData from '../../rest/models/leveldata/LevelData';
 import Section from '../sections/Section';
 
-class SeasonScorersOverviewSectionBase<Data extends LevelData> extends PlayerOverviewSection<Data> {
-    constructor(props: OverviewTableSectionProps<Data, PlayerStatOverview>) {
+class SeasonScorersOverviewSectionBase extends PlayerOverviewSection {
+    constructor(props: OverviewTableSectionProps<PlayerStatOverview>) {
         super(props, i18n.t('overview.goals'))
     }
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
-import LevelData from '../../rest/models/leveldata/LevelData'
 import { getPromotions } from '../../rest/Client'
 import PromotionWithType from '../../rest/models/promotions/Promotion'
 import { Translation } from 'react-i18next'
@@ -17,10 +16,10 @@ interface State {
     promotions?: Array<PromotionWithType>
 }
 
-class PromotionsTableBase<Data extends LevelData, Props extends LevelDataProps<Data>> 
-        extends ExecutableComponent<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State & SectionState, Array<PromotionWithType>, {}> {
+class PromotionsTableBase<Props extends LevelDataProps> 
+        extends ExecutableComponent<LevelDataPropsWrapper<LevelDataProps>, State & SectionState, Array<PromotionWithType>, {}> {
    
-    constructor(props: LevelDataPropsWrapper<Data, Props>) {
+    constructor(props: LevelDataPropsWrapper<Props>) {
         super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
@@ -29,7 +28,7 @@ class PromotionsTableBase<Data extends LevelData, Props extends LevelDataProps<D
         }
     }
 
-    executeDataRequest(dataRequest: {}, callback: (loadingState: LoadingEnum, result?: Array<PromotionWithType>) => void): void {
+    executeDataRequest(_dataRequest: {}, callback: (loadingState: LoadingEnum, result?: Array<PromotionWithType>) => void): void {
         getPromotions(this.props.levelDataProps.createLevelRequest(), callback)
     }
 
@@ -42,7 +41,7 @@ class PromotionsTableBase<Data extends LevelData, Props extends LevelDataProps<D
 
     renderSection(): JSX.Element {
         return <Translation>
-            {(t, { i18n }) =>
+            {t =>
         <div className="promotions_content">
             {this.state.promotions?.map(promotionWithType => {
                 return <React.Fragment key={'promotions_table_entry' + promotionWithType.upDivisionLevelName + '_' + promotionWithType.downDivisionLevelName + '_' + promotionWithType.promoteType}>

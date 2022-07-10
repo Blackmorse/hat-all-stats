@@ -1,5 +1,4 @@
 import React from 'react';
-import LevelData from '../../../rest/models/leveldata/LevelData';
 import AbstractTableSection, { SortingState, DataRequest } from '../AbstractTableSection';
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import '../../../i18n'
@@ -15,10 +14,10 @@ import { LoadingEnum } from '../../enums/LoadingEnum'
 import RestTableData from '../../../rest/models/RestTableData';
 import HattidTooltip from '../../elements/HattidTooltip';
 
-class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-    extends AbstractTableSection<Data, TableProps, TeamGoalPoints, RestTableData<TeamGoalPoints>> {    
+class TeamGoalPointsTable<TableProps extends LevelDataProps> 
+    extends AbstractTableSection<TableProps, TeamGoalPoints, RestTableData<TeamGoalPoints>> {    
 
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+    constructor(props: LevelDataPropsWrapper<TableProps>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND],
             [SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
@@ -40,7 +39,7 @@ class TeamGoalPointsTable<Data extends LevelData, TableProps extends LevelDataPr
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
             {
-            (t, { i18n }) =>
+            t =>
             <tr>
                 <HattidTooltip 
                     poppedHint={t('table.position')}

@@ -164,7 +164,7 @@ class CompareTeamsTable extends React.Component<Props> {
             </Row>
             <Row>
                 <Col className='very-small-font text-center'>
-                    <LeagueLink id={this.props.teamLevelDataProps.leagueId()} text={this.props.teamLevelDataProps.levelData.leagueName} />
+                    <LeagueLink id={this.props.teamLevelDataProps.leagueId()} text={this.props.teamLevelDataProps.leagueName()} />
                 </Col>
                 <Col className='d-flex flex-row align-items-center justify-content-center'>
                     <span className="me-1 small-font">

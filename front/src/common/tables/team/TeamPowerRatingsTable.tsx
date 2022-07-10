@@ -1,5 +1,4 @@
 import React from 'react';
-import LevelData from '../../../rest/models/leveldata/LevelData';
 import { SortingState } from '../AbstractTableSection'
 import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
@@ -13,10 +12,10 @@ import { getTeamPowerRatings } from '../../../rest/Client';
 import TeamPowerRating from '../../../rest/models/team/TeamPowerRating';
 import HattidTooltip from '../../elements/HattidTooltip';
 
-abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends ClassicTableSection<Data, TableProps, TeamPowerRating> {
+abstract class TeamPowerRatingsTable<TableProps extends LevelDataProps>
+    extends ClassicTableSection<TableProps, TeamPowerRating> {
 
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+    constructor(props: LevelDataPropsWrapper<TableProps>) {
         super(props, 'power_rating', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
@@ -26,7 +25,7 @@ abstract class TeamPowerRatingsTable<Data extends LevelData, TableProps extends 
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
             {
-            (t, { i18n }) =>
+            t =>
             <tr>
                 <HattidTooltip 
                     poppedHint={t('table.position')}

@@ -4,13 +4,12 @@ import { Translation } from 'react-i18next'
 import TeamStatOverview from '../../rest/models/overview/TeamStatOverview'
 import LeagueUnitLink from '../../common/links/LeagueUnitLink'
 import TeamLink from '../../common/links/TeamLink'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import OverviewTableSection, { OverviewTableSectionProps } from './OverviewTableSection'
 
-abstract class TeamOverviewSection<Data extends LevelData> extends OverviewTableSection<Data, TeamStatOverview> {
+abstract class TeamOverviewSection extends OverviewTableSection<TeamStatOverview> {
     valueTitle: string
     
-    constructor(props: OverviewTableSectionProps<Data, TeamStatOverview>, 
+    constructor(props: OverviewTableSectionProps<TeamStatOverview>, 
             valueTitle: string) {
         super(props)
         this.valueTitle = valueTitle
@@ -18,7 +17,7 @@ abstract class TeamOverviewSection<Data extends LevelData> extends OverviewTable
 
     tableheader(): JSX.Element {
         return <Translation>
-        {(t, { i18n}) =>  <tr>
+        {t =>  <tr>
                 <th>{t('table.team')}</th>
                 {(this.isWorldData) ? <th></th> : <></>}
                 <th>{t('table.league')}</th>

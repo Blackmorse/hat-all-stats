@@ -5,11 +5,10 @@ import { getTopSalaryTeamsOverview } from '../../rest/Client'
 import '../../i18n'
 import i18n from '../../i18n'
 import { commasSeparated } from '../../common/Formatters'
-import LevelData from '../../rest/models/leveldata/LevelData'
 import Section from '../sections/Section'
 
-class SalaryTeamOverviewSectionBase<Data extends LevelData> extends TeamOverviewSection<Data> {
-    constructor(props: OverviewTableSectionProps<Data, TeamStatOverview>) {
+class SalaryTeamOverviewSectionBase extends TeamOverviewSection {
+    constructor(props: OverviewTableSectionProps<TeamStatOverview>) {
         super(props, i18n.t('table.salary') + ',' + props.levelDataProps.currency())
     }
 

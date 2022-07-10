@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps';
-import TeamData from '../rest/models/leveldata/TeamData';
 import TeamLevelDataProps from './TeamLevelDataProps'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import TeamMatch from '../rest/models/match/TeamMatch';
@@ -14,10 +13,10 @@ interface State {
     matches?: Array<TeamMatch>
 }
 
-class TeamMatchesBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
+class TeamMatchesBase extends ExecutableComponent<LevelDataPropsWrapper<TeamLevelDataProps>, 
     State & SectionState, Array<TeamMatch>, {}> {
     
-    constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
+    constructor(props: LevelDataPropsWrapper<TeamLevelDataProps>) {
         super(props)
         this.state = {
             loadingState: LoadingEnum.OK,
@@ -26,7 +25,7 @@ class TeamMatchesBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData
         }
     }
 
-    executeDataRequest(dataRequest: {}, callback: (loadingState: LoadingEnum, result?: Array<TeamMatch>) => void): void {
+    executeDataRequest(_dataRequest: {}, callback: (loadingState: LoadingEnum, result?: Array<TeamMatch>) => void): void {
         getTeamMatches(this.props.levelDataProps.teamId(), this.props.levelDataProps.currentSeason(), callback)
     }
 

@@ -1,6 +1,6 @@
 import LevelData from './LevelData'
 
-interface LoadingInfo {
+export interface LoadingInfo {
     loadingInfo: string,
     date?: Date
 }

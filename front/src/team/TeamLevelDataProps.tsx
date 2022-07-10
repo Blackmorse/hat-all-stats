@@ -1,18 +1,32 @@
-import LevelDataProps from "../common/LevelDataProps";
 import TeamData from "../rest/models/leveldata/TeamData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 import TeamRequest from "../rest/models/request/TeamRequest";
 import OverviewRequest from "../rest/models/request/OverviewRequest";
+import CountryLevelDataProps from "../common/CountryLevelDataProps";
 
-class TeamLevelDataProps extends LevelDataProps<TeamData> {
+class TeamLevelDataProps extends CountryLevelDataProps {
+    teamData: TeamData
+
+    constructor(teamData: TeamData) {
+        super(teamData)
+        this.teamData = teamData
+    }
     
-    leagueId(): number {
-        return this.levelData.leagueId
+    teamId(): number {
+        return this.teamData.teamId
     }
 
-    teamId(): number {
-        return this.levelData.teamId
-    }
+    teamName(): string { return this.teamData.teamName }
+
+    leagueUnitName(): string { return this.teamData.leagueUnitName }
+
+    divisionLevel(): number { return this.teamData.divisionLevel }
+
+    divisionLevelName(): string { return this.teamData.divisionLevelName }
+
+    leagueUnitId(): number { return this.teamData.leagueUnitId }
+
+    foundedDate(): number { return this.teamData.foundedDate }
 
     createLevelRequest(): LevelRequest {
         const teamRequest: TeamRequest = {

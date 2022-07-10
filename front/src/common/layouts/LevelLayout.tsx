@@ -3,7 +3,6 @@ import {Card} from 'react-bootstrap'
 import {useTranslation} from 'react-i18next'
 import {Link} from 'react-router-dom'
 import LeftMenu from '../../common/menu/LeftMenu'
-import LevelData from '../../rest/models/leveldata/LevelData'
 import Mappings from '../enums/Mappings'
 import {PagesEnum} from '../enums/PagesEnum'
 import LevelDataProps from '../LevelDataProps'
@@ -61,38 +60,37 @@ function parseQueryParams(): QueryParams {
     }
 }
 
-export interface BaseLevelLayoutProps<Data extends LevelData, TableProps extends LevelDataProps<Data>> {
-    pagesMap: Map<PagesEnum, (props: TableProps, queryParams: QueryParams) => JSX.Element>
-    topMenu: (data?: Data) => JSX.Element
-    fetchLevelData: (callback: (data: Data) => void, onError: () => void) => void
-    makeModelProps: (levelData: Data) => TableProps
-    documentTitle: (data: Data) => string
+export interface BaseLevelLayoutProps<LevelProps extends LevelDataProps> {
+    pagesMap: Map<PagesEnum, (props: LevelProps, queryParams: QueryParams) => JSX.Element>
+    topMenu: (props?: LevelProps) => JSX.Element
+    fetchLevelData: (callback: (levelProps: LevelProps) => void, onError: () => void) => void
+    documentTitle: (levelProps: LevelProps) => string
 }
 
-interface Props<Data extends LevelData, TableProps extends LevelDataProps<Data>> extends BaseLevelLayoutProps<Data, TableProps> {
-    topLeftMenu: (data: Data, onPageChange: (page: PagesEnum) => void) => JSX.Element
+interface Props<LevelProps extends LevelDataProps> extends BaseLevelLayoutProps<LevelProps> {
+    topLeftMenu: (levelProps: LevelProps, onPageChange: (page: PagesEnum) => void) => JSX.Element
 }
 
-const LevelLayout = <Data extends LevelData, TableProps extends LevelDataProps<Data>>(props: Props<Data, TableProps>) => {
+const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>) => {
     const t = useTranslation().t
     const [ queryParams ] = useState(parseQueryParams())
     //TODO 
     const [ page, setPage ] = useState((queryParams.pageString === undefined) ? 
         Array.from(props.pagesMap)[0][0] : Mappings.queryParamToPageMap.get(queryParams.pageString))
     const [ isError, setIsError ] = useState(false)
-    const [ levelData, setLevelData ] = useState(undefined as Data | undefined)
+    const [ levelProps, setLevelProps ] = useState<LevelProps | undefined>(undefined)
 
     useEffect(() => {
-        props.fetchLevelData(data => {
-            setLevelData(data)
+        props.fetchLevelData(levelProps => {
+            setLevelProps(levelProps)
             setIsError(false)
-            document.title = props.documentTitle(data) + ' - AlltidLike'
+            document.title = props.documentTitle(levelProps) + ' - AlltidLike'
         },
         () => setIsError(true))
     }, [])
 
     let leftMenu = <>
-            {(levelData !== undefined) ? props.topLeftMenu(levelData, setPage): <></>}
+            {(levelProps !== undefined) ? props.topLeftMenu(levelProps, setPage): <></>}
             <LeftMenu pages={Array.from(props.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH && /*TODO */  p !== PagesEnum.TEAM_COMPARSION))} 
                     callback={leaguePage => setPage(leaguePage)}
                     title='menu.statistics'/>
@@ -115,8 +113,8 @@ const LevelLayout = <Data extends LevelData, TableProps extends LevelDataProps<D
     }
     let res: JSX.Element
     let jsxFunction = props.pagesMap.get(page!)
-    if (levelData && jsxFunction) {
-        res = jsxFunction(props.makeModelProps(levelData), queryParams)
+    if (levelProps && jsxFunction) {
+        res = jsxFunction(levelProps, queryParams)
     } else {
         res = <></>
     }
@@ -130,7 +128,7 @@ const LevelLayout = <Data extends LevelData, TableProps extends LevelDataProps<D
 
     return <Layout 
             leftMenu={leftMenu}
-            topMenu={props.topMenu(levelData)}
+            topMenu={props.topMenu(levelProps)}
             content={content}
         />
 }

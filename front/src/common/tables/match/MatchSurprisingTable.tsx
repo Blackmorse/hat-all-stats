@@ -1,4 +1,3 @@
-import LevelData from '../../../rest/models/leveldata/LevelData';
 import { SortingState } from '../AbstractTableSection'
 import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
@@ -12,10 +11,10 @@ import { getSurprisingMatches } from '../../../rest/Client';
 import MatchSurprisingRow from '../rows/match/MatchSurprisingRow'
 import HattidTooltip from '../../elements/HattidTooltip';
 
-abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends ClassicTableSection<Data, TableProps, MatchTopHatstats> {
+abstract class MatchSurprisingTable<TableProps extends LevelDataProps>
+    extends ClassicTableSection<TableProps, MatchTopHatstats> {
     
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+    constructor(props: LevelDataPropsWrapper<TableProps>) {
         super(props, 'abs_hatstats_difference', {statType: StatsTypeEnum.ACCUMULATE},
             [StatsTypeEnum.ACCUMULATE, StatsTypeEnum.ROUND])
     }
@@ -25,7 +24,7 @@ abstract class MatchSurprisingTable<Data extends LevelData, TableProps extends L
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
             {
-            (t, { i18n }) =>
+            t =>
             <tr>
                 <th/>
                 <HattidTooltip 

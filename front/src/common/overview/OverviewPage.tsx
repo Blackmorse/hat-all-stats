@@ -14,7 +14,6 @@ import RatingPlayerOverviewSection from './RatingPlayerOverviewSection'
 import MatchAttendanceOverviewSection from './MatchAttendanceOverviewSection'
 import VictoriesTeamOverviewSection from './VictoriesTeamOverviewSection'
 import SeasonScorersOverviewSection from './SeasonScorersOverviewSection'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import { PagesEnum } from '../enums/PagesEnum';
 import HattidLink from '../links/HattidLink';
 import { LoadingEnum } from '../enums/LoadingEnum';
@@ -27,7 +26,7 @@ interface State {
     totalOverview?: TotalOverview
 }
 
-interface OverviewPageProps<Data extends LevelData, LevelProps extends LevelDataProps<Data>> {
+interface OverviewPageProps<LevelProps extends LevelDataProps> {
     levelDataProps: LevelProps
 }
 
@@ -35,9 +34,9 @@ export interface LeagueId {
     leagueId: number
 }
 
-abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelDataProps<Data>> extends
-        ExecutableComponent<OverviewPageProps<Data, LevelProps>, State & SectionState, TotalOverview, {}> {
-    constructor(props: OverviewPageProps<Data, LevelProps>) {
+abstract class OverviewPage<LevelProps extends LevelDataProps> extends
+        ExecutableComponent<OverviewPageProps<LevelProps>, State & SectionState, TotalOverview, {}> {
+    constructor(props: OverviewPageProps<LevelProps>) {
         super(props)
         
         this.state = {
@@ -68,19 +67,19 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
             return <>
             <Row className="mb-2"> 
                 <Col lg={4}>
-                    <NumberOverviewSection<Data> 
+                    <NumberOverviewSection
                         initialData={this.state.totalOverview?.numberOverview} 
                         levelDataProps={this.props.levelDataProps}
                     />
                 </Col>
                 <Col lg={4}>
-                    <FormationsOverviewSection<Data> 
+                    <FormationsOverviewSection
                         initialData={this.state.totalOverview?.formations} 
                         levelDataProps={this.props.levelDataProps}
                     />
                 </Col>
                 <Col lg={4}>
-                    <AveragesOverviewSection<Data>  
+                    <AveragesOverviewSection
                         initialData={this.state.totalOverview?.averageOverview} 
                         levelDataProps={this.props.levelDataProps}
                     />
@@ -88,7 +87,7 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
             </Row>
             <Row className="mb-2"> 
                 <Col>
-                    <SurprisingMatchesOverviewSection<Data>  
+                    <SurprisingMatchesOverviewSection
                         initialData={this.state.totalOverview?.surprisingMatches} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.MATCH_SURPRISING, 'abs_hatstats_difference')} 
@@ -97,14 +96,14 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
             </Row>
             <Row className="mb-2"> 
                 <Col lg={6} >
-                    <HatstatsTeamOverviewSection<Data>  
+                    <HatstatsTeamOverviewSection
                         initialData={this.state.totalOverview?.topHatstatsTeams} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.TEAM_HATSTATS, 'hatstats')} 
                     />
                  </Col>
                <Col lg={6}>
-                    <SalaryTeamOverviewSection<Data>  
+                    <SalaryTeamOverviewSection
                         initialData={this.state.totalOverview?.topSalaryTeams} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.TEAM_SALARY_TSI, 'salary')}
@@ -113,7 +112,7 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
             </Row>
             <Row className="mb-2"> 
                 <Col>
-                    <TopMatchesOverviewSection<Data>  
+                    <TopMatchesOverviewSection
                         initialData={this.state.totalOverview?.topMatches} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.MATCH_TOP_HATSTATS, 'sum_hatstats')} 
@@ -122,14 +121,14 @@ abstract class OverviewPage<Data extends LevelData, LevelProps extends LevelData
             </Row>
              <Row className="mb-2"> 
                 <Col lg={6}>
-                    <SalaryPlayerOverviewSection<Data>  
+                    <SalaryPlayerOverviewSection
                         initialData={this.state.totalOverview?.topSalaryPlayers} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.PLAYER_SALARY_TSI, 'salary')}
                     />
                 </Col>
                 <Col lg={6}>
-                    <RatingPlayerOverviewSection<Data>  
+                    <RatingPlayerOverviewSection
                         initialData={this.state.totalOverview?.topRatingPlayers} 
                         levelDataProps={this.props.levelDataProps}
                         linkProvider={this.linkProviderFunc(PagesEnum.PLAYER_RATINGS, 'rating')}        

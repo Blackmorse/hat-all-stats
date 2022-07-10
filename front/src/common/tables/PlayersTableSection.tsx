@@ -1,5 +1,4 @@
 import LevelDataProps, { LevelDataPropsWrapper } from "../LevelDataProps";
-import LevelData from "../../rest/models/leveldata/LevelData";
 import AbstractTableSection, { DataRequest } from './AbstractTableSection'
 import StatisticsParameters, { StatsTypeEnum, StatsType } from "../../rest/models/StatisticsParameters";
 import { LoadingEnum } from '../enums/LoadingEnum'
@@ -9,10 +8,10 @@ import LevelRequest from "../../rest/models/request/LevelRequest";
 import PlayersParameters from "../../rest/models/PlayersParameters";
 
 
-abstract class PlayersTableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, Model>
-    extends AbstractTableSection<Data, TableProps, Model, RestTableData<Model>> {
+abstract class PlayersTableSection<TableProps extends LevelDataProps, Model>
+    extends AbstractTableSection<TableProps, Model, RestTableData<Model>> {
 
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>, 
+    constructor(props: LevelDataPropsWrapper<TableProps>, 
             defaultSortingField: string, 
             defaultStatsType: StatsType,
             statsTypes: Array<StatsTypeEnum>) {

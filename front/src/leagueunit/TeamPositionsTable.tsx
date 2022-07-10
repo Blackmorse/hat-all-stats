@@ -1,5 +1,4 @@
 import React from 'react';
-import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
 import { DataRequest, SortingState } from '../common/tables/AbstractTableSection'
 import AbstractTableSection from '../common/tables/AbstractTableSection'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps'
@@ -19,9 +18,9 @@ import TeamPositionsChart from './TeamPositionsChart'
 import Section from '../common/sections/Section';
 import HattidTooltip from '../common/elements/HattidTooltip';
 
-class TeamPositionsTableBase extends AbstractTableSection<LeagueUnitData, LeagueUnitLevelDataProps, LeagueUnitTeamStatsWithPositionDiff, LeagueUnitTeamStatHistoryInfo> {
+class TeamPositionsTableBase extends AbstractTableSection<LeagueUnitLevelDataProps, LeagueUnitTeamStatsWithPositionDiff, LeagueUnitTeamStatHistoryInfo> {
         
-    constructor(props: LevelDataPropsWrapper<LeagueUnitData, LeagueUnitLevelDataProps>) {
+    constructor(props: LevelDataPropsWrapper<LeagueUnitLevelDataProps>) {
         super(props, 'points', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND],
             [SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
@@ -43,7 +42,7 @@ class TeamPositionsTableBase extends AbstractTableSection<LeagueUnitData, League
     
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
-            {(t, { i18n }) => 
+            {t => 
                 <tr>
                     <HattidTooltip
                         poppedHint={t('table.position')}

@@ -1,13 +1,22 @@
-import LevelDataProps from "../common/LevelDataProps";
 import DivisionLevelData from "../rest/models/leveldata/DivisionLevelData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 import DivisionLevelRequest from "../rest/models/request/DivisionLevelRequest";
 import OverviewRequest from "../rest/models/request/OverviewRequest";
+import CountryLevelDataProps from "../common/CountryLevelDataProps";
 
-class DivisionLevelDataProps extends LevelDataProps<DivisionLevelData> {
-    leagueId(): number{return this.levelData.leagueId;}
+class DivisionLevelDataProps extends CountryLevelDataProps {
+    divisionLevelData: DivisionLevelData
 
-    divisionLevel(): number {return this.levelData.divisionLevel}
+    constructor(divisionLevelData: DivisionLevelData) {
+        super(divisionLevelData)
+        this.divisionLevelData = divisionLevelData
+    }
+
+    divisionLevel(): number {return this.divisionLevelData.divisionLevel}
+
+    divisionLevelName(): string { return this.divisionLevelData.divisionLevelName }
+
+    leagueUnitsNumber(): number { return this.divisionLevelData.leagueUnitsNumber }
 
     createLevelRequest(): LevelRequest {
         const divisionLevelRequest: DivisionLevelRequest = {

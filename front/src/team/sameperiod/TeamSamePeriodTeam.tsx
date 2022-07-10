@@ -2,7 +2,6 @@ import React from 'react'
 import CreatedSameTimeTeamExtended, {CreatedSameTimeTeamRequest} from '../../rest/models/team/CreatedSameTimeTeamExtended';
 import { useTranslation } from 'react-i18next'
 import { LevelDataPropsWrapper } from '../../common/LevelDataProps'
-import TeamData from '../../rest/models/leveldata/TeamData'
 import TeamLevelDataProps from '../TeamLevelDataProps'
 import { getCreatedSameTimeTeams } from '../../rest/Client'
 import ExecutableComponent from '../../common/sections/HookExecutableComponent';
@@ -10,7 +9,7 @@ import {Form, Tab, Tabs} from 'react-bootstrap';
 import TeamSamePeriodTeamsTable from './TeamSamePeriodTeamsTable';
 import {ageFormatter, injuryFormatter, ratingFormatter, salaryFormatter} from '../../common/Formatters';
 
-const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) => {
+const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamLevelDataProps>) => {
     const t = useTranslation().t
 
     const onChanged = (event: React.FormEvent<HTMLSelectElement>, setRequest: (request: CreatedSameTimeTeamRequest) => void) => {
@@ -98,7 +97,7 @@ const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamData, TeamLevelDat
         responseToState={response => response || []}
         content={content}
         executeRequest={(request, callback) => {
-            getCreatedSameTimeTeams(props.levelDataProps.leagueId(), props.levelDataProps.levelData.foundedDate,
+            getCreatedSameTimeTeams(props.levelDataProps.leagueId(), props.levelDataProps.foundedDate(),
                 request, callback)
         }
         }

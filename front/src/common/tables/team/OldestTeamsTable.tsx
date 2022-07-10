@@ -1,5 +1,4 @@
 import React from 'react'
-import LevelData from '../../../rest/models/leveldata/LevelData'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
 import OldestTeam from '../../../rest/models/team/OldestTeam'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
@@ -13,10 +12,10 @@ import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { dateFormatter } from '../../Formatters'
 import HattidTooltip from '../../elements/HattidTooltip'
 
-abstract class OldestTeamsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-    extends ClassicTableSection<Data, TableProps, OldestTeam> {
+abstract class OldestTeamsTable<TableProps extends LevelDataProps> 
+    extends ClassicTableSection<TableProps, OldestTeam> {
 
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+    constructor(props: LevelDataPropsWrapper<TableProps>) {
         super(props, 'founded_date', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
@@ -25,7 +24,7 @@ abstract class OldestTeamsTable<Data extends LevelData, TableProps extends Level
 
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation> 
-            { (t, { i18n }) =>
+            { t =>
             <tr>
                 <HattidTooltip 
                     poppedHint={t('table.position')}

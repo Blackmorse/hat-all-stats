@@ -3,7 +3,6 @@ import { getTeamRankings } from '../rest/Client'
 import TeamLevelDataProps from './TeamLevelDataProps'
 import TeamRequest from '../rest/models/request/TeamRequest';
 import { LevelDataPropsWrapper } from '../common/LevelDataProps';
-import TeamData from '../rest/models/leveldata/TeamData';
 import '../i18n'
 import RankingTable, { RankingData } from './overview/RankingTable'
 import TeamRankingsStats from '../rest/models/team/TeamRankingsStats';
@@ -22,10 +21,10 @@ interface State {
     season: number
 }
 
-class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
+class TeamRankingsTableBase extends ExecutableComponent<LevelDataPropsWrapper<TeamLevelDataProps>, 
     State & SectionState, TeamRankingsStats, number> {
     
-    constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
+    constructor(props: LevelDataPropsWrapper<TeamLevelDataProps>) {
         super(props)
         this.state = {
             loadingState: LoadingEnum.OK,

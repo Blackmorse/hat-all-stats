@@ -3,16 +3,17 @@ import LevelRequest from '../rest/models/request/LevelRequest';
 import OverviewRequest from '../rest/models/request/OverviewRequest';
 import QueryParams from './QueryParams';
 
-export interface LevelDataPropsWrapper<Data extends LevelData, TableProps extends LevelDataProps<Data>> {
-    levelDataProps: TableProps,
+export interface LevelDataPropsWrapper<LevelProps extends LevelDataProps> {
+    levelDataProps: LevelProps,
     queryParams: QueryParams,
     showCountryFlags?: boolean
 }
 
-abstract class LevelDataProps<Data extends LevelData> {
-    levelData: Data
+abstract class LevelDataProps {
+    levelData: LevelData
 
-    constructor(levelData: Data) {
+
+    constructor(levelData: LevelData) {
         this.levelData = levelData
     }
 
@@ -24,6 +25,10 @@ abstract class LevelDataProps<Data extends LevelData> {
 
     offsettedSeason(): number {
         return this.currentSeason() + this.levelData.seasonOffset
+    }
+
+    seasonOffset(): number {
+        return this.levelData.seasonOffset
     }
 
     seasons(): Array<number> {
@@ -38,6 +43,8 @@ abstract class LevelDataProps<Data extends LevelData> {
         let r = this.seasonRoundInfo().filter(season => season[0] === seas )
         return r[0][1]
     }
+
+    countries(): Array<[number, string]> {return this.levelData.countries}
 
     seasonRoundInfo(): Array<[number, Array<number>]> {return this.levelData.seasonRoundInfo}
 

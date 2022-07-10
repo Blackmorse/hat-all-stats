@@ -1,10 +1,17 @@
-import LevelDataProps from "../common/LevelDataProps";
 import LeagueData from "../rest/models/leveldata/LeagueData";
 import LevelRequest from "../rest/models/request/LevelRequest";
 import LeagueRequest from "../rest/models/request/LeagueRequest";
 import OverviewRequest from "../rest/models/request/OverviewRequest";
+import CountryLevelDataProps from "../common/CountryLevelDataProps";
 
-class LeagueLevelDataProps extends LevelDataProps<LeagueData> {
+class LeagueLevelDataProps extends CountryLevelDataProps {
+    leagueData: LeagueData
+
+    constructor(leagueData: LeagueData) {
+        super(leagueData)
+        this.leagueData = leagueData
+    }
+
     createLevelRequest(): LevelRequest {
         const leagueRequest: LeagueRequest = {
             type: 'LeagueRequest', 
@@ -12,7 +19,8 @@ class LeagueLevelDataProps extends LevelDataProps<LeagueData> {
         }
         return leagueRequest
     }
-    leagueId() {return this.levelData.leagueId}
+
+    divisionLevels() { return this.leagueData.divisionLevels }
 
     createOverviewRequest(): OverviewRequest {
         return {

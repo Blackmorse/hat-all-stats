@@ -1,12 +1,10 @@
 import React from 'react';
 import TeamComparsion from '../../rest/models/team/TeamComparsion';
 import { LevelDataPropsWrapper } from '../../common/LevelDataProps'
-import TeamData from '../../rest/models/leveldata/TeamData'
 import TeamLevelDataProps from '../TeamLevelDataProps'
 import { LoadingEnum } from '../../common/enums/LoadingEnum';
 import { getTeamsComparsion } from '../../rest/Client'
 import CompareTeamsTable from './CompareTeamsTable'
-import { Translation } from 'react-i18next'
 import '../../i18n'
 import RankingParametersProvider from '../../common/ranking/RankingParametersProvider'
 import ExecutableComponent from '../../common/sections/ExecutableComponent';
@@ -18,10 +16,10 @@ interface State {
     teamComparsion?: TeamComparsion
 }
 
-class CompareTeamsPage extends ExecutableComponent<LevelDataPropsWrapper<TeamData, TeamLevelDataProps>, 
+class CompareTeamsPage extends ExecutableComponent<LevelDataPropsWrapper<TeamLevelDataProps>, 
     State & SectionState, TeamComparsion, number | undefined> {
     
-        constructor(props: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>) {
+        constructor(props: LevelDataPropsWrapper<TeamLevelDataProps>) {
         super(props)
         
         this.state = {
@@ -58,8 +56,7 @@ class CompareTeamsPage extends ExecutableComponent<LevelDataPropsWrapper<TeamDat
         }
               
         let teamComparsion = this.state.teamComparsion
-        return <Translation>{
-            (t, { i18n }) => <Row>
+        return <Row>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
@@ -161,9 +158,6 @@ class CompareTeamsPage extends ExecutableComponent<LevelDataPropsWrapper<TeamDat
                 />
             </Col>
             </Row>
-
-        }
-        </Translation>
     }
 }
 

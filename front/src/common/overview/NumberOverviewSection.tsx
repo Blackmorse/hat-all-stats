@@ -5,20 +5,19 @@ import { Translation } from 'react-i18next'
 import { commasSeparated } from '../../common/Formatters'
 import { teamNumbersChart, playerNumbersChart, getNumberOverview, goalNumbersChart, injuryNumbersChart, redCardNumbersChart, yellowCardNumbersChart, newTeamNumbersChart } from '../../rest/Client'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import Section from '../sections/Section';
 import '../charts/Charts.css'
 import ChartLink from '../charts/ChartLink';
 import NumbersChart from './charts/NumbersChart'
 
 
-class NumberOverviewSectionBase<Data extends LevelData> extends OverviewSection<Data, NumberOverview, OverviewSectionProps<Data, NumberOverview>> {
+class NumberOverviewSectionBase extends OverviewSection<NumberOverview, OverviewSectionProps<NumberOverview>> {
 
     loadOverviewEntity = getNumberOverview
 
     renderOverviewSection(data: NumberOverview): JSX.Element {   
         return <Translation>
-            {(t, { i18n}) => <table className="table table-striped table-rounded table-sm small text-center">
+            {t => <table className="table table-striped table-rounded table-sm small text-center">
                 <tbody>
                 <tr>
                     <td>{t('overview.number_of_teams')}</td>

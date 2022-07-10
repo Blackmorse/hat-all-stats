@@ -1,34 +1,34 @@
 import React from 'react'
-import TeamData from '../rest/models/leveldata/TeamData'
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu';
 import ExternalTeamLink from '../common/links/ExternalTeamLink'
+import TeamLevelDataProps from './TeamLevelDataProps';
 
-const TeamTopMenu = (props: {data?: TeamData}) => {
-    let externalLink = <ExternalTeamLink id={props.data?.teamId || 0} black={false} /> 
+const TeamTopMenu = (props: {levelProps?: TeamLevelDataProps}) => {
+    let externalLink = <ExternalTeamLink id={props.levelProps?.teamId() || 0} black={false} /> 
 
     let links = [
             {
-                href: "/league/" + props.data?.leagueId, 
-                content: props.data?.leagueName
+                href: "/league/" + props.levelProps?.leagueId(), 
+                content: props.levelProps?.leagueName()
             },
             {
-                href: "/league/" + props.data?.leagueId + "/divisionLevel/" + props.data?.divisionLevel, 
-                content: props.data?.divisionLevelName
+                href: "/league/" + props.levelProps?.leagueId() + "/divisionLevel/" + props.levelProps?.divisionLevel(), 
+                content: props.levelProps?.divisionLevelName()
             },
             {
-                href: "/leagueUnit/" + props.data?.leagueUnitId, 
-                content: props.data?.leagueUnitName
+                href: "/leagueUnit/" + props.levelProps?.leagueUnitId(),
+                content: props.levelProps?.leagueUnitName()
             },
             {
-                href: "/team/" + props.data?.teamId, 
-                content: props.data?.teamName
+                href: "/team/" + props.levelProps?.teamId(), 
+                content: props.levelProps?.teamName()
             }
         ]
 
     return <TopMenu
         links={links}
-        data={props.data}
+        levelProps={props.levelProps}
         externalLink={externalLink}
         sectionLinks={[]}
         />

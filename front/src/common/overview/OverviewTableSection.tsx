@@ -1,17 +1,16 @@
 import React from 'react'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import LeagueLink from '../../common/links/LeagueLink';
 import HattidLink from '../links/HattidLink';
 import CountryImage from '../elements/CountryImage'
 
-export interface OverviewTableSectionProps<Data extends LevelData, Entity> 
-    extends OverviewSectionProps<Data, Array<Entity>> {
+export interface OverviewTableSectionProps<Entity> 
+    extends OverviewSectionProps<Array<Entity>> {
     linkProvider: (text: string | JSX.Element, season: number, round: number, entity: Entity) => HattidLink<any>
 }
 
-abstract class OverviewTableSection<Data extends LevelData, Entity> 
-    extends OverviewSection<Data, Array<Entity>, OverviewTableSectionProps<Data, Entity>> {
+abstract class OverviewTableSection<Entity> 
+    extends OverviewSection<Array<Entity>, OverviewTableSectionProps<Entity>> {
 
     abstract valueFormatter(value: number): JSX.Element
 
@@ -29,7 +28,7 @@ abstract class OverviewTableSection<Data extends LevelData, Entity>
                     
                 </td>
         } else {
-            leagueNameFunc = (id) => undefined
+            leagueNameFunc = (_id) => undefined
         }
         
         return <div className='table-responsive'>

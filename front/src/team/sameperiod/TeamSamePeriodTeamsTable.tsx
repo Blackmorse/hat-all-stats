@@ -6,7 +6,6 @@ import {dateFormatter} from '../../common/Formatters'
 import {LevelDataPropsWrapper} from '../../common/LevelDataProps'
 import LeagueUnitLink from '../../common/links/LeagueUnitLink'
 import TeamLink from '../../common/links/TeamLink'
-import TeamData from '../../rest/models/leveldata/TeamData'
 import {SortingDirection} from '../../rest/models/StatisticsParameters'
 import CreatedSameTimeTeamExtended, {CreatedSameTimeTeam} from '../../rest/models/team/CreatedSameTimeTeamExtended'
 import TeamLevelDataProps from '../TeamLevelDataProps'
@@ -14,7 +13,7 @@ import '../../common/tables/TableSection.css'
 
 interface Props {
     data?: Array<CreatedSameTimeTeamExtended>
-    levelDataPropsWrapper: LevelDataPropsWrapper<TeamData, TeamLevelDataProps>
+    levelDataPropsWrapper: LevelDataPropsWrapper<TeamLevelDataProps>
     rowsWithTitle: Array<RowWithTitle>
 }
 

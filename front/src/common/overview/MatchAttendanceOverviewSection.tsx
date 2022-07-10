@@ -4,14 +4,13 @@ import { Translation } from 'react-i18next'
 import OverviewTableSection from './OverviewTableSection'
 import LeagueUnitLink from '../links/LeagueUnitLink'
 import TeamLink from '../links/TeamLink'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import MatchAttendanceOverview from '../../rest/models/overview/MatchAttendanceOverview'
 import { getTopMatchAttendance } from '../../rest/Client'
 import ExternalMatchLink from '../links/ExternalMatchLink'
 import { commasSeparated } from '../Formatters'
 import Section from '../sections/Section'
 
-class MatchAttendanceOverviewSectionBase<Data extends LevelData> extends OverviewTableSection<Data, MatchAttendanceOverview> {
+class MatchAttendanceOverviewSectionBase extends OverviewTableSection<MatchAttendanceOverview> {
     
     loadOverviewEntity = getTopMatchAttendance
 
@@ -22,7 +21,7 @@ class MatchAttendanceOverviewSectionBase<Data extends LevelData> extends Overvie
 
     tableheader(): JSX.Element {
         return <Translation>
-        {(t, { i18n}) =>  <tr>
+        {t =>  <tr>
                     {(this.isWorldData)  ? <th>{t('overview.country')}</th> : <></>}
                     <th>{t('table.league')}</th>
                     <th>{t('matches.spectatos')}</th>

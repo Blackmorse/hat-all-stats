@@ -11,7 +11,6 @@ import CheckBoxSelector from '../selectors/CheckBoxSelector'
 import PositionSelector from '../selectors/PositionSelector'
 import NationalitySelector from '../selectors/NationalitySelector'
 import AgeSelector from '../selectors/AgeSelector'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
 import { LoadingEnum } from '../enums/LoadingEnum';
 import { SelectorsEnum } from './SelectorsEnum'
@@ -39,13 +38,13 @@ export interface DataRequest {
 }
 
 
-abstract class AbstractTableSection<Data extends LevelData, TableProps extends LevelDataProps<Data>, RowModel, ResponseModel> 
-        extends ExecutableComponent<LevelDataPropsWrapper<Data, TableProps>, ModelTableState<ResponseModel> & SectionState, ResponseModel, DataRequest> {
+abstract class AbstractTableSection<TableProps extends LevelDataProps, RowModel, ResponseModel> 
+        extends ExecutableComponent<LevelDataPropsWrapper<TableProps>, ModelTableState<ResponseModel> & SectionState, ResponseModel, DataRequest> {
     private statsTypes: Array<StatsTypeEnum>
     private selectors: Array<SelectorsEnum>
     private fistOpening: boolean = true
 
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>, 
+    constructor(props: LevelDataPropsWrapper<TableProps>, 
             defaultSortingField: string, 
             defaultStatsType: StatsType,
             statsTypes: Array<StatsTypeEnum>,
@@ -260,7 +259,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         this.updateWithRequest(newDataRequest)
     }
 
-    additionalSection(model?: ResponseModel): JSX.Element {
+    additionalSection(_model?: ResponseModel): JSX.Element {
         return <></>
     }
 
@@ -270,7 +269,7 @@ abstract class AbstractTableSection<Data extends LevelData, TableProps extends L
         if(this.selectors.indexOf(SelectorsEnum.SEASON_SELECTOR) !== -1) {
             seasonSelector = <Col lg={3} md={6}>
                     <SeasonSelector currentSeason={this.state.dataRequest.statisticsParameters.season}
-                    seasonOffset={this.props.levelDataProps.levelData.seasonOffset}
+                    seasonOffset={this.props.levelDataProps.seasonOffset()}
                     seasons={this.props.levelDataProps.seasons()}
                     callback={this.seasonChanged}/>
                 </Col>
