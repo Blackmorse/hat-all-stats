@@ -15,9 +15,14 @@ object PlayerHistoryRequest extends ClickhouseRequest[PlayerHistory] {
     import sqlbuilder.SqlBuilder.implicits._
 
     val builder = Select(
+      "league_id",
+      "league_unit_id",
+      "league_unit_name",
       "player_id",
       "first_name",
       "last_name",
+      "team_id",
+      "team_name",
       "(age * 112) + days" as "age",
       "tsi",
       "rating",
@@ -28,7 +33,11 @@ object PlayerHistoryRequest extends ClickhouseRequest[PlayerHistory] {
       "injury_level",
       "salary",
       "yellow_cards",
-      "red_cards"
+      "red_cards",
+      "goals",
+      "season",
+      "round",
+      "nationality"
     ).from("hattrick.player_stats")
       .where
       //TODO: ability to add typed parameters with custom name

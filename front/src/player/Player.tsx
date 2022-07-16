@@ -4,13 +4,16 @@ import {PagesEnum} from '../common/enums/PagesEnum'
 import CountryLevelLayout from '../common/layouts/CountryLevelLayout'
 import QueryParams from '../common/QueryParams'
 import {getPlayerData} from '../rest/Client'
+import PlayerDetailsSection from './PlayerDetailsSection'
 import PlayerLevelDataProps from './PlayerLevelDataProps'
 import PlayerTopMenu from './PlayerTopMenu'
 
 
 const Player = () => {
     const pagesMap = new Map<PagesEnum, (props: PlayerLevelDataProps, queryParams: QueryParams) => JSX.Element>() 
-    pagesMap.set(PagesEnum.PLAYER_DETAILS, (props, queryParams) => <></>)
+    
+
+    pagesMap.set(PagesEnum.PLAYER_DETAILS, (props, _queryParams) => <PlayerDetailsSection playerProps={props} />)
 
     const playerId = useMatch('/player/:playerId')
 

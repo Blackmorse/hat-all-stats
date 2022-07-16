@@ -1,5 +1,7 @@
 package service
 
+import chpp.avatars.AvatarRequest
+import chpp.avatars.models.AvatarContainer
 import chpp.commonmodels.MatchType
 import chpp.matches.MatchesRequest
 import chpp.matches.models.Matches
@@ -9,7 +11,7 @@ import chpp.teamdetails.TeamDetailsRequest
 import chpp.teamdetails.models.{Team, TeamDetails}
 import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.WorldDetails
-import controllers.NearestMatches
+import controllers.{AvatarPart, NearestMatches}
 import databases.dao.RestClickhouseDAO
 import databases.requests.teamrankings.HistoryTeamLeagueUnitInfoRequest
 import models.clickhouse.NearestMatch
@@ -76,4 +78,15 @@ class ChppService @Inject() (val chppClient: ChppClient,
 
   def playerDetails(playerId: Long): Future[PlayerDetails] =
     chppClient.execute[PlayerDetails, PlayerDetailsRequest] (PlayerDetailsRequest(playerId = playerId))
+
+  def getPlayerAvatar(teamId: Int, playerId: Long): Future[Seq[AvatarPart]] = {
+    chppClient.execute[AvatarContainer, AvatarRequest](AvatarRequest(teamId = Some(teamId)))
+      .map(avatar => {
+        val player = avatar.team.players.filter(_.playerId == playerId)
+          .head
+
+        Seq(AvatarPart(player.backgroundUrl, 0, 0)) ++
+          player.layers.map(layer => AvatarPart(layer.image, layer.x, layer.y))
+      })
+  }
 }

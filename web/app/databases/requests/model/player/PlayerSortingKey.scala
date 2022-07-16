@@ -1,6 +1,6 @@
 package databases.requests.model.player
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 
 case class PlayerSortingKey(playerId: Long,
                             firstName: String,
@@ -13,5 +13,5 @@ case class PlayerSortingKey(playerId: Long,
                             teamLeagueId: Int)
 
 object PlayerSortingKey {
-  implicit val writes = Json.writes[PlayerSortingKey]
+  implicit val writes: OWrites[PlayerSortingKey] = Json.writes[PlayerSortingKey]
 }

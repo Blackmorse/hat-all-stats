@@ -2,6 +2,7 @@ import executors.ExecutorActorFactory
 import executors.TaskExecutorActor.TryToExecute
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import chpp.avatars.AvatarRequest
 import chpp.playerdetails.PlayerDetailsRequest
 import chpp.{ChppRequestExecutor, OauthTokens}
 import chpp.teamdetails.TeamDetailsRequest
@@ -35,7 +36,17 @@ object LoaderApp extends  App {
 
   val worldDetailsFuture = WorldDetailsSingleRequest.request(leagueId = None)
 
+
+val res =   ChppRequestExecutor.execute(AvatarRequest(teamId = Some(615797)))
+
+val t =   Await.result(res, 30.seconds)
+
+  println(t)
+
+  if (true) System.exit(0)
+
   private val worldDetails = Await.result(worldDetailsFuture, 30.seconds)
+
 
   if (args(0) == "teamRankings") {
     if (args.length == 2) {

@@ -2,25 +2,21 @@ package controllers
 
 import chpp.playerdetails.PlayerDetailsRequest
 import chpp.playerdetails.models.PlayerDetails
-import chpp.teamdetails.TeamDetailsRequest
-import chpp.teamdetails.models.TeamDetails
 import databases.dao.RestClickhouseDAO
-import databases.requests.model.player.PlayerHistory
 import databases.requests.playerstats.player.PlayerHistoryRequest
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import play.api.libs.json.{Json, OWrites}
 import play.api.mvc
 import play.api.mvc.{AnyContent, ControllerComponents}
-import service.ChppService
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
+import service.{ChppService, PlayerLeagueUnitEntry, PlayerSeasonStats, PlayerService}
 import utils.{CurrencyUtils, Romans}
 import webclients.ChppClient
 
 //TODO execution context!
-import scala.concurrent.ExecutionContext.Implicits.global
-
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 case class RestPlayerData(playerId: Long,
                           firstName: String,
@@ -49,6 +45,7 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
                                        val controllerComponents: ControllerComponents,
                                      val leagueInfoService: LeagueInfoService,
                                       val chppService: ChppService,
+                                      val playerService: PlayerService,
                                       implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
 
   def getPlayerData(playerId: Long): mvc.Action[AnyContent] = Action.async { implicit request =>
@@ -88,10 +85,26 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
   case class RestPlayerDetails(playerId: Long,
                                firstName: String,
                                lastName: String,
-                               salary: Long,
-                               tsi: Int,
-                              historyList: List[PlayerHistory]
+                               currentPlayerCharacteristics: CurrentPlayerCharacteristics,
+                               nativeLeagueId: Int,
+                               playerLeagueUnitHistory: List[PlayerLeagueUnitEntry],
+                               avatar: Seq[AvatarPart],
+                               playerSeasonStats: List[PlayerSeasonStats]
                               )
+
+  case class CurrentPlayerCharacteristics(position: String,
+                                           salary: Long,
+                                           tsi: Int,
+                                           age: Int,
+                                           form: Int,
+                                           injuryLevel: Int,
+                                           experience: Int,
+                                           leaderShip: Int,
+                                           speciality: Int)
+
+  object CurrentPlayerCharacteristics {
+    implicit val writes: OWrites[CurrentPlayerCharacteristics] = Json.writes[CurrentPlayerCharacteristics]
+  }
 
   object RestPlayerDetails {
     implicit val writes: OWrites[RestPlayerDetails] = Json.writes[RestPlayerDetails]
@@ -100,17 +113,39 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
   def getPlayerHistory(playerId: Long): mvc.Action[AnyContent] = Action.async { implicit request =>
     val playerDetailsFuture = chppClient.execute[PlayerDetails, PlayerDetailsRequest](PlayerDetailsRequest(playerId = playerId))
     val playerHistoryFuture = PlayerHistoryRequest.execute(playerId)
-    playerDetailsFuture.zipWith(playerHistoryFuture){ case(playerDetails, playerHistoryList) =>
-      val restPlayerDetails = RestPlayerDetails(
-        playerId = playerId,
-        firstName = playerDetails.player.firstName,
-        lastName = playerDetails.player.lastName,
-        salary = playerDetails.player.salary,
-        tsi = playerDetails.player.tsi,
-        historyList = playerHistoryList
-      )
 
-      Ok(Json.toJson(restPlayerDetails))
-    }
+   for {
+     (playerDetails, playerHistoryList) <- playerDetailsFuture.zip(playerHistoryFuture)
+     avatarParts <- chppService.getPlayerAvatar(playerDetails.player.owningTeam.teamId.toInt, playerId)
+   } yield {
+     val restPlayerDetails = RestPlayerDetails(
+       playerId = playerId,
+       firstName = playerDetails.player.firstName,
+       lastName = playerDetails.player.lastName,
+       currentPlayerCharacteristics = CurrentPlayerCharacteristics(
+         position = playerService.playerPosition(playerHistoryList),
+         salary = playerDetails.player.salary,
+         tsi = playerDetails.player.tsi,
+         age = playerDetails.player.age * 112 + playerDetails.player.age,
+         form = playerDetails.player.playerForm,
+         injuryLevel = playerDetails.player.injuryLevel,
+         experience = playerDetails.player.experience,
+         leaderShip = playerDetails.player.leaderShip,
+         speciality = playerDetails.player.specialty
+       ),
+       nativeLeagueId = playerDetails.player.nativeLeagueId,
+       playerLeagueUnitHistory = playerService.playerLeagueUnitHistory(playerHistoryList),
+       avatar = avatarParts,
+       playerSeasonStats = playerService.playerSeasonStats(playerHistoryList)
+     )
+
+     Ok(Json.toJson(restPlayerDetails))
+   }
   }
+}
+
+case class AvatarPart(url: String, x: Int, y: Int)
+
+object AvatarPart {
+  implicit val writes: OWrites[AvatarPart] = Json.writes[AvatarPart]
 }

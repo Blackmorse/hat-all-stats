@@ -283,7 +283,7 @@ export function getPlayerData(playerId: number, callback: (result: PlayerLevelDa
 }
 
 export function playerDetails(playerId: number, callback: (loadingEnum: LoadingEnum, result?: PlayerDetails) => void) {
-    axios.get<PlayerDetails>('/api/player/' + playerId + 'playerDetails')
+    axios.get<PlayerDetails>('/api/player/' + playerId + '/playerDetails')
         .then(response => callback(LoadingEnum.OK, response.data))
         .catch(_e => callback(LoadingEnum.ERROR))
 }
