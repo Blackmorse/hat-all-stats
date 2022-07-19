@@ -112,7 +112,6 @@ case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
 
   def sqlWithParameters(): SqlWithParameters = {
     val str = buildStringSql()
-    println(str)
     SqlWithParameters(
       sql = str,
       parameters = this.parameters.toSeq

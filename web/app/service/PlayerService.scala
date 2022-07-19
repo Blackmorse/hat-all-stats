@@ -40,12 +40,34 @@ object PlayerSeasonStats {
   implicit val writes: OWrites[PlayerSeasonStats] = Json.writes[PlayerSeasonStats]
 }
 
+case class PlayerChartEntry(age: Int,
+                            salary: Int,
+                            tsi: Long,
+                            rating: Int,
+                            ratingEndOfMatch: Int)
+
+object PlayerChartEntry {
+  implicit val writes: OWrites[PlayerChartEntry] = Json.writes[PlayerChartEntry]
+}
+
 @Singleton
 class PlayerService @Inject() ()  {
+  def playerCharts(history: List[PlayerHistory]): List[PlayerChartEntry] = {
+    history.sortBy(h => (h.season, h.round, h.age))
+      .map(playerHistory =>
+        PlayerChartEntry(age = playerHistory.age,
+          salary = playerHistory.salary,
+          tsi = playerHistory.tsi,
+          rating = playerHistory.rating,
+          ratingEndOfMatch = playerHistory.ratingEndOfMatch
+        )
+      )
+  }
+
   def playerPosition(history: List[PlayerHistory]): String = {
     val sortedHistory = history.sortBy(h => (h.season, h.round)).reverse
     val lastTeamId = sortedHistory.head.playerSortingKey.teamId
-    sortedHistory.takeWhile(_.playerSortingKey.teamId == lastTeamId).take(10)
+    sortedHistory.filter(_.role != "none").takeWhile(_.playerSortingKey.teamId == lastTeamId).take(10)
       .map(_.role).groupBy(identity).map{case (role, list) => (role, list.size)}
       .toList.sortBy(_._2).reverse
       .head._1
@@ -65,7 +87,7 @@ class PlayerService @Inject() ()  {
         matches = histories.size,
         playedMinutes = histories.map(_.playedMinutes).sum
       )
-    }.toList
+    }.toList.sortBy(_.season)
   }
 
   def playerLeagueUnitHistory(history: List[PlayerHistory]): List[PlayerLeagueUnitEntry] = {

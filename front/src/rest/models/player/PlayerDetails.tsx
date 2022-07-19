@@ -6,7 +6,8 @@ interface PlayerDetails {
   nativeLeagueId: number,
   playerLeagueUnitHistory: Array<PlayerLeagueUnitEntry>,
   avatar: Array<AvatarPart>,
-  playerSeasonStats: Array<PlayerSeasonStats>
+  playerSeasonStats: Array<PlayerSeasonStats>,
+  playerCharts: Array<PlayerChartEntry>
 }
 
 interface AvatarPart {
@@ -55,6 +56,14 @@ interface PlayerSeasonStats {
   redCards: number,
   matches: number,
   playedMinutes: number
+}
+
+export interface PlayerChartEntry {
+  age: number, 
+  salary: number, 
+  tsi: number, 
+  rating: number, 
+  ratingEndOfMatch: number
 }
 
 export default PlayerDetails

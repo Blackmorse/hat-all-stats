@@ -10,7 +10,7 @@ import play.api.libs.json.{Json, OWrites}
 import play.api.mvc
 import play.api.mvc.{AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
-import service.{ChppService, PlayerLeagueUnitEntry, PlayerSeasonStats, PlayerService}
+import service.{ChppService, PlayerChartEntry, PlayerLeagueUnitEntry, PlayerSeasonStats, PlayerService}
 import utils.{CurrencyUtils, Romans}
 import webclients.ChppClient
 
@@ -89,7 +89,8 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
                                nativeLeagueId: Int,
                                playerLeagueUnitHistory: List[PlayerLeagueUnitEntry],
                                avatar: Seq[AvatarPart],
-                               playerSeasonStats: List[PlayerSeasonStats]
+                               playerSeasonStats: List[PlayerSeasonStats],
+                               playerCharts: List[PlayerChartEntry]
                               )
 
   case class CurrentPlayerCharacteristics(position: String,
@@ -136,7 +137,8 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
        nativeLeagueId = playerDetails.player.nativeLeagueId,
        playerLeagueUnitHistory = playerService.playerLeagueUnitHistory(playerHistoryList),
        avatar = avatarParts,
-       playerSeasonStats = playerService.playerSeasonStats(playerHistoryList)
+       playerSeasonStats = playerService.playerSeasonStats(playerHistoryList),
+       playerCharts = playerService.playerCharts(playerHistoryList)
      )
 
      Ok(Json.toJson(restPlayerDetails))

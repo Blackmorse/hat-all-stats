@@ -239,7 +239,7 @@ const OpponentAnalyzerSection = (props: Props) => {
         executeRequest={(request, callback) => {
             teamAndOpponentMatches(request, callback) 
         }}
-        sectionTitle={i18n.t('')}
+        sectionTitle={() => i18n.t('')}
     />
 }
 
