@@ -1,20 +1,20 @@
-package databases.requests.playerstats.player
+package databases.requests.playerstats.player.stats
 
-import databases.requests.model.Roles
 import databases.dao.RestClickhouseDAO
+import databases.requests.model.Roles
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import models.web.{PlayersParameters, RestStatisticsParameters, Round}
 import sqlbuilder.SqlBuilder
 
 import scala.concurrent.Future
 
-trait ClickhousePlayerRequest[T] extends ClickhouseRequest[T] {
+trait ClickhousePlayerStatsRequest[T] extends ClickhouseRequest[T] {
   val sortingColumns: Seq[String]
 
   def execute(orderingKeyPath: OrderingKeyPath,
               parameters: RestStatisticsParameters,
               playersParameters: PlayersParameters)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[T]] = {
-    if(!sortingColumns.contains(parameters.sortBy))
+    if (!sortingColumns.contains(parameters.sortBy))
       throw new Exception("Looks like SQL injection")
 
     val round = parameters.statsType match {
@@ -24,16 +24,16 @@ trait ClickhousePlayerRequest[T] extends ClickhouseRequest[T] {
       .map(_.name)
 
     val builder = buildSql(orderingKeyPath = orderingKeyPath,
-                            parameters = parameters,
-                            playersParameters = playersParameters,
-                            role = role,
-                            round = round)
+      parameters = parameters,
+      playersParameters = playersParameters,
+      role = role,
+      round = round)
     restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
   }
 
   def buildSql(orderingKeyPath: OrderingKeyPath,
-                        parameters: RestStatisticsParameters,
-                        playersParameters: PlayersParameters,
-                        role: Option[String],
-                        round: Int): SqlBuilder
+               parameters: RestStatisticsParameters,
+               playersParameters: PlayersParameters,
+               role: Option[String],
+               round: Int): SqlBuilder
 }

@@ -6,7 +6,7 @@ import './TableLink.css'
 import QueryParams from '../QueryParams';
 
 export interface LinkProps {
-    text: string | JSX.Element,
+    text: string | JSX.Element | undefined,
     tableLink?: boolean,
     page?: PagesEnum,
     queryParams?: QueryParams,

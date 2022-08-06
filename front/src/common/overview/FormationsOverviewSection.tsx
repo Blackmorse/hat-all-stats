@@ -3,14 +3,12 @@ import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import FormationsOverview from '../../rest/models/overview/FormationsOverview'
 import { getFormationsOverview } from '../../rest/Client'
 import '../../i18n'
-import { Translation } from 'react-i18next'
 import { commasSeparated } from '../../common/Formatters'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import Section from '../sections/Section';
 import ChartLink from '../charts/ChartLink';
 import FormationsChart from './charts/FormationsChart';
 
-class FormationsOverviewSectionBase<Data extends LevelData> extends OverviewSection<Data, Array<FormationsOverview>, OverviewSectionProps<Data, Array<FormationsOverview>>> {
+class FormationsOverviewSectionBase extends OverviewSection<Array<FormationsOverview>, OverviewSectionProps<Array<FormationsOverview>>> {
    
     loadOverviewEntity = getFormationsOverview
 
@@ -19,8 +17,7 @@ class FormationsOverviewSectionBase<Data extends LevelData> extends OverviewSect
             .reduce((sum, current) => sum + current, 0);
 
         let top6 = data.slice(0, 6)
-        return <Translation>
-        {(t, { i18n}) => <table className="table table-striped table-rounded table-sm small text-center">
+        return <table className="table table-striped table-rounded table-sm small text-center">
             <tbody>
                 {top6.map(formation => {
                 return <tr key={'overview_formation_' + formation.formation}>
@@ -30,12 +27,10 @@ class FormationsOverviewSectionBase<Data extends LevelData> extends OverviewSect
             </tbody>
     </table>
     }
-    </Translation>
-    }
 
 }
 
-const FormationsOverviewSection = Section(FormationsOverviewSectionBase, (props: OverviewSectionProps<LevelData, Array<FormationsOverview>>, state) => {
+const FormationsOverviewSection = Section(FormationsOverviewSectionBase, (props: OverviewSectionProps<Array<FormationsOverview>>, _state) => {
     return {
         header: 'overview.formations',
         additionalElement: <ChartLink chartContent={() => <FormationsChart levelRequest={props.levelDataProps.createLevelRequest()} />} />

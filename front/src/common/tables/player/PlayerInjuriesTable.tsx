@@ -1,5 +1,4 @@
 import React from 'react';
-import LevelData from "../../../rest/models/leveldata/LevelData";
 import { SortingState } from '../AbstractTableSection'
 import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
@@ -17,9 +16,9 @@ import LeagueLink from '../../links/LeagueLink';
 import CountryImage from '../../elements/CountryImage';
 import HattidTooltip from '../../elements/HattidTooltip';
 
-abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-        extends ClassicTableSection<Data, TableProps, PlayerInjury>{
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+abstract class PlayerInjuriesTable<TableProps extends LevelDataProps>
+        extends ClassicTableSection<TableProps, PlayerInjury>{
+    constructor(props: LevelDataPropsWrapper<TableProps>) {
         super(props, 'injury', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
@@ -29,7 +28,7 @@ abstract class PlayerInjuriesTable<Data extends LevelData, TableProps extends Le
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
             {
-            (t, { i18n }) =>
+            t =>
             <tr>
                 <HattidTooltip 
                     poppedHint={t('table.position')}

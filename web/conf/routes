@@ -2,12 +2,12 @@
 # This file defines all application routes (Higher priority routes first)
 # https://www.playframework.com/documentation/latest/ScalaRouting
 # ~~~~
-GET     /api/teamSearchByName       controllers.WorldController.searchByName(name: String)
-GET     /api/teamSearchById         controllers.WorldController.searchById(id: Long)
+GET     /api/teamSearchByName       controllers.CommonController.searchByName(name: String)
+GET     /api/teamSearchById         controllers.CommonController.searchById(id: Long)
 GET     /api/league/:leagueId/leagueUnitName/:leagueUnitName    controllers.RestLeagueUnitController.leagueUnitIdByName(leagueUnitName: String, leagueId: Int)
 
-GET     /api/health                     controllers.WorldController.health()
-GET     /api/hoRequests             controllers.WorldController.hoRequests()
+GET     /api/health                     controllers.CommonController.health()
+GET     /api/hoRequests             controllers.CommonController.hoRequests()
 
 GET     /api/world/teamHatstats         controllers.WorldController.teamHatstats(restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/world/playerTsiSalary      controllers.WorldController.playersTsiSalary(restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
@@ -104,6 +104,9 @@ GET     /api/team/stats/compareTeams        controllers.RestTeamController.compa
 GET     /api/team/analyzer/teamAndOpponentMatches       controllers.AnalyzerController.currentTeamAndOpponentTeamMatches(teamId: Long)
 GET     /api/team/analyzer/opponentTeamMatches      controllers.AnalyzerController.opponentTeamMatches(teamId: Long)
 GET     /api/team/analyzer/combineMatches       controllers.AnalyzerController.combineMatches(firstTeamId: Long, firstMatchId: Long, secondTeamId: Long, secondMatchId: Long)
+
+GET     /api/player/:playerId           controllers.RestPlayerController.getPlayerData(playerId: Long)
+GET     /api/player/:playerId/playerDetails     controllers.RestPlayerController.getPlayerHistory(playerId: Long)
 
 GET     /api/overview/numberOverview    controllers.RestOverviewController.numberOverview(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 GET     /api/overview/formations    controllers.RestOverviewController.formations(season: Int, round: Int, leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)

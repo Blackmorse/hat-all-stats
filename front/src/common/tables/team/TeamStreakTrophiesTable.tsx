@@ -2,7 +2,6 @@ import React from 'react'
 import { SortingState } from '../AbstractTableSection'
 import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import LevelData from '../../../rest/models/leveldata/LevelData';
 import TeamStreakTrophies from '../../../rest/models/team/TeamStreakTrophies';
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import { getTeamStreakTrophies } from '../../../rest/Client';
@@ -13,10 +12,10 @@ import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import HattidTooltip from '../../elements/HattidTooltip';
 
-abstract class TeamStreakTrophiesTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends ClassicTableSection<Data, TableProps, TeamStreakTrophies> {
+abstract class TeamStreakTrophiesTable<TableProps extends LevelDataProps>
+    extends ClassicTableSection<TableProps, TeamStreakTrophies> {
 
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+    constructor(props: LevelDataPropsWrapper<TableProps>) {
         super(props, 'trophies_number', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND])
     }
@@ -26,7 +25,7 @@ abstract class TeamStreakTrophiesTable<Data extends LevelData, TableProps extend
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
             {
-            (t, { i18n }) =>
+            t =>
             <tr>
                 <HattidTooltip 
                     poppedHint={t('table.position')}

@@ -216,5 +216,14 @@
 
     "team.compare": "Сравнить",
 
-    "filter.weeks_within": "В течение # недель"
+    "filter.weeks_within": "В течение # недель",
+
+    "player.player_details": "Об игроке",
+    "player.experience": "Опыт",
+    "player.form": "Форма",
+    "player.speciality": "Специальность",
+    "player.cup": "Кубок",
+    "player.yellow": "Желтые",
+    "player.red": "Красные",
+    "player.minutes": "Минуты"
 }

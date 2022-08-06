@@ -1,11 +1,10 @@
 import { getTopMatchesOverview } from '../../rest/Client'
 import MatchesOverviewSection from './MatchesOverviewSection'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import Section from '../sections/Section';
 
-class TopMatchesOverviewSectionBase<Data extends LevelData> extends MatchesOverviewSection<Data> {
+class TopMatchesOverviewSectionBase extends MatchesOverviewSection {
 
-    valueFormatter(value: number): JSX.Element {
+    valueFormatter(_value: number): JSX.Element {
         throw new Error("Method not implemented.");
     }
 

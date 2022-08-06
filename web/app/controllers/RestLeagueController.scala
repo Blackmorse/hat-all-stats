@@ -6,6 +6,7 @@ import databases.requests.matchdetails._
 import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
+import databases.requests.playerstats.player.stats.{ClickhousePlayerStatsRequest, PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
@@ -69,7 +70,7 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
-  private def playersRequest[T](plRequest: ClickhousePlayerRequest[T],
+  private def playersRequest[T](plRequest: ClickhousePlayerStatsRequest[T],
                                 leagueId: Int,
                                 restStatisticsParameters: RestStatisticsParameters,
                                 playersParameters: PlayersParameters)(implicit writes: Writes[T])  = Action.async { implicit request =>

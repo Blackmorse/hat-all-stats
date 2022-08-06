@@ -54,53 +54,63 @@ import MatchOpponentCombinedInfo from './models/analyzer/MatchOpponentCombinedIn
 import NumbersChartModel from './models/overview/NumbersChartModel'
 import FormationChartModel from './models/overview/FormationChartModel'
 import { CreatedSameTimeTeamRequest } from './models/team/CreatedSameTimeTeamExtended'
+import PlayerDetails from './models/player/PlayerDetails';
+import PlayerData from './models/leveldata/PlayerData';
+import TeamLevelDataProps from '../team/TeamLevelDataProps';
+import LeagueUnitLevelDataProps from '../leagueunit/LeagueUnitLevelDataProps';
+import WorldLevelDataProps from '../world/WorldLevelDataProps';
+import PlayerLevelDataProps from '../player/PlayerLevelDataProps';
+import LeagueLevelDataProps from '../league/LeagueLevelDataProps';
+import DivisionLevelDataProps from '../divisionlevel/DivisionLevelDataProps';
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
 export function getLeagueData(leagueId: number, 
-        callback: (leagueData: LeagueData) => void,
+        callback: (leagueLevelDataProps: LeagueLevelDataProps) => void,
         onError: () => void): void {
     axios.get<LeagueData>('/api/league/' + leagueId)
         .then(response => response.data)
+        .then(data => new LeagueLevelDataProps(data))
         .then(callback)
         .catch(_e => onError())
 }
 
 export function getDivisionLevelData(leagueId: number, divisionLevel: number, 
-        callback: (divisionLevelData: DivisionLevelData) => void,
+        callback: (divisionLevelDataProps: DivisionLevelDataProps) => void,
         onError: () => void): void {
     axios.get<DivisionLevelData>('/api/league/' + leagueId + '/divisionLevel/' + divisionLevel)   
-    .then(response => {
-        return response.data
-    }).then(model => callback(model)) 
-    .catch(e => onError())
+    .then(response => response.data)
+    .then(data => new DivisionLevelDataProps(data))
+    .then(model => callback(model)) 
+    .catch(_e => onError())
 }
 
 export function getLeagueUnitData(leagueUnitId: number, 
-        callback: (leagueUnitData: LeagueUnitData) => void,
+        callback: (leagueUnitLevelDataProps: LeagueUnitLevelDataProps) => void,
         onError: () => void): void {
     axios.get<LeagueUnitData>('/api/leagueUnit/' + leagueUnitId)
-    .then(response => {
-        return response.data
-    }).then(model => callback(model))
-    .catch(e => onError())
+    .then(response => response.data)
+    .then(data => new LeagueUnitLevelDataProps(data))
+    .then(model => callback(model))
+    .catch(_e => onError())
 }
 
 export function getTeamData(leagueId: number, 
-        callback: (teamData: TeamData) => void,
+        callback: (teamData: TeamLevelDataProps) => void,
         onError: () => void): void {
     axios.get<TeamData>('/api/team/' + leagueId)
-        .then(response => response.data)
+        .then(response => new TeamLevelDataProps(response.data))
         .then(callback)
-        .catch(e => onError())
+        .catch(_e => onError())
 }
 
-export function getWorldData(callback: (worldData: WorldData) => void,
+export function getWorldData(callback: (worldLevelDataProps: WorldLevelDataProps) => void,
         onError: () => void): void {
     axios.get<WorldData>('/api/overview/worldData')
         .then(response => response.data)
+        .then(data => new WorldLevelDataProps(data))
         .then(callback)
-        .catch(e => onError())
+        .catch(_e => onError())
 }
 
 interface LeagueUnitId {
@@ -133,7 +143,7 @@ function statisticsRequest<T>(path: string):
                     let params = createStatisticsParameters(statisticsParameters)
                     axios.get<RestTableData<T>>(startUrl(request) + '/' + path + '?' + params.toString())
                         .then(response => parseAxiosResponse(response, callback))
-                        .catch(e => callback(LoadingEnum.ERROR))
+                        .catch(_e => callback(LoadingEnum.ERROR))
                 }
 }
 
@@ -141,28 +151,28 @@ export function getTeamRankings(request: LevelRequest, season: number,
         callback: (loadingEnum: LoadingEnum, teamRankingsStats?: TeamRankingsStats) => void) {
     axios.get<TeamRankingsStats>(startUrl(request) + '/teamRankings?season=' + season)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function getNearestMatches(request: TeamRequest, 
         callback: (loadingEnum: LoadingEnum, nearestMatches?: NearestMatches) => void) {
     axios.get<NearestMatches>('/api/team/' + request.teamId + "/nearestMatches")
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function getPromotions(levelRequest: LevelRequest, 
         callback: (loadingEnum: LoadingEnum, promotions?: Array<PromotionWithType>) => void) {
     axios.get<Array<PromotionWithType>>(startUrl(levelRequest) + '/promotions')
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function searchTeam(name: string, 
         callback: (loadingEnum: LoadingEnum, results?: Array<TeamSearchResult>) => void): void {
     axios.get<Array<TeamSearchResult>>('/api/teamSearchByName?name=' + name)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function searchTeamById(id: number, 
@@ -260,6 +270,20 @@ export function getCreatedSameTimeTeams(leagueId: number, foundedDate: number, r
 export function getTeamsComparsion(team1Id: number, team2Id: number,
         callback: (LoadingEnum: LoadingEnum, result?: TeamComparsion) => void) {
     axios.get<TeamComparsion>('/api/team/stats/compareTeams?teamId1=' + team1Id + '&teamId2=' + team2Id)
+        .then(response => callback(LoadingEnum.OK, response.data))
+        .catch(_e => callback(LoadingEnum.ERROR))
+}
+
+export function getPlayerData(playerId: number, callback: (result: PlayerLevelDataProps) => void, onError: () => void) {
+    axios.get<PlayerData>('/api/player/' + playerId)
+        .then(response => response.data)
+        .then(data => new PlayerLevelDataProps(data))
+        .then(callback)
+        .catch(onError)
+}
+
+export function playerDetails(playerId: number, callback: (loadingEnum: LoadingEnum, result?: PlayerDetails) => void) {
+    axios.get<PlayerDetails>('/api/player/' + playerId + '/playerDetails')
         .then(response => callback(LoadingEnum.OK, response.data))
         .catch(_e => callback(LoadingEnum.ERROR))
 }

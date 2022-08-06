@@ -216,5 +216,14 @@
 
     "team.compare": "مقایسه کنید",
 
-    "filter.weeks_within": "در عرض # هفته"
+    "filter.weeks_within": "در عرض # هفته",
+
+    "player.player_details": "جزئیات بازیکن",
+    "player.experience": "تجربه",
+    "player.form": "فرم",
+    "player.speciality": "تخصص",
+    "player.cup": "تخصص",
+    "player.yellow": "رنگ زرد",
+    "player.red": "قرمز",
+    "player.minutes": "دقایق"
   }

@@ -11,7 +11,6 @@ import PlayerGoalsGamesTable from '../common/tables/player/PlayerGoalsGamesTable
 import PlayerInjuriesTable from '../common/tables/player/PlayerInjuriesTable';
 import PlayerRatingsTable from '../common/tables/player/PlayerRatingsTable';
 import PlayerSalaryTsiTable from '../common/tables/player/PlayerSalaryTsiTable';
-import TeamData from '../rest/models/leveldata/TeamData';
 import OpponentAnalyzerSection from './analyzer/OpponentAnalyzerSection';
 import CompareSearchSection from './compare/CompareSearchSection';
 import CompareTeamsPage from './compare/CompareTeamsPage';
@@ -30,26 +29,26 @@ export default function pages(): Map<PagesEnum, (props: TeamLevelDataProps, quer
                 <TeamRankingsTable levelDataProps={props} queryParams={queryParams}/>
             </>)
     pagesMap.set(PagesEnum.PLAYER_GOAL_GAMES, 
-        (props, queryParams) => <PlayerGoalsGamesTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
+        (props, queryParams) => <PlayerGoalsGamesTable<TeamLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
     pagesMap.set(PagesEnum.PLAYER_CARDS, 
-        (props, queryParams) => <PlayerCardsTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
+        (props, queryParams) => <PlayerCardsTable<TeamLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
     pagesMap.set(PagesEnum.PLAYER_SALARY_TSI, 
-        (props, queryParams) => <PlayerSalaryTsiTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
+        (props, queryParams) => <PlayerSalaryTsiTable<TeamLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
     pagesMap.set(PagesEnum.PLAYER_RATINGS,
-        (props, queryParams) => <PlayerRatingsTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        (props, queryParams) => <PlayerRatingsTable<TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
     pagesMap.set(PagesEnum.PLAYER_INJURIES, 
-        (props, queryParams) => <PlayerInjuriesTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        (props, queryParams) => <PlayerInjuriesTable<TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
     pagesMap.set(PagesEnum.TEAM_MATCHES,
         (props, queryParams) => <>
             <PlayedAndUpcomingMatchesTable teamId={props.teamId()}/> 
             <TeamMatches levelDataProps={props} queryParams={queryParams} />
         </>)
     pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS, 
-        (props, queryParams) => <MatchTopHatstatsTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        (props, queryParams) => <MatchTopHatstatsTable<TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
     pagesMap.set(PagesEnum.MATCH_SURPRISING, 
-        (props, queryParams) => <MatchSurprisingTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        (props, queryParams) => <MatchSurprisingTable<TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
     pagesMap.set(PagesEnum.MATCH_SPECTATORS, 
-        (props, queryParams) => <MatchSpectatorsTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        (props, queryParams) => <MatchSpectatorsTable<TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
     pagesMap.set(PagesEnum.CREATED_SAME_TIME_TEAMS,
         (props, queryParams) => <TeamSamePeriodTeams levelDataProps={props} queryParams={queryParams}/>)
     pagesMap.set(PagesEnum.TEAM_COMPARSION,
@@ -57,7 +56,7 @@ export default function pages(): Map<PagesEnum, (props: TeamLevelDataProps, quer
 
 
     pagesMap.set(PagesEnum.PROMOTIONS,
-        (props, queryParams) => <PromotionsTable<TeamData, TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        (props, queryParams) => <PromotionsTable<TeamLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
 
     pagesMap.set(PagesEnum.TEAM_SEARCH, (_props, _queryParams) => <TeamSearchPage />)
 

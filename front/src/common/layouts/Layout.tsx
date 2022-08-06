@@ -67,7 +67,7 @@ const Layout = (props: Props) => {
          <div className='w-100'>{props.content}</div>
      </Container>
 
-     let metrika = (process.env.MODE !== undefined && process.env.mode === 'DEV') ? <></> : <YMInitializer accounts={[67069579]} /> 
+     let metrika = (process.env.MODE !== undefined && process.env.MODE === 'DEV') ? <></> : <YMInitializer accounts={[67069579]} /> 
 
     return <Fragment>
                  <header dir={direction}>

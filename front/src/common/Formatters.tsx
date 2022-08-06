@@ -6,8 +6,18 @@ export function commasSeparated(value: number): JSX.Element {
     return <>{value.toLocaleString()}</>
 }
 
-export function ageFormatter(value: number): JSX.Element {
-    return <>{Math.floor(value / 112)},{value % 112}</>
+export function stringCommasSeparated(value: number): string {
+    return value.toLocaleString()
+}
+
+export function stringAgeFormatter(value?: number): string {
+    if (value === undefined) return ''
+    let age =  Math.floor(value / 112).toString() + '(' + (value % 112).toString() + ')'
+    return age
+}
+
+export function ageFormatter(value?: number): JSX.Element {
+    return <>{stringAgeFormatter(value)}</>
 }
 
 export function ratingFormatter(value: number | undefined): JSX.Element {
@@ -21,8 +31,8 @@ export function ratingFormatter(value: number | undefined): JSX.Element {
         </span>
 }
 
-export function injuryFormatter(value: number): JSX.Element {
-    
+export function injuryFormatter(value?: number): JSX.Element {
+    if (value === undefined) return <></>
     return <> 
         <svg width="10px" height="10px" style={{fill: 'rgb(0,0,255)', strokeWidth: '3', stroke: 'rgb(255,0,0)'}}>
                 <line x1="0" y1="5" x2="10" y2="5"></line>
@@ -51,8 +61,13 @@ export function loddarStats(value: number): JSX.Element {
     return <>{Math.ceil(value * 100) / 100}</>
 }
 
-export function salaryFormatter(value: number, currencyRate?: number): JSX.Element {
-    return commasSeparated(Math.floor(value / ((currencyRate === undefined) ? 1 : currencyRate)))
+export function stringSalaryFormatter(value?: number, currencyRate?: number): string {
+    if (value === undefined) return ''
+    return stringCommasSeparated(Math.floor(value / ((currencyRate === undefined) ? 1 : currencyRate)))
+}
+
+export function salaryFormatter(value?: number, currencyRate?: number): JSX.Element {
+    return <>{stringSalaryFormatter(value, currencyRate)}</>
 }
 
 export function doubleSalaryFormatter(value: number, currencyRate?: number): number {

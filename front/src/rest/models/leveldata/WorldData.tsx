@@ -1,6 +1,6 @@
 import LevelData from './LevelData'
 
-interface WorldLoadingInfo {
+export interface WorldLoadingInfo {
     proceedCountries: number,
     nextCountry?: [number, string, Date],
     currentCountry?: [number, string]

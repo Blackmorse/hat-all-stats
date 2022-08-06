@@ -9,7 +9,7 @@ case class WorldDetailsRequest(leagueId: Option[Int] = None,
                                includeRegions: Option[Boolean] = None) extends AbstractRequest[WorldDetails] {
 
   override def createRequest()(implicit oauthTokens: OauthTokens): HttpRequest = {
-    val map = RequestCreator.params("worlddetails", "1.8",
+    val map = RequestCreator.params("worlddetails", "1.9",
       "leagueID" -> leagueId,
       "countryID" -> countryId,
       "includeRegions" -> includeRegions)

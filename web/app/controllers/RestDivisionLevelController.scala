@@ -5,6 +5,7 @@ import databases.requests.matchdetails._
 import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
+import databases.requests.playerstats.player.stats.{ClickhousePlayerStatsRequest, PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
@@ -14,7 +15,7 @@ import javax.inject.{Inject, Singleton}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfoService, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
@@ -35,7 +36,7 @@ case class RestDivisionLevelData(leagueId: Int,
                                  countries: Seq[(Int, String)]) extends CountryLevelData
 
 object RestDivisionLevelData {
-  implicit val writes = Json.writes[RestDivisionLevelData]
+  implicit val writes: OWrites[RestDivisionLevelData] = Json.writes[RestDivisionLevelData]
 }
 
 @Singleton
@@ -76,7 +77,7 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
-  private def playersRequest[T](plRequest: ClickhousePlayerRequest[T],
+  private def playersRequest[T](plRequest: ClickhousePlayerStatsRequest[T],
                                 leagueId: Int,
                                 divisionLevel: Int,
                                 restStatisticsParameters: RestStatisticsParameters,

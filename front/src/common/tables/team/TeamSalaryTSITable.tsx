@@ -1,7 +1,6 @@
 import React from 'react';
 import AbstractTableSection, { SortingState, DataRequest } from '../AbstractTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import LevelData from '../../../rest/models/leveldata/LevelData';
 import TeamSalaryTSI from '../../../rest/models/team/TeamSalaryTSI';
 import { getTeamSalaryTSI } from '../../../rest/Client';
 import '../../../i18n'
@@ -16,10 +15,10 @@ import RestTableData from '../../../rest/models/RestTableData'
 import { SelectorsEnum } from '../SelectorsEnum';
 import HattidTooltip from '../../elements/HattidTooltip';
 
-class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends AbstractTableSection<Data, TableProps, TeamSalaryTSI, RestTableData<TeamSalaryTSI>> {
+class TeamSalaryTSITable<TableProps extends LevelDataProps>
+    extends AbstractTableSection<TableProps, TeamSalaryTSI, RestTableData<TeamSalaryTSI>> {
     
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+    constructor(props: LevelDataPropsWrapper<TableProps>) {
         super(props, 'salary', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
             [StatsTypeEnum.ROUND],
             [SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
@@ -39,7 +38,7 @@ class TeamSalaryTSITable<Data extends LevelData, TableProps extends LevelDataPro
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
             {
-            (t, { i18n }) =>
+            t => 
             <tr>
                 <HattidTooltip 
                     poppedHint={t('table.position')}

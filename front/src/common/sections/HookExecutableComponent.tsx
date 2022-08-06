@@ -10,7 +10,7 @@ interface Props<Request, Response, State=Response> {
     executeRequest: (request: Request, callback: (loadingState: LoadingEnum, result?: Response) => void) => void
     //Client has an ability to set the request, or directly set state
     content: (setRequest: (request: Request) => void, setState: (state: State) => void, currentState: State) => JSX.Element
-    sectionTitle?: string | JSX.Element
+    sectionTitle?: (state: State) => string | JSX.Element
 }
 
 const ExecutableComponent = <Request, Response, State=Response>(props: Props<Request, Response, State>) => {
@@ -40,7 +40,7 @@ const ExecutableComponent = <Request, Response, State=Response>(props: Props<Req
     if (props.sectionTitle === undefined) {
         return render
     } else {
-        return <Section element={render} title={props.sectionTitle}/>
+        return <Section element={render} title={props.sectionTitle(state)}/>
     }
 }
 

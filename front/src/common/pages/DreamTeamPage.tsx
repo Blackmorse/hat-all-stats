@@ -1,5 +1,4 @@
 import React from 'react'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps';
 import { LoadingEnum } from '../enums/LoadingEnum';
 import DreamTeamPlayer from '../../rest/models/player/DreamTeamPlayer';
@@ -31,10 +30,10 @@ export interface DreamTeamPlayerPosition {
     position: string
 }
 
-class DreamTeamPageBase<Data extends LevelData, Props extends LevelDataProps<Data>> 
-    extends ExecutableComponent<LevelDataPropsWrapper<Data, LevelDataProps<Data>>, State & SectionState, Array<DreamTeamPlayer>, Request> {
+class DreamTeamPageBase<Props extends LevelDataProps> 
+    extends ExecutableComponent<LevelDataPropsWrapper<LevelDataProps>, State & SectionState, Array<DreamTeamPlayer>, Request> {
 
-    constructor(props: LevelDataPropsWrapper<Data, Props>) {
+    constructor(props: LevelDataPropsWrapper<Props>) {
         super(props)
         this.state = {
             loadingState: LoadingEnum.OK,

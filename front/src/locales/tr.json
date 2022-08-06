@@ -216,5 +216,14 @@
 
   "team.compare": "Karşılaştırmak",
 
-  "filter.weeks_within": "# hafta içinde"
+  "filter.weeks_within": "# hafta içinde",
+
+    "player.player_details": "Oyuncu ayrıntıları",
+    "player.experience": "Deneyim",
+    "player.form": "Biçim",
+    "player.speciality": "uzmanlık",
+    "player.cup": "Bardak",
+    "player.yellow": "Sarı",
+    "player.red": "Kırmızı",
+    "player.minutes": "dakika"
 }

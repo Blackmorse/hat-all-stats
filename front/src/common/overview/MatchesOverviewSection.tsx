@@ -2,15 +2,14 @@ import React from 'react';
 import MatchTopHatstats from '../../rest/models/match/MatchTopHatstats'
 import '../../i18n'
 import { Translation } from 'react-i18next'
-import LevelData from '../../rest/models/leveldata/LevelData'
 import OverviewTableSection from './OverviewTableSection'
 import MatchOverviewRow from '../tables/rows/match/MatchOverviewRow'
 
-abstract class MatchesOverviewSection<Data extends LevelData> extends OverviewTableSection<Data, MatchTopHatstats> {
+abstract class MatchesOverviewSection extends OverviewTableSection<MatchTopHatstats> {
 
     tableheader(): JSX.Element {
         return <Translation>
-            {(t, { i18n}) =>  <tr>
+            {t =>  <tr>
                         <th/>
                         {(this.isWorldData)  ? <th></th> : <></>}
                         <th>{t('table.league')}</th>

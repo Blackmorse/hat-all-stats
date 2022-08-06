@@ -215,6 +215,15 @@
 
     "team.compare": "Vergleichen",
 
-    "filter.weeks_within": "Innerhalb von # Wochen"
+    "filter.weeks_within": "Innerhalb von # Wochen",
+
+    "player.player_details": "Spielerdetails",
+    "player.experience": "Erfahrung",
+    "player.form": "Form",
+    "player.speciality": "Spezialität",
+    "player.cup": "Tasse",
+    "player.yellow": "Gelb",
+    "player.red": "rot",
+    "player.minutes": "Protokoll"
 }
 

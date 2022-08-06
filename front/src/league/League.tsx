@@ -2,7 +2,6 @@ import React from 'react';
 import { useMatch} from 'react-router';
 import CountryLevelLayout from '../common/layouts/CountryLevelLayout';
 import {getLeagueData} from '../rest/Client';
-import LeagueData from '../rest/models/leveldata/LeagueData';
 import LeagueLevelDataProps from './LeagueLevelDataProps';
 import pages from './LeaguePages';
 import LeagueTopMenu from './LeagueTopMenu';
@@ -12,12 +11,11 @@ const League = () => {
 
     let pagesMap = pages()
 
-    return <CountryLevelLayout<LeagueData, LeagueLevelDataProps>
+    return <CountryLevelLayout<LeagueLevelDataProps>
             pagesMap={pagesMap}
-            topMenu={(levelData) => <LeagueTopMenu data={levelData} />}
+            topMenu={(levelProps) => <LeagueTopMenu levelProps={levelProps} />}
             fetchLevelData={(callback, onError) => getLeagueData(Number(params?.params.league), callback, onError)}
-            documentTitle={(data) => data.leagueName}
-            makeModelProps={data => new LeagueLevelDataProps(data)}
+            documentTitle={(levelProps) => levelProps.leagueName()}
         />
 }
 

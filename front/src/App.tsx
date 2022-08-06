@@ -12,6 +12,7 @@ import LeagueRedirect from './common/redirect/LeagueRedirect'
 import LeagueUnitRedirect from './common/redirect/LeagueUnitRedirect'
 import TeamRedirect from './common/redirect/TeamRedirect'
 import './main.css'
+import Player from './player/Player';
 
 class App extends React.Component{
 
@@ -29,6 +30,7 @@ class App extends React.Component{
         <Route path="/leagueUnit/:leagueUnitId" element={<LeagueUnit />}/>
         <Route path="/team/teamOverview" element={<TeamRedirect />}/>
         <Route path="/team/:teamId" element={<Team />}/>
+        <Route path="/player/:playerId" element={<Player />}/>
       </Routes>
       </Router>
       <CookieWidget />

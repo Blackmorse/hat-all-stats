@@ -1,5 +1,4 @@
 import React from 'react'
-import LeagueUnitData from '../rest/models/leveldata/LeagueUnitData'
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu';
 import ExternalLeagueUnitLink from '../common/links/ExternalLeagueUnitLink';
@@ -7,12 +6,13 @@ import { Form } from 'react-bootstrap';
 import {useNavigate} from 'react-router';
 import {nextLeagueUnit, previousLeagueUnit} from '../common/Utils';
 import {getLeagueUnitIdByName} from '../rest/Client';
+import LeagueUnitLevelDataProps from './LeagueUnitLevelDataProps';
 
-const LeagueUnitTopMenu = (props: {data?: LeagueUnitData}) => {
+const LeagueUnitTopMenu = (props: {levelProps?: LeagueUnitLevelDataProps}) => {
     let navigate = useNavigate()
 
     let openLeagueUnit = (leagueUnitName: string) => {
-        getLeagueUnitIdByName(props.data!.leagueId, leagueUnitName, id => {
+        getLeagueUnitIdByName(props.levelProps!.leagueId(), leagueUnitName, id => {
             navigate('/leagueUnit/' + id)
             //workaround :( Can't refresh
             setTimeout(() => {window.location.reload()}, 100)
@@ -20,8 +20,8 @@ const LeagueUnitTopMenu = (props: {data?: LeagueUnitData}) => {
     }
 
 
-    let prevLeagueUnitName = (props.data === undefined) ? undefined : previousLeagueUnit(props.data.leagueUnitName)
-    let nextLeagueUnitName = (props.data === undefined) ? undefined : nextLeagueUnit(props.data.leagueUnitName)
+    let prevLeagueUnitName = (props.levelProps === undefined) ? undefined : previousLeagueUnit(props.levelProps.leagueUnitName())
+    let nextLeagueUnitName = (props.levelProps === undefined) ? undefined : nextLeagueUnit(props.levelProps.leagueUnitName())
 
     let prevLeagueUnitLink = (prevLeagueUnitName === undefined) ? undefined :
         <svg onClick={() => {openLeagueUnit(prevLeagueUnitName!)}} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="neighboor_league_unit_link bi bi-arrow-left-square" viewBox="0 0 16 16">
@@ -35,34 +35,34 @@ const LeagueUnitTopMenu = (props: {data?: LeagueUnitData}) => {
 
     let links = [
             {
-                href: "/league/" + props.data?.leagueId, 
-                content: props.data?.leagueName
+                href: "/league/" + props.levelProps?.leagueId(), 
+                content: props.levelProps?.leagueName()
             },
             {
-                href: "/league/" + props.data?.leagueId + "/divisionLevel/" + props.data?.divisionLevel, 
-                content: props.data?.divisionLevelName
+                href: "/league/" + props.levelProps?.leagueId() + "/divisionLevel/" + props.levelProps?.divisionLevel(), 
+                content: props.levelProps?.divisionLevelName()
             },
             {
-                href: "/leagueUnit/" + props.data?.leagueUnitId, 
+                href: "/leagueUnit/" + props.levelProps?.leagueUnitId(), 
                 beforeLink: prevLeagueUnitLink,
                 afterLink: nextLeagueUnitLink,
-                content: props.data?.leagueUnitName
+                content: props.levelProps?.leagueUnitName()
             }
         ]
 
-    let externalLink = <ExternalLeagueUnitLink id={props.data?.leagueUnitId || 0} black={false} />
+    let externalLink = <ExternalLeagueUnitLink id={props.levelProps?.leagueUnitId() || 0} black={false} />
 
     let selectBox = <Form>
             <Form.Select  size="sm" className="mt-3 mb-3 pr-3" max-width="200" onChange={e => navigate('/team/' + e.currentTarget.value)}>
                 <option value={undefined}>Select...</option>
-                {props.data?.teams.map(([teamId, teamName]) => {
+                {props.levelProps?.teams().map(([teamId, teamName]) => {
                     return <option key={'league_unit_top_option_' + teamId} value={teamId}>{teamName}</option>
                 })}
             </Form.Select>
         </Form>
 
     return <TopMenu
-            data={props.data}
+            levelProps={props.levelProps}
             links={links}
             externalLink={externalLink}
             selectBox={selectBox}

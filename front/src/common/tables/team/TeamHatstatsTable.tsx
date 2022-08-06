@@ -7,7 +7,6 @@ import ModelTableTh from '../../elements/SortingTableTh'
 import '../../../i18n'
 import { Translation } from 'react-i18next'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
-import LevelData from '../../../rest/models/leveldata/LevelData';
 import LeagueUnitLink from '../../links/LeagueUnitLink';
 import TeamLink from '../../links/TeamLink'
 import { getTeamHatstats } from '../../../rest/Client';
@@ -15,9 +14,9 @@ import { loddarStats } from '../../Formatters'
 import Section from '../../sections/Section';
 import HattidTooltip from '../../elements/HattidTooltip';
 
-class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>> 
-        extends ClassicTableSection<Data, TableProps, TeamHatstats> {
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+class TeamHatstatsTable<TableProps extends LevelDataProps> 
+        extends ClassicTableSection<TableProps, TeamHatstats> {
+    constructor(props: LevelDataPropsWrapper<TableProps>) {
         super(props, 'hatstats', {statType: StatsTypeEnum.AVG},
             [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
     }
@@ -27,7 +26,7 @@ class TeamHatstatsTable<Data extends LevelData, TableProps extends LevelDataProp
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
             {
-            (t, { i18n }) =>
+            t =>
             <tr>
                 <HattidTooltip 
                     poppedHint={t('table.position')}

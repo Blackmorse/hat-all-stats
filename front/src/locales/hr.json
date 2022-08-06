@@ -216,5 +216,14 @@
 
     "team.compare": "Usporedi",
 
-    "filter.weeks_within": "Unutar # tjedana"
+    "filter.weeks_within": "Unutar # tjedana",
+
+    "player.player_details": "Podaci o igraču",
+    "player.experience": "Iskustvo",
+    "player.form": "Oblik",
+    "player.speciality": "Specijalitet",
+    "player.cup": "Kupa",
+    "player.yellow": "Žuta boja",
+    "player.red": "Crvena",
+    "player.minutes": "Minuta"
 }

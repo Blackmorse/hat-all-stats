@@ -111,8 +111,9 @@ case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
   def parameters: mutable.Buffer[Parameter] = this.withSelect.map(ws => ws.sqlBuilder.parameters).getOrElse(mutable.Buffer()) ++ whereClause.parameters ++ havingClause.parameters ++ this._select.parameters
 
   def sqlWithParameters(): SqlWithParameters = {
+    val str = buildStringSql()
     SqlWithParameters(
-      sql = buildStringSql(),
+      sql = str,
       parameters = this.parameters.toSeq
     )
   }

@@ -176,7 +176,7 @@ const OpponentAnalyzerSection = (props: Props) => {
         <Row>
             <Col className='d-flex flex-column align-items-center'>
                 <div className='mb-1'>
-                    {props.props.levelData.teamName}
+                    {props.props.teamName()}
                 </div>
                 {originMatchesTable}
             </Col>
@@ -212,7 +212,7 @@ const OpponentAnalyzerSection = (props: Props) => {
 
         let newState: State = {
             originTeamAndMatches: {
-                team: [props.props.teamId(), props.props.levelData.teamName],
+                team: [props.props.teamId(), props.props.teamName()],
                 matches: result.currentTeamPlayedMatches
             },
             selectedOriginMatchId: result.currentTeamPlayedMatches.length === 0 ? undefined : result.currentTeamPlayedMatches[result.currentTeamPlayedMatches.length - 1].matchId,
@@ -239,7 +239,7 @@ const OpponentAnalyzerSection = (props: Props) => {
         executeRequest={(request, callback) => {
             teamAndOpponentMatches(request, callback) 
         }}
-        sectionTitle={i18n.t('')}
+        sectionTitle={() => i18n.t('')}
     />
 }
 

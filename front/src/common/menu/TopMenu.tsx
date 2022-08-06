@@ -2,12 +2,12 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { Navbar, Container, Image, Nav, NavLink} from 'react-bootstrap'
 
-interface Props<Data> {
+interface Props<LevelProps> {
     selectBox?: JSX.Element 
     links: Array<TopMenuLink>
     sectionLinks: Array<{href: string, text: string}>
     externalLink?: JSX.Element
-    data?: Data
+    levelProps?: LevelProps
 }
 
 export interface TopMenuLink {
@@ -47,7 +47,7 @@ const TopMenu = <Data extends {}>(props: Props<Data>) => {
                         })}
 
                         <li className='nav-item h4 d-flex align-items-center mb-0' >
-                            {(props.data !== undefined) ? selectBox : placeholder}
+                            {(props.levelProps !== undefined) ? selectBox : placeholder}
                         </li>
 
                         {props.sectionLinks.map((link, index) => {

@@ -1,11 +1,11 @@
 import React from 'react'
 import TopMenu from '../common/menu/TopMenu'
-import WorldData from '../rest/models/leveldata/WorldData'
 import { Form } from 'react-bootstrap'
 import {useNavigate} from 'react-router'
 import {useTranslation} from 'react-i18next'
+import WorldLevelDataProps from './WorldLevelDataProps'
 
-const WorldTopMenu = (props: {data?: WorldData}) => {
+const WorldTopMenu = (props: {levelProps?: WorldLevelDataProps}) => {
     const t = useTranslation().t
     let navigate = useNavigate()
 
@@ -18,7 +18,7 @@ const WorldTopMenu = (props: {data?: WorldData}) => {
             <Form.Select  size="sm" className="my-1 pr-3 me-md-5" max-width="100" 
                     onChange={(e: React.FormEvent<HTMLSelectElement>) => navigate('/league/' + Number(e.currentTarget.value))}>
             <option value={undefined}>Select...</option>
-            {props.data?.countries.map(countryInfo => {
+            {props.levelProps?.countries().map(countryInfo => {
                 return <option value={countryInfo[0]} key={'league_select_' + countryInfo[0]}>
                     {countryInfo[1]}
                 </option>
@@ -29,7 +29,7 @@ const WorldTopMenu = (props: {data?: WorldData}) => {
 
     return <TopMenu 
         selectBox={selectBox}
-        data={props.data}
+        levelProps={props.levelProps}
         links={[]}
         sectionLinks={sectionLinks}
     />

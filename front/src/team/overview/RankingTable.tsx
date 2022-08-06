@@ -1,6 +1,5 @@
 import React from 'react';
 import TeamRanking from '../../rest/models/team/TeamRanking'
-import { Translation } from 'react-i18next'
 import '../../i18n'
 import '../../common/elements/Trends.css'
 import TeamLevelDataProps from '../TeamLevelDataProps';
@@ -67,8 +66,8 @@ class RankingTable extends React.Component<Props>{
         let lastDivisionLevelRanking = divisionLevelRankings[divisionLevelRankings.length - 1]
         let previousDivisionLevelRanking = (divisionLevelRankings.length > 1) ? divisionLevelRankings[divisionLevelRankings.length - 2] : undefined;
 
-        let diffValueContent: JSX.Element
-        let divisionLevelDiffPositionContent: JSX.Element
+        let diffValueContent: JSX.Element | undefined = undefined
+        let divisionLevelDiffPositionContent: JSX.Element | undefined = undefined
         if (previousDivisionLevelRanking !== undefined) {
             divisionLevelDiffPositionContent = <DiffPosition
                 positionFunc={positionFunc}
@@ -83,7 +82,7 @@ class RankingTable extends React.Component<Props>{
                  lastRanking={lastDivisionLevelRanking} />
         }
 
-        let leagueDiffPositionContent: JSX.Element
+        let leagueDiffPositionContent: JSX.Element | undefined 
         if(previousLeagueRanking) {
             leagueDiffPositionContent = <DiffPosition 
                 positionFunc={positionFunc}
@@ -91,9 +90,7 @@ class RankingTable extends React.Component<Props>{
                 lastRanking={lastLeagueRanking} />
         }
 
-            return <Translation>{
-                (t, { i18n }) => 
-        <Card>
+            return <Card>
             <Card.Header className='text-center'>
                 {this.props.rankingParameters.title}
                 {<ChartLink chartContent={this.chartContent} />}
@@ -114,7 +111,7 @@ class RankingTable extends React.Component<Props>{
                     <Col className='very-small-font d-flex justify-content-end'>
                         <LeagueLink  tableLink={true}
                             id={this.props.rankingData.teamLevelDataProps.leagueId()}
-                            text={this.props.rankingData.teamLevelDataProps.levelData.leagueName}
+                            text={this.props.rankingData.teamLevelDataProps.leagueName()}
                             />
                     </Col>
                     <Col className='text-center small-font'>
@@ -171,7 +168,7 @@ class RankingTable extends React.Component<Props>{
                     <Col className='very-small-font'>
                     {(previousDivisionLevelRanking) ? <DivisionLevelLink 
                             leagueId={this.props.rankingData.teamLevelDataProps.leagueId()}
-                            divisionLevel={this.props.rankingData.teamLevelDataProps.levelData.divisionLevel}
+                            divisionLevel={this.props.rankingData.teamLevelDataProps.divisionLevel()}
                             text={divisionLevelDiffPositionContent}
                             page={this.props.rankingParameters.page}
                             queryParams={{
@@ -186,8 +183,6 @@ class RankingTable extends React.Component<Props>{
                 </Row>
             </Card.Body>
         </Card>
-        }
-        </Translation>
     }
 }
 

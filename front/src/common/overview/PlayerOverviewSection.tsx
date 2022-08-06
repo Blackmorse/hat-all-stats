@@ -5,19 +5,18 @@ import OverviewTableSection, { OverviewTableSectionProps } from './OverviewTable
 import PlayerStatOverview from '../../rest/models/overview/PlayerStatOverview'
 import LeagueUnitLink from '../../common/links/LeagueUnitLink'
 import TeamLink from '../../common/links/TeamLink'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import ExternalPlayerLink from '../links/ExternalPlayerLink'
 
-abstract class PlayerOverviewSection<Data extends LevelData> extends OverviewTableSection<Data, PlayerStatOverview> {
+abstract class PlayerOverviewSection extends OverviewTableSection<PlayerStatOverview> {
     valueTitle: string
-    constructor(props: OverviewTableSectionProps<Data, PlayerStatOverview>, valueTitle: string) {
+    constructor(props: OverviewTableSectionProps<PlayerStatOverview>, valueTitle: string) {
         super(props)
         this.valueTitle = valueTitle
     }
 
     tableheader(): JSX.Element {
         return  <Translation>
-            {(t, { i18n }) => <tr>{(this.isWorldData) ? <th></th> : <></>}
+            {t => <tr>{(this.isWorldData) ? <th></th> : <></>}
                     <th>{t('table.league')}</th>
                     <th>{t('table.team')}</th>
 

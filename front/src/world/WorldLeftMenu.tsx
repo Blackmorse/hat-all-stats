@@ -1,15 +1,13 @@
 import React from 'react';
-import WorldData from '../rest/models/leveldata/WorldData'
 import { Translation } from 'react-i18next'
 import '../i18n'
 import LeagueLink from '../common/links/LeagueLink';
 import { Card } from 'react-bootstrap';
+import WorldLevelDataProps from './WorldLevelDataProps';
 
 interface Props {
-    worldData?: WorldData
+    worldLevelDataProps?: WorldLevelDataProps
 }
-
-type Country = [number, string]
 
 class WorldLeftMenu extends React.Component<Props, {}> {
     constructor(props: Props) {
@@ -18,14 +16,14 @@ class WorldLeftMenu extends React.Component<Props, {}> {
     }
 
     render() {
-        if (this.props.worldData === undefined) {
+        if (this.props.worldLevelDataProps === undefined) {
             return <></>
         }
 
-        let countries = this.props.worldData.countries
+        let countries = this.props.worldLevelDataProps.countries()
 
         return <Translation>{
-            (t, { i18n }) =>
+            t =>
             <Card className="mb-3 shadow">
                 <Card.Header className="lead">{t('world.countries')}</Card.Header>
                 

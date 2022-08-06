@@ -5,19 +5,18 @@ import { commasSeparated, ageFormatter, ratingFormatter } from '../../common/For
 import { getAveragesOverview } from '../../rest/Client'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import AveragesOverview from '../../rest/models/overview/AveragesOverview'
-import LevelData from '../../rest/models/leveldata/LevelData';
 import Section from '../sections/Section';
 import ChartLink from '../charts/ChartLink';
 import NumbersChart from './charts/NumbersChart';
 import { averageHatstatNumbersChart, averageSpectatorNumbersChart, averageGoalNumbersChart } from '../../rest/Client'
 
-class AveragesOverviewSectionBase<Data extends LevelData> extends OverviewSection<Data, AveragesOverview, OverviewSectionProps<Data, AveragesOverview>> {
+class AveragesOverviewSectionBase extends OverviewSection<AveragesOverview, OverviewSectionProps<AveragesOverview>> {
 
     loadOverviewEntity = getAveragesOverview
 
     renderOverviewSection(averageOverview: AveragesOverview): JSX.Element {
         return <Translation>
-        {(t, { i18n}) =>
+        {t =>
             <table className="table table-striped table-rounded table-sm small text-center">
                 <tbody>
                     <tr>
@@ -73,6 +72,6 @@ class AveragesOverviewSectionBase<Data extends LevelData> extends OverviewSectio
     }
 }
 
-const AveragesOverviewSection = Section(AveragesOverviewSectionBase, (props: OverviewSectionProps<LevelData, AveragesOverview>, state) => 'overview.averages' )
+const AveragesOverviewSection = Section(AveragesOverviewSectionBase, (_props: OverviewSectionProps<AveragesOverview>, _state) => 'overview.averages' )
 
 export default AveragesOverviewSection

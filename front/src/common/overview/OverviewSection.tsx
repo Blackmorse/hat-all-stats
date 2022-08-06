@@ -1,5 +1,4 @@
 import React from 'react';
-import LevelData from '../../rest/models/leveldata/LevelData';
 import LevelDataProps from '../../common/LevelDataProps';
 import OverviewRequest from '../../rest/models/request/OverviewRequest';
 import SeasonRoundSelector from './SeasonRoundSelector'
@@ -7,9 +6,9 @@ import { LoadingEnum } from '../enums/LoadingEnum';
 import ExecutableComponent from '../sections/ExecutableComponent';
 import { SectionState } from '../sections/Section';
 
-export interface OverviewSectionProps<Data extends LevelData, OverviewEntity> {
+export interface OverviewSectionProps<OverviewEntity> {
     initialData?: OverviewEntity,
-    levelDataProps: LevelDataProps<Data>
+    levelDataProps: LevelDataProps
 }
 
 interface State<OverviewEntity> {
@@ -21,7 +20,7 @@ interface Request {
     season: number
 }
 
-abstract class OverviewSection<Data extends LevelData, OverviewEntity, OverviewProps extends OverviewSectionProps<Data, OverviewEntity>> 
+abstract class OverviewSection<OverviewEntity, OverviewProps extends OverviewSectionProps<OverviewEntity>> 
     extends ExecutableComponent<OverviewProps, State<OverviewEntity> & SectionState, OverviewEntity, Request> {
     isWorldData: boolean
 

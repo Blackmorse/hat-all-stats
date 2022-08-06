@@ -11,6 +11,7 @@ import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingR
 import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player._
+import databases.requests.playerstats.player.stats.{ClickhousePlayerStatsRequest, PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
@@ -27,6 +28,7 @@ import service.leagueunit.LeagueUnitCalculatorService
 import utils.{CurrencyUtils, LeagueNameParser, Romans}
 
 import javax.inject.Inject
+//TODO execution context!
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -130,8 +132,8 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
     )
   }
 
-  private def playersRequest[T](plRequest: ClickhousePlayerRequest[T],
-                               leagueUnitId: Int,
+  private def playersRequest[T](plRequest: ClickhousePlayerStatsRequest[T],
+                                leagueUnitId: Int,
                                 restStatisticsParameters: RestStatisticsParameters,
                                 playersParameters: PlayersParameters)(implicit writes: Writes[T]) =
     Action.async{ implicit request =>

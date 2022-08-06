@@ -1,20 +1,17 @@
-import executors.ExecutorActorFactory
-import executors.TaskExecutorActor.TryToExecute
 import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import chpp.{ChppRequestExecutor, OauthTokens}
-import chpp.teamdetails.TeamDetailsRequest
-import chpp.teamdetails.models.TeamDetails
+import chpp.OauthTokens
 import clickhouse.TeamRankJoiner
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.Logger
+import executors.ExecutorActorFactory
+import executors.TaskExecutorActor.TryToExecute
 import guice.LoaderModule
 import org.slf4j.LoggerFactory
 import scheduler.{CupScheduler, LeagueScheduler}
 import utils.WorldDetailsSingleRequest
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 object LoaderApp extends  App {

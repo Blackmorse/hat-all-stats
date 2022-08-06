@@ -22,7 +22,7 @@ class PositionRankingChart extends React.Component<Props, {}> {
         let chartData = [
             {
                 type: 'scatter',
-                name: this.props.teamLevelDataProps.levelData.leagueName,
+                name: this.props.teamLevelDataProps.leagueName(),
                 x: x,
                 y: leagueY,
                 marker: {

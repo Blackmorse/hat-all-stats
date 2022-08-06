@@ -1,4 +1,3 @@
-import LevelData from '../../../rest/models/leveldata/LevelData';
 import { SortingState } from '../AbstractTableSection'
 import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps' 
@@ -12,10 +11,10 @@ import { getMatchSpectators } from '../../../rest/Client';
 import MatchSpectatorsRow from '../rows/match/MatchSpectatorsRow'
 import HattidTooltip from '../../elements/HattidTooltip';
 
-abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends LevelDataProps<Data>>
-    extends ClassicTableSection<Data, TableProps, MatchSpectators> {
+abstract class MatchSpectatorsTable<TableProps extends LevelDataProps>
+    extends ClassicTableSection<TableProps, MatchSpectators> {
 
-    constructor(props: LevelDataPropsWrapper<Data, TableProps>) {
+    constructor(props: LevelDataPropsWrapper<TableProps>) {
         super(props, 'sold_total', {statType: StatsTypeEnum.ACCUMULATE},
             [StatsTypeEnum.ACCUMULATE, StatsTypeEnum.ROUND])
     }
@@ -25,7 +24,7 @@ abstract class MatchSpectatorsTable<Data extends LevelData, TableProps extends L
     columnHeaders(sortingState: SortingState): JSX.Element {
         return <Translation>
             {
-            (t, { i18n }) =>
+            t =>
             <tr>
                 <th/>
                 <HattidTooltip 

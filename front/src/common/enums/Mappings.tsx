@@ -30,7 +30,8 @@ class Mappings {
         [PagesEnum.DREAM_TEAM, MenuGroupsEnum.PLAYER],
         [PagesEnum.CREATED_SAME_TIME_TEAMS, MenuGroupsEnum.TEAM],
         [PagesEnum.TEAM_COMPARSION, MenuGroupsEnum.TEAM],
-        [PagesEnum.OLDEST_TEAMS, MenuGroupsEnum.TEAM]
+        [PagesEnum.OLDEST_TEAMS, MenuGroupsEnum.TEAM],
+        [PagesEnum.PLAYER_DETAILS, MenuGroupsEnum.PLAYER]
         ])
     
     static tacticType: Map<number, string> = 

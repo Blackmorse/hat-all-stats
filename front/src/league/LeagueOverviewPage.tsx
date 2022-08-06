@@ -3,12 +3,11 @@ import LeagueLevelDataProps from './LeagueLevelDataProps'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import LeagueLink from '../common/links/LeagueLink';
 import HattidLink from '../common/links/HattidLink';
-import LeagueData from '../rest/models/leveldata/LeagueData';
 
-class LeagueOverviewPage extends OverviewPage<LeagueData, LeagueLevelDataProps> {
+class LeagueOverviewPage extends OverviewPage<LeagueLevelDataProps> {
     linkProviderFunc<Entity extends LeagueId>(page: PagesEnum, sortingField: string): 
             (text: string | JSX.Element, season: number, round: number, entity: Entity) => HattidLink<any> {       
-        return (text: string | JSX.Element, season: number, round: number, entity: Entity) => {
+        return (text: string | JSX.Element, season: number, round: number, _entity: Entity) => {
             return new LeagueLink({
                 id: this.props.levelDataProps.leagueId(),
                 text: text,

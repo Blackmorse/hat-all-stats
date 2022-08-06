@@ -5,11 +5,10 @@ import { OverviewTableSectionProps } from './OverviewTableSection'
 import { getTopTeamVictories } from '../../rest/Client'
 import '../../i18n'
 import i18n from '../../i18n'
-import LevelData from '../../rest/models/leveldata/LevelData'
 import Section from '../sections/Section'
 
-class VictoriesTeamOverviewSectionBase<Data extends LevelData> extends TeamOverviewSection<Data> {
-    constructor(props: OverviewTableSectionProps<Data, TeamStatOverview>) {
+class VictoriesTeamOverviewSectionBase extends TeamOverviewSection {
+    constructor(props: OverviewTableSectionProps<TeamStatOverview>) {
         super(props, i18n.t('table.victories'))
     }
 

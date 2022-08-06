@@ -2,24 +2,24 @@ import React, {useEffect, useState} from 'react';
 import Layout from '../common/layouts/Layout';
 import '../i18n';
 import {getWorldData} from '../rest/Client';
-import WorldData from '../rest/models/leveldata/WorldData';
 import './About.css';
 import AboutSection from './AboutSection';
 import WorldLeftLoadingMenu from './WorldLeftLoadingMenu';
 import WorldLeftMenu from './WorldLeftMenu';
+import WorldLevelDataProps from './WorldLevelDataProps';
 import WorldTopMenu from './WorldTopMenu';
 
 const AboutLayout = () => {
-    const [levelData, setLevelData] = useState(undefined as WorldData | undefined)
+    const [levelProps, setLevelProps] = useState<WorldLevelDataProps | undefined>(undefined)
     useEffect(() => {
-        getWorldData(worldData => setLevelData(worldData), () => {})    
+        getWorldData(worldData => setLevelProps(worldData), () => {})    
     }, [])
 
     return <Layout 
-        topMenu={<WorldTopMenu data={levelData} />}
+        topMenu={<WorldTopMenu levelProps={levelProps} />}
             leftMenu={<>
-                <WorldLeftLoadingMenu worldData={levelData}/>
-                <WorldLeftMenu worldData={levelData}/>
+                <WorldLeftLoadingMenu worldLevelDataProps={levelProps}/>
+                <WorldLeftMenu worldLevelDataProps={levelProps}/>
             </>}
         content={<AboutSection />}
         />
