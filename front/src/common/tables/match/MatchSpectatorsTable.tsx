@@ -35,7 +35,7 @@ abstract class MatchSpectatorsTable<TableProps extends LevelDataProps>
                 <th className="text-center">{t('table.team')}</th>
                 <th className="value"></th>
                 <th className="text-center">{t('table.team')}</th>
-                <ModelTableTh title='matches.spectatos' sortingField='sold_total' sortingState={sortingState} />
+                <ModelTableTh title='matches.spectatos' sorting={{field: 'sold_total', state: sortingState}} />
             </tr>
             }
         </Translation>

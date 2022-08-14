@@ -34,9 +34,9 @@ abstract class TeamAgeInjuryTable<TableProps extends LevelDataProps>
                 />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.age' sortingField='age' sortingState={sortingState} />
-                <ModelTableTh title='table.total_injury_weeks' sortingField='injury' sortingState={sortingState} />
-                <ModelTableTh title='table.total_injury_number' sortingField='injury_count' sortingState={sortingState} />
+                <ModelTableTh title='table.age' sorting={{field: 'age', state: sortingState}} />
+                <ModelTableTh title='table.total_injury_weeks' sorting={{field: 'injury', state: sortingState}} />
+                <ModelTableTh title='table.total_injury_number' sorting={{field: 'injury_count', state: sortingState}} />
             </tr>
         }
         </Translation>

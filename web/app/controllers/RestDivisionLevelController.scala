@@ -139,14 +139,15 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
     stats(TeamAgeInjuryRequest, leagueId, divisionLevel, restStatisticsParameters)
 
   def teamGoalPoints(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters,
-                     playedAllMatches: Boolean): Action[AnyContent] = Action.async { implicit request =>
+                     playedAllMatches: Boolean, oneTeamPerUnit: Boolean): Action[AnyContent] = Action.async { implicit request =>
     TeamGoalPointsRequest.execute(
         OrderingKeyPath(
           leagueId = Some(leagueId),
           divisionLevel = Some(divisionLevel)),
         restStatisticsParameters,
         playedAllMatches,
-        leagueInfoService.leagueInfo(leagueId).seasonInfo(restStatisticsParameters.season).roundInfo.size)
+        leagueInfoService.leagueInfo(leagueId).seasonInfo(restStatisticsParameters.season).roundInfo.size,
+        oneTeamPerUnit)
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 

@@ -2,7 +2,7 @@ import React from 'react'
 import {Col, Form, Row} from 'react-bootstrap'
 import {useTranslation} from 'react-i18next'
 import {LoadingEnum} from '../../common/enums/LoadingEnum'
-import ExecutableComponent from '../../common/sections/HookExecutableComponent'
+import ExecutableComponent, {StateAndRequest} from '../../common/sections/HookExecutableComponent'
 import Section from '../../common/sections/HookSection'
 import Blur from '../../common/widgets/Blur'
 import {combineMatches, opponentTeamMatches, teamAndOpponentMatches} from '../../rest/Client'
@@ -144,33 +144,31 @@ const OpponentAnalyzerSection = (props: Props) => {
         }
     }
 
-    const content = (_setRequest: (request: TeamId) => void, setState: (state: State) => void, currentState: State) => {
-        let originTeamAndMatches = currentState.originTeamAndMatches
+    const content = (stateAndRequest: StateAndRequest<TeamId, State>) => {
+        let originTeamAndMatches = stateAndRequest.currentState.originTeamAndMatches
         let originMatchesTable: JSX.Element | undefined = undefined
-        if (originTeamAndMatches !== undefined && originTeamAndMatches.matches.length > 0 && currentState.selectedOriginMatchId !== undefined) {
+        if (originTeamAndMatches !== undefined && originTeamAndMatches.matches.length > 0 && stateAndRequest.currentState.selectedOriginMatchId !== undefined) {
             originMatchesTable = <MatchSelectorTable matches={originTeamAndMatches.matches} 
-                selectedMatchId={currentState.selectedOriginMatchId}
+                selectedMatchId={stateAndRequest.currentState.selectedOriginMatchId}
                 selectedTeamId={props.props.teamId()}
-                callback={matchId => updateSelectedOriginMatch(matchId, currentState, setState)}/>
+                callback={matchId => updateSelectedOriginMatch(matchId, stateAndRequest.currentState, stateAndRequest.setState)}/>
         }
         
         let opponentMatchesTable: JSX.Element | undefined = undefined
-        if (currentState.selectedNextOpponent !== undefined) { 
+        if (stateAndRequest.currentState.selectedNextOpponent !== undefined) { 
 
-            opponentMatchesTable = showStateElement(currentState.playedOpponentMatches,    
+            opponentMatchesTable = showStateElement(stateAndRequest.currentState.playedOpponentMatches,    
                 (data) => 
                     <MatchSelectorTable matches={data} 
-                        selectedMatchId={currentState.selectedOpponentMatchId}
-                        selectedTeamId={currentState.selectedNextOpponent![0]}
-                        callback={matchId => updateSelectedOpponentMatch(matchId, currentState, setState)} />,
-                () => opponentChanged(currentState.selectedNextOpponent![0], currentState, setState))
+                        selectedMatchId={stateAndRequest.currentState.selectedOpponentMatchId}
+                        selectedTeamId={stateAndRequest.currentState.selectedNextOpponent![0]}
+                        callback={matchId => updateSelectedOpponentMatch(matchId, stateAndRequest.currentState, stateAndRequest.setState)} />,
+                () => opponentChanged(stateAndRequest.currentState.selectedNextOpponent![0], stateAndRequest.currentState, stateAndRequest.setState))
         }
 
-//        const TeamMatchInfoSection = Section(TeamMatchInfo, _ => 'team.simulate_match')
-
-        let simulatedMatchElement = showStateElement(currentState.simulatedMatch, 
+        let simulatedMatchElement = showStateElement(stateAndRequest.currentState.simulatedMatch, 
             (singleMatch) => <Section element={<TeamMatchInfo singleMatch={singleMatch}/>} title={i18n.t('team.simulate_match')}/>,
-            () => updateSelectedOpponentMatch(currentState.selectedOpponentMatchId!, currentState, setState))
+            () => updateSelectedOpponentMatch(stateAndRequest.currentState.selectedOpponentMatchId!, stateAndRequest.currentState, stateAndRequest.setState))
 
         return  <>
         <Row>
@@ -182,8 +180,8 @@ const OpponentAnalyzerSection = (props: Props) => {
             </Col>
             <Col className='d-flex flex-column align-items-center'>
                 <div className='mb-1'>
-                    <Form.Select size='sm' defaultValue={currentState.selectedNextOpponent?.[0]} onChange={event => opponentChanged(event, currentState, setState)}>
-                        {currentState.nextOpponents?.map(team =>
+                    <Form.Select size='sm' defaultValue={stateAndRequest.currentState.selectedNextOpponent?.[0]} onChange={event => opponentChanged(event, stateAndRequest.currentState, stateAndRequest.setState)}>
+                        {stateAndRequest.currentState.nextOpponents?.map(team =>
                             <option value={team[0]}>{team[1]}</option>)}
                     </Form.Select>
                 </div> 

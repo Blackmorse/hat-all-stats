@@ -45,9 +45,10 @@ const TeamSamePeriodTeamsTable = (props: Props) => {
                     {props.rowsWithTitle.map(rowWithTitle =>{
                         return <SortingTableTh 
                             title={rowWithTitle.title}
-                            sortingField={rowWithTitle.title}
-                            sortingState={{
-                                callback: _sortBy => {
+                            sorting={{
+                            field: rowWithTitle.title,
+                            state: {
+                                callback: (_sortBy: string) => {
                                     if (sortingField === rowWithTitle.title) {
                                         let newSortingDirection = (sortingDirection === SortingDirection.ASC) ? SortingDirection.DESC : SortingDirection.ASC
                                         setSorting([sortingField, sortingFunc, newSortingDirection])
@@ -58,6 +59,7 @@ const TeamSamePeriodTeamsTable = (props: Props) => {
                                 currentSorting: sortingField,
                                 sortingDirection: sortingDirection
                             }}
+                            }
                         />
                     } ) }
                     <th className="text-center">{t('filter.season')}</th>

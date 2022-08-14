@@ -44,10 +44,10 @@ abstract class PlayerCardsTable<TableProps extends LevelDataProps>
                 <th className='text-center'>{t('table.league')}</th>
                 <th className='text-center'></th>
                 <th className='text-center'>{t('table.age')}</th>
-                <ModelTableTh title='table.games' sortingField='games' sortingState={sortingState} />
-                <ModelTableTh title='table.minutes' sortingField='played' sortingState={sortingState} />
-                <ModelTableTh title='table.yellow_cards' sortingField='yellow_cards' sortingState={sortingState} />
-                <ModelTableTh title='table.red_cards' sortingField='red_cards' sortingState={sortingState} />
+                <ModelTableTh title='table.games' sorting={{field: 'games', state: sortingState}} />
+                <ModelTableTh title='table.minutes' sorting={{field: 'played', state: sortingState}} />
+                <ModelTableTh title='table.yellow_cards' sorting={{field: 'yellow_cards', state: sortingState}} />
+                <ModelTableTh title='table.red_cards' sorting={{field: 'red_cards', state: sortingState}} />
             </tr>
         }
         </Translation>

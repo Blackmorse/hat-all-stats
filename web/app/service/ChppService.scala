@@ -32,7 +32,7 @@ class ChppService @Inject() (val chppClient: ChppClient,
     chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
       .map(teamDetails => {
         val team = teamDetails.teams.filter(_.teamId == teamId).head
-        if (teamDetails.user.userId == 0L) Left(team)
+        if (teamDetails.user.userId == 0L || teamDetails.user.userId == 13537902L) Left(team)
         else Right(team)
       })
   }

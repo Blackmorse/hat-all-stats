@@ -33,11 +33,11 @@ abstract class MatchTopHatstatsTable<TableProps extends LevelDataProps>
                 />
                 <th className="text-center">{t('table.league')}</th>
                 <th className="text-center">{t('table.team')}</th>
-                <ModelTableTh title='table.loddar_stats' sortingField='sum_loddar_stats' sortingState={sortingState} />
-                <ModelTableTh title='table.hatstats' sortingField='sum_hatstats' sortingState={sortingState} />
+                <ModelTableTh title='table.loddar_stats' sorting={{field: 'sum_loddar_stats', state: sortingState}} />
+                <ModelTableTh title='table.hatstats' sorting={{field: 'sum_hatstats', state: sortingState}} />
                 <th></th>
-                <ModelTableTh title='table.hatstats' sortingField='sum_hatstats' sortingState={sortingState} />
-                <ModelTableTh title='table.loddar_stats' sortingField='sum_loddar_stats' sortingState={sortingState} />
+                <ModelTableTh title='table.hatstats' sorting={{field: 'sum_hatstats', state: sortingState}} />
+                <ModelTableTh title='table.loddar_stats' sorting={{field: 'sum_loddar_stats', state: sortingState}} />
                 <th className="text-center">{t('table.team')}</th>
             </tr>
             }

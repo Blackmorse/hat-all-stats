@@ -21,7 +21,8 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
   def execute(orderingKeyPath: OrderingKeyPath,
               parameters: RestStatisticsParameters,
               playedAllMatches: Boolean,
-              currentRound: Int)
+              currentRound: Int,
+              oneTeamPerUnit: Boolean)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamGoalPoints]] = {
     val sortBy = parameters.sortBy
     if(!sortingColumns.contains(sortBy))
@@ -65,6 +66,8 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
         "goals_difference".to(parameters.sortingDirection.toSql),
         "team_id".to(parameters.sortingDirection.toSql)
       ).limit(page = parameters.page, pageSize = parameters.pageSize)
+      //TODO add Option for limitBy. 12 just greater than 8 - maximum for leagueUnit
+      .limitBy(if (oneTeamPerUnit) 1 else 12, "league_unit_id")
 
     restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
   }

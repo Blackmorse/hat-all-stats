@@ -13,7 +13,6 @@ import TeamSalaryTSITable from '../common/tables/team/TeamSalaryTSITable';
 import TeamCardsTable from '../common/tables/team/TeamCardsTable';
 import TeamRatingsTable from '../common/tables/team/TeamRatingsTable';
 import TeamAgeInjuryTable from '../common/tables/team/TeamAgeInjuryTable';
-import TeamGoalPointsTable from '../common/tables/team/TeamGoalPointsTable';
 import TeamPowerRatingsTable from '../common/tables/team/TeamPowerRatingsTable';
 import TeamFanclubFlagsTable from '../common/tables/team/TeamFanclubFlagsTable';
 import TeamStreakTrophiesTable from '../common/tables/team/TeamStreakTrophiesTable';
@@ -25,6 +24,7 @@ import PromotionsTable from '../common/pages/PromotionsTable'
 import QueryParams from '../common/QueryParams';
 import DreamTeamPage from '../common/pages/DreamTeamPage';
 import TeamSearchPage from '../common/pages/TeamSearchPage';
+import HookTeamGoalPointsTable from '../common/tables/team/TeamGoalPointsTable';
 
 export default function pages(): Map<PagesEnum, (props: LeagueLevelDataProps, queryParams: QueryParams) => JSX.Element> {
     const pagesMap = new Map<PagesEnum, (props: LeagueLevelDataProps, queryParams: QueryParams) => JSX.Element>()
@@ -55,7 +55,7 @@ export default function pages(): Map<PagesEnum, (props: LeagueLevelDataProps, qu
     pagesMap.set(PagesEnum.TEAM_AGE_INJURY,
         (props, queryParams) => <TeamAgeInjuryTable<LeagueLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
     pagesMap.set(PagesEnum.TEAM_GOAL_POINTS,
-        (props, queryParams) => <TeamGoalPointsTable<LeagueLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
+        (props, queryParams) => <HookTeamGoalPointsTable<LeagueLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)
     pagesMap.set(PagesEnum.TEAM_POWER_RATINGS,
         (props, queryParams) => <TeamPowerRatingsTable<LeagueLevelDataProps> levelDataProps={props} queryParams={queryParams} />)
     pagesMap.set(PagesEnum.TEAM_FANCLUB_FLAGS,

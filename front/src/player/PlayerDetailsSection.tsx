@@ -7,7 +7,7 @@ import {ageFormatter, injuryFormatter, salaryFormatter, stringSalaryFormatter} f
 import LeagueLink from "../common/links/LeagueLink"
 import LeagueUnitLink from "../common/links/LeagueUnitLink"
 import TeamLink from "../common/links/TeamLink"
-import ExecutableComponent from "../common/sections/HookExecutableComponent"
+import ExecutableComponent, {StateAndRequest} from "../common/sections/HookExecutableComponent"
 import {playerDetails} from "../rest/Client"
 import PlayerDetails from "../rest/models/player/PlayerDetails"
 import PlayerHistoryChart from "./PlayerHistoryChart"
@@ -17,51 +17,51 @@ import PlayerLevelDataProps from "./PlayerLevelDataProps"
 const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
     const [t, i18n] = useTranslation() 
 
-    const content = (_setRequest: (request: number) => void, _setState: (state: PlayerDetails) => void, data?: PlayerDetails) => {
-        if (data === undefined) return <></>
+    const content = (stateAndRequest: StateAndRequest<number, PlayerDetails | undefined>) => {
+        if (stateAndRequest.currentState === undefined) return <></>
         return  <div className='d-flex flex-column'>
             <Row className='align-items-center row'>
                 <Col lg={5} md={12}>
                     <div className='d-flex flex-row'>
                         <div className='mx-4' style={{position: 'relative', width: '120px', height: '160px'}}>
-                            {data.avatar.map(avatarPart => <img src={'https://hattrick.org' + avatarPart.url}  
+                            {stateAndRequest.currentState.avatar.map(avatarPart => <img src={'https://hattrick.org' + avatarPart.url}  
                                 style={{position: 'absolute', left: avatarPart.x + 'px', top: avatarPart.y + 'px'}}/>)}
                         </div>
                         <Col>
                             <table style={{maxWidth: '220px'}} className='small-font border border-1 bg-light shadow-sm border-secondary overflow-visible m-2 table'>
                                 <tr>
                                     <td>{t('table.age')}</td>
-                                    <td className='text-center'>{ageFormatter(data.currentPlayerCharacteristics.age)}</td>
+                                    <td className='text-center'>{ageFormatter(stateAndRequest.currentState.currentPlayerCharacteristics.age)}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('player.experience')}</td>
-                                    <td className='text-center'>{props.playerProps.skillLevelTranslation(i18n.resolvedLanguage, data.currentPlayerCharacteristics.experience)}</td>
+                                    <td className='text-center'>{props.playerProps.skillLevelTranslation(i18n.resolvedLanguage, stateAndRequest.currentState.currentPlayerCharacteristics.experience)}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('table.tsi')}</td>
-                                    <td className='text-center'>{salaryFormatter(data.currentPlayerCharacteristics.tsi)}</td>
+                                    <td className='text-center'>{salaryFormatter(stateAndRequest.currentState.currentPlayerCharacteristics.tsi)}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('table.salary')}</td>
-                                    <td className='text-center'>{salaryFormatter(data.currentPlayerCharacteristics.salary, props.playerProps.currencyRate())} {props.playerProps.currency()}</td>
+                                    <td className='text-center'>{salaryFormatter(stateAndRequest.currentState.currentPlayerCharacteristics.salary, props.playerProps.currencyRate())} {props.playerProps.currency()}</td>
                                 </tr>
                             </table>
                             <table style={{maxWidth: '220px'}} className='col small-font border border-1 bg-light shadow-sm border-secondary overflow-visible m-2 table'>
                                 <tr>
                                     <td>{t('player.form')}</td>
-                                    <td className='text-center'>{props.playerProps.skillLevelTranslation(i18n.resolvedLanguage, data.currentPlayerCharacteristics.form)}</td>
+                                    <td className='text-center'>{props.playerProps.skillLevelTranslation(i18n.resolvedLanguage, stateAndRequest.currentState.currentPlayerCharacteristics.form)}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('player.speciality')}</td>
-                                    <td className='text-center'>{props.playerProps.specialityTranslation(i18n.resolvedLanguage, data.currentPlayerCharacteristics.speciality + 1)}</td>
+                                    <td className='text-center'>{props.playerProps.specialityTranslation(i18n.resolvedLanguage, stateAndRequest.currentState.currentPlayerCharacteristics.speciality + 1)}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('table.position')}</td>
-                                    <td className='text-center'>{i18n.t(Mappings.roleToTranslationMap.get(data.currentPlayerCharacteristics.position) || '')}</td>
+                                    <td className='text-center'>{i18n.t(Mappings.roleToTranslationMap.get(stateAndRequest.currentState.currentPlayerCharacteristics.position) || '')}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('table.injury')}</td>
-                                    <td className='text-center'>{injuryFormatter(data.currentPlayerCharacteristics.injuryLevel)}</td>
+                                    <td className='text-center'>{injuryFormatter(stateAndRequest.currentState.currentPlayerCharacteristics.injuryLevel)}</td>
                                 </tr>
                             </table>
                         </Col>
@@ -80,7 +80,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                             <th>{t('player.minutes')}</th>
                         </thead>
                         <tbody>
-                            {data?.playerSeasonStats.entries.map(entry => 
+                            {stateAndRequest.currentState?.playerSeasonStats.entries.map(entry => 
                                 <tr>
                                     <td className='text-center'>{entry.season}</td>
                                     <td className='text-center'>{entry.leagueGoals}</td>
@@ -97,13 +97,13 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                         <tfoot>
                             <tr className='table-active'>
                                 <td>Total</td>
-                                <td className='text-center'>{data?.playerSeasonStats.totalLeagueGoals}</td>
-                                <td className='text-center'>{data?.playerSeasonStats.totalCupGoals}</td>
-                                <td className='text-center'>{data?.playerSeasonStats.totalAllGoals}</td>
-                                <td className='text-center'>{data?.playerSeasonStats.totalYellowCards}</td>
-                                <td className='text-center'>{data?.playerSeasonStats.totalRedCard}</td>
-                                <td className='text-center'>{data?.playerSeasonStats.totalMatches}</td>
-                                <td className='text-center'>{salaryFormatter(data?.playerSeasonStats.totalPlayedMinutes)}</td>
+                                <td className='text-center'>{stateAndRequest.currentState?.playerSeasonStats.totalLeagueGoals}</td>
+                                <td className='text-center'>{stateAndRequest.currentState?.playerSeasonStats.totalCupGoals}</td>
+                                <td className='text-center'>{stateAndRequest.currentState?.playerSeasonStats.totalAllGoals}</td>
+                                <td className='text-center'>{stateAndRequest.currentState?.playerSeasonStats.totalYellowCards}</td>
+                                <td className='text-center'>{stateAndRequest.currentState?.playerSeasonStats.totalRedCard}</td>
+                                <td className='text-center'>{stateAndRequest.currentState?.playerSeasonStats.totalMatches}</td>
+                                <td className='text-center'>{salaryFormatter(stateAndRequest.currentState?.playerSeasonStats.totalPlayedMinutes)}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -128,7 +128,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                 <th className='text-center'>{t('table.salary')}</th>
             </thead>
             <tbody>
-                {data?.playerLeagueUnitHistory.map(entry =>
+                {stateAndRequest.currentState?.playerLeagueUnitHistory.map(entry =>
                 <tr>
                     <td>{entry.season + props.playerProps.seasonOffset()} ({entry.round})</td>
                     <td>
@@ -179,7 +179,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
         </div>
         <Row>
             <Col lg={5} style={{width: '500px'}}>
-                <PlayerHistoryChart history={data?.playerCharts} 
+                <PlayerHistoryChart history={stateAndRequest.currentState?.playerCharts} 
                     title='TSI'
                     chartLines={[{
                         valueFunc: pce => pce.tsi,
@@ -190,7 +190,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                 />            
             </Col>
             <Col lg={5} style={{width: '500px'}}>
-                <PlayerHistoryChart history={data?.playerCharts}
+                <PlayerHistoryChart history={stateAndRequest.currentState?.playerCharts}
                     title={t('table.salary') + ', ' + props.playerProps.currency()}
                     chartLines={[{
                         valueFunc: pce => pce.salary,
@@ -202,7 +202,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
             </Col>
 
             <Col lg={5} style={{width: '500px'}}>
-                <PlayerHistoryChart history={data?.playerCharts.filter(x => x.rating !== 0)}
+                <PlayerHistoryChart history={stateAndRequest.currentState?.playerCharts.filter(x => x.rating !== 0)}
                     title={t('table.rating')}
                     chartLines={[
                     {
@@ -215,7 +215,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                 />
             </Col>
             <Col lg={5}  style={{width: '500px'}}>
-                <PlayerHistoryChart history={data?.playerCharts.filter(x => x.ratingEndOfMatch !== 0)}
+                <PlayerHistoryChart history={stateAndRequest.currentState?.playerCharts.filter(x => x.ratingEndOfMatch !== 0)}
                     title={t('table.rating_end_of_match')}
                     chartLines={[
                     {

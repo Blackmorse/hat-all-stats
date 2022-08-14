@@ -34,11 +34,11 @@ class TeamHatstatsTable<TableProps extends LevelDataProps>
                 />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.hatstats' sortingField='hatstats' sortingState={sortingState} />
-                <ModelTableTh title='table.midfield' sortingField='midfield' sortingState={sortingState} />
-                <ModelTableTh title='table.defense' sortingField='defense' sortingState={sortingState} />
-                <ModelTableTh title='table.attack' sortingField='attack' sortingState={sortingState} />
-                <ModelTableTh title='table.loddar_stats' sortingField='loddar_stats' sortingState={sortingState} />
+                <ModelTableTh title='table.hatstats' sorting={{field: 'hatstats', state: sortingState}} />
+                <ModelTableTh title='table.midfield' sorting={{field: 'midfield', state: sortingState}} />
+                <ModelTableTh title='table.defense' sorting={{field: 'defense', state: sortingState}} />
+                <ModelTableTh title='table.attack' sorting={{field: 'attack', state: sortingState}} />
+                <ModelTableTh title='table.loddar_stats' sorting={{field: 'loddar_stats', state: sortingState}} />
             </tr>
         }
         </Translation>

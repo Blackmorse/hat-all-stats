@@ -33,7 +33,7 @@ abstract class TeamPowerRatingsTable<TableProps extends LevelDataProps>
                 />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.power_rating' sortingField='power_rating' sortingState={sortingState} />
+                <ModelTableTh title='table.power_rating' sorting={{field: 'power_rating', state: sortingState}} />
             </tr>
         }
         </Translation>

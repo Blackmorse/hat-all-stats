@@ -34,8 +34,8 @@ abstract class TeamRatingsTable<TableProps extends LevelDataProps>
                 />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.rating' sortingField='rating' sortingState={sortingState} />
-                <ModelTableTh title='table.rating_end_of_match' sortingField='rating_end_of_match' sortingState={sortingState} />
+                <ModelTableTh title='table.rating' sorting={{field: 'rating', state: sortingState}} />
+                <ModelTableTh title='table.rating_end_of_match' sorting={{field: 'rating_end_of_match', state: sortingState}} />
             </tr>
         }
         </Translation>

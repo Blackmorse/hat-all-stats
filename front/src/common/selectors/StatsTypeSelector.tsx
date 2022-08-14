@@ -53,7 +53,7 @@ class StatsTypeSelector extends React.Component<StatsTypeSelectorProps> {
 
 
         return <Translation>
-            { (t, { i18n }) =>
+            { (t, { }) =>
             <div className='d-flex flex-row align-items-center mx-2 my-xs-2 my-sm-2 my-lg-0 my-md-0'>
                 <span className="me-1">{t('filter.round')}</span>
                 <Form.Select size='sm' onChange={this.onChanged} 

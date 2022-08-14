@@ -54,12 +54,12 @@ class TeamPositionsTableBase extends AbstractTableSection<LeagueUnitLevelDataPro
                         poppedHint={t('table.games')}
                         content={<th className="text-center">{t('table.games_abbr')}</th>}
                     />
-                    <SortingTableTh poppedHint={t('table.win')} title='table.win_abbr' sortingField='win' sortingState={sortingState}/>
-                    <SortingTableTh poppedHint={t('table.draw')} title='table.draw_abbr' sortingField='draw' sortingState={sortingState} />
-                    <SortingTableTh poppedHint={t('table.lose')} title='table.lose_abbr' sortingField='lost' sortingState={sortingState} />
-                    <SortingTableTh poppedHint={t('table.goals_for')} title='table.goals_for_abbr' sortingField='scored' sortingState={sortingState} />
-                    <SortingTableTh poppedHint={t('table.goals_against')} title='table.goals_against_abbr' sortingField='missed' sortingState={sortingState} />
-                    <SortingTableTh title='table.points' sortingField='points' sortingState={sortingState} />
+                    <SortingTableTh poppedHint={t('table.win')} title='table.win_abbr' sorting={{field: 'win', state: sortingState}}/>
+                    <SortingTableTh poppedHint={t('table.draw')} title='table.draw_abbr' sorting={{field: 'draw', state: sortingState}} />
+                    <SortingTableTh poppedHint={t('table.lose')} title='table.lose_abbr' sorting={{field: 'lost', state: sortingState}} />
+                    <SortingTableTh poppedHint={t('table.goals_for')} title='table.goals_for_abbr' sorting={{field: 'scored', state: sortingState}} />
+                    <SortingTableTh poppedHint={t('table.goals_against')} title='table.goals_against_abbr' sorting={{field: 'missed', state: sortingState}} />
+                    <SortingTableTh title='table.points' sorting={{field: 'points', state: sortingState}} />
                 </tr>
             }
         </Translation>

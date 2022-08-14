@@ -225,5 +225,7 @@
     "player.cup": "Taza",
     "player.yellow": "Amarillo",
     "player.red": "Rojo",
-    "player.minutes": "Minutos"
+    "player.minutes": "Minutos",
+
+    "filter.one_team_per_unit": "Un equipo por liga"
 }

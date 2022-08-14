@@ -29,7 +29,7 @@ GET     /api/league/:leagueId/teamSalaryTsi       controllers.RestLeagueControll
 GET     /api/league/:leagueId/teamCards       controllers.RestLeagueController.teamCards(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/teamRatings       controllers.RestLeagueController.teamRatings(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/teamAgeInjuries       controllers.RestLeagueController.teamAgeInjuries(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
-GET     /api/league/:leagueId/teamGoalPoints       controllers.RestLeagueController.teamGoalPoints(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters, playedAllMatches: Boolean ?= false)
+GET     /api/league/:leagueId/teamGoalPoints       controllers.RestLeagueController.teamGoalPoints(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters, playedAllMatches: Boolean ?= false, oneTeamPerUnit: Boolean)
 
 GET     /api/league/:leagueId/teamPowerRatings       controllers.RestLeagueController.teamPowerRatings(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/teamFanclubFlags       controllers.RestLeagueController.teamFanclubFlags(leagueId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
@@ -53,7 +53,7 @@ GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamSalaryTsi  contro
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamCards  controllers.RestDivisionLevelController.teamCards(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamRatings  controllers.RestDivisionLevelController.teamRatings(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamAgeInjuries  controllers.RestDivisionLevelController.teamAgeInjuries(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
-GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamGoalPoints  controllers.RestDivisionLevelController.teamGoalPoints(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters, playedAllMatches: Boolean ?= false)
+GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamGoalPoints  controllers.RestDivisionLevelController.teamGoalPoints(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters, playedAllMatches: Boolean ?= false, oneTeamPerUnit: Boolean)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamPowerRatings  controllers.RestDivisionLevelController.teamPowerRatings(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamFanclubFlags  controllers.RestDivisionLevelController.teamFanclubFlags(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/league/:leagueId/divisionLevel/:divisionLevel/teamStreakTrophies  controllers.RestDivisionLevelController.teamStreakTrophies(leagueId: Int, divisionLevel: Int, restStatisticsParameters: models.web.RestStatisticsParameters)

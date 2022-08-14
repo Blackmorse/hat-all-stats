@@ -46,15 +46,13 @@ class TeamSalaryTSITable<TableProps extends LevelDataProps>
                 />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.tsi' sortingField='tsi' sortingState={sortingState} />
-                <ModelTableTh title='table.salary' sortingField='salary' titlePostfix={', ' + this.props.levelDataProps.currency()}
-                     sortingState={sortingState} />
-                <ModelTableTh title='menu.players' sortingField='players_count' sortingState={sortingState}/>
-                <ModelTableTh title='table.average_tsi' sortingField='avg_tsi' sortingState={sortingState} />
-                <ModelTableTh title='table.average_salary' titlePostfix={', ' + this.props.levelDataProps.currency()} 
-                    sortingField='avg_salary' sortingState={sortingState} />
-                <ModelTableTh title='table.salary_per_tsi' sortingField='salary_per_tsi' titlePostfix={', ' + this.props.levelDataProps.currency()}
-                    sortingState={sortingState} />
+                <ModelTableTh title='table.tsi' sorting={{field: 'tsi', state: sortingState}} />
+                <ModelTableTh title='table.salary' sorting={{field: 'salary', 
+                    state: sortingState}} titlePostfix={', ' + this.props.levelDataProps.currency()}/>
+                <ModelTableTh title='menu.players' sorting={{field: 'players_count', state: sortingState}}/>
+                <ModelTableTh title='table.average_tsi' sorting={{field: 'avg_tsi', state: sortingState}} />
+                <ModelTableTh title='table.average_salary' titlePostfix={', ' + this.props.levelDataProps.currency()} sorting={{field: 'avg_salary', state: sortingState}} />
+                <ModelTableTh title='table.salary_per_tsi' sorting={{field: 'salary_per_tsi', state: sortingState}} titlePostfix={', ' + this.props.levelDataProps.currency()}/>
             </tr>
         }
         </Translation>

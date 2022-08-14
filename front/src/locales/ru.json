@@ -225,5 +225,7 @@
     "player.cup": "Кубок",
     "player.yellow": "Желтые",
     "player.red": "Красные",
-    "player.minutes": "Минуты"
+    "player.minutes": "Минуты",
+
+    "filter.one_team_per_unit": "Одна команда на лигу"
 }

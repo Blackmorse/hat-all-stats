@@ -33,9 +33,9 @@ abstract class TeamStreakTrophiesTable<TableProps extends LevelDataProps>
                 />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.trophies' sortingField='trophies_number' sortingState={sortingState} />
-                <ModelTableTh title='table.victories' sortingField='number_of_victories' sortingState={sortingState} />
-                <ModelTableTh title='table.undefeated' sortingField='number_of_undefeated' sortingState={sortingState} />
+                <ModelTableTh title='table.trophies' sorting={{field: 'trophies_number', state: sortingState}} />
+                <ModelTableTh title='table.victories' sorting={{field: 'number_of_victories', state: sortingState}} />
+                <ModelTableTh title='table.undefeated' sorting={{field: 'number_of_undefeated', state: sortingState}} />
             </tr>
         }
         </Translation>

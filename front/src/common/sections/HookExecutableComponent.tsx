@@ -4,12 +4,19 @@ import Blur from '../widgets/Blur'
 import Bot from '../widgets/Bot'
 import Section from './HookSection'
 
+export interface StateAndRequest<Request, State> {
+    setRequest: (request: Request) => void
+    setState: (state: State) => void
+    currentState: State
+    currentRequest: Request
+}
+
 interface Props<Request, Response, State=Response> {
     initialRequest: Request
     responseToState: (response?: Response, currentState?: State) => State
     executeRequest: (request: Request, callback: (loadingState: LoadingEnum, result?: Response) => void) => void
     //Client has an ability to set the request, or directly set state
-    content: (setRequest: (request: Request) => void, setState: (state: State) => void, currentState: State) => JSX.Element
+    content: (stateAndRequest: StateAndRequest<Request, State>) => JSX.Element
     sectionTitle?: (state: State) => string | JSX.Element
 }
 
@@ -31,10 +38,13 @@ const ExecutableComponent = <Request, Response, State=Response>(props: Props<Req
         return <Bot />
     }
 
+    let stateAndRequest: StateAndRequest<Request, State> = {
+setRequest: setRequest, setState: setState, currentState: state, currentRequest: request
+    }
     let render = <>
                 <Blur loadingState={loadingEnum}
                     updateCallback={() => {setUpdateCounter(updateCounter + 1)}} />               
-                {props.content(setRequest, setState, state)}
+                {props.content(stateAndRequest)}
             </>
 
     if (props.sectionTitle === undefined) {

@@ -35,8 +35,8 @@ abstract class TeamCardsTable<TableProps extends LevelDataProps>
                 />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.yellow_cards' sortingField='yellow_cards' sortingState={sortingState} />
-                <ModelTableTh title='table.red_cards' sortingField='red_cards' sortingState={sortingState} />
+                <ModelTableTh title='table.yellow_cards' sorting={{field: 'yellow_cards', state: sortingState}} />
+                <ModelTableTh title='table.red_cards' sorting={{field: 'red_cards', state: sortingState}} />
             </tr>
         }
         </Translation>

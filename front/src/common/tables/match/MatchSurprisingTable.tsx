@@ -33,11 +33,11 @@ abstract class MatchSurprisingTable<TableProps extends LevelDataProps>
                 />
                 <th className="text-center">{t('table.league')}</th>
                 <th className="text-center">{t('table.team')}</th>
-                <ModelTableTh title='table.loddar_stats' sortingField='abs_loddar_stats_difference' sortingState={sortingState} />
-                <ModelTableTh title='table.hatstats' sortingField='abs_hatstats_difference' sortingState={sortingState} />
-                <ModelTableTh title='overview.goals' sortingField='abs_goals_difference' sortingState={sortingState} />
-                <ModelTableTh title='table.hatstats' sortingField='abs_hatstats_difference' sortingState={sortingState} />
-                <ModelTableTh title='table.loddar_stats' sortingField='abs_loddar_stats_difference' sortingState={sortingState} />
+                <ModelTableTh title='table.loddar_stats' sorting={{field: 'abs_loddar_stats_difference', state: sortingState}} />
+                <ModelTableTh title='table.hatstats' sorting={{field: 'abs_hatstats_difference', state: sortingState}} />
+                <ModelTableTh title='overview.goals' sorting={{field: 'abs_goals_difference', state: sortingState}} />
+                <ModelTableTh title='table.hatstats' sorting={{field: 'abs_hatstats_difference', state: sortingState}} />
+                <ModelTableTh title='table.loddar_stats' sorting={{field: 'abs_loddar_stats_difference', state: sortingState}} />
                 <th className="text-center">{t('table.team')}</th>
             </tr>
             }

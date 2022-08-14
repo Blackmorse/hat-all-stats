@@ -43,10 +43,10 @@ abstract class PlayerGoalsGamesTable<TableProps extends LevelDataProps>
                 <th className='text-center'>{t('table.league')}</th>
                 <th></th>
                 <th className='text-center'>{t('table.age')}</th>
-                <ModelTableTh title='table.games' sortingField='games' sortingState={sortingState} />
-                <ModelTableTh title='table.minutes' sortingField='played' sortingState={sortingState} />
-                <ModelTableTh title='table.scored' sortingField='scored' sortingState={sortingState} />
-                <ModelTableTh title='table.minutes_per_goal_abbr' poppedHint={t('table.minutes_per_goal')} sortingField='goal_rate' sortingState={sortingState} />
+                <ModelTableTh title='table.games' sorting={{field: 'games', state: sortingState}} />
+                <ModelTableTh title='table.minutes' sorting={{field: 'played', state: sortingState}} />
+                <ModelTableTh title='table.scored' sorting={{field: 'scored', state: sortingState}} />
+                <ModelTableTh title='table.minutes_per_goal_abbr' sorting={{field: 'goal_rate', state: sortingState}}  poppedHint={t('table.minutes_per_goal')}/>
             </tr>
         }
         </Translation>

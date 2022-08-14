@@ -32,7 +32,7 @@ abstract class OldestTeamsTable<TableProps extends LevelDataProps>
                 />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='team.date_of_foundation' sortingField='founded_date' sortingState={sortingState}/>
+                <ModelTableTh title='team.date_of_foundation' sorting={{field: 'founded_date', state: sortingState}}/>
             </tr>
             }
         </Translation>

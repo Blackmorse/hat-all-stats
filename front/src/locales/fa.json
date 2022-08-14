@@ -225,5 +225,7 @@
     "player.cup": "تخصص",
     "player.yellow": "رنگ زرد",
     "player.red": "قرمز",
-    "player.minutes": "دقایق"
+    "player.minutes": "دقایق",
+
+    "filter.one_team_per_unit": "یک تیم در هر لیگ"
   }

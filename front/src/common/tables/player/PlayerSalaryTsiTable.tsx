@@ -41,9 +41,9 @@ abstract class PlayerSalaryTsiTable<TableProps extends LevelDataProps>
                 <th>{t('table.team')}</th>
                 <th className="value">{t('table.league')}</th>
                 <th></th>
-                <ModelTableTh title='table.age' sortingField='age' sortingState={sortingState} />
-                <ModelTableTh title='table.tsi' sortingField='tsi' sortingState={sortingState} />
-                <ModelTableTh title='table.salary' titlePostfix={', ' + this.props.levelDataProps.currency()} sortingField='salary' sortingState={sortingState} />
+                <ModelTableTh title='table.age' sorting={{field: 'age', state: sortingState}} />
+                <ModelTableTh title='table.tsi' sorting={{field: 'tsi', state: sortingState}} />
+                <ModelTableTh title='table.salary' sorting={{field: 'salary', state: sortingState}} titlePostfix={', ' + this.props.levelDataProps.currency()} />
             </tr>
         }
         </Translation>

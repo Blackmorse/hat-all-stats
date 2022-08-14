@@ -224,6 +224,8 @@
     "player.cup": "Tasse",
     "player.yellow": "Gelb",
     "player.red": "rot",
-    "player.minutes": "Protokoll"
+    "player.minutes": "Protokoll",
+
+    "filter.one_team_per_unit": "Ein Team pro Liga"
 }
 

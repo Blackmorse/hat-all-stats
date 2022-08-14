@@ -225,5 +225,7 @@
     "player.cup": "Kupa",
     "player.yellow": "Žuta boja",
     "player.red": "Crvena",
-    "player.minutes": "Minuta"
+    "player.minutes": "Minuta",
+
+    "filter.one_team_per_unit": "Jedna ekipa po ligi"
 }

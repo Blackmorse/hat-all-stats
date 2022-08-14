@@ -33,10 +33,10 @@ abstract class TeamFanclubFlagsTable<TableProps extends LevelDataProps>
                 />
                 <th>{t('table.team')}</th>
                 <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.fanclub_size' sortingField='fanclub_size' sortingState={sortingState} />
-                <ModelTableTh title='table.home_flags' sortingField='home_flags' sortingState={sortingState} />
-                <ModelTableTh title='table.away_flags' sortingField='away_flags' sortingState={sortingState} />
-                <ModelTableTh title='table.all_flags' sortingField='all_flags' sortingState={sortingState} />
+                <ModelTableTh title='table.fanclub_size' sorting={{field: 'fanclub_size', state: sortingState}} />
+                <ModelTableTh title='table.home_flags' sorting={{field: 'home_flags', state: sortingState}} />
+                <ModelTableTh title='table.away_flags' sorting={{field: 'away_flags', state: sortingState}} />
+                <ModelTableTh title='table.all_flags' sorting={{field: 'all_flags', state: sortingState}} />
             </tr>
         }
         </Translation>

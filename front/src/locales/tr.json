@@ -225,5 +225,7 @@
     "player.cup": "Bardak",
     "player.yellow": "Sarı",
     "player.red": "Kırmızı",
-    "player.minutes": "dakika"
+    "player.minutes": "dakika",
+
+    "filter.one_team_per_unit": "Lig başına bir takım"
 }

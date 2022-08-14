@@ -326,7 +326,7 @@ export function getTeamPositions(request: LevelRequest,
     let params = createStatisticsParameters(statisticsParameters)
     axios.get<LeagueUnitTeamStatHistoryInfo>(startUrl(request) + '/teamPositions?' + params.toString())
         .then(response => callback(LoadingEnum.OK, response.data))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function getTeamSalaryTSI(request: LevelRequest,
@@ -336,7 +336,7 @@ export function getTeamSalaryTSI(request: LevelRequest,
     let params = createStatisticsParameters(statisticsParameters)
     axios.get<RestTableData<TeamSalaryTSI>>(startUrl(request) + '/teamSalaryTsi?' + params.toString() + '&playedInLastMatch=' + playedInLastMatch)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export let getTeamCards = statisticsRequest<TeamCards>('teamCards')
@@ -350,10 +350,11 @@ export let getOldestTeams = statisticsRequest<OldestTeam>('oldestTeams')
 export function getTeamGoalPoints(request: LevelRequest,
         statisticsParameters: StatisticsParameters,
         playedAllMatches: boolean,
+        oneTeamPerUnit: boolean,
         callback: (loadingEnum: LoadingEnum, entities?: RestTableData<TeamGoalPoints>) => void){
     let params = createStatisticsParameters(statisticsParameters)
     axios.get<RestTableData<TeamGoalPoints>>(startUrl(request) + '/teamGoalPoints?' + params.toString() + 
-        '&playedAllMatches=' + playedAllMatches)
+        '&playedAllMatches=' + playedAllMatches + '&oneTeamPerUnit=' + oneTeamPerUnit)
         .then(response => parseAxiosResponse(response, callback))
         .catch(e => callback(LoadingEnum.ERROR))
 }
