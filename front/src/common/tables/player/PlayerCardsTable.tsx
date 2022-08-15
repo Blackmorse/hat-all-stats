@@ -11,13 +11,11 @@ import TeamLink from '../../links/TeamLink'
 import LeagueUnitLink from '../../links/LeagueUnitLink'
 import { yellowCards, redCards } from '../../Formatters'
 import { getPlayerCards } from '../../../rest/Client';
-import ExternalPlayerLink from '../../links/ExternalPlayerLink';
-import CountryImage from '../../elements/CountryImage';
-import LeagueLink from '../../links/LeagueLink';
 import Mappings from '../../enums/Mappings';
 import i18n from '../../../i18n';
 import { ageFormatter } from '../../Formatters'
 import HattidTooltip from '../../elements/HattidTooltip';
+import PlayerLink from '../../links/PlayerLink';
 
 abstract class PlayerCardsTable<TableProps extends LevelDataProps> 
     extends PlayersTableSection<TableProps, PlayerCards> {
@@ -38,7 +36,6 @@ abstract class PlayerCardsTable<TableProps extends LevelDataProps>
                     poppedHint={t('table.position')}
                     content={<th>{t('table.position_abbr')}</th>}
                 />
-                <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
                 <th className='text-center'>{t('table.league')}</th>
@@ -57,8 +54,15 @@ abstract class PlayerCardsTable<TableProps extends LevelDataProps>
         let playerSortingKey = playerCards.playerSortingKey
         return <tr className={className}>
             <td>{index + 1}</td>
-            <td className="text-center"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
-            <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId} /></td>
+            <td>
+                <PlayerLink
+                    id={playerSortingKey.playerId}
+                    text={playerSortingKey.firstName + ' ' + playerSortingKey.lastName}
+                    externalLink
+                    nationality={playerSortingKey.nationality }
+                    countriesMap={this.props.levelDataProps.countriesMap()}
+                />
+            </td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="text-center"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="text-center">{i18n.t(Mappings.roleToTranslationMap.get(playerCards.role) || '')}</td>

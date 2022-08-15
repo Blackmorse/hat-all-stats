@@ -21,6 +21,10 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
         return <></>
     }
 
+    postfixAdditionalContent(): JSX.Element {
+        return <></>
+    }
+
     render() {
         let parameters: any = {}
         let page: PagesEnum | undefined = this.props.page
@@ -70,7 +74,7 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
                 onClick={cback} >
                     <u className={className} >{this.props.text}</u>
             </NavLink>
-            
+            {this.postfixAdditionalContent()}
         </>
     }
 }

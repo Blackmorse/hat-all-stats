@@ -5,7 +5,7 @@ import OverviewTableSection, { OverviewTableSectionProps } from './OverviewTable
 import PlayerStatOverview from '../../rest/models/overview/PlayerStatOverview'
 import LeagueUnitLink from '../../common/links/LeagueUnitLink'
 import TeamLink from '../../common/links/TeamLink'
-import ExternalPlayerLink from '../links/ExternalPlayerLink'
+import PlayerLink from '../links/PlayerLink'
 
 abstract class PlayerOverviewSection extends OverviewTableSection<PlayerStatOverview> {
     valueTitle: string
@@ -37,7 +37,14 @@ abstract class PlayerOverviewSection extends OverviewTableSection<PlayerStatOver
             <td>
                 <TeamLink id={playerStat.playerSortingKey.teamId} text={playerStat.playerSortingKey.teamName} />
             </td>
-            <td>{playerStat.playerSortingKey.firstName} {playerStat.playerSortingKey.lastName} <ExternalPlayerLink id={playerStat.playerSortingKey.playerId} /></td>
+            <td>
+                <PlayerLink
+                    id={playerStat.playerSortingKey.playerId}
+                    text={playerStat.playerSortingKey.firstName + ' ' + playerStat.playerSortingKey.lastName}
+                    externalLink
+                    nationality={playerStat.playerSortingKey.nationality}
+                />
+            </td>
             <td>
                 {this.props.linkProvider(this.valueFormatter(playerStat.value), this.state.dataRequest.season, this.state.dataRequest.round, playerStat).render()}
             </td>

@@ -60,7 +60,7 @@ class PlayerService @Inject() ()  {
   }
 
   def playerLeagueUnitHistory(history: List[PlayerHistory]): List[PlayerLeagueUnitEntry] = {
-    val sortedHistory = history.sortBy(h => (h.season, h.round))
+    val sortedHistory = history.sortBy(h => (h.season, h.round, h.age))
 
     val result = mutable.Buffer[PlayerLeagueUnitEntry]()
 

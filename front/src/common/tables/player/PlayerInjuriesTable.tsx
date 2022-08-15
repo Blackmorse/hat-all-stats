@@ -11,10 +11,8 @@ import ModelTableTh from "../../elements/SortingTableTh";
 import LeagueUnitLink from "../../links/LeagueUnitLink";
 import TeamLink from "../../links/TeamLink";
 import { injuryFormatter, ageFormatter } from '../../Formatters'
-import ExternalPlayerLink from '../../links/ExternalPlayerLink';
-import LeagueLink from '../../links/LeagueLink';
-import CountryImage from '../../elements/CountryImage';
 import HattidTooltip from '../../elements/HattidTooltip';
+import PlayerLink from '../../links/PlayerLink';
 
 abstract class PlayerInjuriesTable<TableProps extends LevelDataProps>
         extends ClassicTableSection<TableProps, PlayerInjury>{
@@ -34,7 +32,6 @@ abstract class PlayerInjuriesTable<TableProps extends LevelDataProps>
                     poppedHint={t('table.position')}
                     content={<th>{t('table.position_abbr')}</th>}
                 />
-                <th></th>
                 <th>{t('table.player')}</th>
                 <th>{t('table.team')}</th>
                 <th className="value">{t('table.league')}</th>
@@ -49,8 +46,15 @@ abstract class PlayerInjuriesTable<TableProps extends LevelDataProps>
         let playerSortingKey = playerInjury.playerSortingKey
         return <tr className={className}>
             <td>{index + 1}</td>
-            <td className="text-center"><LeagueLink forceRefresh={true} id={playerSortingKey.nationality} text={<CountryImage countryId={playerSortingKey.nationality} text={this.props.levelDataProps.countriesMap().get(playerSortingKey.nationality)}/>} /></td>
-            <td>{playerSortingKey.firstName + ' ' + playerSortingKey.lastName} <ExternalPlayerLink id={playerSortingKey.playerId}/></td>
+            <td>
+                <PlayerLink
+                    id={playerSortingKey.playerId}
+                    text={playerSortingKey.firstName + ' ' + playerSortingKey.lastName}
+                    nationality={playerSortingKey.nationality}
+                    countriesMap={this.props.levelDataProps.countriesMap()}
+                    externalLink
+                />
+            </td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} /></td>
             <td className="text-center"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="text-center">{ageFormatter(playerInjury.age)}</td>

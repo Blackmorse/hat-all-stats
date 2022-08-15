@@ -82,7 +82,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                         <tbody>
                             {stateAndRequest.currentState?.playerSeasonStats.entries.map(entry => 
                                 <tr>
-                                    <td className='text-center'>{entry.season}</td>
+                                    <td className='text-center'>{entry.season + props.playerProps.seasonOffset()}</td>
                                     <td className='text-center'>{entry.leagueGoals}</td>
                                     <td className='text-center'>{entry.cupGoals}</td>
                                     <td className='text-center'>{entry.allGoals}</td>
@@ -112,7 +112,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
             </Row>
         <div>
 
-
+        {(stateAndRequest.currentState?.playerLeagueUnitHistory.length === 0)? <></> :
         <table className='small-font border border-1 bg-light shadow-sm border-secondary overflow-visible mt-2 table'>
             <thead>
                 <th></th>
@@ -173,7 +173,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                     <td className='text-center'>{salaryFormatter(entry.salary, props.playerProps.currencyRate())} {props.playerProps.currency()}</td>
                 </tr>)}
             </tbody>
-        </table>
+        </table>}
 
 
         </div>

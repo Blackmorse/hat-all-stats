@@ -1,10 +1,7 @@
 import React from 'react'
 import { ratingFormatter } from '../../Formatters'
-import ExternalPlayerLink from '../../links/ExternalPlayerLink';
 import TeamLink from '../../links/TeamLink';
 import LeagueUnitLink from '../../links/LeagueUnitLink';
-import CountryImage from '../../elements/CountryImage';
-import LeagueLink from '../../links/LeagueLink';
 import { DreamTeamPlayerPosition } from '../DreamTeamPage'
 import { Card } from 'react-bootstrap';
 import PlayerLink from '../../links/PlayerLink';
@@ -25,12 +22,12 @@ class DreamTeamPlayerCard extends React.Component<Props> {
         if (this.props.dreamTeamPlayerPosition.player !== undefined) {
             content = <>
                 <span className='text-center'>
-                    <LeagueLink id={this.props.dreamTeamPlayerPosition.player.playerSortingKey.nationality} forceRefresh={true}
-                        text={<CountryImage countryId={this.props.dreamTeamPlayerPosition.player.playerSortingKey.nationality} />}/>  
-                </span>
-                <span className='text-center'>
-                    <PlayerLink id={this.props.dreamTeamPlayerPosition.player!.playerSortingKey.playerId} text={this.props.dreamTeamPlayerPosition.player?.playerSortingKey.firstName + ' ' + this.props.dreamTeamPlayerPosition.player.playerSortingKey.lastName} />
-                    {<ExternalPlayerLink id={this.props.dreamTeamPlayerPosition.player?.playerSortingKey.playerId}/>}
+                    <PlayerLink 
+                        id={this.props.dreamTeamPlayerPosition.player!.playerSortingKey.playerId} 
+                        text={this.props.dreamTeamPlayerPosition.player?.playerSortingKey.firstName + ' ' + this.props.dreamTeamPlayerPosition.player.playerSortingKey.lastName} 
+                        externalLink
+                        nationality={this.props.dreamTeamPlayerPosition.player.playerSortingKey.nationality}
+                    />
                 </span>
                 <span className='text-center'>
                     <TeamLink id={this.props.dreamTeamPlayerPosition.player.playerSortingKey.teamId} 
