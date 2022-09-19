@@ -1,7 +1,7 @@
 import TeamSortingKey from './TeamSortingKey'
 
 interface TeamGoalPoints {
-    teamSortingKey: TeamSortingKey,
+    sortingKey: TeamSortingKey,
     won: number,
     lost: number,
     draw: number,

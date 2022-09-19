@@ -4,10 +4,9 @@ import {getTeamGoalPoints} from '../../../rest/Client'
 import {StatsTypeEnum} from '../../../rest/models/StatisticsParameters'
 import TeamGoalPoints from '../../../rest/models/team/TeamGoalPoints'
 import LevelDataProps, {LevelDataPropsWrapper} from '../../LevelDataProps'
-import LeagueUnitLink from '../../links/LeagueUnitLink'
-import TeamLink from '../../links/TeamLink'
 import HookAbstractTableSection from '../HookAbstractTableSection'
 import {SelectorsEnum} from '../SelectorsEnum'
+import TableColumns from '../TableColumns'
 
 const TeamGoalPointsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
@@ -23,30 +22,9 @@ const TeamGoalPointsTable = <LevelProps extends LevelDataProps>(props: LevelData
                 SelectorsEnum.PLAYED_ALL_MATCHES_SELECTOR, SelectorsEnum.ONE_TEAM_PER_UNIT_SELECTOR]}
         statsTypes={[StatsTypeEnum.ROUND]}
         tableColumns={[
-            {
-                columnHeader: {
-                    title: t('table.position_abbr'), poppedHint: t('table.position')
-                },
-                columnValue: {
-                    provider: (_tgp, index) => (index + 1).toString()
-                }
-            },
-            {
-                columnHeader: {
-                    title: t('table.team')
-                },
-                columnValue: {
-                    provider: (tgp) => <TeamLink id={tgp.teamSortingKey.teamId} text={tgp.teamSortingKey.teamName}/>
-                }
-            }, 
-            {
-                columnHeader: {
-                    title: t('table.league'), center: true
-                },
-                columnValue: {
-                    provider: (tgp) => <LeagueUnitLink id={tgp.teamSortingKey.leagueUnitId} text={tgp.teamSortingKey.leagueUnitName}/>, center: true
-                }
-            },
+            TableColumns.postitionsTableColumn(),
+            TableColumns.teamTableColumn(props.showCountryFlags),
+            TableColumns.leagueUnitTableColumn(),
             {
                 columnHeader: {
                     title: t('table.win_abbr'), poppedHint: t('table.win'), sortingField: 'won', center: true

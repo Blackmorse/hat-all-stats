@@ -1,10 +1,10 @@
 package databases.requests.model.team
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 import anorm.SqlParser.get
-import anorm.~
+import anorm.{RowParser, ~}
 
-case class TeamGoalPoints(teamSortingKey: TeamSortingKey,
+case class TeamGoalPoints(sortingKey: TeamSortingKey,
                           won: Int,
                           lost: Int,
                           draw: Int,
@@ -14,9 +14,9 @@ case class TeamGoalPoints(teamSortingKey: TeamSortingKey,
                           points: Int)
 
 object TeamGoalPoints {
-  implicit val writes = Json.writes[TeamGoalPoints]
+  implicit val writes: OWrites[TeamGoalPoints] = Json.writes[TeamGoalPoints]
 
-  val mapper = {
+  val mapper: RowParser[TeamGoalPoints] = {
     get[Int]("league") ~
     get[Long]("team_id") ~
     get[String]("team_name") ~
@@ -32,9 +32,20 @@ object TeamGoalPoints {
       case leagueId ~ teamId ~ teamName ~ leagueUnitId ~ leagueUnitName ~
         won ~ lost ~ draw ~ goalsFor ~ goalsAgainst ~
         goalsDifference ~ points =>
-        val teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId)
+        val teamSortingKey = TeamSortingKey(teamId = teamId,
+          teamName = teamName,
+          leagueUnitId = leagueUnitId,
+          leagueUnitName = leagueUnitName,
+          leagueId = leagueId)
 
-        TeamGoalPoints(teamSortingKey, won, lost, draw, goalsFor, goalsAgainst, goalsDifference, points)
+        TeamGoalPoints(sortingKey = teamSortingKey,
+          won = won,
+          lost = lost,
+          draw = draw,
+          goalsFor = goalsFor,
+          goalsAgaints = goalsAgainst,
+          goalsDifference = goalsDifference,
+          points = points)
     }
   }
 }

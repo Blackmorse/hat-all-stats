@@ -32,7 +32,7 @@ class DreamTeamPlayerCard extends React.Component<Props> {
                 <span className='text-center'>
                     <TeamLink id={this.props.dreamTeamPlayerPosition.player.playerSortingKey.teamId} 
                         text={this.props.dreamTeamPlayerPosition.player.playerSortingKey.teamName} 
-                        flagCountryNumber={this.props.showTeamCountryFlag !== undefined && this.props.showTeamCountryFlag ? this.props.dreamTeamPlayerPosition.player.playerSortingKey.teamLeagueId : undefined}/>
+                        flagCountryNumber={this.props.showTeamCountryFlag !== undefined && this.props.showTeamCountryFlag ? this.props.dreamTeamPlayerPosition.player.playerSortingKey.leagueId : undefined}/>
                 </span>   
                 <span className='text-center'>
                     <LeagueUnitLink text={this.props.dreamTeamPlayerPosition.player.playerSortingKey.leagueUnitName} 

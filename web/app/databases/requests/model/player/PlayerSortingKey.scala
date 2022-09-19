@@ -10,7 +10,7 @@ case class PlayerSortingKey(playerId: Long,
                             leagueUnitId: Long,
                             leagueUnitName: String,
                             nationality: Int,
-                            teamLeagueId: Int)
+                            leagueId: Int)
 
 object PlayerSortingKey {
   implicit val writes: OWrites[PlayerSortingKey] = Json.writes[PlayerSortingKey]

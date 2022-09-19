@@ -1,7 +1,7 @@
 import PlayerSortingKey from './PlayerSortingKey'
 
 interface PlayerSalaryTSI {
-    playerSortingKey: PlayerSortingKey,
+    sortingKey: PlayerSortingKey,
     age: number,
     tsi: number,
     salary: number,

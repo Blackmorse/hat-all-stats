@@ -63,7 +63,7 @@ object PlayerHistory {
             leagueUnitId = leagueUnitId,
             leagueUnitName = leagueUnitName,
             nationality = nationality,
-            teamLeagueId = leagueId
+            leagueId = leagueId
           ),
           age = age,
           tsi = tsi,

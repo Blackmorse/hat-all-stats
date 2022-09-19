@@ -61,7 +61,7 @@ abstract class PlayerRatingsTable<TableProps extends LevelDataProps>
                 />
             </td>
             <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} 
-                flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? playerSortingKey.teamLeagueId : undefined}/></td>
+                flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? playerSortingKey.leagueId : undefined}/></td>
             <td className="text-center"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
             <td className="text-center">{i18n.t(Mappings.roleToTranslationMap.get(playerRating.role) || '')}</td>
             <td className="text-center">{ageFormatter(playerRating.age)}</td>
