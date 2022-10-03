@@ -2,7 +2,7 @@ package controllers
 
 import databases.dao.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
-import databases.requests.model.overview.TotalOverview
+import databases.requests.model.overview.{PlayerStatOverview, TotalOverview}
 import databases.requests.overview.charts.{AverageGoalsChartRequest, AverageHatstatsChartRequest, AverageSpectatorsChartRequest, FormationsChartRequest, GoalsNumberOverviewChartRequest, InjuriesNumberOverviewChartRequest, NewTeamsNumberChartRequest, NumbersOverviewChartRequest, PlayersNumberOverviewChartRequest, RedCardsNumberOverviewRequest, TeamsNumberOverviewChartRequest, YellowCardsNumberOverviewRequest}
 
 import java.util.Date
@@ -136,8 +136,10 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
   }
 
   def topSeasonScorers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async{ implicit request =>
-    restOverviewStatsService.topSeasonScorers(season, round, leagueId, divisionLevel)
-      .map(players => Ok(Json.toJson(players)))
+    //temporary disable due to performance issues
+//    restOverviewStatsService.topSeasonScorers(season, round, leagueId, divisionLevel)
+//      .map(players => Ok(Json.toJson(players)))
+    Future(Ok(Json.toJson(List[PlayerStatOverview]())))
   }
 
   def totalOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async { implicit request =>

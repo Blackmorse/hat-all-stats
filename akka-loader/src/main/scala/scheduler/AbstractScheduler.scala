@@ -19,9 +19,14 @@ abstract class AbstractScheduler(val worldDetails: WorldDetails) {
     load(leagueIds)
   }
 
-  private def findLeagueIdByName(leagueName: String): Int =
-    worldDetails.leagueList
+  private def findLeagueIdByName(leagueName: String): Int = {
+   if (leagueName.forall(_.isDigit)) {
+    leagueName.toInt
+   } else {
+     worldDetails.leagueList
       .find(_.leagueName == leagueName)
       .getOrElse(throw new IllegalArgumentException(s"Unknown country $leagueName"))
       .leagueId
+   }
+  }
 }

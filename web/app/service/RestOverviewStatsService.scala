@@ -100,6 +100,10 @@ class RestOverviewStatsService @Inject()
 
   def topSeasonScorers(season: Int, round: Int,
                        leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[PlayerStatOverview]] = {
+    if (true) {
+      //Temporary disable scorers due to Clickhouse timeout issue
+      return Future(List())
+    }
     val name = cacheName("topSeasonScorers", season, round, leagueId, divisionLevel)
     cache.getOrElseUpdate(name, 28 days)(TopSeasonScorersOverviewRequest.execute(season, round, leagueId, divisionLevel))
   }
