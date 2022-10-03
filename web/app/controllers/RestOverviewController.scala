@@ -136,10 +136,13 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
   }
 
   def topSeasonScorers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async{ implicit request =>
-    //temporary disable due to performance issues
-//    restOverviewStatsService.topSeasonScorers(season, round, leagueId, divisionLevel)
-//      .map(players => Ok(Json.toJson(players)))
-    Future(Ok(Json.toJson(List[PlayerStatOverview]())))
+    //temporary disable for world requests due to performance issues
+    if(leagueId.isDefined) {
+      restOverviewStatsService.topSeasonScorers(season, round, leagueId, divisionLevel)
+        .map(players => Ok(Json.toJson(players)))
+    } else {
+      Future(Ok(Json.toJson(List[PlayerStatOverview]())))
+    }
   }
 
   def totalOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
