@@ -9,7 +9,7 @@ import java.sql.DriverManager
 
 object ClickhouseTests {
 
-  def testNoHolesInLeagueRounds(worldDetails: WorldDetails)(implicit connection: java.sql.Connection): Unit = {
+  def testNoHolesInLeagueRounds(worldDetails: WorldDetails)(implicit connection: java.sql.Connection): Seq[String] = {
     import sqlbuilder.SqlBuilder.implicits._
 
     val season = worldDetails.leagueList.find(_.leagueId == 1000).map(league => league.season - league.seasonOffset).get
@@ -27,27 +27,32 @@ object ClickhouseTests {
       .groupBy("league_id", "division_level", "round")
 
     val results = builder.sqlWithParameters().build.as(Count.mapper.*)
-    results.groupBy(_.leagueId).foreach{ case (leagueId, leagueCounts) =>
-      leagueCounts.groupBy(_.divisionLevel).foreach{case (divisionLevel, divisionLevelCounts) =>
-        if(!(1 to round).forall(r => divisionLevelCounts.exists(_.round == r))) {
-          throw new Exception(s"Inconsistency for leagueId $leagueId, divisionLevel $divisionLevel" +
+    results.groupBy(_.leagueId).flatMap{ case (leagueId, leagueCounts) =>
+      leagueCounts.groupBy(_.divisionLevel).flatMap{case (divisionLevel, divisionLevelCounts) =>
+        val inconsistensyIssue = if(!(1 to round).forall(r => divisionLevelCounts.exists(_.round == r))) {
+          Some(s"Inconsistency for leagueId $leagueId, divisionLevel $divisionLevel" +
             s"(at least one divisionLevel-round is missing): ${divisionLevelCounts.sortBy(_.round)}")
+        } else {
+          None
         }
-        for (r <- 2 to round) {
+        val countsIssues = for (r <- 2 to round) yield {
           val previousRoundCount = divisionLevelCounts.find(_.round == r - 1).get.cnt
           val currentRoundCount = divisionLevelCounts.find(_.round == r).get.cnt
 
           if(Math.abs(previousRoundCount - currentRoundCount) > currentRoundCount * 0.3 && currentRoundCount > 12) {
-            throw new Exception(s"Suspicious teams number difference for rounds ${r - 1} and $r: ${divisionLevelCounts.sortBy(_.round)}")
+            Some(s"Suspicious teams number difference for rounds ${r - 1} and $r: ${divisionLevelCounts.sortBy(_.round)}")
+          } else {
+            None
           }
         }
+
+        (Seq(inconsistensyIssue) ++ countsIssues).flatten
       }
-    }
+    }.toSeq
   }
 
-  def testNumberOfTeamRankingsRecords(worldDetails: WorldDetails): Unit = {
+  def testNumberOfTeamRankingsRecords(worldDetails: WorldDetails)(implicit connection: java.sql.Connection): Seq[String] = {
     import sqlbuilder.SqlBuilder.implicits._
-    implicit val connection: java.sql.Connection = DriverManager.getConnection("jdbc:clickhouse://localhost:8123")
 
     val season = worldDetails.leagueList.find(_.leagueId == 1000).map(league => league.season - league.seasonOffset).get
     val round = worldDetails.leagueList.find(_.leagueId == 1000).get.matchRound - 1
@@ -75,25 +80,29 @@ object ClickhouseTests {
     val teamRankingsCounts = teamRankingsBuilder.sqlWithParameters().build
       .as(Count.mapper.*)
 
-    if (!isNumbersEqual(matchDetailsCounts.size, teamRankingsCounts.size)) {
-      throw new Exception(s"Counts doesn't match while test of team rankings consistency: " +
+    val countsIssue = if (!isNumbersEqual(matchDetailsCounts.size, teamRankingsCounts.size)) {
+      Some(s"Counts doesn't match while test of team rankings consistency: " +
         s"matchDetails: ${matchDetailsCounts.size}, teamRankings: ${teamRankingsCounts.size}")
+    } else {
+      None
     }
 
-    matchDetailsCounts.sortBy(count => (count.leagueId, count.divisionLevel)).zip(teamRankingsCounts.sortBy(count => (count.leagueId, count.divisionLevel)))
-      .foreach{ case (matchDetailsCount, teamRankingsCount) =>
+    val mismatchIssues = matchDetailsCounts.sortBy(count => (count.leagueId, count.divisionLevel)).zip(teamRankingsCounts.sortBy(count => (count.leagueId, count.divisionLevel)))
+      .map{ case (matchDetailsCount, teamRankingsCount) =>
         if (matchDetailsCount.cnt * 2 != teamRankingsCount.cnt) {
-          throw new Exception(s"MatchDetails and TeamRankings for ${matchDetailsCount.leagueId} division level ${matchDetailsCount.divisionLevel} doesn't match: " +
+          Some(s"MatchDetails and TeamRankings for ${matchDetailsCount.leagueId} division level ${matchDetailsCount.divisionLevel} doesn't match: " +
           s"match details: ${matchDetailsCount.cnt}, " +
           s"team rankings: ${teamRankingsCount.cnt}")
+        } else {
+          None
         }
       }
+    (Seq(countsIssue) ++ mismatchIssues).flatten
   }
 
-  def testTeamCounts(worldDetails: WorldDetails): Unit = {
+  def testTeamCounts(worldDetails: WorldDetails)(implicit connection: java.sql.Connection): Seq[String] = {
 
     import sqlbuilder.SqlBuilder.implicits._
-    implicit val connection: java.sql.Connection = DriverManager.getConnection("jdbc:clickhouse://localhost:8123")
 
     val season = worldDetails.leagueList.find(_.leagueId == 1000).map(league => league.season - league.seasonOffset).get
     val round = worldDetails.leagueList.find(_.leagueId == 1000).get.matchRound - 1
@@ -125,24 +134,30 @@ object ClickhouseTests {
     val teamsFromTeamDetails = teamsFromTeamDetailsBuilder.sqlWithParameters().build
       .as(Count.mapper.*)
 
-    if (!isNumbersEqual(teamsFromMatchDetails.size, teamsFromPlayerStats.size, teamsFromTeamRankings.size, teamsFromTeamDetails.size)) {
-      throw new Exception(s"Teams number from match_details: ${teamsFromMatchDetails.size}, " +
+    val teamNumbersIssue = if (!isNumbersEqual(teamsFromMatchDetails.size, teamsFromPlayerStats.size, teamsFromTeamRankings.size, teamsFromTeamDetails.size)) {
+      Some(s"Teams number from match_details: ${teamsFromMatchDetails.size}, " +
         s"teams number from player_stats: ${teamsFromPlayerStats.size}, " +
         s"teams number from team_rankings: ${teamsFromTeamRankings.size}, " +
         s"teams number from team_details: ${teamsFromTeamDetails.size}")
+    } else {
+      None
     }
 
-    teamsFromMatchDetails.sortBy(count => (count.leagueId, count.divisionLevel)).zip(teamsFromPlayerStats.sortBy(count => (count.leagueId, count.divisionLevel)))
+    val teamCountsIssues = teamsFromMatchDetails.sortBy(count => (count.leagueId, count.divisionLevel)).zip(teamsFromPlayerStats.sortBy(count => (count.leagueId, count.divisionLevel)))
       .zip(teamsFromTeamRankings.sortBy(count => (count.leagueId, count.divisionLevel))).zip(teamsFromTeamDetails.sortBy(count => (count.leagueId, count.divisionLevel)))
-      .foreach{case (((matchDetailsCount, playerStatsCount), teamRankingsCount), teamDetailsCount) =>
+      .map{case (((matchDetailsCount, playerStatsCount), teamRankingsCount), teamDetailsCount) =>
         if (!isNumbersEqual(matchDetailsCount.cnt, playerStatsCount.cnt, teamRankingsCount.cnt, teamDetailsCount.cnt)) {
-          throw new Exception(s"League ${matchDetailsCount.leagueId} division level ${matchDetailsCount.divisionLevel} team counts don't match: " +
+          Some(s"League ${matchDetailsCount.leagueId} division level ${matchDetailsCount.divisionLevel} team counts don't match: " +
             s"match_details: ${matchDetailsCount.cnt}, " +
             s"playerStats: ${playerStatsCount.cnt}, " +
             s"teamRankings: ${teamRankingsCount.cnt}, " +
             s"teamDetails: ${teamDetailsCount.cnt}")
+        } else {
+          None
         }
       }
+
+    (Seq(teamNumbersIssue) ++ teamCountsIssues).flatten
   }
 
   private def isNumbersEqual(numbers: Long*): Boolean = {

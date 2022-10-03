@@ -7,13 +7,15 @@ import java.util.{Calendar, Date}
 
 object AllCountriesTest {
 
-  def testNumberOfCountries(worldDetails: WorldDetails): Unit = {
+  def testNumberOfCountries(worldDetails: WorldDetails): Option[String] = {
     if (CommonData.higherLeagueMap.size != worldDetails.leagueList.size) {
-      throw new Exception(s"Expected ${CommonData.higherLeagueMap.size} countries, but got ${worldDetails.leagueList.size}")
+      Some(s"Expected ${CommonData.higherLeagueMap.size} countries, but got ${worldDetails.leagueList.size}")
+    } else {
+      None
     }
   }
 
-  def testCupSchedule(worldDetails: WorldDetails): Unit = {
+  def testCupSchedule(worldDetails: WorldDetails): Option[String] = {
 
     val schedule = CupSchedule.normalizeCupScheduleToDayOfWeek(CupSchedule.seq, Calendar.MONDAY)
       .sortBy(_.leagueId)
@@ -32,27 +34,32 @@ object AllCountriesTest {
         s"Cup schedule has been changed. Backup: $original. World details: $worldDetails"}
 
     if (changes.nonEmpty) {
-      throw new Exception(s"${changes.head}.\n ... \n Total ${changes.size}")
+      Some(s"${changes.head}.\n ... \n Total ${changes.size}")
+    } else {
+      None
     }
   }
 
-  def testFirstAndLastLeague(worldDetails: WorldDetails): Unit = {
+  def testFirstAndLastLeague(worldDetails: WorldDetails): Option[String] = {
     val schedule = CupSchedule.normalizeCupScheduleToDayOfWeek(worldDetails.leagueList
       .map(league => ScheduleEntry(league.leagueId, league.seriesMatchDate)), Calendar.THURSDAY)
       .sortBy(_.date)
 
     if (schedule.head.leagueId != 1000) {
-      throw new Exception(s"Now first league is ${schedule.head} instead of Hattrick International!")
-    }
-    if (schedule.last.leagueId != 100) {
-      throw new Exception(s"Now last league is ${schedule.last} instead of El Salvador!")
+      Some(s"Now first league is ${schedule.head} instead of Hattrick International!")
+    } else if (schedule.last.leagueId != 100) {
+      Some(s"Now last league is ${schedule.last} instead of El Salvador!")
+    } else {
+      None
     }
   }
 
-  def testDivisionLevels(worldDetails: WorldDetails): Unit = {
+  def testDivisionLevels(worldDetails: WorldDetails): Option[String] = {
     if (worldDetails.leagueList.exists(_.numberOfLevels > 10)) {
-      throw new Exception(s"There is a leagues with more than 10 divisionLevels: " +
+      Some(s"There is a leagues with more than 10 divisionLevels: " +
         s"${worldDetails.leagueList.filter(_.numberOfLevels > 10).map(_.leagueId).mkString(",")}")
+    } else {
+      None
     }
   }
 }

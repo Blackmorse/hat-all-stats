@@ -18,7 +18,7 @@ class HattidErrorHandler @Inject() (telegramClient: WebTelegramClient,
     override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
       val stacktrace = exception.getStackTrace.mkString("\n")
       val message = s"${request.path} \n\nWeb onServerError: ${exception.getMessage}. Stack Trace: \n $stacktrace"
-      telegramClient.sendMessage(message.take(4095)) //Maximum length of telegram message
+      telegramClient.sendMessage(message)
       jsonHandler.onServerError(request, exception)
     }
   },

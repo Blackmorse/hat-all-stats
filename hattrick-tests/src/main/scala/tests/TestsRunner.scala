@@ -37,17 +37,20 @@ object TestsRunner {
     val worldDetails = Await.result(ChppRequestExecutor.execute(WorldDetailsRequest()), 1.minute)
 
     try {
-      AllCountriesTest.testNumberOfCountries(worldDetails)
-      AllCountriesTest.testFirstAndLastLeague(worldDetails)
-      AllCountriesTest.testDivisionLevels(worldDetails)
-      AllCountriesTest.testCupSchedule(worldDetails)
-      ClickhouseTests.testTeamCounts(worldDetails)
-      ClickhouseTests.testNumberOfTeamRankingsRecords(worldDetails)
-      ClickhouseTests.testNoHolesInLeagueRounds(worldDetails)
-      Await.result(TelegramClient.sendMessage("Countries tests succesfully passed!"), 1.minute)
+      val allIssues = AllCountriesTest.testNumberOfCountries(worldDetails) ++
+        AllCountriesTest.testFirstAndLastLeague(worldDetails) ++
+        AllCountriesTest.testDivisionLevels(worldDetails) ++
+        AllCountriesTest.testCupSchedule(worldDetails) ++
+        ClickhouseTests.testTeamCounts(worldDetails) ++
+        ClickhouseTests.testNumberOfTeamRankingsRecords(worldDetails) ++
+        ClickhouseTests.testNoHolesInLeagueRounds(worldDetails)
+      if (allIssues.isEmpty) {
+        Await.result(TelegramClient.sendMessage("Countries tests succesfully passed!"), 1.minute)
+      } else {
+        allIssues.foreach(issue => Await.result(TelegramClient.sendMessage(issue), 1.minute))
+      }
     } catch {
-      case e: Exception =>
-        Await.result(TelegramClient.sendMessage(e.getMessage), 1.minute)
+      case e: Throwable => Await.result(TelegramClient.sendMessage("Tests are broken!! \n" + e.getStackTrace.mkString("\n")), 1.minute)
     } finally {
       connection.close()
     }

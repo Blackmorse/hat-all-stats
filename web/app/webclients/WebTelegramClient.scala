@@ -19,5 +19,5 @@ class WebTelegramClient @Inject()(val configuration: Configuration,
     }
 
   def sendMessage(message: String): Unit =
-    telegramCredsOpt.foreach(implicit telegramCreds => TelegramClient.sendMessage(message))
+    telegramCredsOpt.foreach(implicit telegramCreds => TelegramClient.sendMessage(message.take(4095))) // Maximum length of telegram message
 }
