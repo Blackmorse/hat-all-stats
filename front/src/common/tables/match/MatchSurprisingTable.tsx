@@ -1,53 +1,43 @@
-import { SortingState } from '../AbstractTableSection'
-import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import React from 'react';
 import MatchTopHatstats from '../../../rest/models/match/MatchTopHatstats';
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import '../../../i18n'
-import { Translation } from 'react-i18next'
-import ModelTableTh from '../../elements/SortingTableTh'
+import { useTranslation } from 'react-i18next'
 import { getSurprisingMatches } from '../../../rest/Client';
-import MatchSurprisingRow from '../rows/match/MatchSurprisingRow'
-import HattidTooltip from '../../elements/HattidTooltip';
+import HookAbstractTableSection from '../HookAbstractTableSection';
+import { SelectorsEnum } from '../SelectorsEnum';
+import TableColumns from '../TableColumns';
+import TeamMatchInfoExecutableSection from '../../../team/matches/TeamMatchInfoExecutableSection';
 
-abstract class MatchSurprisingTable<TableProps extends LevelDataProps>
-    extends ClassicTableSection<TableProps, MatchTopHatstats> {
-    
-    constructor(props: LevelDataPropsWrapper<TableProps>) {
-        super(props, 'abs_hatstats_difference', {statType: StatsTypeEnum.ACCUMULATE},
-            [StatsTypeEnum.ACCUMULATE, StatsTypeEnum.ROUND])
-    }
-
-    fetchDataFunction = getSurprisingMatches
-
-    columnHeaders(sortingState: SortingState): JSX.Element {
-        return <Translation>
+const MatchSurprisingTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
+    const [ t, _i18n ] = useTranslation()
+   
+    return <HookAbstractTableSection<LevelProps, MatchTopHatstats>
+        levelProps={props.levelDataProps}
+        queryParams={props.queryParams}
+        requestFunc={(request, callback) => getSurprisingMatches(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
+        defaultSortingField='abs_hatstats_difference'
+        defaultStatsType={{statType: StatsTypeEnum.ACCUMULATE}}
+        statsTypes={[StatsTypeEnum.ACCUMULATE, StatsTypeEnum.ROUND]}
+        selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+                SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR]}
+        tableColumns={[
+            TableColumns.postitionsTableColumn(),
+            TableColumns.leagueUnitTableColumn<MatchTopHatstats>(mth => mth.homeTeam),
+            TableColumns.teamTableColumn(mth => mth.homeTeam, props.showCountryFlags),
+            TableColumns.loddarStatsTableColumn(mth => mth.homeLoddarStats, 'abs_loddar_stats_difference'),
+            TableColumns.hatstatsTableColumn(mth => mth.homeHatstats, 'abs_hatstats_difference'),
             {
-            t =>
-            <tr>
-                <th/>
-                <HattidTooltip 
-                    poppedHint={t('table.position')}
-                    content={<th>{t('table.position_abbr')}</th>}
-                />
-                <th className="text-center">{t('table.league')}</th>
-                <th className="text-center">{t('table.team')}</th>
-                <ModelTableTh title='table.loddar_stats' sorting={{field: 'abs_loddar_stats_difference', state: sortingState}} />
-                <ModelTableTh title='table.hatstats' sorting={{field: 'abs_hatstats_difference', state: sortingState}} />
-                <ModelTableTh title='overview.goals' sorting={{field: 'abs_goals_difference', state: sortingState}} />
-                <ModelTableTh title='table.hatstats' sorting={{field: 'abs_hatstats_difference', state: sortingState}} />
-                <ModelTableTh title='table.loddar_stats' sorting={{field: 'abs_loddar_stats_difference', state: sortingState}} />
-                <th className="text-center">{t('table.team')}</th>
-            </tr>
-            }
-        </Translation>
-    }
-
-    row(index: number, className: string, matchHatstats: MatchTopHatstats): JSX.Element {
-        return <MatchSurprisingRow key={this.constructor.name + '_' + matchHatstats.matchId } rowIndex={index} 
-            rowModel={matchHatstats} className={className} />
-    }
+                columnHeader: {title: t('overview.goals'), sortingField: 'abs_goals_difference', center: true},
+                columnValue: {provider: (mth) => mth.homeGoals + ' : ' + mth.awayGoals, center: true}
+            },
+            TableColumns.hatstatsTableColumn(mth => mth.awayHatstats, 'abs_hatstats_difference'),
+            TableColumns.loddarStatsTableColumn(mth => mth.awayLoddarStats, 'abs_loddar_stats_difference'),
+            TableColumns.teamTableColumn(mth => mth.awayTeam, props.showCountryFlags)
+        ]}
+        expandedRowFunc={mth => <TeamMatchInfoExecutableSection matchId={mth.matchId}/>}
+    />
 }
 
 export default MatchSurprisingTable

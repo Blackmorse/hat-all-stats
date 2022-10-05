@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useState} from 'react'
 import TeamMatchInfoExecutableSection from '../../../../team/matches/TeamMatchInfoExecutableSection'
 import '../../../links/TableLink.css'
+import TableColumn from '../../TableColumn'
 
 export interface TableRowProps<RowModel> {
     rowIndex: number,
@@ -12,6 +13,54 @@ export interface TableRowProps<RowModel> {
 interface State {
     expanded: boolean
 }
+
+interface HookMatchRowProperties<RowModel> {
+    rowNum: number,
+    entity: RowModel,
+    tableColumns: Array<TableColumn<RowModel>>,
+    className?: string,
+    expandedRowFunc?: (model: RowModel) => JSX.Element
+}
+
+export const HookMatchRow = <RowModel extends {}>(props: HookMatchRowProperties<RowModel>) => {
+    const [ expanded, setExpanded ] = useState(false)
+
+    function row(): JSX.Element {
+        return <>
+                {props.tableColumns.map(tableColumn => {
+                    return <td className={(tableColumn.columnValue.center === undefined || !tableColumn.columnValue.center) ? '' : 'text-center'}>{tableColumn.columnValue.provider(props.entity, props.rowNum)}</td>
+                } ) }
+            </>
+    }
+
+    if (props.expandedRowFunc === undefined) {
+        return <tr>{row()}</tr>
+    } else {
+        if (!expanded) {
+            return <tr className={props.className}>
+                    <td key={'match_row' + '_' + Math.random()}>
+                        <i className='bi bi-caret-right-fill table_link' onClick={() => setExpanded(!expanded)}></i>
+                    </td>
+                    {row()}
+            </tr>
+        } else {
+            return <>
+                <tr className={props.className}>
+                    <td key={'match_row' + '_' + Math.random()}>
+                        <i className='bi bi-caret-down-fill table_link' onClick={() => setExpanded(!expanded)}></i>
+                    </td>
+                    {row()}
+                </tr>
+                <tr className='white_row'>
+                    <td colSpan={props.tableColumns.length + 1}>
+                        {props.expandedRowFunc(props.entity)}
+                    </td>
+                </tr>
+            </>
+        }
+    }
+}
+
 
 abstract class MatchRow<RowModel extends {matchId: number}, Props extends TableRowProps<RowModel>> extends React.Component<Props, State> {
     constructor(props: Props) {

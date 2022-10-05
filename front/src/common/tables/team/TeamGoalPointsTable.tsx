@@ -23,8 +23,8 @@ const TeamGoalPointsTable = <LevelProps extends LevelDataProps>(props: LevelData
         statsTypes={[StatsTypeEnum.ROUND]}
         tableColumns={[
             TableColumns.postitionsTableColumn(),
-            TableColumns.teamTableColumn(props.showCountryFlags),
-            TableColumns.leagueUnitTableColumn(),
+            TableColumns.teamTableColumn(tgp => tgp.sortingKey, props.showCountryFlags),
+            TableColumns.leagueUnitTableColumn(tgp => tgp.sortingKey),
             {
                 columnHeader: {
                     title: t('table.win_abbr'), poppedHint: t('table.win'), sortingField: 'won', center: true

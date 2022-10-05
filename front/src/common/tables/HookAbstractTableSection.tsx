@@ -19,6 +19,7 @@ import PositionSelector from '../selectors/PositionSelector'
 import NationalitySelector from '../selectors/NationalitySelector'
 import AgeSelector from '../selectors/AgeSelector'
 import PlayersParameters from '../../rest/models/PlayersParameters'
+import {HookMatchRow} from './rows/match/MatchRow'
 
 interface Request {
     statisticsParameters: StatisticsParameters
@@ -74,7 +75,8 @@ interface Properties<LevelProps extends LevelDataProps, Model> {
     defaultStatsType: StatsType,
     tableColumns: Array<TableColumn<Model>>,
     selectors: Array<SelectorsEnum>,
-    statsTypes: Array<StatsTypeEnum>
+    statsTypes: Array<StatsTypeEnum>,
+    expandedRowFunc?: (model: Model) => JSX.Element
 }
 
 
@@ -106,6 +108,15 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
             }
        ) 
     }, [ sorting, updateCounter, season, statType, playedAllMatches, playedInLastMatch, pageSize, pageNumber,  nationality, role, minAge, maxAge, oneTeamPerUnit ])
+
+    function row(rowNum: number, entity: Model): JSX.Element {
+       return <HookMatchRow 
+           rowNum={rowNum}
+           entity={entity}
+           tableColumns={props.tableColumns}
+           expandedRowFunc={props.expandedRowFunc}
+        />
+    }
 
     function createDataRequest(): Request {
         return {
@@ -259,6 +270,7 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
         <table className="table table-striped table-rounded table-sm small">
             <thead>
                 <tr>
+                {(props.expandedRowFunc === undefined) ? <></> : <td></td>}
                 {
                     props.tableColumns.map(tableColumn => {
                         let sortingInfo = (tableColumn.columnHeader.sortingField === undefined) ? undefined : {
@@ -278,11 +290,7 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
             <tbody>
                 {
                     data?.entities.map((entity, index) => {
-                        return <tr>
-                            {props.tableColumns.map(tableColumn => {
-                                return <td className={(tableColumn.columnValue.center === undefined || !tableColumn.columnValue.center) ? '' : 'text-center'}>{tableColumn.columnValue.provider(entity, pageSize * pageNumber + index)}</td>
-                            } ) }
-                        </tr>
+                        return row(pageSize * pageNumber + index, entity)
                     } )
                 }
             </tbody>

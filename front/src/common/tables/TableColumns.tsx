@@ -1,10 +1,11 @@
 import React from "react";
 import i18n from "../../i18n";
+import {loddarStats} from "../Formatters";
 import LeagueUnitLink from "../links/LeagueUnitLink";
 import TeamLink from "../links/TeamLink";
 import TableColumn from "./TableColumn";
 
-type WithSortingKey = {sortingKey: {teamId: number, teamName: string, leagueId: number, leagueUnitId: number, leagueUnitName: string}}
+type SortingKeyType = {teamId: number, teamName: string, leagueId: number, leagueUnitId: number, leagueUnitName: string}
 
 class TableColumns {
     static postitionsTableColumn<Smth>(): TableColumn<Smth> {
@@ -19,30 +20,44 @@ class TableColumns {
     }
 
 
-    static teamTableColumn<T extends WithSortingKey>(showCountryFlags?: boolean): TableColumn<T> {
+    static teamTableColumn<T>(sortingFieldFunc: (t: T) => SortingKeyType, showCountryFlags?: boolean): TableColumn<T> {
         return {
             columnHeader: {title: i18n.t('table.team')},
             columnValue: {
                 provider: (t) =><TeamLink
-                                   id={t.sortingKey.teamId}
-                                   text={t.sortingKey.teamName}
-                                   flagCountryNumber={showCountryFlags !== undefined && showCountryFlags ? t.sortingKey.leagueId : undefined}
-                                /> 
+                                   id={sortingFieldFunc(t).teamId}
+                                   text={sortingFieldFunc(t).teamName}
+                                   flagCountryNumber={showCountryFlags !== undefined && showCountryFlags ? sortingFieldFunc(t).leagueId : undefined}
+                                />, 
             }
         }
     }
 
 
-    static leagueUnitTableColumn<T extends WithSortingKey>(): TableColumn<T> {
+    static leagueUnitTableColumn<T>(sortingFieldFunc: (t: T) => SortingKeyType): TableColumn<T> {
         return {
             columnHeader: {title: i18n.t('table.league'), center: true},
             columnValue: {
                 provider: (pst) => <LeagueUnitLink 
-                              id={pst.sortingKey.leagueUnitId}
-                              text={pst.sortingKey.leagueUnitName}
+                              id={sortingFieldFunc(pst).leagueUnitId}
+                              text={sortingFieldFunc(pst).leagueUnitName}
                           />,
                 center: true
             }
+        }
+    }
+
+    static hatstatsTableColumn<T>(hatstatsFunc: (t: T) => number, sortingField: string): TableColumn<T> {
+        return {
+            columnHeader: {title: i18n.t('table.hatstats'), sortingField: sortingField, center: true},
+            columnValue: {provider: t => hatstatsFunc(t).toString(), center: true}
+        }
+    }
+
+    static loddarStatsTableColumn<T>(loddarStatsFunc: (t: T) => number, sortingField: string): TableColumn<T> {
+        return {
+            columnHeader: {title: i18n.t('table.loddar_stats'), sortingField: sortingField, center: true},
+            columnValue: {provider: t => loddarStats(loddarStatsFunc(t)), center: true}
         }
     }
 }

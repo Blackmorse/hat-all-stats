@@ -40,8 +40,8 @@ const PlayerSalaryTsiTable = <LevelProps extends LevelDataProps>(props: LevelDat
                                         />
                 }
             },
-            TableColumns.teamTableColumn(props.showCountryFlags),
-            TableColumns.leagueUnitTableColumn(),
+            TableColumns.teamTableColumn(pst => pst.sortingKey, props.showCountryFlags),
+            TableColumns.leagueUnitTableColumn(pst => pst.sortingKey),
             {
                 columnHeader: {title: ''},
                 columnValue: {
