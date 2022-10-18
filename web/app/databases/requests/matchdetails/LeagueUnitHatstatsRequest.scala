@@ -16,16 +16,16 @@ object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitR
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFuntion: functions.func): SqlBuilder = {
+                                aggregateFunction: functions.func): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
         "league_unit_id",
         "league_unit_name",
-        aggregateFuntion("hatstats").toInt32 as "hatstats",
-        aggregateFuntion("midfield").toInt32 as "midfield",
-        aggregateFuntion("defense").toInt32 as "defense",
-        aggregateFuntion("attack").toInt32 as "attack",
-        aggregateFuntion("loddar_stats") as "loddar_stats"
+        aggregateFunction("hatstats").toInt32 as "hatstats",
+        aggregateFunction("midfield").toInt32 as "midfield",
+        aggregateFunction("defense").toInt32 as "defense",
+        aggregateFunction("attack").toInt32 as "attack",
+        aggregateFunction("loddar_stats") as "loddar_stats"
       ).from(
         NestedSelect(
             "league_unit_id",

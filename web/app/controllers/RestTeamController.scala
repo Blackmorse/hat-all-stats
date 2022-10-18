@@ -60,60 +60,45 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
   def getTeamData(teamId: Long): Action[AnyContent] = Action.async {
     chppService.getTeamById(teamId)
-      .map(teamEither => teamEither.map(team => {
-        getRestTeamData(team)
-      })).map( {
-      case Right(data) => Ok(Json.toJson(data))
-      case Left(data) => Ok(Json.toJson(getRestTeamData(data)))
-    })
-  }
+      .map(teamOption => teamOption
+        .map(team => Ok(Json.toJson(getRestTeamData(team))))
+        .getOrElse(NotFound(s"TeamId: $teamId"))
+      )
+    }
 
 
-
+  private def orderingKeyPathFromTeam(team: Team, divisionLevel: Int, leagueUnitId: Long): OrderingKeyPath =
+    OrderingKeyPath(
+      leagueId = Some(team.league.leagueId),
+      divisionLevel = Some(divisionLevel),
+      leagueUnitId = Some(leagueUnitId),
+      teamId = Some(team.teamId)
+    )
 
   private def stats[T](chRequest: ClickhouseStatisticsRequest[T],
                        teamId: Long,
                        restStatisticsParameters: RestStatisticsParameters)
               (implicit writes: Writes[T]): Action[AnyContent] = Action.async{ implicit request =>
-    chppService.getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
-
-      chppService.getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
-        .flatMap { case (divisionLevel: Int, leagueUnitId: Long) =>
-          chRequest.execute(
-            OrderingKeyPath(
-              leagueId = Some(team.league.leagueId),
-              divisionLevel = Some(divisionLevel),
-              leagueUnitId = Some(leagueUnitId),
-              teamId = Some(teamId)
-            ), restStatisticsParameters)
-        }
-    }) match {
-      case Right(statList) => statList.map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
-      case Left(_) => Future(NoContent)
-    })
+    chppService.getTeamById(teamId).flatMap(teamOpt => teamOpt.map(team => {
+      for {
+        (divisionLevel, leagueUnitId) <- chppService.getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
+        statList <- chRequest.execute(orderingKeyPathFromTeam(team, divisionLevel, leagueUnitId), restStatisticsParameters)
+      } yield restTableDataJson(statList, restStatisticsParameters.pageSize)
+    }).getOrElse(Future(NotFound(s"TeamId: $teamId")))
+    )
   }
 
   private def playersRequest[T](plRequest: ClickhousePlayerStatsRequest[T],
                                 teamId: Long,
                                 restStatisticsParameters: RestStatisticsParameters,
-                                playersParameters: PlayersParameters)(implicit writes: Writes[T]) =
-    Action.async{ implicit request =>
-      chppService.getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
-
-        chppService.getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
-          .flatMap{  case (divisionLevel: Int, leagueUnitId: Long) =>
-            plRequest.execute(
-              OrderingKeyPath(
-                leagueId = Some(team.league.leagueId),
-                divisionLevel = Some(divisionLevel),
-                leagueUnitId = Some(leagueUnitId),
-                teamId = Some(teamId)
-              ), restStatisticsParameters, playersParameters)
-          }
-      }) match {
-        case Right(statList) => statList.map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
-        case Left(_) => Future(NoContent)
-      })
+                                playersParameters: PlayersParameters)(implicit writes: Writes[T]) = Action.async{ implicit request =>
+    chppService.getTeamById(teamId).flatMap(teamOpt => teamOpt.map(team => {
+      for {
+        (divisionLevel, leagueUnitId) <- chppService.getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
+        statList <- plRequest.execute(orderingKeyPathFromTeam(team, divisionLevel, leagueUnitId), restStatisticsParameters, playersParameters)
+      } yield restTableDataJson(statList, restStatisticsParameters.pageSize)
+    }).getOrElse(Future(NotFound(s"TeamId: $teamId")))
+    )
     }
 
   def playerGoalGames(teamId: Long, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[AnyContent] =
@@ -143,7 +128,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
 
   def teamRankings(teamId: Long, season: Int): Action[AnyContent] = Action.async { implicit request =>
-    chppService.getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
+    chppService.getTeamById(teamId).flatMap(teamOpt => teamOpt.map(team => {
       val leagueId = team.league.leagueId
 
       TeamRankingsRequest.execute(OrderingKeyPath(
@@ -173,11 +158,9 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
             currencyRate = currencyRate,
             currencyName = currencyName)
 
-        })
-    }) match {
-      case Right(rankings) => rankings.map(r => Ok(Json.toJson(r)))
-      case Left(_) => Future(NoContent)
-    })
+        }).map(tr => Ok(Json.toJson(tr)))
+    }).getOrElse(Future(NotFound(s"TeamId: $teamId")))
+    )
   }
 
   def nearestMatches(teamId: Long): Action[AnyContent] = Action.async { implicit request =>
@@ -186,38 +169,23 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   }
 
   def promotions(teamId: Long): Action[AnyContent] = Action.async{ implicit request =>
-    chppService.getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
+    chppService.getTeamById(teamId).flatMap(teamOpt => teamOpt.map(team => {
       val season = leagueInfoService.leagueInfo.currentSeason(team.league.leagueId)
-
-      chppService.getDivisionLevelAndLeagueUnit(team, season)
-        .flatMap { case (divisionLevel: Int, leagueUnitId: Long) =>
-          PromotionsRequest.execute(
-            OrderingKeyPath(leagueId = Some(team.league.leagueId),
-              divisionLevel = Some(divisionLevel),
-              leagueUnitId = Some(leagueUnitId),
-              teamId = Some(teamId)), season
-          )
-        }
-    }) match {
-      case Right(promotions) => promotions.map(PromotionWithType.convert).map(result => Ok(Json.toJson(result)))
-      case Left(_) => Future(NoContent)
-    })
+      for {
+        (divisionLevel, leagueUnit) <- chppService.getDivisionLevelAndLeagueUnit(team, season)
+        promotions <- PromotionsRequest.execute(orderingKeyPathFromTeam(team, divisionLevel, leagueUnit), season)
+      } yield Ok(Json.toJson(PromotionWithType.convert(promotions)))
+    }).getOrElse(Future(NotFound(s"TeamId: $teamId")))
+    )
   }
 
   def teamMatches(teamId: Long, season: Int): Action[AnyContent] = Action.async(implicit request =>
-    chppService.getTeamById(teamId).flatMap(teamEither => teamEither.map(team => {
-      chppService.getDivisionLevelAndLeagueUnit(team, season)
-        .flatMap { case (divisionLevel: Int, leagueUnitId: Long) =>
-
-          TeamMatchesRequest.execute(season, OrderingKeyPath(leagueId = Some(team.league.leagueId),
-            divisionLevel = Some(divisionLevel),
-            leagueUnitId = Some(leagueUnitId),
-            teamId = Some(team.teamId)))
-        }
-    }) match {
-      case Right(matches) => matches.map(result => Ok(Json.toJson(result)))
-      case Left(_) => Future(NoContent)
-    })
+    chppService.getTeamById(teamId).flatMap(teamOpt => teamOpt.map(team => {
+      for {
+        (divisionLevel, leagueUnitId) <- chppService.getDivisionLevelAndLeagueUnit(team, season)
+        matches <- TeamMatchesRequest.execute(season, orderingKeyPathFromTeam(team, divisionLevel, leagueUnitId))
+      } yield Ok(Json.toJson(matches))
+    }).getOrElse(Future(NotFound(s"TeamId: $teamId"))))
   )
 
   def teamsFoundedSameDate(period: HattrickPeriod, leagueId: Int, foundedDate: Long): Action[AnyContent] = Action.async { implicit request =>

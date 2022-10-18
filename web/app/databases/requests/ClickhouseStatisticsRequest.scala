@@ -15,7 +15,7 @@ trait ClickhouseStatisticsRequest[T] extends ClickhouseRequest[T] {
 
   def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                        parameters: RestStatisticsParameters,
-                       aggregateFuntion: functions.func): SqlBuilder
+                       aggregateFunction: functions.func): SqlBuilder
 
   def execute(orderingKeyPath: OrderingKeyPath,
               parameters: RestStatisticsParameters)

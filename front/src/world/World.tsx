@@ -1,5 +1,5 @@
 import React from 'react'
-import { getWorldData } from '../rest/Client'
+import { getWorldData } from '../rest/clients/LevelDataClient'
 import WorldTopMenu from './WorldTopMenu'
 import WorldLeftLoadingMenu from './WorldLeftLoadingMenu'
 import LevelLayout from '../common/layouts/LevelLayout';
@@ -14,7 +14,7 @@ const World = () => {
             pagesMap={pagesMap}
             topMenu={(levelData => <WorldTopMenu levelProps={levelData} />)}
             topLeftMenu={leveData => <WorldLeftLoadingMenu worldLevelDataProps={leveData} />}
-            fetchLevelData={(callback, onError) => getWorldData(callback, onError)}
+            fetchLevelData={callback => getWorldData(callback)}
             documentTitle={_levelData => 'World'}
         />
 

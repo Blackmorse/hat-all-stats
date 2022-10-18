@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Layout from '../common/layouts/Layout';
 import '../i18n';
-import {getWorldData} from '../rest/Client';
+import {getWorldData} from '../rest/clients/LevelDataClient';
 import './About.css';
 import AboutSection from './AboutSection';
 import WorldLeftLoadingMenu from './WorldLeftLoadingMenu';
@@ -12,7 +12,7 @@ import WorldTopMenu from './WorldTopMenu';
 const AboutLayout = () => {
     const [levelProps, setLevelProps] = useState<WorldLevelDataProps | undefined>(undefined)
     useEffect(() => {
-        getWorldData(worldData => setLevelProps(worldData), () => {})    
+        getWorldData((_loadingEnum, worldData) => setLevelProps(worldData))    
     }, [])
 
     return <Layout 

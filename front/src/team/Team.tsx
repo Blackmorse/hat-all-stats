@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMatch } from 'react-router';
 import CountryLevelLayout from '../common/layouts/CountryLevelLayout';
-import {getTeamData} from '../rest/Client';
+import {getTeamData} from '../rest/clients/LevelDataClient';
 import TeamLevelDataProps from './TeamLevelDataProps';
 import pages from './TeamPages';
 import TeamTopMenu from './TeamTopMenu';
@@ -13,7 +13,7 @@ const Team = () => {
     return <CountryLevelLayout<TeamLevelDataProps>
             pagesMap={pagesMap}
             documentTitle={levelProps => levelProps.teamName()}
-            fetchLevelData={(callback, onError) => getTeamData(Number(teamId?.params.teamId), callback, onError)}
+            fetchLevelData={callback => getTeamData(Number(teamId?.params.teamId), callback)}
             topMenu={levelProps => <TeamTopMenu levelProps={levelProps}/>}
         />
 }

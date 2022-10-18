@@ -17,7 +17,7 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFuntion: functions.func): SqlBuilder = {
+                                aggregateFunction: functions.func): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
         "league_id",

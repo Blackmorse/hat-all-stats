@@ -2,5 +2,6 @@ export enum LoadingEnum {
     OK,
     LOADING,
     ERROR,
-    BOT
+    BOT,
+    NOT_FOUND
 }

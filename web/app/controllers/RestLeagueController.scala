@@ -1,5 +1,6 @@
 package controllers
 
+import chpp.worlddetails.models.League
 import com.google.inject.{Inject, Singleton}
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails._
@@ -16,7 +17,7 @@ import models.web.rest.LevelData.Rounds
 import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
 import play.api.libs.json.{Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import service.leagueinfo.{LeagueInfoService, LoadingInfo}
+import service.leagueinfo.{LeagueInfo, LeagueInfoService, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -41,26 +42,30 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
                                       implicit val restClickhouseDAO: RestClickhouseDAO,
                                   val leagueInfoService: LeagueInfoService) extends RestController  {
 
-  def getLeagueData(leagueId: Int): Action[AnyContent] =  Action.async { implicit request =>
-      val league = leagueInfoService.leagueInfo(leagueId).league
-      val leagueName = league.englishName
-      val numberOfDivisions = league.numberOfLevels
-      val divisionLevels = (1 to numberOfDivisions).map(Romans(_))
-      val seasonOffset = leagueInfoService.leagueInfo(leagueId).league.seasonOffset
-      val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId)
-
-      val restLeagueData = RestLeagueData(
-        leagueId = leagueId,
-        leagueName = leagueName,
-        divisionLevels = divisionLevels,
-        seasonOffset = seasonOffset,
-        seasonRoundInfo = seasonRoundInfo,
-        currency = CurrencyUtils.currencyName(league.country),
-        currencyRate = CurrencyUtils.currencyRate(league.country),
-        loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo,
-        countries = leagueInfoService.idToStringCountryMap)
-      Future(Ok(Json.toJson(restLeagueData)))
+  def getLeagueData(leagueId: Int): Action[AnyContent] = Action { implicit request =>
+    leagueInfoService.leagueInfo.get(leagueId)
+      .map(createRestLeagueData)
+      .map(restLeagueData => Ok(Json.toJson(restLeagueData)))
+      .getOrElse(NotFound(s"League: $leagueId"))
     }
+
+  private def createRestLeagueData(leagueInfo: LeagueInfo): RestLeagueData = {
+    val league = leagueInfo.league
+    val numberOfDivisions = league.numberOfLevels
+    val divisionLevels = (1 to numberOfDivisions).map(Romans(_))
+    val seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(league.leagueId)
+
+    RestLeagueData(
+      leagueId = league.leagueId,
+      leagueName = league.englishName,
+      divisionLevels = divisionLevels,
+      seasonOffset = league.seasonOffset,
+      seasonRoundInfo = seasonRoundInfo,
+      currency = CurrencyUtils.currencyName(league.country),
+      currencyRate = CurrencyUtils.currencyRate(league.country),
+      loadingInfo = leagueInfo.loadingInfo,
+      countries = leagueInfoService.idToStringCountryMap)
+  }
 
   private def stats[T](chRequest: ClickhouseStatisticsRequest[T],
                        leagueId: Int,

@@ -36,6 +36,6 @@ object TeamPowerRatingsRequest extends ClickhouseStatisticsRequest[TeamPowerRati
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFuntion: functions.func): SqlBuilder =
+                                aggregateFunction: functions.func): SqlBuilder =
     throw new UnsupportedOperationException("No aggregation allowed for TeamPowerRatings")
 }

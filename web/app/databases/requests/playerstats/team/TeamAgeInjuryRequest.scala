@@ -40,6 +40,6 @@ object TeamAgeInjuryRequest extends ClickhouseStatisticsRequest[TeamAgeInjury] {
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFuntion: functions.func): SqlBuilder =
+                                aggregateFunction: functions.func): SqlBuilder =
     throw new UnsupportedOperationException("No aggregation for TeamAgeInjury")
 }

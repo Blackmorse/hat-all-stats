@@ -28,12 +28,12 @@ import scala.concurrent.Future
 class ChppService @Inject() (val chppClient: ChppClient,
                              val leagueInfoService: LeagueInfoService,
                              implicit val restClickhouseDAO: RestClickhouseDAO) {
-  def getTeamById(teamId: Long): Future[Either[Team, Team]] = {
+  def getTeamById(teamId: Long): Future[Option[Team]] = {
     chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
       .map(teamDetails => {
-        val team = teamDetails.teams.filter(_.teamId == teamId).head
-        if (teamDetails.user.userId == 0L || teamDetails.user.userId == 13537902L) Left(team)
-        else Right(team)
+        teamDetails.teams
+          .find(_.teamId == teamId)
+          .filter(_ => teamDetails.user.userId != 0L && teamDetails.user.userId != 13537902L)
       })
   }
 

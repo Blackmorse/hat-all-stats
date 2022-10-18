@@ -39,6 +39,6 @@ object TeamFanclubFlagsRequest extends ClickhouseStatisticsRequest[TeamFanclubFl
 
   override def aggregateBuilder(orderingKeyPath: OrderingKeyPath,
                                 parameters: RestStatisticsParameters,
-                                aggregateFuntion: functions.func): SqlBuilder =
+                                aggregateFunction: functions.func): SqlBuilder =
     throw new UnsupportedOperationException("No aggregate allowed from TeamFanclubFlags")
 }

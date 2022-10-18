@@ -1,6 +1,4 @@
 import ax, { AxiosResponse } from 'axios';
-import LeagueData from './models/leveldata/LeagueData'
-import DivisionLevelData from './models/leveldata/DivisionLevelData'
 import TeamHatstats from './models/team/TeamHatstats'
 import LeagueUnitRating from './models/leagueunit/LeagueUnitRating'
 import StatisticsParameters, { StatsTypeEnum, StatsType } from './models/StatisticsParameters'
@@ -9,9 +7,7 @@ import DivisionLevelRequest from './models/request/DivisionLevelRequest';
 import LeagueRequest from './models/request/LeagueRequest'
 import TeamRequest from './models/request/TeamRequest'
 import LevelRequest from './models/request/LevelRequest';
-import LeagueUnitData from './models/leveldata/LeagueUnitData';
 import { LeagueUnitTeamStatHistoryInfo } from './models/team/LeagueUnitTeamStat';
-import TeamData from './models/leveldata/TeamData'
 import TeamRankingsStats from './models/team/TeamRankingsStats'
 import NearestMatch, { NearestMatches } from './models/match/NearestMatch';
 import PlayerGoalGames from './models/player/PlayerGoalsGames'
@@ -30,7 +26,6 @@ import TeamStreakTrophies from './models/team/TeamStreakTrophies'
 import OldestTeam from './models/team/OldestTeam'
 import MatchTopHatstats from './models/match/MatchTopHatstats'
 import MatchSpectators from './models/match/MatchSpectators'
-import WorldData from './models/leveldata/WorldData';
 import TotalOverview from './models/overview/TotalOverview'
 import OverviewRequest from './models/request/OverviewRequest'
 import AveragesOverview from './models/overview/AveragesOverview'
@@ -55,63 +50,18 @@ import NumbersChartModel from './models/overview/NumbersChartModel'
 import FormationChartModel from './models/overview/FormationChartModel'
 import { CreatedSameTimeTeamRequest } from './models/team/CreatedSameTimeTeamExtended'
 import PlayerDetails from './models/player/PlayerDetails';
-import PlayerData from './models/leveldata/PlayerData';
-import TeamLevelDataProps from '../team/TeamLevelDataProps';
-import LeagueUnitLevelDataProps from '../leagueunit/LeagueUnitLevelDataProps';
-import WorldLevelDataProps from '../world/WorldLevelDataProps';
-import PlayerLevelDataProps from '../player/PlayerLevelDataProps';
-import LeagueLevelDataProps from '../league/LeagueLevelDataProps';
-import DivisionLevelDataProps from '../divisionlevel/DivisionLevelDataProps';
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
-export function getLeagueData(leagueId: number, 
-        callback: (leagueLevelDataProps: LeagueLevelDataProps) => void,
-        onError: () => void): void {
-    axios.get<LeagueData>('/api/league/' + leagueId)
-        .then(response => response.data)
-        .then(data => new LeagueLevelDataProps(data))
-        .then(callback)
-        .catch(_e => onError())
-}
+function parseAxiosResponse<T>(response: AxiosResponse<T>,
+    callback: (loadingEnum: LoadingEnum, entities?: T) => void) {
+    if (response.status === 204) {
+        callback(LoadingEnum.BOT)
+    } else {
+        callback(LoadingEnum.OK, response.data)
+    }
+} 
 
-export function getDivisionLevelData(leagueId: number, divisionLevel: number, 
-        callback: (divisionLevelDataProps: DivisionLevelDataProps) => void,
-        onError: () => void): void {
-    axios.get<DivisionLevelData>('/api/league/' + leagueId + '/divisionLevel/' + divisionLevel)   
-    .then(response => response.data)
-    .then(data => new DivisionLevelDataProps(data))
-    .then(model => callback(model)) 
-    .catch(_e => onError())
-}
-
-export function getLeagueUnitData(leagueUnitId: number, 
-        callback: (leagueUnitLevelDataProps: LeagueUnitLevelDataProps) => void,
-        onError: () => void): void {
-    axios.get<LeagueUnitData>('/api/leagueUnit/' + leagueUnitId)
-    .then(response => response.data)
-    .then(data => new LeagueUnitLevelDataProps(data))
-    .then(model => callback(model))
-    .catch(_e => onError())
-}
-
-export function getTeamData(leagueId: number, 
-        callback: (teamData: TeamLevelDataProps) => void,
-        onError: () => void): void {
-    axios.get<TeamData>('/api/team/' + leagueId)
-        .then(response => new TeamLevelDataProps(response.data))
-        .then(callback)
-        .catch(_e => onError())
-}
-
-export function getWorldData(callback: (worldLevelDataProps: WorldLevelDataProps) => void,
-        onError: () => void): void {
-    axios.get<WorldData>('/api/overview/worldData')
-        .then(response => response.data)
-        .then(data => new WorldLevelDataProps(data))
-        .then(callback)
-        .catch(_e => onError())
-}
 
 interface LeagueUnitId {
     id: number
@@ -122,15 +72,6 @@ export function getLeagueUnitIdByName(leagueId: number, leagueUnitName: string, 
         .then(response => response.data)
         .then(leagueUnitId => callback(leagueUnitId.id))
 }
-
-function parseAxiosResponse<T>(response: AxiosResponse<T>,
-    callback: (loadingEnum: LoadingEnum, entities?: T) => void) {
-    if (response.status === 204) {
-        callback(LoadingEnum.BOT)
-    } else {
-        callback(LoadingEnum.OK, response.data)
-    }
-} 
 
 function statisticsRequest<T>(path: string): 
     (request: LevelRequest,
@@ -206,7 +147,7 @@ export function getSimilarMatchesByRatings(singleMatch: SingleMatch, accuracy: n
         callback: (loadingEnum: LoadingEnum, result?: SimilarMatchesStats) => void): void {
     axios.post<SimilarMatchesStats>('/api/matches/similarMatchesByRatings?accuracy=' + accuracy, singleMatch)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 export function getDreamTeam(request: LevelRequest, season: number, statType: StatsType, sortBy: string,
         callback: (loadingEnum: LoadingEnum, players?: Array<DreamTeamPlayer>) => void,) {
@@ -224,7 +165,7 @@ export function getDreamTeam(request: LevelRequest, season: number, statType: St
 
     axios.get<Array<DreamTeamPlayer>>(startUrl(request) + '/dreamTeam?' + queryParams)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 
 }
 
@@ -274,13 +215,6 @@ export function getTeamsComparsion(team1Id: number, team2Id: number,
         .catch(_e => callback(LoadingEnum.ERROR))
 }
 
-export function getPlayerData(playerId: number, callback: (result: PlayerLevelDataProps) => void, onError: () => void) {
-    axios.get<PlayerData>('/api/player/' + playerId)
-        .then(response => response.data)
-        .then(data => new PlayerLevelDataProps(data))
-        .then(callback)
-        .catch(onError)
-}
 
 export function playerDetails(playerId: number, callback: (loadingEnum: LoadingEnum, result?: PlayerDetails) => void) {
     axios.get<PlayerDetails>('/api/player/' + playerId + '/playerDetails')
@@ -356,7 +290,7 @@ export function getTeamGoalPoints(request: LevelRequest,
     axios.get<RestTableData<TeamGoalPoints>>(startUrl(request) + '/teamGoalPoints?' + params.toString() + 
         '&playedAllMatches=' + playedAllMatches + '&oneTeamPerUnit=' + oneTeamPerUnit)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export let getTeamPowerRatings = statisticsRequest<TeamPowerRating>('teamPowerRatings')

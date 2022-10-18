@@ -29,35 +29,31 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
   def getPlayerData(playerId: Long): mvc.Action[AnyContent] = Action.async { implicit request =>
     for {
       playerDetails <- chppService.playerDetails(playerId)
-      teamDetailsEither <- chppService.getTeamById(playerDetails.player.owningTeam.teamId)
+      teamDetailsOption <- chppService.getTeamById(playerDetails.player.owningTeam.teamId)
     } yield {
       val leagueId = playerDetails.player.owningTeam.leagueId
       val league = leagueInfoService.leagueInfo(leagueId).league
-      val teamDetails = teamDetailsEither match {
-        //Can't be Left!! I hope...
-        case Right(teamDetails) => teamDetails
-        case Left(teamDetails) => teamDetails
-      }
-      Ok(Json.toJson(RestPlayerData(
-        playerId = playerId,
-        firstName = playerDetails.player.firstName,
-        lastName = playerDetails.player.lastName,
-        leagueId = leagueId,
-        leagueName = league.englishName,
-        divisionLevel = teamDetails.leagueLevelUnit.leagueLevel,
-        divisionLevelName = Romans(teamDetails.leagueLevelUnit.leagueLevel),
-        leagueUnitId = teamDetails.leagueLevelUnit.leagueLevelUnitId,
-        leagueUnitName = teamDetails.leagueLevelUnit.leagueLevelUnitName,
-        teamId = playerDetails.player.owningTeam.teamId,
-        teamName = playerDetails.player.owningTeam.teamName,
-        seasonOffset = league.seasonOffset,
-        seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId),
-        currency = CurrencyUtils.currencyName(league.country),
-        currencyRate = CurrencyUtils.currencyRate(league.country),
-        countries = leagueInfoService.idToStringCountryMap,
-        loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo,
-        translations = translationsService.translationsMap
-      )))
+      teamDetailsOption.map(teamDetails =>
+        Ok(Json.toJson(RestPlayerData(
+          playerId = playerId,
+          firstName = playerDetails.player.firstName,
+          lastName = playerDetails.player.lastName,
+          leagueId = leagueId,
+          leagueName = league.englishName,
+          divisionLevel = teamDetails.leagueLevelUnit.leagueLevel,
+          divisionLevelName = Romans(teamDetails.leagueLevelUnit.leagueLevel),
+          leagueUnitId = teamDetails.leagueLevelUnit.leagueLevelUnitId,
+          leagueUnitName = teamDetails.leagueLevelUnit.leagueLevelUnitName,
+          teamId = playerDetails.player.owningTeam.teamId,
+          teamName = playerDetails.player.owningTeam.teamName,
+          seasonOffset = league.seasonOffset,
+          seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId),
+          currency = CurrencyUtils.currencyName(league.country),
+          currencyRate = CurrencyUtils.currencyRate(league.country),
+          countries = leagueInfoService.idToStringCountryMap,
+          loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo,
+          translations = translationsService.translationsMap
+      )))).getOrElse(NotFound(s"Not team for playerId: $playerId"))
     }
   }
 

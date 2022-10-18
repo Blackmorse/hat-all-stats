@@ -3,6 +3,7 @@ import {Card} from 'react-bootstrap'
 import {useTranslation} from 'react-i18next'
 import {Link} from 'react-router-dom'
 import LeftMenu from '../../common/menu/LeftMenu'
+import {LoadingEnum} from '../enums/LoadingEnum'
 import Mappings from '../enums/Mappings'
 import {PagesEnum} from '../enums/PagesEnum'
 import LevelDataProps from '../LevelDataProps'
@@ -63,7 +64,7 @@ function parseQueryParams(): QueryParams {
 export interface BaseLevelLayoutProps<LevelProps extends LevelDataProps> {
     pagesMap: Map<PagesEnum, (props: LevelProps, queryParams: QueryParams) => JSX.Element>
     topMenu: (props?: LevelProps) => JSX.Element
-    fetchLevelData: (callback: (levelProps: LevelProps) => void, onError: () => void) => void
+    fetchLevelData: (callback: (loadingEnum: LoadingEnum, levelProps?: LevelProps) => void) => void
     documentTitle: (levelProps: LevelProps) => string
 }
 
@@ -77,16 +78,21 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
     //TODO 
     const [ page, setPage ] = useState((queryParams.pageString === undefined) ? 
         Array.from(props.pagesMap)[0][0] : Mappings.queryParamToPageMap.get(queryParams.pageString))
-    const [ isError, setIsError ] = useState(false)
+    const [ loadingState, setLoadingState ] = useState(LoadingEnum.OK)
     const [ levelProps, setLevelProps ] = useState<LevelProps | undefined>(undefined)
 
     useEffect(() => {
-        props.fetchLevelData(levelProps => {
-            setLevelProps(levelProps)
-            setIsError(false)
-            document.title = props.documentTitle(levelProps) + ' - Hattid'
-        },
-        () => setIsError(true))
+        props.fetchLevelData((loadingEnum, levelProps) => {
+            if (loadingEnum === LoadingEnum.OK) {
+                setLoadingState(LoadingEnum.OK)
+                setLevelProps(levelProps)
+                document.title = props.documentTitle(levelProps!) + ' - Hattid'
+            } else if(loadingEnum === LoadingEnum.NOT_FOUND) {
+                setLoadingState(LoadingEnum.NOT_FOUND)
+            } else {
+                setLoadingState(LoadingEnum.ERROR)
+            }
+        })
     }, [])
 
     let leftMenu = <>
@@ -100,12 +106,19 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
         </>
 
     let errorPopup: JSX.Element
-    if (isError) {
+    if (loadingState === LoadingEnum.ERROR) {
         errorPopup = <div className="error_popup">
             <img src="/warning.gif" className="warning_img" alt="warning" />
             <span>
                 Error! Page doesnt exist or internal error occured. 
                 Try to <button className="warning_link" onClick={() => window.location.reload()}> reload </button> or return to the <Link className="warning_link" to="/">main page</Link>
+            </span>
+        </div>
+    } else if (loadingState === LoadingEnum.NOT_FOUND) {
+        errorPopup = <div className="error_popup">
+            <img src="/warning.gif" className="warning_img" alt="warning" />
+            <span>
+                404: no entity (league/division/country/team/player) with specified id was found 
             </span>
         </div>
     } else {

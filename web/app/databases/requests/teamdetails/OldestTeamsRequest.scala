@@ -33,7 +33,7 @@ object OldestTeamsRequest extends ClickhouseStatisticsRequest[OldestTeam] {
       .limit(page = parameters.page, pageSize = parameters.pageSize)
   }
 
-  override def aggregateBuilder(orderingKeyPath: OrderingKeyPath, parameters: RestStatisticsParameters, aggregateFuntion: functions.func): SqlBuilder =
+  override def aggregateBuilder(orderingKeyPath: OrderingKeyPath, parameters: RestStatisticsParameters, aggregateFunction: functions.func): SqlBuilder =
     throw new UnsupportedOperationException("No aggregate allowed for OldestTeamsRequest")
 
   override val rowParser: RowParser[OldestTeam] = OldestTeam.mapper
