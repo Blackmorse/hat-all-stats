@@ -24,11 +24,20 @@ class PlayerService @Inject() ()  {
   def playerPosition(history: List[PlayerHistory]): String = {
     val sortedHistory = history.sortBy(h => (h.season, h.round)).reverse
     sortedHistory.headOption.map(_.playerSortingKey.teamId)
-      .map(lastTeamId =>
-        sortedHistory.filter(_.role != "none").takeWhile(_.playerSortingKey.teamId == lastTeamId).take(10)
-          .map(_.role).groupBy(identity).map{case (role, list) => (role, list.size)}
-          .toList.sortBy(_._2).reverse
-          .head._1).getOrElse("")
+      .flatMap(lastTeamId =>
+        sortedHistory
+          .filter(_.role != "none")
+          .takeWhile(_.playerSortingKey.teamId == lastTeamId)
+          .take(10)
+          .map(_.role)
+          .groupBy(identity)
+          .map{case (role, list) => (role, list.size)}
+          .toList
+          .sortBy(_._2)
+          .reverse
+          .headOption
+          .map(_._1))
+      .getOrElse("")
   }
 
   def playerSeasonStats(history: List[PlayerHistory]): PlayerSeasonStats = {
