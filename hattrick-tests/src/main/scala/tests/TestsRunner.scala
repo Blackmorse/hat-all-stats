@@ -34,7 +34,10 @@ object TestsRunner {
     implicit val oauthTokens: OauthTokens = OauthTokens(authToken, authCustomerKey, clientSecret, tokenSecret)
     implicit val telegramCreds: TelegramCreds = TelegramCreds(chatId = chatId, botToken = botToken)
 
-    val worldDetails = Await.result(ChppRequestExecutor.execute(WorldDetailsRequest()), 1.minute)
+    val worldDetails = Await.result(ChppRequestExecutor.execute(WorldDetailsRequest()), 1.minute) match {
+      case Right(value) => value
+      case Left(err) => throw new Exception(s"$err")
+    }
 
     try {
       val allIssues = AllCountriesTest.testNumberOfCountries(worldDetails) ++

@@ -9,10 +9,10 @@ database_name = "hattrick"
 hattid_web_url = "http://localhost:{{ web.port }}"
 
 akka.http.host-connection-pool.response-entity-subscription-timeout = 3.minute
-akka.stream.materializer.max-input-buffer-size = 256
+akka.stream.materializer.max-input-buffer-size = 512
 
-akka.http.host-connection-pool.max-connections = 256
-akka.http.host-connection-pool.max-open-requests = 256
+akka.http.host-connection-pool.max-connections = 512
+akka.http.host-connection-pool.max-open-requests = 512
 
 crobox.clickhouse.client {
     connection: {

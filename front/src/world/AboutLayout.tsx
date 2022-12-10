@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
+import { LoadingEnum } from '../common/enums/LoadingEnum';
 import Layout from '../common/layouts/Layout';
 import '../i18n';
 import {getWorldData} from '../rest/clients/LevelDataClient';
+import { Success } from '../rest/models/Https';
 import './About.css';
 import AboutSection from './AboutSection';
 import WorldLeftLoadingMenu from './WorldLeftLoadingMenu';
@@ -11,8 +13,13 @@ import WorldTopMenu from './WorldTopMenu';
 
 const AboutLayout = () => {
     const [levelProps, setLevelProps] = useState<WorldLevelDataProps | undefined>(undefined)
+
     useEffect(() => {
-        getWorldData((_loadingEnum, worldData) => setLevelProps(worldData))    
+        getWorldData((payload) => {
+            if (payload.loadingEnum === LoadingEnum.OK) {
+                setLevelProps((payload as Success<WorldLevelDataProps>).model)
+            }
+        })    
     }, [])
 
     return <Layout 

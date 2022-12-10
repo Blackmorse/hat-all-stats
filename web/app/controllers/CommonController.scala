@@ -22,13 +22,13 @@ class CommonController @Inject() (val controllerComponents: ControllerComponents
                                   val translationsService: TranslationsService) extends BaseController {
 
   def searchByName(name: String): Action[AnyContent] = Action.async { implicit request =>
-    chppClient.execute[Search, SearchRequest](SearchRequest(searchType = Some(SearchType.TEAMS), searchString = Some(name)))
+    chppClient.executeUnsafe[Search, SearchRequest](SearchRequest(searchType = Some(SearchType.TEAMS), searchString = Some(name)))
       .map(results => results.searchResults.map(result => TeamSearchResult(result.resultId, result.resultName)))
       .map(r => Ok(Json.toJson(r)))
   }
 
   def searchById(id: Long): Action[AnyContent] = Action.async { implicit request =>
-    chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(id)))
+    chppClient.executeUnsafe[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(id)))
       .map(result => {
         result.teams
           .filter(_.teamId == id)

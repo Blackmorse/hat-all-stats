@@ -93,9 +93,9 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
   }
 
   def compareTwoTeams(teamId1: Long, teamId2: Long): Future[TeamComparsion] = {
-    val team1Future = chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId1)))
+    val team1Future = chppClient.executeUnsafe[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId1)))
 
-    val team2Future = chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId2)))
+    val team2Future = chppClient.executeUnsafe[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId2)))
 
     team1Future.zipWith(team2Future){case (teamDetails1, teamDetails2) =>
       val team1 = teamDetails1.teams.filter(_.teamId == teamId1).head

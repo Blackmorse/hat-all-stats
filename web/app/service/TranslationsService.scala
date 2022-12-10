@@ -24,9 +24,9 @@ class TranslationsService @Inject() (val chppClient: ChppClient) {
 
   val translationsMap: Seq[(String, LanguageTranslations)] = {
     languages.map {case (languageAbbr, languageId) =>
-      languageAbbr -> chppClient.execute[Translations, TranslationsRequest](TranslationsRequest(languageId = languageId))
+      languageAbbr -> chppClient.executeUnsafe[Translations, TranslationsRequest](TranslationsRequest(languageId = languageId))
     }.map {case (languageAbbr, translationsFuture) =>
-      val translations = Await.result(translationsFuture, 30.seconds)
+      val translations = Await.result(translationsFuture, 60.seconds)
       languageAbbr -> LanguageTranslations(
         skillTranslations = translations.skillLevels.map(sl => TranslationLevel(sl.level, sl.name)),
         specialities = translations.specialities.map(sl => TranslationLevel(sl.level, sl.name))

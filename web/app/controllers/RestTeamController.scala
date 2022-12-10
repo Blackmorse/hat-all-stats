@@ -59,12 +59,11 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   }
 
   def getTeamData(teamId: Long): Action[AnyContent] = Action.async {
-    chppService.getTeamById(teamId)
-      .map(teamOption => teamOption
-        .map(team => Ok(Json.toJson(getRestTeamData(team))))
-        .getOrElse(NotFound(s"TeamId: $teamId"))
-      )
+    chppService.getTeamById(teamId).map {
+      case Left(notFoundError) => NotFound(Json.toJson(notFoundError))
+      case Right(team) => Ok(Json.toJson(getRestTeamData(team)))
     }
+  }
 
 
   private def orderingKeyPathFromTeam(team: Team, divisionLevel: Int, leagueUnitId: Long): OrderingKeyPath =
@@ -79,7 +78,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
                        teamId: Long,
                        restStatisticsParameters: RestStatisticsParameters)
               (implicit writes: Writes[T]): Action[AnyContent] = Action.async{ implicit request =>
-    chppService.getTeamById(teamId).flatMap(teamOpt => teamOpt.map(team => {
+    chppService.getTeamByIdUnsafe(teamId).flatMap(teamOpt => teamOpt.map(team => {
       for {
         (divisionLevel, leagueUnitId) <- chppService.getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
         statList <- chRequest.execute(orderingKeyPathFromTeam(team, divisionLevel, leagueUnitId), restStatisticsParameters)
@@ -92,7 +91,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
                                 teamId: Long,
                                 restStatisticsParameters: RestStatisticsParameters,
                                 playersParameters: PlayersParameters)(implicit writes: Writes[T]) = Action.async{ implicit request =>
-    chppService.getTeamById(teamId).flatMap(teamOpt => teamOpt.map(team => {
+    chppService.getTeamByIdUnsafe(teamId).flatMap(teamOpt => teamOpt.map(team => {
       for {
         (divisionLevel, leagueUnitId) <- chppService.getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
         statList <- plRequest.execute(orderingKeyPathFromTeam(team, divisionLevel, leagueUnitId), restStatisticsParameters, playersParameters)
@@ -128,7 +127,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
 
   def teamRankings(teamId: Long, season: Int): Action[AnyContent] = Action.async { implicit request =>
-    chppService.getTeamById(teamId).flatMap(teamOpt => teamOpt.map(team => {
+    chppService.getTeamByIdUnsafe(teamId).flatMap(teamOpt => teamOpt.map(team => {
       val leagueId = team.league.leagueId
 
       TeamRankingsRequest.execute(OrderingKeyPath(
@@ -169,7 +168,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   }
 
   def promotions(teamId: Long): Action[AnyContent] = Action.async{ implicit request =>
-    chppService.getTeamById(teamId).flatMap(teamOpt => teamOpt.map(team => {
+    chppService.getTeamByIdUnsafe(teamId).flatMap(teamOpt => teamOpt.map(team => {
       val season = leagueInfoService.leagueInfo.currentSeason(team.league.leagueId)
       for {
         (divisionLevel, leagueUnit) <- chppService.getDivisionLevelAndLeagueUnit(team, season)
@@ -180,7 +179,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   }
 
   def teamMatches(teamId: Long, season: Int): Action[AnyContent] = Action.async(implicit request =>
-    chppService.getTeamById(teamId).flatMap(teamOpt => teamOpt.map(team => {
+    chppService.getTeamByIdUnsafe(teamId).flatMap(teamOpt => teamOpt.map(team => {
       for {
         (divisionLevel, leagueUnitId) <- chppService.getDivisionLevelAndLeagueUnit(team, season)
         matches <- TeamMatchesRequest.execute(season, orderingKeyPathFromTeam(team, divisionLevel, leagueUnitId))

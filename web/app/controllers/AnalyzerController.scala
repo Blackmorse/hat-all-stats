@@ -56,8 +56,8 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
       secondTeamId  <- secondTeamIdOpt
       secondMatchId <- secondMatchIdOpt
     } yield {
-      val firstMatchFuture = chppClient.execute[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(firstMatchId)))
-      val secondMatchFuture = chppClient.execute[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(secondMatchId)))
+      val firstMatchFuture = chppClient.executeUnsafe[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(firstMatchId)))
+      val secondMatchFuture = chppClient.executeUnsafe[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(secondMatchId)))
 
       firstMatchFuture.zip(secondMatchFuture).map { case (firstMatch, secondMatch) =>
         val firstTeam = if (firstMatch.matc.homeTeam.teamId == firstTeamId) firstMatch.matc.homeTeam else firstMatch.matc.awayTeam
@@ -78,7 +78,7 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
 
   private def getTeamPlayedMatches(teamOpt: Option[Team]): Future[Seq[NearestMatch]] = {
     teamOpt.map(team => {
-      chppClient.execute[Matches, MatchesRequest](MatchesRequest(teamId = Some(team._1)))
+      chppClient.executeUnsafe[Matches, MatchesRequest](MatchesRequest(teamId = Some(team._1)))
         .map(opponentMatches => {
           opponentMatches.team.matchList
             .filter(m => m.matchType == MatchType.LEAGUE_MATCH || m.matchType == MatchType.CUP_MATCH)
@@ -91,7 +91,7 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
   }
 
   private def currentTeamPlayedMatchesAndUpcomingOpponents(teamId: Long): Future[(Seq[NearestMatch], Seq[Team])] = {
-    chppClient.execute[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
+    chppClient.executeUnsafe[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
       .map(matches => {
         val currentTeamPlayedMatches = matches.team.matchList
           .filter(m => m.matchType == MatchType.LEAGUE_MATCH || m.matchType == MatchType.CUP_MATCH)
@@ -118,7 +118,7 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
   }
 
   private def teamPlayedMatches(teamId: Long): Future[Seq[NearestMatch]] =
-    chppClient.execute[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
+    chppClient.executeUnsafe[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
       .map(opponentMatches => {
         opponentMatches.team.matchList
           .filter(m => m.matchType == MatchType.LEAGUE_MATCH || m.matchType == MatchType.CUP_MATCH)

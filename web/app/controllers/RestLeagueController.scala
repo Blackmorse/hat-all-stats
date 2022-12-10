@@ -14,7 +14,7 @@ import databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsReque
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
-import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
+import models.web.{NotFoundError, PlayersParameters, RestStatisticsParameters, StatsType}
 import play.api.libs.json.{Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfo, LeagueInfoService, LoadingInfo}
@@ -46,7 +46,11 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
     leagueInfoService.leagueInfo.get(leagueId)
       .map(createRestLeagueData)
       .map(restLeagueData => Ok(Json.toJson(restLeagueData)))
-      .getOrElse(NotFound(s"League: $leagueId"))
+      .getOrElse(NotFound(Json.toJson(NotFoundError(
+        entityType = NotFoundError.LEAGUE,
+        entityId = leagueId.toString,
+        description = ""
+      ))))
     }
 
   private def createRestLeagueData(leagueInfo: LeagueInfo): RestLeagueData = {

@@ -9,11 +9,12 @@ import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsReque
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
+import hattid.CommonData
 
 import javax.inject.{Inject, Singleton}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
-import models.web.{PlayersParameters, RestStatisticsParameters, StatsType}
+import models.web.{NotFoundError, PlayersParameters, RestStatisticsParameters, StatsType}
 import play.api.libs.json.{Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfo, LeagueInfoService, LoadingInfo}
@@ -45,7 +46,11 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
     leagueInfoService.leagueInfo.get(leagueId)
       .map(leagueInfo => createRestDivisionLevelData(leagueInfo, divisionLevel))
       .map(restData => Ok(Json.toJson(restData)))
-      .getOrElse(NotFound(s"League: $leagueId, Division: $divisionLevel"))
+      .getOrElse(NotFound(Json.toJson(NotFoundError(
+        entityType = NotFoundError.DIVISION_LEVEL,
+        entityId = s"$leagueId-${CommonData.arabToRomans.getOrElse(divisionLevel, divisionLevel)}",
+        description = ""
+      ))))
   }
 
   private def createRestDivisionLevelData(leagueInfo: LeagueInfo, divisionLevel: Int): RestDivisionLevelData = {

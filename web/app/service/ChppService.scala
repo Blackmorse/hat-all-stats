@@ -2,6 +2,7 @@ package service
 
 import chpp.avatars.AvatarRequest
 import chpp.avatars.models.AvatarContainer
+import chpp.chpperror.ChppError
 import chpp.commonmodels.MatchType
 import chpp.matches.MatchesRequest
 import chpp.matches.models.Matches
@@ -15,6 +16,7 @@ import controllers.NearestMatches
 import databases.dao.RestClickhouseDAO
 import databases.requests.teamrankings.HistoryTeamLeagueUnitInfoRequest
 import models.clickhouse.NearestMatch
+import models.web.NotFoundError
 import models.web.player.AvatarPart
 import service.leagueinfo.LeagueInfoService
 import webclients.ChppClient
@@ -28,8 +30,35 @@ import scala.concurrent.Future
 class ChppService @Inject() (val chppClient: ChppClient,
                              val leagueInfoService: LeagueInfoService,
                              implicit val restClickhouseDAO: RestClickhouseDAO) {
-  def getTeamById(teamId: Long): Future[Option[Team]] = {
+
+
+  def getTeamById(teamId: Long): Future[Either[NotFoundError, Team]] = {
     chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
+      .map {
+        case Left(chppError) => Left(NotFoundError(
+          entityType = NotFoundError.TEAM,
+          entityId = teamId.toString,
+          description = chppError.error))
+        case Right(teamDetails) => findTeamId(teamDetails, teamId)
+      }
+  }
+
+  private def findTeamId(teamDetails: TeamDetails, teamId: Long): Either[NotFoundError, Team] = {
+    val teamOpt = teamDetails.teams
+      .find(_.teamId == teamId)
+      .filter(_ => teamDetails.user.userId != 0L && teamDetails.user.userId != 13537902L)
+    teamOpt match {
+      case None => Left(NotFoundError(
+        entityType = "TEAM",
+        entityId = teamId.toString,
+        description = s"The owner is a bot or has been banned"))
+      case Some(team) => Right(team)
+    }
+  }
+
+  @deprecated
+  def getTeamByIdUnsafe(teamId: Long): Future[Option[Team]] = {
+    chppClient.executeUnsafe[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
       .map(teamDetails => {
         teamDetails.teams
           .find(_.teamId == teamId)
@@ -38,7 +67,7 @@ class ChppService @Inject() (val chppClient: ChppClient,
   }
 
   def getDivisionLevelAndLeagueUnit(team: Team, season: Int): Future[(Int, Long)] = {
-    chppClient.execute[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
+    chppClient.executeUnsafe[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
       .map(_.leagueList.head)
       .flatMap(league => {
         val htRound = league.matchRound
@@ -59,7 +88,7 @@ class ChppService @Inject() (val chppClient: ChppClient,
   }
 
   def nearestMatches(teamId: Long): Future[NearestMatches] = {
-    chppClient.execute[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
+    chppClient.executeUnsafe[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
       .map(response => {
         val matches = response.team.matchList
           .filter(_.matchType == MatchType.LEAGUE_MATCH)
@@ -77,11 +106,11 @@ class ChppService @Inject() (val chppClient: ChppClient,
       })
   }
 
-  def playerDetails(playerId: Long): Future[PlayerDetails] =
+  def playerDetails(playerId: Long): Future[Either[ChppError, PlayerDetails]] =
     chppClient.execute[PlayerDetails, PlayerDetailsRequest] (PlayerDetailsRequest(playerId = playerId))
 
   def getPlayerAvatar(teamId: Int, playerId: Long): Future[Seq[AvatarPart]] = {
-    chppClient.execute[AvatarContainer, AvatarRequest](AvatarRequest(teamId = Some(teamId)))
+    chppClient.executeUnsafe[AvatarContainer, AvatarRequest](AvatarRequest(teamId = Some(teamId)))
       .map(avatar => {
         val player = avatar.team.players.filter(_.playerId == playerId)
           .head

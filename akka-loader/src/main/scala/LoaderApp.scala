@@ -1,5 +1,7 @@
 import akka.actor.ActorSystem
-import chpp.OauthTokens
+import akka.http.scaladsl.Http
+import chpp.{ChppRequestExecutor, OauthTokens}
+import chpp.playerdetails.PlayerDetailsRequest
 import clickhouse.TeamRankJoiner
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory

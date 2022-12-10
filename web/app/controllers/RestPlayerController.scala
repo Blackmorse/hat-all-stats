@@ -4,6 +4,7 @@ import chpp.playerdetails.PlayerDetailsRequest
 import chpp.playerdetails.models.PlayerDetails
 import databases.dao.RestClickhouseDAO
 import databases.requests.playerstats.player.PlayerHistoryRequest
+import models.web.NotFoundError
 import models.web.player.{CurrentPlayerCharacteristics, RestPlayerData, RestPlayerDetails}
 import play.api.libs.json.Json
 import play.api.mvc
@@ -12,6 +13,8 @@ import service.leagueinfo.LeagueInfoService
 import service.{ChppService, PlayerService, TranslationsService}
 import utils.{CurrencyUtils, Romans}
 import webclients.ChppClient
+
+import scala.concurrent.Future
 
 //TODO execution context!
 import javax.inject.{Inject, Singleton}
@@ -26,16 +29,15 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
                                       val translationsService: TranslationsService,
                                       implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
 
-  def getPlayerData(playerId: Long): mvc.Action[AnyContent] = Action.async { implicit request =>
+  private def getRestPlayerData(playerDetails: PlayerDetails): Future[Either[NotFoundError ,RestPlayerData]] = {
     for {
-      playerDetails <- chppService.playerDetails(playerId)
-      teamDetailsOption <- chppService.getTeamById(playerDetails.player.owningTeam.teamId)
+      teamDetailsEither <- chppService.getTeamById(playerDetails.player.owningTeam.teamId)
     } yield {
       val leagueId = playerDetails.player.owningTeam.leagueId
       val league = leagueInfoService.leagueInfo(leagueId).league
-      teamDetailsOption.map(teamDetails =>
-        Ok(Json.toJson(RestPlayerData(
-          playerId = playerId,
+      val map = teamDetailsEither.map(teamDetails =>
+        RestPlayerData(
+          playerId = playerDetails.player.playerId,
           firstName = playerDetails.player.firstName,
           lastName = playerDetails.player.lastName,
           leagueId = leagueId,
@@ -53,41 +55,66 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
           countries = leagueInfoService.idToStringCountryMap,
           loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo,
           translations = translationsService.translationsMap
-      )))).getOrElse(NotFound(s"Not team for playerId: $playerId"))
+        ))
+      map match {
+        case Left(notFoundError: NotFoundError) => Left(NotFoundError(
+          entityType = NotFoundError.PLAYER,
+          entityId = playerDetails.player.playerId.toString,
+          description = s"No active team for the player ${playerDetails.player.playerId}. Cause ${notFoundError.description}"))
+        case Right(value) => Right(value)
+      }
     }
+  }
+  def getPlayerData(playerId: Long): mvc.Action[AnyContent] = Action.async { implicit request =>
+    chppService.playerDetails(playerId).flatMap {
+      case Left(chppError) => Future(Left(NotFoundError(
+        entityType = NotFoundError.PLAYER,
+        entityId = playerId.toString,
+        description = s"Player $playerId not found: ${chppError.error}")))
+      case Right(playerDetails) => getRestPlayerData(playerDetails)
+    } map {
+      case Left(error) => NotFound(Json.toJson(error))
+      case Right(value) => Ok(Json.toJson(value))
+    }
+  }
+
+  private def getRestPlayerDetails(playerDetails: PlayerDetails): Future[RestPlayerDetails] = {
+    for {
+      playerHistoryList <- PlayerHistoryRequest.execute(playerDetails.player.playerId)
+      avatarParts <- chppService.getPlayerAvatar(playerDetails.player.owningTeam.teamId.toInt, playerDetails.player.playerId)
+    } yield RestPlayerDetails(
+        playerId = playerDetails.player.playerId,
+        firstName = playerDetails.player.firstName,
+        lastName = playerDetails.player.lastName,
+        currentPlayerCharacteristics = CurrentPlayerCharacteristics(
+          position = playerService.playerPosition(playerHistoryList),
+          salary = playerDetails.player.salary,
+          tsi = playerDetails.player.tsi,
+          age = playerDetails.player.age * 112 + playerDetails.player.age,
+          form = playerDetails.player.playerForm,
+          injuryLevel = playerDetails.player.injuryLevel,
+          experience = playerDetails.player.experience,
+          leaderShip = playerDetails.player.leaderShip,
+          speciality = playerDetails.player.specialty
+        ),
+        nativeLeagueId = playerDetails.player.nativeLeagueId,
+        playerLeagueUnitHistory = playerService.playerLeagueUnitHistory(playerHistoryList),
+        avatar = avatarParts,
+        playerSeasonStats = playerService.playerSeasonStats(playerHistoryList),
+        playerCharts = playerService.playerCharts(playerHistoryList)
+      )
   }
 
   def getPlayerHistory(playerId: Long): mvc.Action[AnyContent] = Action.async { implicit request =>
     val playerDetailsFuture = chppClient.execute[PlayerDetails, PlayerDetailsRequest](PlayerDetailsRequest(playerId = playerId))
-    val playerHistoryFuture = PlayerHistoryRequest.execute(playerId)
 
-   for {
-     (playerDetails, playerHistoryList) <- playerDetailsFuture.zip(playerHistoryFuture)
-     avatarParts <- chppService.getPlayerAvatar(playerDetails.player.owningTeam.teamId.toInt, playerId)
-   } yield {
-     val restPlayerDetails = RestPlayerDetails(
-       playerId = playerId,
-       firstName = playerDetails.player.firstName,
-       lastName = playerDetails.player.lastName,
-       currentPlayerCharacteristics = CurrentPlayerCharacteristics(
-         position = playerService.playerPosition(playerHistoryList),
-         salary = playerDetails.player.salary,
-         tsi = playerDetails.player.tsi,
-         age = playerDetails.player.age * 112 + playerDetails.player.age,
-         form = playerDetails.player.playerForm,
-         injuryLevel = playerDetails.player.injuryLevel,
-         experience = playerDetails.player.experience,
-         leaderShip = playerDetails.player.leaderShip,
-         speciality = playerDetails.player.specialty
-       ),
-       nativeLeagueId = playerDetails.player.nativeLeagueId,
-       playerLeagueUnitHistory = playerService.playerLeagueUnitHistory(playerHistoryList),
-       avatar = avatarParts,
-       playerSeasonStats = playerService.playerSeasonStats(playerHistoryList),
-       playerCharts = playerService.playerCharts(playerHistoryList)
-     )
-
-     Ok(Json.toJson(restPlayerDetails))
-   }
+    playerDetailsFuture.flatMap{
+      case Left(chppError) => Future(NotFound(Json.toJson(NotFoundError(
+        entityType = NotFoundError.PLAYER,
+        entityId = playerId.toString,
+        description = s"Player with id $playerId not found. Cause: ${chppError.error}"
+      ))))
+      case Right(playerDetails) => getRestPlayerDetails(playerDetails).map(pd => Ok(Json.toJson(pd)))
+    }
   }
 }

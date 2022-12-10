@@ -41,8 +41,8 @@ class LeagueInfoService @Inject() (val chppClient: ChppClient,
   def getRelativeSeasonFromAbsolute(season: Int, leagueId: Int): Int = leagueInfo(leagueId).league.seasonOffset + season
 
   val leagueInfo: LeaguesInfo = {
-    val leagueIdToCountryNameMap = Await.result(chppClient.execute[WorldDetails, WorldDetailsRequest](WorldDetailsRequest())
-      .map(_.leagueList.map(league => league.leagueId -> league)), 30.seconds)
+    val leagueIdToCountryNameMap = Await.result(chppClient.executeUnsafe[WorldDetails, WorldDetailsRequest](WorldDetailsRequest())
+      .map(_.leagueList.map(league => league.leagueId -> league)), 60.seconds)
 
 
     val leagueHistoryInfos = Await.result(HistoryInfoRequest.execute(None, None, None), 1.minute)

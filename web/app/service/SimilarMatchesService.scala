@@ -17,7 +17,7 @@ class SimilarMatchesService @Inject()
                                      (chppClient: ChppClient,
                                        implicit val restClickhouseDAO: RestClickhouseDAO){
   def similarMatchesStats(matchId: Long, accuracy: Double): Future[Option[SimilarMatchesStats]] = {
-    chppClient.execute[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(matchId)))
+    chppClient.executeUnsafe[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(matchId)))
       .flatMap(matchDetails => {
         val singleMatch = SingleMatch.fromHomeAwayTeams(
           homeTeam = matchDetails.matc.homeTeam,

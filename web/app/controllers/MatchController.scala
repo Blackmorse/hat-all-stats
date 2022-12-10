@@ -42,7 +42,7 @@ class MatchController @Inject()(val controllerComponents: ControllerComponents,
   }
 
   def singleMatch(matchId: Long): Action[AnyContent] = Action.async { implicit request =>
-    chppClient.execute[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(matchId)))
+    chppClient.executeUnsafe[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(matchId)))
       .map(matchDetails => {
         val matc = matchDetails.matc
         val homeTeam = matc.homeTeam

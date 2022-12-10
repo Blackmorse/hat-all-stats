@@ -16,7 +16,12 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest[Model], Model] {
     Flow[(Request, T)]
       .mapAsyncUnordered(32) {
         case (request, t) =>
-          ChppRequestExecutor.execute(request).map((_, t))
+          ChppRequestExecutor.execute(request)
+            .map{
+              case Right(value) => value
+              case Left(value) => throw new Exception(s"Error response: $value")
+            }
+            .map(r => (r, t))
       }.async
   }
 }
