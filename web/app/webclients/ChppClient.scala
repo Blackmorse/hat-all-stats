@@ -22,12 +22,12 @@ class ChppClient @Inject()(val configuration: Configuration,
     )
 
   def execute[Model, Request <: AbstractRequest[Model]](request: Request)(implicit reader: XmlReader[Model]): Future[Either[ChppError, Model]] =
-    ChppRequestExecutor.execute(request)
+    ChppRequestExecutor.executeWithRetry(request)
 
   @deprecated
   def executeUnsafe[Model, Request <: AbstractRequest[Model]](request: Request)(implicit reader: XmlReader[Model]): Future[Model] = {
     import actorSystem.dispatcher
-    ChppRequestExecutor.execute(request) map {
+    ChppRequestExecutor.executeWithRetry(request) map {
       case Right(value) => value
       case Left(err) => throw new Exception(s"Error while parsing: $err")
     }

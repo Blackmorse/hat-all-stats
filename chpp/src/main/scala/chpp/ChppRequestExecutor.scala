@@ -1,9 +1,9 @@
 package chpp
 
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, Scheduler}
 import akka.http.scaladsl.Http
 import chpp.chpperror.ChppError
-import com.lucidchart.open.xtract.XmlReader
+import com.lucidchart.open.xtract.{ParseError, XmlReader}
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -13,58 +13,64 @@ import scala.xml.{Elem, XML}
 object ChppRequestExecutor {
   private val retries = 4
 
-  def execute[Model](request: AbstractRequest[Model], retry: Int = 0)
-                    (implicit oauthTokens: OauthTokens, system: ActorSystem, reader: XmlReader[Model]): Future[Either[ChppError, Model]] = {
-    import system.dispatcher
-    val v = for (response <- Http().singleRequest(request.createRequest());
-         responseBody <- response.entity.toStrict(3.minute)) yield {
+  case class ChppErrorResponse(chppError: ChppError) extends Exception
+  case class ChppUnparsableErrorResponse(errors: Seq[ParseError], rawResponse: String) extends Exception
+  case class ModelUnparsableResponse(errors: Seq[ParseError], rawResponse: String) extends Exception
 
+  def executeWithRetry[Model](request: AbstractRequest[Model])
+                      (implicit oauthTokens: OauthTokens, system: ActorSystem, reader: XmlReader[Model]): Future[Either[ChppError, Model]] = {
+    import system.dispatcher
+    implicit val scheduler: Scheduler =  system.scheduler
+    //Throwing exceptions insides to enable retries, as it triggered by throwing exceptions
+    akka.pattern.retry(
+      attempt = () => execute(request),
+      attempts = retries,
+      minBackoff = 300.millisecond,
+      maxBackoff = 2.seconds,
+      randomFactor = 0.3
+    ) transform {
+      case Success(model) => Try(Right(model))
+      case Failure(ChppErrorResponse(chppError)) => Try(Left(chppError))
+      case Failure(e) => Try(throw e)
+    }
+  }
+
+  private def execute[Model](request: AbstractRequest[Model])
+                       (implicit oauthTokens: OauthTokens, system: ActorSystem, reader: XmlReader[Model]): Future[Model] = {
+    import system.dispatcher
+    for (response <- Http().singleRequest(request.createRequest());
+                 responseBody <- response.entity.toStrict(3.minute)) yield {
       val rawResponse = responseBody.data.utf8String
       val preprocessed = request.preprocessBody(rawResponse)
       val xml = XML.loadString(preprocessed)
+
       val errorResponse = xml.child
         .find(node => node.label == "FileName" && node.text == "chpperror.xml")
 
-      val responseEither = errorResponse match {
-        case Some(_) => Left(parseError(xml, rawResponse))
-        case None => Right(parseModel(xml, rawResponse))
-      }
+      errorResponse.foreach(_ => parseErrorNew(xml, rawResponse))
 
-      responseEither match {
-        case Right(Success(model)) => Future(Right(model))
-        case _ if retry <= retries => execute(request, retry + 1)
-        case v => Future(eitherTriesToTryEither(v).get)
-      }
+      parseModelNew(xml, rawResponse)
     }
-
-    v.flatten
   }
 
-  private def parseError(xml: Elem, rawResponse: String): Try[ChppError] = Try {
+  private def parseErrorNew(xml: Elem, rawResponse: String): Try[ChppError] = {
     val parse = XmlReader.of[ChppError].read(xml)
     if (parse.errors.nonEmpty) {
-      throw new Exception(s"Unable to parse error response. \n " +
-        s"ParseErrors: ${parse.errors.map(_.toString).mkString("[", ",", "]")} \n" +
-        s"Response: $rawResponse")
+      throw ChppUnparsableErrorResponse(parse.errors, rawResponse)
     }
 
-    parse.getOrElse(throw new Exception(s"Unknown error for response: $rawResponse"))
+    val chppError = parse.getOrElse(throw new Exception(s"Unknown error for response: $rawResponse"))
+    throw ChppErrorResponse(chppError)
   }
 
-  private def parseModel[Model](xml: Elem, rawResponse: String)(implicit reader: XmlReader[Model]): Try[Model] = Try {
+  private def parseModelNew[Model](xml: Elem, rawResponse: String)(implicit reader: XmlReader[Model]): Model = {
     val modelParse = XmlReader.of[Model].read(xml)
 
     if (modelParse.errors.nonEmpty) {
-      throw new Exception(s"Unable to parse model response. \nResponse was: \n $rawResponse \nParse model have an errors: ${modelParse.errors.map(_.toString).mkString("[", ",", "]")}")
+      throw ModelUnparsableResponse(modelParse.errors, rawResponse)
     } else {
-      modelParse.getOrElse(throw new Exception(s"Unable to parse $rawResponse"))
-    }
-  }
 
-  private def eitherTriesToTryEither[A,B](lr: Either[Try[A], Try[B]]): Try[Either[A, B]] = lr match {
-    case Left(Success(value)) => Success(Left(value))
-    case Left(Failure(exception)) => Failure(exception)
-    case Right(Success(value)) => Success(Right(value))
-    case Right(Failure(exception)) => Failure(exception)
+      modelParse.getOrElse(throw new Exception(s"Unable to parse model with $rawResponse"))
+    }
   }
 }

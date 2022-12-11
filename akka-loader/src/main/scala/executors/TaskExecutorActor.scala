@@ -79,16 +79,16 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                 val updatedLeagueFuture =  WorldDetailsSingleRequest.request(leagueId = Some(league.leagueId)).map(_.leagueList.head);
 
                 updatedLeagueFuture.foreach(updatedLeague => {
-                val result = postProcessLoadedResults(updatedLeague, matValue)
-                result.onComplete {
-                  case Failure(exception) =>
-                    logger.error(exception.getMessage, exception)
-                    self ! TaskFinished
-                  case Success(_) =>
-                    logger.info(s"(${updatedLeague.leagueId}, ${updatedLeague.leagueName}) successfully loaded")
-                    notifyLeagueFinished(updatedLeague)
-                    self ! TaskFinished
-                }})
+                  val result = postProcessLoadedResults(updatedLeague, matValue)
+                  result.onComplete {
+                    case Failure(exception) =>
+                      logger.error(exception.getMessage, exception)
+                      self ! TaskFinished
+                    case Success(_) =>
+                      logger.info(s"(${updatedLeague.leagueId}, ${updatedLeague.leagueName}) successfully loaded")
+                      notifyLeagueFinished(updatedLeague)
+                      self ! TaskFinished
+                  }})
             }
 
           }

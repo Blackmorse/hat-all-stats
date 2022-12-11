@@ -1,7 +1,5 @@
 import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import chpp.{ChppRequestExecutor, OauthTokens}
-import chpp.playerdetails.PlayerDetailsRequest
+import chpp.OauthTokens
 import clickhouse.TeamRankJoiner
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory
@@ -16,7 +14,7 @@ import utils.WorldDetailsSingleRequest
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-object LoaderApp extends  App {
+object LoaderApp extends App {
   private val logger = Logger(LoggerFactory.getLogger(this.getClass))
 
   implicit val actorSystem: ActorSystem = ActorSystem("LoaderActorSystem")
