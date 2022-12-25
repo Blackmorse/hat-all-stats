@@ -44,33 +44,19 @@ const PlayerSalaryTsiTable = <LevelProps extends LevelDataProps>(props: LevelDat
             TableColumns.leagueUnitTableColumn(pst => pst.sortingKey),
             {
                 columnHeader: {title: ''},
-                columnValue: {
-                    provider: (pst) => t(Mappings.roleToTranslationMap.get(pst.role) || '')
-                }
+                columnValue: { provider: (pst) => t(Mappings.roleToTranslationMap.get(pst.role) || '') }
             },
             {
-                columnHeader: {
-                    title: t('table.age'), sortingField: 'age'
-                },
-                columnValue: {
-                    provider: (pst) => ageFormatter(pst.age), center: true
-                }
+                columnHeader: { title: t('table.age'), sortingField: 'age' },
+                columnValue: { provider: (pst) => ageFormatter(pst.age), center: true }
             },
             {
-                columnHeader: {
-                    title: t('table.tsi'), sortingField: 'tsi'
-                },
-                columnValue: {
-                    provider: (pst) => commasSeparated(pst.tsi), center: true
-                }
+                columnHeader: { title: t('table.tsi'), sortingField: 'tsi' },
+                columnValue: { provider: (pst) => commasSeparated(pst.tsi), center: true }
             },
             {
-                columnHeader: {
-                    title: t('table.salary') + ', ' + props.levelDataProps.currency(), sortingField: 'salary'
-                },
-                columnValue: {
-                    provider: (pst) => salaryFormatter(pst.salary, props.levelDataProps.currencyRate()), center: true
-                }
+                columnHeader: { title: t('table.salary') + ', ' + props.levelDataProps.currency(), sortingField: 'salary' },
+                columnValue: { provider: (pst) => salaryFormatter(pst.salary, props.levelDataProps.currencyRate()), center: true }
             }
         ]}
     />

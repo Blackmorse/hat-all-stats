@@ -10,6 +10,7 @@ GET     /api/health                     controllers.CommonController.health()
 GET     /api/hoRequests             controllers.CommonController.hoRequests()
 
 GET     /api/world/teamHatstats         controllers.WorldController.teamHatstats(restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/world/teamSalaryTsi        controllers.WorldController.teamSalaryTsi(restStatisticsParameters: models.web.RestStatisticsParameters, playedInLastMatch: Boolean)
 GET     /api/world/playerTsiSalary      controllers.WorldController.playersTsiSalary(restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
 GET     /api/world/playerRatings        controllers.WorldController.playerRatings(restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
 GET     /api/world/topMatches           controllers.WorldController.topMatches(restStatisticsParameters: models.web.RestStatisticsParameters)

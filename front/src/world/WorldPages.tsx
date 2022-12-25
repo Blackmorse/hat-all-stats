@@ -11,6 +11,7 @@ import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import DreamTeamPage from '../common/pages/DreamTeamPage';
 import OldestTeamsTable from '../common/tables/team/OldestTeamsTable';
 import TeamSearchPage from '../common/pages/TeamSearchPage'
+import TeamSalaryTSITable from '../common/tables/team/TeamSalaryTSITable'
 
 
 export default function pages() {
@@ -19,6 +20,8 @@ export default function pages() {
         (props, _queryParams) => <WorldOverviewPage levelDataProps={props} />)
     pagesMap.set(PagesEnum.TEAM_HATSTATS,
         (props, queryParams) => <TeamHatstatsTable<WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
+    pagesMap.set(PagesEnum.TEAM_SALARY_TSI,
+        (props, queryParams) => <TeamSalaryTSITable<WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
     pagesMap.set(PagesEnum.OLDEST_TEAMS,
         (props, queryParams) => <OldestTeamsTable<WorldLevelDataProps> levelDataProps={props} queryParams={queryParams} showCountryFlags={true} />)
     pagesMap.set(PagesEnum.PLAYER_SALARY_TSI, 

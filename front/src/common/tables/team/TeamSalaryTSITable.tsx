@@ -1,77 +1,58 @@
 import React from 'react';
-import AbstractTableSection, { SortingState, DataRequest } from '../AbstractTableSection'
-import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import TeamSalaryTSI from '../../../rest/models/team/TeamSalaryTSI';
+import { useTranslation } from 'react-i18next';
 import { getTeamSalaryTSI } from '../../../rest/Client';
-import '../../../i18n'
-import { Translation } from 'react-i18next'
-import ModelTableTh from '../../../common/elements/SortingTableTh'
-import LeagueUnitLink from '../../links/LeagueUnitLink';
-import TeamLink from '../../links/TeamLink'
-import { commasSeparated, salaryFormatter, doubleSalaryFormatter } from '../../Formatters'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
-import { LoadingEnum } from '../../enums/LoadingEnum'
-import RestTableData from '../../../rest/models/RestTableData'
+import TeamSalaryTSI from '../../../rest/models/team/TeamSalaryTSI';
+import { commasSeparated, doubleSalaryFormatter, salaryFormatter } from '../../Formatters';
+import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps';
+import HookAbstractTableSection from '../HookAbstractTableSection';
 import { SelectorsEnum } from '../SelectorsEnum';
-import HattidTooltip from '../../elements/HattidTooltip';
+import TableColumns from '../TableColumns';
 
-class TeamSalaryTSITable<TableProps extends LevelDataProps>
-    extends AbstractTableSection<TableProps, TeamSalaryTSI, RestTableData<TeamSalaryTSI>> {
-    
-    constructor(props: LevelDataPropsWrapper<TableProps>) {
-        super(props, 'salary', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
-            [StatsTypeEnum.ROUND],
-            [SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
-                SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR,
-                SelectorsEnum.PLAYED_IN_LAST_MATCH_SELECTOR])
-    }
+const TeamSalaryTSITable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
+    const [ t, _i18n ] = useTranslation()
 
-    responseModelToRowModel(responseModel: RestTableData<TeamSalaryTSI>): RestTableData<TeamSalaryTSI> {
-        return responseModel
-    }
-
-    executeDataRequest(dataRequest: DataRequest, callback: (loadingState: LoadingEnum, result?: RestTableData<TeamSalaryTSI>) => void): void {
-        getTeamSalaryTSI(this.props.levelDataProps.createLevelRequest(), dataRequest.statisticsParameters, dataRequest.playedInLastMatch, 
-            callback)
-    }
-
-    columnHeaders(sortingState: SortingState): JSX.Element {
-        return <Translation>
+    return <HookAbstractTableSection<LevelProps, TeamSalaryTSI>
+        levelProps={props.levelDataProps}
+        queryParams={props.queryParams}
+        requestFunc={(request, callback) => 
+            getTeamSalaryTSI(props.levelDataProps.createLevelRequest(), request.statisticsParameters, request.playedInLastMatch, callback)}
+        defaultSortingField='salary'
+        defaultStatsType={{statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()}}
+        selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+            SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR,
+            SelectorsEnum.PLAYED_IN_LAST_MATCH_SELECTOR]}
+        statsTypes={[StatsTypeEnum.ROUND]}
+        tableColumns={[
+            TableColumns.postitionsTableColumn(),
+            TableColumns.teamTableColumn(pst => pst.teamSortingKey, props.showCountryFlags),
+            TableColumns.leagueUnitTableColumn(pst => pst.teamSortingKey),
+            { 
+                columnHeader: { title: t('table.tsi'), sortingField: 'tsi' },
+                columnValue: { provider: (tst) => commasSeparated(tst.tsi), center: true }
+            },
             {
-            t => 
-            <tr>
-                <HattidTooltip 
-                    poppedHint={t('table.position')}
-                    content={<th>{t('table.position_abbr')}</th>}
-                />
-                <th>{t('table.team')}</th>
-                <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.tsi' sorting={{field: 'tsi', state: sortingState}} />
-                <ModelTableTh title='table.salary' sorting={{field: 'salary', 
-                    state: sortingState}} titlePostfix={', ' + this.props.levelDataProps.currency()}/>
-                <ModelTableTh title='menu.players' sorting={{field: 'players_count', state: sortingState}}/>
-                <ModelTableTh title='table.average_tsi' sorting={{field: 'avg_tsi', state: sortingState}} />
-                <ModelTableTh title='table.average_salary' titlePostfix={', ' + this.props.levelDataProps.currency()} sorting={{field: 'avg_salary', state: sortingState}} />
-                <ModelTableTh title='table.salary_per_tsi' sorting={{field: 'salary_per_tsi', state: sortingState}} titlePostfix={', ' + this.props.levelDataProps.currency()}/>
-            </tr>
-        }
-        </Translation>
-    }
-
-    row(index: number, className: string, teamSalaryTSI: TeamSalaryTSI): JSX.Element {
-        let teamSortingKey = teamSalaryTSI.teamSortingKey
-        return <tr className={className}>
-            <td>{index + 1}</td>
-            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
-            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="text-center">{commasSeparated(teamSalaryTSI.tsi)}</td>
-            <td className="text-center">{salaryFormatter(teamSalaryTSI.salary, this.props.levelDataProps.currencyRate())}</td>
-            <td className="text-center">{teamSalaryTSI.playersCount}</td>
-            <td className="text-center">{commasSeparated(teamSalaryTSI.avgTsi)}</td>
-            <td className="text-center">{salaryFormatter(teamSalaryTSI.avgSalary, this.props.levelDataProps.currencyRate())}</td>
-            <td className="text-center">{doubleSalaryFormatter(teamSalaryTSI.salaryPerTsi, this.props.levelDataProps.currencyRate())}</td>
-        </tr>
-    }
+                columnHeader: { title: t('table.salary') + ', ' + props.levelDataProps.currency(), sortingField: 'salary' },
+                columnValue: { provider: (tst) => salaryFormatter(tst.salary, props.levelDataProps.currencyRate()), center: true }
+            },
+            {
+                columnHeader: { title: t('menu.players'), sortingField: 'players_count' },
+                columnValue: { provider: (tst) => tst.playersCount.toString() }
+            },
+            {
+                columnHeader: { title: t('table.average_tsi'), sortingField: 'avg_tsi' },
+                columnValue: { provider: (tst) =>  commasSeparated(tst.avgTsi), center: true}
+            },
+            {
+                columnHeader: { title: t('table.average_salary') + ', ' + props.levelDataProps.currency(), sortingField: 'avg_salary' },
+                columnValue: { provider: (tst) => salaryFormatter(tst.avgSalary, props.levelDataProps.currencyRate()), center: true }
+            },
+            {
+                columnHeader: { title: t('table.salary_per_tsi') + ', ' + props.levelDataProps.currency(), sortingField: 'salary_per_tsi' },
+                columnValue: { provider: (tst) => doubleSalaryFormatter(tst.salaryPerTsi, props.levelDataProps.currencyRate()).toString(), center: true }
+            }
+        ]}
+    />
 }
 
 export default TeamSalaryTSITable
