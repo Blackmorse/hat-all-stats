@@ -53,7 +53,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                                 </tr>
                                 <tr>
                                     <td>{t('player.speciality')}</td>
-                                    <td className='text-center'>{props.playerProps.specialityTranslation(i18n.resolvedLanguage, stateAndRequest.currentState.currentPlayerCharacteristics.speciality + 1)}</td>
+                                    <td className='text-center'>{props.playerProps.specialityTranslation(i18n.resolvedLanguage, stateAndRequest.currentState.currentPlayerCharacteristics.speciality)}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('table.position')}</td>
