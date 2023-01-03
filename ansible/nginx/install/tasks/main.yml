@@ -1,0 +1,7 @@
+---
+# tasks file for nginx/install
+- name: install nginx
+  become: true
+  apt:
+    name: nginx-core
+    state: present

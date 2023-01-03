@@ -1,6 +1,7 @@
  - hosts: master-server
    roles:
     - repo-update
+    - nginx/install
     - nginx/stub
     - redeploy
     - nginx/site

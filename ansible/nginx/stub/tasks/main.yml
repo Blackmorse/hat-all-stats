@@ -1,9 +1,12 @@
 ---
 # tasks file for nginx/stub
- - name: Create stub directory
+ - name: Create directories
    file:
-    path: "{{ base_project_directory }}/stub"
+    path: "{{ base_project_directory }}/{{ item }}"
     state: directory
+   loop:
+    - stub
+    - certs
 
  - name: copy certs to files
    copy:
