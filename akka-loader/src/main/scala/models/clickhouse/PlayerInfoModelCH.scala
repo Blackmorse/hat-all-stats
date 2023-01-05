@@ -1,8 +1,8 @@
 package models.clickhouse
 
 import java.util.Date
-
 import chpp.players.models.Player
+import loadergraph.matchlineup.StreamMatchDetailsWithLineup
 import models.stream.StreamMatchDetails
 import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
 import utils.DateTimeMarshalling.DateTimeFormat
@@ -70,7 +70,7 @@ object PlayerInfoModelCH {
     }
   }
 
-  def convert(player: Player, matchDetails: StreamMatchDetails, countryMap: Map[Int, Int]): PlayerInfoModelCH = {
+  def convert(player: Player, matchDetails: StreamMatchDetailsWithLineup, countryMap: Map[Int, Int]): PlayerInfoModelCH = {
     val (playedMinutes,
         roleId,
         rating,

@@ -1,4 +1,4 @@
-package flows
+package loadergraph
 
 import akka.stream.scaladsl.Flow
 import com.crobox.clickhouse.stream.Insert

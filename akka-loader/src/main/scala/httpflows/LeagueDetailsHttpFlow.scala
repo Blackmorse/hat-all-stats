@@ -1,4 +1,4 @@
-package flows
+package httpflows
 
 import chpp.leaguedetails.LeagueDetailsRequest
 import chpp.leaguedetails.models.LeagueDetails

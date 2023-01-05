@@ -1,6 +1,7 @@
 package models.clickhouse
 
 import chpp.teamdetails.models.{Team, TrophyTypeId}
+import loadergraph.matchlineup.StreamMatchDetailsWithLineup
 import models.stream.StreamMatchDetails
 import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
 import utils.DateMarshalling.DateFormat
@@ -51,7 +52,7 @@ object TeamDetailsModelCH {
     }
   }
 
-  def convert(team: Team, matchDetails: StreamMatchDetails): TeamDetailsModelCH = {
+  def convert(team: Team, matchDetails: StreamMatchDetailsWithLineup): TeamDetailsModelCH = {
     val trophyNumber = team.trophyList.count(trophy => trophy.trophyTypeId != TrophyTypeId.TOURNAMENT_WINNER
                                                     && trophy.trophyTypeId != TrophyTypeId.STUDY_TOURNNAMENT)
 

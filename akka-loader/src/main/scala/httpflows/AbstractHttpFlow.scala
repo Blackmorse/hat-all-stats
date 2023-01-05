@@ -1,4 +1,4 @@
-package flows
+package httpflows
 
 import akka.NotUsed
 import akka.actor.ActorSystem

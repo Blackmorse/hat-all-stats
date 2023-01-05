@@ -1,4 +1,4 @@
-package flows
+package httpflows
 
 import chpp.matches.MatchesRequest
 import chpp.matches.models.Matches

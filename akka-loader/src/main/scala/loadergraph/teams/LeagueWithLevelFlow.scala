@@ -5,7 +5,7 @@ import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
 import chpp.worlddetails.WorldDetailsRequest
-import flows.WorldDetailsHttpFlow
+import httpflows.WorldDetailsHttpFlow
 import models.stream.League
 
 import scala.concurrent.ExecutionContext

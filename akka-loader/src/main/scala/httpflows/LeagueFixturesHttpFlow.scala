@@ -1,4 +1,4 @@
-package flows
+package httpflows
 
 import chpp.leaguefixtures.LeagueFixturesRequest
 import chpp.leaguefixtures.models.LeagueFixtures

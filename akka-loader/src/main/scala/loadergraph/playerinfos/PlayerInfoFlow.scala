@@ -5,16 +5,17 @@ import akka.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
 import chpp.players.PlayersRequest
 import com.crobox.clickhouse.stream.Insert
-import flows.{ClickhouseFlow, LogProgressFlow, PlayersHttpFlow}
+import httpflows.PlayersHttpFlow
+import loadergraph.matchlineup.StreamMatchDetailsWithLineup
+import loadergraph.{ClickhouseFlow, LogProgressFlow}
 import models.clickhouse.PlayerInfoModelCH
-import models.stream.StreamMatchDetails
 
 import scala.concurrent.ExecutionContext
 
 object PlayerInfoFlow {
   def apply(databaseName: String, countryMap: Map[Int, Int])(implicit oauthTokens: OauthTokens, system: ActorSystem,
-              executionContext: ExecutionContext): Flow[StreamMatchDetails, Insert, _] = {
-    Flow[StreamMatchDetails]
+              executionContext: ExecutionContext): Flow[StreamMatchDetailsWithLineup, Insert, _] = {
+    Flow[StreamMatchDetailsWithLineup]
       .map(matchDetails => (PlayersRequest(teamId = Some(matchDetails.matc.team.id), includeMatchInfo = Some(true)), matchDetails))
       .async
       .via(PlayersHttpFlow())

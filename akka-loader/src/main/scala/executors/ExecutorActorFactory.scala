@@ -9,7 +9,7 @@ import clickhouse.PlayerStatsClickhouseClient
 import com.crobox.clickhouse.ClickhouseClient
 import com.crobox.clickhouse.stream.{ClickhouseSink, Insert}
 import com.typesafe.config.Config
-import flows.{CupMatchesFlow, LeagueMatchesFlow}
+import loadergraph.{CupMatchesFlow, LeagueMatchesFlow}
 
 import javax.inject.{Inject, Singleton}
 

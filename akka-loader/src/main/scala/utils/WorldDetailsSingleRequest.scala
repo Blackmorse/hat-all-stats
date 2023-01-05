@@ -5,7 +5,7 @@ import akka.stream.scaladsl.Source
 import chpp.OauthTokens
 import chpp.worlddetails.models.WorldDetails
 import chpp.worlddetails.WorldDetailsRequest
-import flows.WorldDetailsHttpFlow
+import httpflows.WorldDetailsHttpFlow
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}

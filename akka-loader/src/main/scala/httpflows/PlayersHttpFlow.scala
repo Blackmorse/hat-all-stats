@@ -1,4 +1,4 @@
-package flows
+package httpflows
 
 import chpp.players.PlayersRequest
 import chpp.players.models.Players

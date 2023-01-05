@@ -1,4 +1,4 @@
-package flows
+package httpflows
 
 import chpp.search.SearchRequest
 import chpp.search.models.Search

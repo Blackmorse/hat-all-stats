@@ -1,8 +1,8 @@
 package models.clickhouse
 
-import java.util.Date
+import loadergraph.matchlineup.StreamMatchDetailsWithLineup
 
-import models.stream.StreamMatchDetails
+import java.util.Date
 import spray.json.{JsNumber, JsObject, JsString, JsValue, JsonFormat}
 import utils.DateTimeMarshalling._
 
@@ -110,7 +110,7 @@ object MatchDetailsCHModel {
     }
   }
 
-  def convert(streamMatchDetails: StreamMatchDetails): MatchDetailsCHModel = {
+  def convert(streamMatchDetails: StreamMatchDetailsWithLineup): MatchDetailsCHModel = {
     val matchDetails = streamMatchDetails.matchDetails
 
     val homeTeamId = matchDetails.matc.homeTeam.teamId

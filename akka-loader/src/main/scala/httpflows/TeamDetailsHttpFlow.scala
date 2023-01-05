@@ -1,4 +1,4 @@
-package flows
+package httpflows
 
 import chpp.teamdetails.TeamDetailsRequest
 import chpp.teamdetails.models.TeamDetails

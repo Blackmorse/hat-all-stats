@@ -1,4 +1,4 @@
-package flows
+package loadergraph
 
 import akka.stream.FlowShape
 import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Sink}

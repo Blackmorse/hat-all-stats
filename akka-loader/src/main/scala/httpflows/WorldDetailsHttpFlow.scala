@@ -1,4 +1,4 @@
-package flows
+package httpflows
 
 import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.WorldDetails

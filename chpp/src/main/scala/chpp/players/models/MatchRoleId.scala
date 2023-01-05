@@ -22,6 +22,8 @@ object MatchRoleId extends Enumeration {
   val SUBSTITUTION_FORWARD = Value(118, "118")
   //Not present in documentation
   val ADDITIONAL_SLOT = Value(119, "119")
+  // Not present in documentation
+  val UNKNOWN_SLOT = Value(120, "120")
   //TODO same value
   val SUBSTITUTION_KEEPER_2 = Value(200, "200")
   val SUBSTITUTION_CENTRAL_DEFENDER = Value(201, "201")
@@ -55,4 +57,10 @@ object MatchRoleId extends Enumeration {
   val PENALTY_TAKER_9 = Value(30, "30")
   val PENALTY_TAKER_10 = Value(31, "31")
   val PENALTY_TAKER_11 = Value(32, "32")
+
+  val READ_CARDED_PLAYER1 = Value(33, "33")
+  val READ_CARDED_PLAYER2 = Value(34, "34")
+  val READ_CARDED_PLAYER3 = Value(35, "35")
+
+  val INJURY_SUBSTITUTED = Value(0, "0")
 }

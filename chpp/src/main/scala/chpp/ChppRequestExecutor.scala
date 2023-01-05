@@ -14,8 +14,17 @@ object ChppRequestExecutor {
   private val retries = 4
 
   case class ChppErrorResponse(chppError: ChppError) extends Exception
-  case class ChppUnparsableErrorResponse(errors: Seq[ParseError], rawResponse: String) extends Exception
-  case class ModelUnparsableResponse(errors: Seq[ParseError], rawResponse: String) extends Exception
+  case class ChppUnparsableErrorResponse(errors: Seq[ParseError], rawResponse: String) extends Exception {
+    override def toString: String = {
+      s"$errors \n rawResponse: $rawResponse"
+    }
+  }
+
+  case class ModelUnparsableResponse(errors: Seq[ParseError], rawResponse: String, request: String) extends Exception {
+    override def toString: String = {
+      errors.mkString(", ") + "\n " + rawResponse + s"\n request: $request"
+    }
+  }
 
   def executeWithRetry[Model](request: AbstractRequest[Model])
                       (implicit oauthTokens: OauthTokens, system: ActorSystem, reader: XmlReader[Model]): Future[Either[ChppError, Model]] = {
@@ -41,19 +50,19 @@ object ChppRequestExecutor {
     for (response <- Http().singleRequest(request.createRequest());
                  responseBody <- response.entity.toStrict(3.minute)) yield {
       val rawResponse = responseBody.data.utf8String
-      val preprocessed = request.preprocessBody(rawResponse)
+      val preprocessed = request.preprocessResponseBody(rawResponse)
       val xml = XML.loadString(preprocessed)
 
       val errorResponse = xml.child
         .find(node => node.label == "FileName" && node.text == "chpperror.xml")
 
-      errorResponse.foreach(_ => parseErrorNew(xml, rawResponse))
+      errorResponse.foreach(_ => parseError(xml, rawResponse))
 
-      parseModelNew(xml, rawResponse)
+      parseModel(request, xml, rawResponse)
     }
   }
 
-  private def parseErrorNew(xml: Elem, rawResponse: String): Try[ChppError] = {
+  private def parseError(xml: Elem, rawResponse: String): Try[ChppError] = {
     val parse = XmlReader.of[ChppError].read(xml)
     if (parse.errors.nonEmpty) {
       throw ChppUnparsableErrorResponse(parse.errors, rawResponse)
@@ -63,14 +72,14 @@ object ChppRequestExecutor {
     throw ChppErrorResponse(chppError)
   }
 
-  private def parseModelNew[Model](xml: Elem, rawResponse: String)(implicit reader: XmlReader[Model]): Model = {
+  private def parseModel[Model](request: AbstractRequest[Model],xml: Elem, rawResponse: String)(implicit reader: XmlReader[Model]): Model = {
     val modelParse = XmlReader.of[Model].read(xml)
 
     if (modelParse.errors.nonEmpty) {
-      throw ModelUnparsableResponse(modelParse.errors, rawResponse)
+      throw ModelUnparsableResponse(modelParse.errors, rawResponse, request.toString)
     } else {
 
-      modelParse.getOrElse(throw new Exception(s"Unable to parse model with $rawResponse"))
+      modelParse.getOrElse(throw new Exception(s"Unable to parse model with $rawResponse. Request: $request"))
     }
   }
 }

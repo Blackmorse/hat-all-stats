@@ -7,7 +7,7 @@ import chpp.OauthTokens
 import loadergraph.teams.LeagueWithLevel
 import chpp.search.SearchRequest
 import chpp.search.models.SearchType
-import flows.SearchHttpFlow
+import httpflows.SearchHttpFlow
 import hattid.CommonData.{arabToRomans, leagueLevelNumberTeams}
 import models.stream.LeagueUnit
 

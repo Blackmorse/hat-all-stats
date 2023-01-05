@@ -4,7 +4,7 @@ import akka.Done
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import com.crobox.clickhouse.stream.Insert
-import flows.ClickhouseFlow
+import loadergraph.ClickhouseFlow
 import org.slf4j.LoggerFactory
 import spray.json.JsonFormat
 
