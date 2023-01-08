@@ -22,7 +22,17 @@ object PlayerInfoFlow {
       .async
       .via(LogProgressFlow("Players of teams", Some(_._2.matc.team.leagueUnit.league.activeTeams)))
       .flatMapConcat{case(players, matchDetails) =>
-        val playerInfos = players.team.playerList.map(player => PlayerInfoModelCH.convert(player, matchDetails, countryMap))
+        val matchDuration = players.team.playerList
+          .flatMap(_.lastMatch)
+          .filter(lastMatch => lastMatch.date == matchDetails.matc.date)
+          .map(_.playedMinutes).max
+        val playerInfos = players.team.playerList
+          .map(player =>
+            PlayerInfoModelCH.convert(player = player,
+              matchDetails = matchDetails,
+              matchDuration = matchDuration,
+              countryMap = countryMap)
+          )
         Source(playerInfos.toList)
       }
       .via(ClickhouseFlow[PlayerInfoModelCH](databaseName, "player_info"))

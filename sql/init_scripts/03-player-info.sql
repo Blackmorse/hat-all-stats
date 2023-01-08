@@ -25,7 +25,8 @@
     `injury_level` Int8, 
     `tsi` UInt32, 
     `salary` UInt32,
-    `nationality` UInt8
+    `nationality` UInt8,
+    `match_duration` UInt8
 )
 ENGINE = MergeTree()
 ORDER BY (season, league_id, division_level, league_unit_id, team_id, round, cityHash64(player_id))

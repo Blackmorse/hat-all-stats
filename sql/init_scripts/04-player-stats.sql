@@ -29,6 +29,7 @@
     `red_cards` UInt8,
     `goals` UInt8,
     `nationality` UInt8,
+    `match_duration` UInt8,
     PROJECTION by_player_id (SELECT * ORDER BY (player_id, season, round))
 )
 ENGINE = MergeTree()

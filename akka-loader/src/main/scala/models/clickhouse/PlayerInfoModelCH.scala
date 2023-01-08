@@ -33,7 +33,8 @@ case class PlayerInfoModelCH(season: Int,
                             injuryLevel: Int,
                             TSI: Int,
                             salary: Int,
-                            nationality: Int)
+                            nationality: Int,
+                            matchDuration: Int)
 
 object PlayerInfoModelCH {
   implicit val format: JsonFormat[PlayerInfoModelCH] = new JsonFormat[PlayerInfoModelCH] {
@@ -66,11 +67,15 @@ object PlayerInfoModelCH {
         ("tsi", JsNumber(obj.TSI)),
         ("salary", JsNumber(obj.salary)),
         ("nationality", JsNumber(obj.nationality)),
+        ("match_duration", JsNumber(obj.matchDuration))
       )
     }
   }
 
-  def convert(player: Player, matchDetails: StreamMatchDetailsWithLineup, countryMap: Map[Int, Int]): PlayerInfoModelCH = {
+  def convert(player: Player,
+              matchDetails: StreamMatchDetailsWithLineup,
+              matchDuration: Int,
+              countryMap: Map[Int, Int]): PlayerInfoModelCH = {
     val (playedMinutes,
         roleId,
         rating,
@@ -110,7 +115,8 @@ object PlayerInfoModelCH {
       ratingEndOfMatch = ratingEndOfMatch,
       injuryLevel = player.injuryLevel.getOrElse(-1),
       TSI = player.playerPart.TSI,
-      salary = player.playerPart.salary
+      salary = player.playerPart.salary,
+      matchDuration = matchDuration
     )
   }
 }
