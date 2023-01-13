@@ -29,7 +29,7 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
                                       val translationsService: TranslationsService,
                                       implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
 
-  private def getRestPlayerData(playerDetails: PlayerDetails): Future[Either[NotFoundError ,RestPlayerData]] = {
+  private def getRestPlayerData(playerDetails: PlayerDetails): Future[Either[NotFoundError, RestPlayerData]] = {
     for {
       teamDetailsEither <- chppService.getTeamById(playerDetails.player.owningTeam.teamId)
     } yield {
@@ -65,7 +65,7 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
       }
     }
   }
-  def getPlayerData(playerId: Long): mvc.Action[AnyContent] = Action.async { implicit request =>
+  def getPlayerData(playerId: Long): mvc.Action[AnyContent] = Action.async {
     chppService.playerDetails(playerId).flatMap {
       case Left(chppError) => Future(Left(NotFoundError(
         entityType = NotFoundError.PLAYER,
@@ -90,7 +90,7 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
           position = playerService.playerPosition(playerHistoryList),
           salary = playerDetails.player.salary,
           tsi = playerDetails.player.tsi,
-          age = playerDetails.player.age * 112 + playerDetails.player.age,
+          age = playerDetails.player.age * 112 + playerDetails.player.ageDays,
           form = playerDetails.player.playerForm,
           injuryLevel = playerDetails.player.injuryLevel,
           experience = playerDetails.player.experience,
@@ -105,7 +105,7 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
       )
   }
 
-  def getPlayerHistory(playerId: Long): mvc.Action[AnyContent] = Action.async { implicit request =>
+  def getPlayerHistory(playerId: Long): mvc.Action[AnyContent] = Action.async {
     val playerDetailsFuture = chppClient.execute[PlayerDetails, PlayerDetailsRequest](PlayerDetailsRequest(playerId = playerId))
 
     playerDetailsFuture.flatMap{
