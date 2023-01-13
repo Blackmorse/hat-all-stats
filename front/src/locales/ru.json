@@ -227,5 +227,7 @@
     "player.red": "Красные",
     "player.minutes": "Минуты",
 
-    "filter.one_team_per_unit": "Одна команда на лигу"
+    "filter.one_team_per_unit": "Одна команда на лигу",
+
+    "filter.exclude_zero_player_tsi": "Исключить игроков с нулевым TSI"
 }

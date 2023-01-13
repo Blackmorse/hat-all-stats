@@ -227,5 +227,7 @@
     "player.red": "قرمز",
     "player.minutes": "دقایق",
 
-    "filter.one_team_per_unit": "یک تیم در هر لیگ"
+    "filter.one_team_per_unit": "یک تیم در هر لیگ",
+
+    "filter.exclude_zero_player_tsi": "بازیکنان 0-TSI را حذف کنید"
   }

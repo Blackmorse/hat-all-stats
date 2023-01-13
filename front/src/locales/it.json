@@ -228,5 +228,7 @@
     "player.red": "Rosso",
     "player.minutes": "Minuti",
 
-    "filter.one_team_per_unit": "Una squadra per campionato"
+    "filter.one_team_per_unit": "Una squadra per campionato",
+
+    "filter.exclude_zero_player_tsi": "Escludi i giocatori 0-TSI"
 }

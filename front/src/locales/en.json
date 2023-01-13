@@ -227,5 +227,7 @@
     "player.red": "Red",
     "player.minutes": "Minutes",
 
-    "filter.one_team_per_unit": "One team per league"
+    "filter.one_team_per_unit": "One team per league",
+
+    "filter.exclude_zero_player_tsi": "Exclude 0-TSI players"
   }

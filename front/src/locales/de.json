@@ -226,6 +226,8 @@
     "player.red": "rot",
     "player.minutes": "Protokoll",
 
-    "filter.one_team_per_unit": "Ein Team pro Liga"
+    "filter.one_team_per_unit": "Ein Team pro Liga",
+
+    "filter.exclude_zero_player_tsi": "Schließen Sie 0-TSI-Spieler aus"
 }
 

@@ -227,5 +227,7 @@
     "player.red": "Kırmızı",
     "player.minutes": "dakika",
 
-    "filter.one_team_per_unit": "Lig başına bir takım"
+    "filter.one_team_per_unit": "Lig başına bir takım",
+
+    "filter.exclude_zero_player_tsi": "0-TSI oyuncularını hariç tut"
 }

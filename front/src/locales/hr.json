@@ -227,5 +227,7 @@
     "player.red": "Crvena",
     "player.minutes": "Minuta",
 
-    "filter.one_team_per_unit": "Jedna ekipa po ligi"
+    "filter.one_team_per_unit": "Jedna ekipa po ligi",
+
+    "filter.exclude_zero_player_tsi": "Isključi 0-TSI igrače"
 }
