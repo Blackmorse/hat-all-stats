@@ -6,6 +6,7 @@ import TeamLink from "../links/TeamLink";
 import TableColumn from "./TableColumn";
 
 type SortingKeyType = {teamId: number, teamName: string, leagueId: number, leagueUnitId: number, leagueUnitName: string}
+type LeagueUnit = {leagueUnitId: number, leagueUnitName: string}
 
 class TableColumns {
     static postitionsTableColumn<Smth>(): TableColumn<Smth> {
@@ -34,7 +35,7 @@ class TableColumns {
     }
 
 
-    static leagueUnitTableColumn<T>(sortingFieldFunc: (t: T) => SortingKeyType): TableColumn<T> {
+    static leagueUnitTableColumn<T>(sortingFieldFunc: (t: T) => LeagueUnit): TableColumn<T> {
         return {
             columnHeader: {title: i18n.t('table.league'), center: true},
             columnValue: {

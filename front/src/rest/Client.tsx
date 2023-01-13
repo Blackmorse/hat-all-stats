@@ -1,5 +1,4 @@
 import ax, { AxiosResponse } from 'axios';
-import TeamHatstats from './models/team/TeamHatstats'
 import LeagueUnitRating from './models/leagueunit/LeagueUnitRating'
 import StatisticsParameters, { StatsTypeEnum, StatsType } from './models/StatisticsParameters'
 import RestTableData from './models/RestTableData'
@@ -72,7 +71,7 @@ export function getLeagueUnitIdByName(leagueId: number, leagueUnitName: string, 
         .then(leagueUnitId => callback(leagueUnitId.id))
 }
 
-function statisticsRequest<T>(path: string): 
+export function statisticsRequest<T>(path: string): 
     (request: LevelRequest,
         statisticsParameters: StatisticsParameters,
         callback: (loadingEnum: LoadingEnum, entities?: RestTableData<T>) => void) => void {
@@ -248,8 +247,6 @@ export let getPlayerSalaryTsi = playersRequest<PlayerSalaryTSI>('playerTsiSalary
 export let getPlayerRatings = playersRequest<PlayerRating>('playerRatings')
 
 export let getPlayerInjuries = statisticsRequest<PlayerInjury>('playerInjuries')
-
-export let getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')
 
 export let getLeagueUnits = statisticsRequest<LeagueUnitRating>('leagueUnits')
 

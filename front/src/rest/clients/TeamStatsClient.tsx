@@ -4,7 +4,8 @@ import LevelRequest from "../models/request/LevelRequest"
 import RestTableData from "../models/RestTableData"
 import StatisticsParameters from "../models/StatisticsParameters"
 import TeamSalaryTSI from "../models/team/TeamSalaryTSI"
-import { createStatisticsParameters, startUrl, parseAxiosResponse } from '../Client'
+import { createStatisticsParameters, startUrl, parseAxiosResponse, statisticsRequest } from '../Client'
+import TeamHatstats from '../models/team/TeamHatstats';
 
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
@@ -21,3 +22,5 @@ export function getTeamSalaryTSI(request: LevelRequest,
         .then(response => parseAxiosResponse(response, callback))
         .catch(_e => callback(LoadingEnum.ERROR))
 }
+
+export let getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')

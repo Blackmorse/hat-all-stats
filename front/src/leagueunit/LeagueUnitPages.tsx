@@ -4,6 +4,7 @@ import DreamTeamPage from '../common/pages/DreamTeamPage';
 import PromotionsTable from '../common/pages/PromotionsTable';
 import TeamSearchPage from '../common/pages/TeamSearchPage';
 import QueryParams from '../common/QueryParams';
+import Section from '../common/sections/HookSection';
 import MatchSpectatorsTable from '../common/tables/match/MatchSpectatorsTable';
 import MatchSurprisingTable from '../common/tables/match/MatchSurprisingTable';
 import MatchTopHatstatsTable from '../common/tables/match/MatchTopHatstatsTable';
@@ -16,7 +17,7 @@ import OldestTeamsTable from '../common/tables/team/OldestTeamsTable';
 import TeamAgeInjuryTable from '../common/tables/team/TeamAgeInjuryTable';
 import TeamCardsTable from '../common/tables/team/TeamCardsTable';
 import TeamFanclubFlagsTable from '../common/tables/team/TeamFanclubFlagsTable';
-import {TeamHatstatsTableSection} from '../common/tables/team/TeamHatstatsTable';
+import TeamHatstatsTable from '../common/tables/team/TeamHatstatsTable';
 import TeamPowerRatingsTable from '../common/tables/team/TeamPowerRatingsTable';
 import TeamRatingsTable from '../common/tables/team/TeamRatingsTable';
 import TeamSalaryTSITable from '../common/tables/team/TeamSalaryTSITable';
@@ -29,7 +30,10 @@ export default function pages(): Map<PagesEnum, (props: LeagueLevelDataProps, qu
     pagesMap.set(PagesEnum.TEAM_HATSTATS, 
         (props, queryParams) => <>
             <TeamPositionsTable levelDataProps={props} queryParams={queryParams} />
-            <TeamHatstatsTableSection<LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams}/>
+            <Section
+                element={<TeamHatstatsTable<LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams}/>}
+                title=''
+            />
             </>)
     pagesMap.set(PagesEnum.DREAM_TEAM,
         (props, queryParams) => <DreamTeamPage<LeagueUnitLevelDataProps> levelDataProps={props} queryParams={queryParams}/>)

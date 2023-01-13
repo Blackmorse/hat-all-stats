@@ -1,56 +1,52 @@
-import React from 'react';
+import React from 'react'
 import LeagueUnitRating from '../../../rest/models/leagueunit/LeagueUnitRating'
-import { SortingState } from '../AbstractTableSection'
-import ClassicTableSection from '../ClassicTableSection'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import ModelTableTh from '../../elements/SortingTableTh'
-import { Translation } from 'react-i18next'
-import '../../../i18n'
-import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
-import LeagueUnitLink from '../../links/LeagueUnitLink'
+import HookAbstractTableSection from '../HookAbstractTableSection'
 import { getLeagueUnits } from '../../../rest/Client'
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
+import { SelectorsEnum } from '../SelectorsEnum'
+import TableColumns from '../TableColumns'
+import { useTranslation } from 'react-i18next'
 import { loddarStats } from '../../Formatters'
-import HattidTooltip from '../../elements/HattidTooltip';
 
-class LeagueUnitsTable<TableProps extends LevelDataProps> 
-        extends ClassicTableSection<TableProps ,LeagueUnitRating> {
 
-    constructor(props: LevelDataPropsWrapper<TableProps>) {
-        super(props, 'hatstats', {statType: StatsTypeEnum.AVG}, 
-            [StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND])
-    }
+const LeagueUnitsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
+    const [ t, _i18n ] = useTranslation()
 
-    fetchDataFunction = getLeagueUnits
-
-    columnHeaders(sortingState: SortingState): JSX.Element {
-        return <Translation>{
-            t => <tr>
-                <HattidTooltip 
-                    poppedHint={t('table.position')}
-                    content={<th>{t('table.position_abbr')}</th>              }
-                />
-                <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.hatstats' sorting={{field: 'hatstats',  state: sortingState}}/>
-                <ModelTableTh title='table.midfield' sorting={{field: 'midfield', state: sortingState}}/>
-                <ModelTableTh title='table.defense' sorting={{field: 'defense', state: sortingState}}/>
-                <ModelTableTh title='table.attack' sorting={{field: 'attack', state: sortingState}}/>
-                <ModelTableTh title='table.loddar_stats' sorting={{field: 'loddar_stats', state: sortingState}}/>
-            </tr>
-            }
-            </Translation> 
-    }
-
-    row(index: number, className: string, leagueUnitRating: LeagueUnitRating): JSX.Element {
-        return <tr className={className}>
-            <td>{index + 1}</td>
-            <td className="text-center"><LeagueUnitLink id={leagueUnitRating.leagueUnitId} text={leagueUnitRating.leagueUnitName}/></td>
-            <td className="text-center">{leagueUnitRating.hatStats}</td>
-            <td className="text-center">{leagueUnitRating.midfield * 3}</td>
-            <td className="text-center">{leagueUnitRating.defense}</td>
-            <td className="text-center">{leagueUnitRating.attack}</td>
-            <td className="text-center">{loddarStats(leagueUnitRating.loddarStats)}</td>
-        </tr>
-    }    
+    return <HookAbstractTableSection<LevelProps, LeagueUnitRating>
+        levelProps={props.levelDataProps}
+        queryParams={props.queryParams}
+        requestFunc={(request, callback) => getLeagueUnits(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
+        defaultSortingField='hatstats'
+        statsTypes={[StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND]}
+        defaultStatsType={{statType: StatsTypeEnum.MAX}}
+        selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+            SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR]}
+        tableColumns={[
+            TableColumns.postitionsTableColumn(),
+            TableColumns.leagueUnitTableColumn(lur => lur),
+            {
+                columnHeader: { title: t('table.hatstats'), sortingField: 'hatstats' },
+                columnValue:  { provider: lur => lur.hatStats.toString(), center: true }
+            },
+            {
+                columnHeader: { title: t('table.midfield'), sortingField: 'midfield' },
+                columnValue:  { provider: lur => (lur.midfield * 3).toString(), center: true }
+            },
+            {
+                columnHeader: { title: t('table.defense'), sortingField: 'defense' },
+                columnValue:  { provider: lur => lur.defense.toString(), center: true }
+            },
+            {
+                columnHeader: { title: t('table.attack'), sortingField: 'attack' },
+                columnValue:  { provider: lur => lur.attack.toString(), center: true }
+            },
+            {
+                columnHeader: { title: t('table.loddar_stats'), sortingField: 'loddar_stats' },
+                columnValue:  { provider: lur => loddarStats(lur.loddarStats), center: true }
+            },
+        ]}
+    />
 }
 
-export default LeagueUnitsTable;
+export default LeagueUnitsTable
