@@ -1,6 +1,5 @@
 import ax, {AxiosResponse} from 'axios';
 import {LoadingEnum} from '../../common/enums/LoadingEnum';
-import LevelDataProps from '../../common/LevelDataProps';
 import DivisionLevelDataProps from '../../divisionlevel/DivisionLevelDataProps';
 import LeagueLevelDataProps from '../../league/LeagueLevelDataProps';
 import LeagueUnitLevelDataProps from '../../leagueunit/LeagueUnitLevelDataProps';
@@ -11,7 +10,6 @@ import { Callback } from '../models/Https';
 import DivisionLevelData from '../models/leveldata/DivisionLevelData';
 import LeagueData from '../models/leveldata/LeagueData';
 import LeagueUnitData from '../models/leveldata/LeagueUnitData';
-import LevelData from '../models/leveldata/LevelData';
 import PlayerData from '../models/leveldata/PlayerData';
 import TeamData from '../models/leveldata/TeamData';
 import WorldData from '../models/leveldata/WorldData';
@@ -19,14 +17,6 @@ import NotFoundError from '../models/NotFoundLevel';
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
-
-function parseResponse<Data extends LevelData, Props extends LevelDataProps>(axiosResponse: AxiosResponse<Data, any>, converter: (levelData: Data) => Props, callback: (loadingEnum: LoadingEnum, props?: Props) => void) {
-    if (axiosResponse.status === 404) {
-        callback(LoadingEnum.NOT_FOUND)
-    } else {
-        callback(LoadingEnum.OK, converter(axiosResponse.data))
-    }
-}
 
 function catchError<T>(e: any, callback: Callback<T>) {
     if (e.response.status === 404) {

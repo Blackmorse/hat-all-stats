@@ -145,14 +145,15 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
   def playerInjuries(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(PlayerInjuryRequest, leagueUnitId, restStatisticsParameters)
 
-  def teamSalaryTsi(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean): Action[AnyContent] = Action.async {
+  def teamSalaryTsi(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[AnyContent] = Action.async {
     withLeagueUnit(leagueUnitId){leagueUnitData =>
       TeamSalaryTSIRequest.execute(
         OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
           leagueUnitId = Some(leagueUnitId)),
         restStatisticsParameters,
-        playedInLastMatch
+        playedInLastMatch = playedInLastMatch,
+        excludeZeroTsi = excludeZeroTsi
       ).map(entities => restTableData(entities, restStatisticsParameters.pageSize))
     }
   }

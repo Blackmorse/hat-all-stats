@@ -46,6 +46,8 @@ case class ClauseEntry(sqlBuilder: SqlBuilder) {
 
   def rankType: StringParameter = addParameter(StringParameter(sqlBuilder.parametersNumber, "rank_type", this, sqlBuilder.name))
 
+  def tsi: IntParameter = addParameter(IntParameter(sqlBuilder.parametersNumber, "tsi", this, sqlBuilder.name))
+
   def and(condition: String): ClauseEntry = {
     parameters += ConditionParameter(condition)
     this

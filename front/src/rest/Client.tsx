@@ -15,7 +15,6 @@ import PlayerCards from './models/player/PlayerCards'
 import PlayerSalaryTSI from './models/player/PlayerSalaryTSI'
 import PlayerRating from './models/player/PlayerRating'
 import PlayerInjury from './models/player/PlayerInjury'
-import TeamSalaryTSI from './models/team/TeamSalaryTSI'
 import TeamCards from './models/team/TeamCards'
 import TeamRating from './models/team/TeamRating'
 import TeamAgeInjury from './models/team/TeamAgeInjury'
@@ -53,7 +52,7 @@ import PlayerDetails from './models/player/PlayerDetails';
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
 
-function parseAxiosResponse<T>(response: AxiosResponse<T>,
+export function parseAxiosResponse<T>(response: AxiosResponse<T>,
     callback: (loadingEnum: LoadingEnum, entities?: T) => void) {
     if (response.status === 204) {
         callback(LoadingEnum.BOT)
@@ -263,16 +262,6 @@ export function getTeamPositions(request: LevelRequest,
         .catch(_e => callback(LoadingEnum.ERROR))
 }
 
-export function getTeamSalaryTSI(request: LevelRequest,
-        statisticsParameters: StatisticsParameters,
-        playedInLastMatch: boolean,
-        callback: (loadingEnum: LoadingEnum, entities?: RestTableData<TeamSalaryTSI>) => void) {
-    let params = createStatisticsParameters(statisticsParameters)
-    axios.get<RestTableData<TeamSalaryTSI>>(startUrl(request) + '/teamSalaryTsi?' + params.toString() + '&playedInLastMatch=' + playedInLastMatch)
-        .then(response => parseAxiosResponse(response, callback))
-        .catch(_e => callback(LoadingEnum.ERROR))
-}
-
 export let getTeamCards = statisticsRequest<TeamCards>('teamCards')
 
 export let getTeamRatings = statisticsRequest<TeamRating>('teamRatings')
@@ -403,7 +392,7 @@ export let getTopTeamVictories = requestOverview<Array<TeamStatOverview>>('topVi
 
 export let getTopSeasonScorers = requestOverview<Array<PlayerStatOverview>>('topSeasonScorers')
 
-function startUrl(request: LevelRequest): string {
+export function startUrl(request: LevelRequest): string {
     if (request.type === 'LeagueRequest') {
         return '/api/league/' + (request as LeagueRequest).leagueId 
     } else if (request.type === 'DivisionLevelRequest') {
@@ -420,7 +409,7 @@ function startUrl(request: LevelRequest): string {
     }
 }
 
-function createStatisticsParameters(statisticsParameters: StatisticsParameters) {
+export function createStatisticsParameters(statisticsParameters: StatisticsParameters) {
     var values: any = {}
 
     values.page = statisticsParameters.page.toString()

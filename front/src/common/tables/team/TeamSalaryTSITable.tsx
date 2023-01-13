@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { getTeamSalaryTSI } from '../../../rest/Client';
+import { getTeamSalaryTSI } from '../../../rest/clients/TeamStatsClient';
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import TeamSalaryTSI from '../../../rest/models/team/TeamSalaryTSI';
 import { commasSeparated, doubleSalaryFormatter, salaryFormatter } from '../../Formatters';
@@ -16,12 +16,16 @@ const TeamSalaryTSITable = <LevelProps extends LevelDataProps>(props: LevelDataP
         levelProps={props.levelDataProps}
         queryParams={props.queryParams}
         requestFunc={(request, callback) => 
-            getTeamSalaryTSI(props.levelDataProps.createLevelRequest(), request.statisticsParameters, request.playedInLastMatch, callback)}
+            getTeamSalaryTSI(props.levelDataProps.createLevelRequest(), request.statisticsParameters, 
+                request.playedInLastMatch, request.excludeZeroTsi, callback)}
         defaultSortingField='salary'
         defaultStatsType={{statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()}}
-        selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
-            SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR,
-            SelectorsEnum.PLAYED_IN_LAST_MATCH_SELECTOR]}
+        selectors={[SelectorsEnum.SEASON_SELECTOR, 
+            SelectorsEnum.STATS_TYPE_SELECTOR, 
+            SelectorsEnum.PAGE_SIZE_SELECTOR, 
+            SelectorsEnum.PAGE_SELECTOR,
+            SelectorsEnum.PLAYED_IN_LAST_MATCH_SELECTOR,
+            SelectorsEnum.EXCLUDE_ZERO_TSI_PLAYERS]}
         statsTypes={[StatsTypeEnum.ROUND]}
         tableColumns={[
             TableColumns.postitionsTableColumn(),

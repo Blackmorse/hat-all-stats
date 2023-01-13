@@ -32,8 +32,13 @@ class WorldController @Inject() (val controllerComponents: ControllerComponents,
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
-  def teamSalaryTsi(restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean): Action[AnyContent] = Action.async {
-    TeamSalaryTSIRequest.execute(OrderingKeyPath(), restStatisticsParameters, playedInLastMatch)
+  def teamSalaryTsi(restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[AnyContent] = Action.async {
+    TeamSalaryTSIRequest.execute(
+        orderingKeyPath = OrderingKeyPath(),
+        parameters = restStatisticsParameters,
+        playedInLastMatch = playedInLastMatch,
+        excludeZeroTsi = excludeZeroTsi
+    )
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 

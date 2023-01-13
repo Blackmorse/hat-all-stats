@@ -7,6 +7,7 @@ import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.team.TeamSalaryTSI
 import models.web.{RestStatisticsParameters, Round}
 import sqlbuilder.Select
+import sqlbuilder.functions.sum
 
 import scala.concurrent.Future
 
@@ -15,7 +16,8 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
 
   def execute(orderingKeyPath: OrderingKeyPath,
               parameters: RestStatisticsParameters,
-              playedInLastMatch: Boolean)
+              playedInLastMatch: Boolean,
+              excludeZeroTsi: Boolean)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamSalaryTSI]] = {
     if(!sortingColumns.contains(parameters.sortBy))
       throw new Exception("Looks like SQL injection")
@@ -25,6 +27,7 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
     }
 
     val playedMinutes = if(playedInLastMatch) Some(1) else None
+    val tsiGreater = if (excludeZeroTsi) 1 else 0
 
     import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
@@ -33,19 +36,21 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
         "team_id",
         "league_unit_id",
         "league_unit_name",
-        "sum(tsi)" as "tsi",
-        "sum(salary)" as "salary",
+        sum("tsi") as "team_tsi",
+        sum("salary") as "salary",
         "count()" as "players_count",
         "salary / players_count".toInt64 as "avg_salary",
-        "tsi / players_count".toInt64 as "avg_tsi",
-        "if(tsi = 0, 0, salary / tsi)" as "salary_per_tsi"
+        "team_tsi / players_count".toInt64 as "avg_tsi",
+        "if(team_tsi = 0, 0, salary / team_tsi)" as "salary_per_tsi"
       ).from("hattrick.player_stats")
       .where
         .season(parameters.season)
         .orderingKeyPath(orderingKeyPath)
         .playedMinutes.greaterEqual(playedMinutes)
         .round(round)
+        .tsi.greaterEqual(tsiGreater)
         .isLeagueMatch
+
       .groupBy("team_id", "league_unit_id", "league_unit_name")
       .orderBy(
         parameters.sortBy.to(parameters.sortingDirection.toSql),

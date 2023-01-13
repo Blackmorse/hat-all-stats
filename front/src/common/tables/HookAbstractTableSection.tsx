@@ -27,6 +27,7 @@ interface Request {
     playedAllMatches: boolean
     playedInLastMatch: boolean
     oneTeamPerUnit: boolean
+    excludeZeroTsi: boolean
 }
 
 function initialDataRequest<LevelProps extends LevelDataProps, Model>(props: Properties<LevelProps, Model>): Request {
@@ -63,7 +64,8 @@ function initialDataRequest<LevelProps extends LevelDataProps, Model>(props: Pro
         },
         playedInLastMatch: false,
         playedAllMatches: true,
-        oneTeamPerUnit: true
+        oneTeamPerUnit: true,
+        excludeZeroTsi: false
     }
 }
 
@@ -96,6 +98,7 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
     const [ statType, setStatType ] = useState(initDataRequest.statisticsParameters.statsType)
     const [ season, setSeason ] = useState(initDataRequest.statisticsParameters.season)
     const [ sorting, setSorting ] = useState({field: initDataRequest.statisticsParameters.sortingField, direction: initDataRequest.statisticsParameters.sortingDirection})
+    const [ excludeZeroTsi, setExcludeZeroTsi ] = useState(initDataRequest.excludeZeroTsi)
 
     const [ data, setData ] = useState(undefined as RestTableData<Model> | undefined)
 
@@ -107,10 +110,10 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
                 setLoadingEnum(loadingEnum)
             }
        ) 
-    }, [ sorting, updateCounter, season, statType, playedAllMatches, playedInLastMatch, pageSize, pageNumber,  nationality, role, minAge, maxAge, oneTeamPerUnit ])
+    }, [ sorting, updateCounter, season, statType, playedAllMatches, playedInLastMatch, excludeZeroTsi, pageSize, pageNumber,  nationality, role, minAge, maxAge, oneTeamPerUnit ])
 
     function row(rowNum: number, entity: Model): JSX.Element {
-       return <HookMatchRow 
+       return <HookMatchRow
            rowNum={rowNum}
            entity={entity}
            tableColumns={props.tableColumns}
@@ -137,7 +140,8 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
             },
             playedAllMatches: playedAllMatches,
             playedInLastMatch: playedInLastMatch,
-            oneTeamPerUnit: oneTeamPerUnit
+            oneTeamPerUnit: oneTeamPerUnit,
+            excludeZeroTsi: excludeZeroTsi
         }
     }
 
@@ -192,6 +196,17 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
                 value={playedInLastMatch}
                 callback={setPlayedInLastMatch}
                 title='filter.played_in_last_match' />
+            </Col>
+    }
+
+    let zeroPlayerTsiSelector = <></>
+    if(props.selectors.indexOf(SelectorsEnum.EXCLUDE_ZERO_TSI_PLAYERS) !== -1) {
+        zeroPlayerTsiSelector = <Col lg={2} md={5}>
+            <CheckBoxSelector
+                value={excludeZeroTsi}
+                callback={setExcludeZeroTsi}
+                title='filter.exclude_zero_player_tsi' 
+            />
             </Col>
     }
 
@@ -252,6 +267,7 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
             {playedAllMatchesSelector}
             {playedInLastMatchSelector}
             {oneTeamPerUnitSelector}
+            {zeroPlayerTsiSelector}
             {pageSizeSelector}
         </Row>
         <Row>

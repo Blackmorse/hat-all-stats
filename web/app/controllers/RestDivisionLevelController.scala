@@ -122,12 +122,14 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
   def playerInjuries(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(PlayerInjuryRequest, leagueId, divisionLevel, restStatisticsParameters)
 
-  def teamSalaryTsi(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean): Action[AnyContent] = Action.async { implicit request =>
-    TeamSalaryTSIRequest.execute(OrderingKeyPath(
-        leagueId = Some(leagueId),
-        divisionLevel = Some(divisionLevel)),
-        restStatisticsParameters,
-        playedInLastMatch)
+  def teamSalaryTsi(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[AnyContent] = Action.async { implicit request =>
+    TeamSalaryTSIRequest.execute(
+        orderingKeyPath = OrderingKeyPath(
+          leagueId = Some(leagueId),
+          divisionLevel = Some(divisionLevel)),
+        parameters = restStatisticsParameters,
+        playedInLastMatch = playedInLastMatch,
+        excludeZeroTsi = excludeZeroTsi)
       .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
   }
 
