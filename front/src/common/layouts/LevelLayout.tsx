@@ -77,11 +77,15 @@ interface Props<LevelProps extends LevelDataProps> extends BaseLevelLayoutProps<
 const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>) => {
     const t = useTranslation().t
     const [ queryParams ] = useState(parseQueryParams())
+    // after the changing page query params should not apply
+    const [ updateCounter, setUpdateCounter ] = useState(0)
     //TODO 
     const [ page, setPage ] = useState((queryParams.pageString === undefined) ? 
         Array.from(props.pagesMap)[0][0] : Mappings.queryParamToPageMap.get(queryParams.pageString))
+
     const [ responseState, setResponseState ] = useState({loadingEnum: LoadingEnum.OK})
     const [ levelProps, setLevelProps ] = useState<LevelProps | undefined>(undefined)
+    
 
     useEffect(() => {
         props.fetchLevelData(payload => {
@@ -98,13 +102,18 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
         })
     }, [])
 
+    let setThisPage = (pagesEnum: PagesEnum) => {
+        setUpdateCounter(updateCounter + 1)
+        setPage(pagesEnum)
+    }
+
     let leftMenu = <>
-            {(levelProps !== undefined) ? props.topLeftMenu(levelProps, setPage): <></>}
+            {(levelProps !== undefined) ? props.topLeftMenu(levelProps, setThisPage): <></>}
             <LeftMenu pages={Array.from(props.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH && /*TODO */  p !== PagesEnum.TEAM_COMPARSION))} 
-                    callback={leaguePage => setPage(leaguePage)}
+                    callback={leaguePage => setThisPage(leaguePage)}
                     title='menu.statistics'/>
             <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
-                    callback={leaguePage => setPage(leaguePage)}
+                    callback={leaguePage => setThisPage(leaguePage)}
                     title='menu.team_search' /> 
         </>
 
@@ -131,7 +140,11 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
     let res: JSX.Element
     let jsxFunction = props.pagesMap.get(page!)
     if (levelProps && jsxFunction) {
-        res = jsxFunction(levelProps, queryParams)
+        if(updateCounter < 1) {
+            res = jsxFunction(levelProps, queryParams)
+        } else {
+            res = jsxFunction(levelProps, {})
+        }
     } else {
         res = <></>
     }
