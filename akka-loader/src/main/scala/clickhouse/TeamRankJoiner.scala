@@ -54,7 +54,7 @@ object TeamRankJoiner {
     |    WHERE {where}
     |    ORDER BY {field_alias} DESC, team_id ASC
     |)
-    |ORDER BY team_id ASC""".stripMargin
+    |""".stripMargin
 
   private val team_details_request = """SELECT
     |team_id,
@@ -71,7 +71,7 @@ object TeamRankJoiner {
     |    WHERE {where}
     |    ORDER BY {field_alias} {direction}, team_id ASC
     |)
-    |ORDER BY team_id ASC""".stripMargin
+    |""".stripMargin
 
   private val player_stats_request = """SELECT
         team_id,
@@ -91,8 +91,7 @@ object TeamRankJoiner {
             team_name
         ORDER BY {field_alias} DESC, team_id ASC
     )
-    ORDER BY
-        team_id ASC """.stripMargin
+        """.stripMargin
 
   def createSql(season: Int, leagueId: Int, round: Int, divisionLevel: Option[Int], database: String): String = {
     val field = "rating_midfield * 3 + rating_right_def + rating_left_def + rating_mid_def + rating_right_att + rating_mid_att + rating_left_att"
@@ -117,7 +116,7 @@ object TeamRankJoiner {
       |    WHERE ${whereStatement(true)}
       |    ORDER BY $field_alias DESC, team_id ASC
       |)
-      |ORDER BY team_id ASC""".stripMargin
+      |""".stripMargin
 
       val requestParams = Seq(
         SqlRequestParam("rating_right_att + rating_mid_att + rating_left_att", "attack", match_details_request, cupLevelField = true),
