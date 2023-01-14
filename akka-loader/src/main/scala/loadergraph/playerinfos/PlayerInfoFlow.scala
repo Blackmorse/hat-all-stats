@@ -24,8 +24,11 @@ object PlayerInfoFlow {
       .flatMapConcat{case(players, matchDetails) =>
         val matchDuration = players.team.playerList
           .flatMap(_.lastMatch)
-          .filter(lastMatch => lastMatch.date == matchDetails.matc.date)
-          .map(_.playedMinutes).max
+          .filter(lastMatch => lastMatch.matchId == matchDetails.matc.id)
+          .map(_.playedMinutes)
+          .maxOption
+          .getOrElse(0)
+
         val playerInfos = players.team.playerList
           .map(player =>
             PlayerInfoModelCH.convert(player = player,
