@@ -34,7 +34,7 @@ export const HookMatchRow = <RowModel extends {}>(props: HookMatchRowProperties<
     }
 
     if (props.expandedRowFunc === undefined) {
-        return <tr>{row()}</tr>
+        return <tr className={props.className}>{row()}</tr>
     } else {
         if (!expanded) {
             return <tr className={props.className}>

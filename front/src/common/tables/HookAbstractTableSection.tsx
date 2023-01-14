@@ -23,6 +23,7 @@ import {HookMatchRow} from './rows/match/MatchRow'
 
 interface Request {
     statisticsParameters: StatisticsParameters
+    selectedRow?: number,
     playerParameters: PlayersParameters
     playedAllMatches: boolean
     playedInLastMatch: boolean
@@ -35,7 +36,7 @@ function initialDataRequest<LevelProps extends LevelDataProps, Model>(props: Pro
     let pageSize = (pageSizeString == null) ? 16 : Number(pageSizeString)
 
     let selectedRow = props.queryParams.selectedRow
-    let page = (selectedRow) ? Math.floor(Number(selectedRow)/ pageSize) : 0
+    let page = (selectedRow) ? Math.floor(Number(selectedRow) / pageSize) : 0
 
     let sortingField = props.queryParams.sortingField
     if (!sortingField) {
@@ -60,6 +61,7 @@ function initialDataRequest<LevelProps extends LevelDataProps, Model>(props: Pro
             statsType: statsType,
             season: season
         },
+        selectedRow: (selectedRow === undefined) ? undefined : Number(selectedRow),
         playerParameters: {
         },
         playedInLastMatch: false,
@@ -85,7 +87,7 @@ interface Properties<LevelProps extends LevelDataProps, Model> {
 const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(props: Properties<LevelProps, Model>) => {
     let initDataRequest = initialDataRequest(props)
     const [ updateCounter, setUpdateCounter ] = useState(0)
-    const [loadingEnum, setLoadingEnum] = useState(LoadingEnum.LOADING)
+    const [ loadingEnum, setLoadingEnum ] = useState(LoadingEnum.LOADING)
 
     const [ oneTeamPerUnit, setOneTeamPerUnit ] = useState(initDataRequest.oneTeamPerUnit)
     const [ nationality, setNationality ] = useState(undefined as number | undefined)
@@ -112,12 +114,13 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
        ) 
     }, [ sorting, updateCounter, season, statType, playedAllMatches, playedInLastMatch, excludeZeroTsi, pageSize, pageNumber,  nationality, role, minAge, maxAge, oneTeamPerUnit ])
 
-    function row(rowNum: number, entity: Model): JSX.Element {
+    function row(rowNum: number, entity: Model, className?: string): JSX.Element {
        return <HookMatchRow
            rowNum={rowNum}
            entity={entity}
            tableColumns={props.tableColumns}
            expandedRowFunc={props.expandedRowFunc}
+           className={className}
         />
     }
 
@@ -306,7 +309,8 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
             <tbody>
                 {
                     data?.entities.map((entity, index) => {
-                        return row(pageSize * pageNumber + index, entity)
+                        return row(pageSize * pageNumber + index, entity,
+                            ((initDataRequest.selectedRow !== undefined) && initDataRequest.selectedRow === pageSize * pageNumber + index) ? "selected_row" : "")
                     } )
                 }
             </tbody>
