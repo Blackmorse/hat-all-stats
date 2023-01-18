@@ -13,7 +13,9 @@ import FormationSelector, { Formation } from '../selectors/FormationSelector'
 import { ratingFormatter } from '../Formatters'
 import ExecutableComponent from '../sections/ExecutableComponent';
 import Section, { SectionState } from '../sections/Section';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row, Card } from 'react-bootstrap';
+import { Translation } from 'react-i18next';
+import { PagesEnum } from '../enums/PagesEnum';
 
 interface State {
     dreamTeamPlayers?: Array<DreamTeamPlayer>,
@@ -166,7 +168,9 @@ class DreamTeamPageBase<Props extends LevelDataProps>
         sumStars += this.starsOfPlayers(displayedMidfielders)
         sumStars += this.starsOfPlayers(displayedForwards)
 
-        return <div>
+        return <Translation>{(t, { i18n }) => <Card className='mt-3 shadow'>
+            <Card.Header className="lead">{t(PagesEnum.DREAM_TEAM)}</Card.Header>
+            <Card.Body>
             <Row>
                 <Col lg={4} className="d-flex flex-row mb-2">
                     <span className="me-2">{i18n.t('dream_team.total')}:</span> {ratingFormatter(sumStars)}
@@ -261,7 +265,9 @@ class DreamTeamPageBase<Props extends LevelDataProps>
                     <DreamTeamPlayerCard dreamTeamPlayerPosition={{player: wingers[displayedWings.length], position: i18n.t('dream_team.winger')}} showTeamCountryFlag={this.props.showCountryFlags}/>
                 </Col>
             </Row>
-        </div>
+            </Card.Body>
+        </Card>}
+        </Translation>
     }
     
 }

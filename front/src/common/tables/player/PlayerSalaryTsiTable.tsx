@@ -4,6 +4,7 @@ import {getPlayerSalaryTsi} from "../../../rest/Client"
 import PlayerSalaryTSI from "../../../rest/models/player/PlayerSalaryTSI"
 import {StatsTypeEnum} from "../../../rest/models/StatisticsParameters"
 import Mappings from '../../enums/Mappings'
+import { PagesEnum } from '../../enums/PagesEnum'
 import {ageFormatter, commasSeparated, salaryFormatter} from '../../Formatters'
 import LevelDataProps, {LevelDataPropsWrapper} from "../../LevelDataProps"
 import PlayerLink from '../../links/PlayerLink'
@@ -17,7 +18,6 @@ const PlayerSalaryTsiTable = <LevelProps extends LevelDataProps>(props: LevelDat
 
     return <HookAbstractTableSection<LevelProps, PlayerSalaryTSI>
         levelProps={props.levelDataProps}
-        queryParams={props.queryParams}
         requestFunc={(request, callback) => getPlayerSalaryTsi(props.levelDataProps.createLevelRequest(), request.statisticsParameters, request.playerParameters, callback)}
         defaultSortingField='tsi'
         defaultStatsType={{statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()}}
@@ -26,6 +26,7 @@ const PlayerSalaryTsiTable = <LevelProps extends LevelDataProps>(props: LevelDat
                 SelectorsEnum.PLAYER_ROLES, SelectorsEnum.NATIONALITIES_SELECTOR,
                 SelectorsEnum.AGE_SELECTOR]}
         statsTypes={[StatsTypeEnum.ROUND]}
+        pageEnum={PagesEnum.PLAYER_SALARY_TSI}
         tableColumns={[
             TableColumns.postitionsTableColumn(),
             {

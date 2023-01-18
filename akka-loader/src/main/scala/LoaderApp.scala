@@ -1,5 +1,6 @@
 import akka.actor.ActorSystem
 import chpp.matchlineup.MatchLineupRequest
+import chpp.teamdetails.TeamDetailsRequest
 import chpp.{ChppRequestExecutor, OauthTokens}
 import clickhouse.TeamRankJoiner
 import com.google.inject.Guice
@@ -30,11 +31,11 @@ object LoaderApp extends App {
   val executorActorFactory: ExecutorActorFactory = injector
       .getInstance(classOf[ExecutorActorFactory])
 
-//  val ex = ChppRequestExecutor.executeWithRetry(MatchLineupRequest(Some(705575755), Some(1958858), None))
-//
-//  val r = Await.result(ex, 3.minute)
-//
-//  if (true) System.exit(0)
+  val ex = ChppRequestExecutor.executeWithRetry(TeamDetailsRequest(teamId = Some(935203L)))
+
+  val r = Await.result(ex, 3.minute)
+println(r)
+  if (true) System.exit(0)
 
   val worldDetailsFuture = WorldDetailsSingleRequest.request(leagueId = None)
 

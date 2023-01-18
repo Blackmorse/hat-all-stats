@@ -1,6 +1,6 @@
 import React from "react";
 import i18n from "../../i18n";
-import {loddarStats} from "../Formatters";
+import {ageFormatter, commasSeparated, loddarStats, ratingFormatter, redCards, salaryFormatter, yellowCards} from "../Formatters";
 import LeagueUnitLink from "../links/LeagueUnitLink";
 import TeamLink from "../links/TeamLink";
 import TableColumn from "./TableColumn";
@@ -61,6 +61,48 @@ class TableColumns {
             columnValue: {provider: t => loddarStats(loddarStatsFunc(t)), center: true}
         }
     }
+
+     static ageTableColumn<T>(ageFunc: (t: T) => number, sortingField: string): TableColumn<T> {
+        return {
+            columnHeader: { title: i18n.t('table.age'), sortingField: sortingField, center: true },
+            columnValue:  { provider: t => ageFormatter(ageFunc(t)), center: true }
+        }
+     }
+
+     static yellowCards<T>(yellowCardsFunc: (t: T) => number, sortingField: string): TableColumn<T> {
+        return {
+            columnHeader: { title: i18n.t('table.yellow_cards'), sortingField: sortingField, center: true },
+            columnValue:  { provider: t => yellowCards(yellowCardsFunc(t)), center: true }
+        }
+     }
+
+     static redCards<T>(redCardsFunc: (t: T) => number, sortingField: string): TableColumn<T> {
+        return {
+            columnHeader: { title: i18n.t('table.red_cards'), sortingField: sortingField, center: true },
+            columnValue:  { provider: t => redCards(redCardsFunc(t)), center: true }
+        }
+     }
+
+     static ratings<T>(ratingsFunc: (t: T) => number, title: string, sortingField: string): TableColumn<T> {
+        return {
+            columnHeader: { title: title, sortingField: sortingField, center: true },
+            columnValue:  { provider: t => ratingFormatter(ratingsFunc(t)), center: true }
+        }
+     }
+
+     static tsi<T>(tsiFunc: (t: T) => number, title: string, sortingField: string): TableColumn<T> {
+        return {
+            columnHeader: { title: title, sortingField: sortingField, center: true },
+            columnValue:  { provider: t => commasSeparated(tsiFunc(t)), center: true }
+        }
+     }
+
+     static salary<T>(salaryFunc: (t: T) => number, rate: number, title: string, sortingField: string): TableColumn<T> {
+        return {
+            columnHeader: { title: title, sortingField: sortingField, center: true },
+            columnValue:  { provider: t => salaryFormatter(salaryFunc(t), rate), center: true }
+        }
+     }
 }
 
 export default TableColumns

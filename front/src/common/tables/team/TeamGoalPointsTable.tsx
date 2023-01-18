@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next'
 import {getTeamGoalPoints} from '../../../rest/Client'
 import {StatsTypeEnum} from '../../../rest/models/StatisticsParameters'
 import TeamGoalPoints from '../../../rest/models/team/TeamGoalPoints'
+import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, {LevelDataPropsWrapper} from '../../LevelDataProps'
 import HookAbstractTableSection from '../HookAbstractTableSection'
 import {SelectorsEnum} from '../SelectorsEnum'
@@ -13,7 +14,6 @@ const TeamGoalPointsTable = <LevelProps extends LevelDataProps>(props: LevelData
 
     return <HookAbstractTableSection<LevelProps, TeamGoalPoints>
         levelProps={props.levelDataProps}
-        queryParams={props.queryParams}
         requestFunc={(request, callback) => getTeamGoalPoints(props.levelDataProps.createLevelRequest(), request.statisticsParameters, request.playedAllMatches, request.oneTeamPerUnit, callback)}
         defaultSortingField='points'
         defaultStatsType={{statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()}}
@@ -21,6 +21,7 @@ const TeamGoalPointsTable = <LevelProps extends LevelDataProps>(props: LevelData
                 SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR,
                 SelectorsEnum.PLAYED_ALL_MATCHES_SELECTOR, SelectorsEnum.ONE_TEAM_PER_UNIT_SELECTOR]}
         statsTypes={[StatsTypeEnum.ROUND]}
+        pageEnum={PagesEnum.TEAM_GOAL_POINTS}
         tableColumns={[
             TableColumns.postitionsTableColumn(),
             TableColumns.teamTableColumn(tgp => tgp.sortingKey, props.showCountryFlags),

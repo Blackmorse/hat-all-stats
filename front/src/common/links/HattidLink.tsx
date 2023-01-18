@@ -14,6 +14,7 @@ export interface LinkProps {
     className?: string
 }
 
+
 abstract class HattidLink<Props extends LinkProps> extends React.Component<Props, {}> {
     abstract baseString(): string
 
@@ -26,31 +27,25 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
     }
 
     render() {
-        let parameters: any = {}
+        let parameters: any = Object.assign({}, this.props.queryParams)
+        
         let page: PagesEnum | undefined = this.props.page
-        if(page) {    
-            parameters.page = Mappings.queryParamToPageMap.getKey(page as PagesEnum)
+        if(page !== undefined) {    
+            parameters.pageName = Mappings.queryParamToPageMap.getKey(page!)
         }
 
-        if(this.props.queryParams !== undefined) {
-            if(this.props.queryParams.sortingField) {
-                parameters.sortingField = this.props.queryParams.sortingField || ''
-            }
-            if(this.props.queryParams.selectedRow !== undefined) {
-                parameters.row = this.props.queryParams.selectedRow
-            }
-            if(this.props.queryParams.round !== undefined) {
-                parameters.round = this.props.queryParams.round
-            }
-            if(this.props.queryParams.season) {
-                parameters.season = this.props.queryParams.season || 0
-            }
-            if(this.props.queryParams.teamId !== undefined) {
-                parameters.teamId = this.props.queryParams.teamId || 0
-            }
-        }
-        let queryParams = new URLSearchParams(parameters).toString()
+        let queryParams = new URLSearchParams(parameters)
 
+        let keysToDel: Array<string> = []
+        queryParams.forEach((key, value) => {
+            if (value === undefined || value === 'undefined') {
+                keysToDel.push(key)
+            }
+        })
+
+        keysToDel.forEach(key => queryParams.delete(key))
+
+        
         let className: string
         if (this.props.className !== undefined) {
             className = this.props.className!

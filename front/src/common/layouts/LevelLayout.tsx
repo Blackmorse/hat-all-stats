@@ -1,6 +1,4 @@
 import React, {useEffect, useState} from 'react'
-import {Card} from 'react-bootstrap'
-import {useTranslation} from 'react-i18next'
 import {Link} from 'react-router-dom'
 import LeftMenu from '../../common/menu/LeftMenu'
 import { Callback, Failure, Success } from '../../rest/models/Https'
@@ -9,62 +7,17 @@ import {LoadingEnum} from '../enums/LoadingEnum'
 import Mappings from '../enums/Mappings'
 import {PagesEnum} from '../enums/PagesEnum'
 import LevelDataProps from '../LevelDataProps'
-import QueryParams from '../QueryParams'
 import Layout from './Layout'
 
 
-function parseQueryParams(): QueryParams {
+function parsePage(): string | undefined {
     let params = new URLSearchParams(window.location.search);
 
-    let sortingFieldParams = params.get('sortingField')
-    let sortingField: string | undefined = undefined
-    if (sortingFieldParams !== null) {
-        sortingField = sortingFieldParams
-    }
-
-    let selectedRowParams = params.get('row')
-    let selectedRow: number | undefined = undefined
-    if (selectedRowParams !== null) {
-        selectedRow = Number(selectedRowParams)
-    }
-   
-    let roundParams = params.get('round')
-    let round: number | undefined = undefined
-    if(roundParams !== null) {
-        round = Number(roundParams)
-    }
-
-    let seasonParams = params.get('season')
-    let season: number | undefined = undefined
-    if(seasonParams !== null) {
-        season = Number(seasonParams)
-    }
-
-    let teamIdParams = params.get('teamId')
-    let teamId: number | undefined = undefined
-    if(teamIdParams !== null) {
-        teamId = Number(teamIdParams)
-    }
-
-        
-    let pageStringParams = params.get('page')
-    let pageString: string | undefined = undefined
-    if(pageStringParams !== null) {
-        pageString = pageStringParams
-    }
-
-    return {
-        sortingField: sortingField,
-        selectedRow: selectedRow,
-        round: round,
-        season: season,
-        teamId: teamId,
-        pageString: pageString
-    }
+    return (params.get('pageName') === null) ? undefined : params.get('pageName') as string | undefined;
 }
 
 export interface BaseLevelLayoutProps<LevelProps extends LevelDataProps> {
-    pagesMap: Map<PagesEnum, (props: LevelProps, queryParams: QueryParams) => JSX.Element>
+    pagesMap: Map<PagesEnum, (props: LevelProps) => JSX.Element>
     topMenu: (props?: LevelProps) => JSX.Element
     fetchLevelData: (callback: Callback<LevelProps>) => void
     documentTitle: (levelProps: LevelProps) => string
@@ -75,20 +28,16 @@ interface Props<LevelProps extends LevelDataProps> extends BaseLevelLayoutProps<
 }
 
 const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>) => {
-    const t = useTranslation().t
-    const [ queryParams ] = useState(parseQueryParams())
-    // after the changing page query params should not apply
-    const [ updateCounter, setUpdateCounter ] = useState(0)
-    //TODO 
-    const [ page, setPage ] = useState((queryParams.pageString === undefined) ? 
-        Array.from(props.pagesMap)[0][0] : Mappings.queryParamToPageMap.get(queryParams.pageString))
+    const [ pageName ] = useState(parsePage())
+    const [ page, setPage ] = useState((pageName === undefined) ? 
+        Array.from(props.pagesMap)[0][0] : Mappings.queryParamToPageMap.get(pageName))
 
     const [ responseState, setResponseState ] = useState({loadingEnum: LoadingEnum.OK})
     const [ levelProps, setLevelProps ] = useState<LevelProps | undefined>(undefined)
     
 
     useEffect(() => {
-        props.fetchLevelData(payload => {
+       props.fetchLevelData(payload => {
             if (payload.loadingEnum === LoadingEnum.OK) {
                 let success = payload as Success<LevelProps>
                 setResponseState(success)
@@ -102,18 +51,13 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
         })
     }, [])
 
-    let setThisPage = (pagesEnum: PagesEnum) => {
-        setUpdateCounter(updateCounter + 1)
-        setPage(pagesEnum)
-    }
-
     let leftMenu = <>
-            {(levelProps !== undefined) ? props.topLeftMenu(levelProps, setThisPage): <></>}
+            {(levelProps !== undefined) ? props.topLeftMenu(levelProps, setPage): <></>}
             <LeftMenu pages={Array.from(props.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH && /*TODO */  p !== PagesEnum.TEAM_COMPARSION))} 
-                    callback={leaguePage => setThisPage(leaguePage)}
+                    callback={leaguePage => setPage(leaguePage)}
                     title='menu.statistics'/>
             <LeftMenu pages={[PagesEnum.TEAM_SEARCH]} 
-                    callback={leaguePage => setThisPage(leaguePage)}
+                    callback={leaguePage => setPage(leaguePage)}
                     title='menu.team_search' /> 
         </>
 
@@ -140,20 +84,13 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
     let res: JSX.Element
     let jsxFunction = props.pagesMap.get(page!)
     if (levelProps && jsxFunction) {
-        if(updateCounter < 1) {
-            res = jsxFunction(levelProps, queryParams)
-        } else {
-            res = jsxFunction(levelProps, {})
-        }
+        res = jsxFunction(levelProps)
     } else {
         res = <></>
     }
     let content = <>
             {errorPopup}
-            <Card className="mt-3 shadow">
-                <Card.Header className="lead">{t(page!)}</Card.Header>
-                <Card.Body>{res}</Card.Body>
-            </Card>
+            {res}
         </>
 
     return <Layout 

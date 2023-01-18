@@ -11,6 +11,8 @@ import LeagueUnitLink from '../links/LeagueUnitLink';
 import { LoadingEnum } from '../enums/LoadingEnum';
 import ExecutableComponent from '../sections/ExecutableComponent';
 import Section, { SectionState } from '../sections/Section';
+import { Card } from 'react-bootstrap'
+import { PagesEnum } from '../enums/PagesEnum';
 
 interface State {
     promotions?: Array<PromotionWithType>
@@ -42,6 +44,9 @@ class PromotionsTableBase<Props extends LevelDataProps>
     renderSection(): JSX.Element {
         return <Translation>
             {t =>
+        <Card className='mt-3 shadow'>
+            <Card.Header className='lead'>{t(PagesEnum.PROMOTIONS)}</Card.Header>
+            <Card.Body>
         <div className="promotions_content">
             {this.state.promotions?.map(promotionWithType => {
                 return <React.Fragment key={'promotions_table_entry' + promotionWithType.upDivisionLevelName + '_' + promotionWithType.downDivisionLevelName + '_' + promotionWithType.promoteType}>
@@ -95,6 +100,8 @@ class PromotionsTableBase<Props extends LevelDataProps>
                 </React.Fragment>
             })}
         </div>
+        </Card.Body>
+        </Card>
         }
         </Translation>
     }

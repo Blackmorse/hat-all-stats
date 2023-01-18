@@ -18,6 +18,9 @@ import PlayersParameters from '../../rest/models/PlayersParameters'
 import ExecutableComponent from '../sections/ExecutableComponent';
 import { SectionState } from '../sections/Section';
 import { Col, Container, Row } from 'react-bootstrap';
+import { QueryParams } from '../QueryParams'
+import { Translation } from 'react-i18next';
+import { Card } from 'react-bootstrap'
 
 interface ModelTableState<ResponseModel> {
     model?: ResponseModel,
@@ -53,7 +56,7 @@ abstract class AbstractTableSection<TableProps extends LevelDataProps, RowModel,
         this.statsTypes = statsTypes
         this.selectors = selectors
         
-        let queryParams = props.queryParams
+        let queryParams: QueryParams = {}//props.queryParams
         let sortingField = queryParams.sortingField
         if (!sortingField) {
             sortingField = defaultSortingField
@@ -350,8 +353,11 @@ abstract class AbstractTableSection<TableProps extends LevelDataProps, RowModel,
         }
 
         let indexOffset = this.state.dataRequest.statisticsParameters.pageSize * this.state.dataRequest.statisticsParameters.page 
-        return <Container className='table-responsive'>
-                <Row>
+        return <Translation>{(t, { i18n }) => <Card className='mt-3 shadow'> 
+        <Card.Header></Card.Header>
+            <Card.Body>
+        <Container className='table-responsive'>
+                <Row className='mt-3'>
                     {seasonSelector}
                     {statsTypeSelector}
                     {playedAllMatchesSelector}
@@ -385,6 +391,9 @@ abstract class AbstractTableSection<TableProps extends LevelDataProps, RowModel,
                 {pageSelector}
                 {this.additionalSection(this.state.model)}
                 </Container>
+                </Card.Body>
+                </Card>}
+            </Translation>
     }
 }
 

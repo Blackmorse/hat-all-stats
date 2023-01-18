@@ -21,7 +21,7 @@ class RankingParametersProvider {
             positionFunc: teamRanking => teamRanking.salaryPosition,
             valueFunc: teamRanking => teamRanking.salary,
             formatter: value => salaryFormatter(value, rate),
-            sortingField: 'salary',
+            sortingField: 'sum_salary',
             page: PagesEnum.TEAM_SALARY_TSI,
             yAxisFunc: n => n / ((rate === undefined) ? 1 : rate)
         }
@@ -33,7 +33,7 @@ class RankingParametersProvider {
             positionFunc: teamRanking => teamRanking.tsiPosition,
             valueFunc: teamRanking => teamRanking.tsi,
             formatter: commasSeparated,
-            sortingField: 'tsi',
+            sortingField: 'team_tsi',
             page: PagesEnum.TEAM_SALARY_TSI
         }
     }

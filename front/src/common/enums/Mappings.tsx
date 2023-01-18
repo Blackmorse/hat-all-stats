@@ -1,6 +1,7 @@
 import { PagesEnum } from './PagesEnum'
 import { MenuGroupsEnum } from './MenuGroupsEnum'
 import BiMap from 'ts-bidirectional-map';
+import { SortingDirection, StatsTypeEnum } from '../../rest/models/StatisticsParameters';
 
 class Mappings {
     static groupMap: Map<PagesEnum, MenuGroupsEnum> = 
@@ -54,6 +55,20 @@ class Mappings {
         })
         return biMap
     }
+
+    static statsTypeMappings: BiMap<string, StatsTypeEnum> = 
+        Mappings.createBiMap([
+            ['avg', StatsTypeEnum.AVG],
+            ['max', StatsTypeEnum.MAX],
+            ['accumulate', StatsTypeEnum.ACCUMULATE],
+            ['statRound', StatsTypeEnum.ROUND]
+        ])
+
+    static directionMappings: BiMap<string, SortingDirection> = 
+        Mappings.createBiMap([
+            ['desc', SortingDirection.DESC],
+            ['asc', SortingDirection.ASC]
+        ])
 
     static queryParamToPageMap: BiMap<string, PagesEnum> = 
         Mappings.createBiMap([

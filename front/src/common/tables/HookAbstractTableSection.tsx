@@ -3,8 +3,8 @@ import {Col, Container, Row} from 'react-bootstrap'
 import RestTableData from '../../rest/models/RestTableData'
 import StatisticsParameters, {SortingDirection, StatsType, StatsTypeEnum} from '../../rest/models/StatisticsParameters'
 import LevelDataProps from '../LevelDataProps'
+import {Card} from 'react-bootstrap'
 import Cookies from 'js-cookie'
-import QueryParams from '../QueryParams'
 import TableColumn from './TableColumn'
 import SortingTableTh from '../elements/SortingTableTh'
 import {LoadingEnum} from '../enums/LoadingEnum'
@@ -20,6 +20,11 @@ import NationalitySelector from '../selectors/NationalitySelector'
 import AgeSelector from '../selectors/AgeSelector'
 import PlayersParameters from '../../rest/models/PlayersParameters'
 import {HookMatchRow} from './rows/match/MatchRow'
+import { PagesEnum } from '../enums/PagesEnum'
+import Mappings from '../enums/Mappings'
+import { useLocation } from 'react-router'
+import Popup from 'reactjs-popup'
+import { useTranslation } from 'react-i18next'
 
 interface Request {
     statisticsParameters: StatisticsParameters
@@ -31,76 +36,107 @@ interface Request {
     excludeZeroTsi: boolean
 }
 
-function initialDataRequest<LevelProps extends LevelDataProps, Model>(props: Properties<LevelProps, Model>): Request {
-    let pageSizeString = Cookies.get('hattid_page_size')
-    let pageSize = (pageSizeString == null) ? 16 : Number(pageSizeString)
+interface TableQueryParams {
+    pageName: string,
+    selectedRow?: number,
+    //statisticsParameters
+    season: number,
+    sortingField: string,
+    sortingDirection: SortingDirection,
+    statType: StatsTypeEnum,
+    statTypeRound?: number,
+    pageSize: number,
+    pageNumber: number,
+    //playerParameters
+    nationality?: number,
+    minAge?: number,
+    maxAge?: number,
+    role?: string,
 
-    let selectedRow = props.queryParams.selectedRow
-    let page = (selectedRow) ? Math.floor(Number(selectedRow) / pageSize) : 0
+    playedAllMatches: boolean,
+    playedInLastMatch: boolean,
+    oneTeamPerUnit: boolean,
+    excludeZeroTsi: boolean
+}
 
-    let sortingField = props.queryParams.sortingField
-    if (!sortingField) {
-        sortingField = props.defaultSortingField
+function parseParams<LevelProps extends LevelDataProps, Model>(props: Properties<LevelProps, Model>): TableQueryParams {
+    let params = new URLSearchParams(window.location.search);
+
+    let selectedRow = (params.get('selectedRow') === null) ? undefined : Number(params.get('selectedRow'))
+    let cookiesPageSize = (Cookies.get('hattid_page_size') === undefined) ? 16 : Number(Cookies.get('hattid_page_size'))
+    let pageSize = (params.get('pageSize') === null) ? cookiesPageSize : Number(params.get('pageSize'))
+    let pageNumberFromParams = (params.get('pageNumber') === null) ? undefined : Number(params.get('pageNumber'))
+
+    let pageNumberFromSelectedRow = (selectedRow) ? Math.floor(Number(selectedRow) / pageSize) : 0
+
+    let pageNumber: number
+    if (pageNumberFromParams === undefined) {
+        pageNumber = pageNumberFromSelectedRow
+    } else {
+        pageNumber = (pageNumberFromParams === undefined) ? 0 : pageNumberFromParams
+    }
+    let statType = (params.get('statType') === null) ? props.defaultStatsType?.statType : Mappings.statsTypeMappings.ForwardMap.get(params.get('statType')!)!
+    let statTypeRound: number | undefined = undefined
+    if (statType === StatsTypeEnum.ROUND) {
+        statTypeRound = (params.get('round') === null) ? props.levelProps.currentRound() : Number(params.get('round'))
     }
 
-    let statsType = props.defaultStatsType
-    let round = props.queryParams.round
-    if (round) {
-        statsType = {statType: StatsTypeEnum.ROUND, roundNumber: round}
-    }
+    return {
+        pageName: Mappings.queryParamToPageMap.ReverseMap.get(props.pageEnum!)!,
+        selectedRow: selectedRow,
+        season: (params.get('season') === null) ? props.levelProps.currentSeason() : Number(params.get('season')),
 
-    let seasonQp = props.queryParams.season
-    let season = (seasonQp) ? seasonQp : props.levelProps.currentSeason()
+        sortingField: (params.get('sortingField') === null) ? props.defaultSortingField : params.get('sortingField') as string,
+        sortingDirection: (params.get('sortingDirection') === null) ? SortingDirection.DESC : Mappings.directionMappings.ForwardMap.get(params.get('sortingDirection')!)!,
+        statType: statType,
+        statTypeRound: statTypeRound,
 
-    return { 
-        statisticsParameters: {
-            page: page,
-            pageSize: pageSize,
-            sortingField: sortingField,
-            sortingDirection: SortingDirection.DESC,
-            statsType: statsType,
-            season: season
-        },
-        selectedRow: (selectedRow === undefined) ? undefined : Number(selectedRow),
-        playerParameters: {
-        },
-        playedInLastMatch: false,
-        playedAllMatches: true,
-        oneTeamPerUnit: true,
-        excludeZeroTsi: false
+        pageSize: pageSize,
+        pageNumber: pageNumber,
+
+        nationality: (params.get('nationality') === null) ? undefined : Number(params.get('nationality')) ,
+        minAge: (params.get('minAge') === null) ? undefined : Number(params.get('minAge')),
+        maxAge: (params.get('maxAge') === null) ? undefined : Number(params.get('maxAge')),
+        role: (params.get('role') === null) ? undefined : params.get('role') as string | undefined,
+
+        playedAllMatches: (params.get('playedAllMatches') === null) ? false : Boolean(params.get('playedAllMatches')),
+        playedInLastMatch: (params.get('playedInLastMatch') === null) ? false : Boolean(params.get('playedInLastMatch')),
+        oneTeamPerUnit: (params.get('oneTeamPerUnit') === null) ? false : Boolean(params.get('oneTeamPerUnit')),
+        excludeZeroTsi: (params.get('excludeZeroTsi') === null) ? false : Boolean(params.get('excludeZeroTsi'))
     }
 }
 
 interface Properties<LevelProps extends LevelDataProps, Model> {
     levelProps: LevelProps,
-    queryParams: QueryParams,
     requestFunc: (request: Request, callback: (loadingEnum: LoadingEnum, result?: RestTableData<Model>) => void) => void,
     defaultSortingField: string,
     defaultStatsType: StatsType,
     tableColumns: Array<TableColumn<Model>>,
     selectors: Array<SelectorsEnum>,
     statsTypes: Array<StatsTypeEnum>,
-    expandedRowFunc?: (model: Model) => JSX.Element
+    expandedRowFunc?: (model: Model) => JSX.Element,
+    pageEnum: PagesEnum
 }
 
 
 const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(props: Properties<LevelProps, Model>) => {
-    let initDataRequest = initialDataRequest(props)
+    let queryParameters = parseParams(props)
+    let location = useLocation()  
+    let [ t, _i18n ] = useTranslation()
     const [ updateCounter, setUpdateCounter ] = useState(0)
     const [ loadingEnum, setLoadingEnum ] = useState(LoadingEnum.LOADING)
-
-    const [ oneTeamPerUnit, setOneTeamPerUnit ] = useState(initDataRequest.oneTeamPerUnit)
-    const [ nationality, setNationality ] = useState(undefined as number | undefined)
-    const [ [ minAge, maxAge ], setMinMaxAge ] = useState ([undefined, undefined] as [number?, number?])
-    const [ role, setRole ] = useState(undefined as string | undefined)
-    const [ pageNumber, setPageNumber ] = useState(initDataRequest.statisticsParameters.page)
-    const [ pageSize, setPageSize ] = useState(initDataRequest.statisticsParameters.pageSize)
-    const [ playedInLastMatch, setPlayedInLastMatch ] = useState(initDataRequest.playedInLastMatch)
-    const [ playedAllMatches, setPlayedAllMatches ] = useState(initDataRequest.playedAllMatches)
-    const [ statType, setStatType ] = useState(initDataRequest.statisticsParameters.statsType)
-    const [ season, setSeason ] = useState(initDataRequest.statisticsParameters.season)
-    const [ sorting, setSorting ] = useState({field: initDataRequest.statisticsParameters.sortingField, direction: initDataRequest.statisticsParameters.sortingDirection})
-    const [ excludeZeroTsi, setExcludeZeroTsi ] = useState(initDataRequest.excludeZeroTsi)
+    const [ oneTeamPerUnit, setOneTeamPerUnit ] = useState(queryParameters.oneTeamPerUnit)
+    const [ nationality, setNationality ] = useState(queryParameters.nationality)
+    const [ [ minAge, maxAge ], setMinMaxAge ] = useState ([queryParameters.minAge, queryParameters.maxAge])
+    const [ role, setRole ] = useState(queryParameters.role)
+    const [ pageNumber, setPageNumber ] = useState(queryParameters.pageNumber)
+    const [ pageSize, setPageSize ] = useState(queryParameters.pageSize)
+    const [ playedInLastMatch, setPlayedInLastMatch ] = useState(queryParameters.playedInLastMatch)
+    const [ playedAllMatches, setPlayedAllMatches ] = useState(queryParameters.playedAllMatches)
+    const [ statType, setStatType ] = useState({statType: queryParameters.statType, roundNumber: queryParameters.statTypeRound} as StatsType)
+    const [ season, setSeason ] = useState(queryParameters.season)
+    const [ sorting, setSorting ] = useState({field: queryParameters.sortingField, direction: queryParameters.sortingDirection})
+    const [ excludeZeroTsi, setExcludeZeroTsi ] = useState(queryParameters.excludeZeroTsi)
 
     const [ data, setData ] = useState(undefined as RestTableData<Model> | undefined)
 
@@ -127,7 +163,6 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
     function createDataRequest(): Request {
         return {
             statisticsParameters: {
-                ...initDataRequest.statisticsParameters,
                 season: season,
                 sortingField: sorting.field,
                 sortingDirection: sorting.direction,
@@ -150,7 +185,7 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
 
     function updateSorting(sortingField: string) {
         if (sortingField === sorting.field) {
-            if (sorting.direction == SortingDirection.DESC) {
+            if (sorting.direction === SortingDirection.DESC) {
                 setSorting({field: sortingField, direction: SortingDirection.ASC})
             } else {
                 setSorting({field: sortingField, direction: SortingDirection.DESC})
@@ -250,7 +285,8 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
 
     let ageSelector = <></>
     if(props.selectors.indexOf(SelectorsEnum.AGE_SELECTOR) !== -1) {
-        ageSelector = <AgeSelector callback={setMinMaxAge}/>
+        // ageSelector = <AgeSelector callback={setMinMaxAge}/> Why not working?
+        ageSelector = <AgeSelector minAge={minAge} maxAge={maxAge} callback={(arr) => setMinMaxAge([ arr[0], arr[1] ])}/>
     }
 
     let oneTeamPerUnitSelector = <></>
@@ -263,7 +299,54 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
             </Col>
     }
 
-    let content = <Container className='table-responsive'>
+    let shareParams: TableQueryParams = {
+        pageName: queryParameters.pageName,
+        selectedRow: queryParameters.selectedRow,
+        season: season,
+        sortingField: sorting.field,
+        sortingDirection: Mappings.directionMappings.ForwardMap.get(sorting.direction)!,
+        statType: statType.statType,
+        statTypeRound: statType.roundNumber,
+        pageSize: pageSize,
+        pageNumber: pageNumber,
+        nationality: nationality,
+        minAge: minAge,
+        maxAge: maxAge,
+        role: role,
+
+        playedAllMatches: playedAllMatches,
+        playedInLastMatch: playedInLastMatch,
+        oneTeamPerUnit: oneTeamPerUnit,
+        excludeZeroTsi: excludeZeroTsi
+    }
+    let anyParams: any = Object.assign({}, shareParams)
+    let params = new URLSearchParams(anyParams)
+    let keysToDel: Array<string> = []
+    params.forEach((value, key) => {
+        if (value === undefined || value === 'undefined') {
+            keysToDel.push(key)
+        }
+    })
+
+    keysToDel.forEach(key => params.delete(key))
+
+    let sharedLink = window.location.protocol + '//' + window.location.host + location.pathname + '?' + params.toString()
+    let sharedLinkPopup = <Popup position='bottom center' nested trigger={<button className='btn btn-sm btn-success me-5'> Share <i className="bi bi-caret-down-fill"></i></button>}>
+            <div className='input-group bg-light border border-success p-2'>
+                <input type="text" className="form-control" value={sharedLink} />
+                <button type="button" className="btn btn-outline-secondary" onClick={() => {navigator.clipboard.writeText(sharedLink)}}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-clipboard" viewBox="0 0 16 16">
+                      <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"></path>
+                      <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"></path>
+                  </svg>
+                </button>
+            </div>
+        </Popup>
+    let content = 
+            <Card className="mt-3 shadow">
+                <Card.Header className="lead d-flex flex-row justify-content-between">{t(props.pageEnum)}{sharedLinkPopup}</Card.Header>
+                <Card.Body>
+       <Container className='table-responsive'>
         <Row>
             {seasonSelector} 
             {statsTypeSelector}
@@ -310,13 +393,14 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
                 {
                     data?.entities.map((entity, index) => {
                         return row(pageSize * pageNumber + index, entity,
-                            ((initDataRequest.selectedRow !== undefined) && initDataRequest.selectedRow === pageSize * pageNumber + index) ? "selected_row" : "")
+                            ((queryParameters.selectedRow !== undefined) && queryParameters.selectedRow === pageSize * pageNumber + index) ? "selected_row" : "")
                     } )
                 }
             </tbody>
         </table>
         {pageSelector}
-    </Container>
+    </Container></Card.Body>
+            </Card>
 
     return <>
         <Blur loadingState={loadingEnum} updateCallback={() => setUpdateCounter(updateCounter + 1)}/>

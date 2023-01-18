@@ -52,7 +52,7 @@ export default function Section<P, S extends SectionState, TBase extends GSectio
     
             let triangle = (!this.state.collapsed) ? <i className="bi bi-caret-down-fill"></i> : <i className="bi bi-caret-right-fill"></i>
 
-            return <Card className="shadow-sm">
+            return <Card className="shadow-sm mt-3">
                 <Card.Header className="lead text-start"  onClick={this.collapse}>
                     {triangle} <Link to='#' className="link-dark section-cursor"> {title}</Link> 
                     {additionalElement}

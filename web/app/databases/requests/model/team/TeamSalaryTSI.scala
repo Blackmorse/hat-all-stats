@@ -22,7 +22,7 @@ object TeamSalaryTSI {
     get[Long]("league_unit_id") ~
     get[String]("league_unit_name") ~
     get[Long]("team_tsi") ~
-    get[Long]("salary") ~
+    get[Long]("sum_salary") ~
     get[Int]("players_count") ~
     get[Long]("avg_salary") ~
     get[Long]("avg_tsi") ~

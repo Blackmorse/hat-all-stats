@@ -8,16 +8,17 @@ import { SelectorsEnum } from '../SelectorsEnum';
 import TableColumns from '../TableColumns';
 import { useTranslation } from 'react-i18next';
 import { loddarStats } from '../../Formatters';
+import { PagesEnum } from '../../enums/PagesEnum';
 
 const TeamHatstatsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
     
     return <HookAbstractTableSection<LevelProps, TeamHatstats>
         levelProps={props.levelDataProps}
-        queryParams={props.queryParams}
         requestFunc={(request, callback) => getTeamHatstats(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='hatstats'
         defaultStatsType={{statType: StatsTypeEnum.MAX}}
+        pageEnum={PagesEnum.TEAM_HATSTATS}
         statsTypes={[StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND]}
         selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
             SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR]}

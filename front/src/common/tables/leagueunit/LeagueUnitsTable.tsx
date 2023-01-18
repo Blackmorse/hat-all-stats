@@ -8,6 +8,7 @@ import { SelectorsEnum } from '../SelectorsEnum'
 import TableColumns from '../TableColumns'
 import { useTranslation } from 'react-i18next'
 import { loddarStats } from '../../Formatters'
+import { PagesEnum } from '../../enums/PagesEnum'
 
 
 const LeagueUnitsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
@@ -15,13 +16,13 @@ const LeagueUnitsTable = <LevelProps extends LevelDataProps>(props: LevelDataPro
 
     return <HookAbstractTableSection<LevelProps, LeagueUnitRating>
         levelProps={props.levelDataProps}
-        queryParams={props.queryParams}
         requestFunc={(request, callback) => getLeagueUnits(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='hatstats'
         statsTypes={[StatsTypeEnum.AVG, StatsTypeEnum.MAX, StatsTypeEnum.ROUND]}
         defaultStatsType={{statType: StatsTypeEnum.MAX}}
         selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
             SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR]}
+        pageEnum={PagesEnum.LEAGUE_UNITS}
         tableColumns={[
             TableColumns.postitionsTableColumn(),
             TableColumns.leagueUnitTableColumn(lur => lur),

@@ -12,7 +12,7 @@ import sqlbuilder.functions.sum
 import scala.concurrent.Future
 
 object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
-  val sortingColumns: Seq[String] = Seq("tsi", "salary", "players_count", "avg_salary", "avg_tsi", "salary_per_tsi")
+  val sortingColumns: Seq[String] = Seq("team_tsi", "sum_salary", "players_count", "avg_salary", "avg_tsi", "salary_per_tsi")
 
   def execute(orderingKeyPath: OrderingKeyPath,
               parameters: RestStatisticsParameters,
@@ -20,7 +20,7 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
               excludeZeroTsi: Boolean)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamSalaryTSI]] = {
     if(!sortingColumns.contains(parameters.sortBy))
-      throw new Exception("Looks like SQL injection")
+      throw new Exception(s"Looks like SQL injection. Field: ${parameters.sortBy}" )
 
     val round = parameters.statsType match {
       case Round(r) => r
@@ -37,11 +37,11 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
         "league_unit_id",
         "league_unit_name",
         sum("tsi") as "team_tsi",
-        sum("salary") as "salary",
+        sum("salary") as "sum_salary",
         "count()" as "players_count",
-        "salary / players_count".toInt64 as "avg_salary",
+        "sum_salary / players_count".toInt64 as "avg_salary",
         "team_tsi / players_count".toInt64 as "avg_tsi",
-        "if(team_tsi = 0, 0, salary / team_tsi)" as "salary_per_tsi"
+        "if(team_tsi = 0, 0, sum_salary / team_tsi)" as "salary_per_tsi"
       ).from("hattrick.player_stats")
       .where
         .season(parameters.season)

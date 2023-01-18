@@ -44,9 +44,12 @@ class ChppService @Inject() (val chppClient: ChppClient,
   }
 
   private def findTeamId(teamDetails: TeamDetails, teamId: Long): Either[NotFoundError, Team] = {
+    println(teamId)
+    println(teamDetails)
     val teamOpt = teamDetails.teams
       .find(_.teamId == teamId)
       .filter(_ => teamDetails.user.userId != 0L && teamDetails.user.userId != 13537902L)
+    println(teamOpt)
     teamOpt match {
       case None => Left(NotFoundError(
         entityType = "TEAM",

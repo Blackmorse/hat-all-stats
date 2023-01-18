@@ -1,53 +1,38 @@
 import React from 'react'
-import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
+import LevelDataProps, { LevelDataPropsWrapper } from "../../LevelDataProps";
+import { useTranslation } from 'react-i18next';
+import HookAbstractTableSection from '../HookAbstractTableSection';
 import OldestTeam from '../../../rest/models/team/OldestTeam'
-import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import ClassicTableSection from '../ClassicTableSection'
 import { getOldestTeams } from '../../../rest/Client'
-import { SortingState } from '../AbstractTableSection'
-import { Translation } from 'react-i18next'
-import ModelTableTh from '../../../common/elements/SortingTableTh'
-import TeamLink from '../../links/TeamLink'
-import LeagueUnitLink from '../../links/LeagueUnitLink'
-import { dateFormatter } from '../../Formatters'
-import HattidTooltip from '../../elements/HattidTooltip'
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
+import { PagesEnum } from '../../enums/PagesEnum';
+import { SelectorsEnum } from '../SelectorsEnum';
+import TableColumns from '../TableColumns';
+import { dateFormatter } from '../../Formatters';
 
-abstract class OldestTeamsTable<TableProps extends LevelDataProps> 
-    extends ClassicTableSection<TableProps, OldestTeam> {
 
-    constructor(props: LevelDataPropsWrapper<TableProps>) {
-        super(props, 'founded_date', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
-            [StatsTypeEnum.ROUND])
-    }
-
-    fetchDataFunction = getOldestTeams
-
-    columnHeaders(sortingState: SortingState): JSX.Element {
-        return <Translation> 
-            { t =>
-            <tr>
-                <HattidTooltip 
-                    poppedHint={t('table.position')}
-                    content={<th>{t('table.position_abbr')}</th>}
-                />
-                <th>{t('table.team')}</th>
-                <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='team.date_of_foundation' sorting={{field: 'founded_date', state: sortingState}}/>
-            </tr>
+const OldestTeamsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
+    const [ t, _i18n ] = useTranslation()
+    
+    return <HookAbstractTableSection<LevelProps, OldestTeam>
+        levelProps={props.levelDataProps}
+        requestFunc={(request, callback) => getOldestTeams(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
+        defaultSortingField='founded_date'
+        defaultStatsType={{statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()}}        
+        pageEnum={PagesEnum.OLDEST_TEAMS}
+        statsTypes={[StatsTypeEnum.ROUND]}
+        selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+                SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR]}
+        tableColumns={[
+            TableColumns.postitionsTableColumn(),
+            TableColumns.teamTableColumn(ot => ot.teamSortingKey, props.showCountryFlags),
+            TableColumns.leagueUnitTableColumn(ot => ot.teamSortingKey),
+            {
+                columnHeader: { title: t('team.date_of_foundation'), sortingField: 'founded_date' },
+                columnValue:  { provider: ot => dateFormatter(ot.foundedDate), center: true }
             }
-        </Translation>
-    }
-
-    row(index: number, className: string, team: OldestTeam): JSX.Element {
-        let teamSortingKey = team.teamSortingKey
-        return <tr className={className}>
-            <td>{index + 1}</td>
-            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} 
-                flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? teamSortingKey.leagueId : undefined}/></td>
-            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="text-center">{dateFormatter(team.foundedDate)}</td>
-        </tr>
-    }
+        ]}
+    />
 }
 
 export default OldestTeamsTable

@@ -4,6 +4,8 @@ import Slider from '@material-ui/core/Slider';
 import { makeStyles } from '@material-ui/core';
 
 interface Props {
+  left?: number,
+  right?: number,
   callback: (ages: [number?, number?]) => void
 }
 
@@ -19,7 +21,7 @@ export default function TwoThumbs(props: Props) {
         }
     ]
     
-    const [value, setValue] = React.useState([17, 99]);
+    const [value, setValue] = React.useState([(props.left === undefined) ? 17 : props.left, (props.right === undefined) ? 99 : props.right]);
   
     const handleChange = (event: any, newValue: any) => {
       setValue(newValue);
@@ -54,6 +56,8 @@ export default function TwoThumbs(props: Props) {
           aria-labelledby="range-slider"
           min={17}
           max={99}
+          // min={(props.left === undefined) ? 17 : props.left}
+          // max={(props.right === undefined) ? 99 : props.right}
           marks={marks}
         />
     );

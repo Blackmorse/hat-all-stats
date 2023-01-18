@@ -8,18 +8,19 @@ import HookAbstractTableSection from '../HookAbstractTableSection';
 import {SelectorsEnum} from '../SelectorsEnum';
 import TableColumns from '../TableColumns';
 import TeamMatchInfoExecutableSection from '../../../team/matches/TeamMatchInfoExecutableSection';
+import { PagesEnum } from '../../enums/PagesEnum';
 
 const MatchTopHatstatsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
 
     return <HookAbstractTableSection<LevelProps, MatchTopHatstats>
         levelProps={props.levelDataProps}
-        queryParams={props.queryParams}
         requestFunc={(request, callback) => getMatchesTopHatstats(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='sum_hatstats'
         defaultStatsType={{statType: StatsTypeEnum.ACCUMULATE}}
         statsTypes={[StatsTypeEnum.ACCUMULATE, StatsTypeEnum.ROUND]}
         selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
                 SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR]}
+        pageEnum={PagesEnum.MATCH_TOP_HATSTATS}
         tableColumns={[
             TableColumns.postitionsTableColumn(),
             TableColumns.leagueUnitTableColumn(mth => mth.homeTeam),

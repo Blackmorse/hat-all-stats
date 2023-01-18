@@ -1,53 +1,36 @@
-import React from 'react';
-import { SortingState } from '../AbstractTableSection'
-import ClassicTableSection from '../ClassicTableSection'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { getTeamPowerRatings } from '../../../rest/Client'
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
+import TeamPowerRating from '../../../rest/models/team/TeamPowerRating'
+import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import '../../../i18n'
-import { Translation } from 'react-i18next'
-import ModelTableTh from '../../../common/elements/SortingTableTh'
-import LeagueUnitLink from '../../links/LeagueUnitLink';
-import TeamLink from '../../links/TeamLink'
-import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
-import { getTeamPowerRatings } from '../../../rest/Client';
-import TeamPowerRating from '../../../rest/models/team/TeamPowerRating';
-import HattidTooltip from '../../elements/HattidTooltip';
+import HookAbstractTableSection from '../HookAbstractTableSection'
+import { SelectorsEnum } from '../SelectorsEnum'
+import TableColumns from '../TableColumns'
 
-abstract class TeamPowerRatingsTable<TableProps extends LevelDataProps>
-    extends ClassicTableSection<TableProps, TeamPowerRating> {
+const TeamPowerRatingsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
+    const [ t, _i18n ] = useTranslation()
 
-    constructor(props: LevelDataPropsWrapper<TableProps>) {
-        super(props, 'power_rating', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
-            [StatsTypeEnum.ROUND])
-    }
-
-    fetchDataFunction = getTeamPowerRatings
-
-    columnHeaders(sortingState: SortingState): JSX.Element {
-        return <Translation>
+    return <HookAbstractTableSection<LevelProps, TeamPowerRating>
+        levelProps={props.levelDataProps}
+        requestFunc={(request, callback) => getTeamPowerRatings(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
+        defaultSortingField='power_rating'  
+        defaultStatsType={{statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()}}
+        pageEnum={PagesEnum.TEAM_POWER_RATINGS}
+        statsTypes={[StatsTypeEnum.ROUND]}
+        selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+                SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR]}
+        tableColumns={[
+            TableColumns.postitionsTableColumn(),
+            TableColumns.teamTableColumn(tpr => tpr.teamSortingKey, props.showCountryFlags),
+            TableColumns.leagueUnitTableColumn(tpr => tpr.teamSortingKey),
             {
-            t =>
-            <tr>
-                <HattidTooltip 
-                    poppedHint={t('table.position')}
-                    content={<th>{t('table.position_abbr')}</th>}
-                />
-                <th>{t('table.team')}</th>
-                <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.power_rating' sorting={{field: 'power_rating', state: sortingState}} />
-            </tr>
-        }
-        </Translation>
-    }
-    
-    row(index: number, className: string, teamPowerRating: TeamPowerRating): JSX.Element {
-        let teamSortingKey = teamPowerRating.teamSortingKey
-        return <tr className={className}>
-            <td>{index + 1}</td>
-            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
-            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="text-center">{teamPowerRating.powerRating}</td>
-        </tr>
-    }
+                columnHeader: { title: t('table.power_rating'), sortingField: 'power_rating', center: true },
+                columnValue:  { provider: tpr => tpr.powerRating.toString(), center: true }
+            }
+        ]}
+    />
 }
 
 export default TeamPowerRatingsTable

@@ -16,7 +16,7 @@ class AgeSelector extends React.Component<Props> {
         <div className='d-flex flex-row align-items-center mx-2 my-xs-2 my-sm-2 my-lg-0 my-md-0' style={{width: '200px'}}>
             <span>{t('table.age')}:</span>
             <span style={{width: '100%', transform: 'translate(7px, 11px)'}}>
-                <TwoThumbs callback={this.props.callback}/>
+                <TwoThumbs callback={this.props.callback} left={this.props.minAge} right={this.props.maxAge}/>
             </span>
         </div>
         }

@@ -2,6 +2,7 @@ import React from 'react';
 import TotalOverview from "../../rest/models/overview/TotalOverview";
 import { getTotalOverview } from '../../rest/Client'
 import LevelDataProps from '../LevelDataProps';
+import '../../i18n'
 import NumberOverviewSection from './NumberOverviewSection'
 import FormationsOverviewSection from './FormationsOverviewSection'
 import AveragesOverviewSection from './AveragesOverviewSection'
@@ -19,7 +20,8 @@ import HattidLink from '../links/HattidLink';
 import { LoadingEnum } from '../enums/LoadingEnum';
 import ExecutableComponent from '../sections/ExecutableComponent';
 import { SectionState } from '../sections/Section';
-import { Col, Row } from 'react-bootstrap';
+import { Card, Col, Row } from 'react-bootstrap';
+import { Translation } from 'react-i18next';
 
 
 interface State {
@@ -63,8 +65,9 @@ abstract class OverviewPage<LevelProps extends LevelDataProps> extends
     renderSection(): JSX.Element {
         if (!this.state.totalOverview) {
             return <></>
-        } else {
-            return <>
+        } else { return <Translation>{ (t, { i18n} ) => <Card className="mt-3 shadow">
+        <Card.Header className="lead">{i18n.t(PagesEnum.OVERVIEW)}</Card.Header>
+        <Card.Body>
             <Row className="mb-2"> 
                 <Col lg={4}>
                     <NumberOverviewSection
@@ -160,7 +163,9 @@ abstract class OverviewPage<LevelProps extends LevelDataProps> extends
                     />
                 </Col>
             </Row>
-        </>
+            </Card.Body>
+            </Card>
+        }</Translation>
         }
         
     }

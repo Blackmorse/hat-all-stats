@@ -1,115 +1,88 @@
-import React from 'react';
-import TeamComparsion from '../../rest/models/team/TeamComparsion';
-import { LevelDataPropsWrapper } from '../../common/LevelDataProps'
+import React from 'react'
 import TeamLevelDataProps from '../TeamLevelDataProps'
+import { LevelDataPropsWrapper } from "../../common/LevelDataProps";
+import ExecutableComponent, {StateAndRequest} from "../../common/sections/HookExecutableComponent"
+import TeamComparsion from '../../rest/models/team/TeamComparsion';
 import { LoadingEnum } from '../../common/enums/LoadingEnum';
 import { getTeamsComparsion } from '../../rest/Client'
-import CompareTeamsTable from './CompareTeamsTable'
-import '../../i18n'
+import {useTranslation} from "react-i18next"
+import { Col, Row, Card } from 'react-bootstrap';
 import RankingParametersProvider from '../../common/ranking/RankingParametersProvider'
-import ExecutableComponent from '../../common/sections/ExecutableComponent';
-import { SectionState } from '../../common/sections/Section';
-import i18n from '../../i18n';
-import { Col, Row } from 'react-bootstrap';
+import CompareTeamsTable from './CompareTeamsTable'
+import { PagesEnum } from '../../common/enums/PagesEnum';
 
-interface State {
-    teamComparsion?: TeamComparsion
-}
+const CompareTeamsPage = (props: LevelDataPropsWrapper<TeamLevelDataProps>) => {
+    let params = new URLSearchParams(window.location.search);
+    let teamId = (params.get('teamId') === null) ? undefined : Number(params.get('teamId'))
 
-class CompareTeamsPage extends ExecutableComponent<LevelDataPropsWrapper<TeamLevelDataProps>, 
-    State & SectionState, TeamComparsion, number | undefined> {
-    
-        constructor(props: LevelDataPropsWrapper<TeamLevelDataProps>) {
-        super(props)
-        
-        this.state = {
-            loadingState: LoadingEnum.OK,
-            dataRequest: props.queryParams.teamId,
-            collapsed: false
-        }
-    }
-    
-    executeDataRequest(dataRequest: number | undefined, 
-            callback: (loadingState: LoadingEnum, result?: TeamComparsion) => void): void {
-        if(dataRequest !== undefined) {
-            getTeamsComparsion(this.props.levelDataProps.teamId(), dataRequest, callback)
-        } else {
-            callback(LoadingEnum.OK)
-        }
-    }
+    const [t, _i18n] = useTranslation() 
 
-    stateFromResult(result?: TeamComparsion): State & SectionState {
-        return {
-            teamComparsion: result,
-            collapsed: this.state.collapsed
-        }
-    }
+    const content = (stateAndRequest: StateAndRequest<number | undefined, TeamComparsion | undefined>) => {
+        if (stateAndRequest.currentState === undefined) return <></>
 
-    renderSection(): JSX.Element {
-        if (this.state.teamComparsion === undefined) {
-            return <></>
-        }
-
-        if (this.state.teamComparsion.team1Rankings.length === 0 ||
-                this.state.teamComparsion.team2Rankings.length === 0) {
-            return <>{i18n.t('team.unable_to_compare')}</>
+        if (stateAndRequest.currentState.team1Rankings.length === 0 ||
+                stateAndRequest.currentState.team2Rankings.length === 0) {
+            return <>{t('team.unable_to_compare')}</>
         }
               
-        let teamComparsion = this.state.teamComparsion
-        return <Row>
+        let teamComparsion = stateAndRequest.currentState
+        return <Card className='mt-3 shadow'> 
+        <Card.Header className='lead'>{t(PagesEnum.TEAM_COMPARSION)}</Card.Header>
+        <Card.Body>
+            <Row>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.HATSTATS()}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
-                    rankingParameters={RankingParametersProvider.SALARY(this.props.levelDataProps.currencyRate(), this.props.levelDataProps.currency())}
+                    teamLevelDataProps={props.levelDataProps} 
+                    rankingParameters={RankingParametersProvider.SALARY(props.levelDataProps.currencyRate(), props.levelDataProps.currency())}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.TSI()}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.ATTACK()}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.DEFENSE()}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.MIDFIELD()}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.AGE()}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.RATING()}
                     diffFormatter={value => <>{value / 10}</>}
                 />
@@ -117,7 +90,7 @@ class CompareTeamsPage extends ExecutableComponent<LevelDataPropsWrapper<TeamLev
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.RATING_END_OF_MATCH()}
                     diffFormatter={value => <>{value / 10}</>}
                 />
@@ -125,40 +98,55 @@ class CompareTeamsPage extends ExecutableComponent<LevelDataPropsWrapper<TeamLev
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.POWER_RATINGS()}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.INJURY()}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.INJURY_COUNT()}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.LODDAR_STATS()}
                 />
             </Col>
             <Col lg={6}>
                 <CompareTeamsTable 
                     teamComparsion={teamComparsion}
-                    teamLevelDataProps={this.props.levelDataProps} 
+                    teamLevelDataProps={props.levelDataProps} 
                     rankingParameters={RankingParametersProvider.FOUNDED_DATE()}
                 />
             </Col>
-            </Row>
+        </Row>
+        </Card.Body>
+        </Card>
     }
+
+    return <ExecutableComponent<number | undefined, TeamComparsion | undefined>
+        executeRequest={(request: number | undefined, callback: (loadingState: LoadingEnum, result?: TeamComparsion) => void) => {
+            if (request !== undefined) {
+                getTeamsComparsion(props.levelDataProps.teamId(), request, callback)
+            } else {
+                callback(LoadingEnum.OK)
+            }
+        }}
+        responseToState={response => response}
+        initialRequest={teamId}
+        content={content}
+    />
 }
 
 export default CompareTeamsPage

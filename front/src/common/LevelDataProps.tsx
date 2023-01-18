@@ -1,11 +1,9 @@
 import LevelData from '../rest/models/leveldata/LevelData';
 import LevelRequest from '../rest/models/request/LevelRequest';
 import OverviewRequest from '../rest/models/request/OverviewRequest';
-import QueryParams from './QueryParams';
 
 export interface LevelDataPropsWrapper<LevelProps extends LevelDataProps> {
     levelDataProps: LevelProps,
-    queryParams: QueryParams,
     showCountryFlags?: boolean
 }
 

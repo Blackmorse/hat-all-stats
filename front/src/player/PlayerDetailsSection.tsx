@@ -1,8 +1,9 @@
 import React from "react"
-import {Col, Row} from "react-bootstrap"
+import { Col, Row, Card } from "react-bootstrap"
 import {useTranslation} from "react-i18next"
 import CountryImage from "../common/elements/CountryImage"
 import Mappings from "../common/enums/Mappings"
+import { PagesEnum } from "../common/enums/PagesEnum"
 import {ageFormatter, injuryFormatter, salaryFormatter, stringSalaryFormatter} from "../common/Formatters"
 import LeagueLink from "../common/links/LeagueLink"
 import LeagueUnitLink from "../common/links/LeagueUnitLink"
@@ -19,7 +20,9 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
 
     const content = (stateAndRequest: StateAndRequest<number, PlayerDetails | undefined>) => {
         if (stateAndRequest.currentState === undefined) return <></>
-        return  <div className='d-flex flex-column'>
+        return  <Card className='mt-3 shadow'>
+        <Card.Header className='lead'>{t(PagesEnum.PLAYER_DETAILS)}</Card.Header>
+        <Card.Body className='d-flex flex-column'>
             <Row className='align-items-center row'>
                 <Col lg={5} md={12}>
                     <div className='d-flex flex-row'>
@@ -228,7 +231,8 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                 />
             </Col>
         </Row>
-        </div>
+        </Card.Body>
+        </Card>
     }
 
     return <ExecutableComponent<number, PlayerDetails | undefined>
