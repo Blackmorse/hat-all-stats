@@ -31,18 +31,7 @@ object LoaderApp extends App {
   val executorActorFactory: ExecutorActorFactory = injector
       .getInstance(classOf[ExecutorActorFactory])
 
-  val ex = ChppRequestExecutor.executeWithRetry(TeamDetailsRequest(teamId = Some(935203L)))
-
-  val r = Await.result(ex, 3.minute)
-println(r)
-  if (true) System.exit(0)
-
-  val worldDetailsFuture = WorldDetailsSingleRequest.request(leagueId = None)
-
   private val worldDetails = Await.result(worldDetailsFuture, 30.seconds)
-
-
-
 
   if (args(0) == "teamRankings") {
     if (args.length == 2) {

@@ -56,8 +56,6 @@ export default function TwoThumbs(props: Props) {
           aria-labelledby="range-slider"
           min={17}
           max={99}
-          // min={(props.left === undefined) ? 17 : props.left}
-          // max={(props.right === undefined) ? 99 : props.right}
           marks={marks}
         />
     );
