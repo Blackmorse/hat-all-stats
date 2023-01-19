@@ -31,6 +31,8 @@ object LoaderApp extends App {
   val executorActorFactory: ExecutorActorFactory = injector
       .getInstance(classOf[ExecutorActorFactory])
 
+  val worldDetailsFuture = WorldDetailsSingleRequest.request(leagueId = None)
+
   private val worldDetails = Await.result(worldDetailsFuture, 30.seconds)
 
   if (args(0) == "teamRankings") {
