@@ -13,8 +13,6 @@ import scala.concurrent.Future
 object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
   val sortingColumns: Seq[String] = Seq("won", "lost", "draw", "goals_for",
       "goals_against", "goals_difference", "points")
-  val aggregateSql: String = ""
-  val oneRoundSql: String = ""
 
   override val rowParser: RowParser[TeamGoalPoints] = TeamGoalPoints.mapper
 
@@ -26,7 +24,7 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamGoalPoints]] = {
     val sortBy = parameters.sortBy
     if(!sortingColumns.contains(sortBy))
-      throw new Exception("Looks like SQL injection")
+      throw new Exception(s"Looks like SQL injection. Field: $sortBy")
 
     val (round, havingClause) = parameters.statsType match {
       case Round(r) =>

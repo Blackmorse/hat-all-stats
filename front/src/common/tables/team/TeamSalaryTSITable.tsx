@@ -32,7 +32,7 @@ const TeamSalaryTSITable = <LevelProps extends LevelDataProps>(props: LevelDataP
             TableColumns.postitionsTableColumn(),
             TableColumns.teamTableColumn(pst => pst.teamSortingKey, props.showCountryFlags),
             TableColumns.leagueUnitTableColumn(pst => pst.teamSortingKey),
-            TableColumns.tsi(tst => tst.tsi, t('table.tsi'), 'tsi'),
+            TableColumns.tsi(tst => tst.tsi, t('table.tsi'), 'team_tsi'),
             TableColumns.salary(tst => tst.salary, props.levelDataProps.currencyRate(), t('table.salary') + ', ' + props.levelDataProps.currency(), 'sum_salary'),
             {
                 columnHeader: { title: t('menu.players'), sortingField: 'players_count' },

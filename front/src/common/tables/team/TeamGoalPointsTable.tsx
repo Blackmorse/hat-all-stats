@@ -76,7 +76,7 @@ const TeamGoalPointsTable = <LevelProps extends LevelDataProps>(props: LevelData
             },
             {
                 columnHeader: {
-                    title: t('table.points_abbr'), poppedHint: t('table.points'), sortingField: 'point', center: true
+                    title: t('table.points_abbr'), poppedHint: t('table.points'), sortingField: 'points', center: true
                 },
                 columnValue: {
                     provider: tgp => tgp.points.toString() , center: true
