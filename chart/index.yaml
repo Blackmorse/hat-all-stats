@@ -1,0 +1,12 @@
+apiVersion: v1
+entries:
+  hattid:
+  - apiVersion: v2
+    created: "2023-04-14T12:56:34.47006+04:00"
+    description: Chart for the Hattid application
+    digest: 3943c7c72ecc48b215d5015df66af6cf726754ee77f0e3ccf153667d8260bf7d
+    name: hattid
+    urls:
+    - hattid-0.1.0.tgz
+    version: 0.1.0
+generated: "2023-04-14T12:56:34.469305+04:00"
