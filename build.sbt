@@ -16,7 +16,8 @@ lazy val webDependencies = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
   clickhouseVersion,
   "ai.x" %% "play-json-extensions" % "0.42.0",
-  anormVersion
+  anormVersion,
+  "com.fasterxml.jackson.core" % "jackson-databind" % "2.11.4"
 )
 
 lazy val webSettings = Seq(
@@ -106,5 +107,4 @@ lazy val hattrickTests = (project in file("hattrick-tests"))
   .dependsOn(scalaCommon)
   .dependsOn(sqlBuilder)
   .settings(testSettings)
-
 

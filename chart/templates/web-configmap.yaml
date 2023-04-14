@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-web-configmap
+data:
+  application.conf: |-
+    play.http.secret.key="{{ .Values.web.config.httpSecretKey }}"
+    play.i18n.langs = [ "en", "de", "it", "ru", "es", "hr" ]
+
+    play.filters.enabled += play.filters.hosts.AllowedHostsFilter
+
+    play.filters.enabled += "play.filters.cors.CORSFilter"
+    play.filters.cors.pathPrefixes += "/api"
+    play.filters.cors.allowedHttpMethods = ["GET"]
+
+    play.filters.hosts.routeModifiers.whiteList = []
+    play.filters.hosts.routeModifiers.blackList = ["localhost"]
+    play.http.filters=controllers.Filters
+
+    hattrick {
+      customerKey = "{{ .Values.chpp.customerKey }}"
+      customerSecret = "{{ .Values.chpp.customerSecret }}"
+      accessToken = "{{ .Values.chpp.accessToken }}"
+      accessTokenSecret = "{{ .Values.chpp.accessTokenSecret }}"
+    }
+
+    play.http.errorHandler = "handlers.HattidErrorHandler"
+
+    db.default.driver = ru.yandex.clickhouse.ClickHouseDriver
+    db.default.url = "jdbc:clickhouse://hattrick-clickhouse:8123"
+    db.default.logStatements=true
+
+    fixedConnectionPool = 20
+
+    database.clickhouse {
+      executor = "thread-pool-executor"
+      throughput = 1
+      thread-pool-executor {
+        fixed-pool-size = ${fixedConnectionPool}
+      }
+    }
+
+    play.cache.dispatcher = "contexts.blockingCacheDispatcher"
+
+    contexts {
+      blockingCacheDispatcher {
+        fork-join-executor {
+          parallelism-factor = 3.0
+        }
+      }
+    }
+

@@ -1,0 +1,16 @@
+FROM hseeberger/scala-sbt:11.0.14.1_1.6.2_2.12.15 AS build
+
+WORKDIR /app
+RUN mkdir /app/project
+COPY build.sbt /app/
+COPY project/plugins.sbt project/build.properties /app/project
+RUN sbt update
+COPY ./ /app
+RUN sbt dist && mkdir build && mv /app/web/target/universal/*.zip build/web.zip && cd build && unzip web.zip
+
+FROM openjdk:11.0.16-slim-buster
+WORKDIR /app
+COPY --from=build /app/build/web-* /app/
+COPY web/conf/application-docker.conf /app/application.conf
+
+CMD ["/app/bin/web", "-Dconfig.file=/etc/config/application.conf"]

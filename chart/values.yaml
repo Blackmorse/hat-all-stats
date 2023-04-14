@@ -1,0 +1,10 @@
+  web:
+    image:
+      tag: 0.0.1
+    config:
+      httpSecretKey: eHkmMe8[M;pym0yaS3IRuuugh:za7B>G_E_nGZ`0cHe6:4PhI;SMMcGMAyXKpTzy
+  chpp:
+    customerKey: customerKey
+    customerSecret: customerSecret
+    accessToken: accessToken
+    accessTokenSecret: accessTokenSecret

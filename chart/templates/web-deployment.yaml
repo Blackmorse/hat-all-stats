@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-web
+  labels:
+    app: {{ .Chart.Name }}-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}-web
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}-web
+    spec:
+      containers:
+        - name: hattid-web
+          image: ghcr.io/blackmorse/hattid-web:{{ .Values.web.image.tag }}
+      volumes:
+        - name: web-config-volume
+          configMap:
+            name: {{ .Chart.Name }}-web-configmap

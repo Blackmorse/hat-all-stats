@@ -1,0 +1,5 @@
+apiVersion: v2
+name: hattid
+version: 0.1.0
+description: Chart for the Hattid application
+repository: https://github.com/blackmorse/hat-all-stats
