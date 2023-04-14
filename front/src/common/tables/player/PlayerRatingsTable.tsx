@@ -1,74 +1,39 @@
-import React from 'react';
-import { SortingState } from '../AbstractTableSection'
-import PlayersTableSection from '../PlayersTableSection'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { getPlayerRatings } from '../../../rest/clients/PlayerStatsClient'
+import PlayerRating from '../../../rest/models/player/PlayerRating'
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
+import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import { StatsTypeEnum } from "../../../rest/models/StatisticsParameters";
-import { getPlayerRatings } from '../../../rest/Client';
-import PlayerRating from "../../../rest/models/player/PlayerRating";
-import { Translation } from "react-i18next";
-import '../../../i18n'
-import ModelTableTh from "../../elements/SortingTableTh";
-import TeamLink from "../../links/TeamLink";
-import LeagueUnitLink from "../../links/LeagueUnitLink";
-import { ageFormatter, ratingFormatter } from '../../Formatters'
-import Mappings from '../../enums/Mappings';
-import i18n from '../../../i18n';
-import HattidTooltip from '../../elements/HattidTooltip';
-import PlayerLink from '../../links/PlayerLink';
+import HookAbstractTableSection from '../HookAbstractTableSection'
+import { SelectorsEnum } from '../SelectorsEnum'
+import TableColumns from '../TableColumns'
 
-abstract class PlayerRatingsTable<TableProps extends LevelDataProps> 
-        extends PlayersTableSection<TableProps, PlayerRating> {
-    
-    constructor(props: LevelDataPropsWrapper<TableProps>) {
-        super(props, 'rating', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
-            [StatsTypeEnum.ROUND])
-    }
+const PlayerRatingsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
+    const [ t, _i18n ] = useTranslation()
 
-    fetchDataFunction = getPlayerRatings
-
-    columnHeaders(sortingState: SortingState): JSX.Element {
-        return <Translation>
-            {
-            t =>
-            <tr>
-                <HattidTooltip 
-                    poppedHint={t('table.position')}
-                    content={<th>{t('table.position_abbr')}</th>}
-                />
-                <th>{t('table.player')}</th>
-                <th>{t('table.team')}</th>
-                <th className="value">{t('table.league')}</th>
-                <th></th>
-                <ModelTableTh title='table.age' sorting={{field: 'age', state: sortingState}} />
-                <ModelTableTh title='table.rating' sorting={{field: 'rating', state: sortingState}} />
-                <ModelTableTh title='table.rating_end_of_match' sorting={{field: 'rating_end_of_match', state: sortingState}} />
-            </tr>
-        }
-        </Translation>
-    }
-
-    row(index: number, className: string, playerRating: PlayerRating): JSX.Element {
-        let playerSortingKey = playerRating.playerSortingKey
-        return <tr className={className}>
-            <td>{index + 1}</td>
-            <td>
-                <PlayerLink
-                    id={playerSortingKey.playerId}
-                    text={playerSortingKey.firstName + ' ' + playerSortingKey.lastName}
-                    nationality={playerSortingKey.nationality}
-                    countriesMap={this.props.levelDataProps.countriesMap()}
-                    externalLink
-                />
-            </td>
-            <td><TeamLink id={playerSortingKey.teamId} text={playerSortingKey.teamName} 
-                flagCountryNumber={this.props.showCountryFlags !== undefined && this.props.showCountryFlags ? playerSortingKey.leagueId : undefined}/></td>
-            <td className="text-center"><LeagueUnitLink id={playerSortingKey.leagueUnitId} text={playerSortingKey.leagueUnitName} /></td>
-            <td className="text-center">{i18n.t(Mappings.roleToTranslationMap.get(playerRating.role) || '')}</td>
-            <td className="text-center">{ageFormatter(playerRating.age)}</td>
-            <td className="text-center">{ratingFormatter(playerRating.rating)}</td>
-            <td className="text-center">{ratingFormatter(playerRating.ratingEndOfMatch)}</td>
-        </tr>
-    }
+     return <HookAbstractTableSection<LevelProps, PlayerRating>
+         levelProps={props.levelDataProps}
+        requestFunc={(request, callback) => getPlayerRatings(props.levelDataProps.createLevelRequest(), request.statisticsParameters, request.playerParameters, callback)}
+        defaultSortingField='rating'
+        defaultStatsType={{statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()}}
+        selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+                SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR,
+                SelectorsEnum.PLAYER_ROLES, SelectorsEnum.NATIONALITIES_SELECTOR,
+                SelectorsEnum.AGE_SELECTOR]}
+        statsTypes={[StatsTypeEnum.ROUND]}
+        pageEnum={PagesEnum.PLAYER_RATINGS}
+        tableColumns={[
+            TableColumns.postitionsTableColumn(),
+            TableColumns.player(pr => pr.playerSortingKey, props.levelDataProps.countriesMap()),
+            TableColumns.teamTableColumn(pr => pr.playerSortingKey, props.showCountryFlags),
+            TableColumns.leagueUnitTableColumn(pr => pr.playerSortingKey),
+            TableColumns.role(pr => pr.role),
+            TableColumns.ageTableColumn(pr => pr.age, 'age'),
+            TableColumns.ratings(pr => pr.rating, t('table.rating'), 'rating'),
+            TableColumns.ratings(pr => pr.ratingEndOfMatch, t('table.rating_end_of_match'), 'rating_end_of_match'),
+        ]}
+     />
 }
 
 export default PlayerRatingsTable

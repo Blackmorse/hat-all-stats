@@ -220,7 +220,7 @@ export function playerDetails(playerId: number, callback: (loadingEnum: LoadingE
         .catch(_e => callback(LoadingEnum.ERROR))
 }
 
-function playersRequest<T>(path: string): 
+export function playersRequest<T>(path: string): 
     (request: LevelRequest,
     statisticsParameters: StatisticsParameters,
     playersParameters: PlayersParameters,
@@ -238,15 +238,9 @@ function playersRequest<T>(path: string):
                 }
 }
 
-export let getPlayerCards = playersRequest<PlayerCards>('playerCards')
 
-export let getPlayerGoalsGames = playersRequest<PlayerGoalGames>('playerGoalGames')
 
-export let getPlayerSalaryTsi = playersRequest<PlayerSalaryTSI>('playerTsiSalary')
 
-export let getPlayerRatings = playersRequest<PlayerRating>('playerRatings')
-
-export let getPlayerInjuries = statisticsRequest<PlayerInjury>('playerInjuries')
 
 export let getLeagueUnits = statisticsRequest<LeagueUnitRating>('leagueUnits')
 
@@ -281,9 +275,7 @@ export function getTeamGoalPoints(request: LevelRequest,
 
 export let getTeamPowerRatings = statisticsRequest<TeamPowerRating>('teamPowerRatings')
 
-export let getTeamFanclubFlags = statisticsRequest<TeamFanclubFlags>('teamFanclubFlags')
 
-export let getTeamStreakTrophies = statisticsRequest<TeamStreakTrophies>('teamStreakTrophies')
 
 export let getMatchesTopHatstats = statisticsRequest<MatchTopHatstats>('topMatches')
 

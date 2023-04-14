@@ -6,6 +6,8 @@ import StatisticsParameters from "../models/StatisticsParameters"
 import TeamSalaryTSI from "../models/team/TeamSalaryTSI"
 import { createStatisticsParameters, startUrl, parseAxiosResponse, statisticsRequest } from '../Client'
 import TeamHatstats from '../models/team/TeamHatstats';
+import TeamFanclubFlags from '../models/team/TeamFanclubFlags';
+import TeamStreakTrophies from '../models/team/TeamStreakTrophies';
 
 
 const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
@@ -24,3 +26,7 @@ export function getTeamSalaryTSI(request: LevelRequest,
 }
 
 export let getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')
+
+export let getTeamFanclubFlags = statisticsRequest<TeamFanclubFlags>('teamFanclubFlags')
+
+export let getTeamStreakTrophies = statisticsRequest<TeamStreakTrophies>('teamStreakTrophies')

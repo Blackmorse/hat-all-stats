@@ -1,59 +1,36 @@
 import React from 'react'
-import { SortingState } from '../AbstractTableSection'
-import ClassicTableSection from '../ClassicTableSection'
+import { useTranslation } from 'react-i18next'
+import { getTeamFanclubFlags } from '../../../rest/clients/TeamStatsClient'
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
+import TeamFanclubFlags from '../../../rest/models/team/TeamFanclubFlags'
+import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
-import { getTeamFanclubFlags } from '../../../rest/Client';
-import '../../../i18n'
-import { Translation } from 'react-i18next'
-import ModelTableTh from '../../elements/SortingTableTh'
-import LeagueUnitLink from '../../links/LeagueUnitLink';
-import TeamLink from '../../links/TeamLink'
-import TeamFanclubFlags from '../../../rest/models/team/TeamFanclubFlags';
-import HattidTooltip from '../../elements/HattidTooltip';
+import HookAbstractTableSection from '../HookAbstractTableSection'
+import { SelectorsEnum } from '../SelectorsEnum'
+import TableColumns from '../TableColumns'
 
-abstract class TeamFanclubFlagsTable<TableProps extends LevelDataProps>
-    extends ClassicTableSection<TableProps, TeamFanclubFlags> {
+const TeamFanclubFlagsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
+    const [ t, _i18n ] = useTranslation()
 
-    constructor(props: LevelDataPropsWrapper<TableProps>) {
-        super(props, 'fanclub_size', {statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()},
-            [StatsTypeEnum.ROUND])
-    }
-
-    fetchDataFunction = getTeamFanclubFlags
-
-    columnHeaders(sortingState: SortingState): JSX.Element {
-        return <Translation>
-            {
-            t =>
-            <tr>
-                <HattidTooltip 
-                    poppedHint={t('table.position')}
-                    content={<th>{t('table.position_abbr')}</th>}
-                />
-                <th>{t('table.team')}</th>
-                <th className="text-center">{t('table.league')}</th>
-                <ModelTableTh title='table.fanclub_size' sorting={{field: 'fanclub_size', state: sortingState}} />
-                <ModelTableTh title='table.home_flags' sorting={{field: 'home_flags', state: sortingState}} />
-                <ModelTableTh title='table.away_flags' sorting={{field: 'away_flags', state: sortingState}} />
-                <ModelTableTh title='table.all_flags' sorting={{field: 'all_flags', state: sortingState}} />
-            </tr>
-        }
-        </Translation>
-    }
-
-    row(index: number, className: string, teamFanclubFlags: TeamFanclubFlags): JSX.Element {
-        let teamSortingKey = teamFanclubFlags.teamSortingKey
-        return <tr className={className}>
-            <td>{index + 1}</td>
-            <td><TeamLink id={teamSortingKey.teamId} text={teamSortingKey.teamName} /></td>
-            <td className="text-center"><LeagueUnitLink id={teamSortingKey.leagueUnitId} text={teamSortingKey.leagueUnitName}/></td>
-            <td className="text-center">{teamFanclubFlags.fanclubSize}</td>
-            <td className="text-center">{teamFanclubFlags.homeFlags}</td>
-            <td className="text-center">{teamFanclubFlags.awayFlags}</td>
-            <td className="text-center">{teamFanclubFlags.allFlags}</td>
-        </tr>
-    }
+    return <HookAbstractTableSection<LevelProps, TeamFanclubFlags>
+        levelProps={props.levelDataProps}
+        requestFunc={(request, callback) => getTeamFanclubFlags(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
+        defaultSortingField='fanclub_size'
+        defaultStatsType={{statType: StatsTypeEnum.ROUND, roundNumber: props.levelDataProps.currentRound()}}
+        statsTypes={[StatsTypeEnum.ROUND]}
+        selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+                SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR]}
+        pageEnum={PagesEnum.TEAM_FANCLUB_FLAGS}
+        tableColumns={[
+            TableColumns.postitionsTableColumn(),
+            TableColumns.teamTableColumn(tff => tff.teamSortingKey, props.showCountryFlags),
+            TableColumns.leagueUnitTableColumn(tff => tff.teamSortingKey),
+            TableColumns.simpleNumber(tff => tff.fanclubSize, t('table.fanclub_size'), 'fanclub_size'),
+            TableColumns.simpleNumber(tff => tff.homeFlags, t('table.home_flags'), 'home_flags'),
+            TableColumns.simpleNumber(tff => tff.awayFlags, t('table.away_flags'), 'away_flags'),
+            TableColumns.simpleNumber(tff => tff.allFlags, t('table.all_flags'), 'all_flags')
+        ]}
+    />
 }
 
 export default TeamFanclubFlagsTable

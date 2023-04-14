@@ -27,60 +27,33 @@ const TeamGoalPointsTable = <LevelProps extends LevelDataProps>(props: LevelData
             TableColumns.teamTableColumn(tgp => tgp.sortingKey, props.showCountryFlags),
             TableColumns.leagueUnitTableColumn(tgp => tgp.sortingKey),
             {
-                columnHeader: {
-                    title: t('table.win_abbr'), poppedHint: t('table.win'), sortingField: 'won', center: true
-                },
-                columnValue: {
-                    provider: (tgp) => tgp.won.toString(), center: true
-            }
+                columnHeader: { title: t('table.win_abbr'), poppedHint: t('table.win'), sortingField: 'won', center: true },
+                columnValue: { provider: (tgp) => tgp.won.toString(), center: true }
             },
             {
-                columnHeader: {
-                    title: t('table.lose_abbr'), poppedHint: t('table.lose'), sortingField: 'lost', center: true
-                },
-                columnValue: {
-                    provider: (tgp) => tgp.lost.toString(), center: true
-                }
+                columnHeader: { title: t('table.lose_abbr'), poppedHint: t('table.lose'), sortingField: 'lost', center: true },
+                columnValue: { provider: (tgp) => tgp.lost.toString(), center: true }
             },
             {
-                columnHeader: {
-                    title: t('table.draw_abbr'), poppedHint: t('table.draw'), sortingField: 'draw', center: true
-                },
-                columnValue: {
-                    provider: tgp => tgp.draw.toString(), center: true
-                }
+                columnHeader: { title: t('table.draw_abbr'), poppedHint: t('table.draw'), sortingField: 'draw', center: true },
+                columnValue: { provider: tgp => tgp.draw.toString(), center: true }
             },
             {
-                columnHeader: {
-                    title: t('table.goals_for_abbr'), poppedHint: t('table.goals_for'), sortingField: 'goals_for', center: true
-                },
-                columnValue: {
-                    provider: tgp => tgp.goalsFor.toString(), center: true
-                }
+                columnHeader: { title: t('table.goals_for_abbr'), poppedHint: t('table.goals_for'), sortingField: 'goals_for', center: true },
+                columnValue: { provider: tgp => tgp.goalsFor.toString(), center: true }
             },
             {
-                columnHeader: {
-                    title: t('table.goals_against_abbr'), poppedHint: t('table.goals_against'), sortingField: 'goals_against', center: true
-                },
-                columnValue: {
-                    provider: tgp => tgp.goalsAgaints.toString(), center: true
-                }
+                columnHeader: { title: t('table.goals_against_abbr'), poppedHint: t('table.goals_against'), sortingField: 'goals_against', center: true },
+                columnValue: { provider: tgp => tgp.goalsAgaints.toString(), center: true }
             },
             {
-                columnHeader: {
-                    title: t('table.goals_difference'), sortingField: 'goals_difference', center: true
-                },
+                columnHeader: { title: t('table.goals_difference'), sortingField: 'goals_difference', center: true }, 
                 columnValue: {
-                    provider: tgp => tgp.goalsDifference.toString(), center: true
-                }
+                    provider: tgp => tgp.goalsDifference.toString(), center: true }
             },
             {
-                columnHeader: {
-                    title: t('table.points_abbr'), poppedHint: t('table.points'), sortingField: 'points', center: true
-                },
-                columnValue: {
-                    provider: tgp => tgp.points.toString() , center: true
-                } 
+                columnHeader: { title: t('table.points_abbr'), poppedHint: t('table.points'), sortingField: 'points', center: true },
+                columnValue: { provider: tgp => tgp.points.toString() , center: true } 
             }
         ]}
     />

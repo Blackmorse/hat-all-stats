@@ -1,11 +1,14 @@
 import React from "react";
 import i18n from "../../i18n";
-import {ageFormatter, commasSeparated, loddarStats, ratingFormatter, redCards, salaryFormatter, yellowCards} from "../Formatters";
+import Mappings from "../enums/Mappings";
+import {ageFormatter, commasSeparated, injuryFormatter, loddarStats, ratingFormatter, redCards, salaryFormatter, yellowCards} from "../Formatters";
 import LeagueUnitLink from "../links/LeagueUnitLink";
+import PlayerLink from "../links/PlayerLink";
 import TeamLink from "../links/TeamLink";
 import TableColumn from "./TableColumn";
 
 type SortingKeyType = {teamId: number, teamName: string, leagueId: number, leagueUnitId: number, leagueUnitName: string}
+type PlayerSortingKeyType = {playerId: number, firstName: string, lastName: string, nationality: number}
 type LeagueUnit = {leagueUnitId: number, leagueUnitName: string}
 
 class TableColumns {
@@ -62,7 +65,7 @@ class TableColumns {
         }
     }
 
-     static ageTableColumn<T>(ageFunc: (t: T) => number, sortingField: string): TableColumn<T> {
+     static ageTableColumn<T>(ageFunc: (t: T) => number, sortingField?: string): TableColumn<T> {
         return {
             columnHeader: { title: i18n.t('table.age'), sortingField: sortingField, center: true },
             columnValue:  { provider: t => ageFormatter(ageFunc(t)), center: true }
@@ -102,6 +105,42 @@ class TableColumns {
             columnHeader: { title: title, sortingField: sortingField, center: true },
             columnValue:  { provider: t => salaryFormatter(salaryFunc(t), rate), center: true }
         }
+     }
+
+     static player<T>(sortingKeyFunc: (t: T) => PlayerSortingKeyType, countriesMap: Map<number, string>): TableColumn<T> {
+            return {
+                columnHeader: {title: i18n.t('table.player')},
+                columnValue: {
+                    provider: (pst) => <PlayerLink 
+                                           id={sortingKeyFunc(pst).playerId}
+                                           text={sortingKeyFunc(pst).firstName + ' ' + sortingKeyFunc(pst).lastName}
+                                           nationality={sortingKeyFunc(pst).nationality}
+                                           countriesMap={countriesMap}
+                                           externalLink
+                                        />
+                }
+            }
+     }
+
+     static role<T>(roleFunc: (t: T) => string): TableColumn<T> {
+         return {
+                columnHeader: {title: ''},
+                columnValue: { provider: (pst) => i18n.t(Mappings.roleToTranslationMap.get(roleFunc(pst)) || ''), center: true }
+            }
+     }
+
+     static simpleNumber<T>(numberFunc: (t: T) => number, title: string, sortingField?: string): TableColumn<T> {
+         return {
+             columnHeader: {title: title, center: true, sortingField: sortingField},
+             columnValue: {provider: (t) => numberFunc(t).toString(), center: true}
+         }
+     }
+
+     static injury<T>(injuryFunc: (t: T) => number, sortingField?: string): TableColumn<T> {
+         return {
+             columnHeader: { title: i18n.t('table.injury'), sortingField: sortingField, center: true },
+             columnValue: { provider: (t) => injuryFormatter(injuryFunc(t))}
+         }
      }
 }
 

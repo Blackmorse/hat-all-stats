@@ -11,10 +11,23 @@ GET     /api/hoRequests             controllers.CommonController.hoRequests()
 
 GET     /api/world/teamHatstats         controllers.WorldController.teamHatstats(restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/world/teamSalaryTsi        controllers.WorldController.teamSalaryTsi(restStatisticsParameters: models.web.RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean)
+GET     /api/world/teamCards       controllers.WorldController.teamCards(restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/world/teamRatings       controllers.WorldController.teamRatings(restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/world/teamAgeInjuries       controllers.WorldController.teamAgeInjuries(restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/world/teamGoalPoints       controllers.WorldController.teamGoalPoints(restStatisticsParameters: models.web.RestStatisticsParameters, playedAllMatches: Boolean ?= false, oneTeamPerUnit: Boolean)
+
+GET     /api/world/teamPowerRatings       controllers.WorldController.teamPowerRatings(restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/world/teamFanclubFlags       controllers.WorldController.teamFanclubFlags(restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/world/teamStreakTrophies       controllers.WorldController.teamStreakTrophies(restStatisticsParameters: models.web.RestStatisticsParameters)
+
 GET     /api/world/playerTsiSalary      controllers.WorldController.playersTsiSalary(restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
 GET     /api/world/playerRatings        controllers.WorldController.playerRatings(restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
+GET     /api/world/playerCards        controllers.WorldController.playerCards(restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
+GET     /api/world/playerGoalGames        controllers.WorldController.playerGoalGames(restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
+GET     /api/world/playerInjuries       controllers.WorldController.playerInjuries(restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/world/topMatches           controllers.WorldController.topMatches(restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/world/surprisingMatches    controllers.WorldController.surprisingMatches(restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/world/matchSpectators       controllers.WorldController.matchSpectators(restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/world/dreamTeam            controllers.WorldController.dreamTeam(season: Int, sortBy: String, statsType: models.web.StatsType)
 GET     /api/world/oldestTeams    controllers.WorldController.oldestTeams(restStatisticsParameters: models.web.RestStatisticsParameters)
 

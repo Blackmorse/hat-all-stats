@@ -1,50 +1,41 @@
-import { SortingState } from '../AbstractTableSection'
-import ClassicTableSection from '../ClassicTableSection'
-import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps' 
-import React from 'react';
-import MatchSpectators from '../../../rest/models/match/MatchSpectators';
-import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
-import '../../../i18n'
-import { Translation } from 'react-i18next'
-import ModelTableTh from '../../elements/SortingTableTh'
-import { getMatchSpectators } from '../../../rest/Client';
-import MatchSpectatorsRow from '../rows/match/MatchSpectatorsRow'
-import HattidTooltip from '../../elements/HattidTooltip';
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { getMatchSpectators } from '../../../rest/Client'
+import MatchSpectators from '../../../rest/models/match/MatchSpectators'
+import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
+import { PagesEnum } from '../../enums/PagesEnum'
+import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
+import HookAbstractTableSection from '../HookAbstractTableSection'
+import { SelectorsEnum } from '../SelectorsEnum'
+import TableColumns from '../TableColumns'
 
-abstract class MatchSpectatorsTable<TableProps extends LevelDataProps>
-    extends ClassicTableSection<TableProps, MatchSpectators> {
-
-    constructor(props: LevelDataPropsWrapper<TableProps>) {
-        super(props, 'sold_total', {statType: StatsTypeEnum.ACCUMULATE},
-            [StatsTypeEnum.ACCUMULATE, StatsTypeEnum.ROUND])
-    }
-
-    fetchDataFunction = getMatchSpectators
-
-    columnHeaders(sortingState: SortingState): JSX.Element {
-        return <Translation>
+const MatchSpectatorsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
+    const [ t, _i18n ] = useTranslation()
+    
+    return <HookAbstractTableSection<LevelProps, MatchSpectators>
+        levelProps={props.levelDataProps}
+        requestFunc={(request, callback) => getMatchSpectators(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
+        defaultSortingField='sold_total'
+        defaultStatsType={{statType: StatsTypeEnum.ACCUMULATE}}
+        statsTypes={[StatsTypeEnum.ACCUMULATE, StatsTypeEnum.ROUND]}
+        selectors={[SelectorsEnum.SEASON_SELECTOR, SelectorsEnum.STATS_TYPE_SELECTOR, 
+                SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR]}
+        pageEnum={PagesEnum.MATCH_SPECTATORS}
+        tableColumns={[
+            TableColumns.postitionsTableColumn(),
+            TableColumns.leagueUnitTableColumn(ms => ms.homeTeam),
+            TableColumns.teamTableColumn(ms => ms.homeTeam, props.showCountryFlags),
             {
-            t =>
-            <tr>
-                <th/>
-                <HattidTooltip 
-                    poppedHint={t('table.position')}
-                    content={<th>{t('table.position_abbr')}</th>}
-                />
-                <th className="text-center">{t('table.league')}</th>
-                <th className="text-center">{t('table.team')}</th>
-                <th className="value"></th>
-                <th className="text-center">{t('table.team')}</th>
-                <ModelTableTh title='matches.spectatos' sorting={{field: 'sold_total', state: sortingState}} />
-            </tr>
+                columnHeader: {title: '', center: true},
+                columnValue: {provider: (ms) => ms.homeGoals + ' : ' + ms.awayGoals, center: true}
+            },
+            TableColumns.teamTableColumn(ms => ms.awayTeam, props.showCountryFlags),
+            {
+                columnHeader: { title: t('matches.spectatos'), sortingField: 'sold_total', center: true },
+                columnValue: { provider: ms => ms.spectators.toString(), center: true }
             }
-        </Translation>
-    }
-
-    row(index: number, className: string, matchSpectators: MatchSpectators): JSX.Element {
-        return <MatchSpectatorsRow key={this.constructor.name + '_' + matchSpectators.matchId } rowIndex={index} className={className} 
-            rowModel={matchSpectators}/>
-    }
+        ]}
+    />
 }
 
 export default MatchSpectatorsTable

@@ -24,17 +24,14 @@ const TeamAgeInjuryTable = <LevelProps extends LevelDataProps>(props: LevelDataP
                 SelectorsEnum.PAGE_SIZE_SELECTOR, SelectorsEnum.PAGE_SELECTOR]}
         tableColumns={[
             TableColumns.postitionsTableColumn(),
-            TableColumns.teamTableColumn(tai => tai.teamSortingKey),
+            TableColumns.teamTableColumn(tai => tai.teamSortingKey, props.showCountryFlags),
             TableColumns.leagueUnitTableColumn(tai => tai.teamSortingKey),
             TableColumns.ageTableColumn(tai => tai.age, 'age'),
             {
                 columnHeader: { title: t('table.total_injury_weeks'), sortingField: 'injury', center: true },
                 columnValue:  { provider: tai => injuryFormatter(tai.injury), center: true }
             },
-            {
-                columnHeader: { title: t('table.total_injury_number'), sortingField: 'injury_count', center: true },
-                columnValue:  { provider: tai => tai.injuryCount.toString(), center: true}
-            }
+            TableColumns.simpleNumber(tai => tai.injuryCount, t('table.total_injury_number'), 'injury_count')
         ]}
     />
 }

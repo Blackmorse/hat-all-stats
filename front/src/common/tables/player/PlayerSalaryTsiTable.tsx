@@ -1,13 +1,10 @@
 import React from 'react'
 import {useTranslation} from 'react-i18next'
-import {getPlayerSalaryTsi} from "../../../rest/Client"
+import { getPlayerSalaryTsi } from '../../../rest/clients/PlayerStatsClient'
 import PlayerSalaryTSI from "../../../rest/models/player/PlayerSalaryTSI"
 import {StatsTypeEnum} from "../../../rest/models/StatisticsParameters"
-import Mappings from '../../enums/Mappings'
 import { PagesEnum } from '../../enums/PagesEnum'
-import {ageFormatter, commasSeparated, salaryFormatter} from '../../Formatters'
 import LevelDataProps, {LevelDataPropsWrapper} from "../../LevelDataProps"
-import PlayerLink from '../../links/PlayerLink'
 import HookAbstractTableSection from "../HookAbstractTableSection"
 import {SelectorsEnum} from "../SelectorsEnum"
 import TableColumns from '../TableColumns'
@@ -29,36 +26,13 @@ const PlayerSalaryTsiTable = <LevelProps extends LevelDataProps>(props: LevelDat
         pageEnum={PagesEnum.PLAYER_SALARY_TSI}
         tableColumns={[
             TableColumns.postitionsTableColumn(),
-            {
-                columnHeader: {title: t('table.player')},
-                columnValue: {
-                    provider: (pst) => <PlayerLink 
-                                           id={pst.sortingKey.playerId}
-                                           text={pst.sortingKey.firstName + ' ' + pst.sortingKey.lastName}
-                                           nationality={pst.sortingKey.nationality}
-                                           countriesMap={props.levelDataProps.countriesMap()}
-                                           externalLink
-                                        />
-                }
-            },
+            TableColumns.player(pst => pst.sortingKey, props.levelDataProps.countriesMap()),
             TableColumns.teamTableColumn(pst => pst.sortingKey, props.showCountryFlags),
             TableColumns.leagueUnitTableColumn(pst => pst.sortingKey),
-            {
-                columnHeader: {title: ''},
-                columnValue: { provider: (pst) => t(Mappings.roleToTranslationMap.get(pst.role) || '') }
-            },
-            {
-                columnHeader: { title: t('table.age'), sortingField: 'age' },
-                columnValue: { provider: (pst) => ageFormatter(pst.age), center: true }
-            },
-            {
-                columnHeader: { title: t('table.tsi'), sortingField: 'tsi' },
-                columnValue: { provider: (pst) => commasSeparated(pst.tsi), center: true }
-            },
-            {
-                columnHeader: { title: t('table.salary') + ', ' + props.levelDataProps.currency(), sortingField: 'salary' },
-                columnValue: { provider: (pst) => salaryFormatter(pst.salary, props.levelDataProps.currencyRate()), center: true }
-            }
+            TableColumns.role(pst => pst.role),
+            TableColumns.ageTableColumn(pst => pst.age, 'age'),
+            TableColumns.tsi(pst => pst.tsi, t('table.tsi'), 'tsi'),
+            TableColumns.salary(pst => pst.salary, props.levelDataProps.currencyRate(), t('table.salary') + ', ' + props.levelDataProps.currency(), 'salary')
         ]}
     />
 }
