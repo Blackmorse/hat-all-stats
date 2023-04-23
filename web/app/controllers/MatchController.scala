@@ -15,6 +15,8 @@ import java.util.Date
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import databases.requests.matchdetails.AnnoySimilarMatchesRequest
+import play.api.mvc.Request
 
 case class WebTeamMatch(teamMatchInfo: TeamMatchInfo, date: Date,
                         homeTeamId: Long, homeTeamName: String, homeTeamGoals: Int,
@@ -32,6 +34,30 @@ class MatchController @Inject()(val controllerComponents: ControllerComponents,
         similarMatchesStats.map(s => Ok(Json.toJson(s))).getOrElse(Ok("")))
   }
 
+  def similarMatchesWithAnnoy(matchId: Long, 
+              accuracy: Int,
+              considerTacticType: Boolean,
+              considerTacticSkill: Boolean,
+              considerSetPiecesLevels: Boolean): Action[AnyContent] =  Action(parse.json).async {
+    similarMatchesService.similarMatchesAnnoyStats(matchId, accuracy, considerTacticType, considerTacticSkill, considerSetPiecesLevels)
+      .map {
+        case Left(notFoundError) => NotFound(Json.toJson(notFoundError))
+        case Right(similarMatchesStats) => Ok(Json.toJson(similarMatchesStats))
+      }
+  }
+
+  def similarMatchesByRatingsWithAnnoy(accuracy: Int,
+              considerTacticType: Boolean,
+              considerTacticSkill: Boolean,
+              considerSetPiecesLevels: Boolean): Action[JsValue] =  Action(parse.json).async { implicit request: Request[JsValue] => 
+    (request.body.validate[SingleMatch] match {
+      case JsSuccess(singleMatch, _) => Right(singleMatch)
+      case _ => Left(BadRequest("Match stats are corrupted"))
+    }).map(singleMatch => AnnoySimilarMatchesRequest.execute(singleMatch, accuracy, considerTacticType, considerTacticSkill, considerSetPiecesLevels))
+      .map(statsFuture => statsFuture.map(stats => Ok(Json.toJson(stats))))
+      .getOrElse(Future(BadRequest("Error")))
+  }
+
   def similarMatchesByRatings(accuracy: Double): Action[JsValue] = Action(parse.json).async { implicit request =>
     (request.body.validate[SingleMatch] match {
       case JsSuccess(singleMatch, _) => Right(singleMatch)
@@ -41,7 +67,7 @@ class MatchController @Inject()(val controllerComponents: ControllerComponents,
       .getOrElse(Future(BadRequest("")))
   }
 
-  def singleMatch(matchId: Long): Action[AnyContent] = Action.async { implicit request =>
+  def singleMatch(matchId: Long): Action[AnyContent] = Action(parse.json).async {
     chppClient.executeUnsafe[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(matchId)))
       .map(matchDetails => {
         val matc = matchDetails.matc

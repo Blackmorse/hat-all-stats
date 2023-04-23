@@ -37,6 +37,11 @@ object functions {
       new Field(s"countIf($condition)")
   }
 
+  object If {
+    def apply(condition: String, trueEval: Field, falseEval: Field): Field = 
+      new Field(s"if($condition, ${trueEval.toString()}, ${falseEval.toString()})")
+  }
+
   object identity extends func {
     override def apply(field: Field): Field = field
   }

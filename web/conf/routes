@@ -149,8 +149,10 @@ GET     /api/overview/averageGoalNumbersChart  controllers.RestOverviewControlle
 GET     /api/overview/newTeamNumbersChart  controllers.RestOverviewController.newTeamNumbersChart(leagueId: Option[Int] ?= None, divisionLevel: Option[Int] ?= None)
 
 GET     /api/matches/similarMatches controllers.MatchController.similarMatches(matchId: Long, accuracy: Double)
+GET	/api/matches/similarMatchesWithAnnoy	controllers.MatchController.similarMatchesWithAnnoy(matchId: Long, accuracy: Int, considerTacticType: Boolean, considerTacticSkill: Boolean, considerSetPiecesLevels: Boolean)
 + nocsrf
 POST     /api/matches/similarMatchesByRatings controllers.MatchController.similarMatchesByRatings(accuracy: Double)
+POST     /api/matches/similarMatchesByRatingsWithAnnoy controllers.MatchController.similarMatchesByRatingsWithAnnoy(accuracy: Int, considerTacticType: Boolean, considerTacticSkill: Boolean, considerSetPiecesLevels: Boolean)
 GET     /api/matches/singleMatch    controllers.MatchController.singleMatch(matchId: Long)
 
 POST    /loader/leagueRound         controllers.LoaderController.leagueRound(season: Int, leagueId: Int, round: Int)

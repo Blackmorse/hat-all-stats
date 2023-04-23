@@ -23,11 +23,11 @@ export default function TwoThumbs(props: Props) {
     
     const [value, setValue] = React.useState([(props.left === undefined) ? 17 : props.left, (props.right === undefined) ? 99 : props.right]);
   
-    const handleChange = (event: any, newValue: any) => {
+    const handleChange = (_event: any, newValue: any) => {
       setValue(newValue);
     };
 
-    const handleCommited = (event: any, newValue: any) => {
+    const handleCommited = (_event: any, newValue: any) => {
         let [minAge, maxAge] = newValue as [number?, number?]
         if (minAge === 17) {
           minAge = undefined

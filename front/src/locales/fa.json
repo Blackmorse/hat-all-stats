@@ -229,5 +229,10 @@
 
     "filter.one_team_per_unit": "یک تیم در هر لیگ",
 
-    "filter.exclude_zero_player_tsi": "بازیکنان 0-TSI را حذف کنید"
+    "filter.exclude_zero_player_tsi": "بازیکنان 0-TSI را حذف کنید",
+
+    "match.accuracy": "دقت",
+    "match.consider_tactics_type": "نوع تاکتیک را در نظر بگیرید",
+    "match.consider_tactics_skill": "مهارت تاکتیکی را در نظر بگیرید",
+    "match.consider_set_pieces": "سطح قطعات مجموعه را در نظر بگیرید"
   }

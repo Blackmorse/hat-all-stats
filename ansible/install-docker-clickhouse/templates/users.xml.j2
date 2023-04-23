@@ -19,6 +19,7 @@
                  first_or_random - if first replica one has higher number of errors, pick a random one from replicas with minimum number of errors.
             -->
             <load_balancing>random</load_balancing>
+            <allow_experimental_annoy_index>1</allow_experimental_annoy_index>
         </default>
 
         <!-- Profile that allows only read queries. -->
@@ -89,7 +90,8 @@
         </default>
 
         <web>
-            <password>{{ clickhouse.users.web.password }}</password>
+            <!-- <password>{{ clickhouse.users.web.password }}</password> -->
+            <password>1234</password>
 
             <networks incl="networks" replace="replace">
                 <ip>::/0</ip>

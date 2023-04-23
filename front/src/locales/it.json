@@ -230,5 +230,10 @@
 
     "filter.one_team_per_unit": "Una squadra per campionato",
 
-    "filter.exclude_zero_player_tsi": "Escludi i giocatori 0-TSI"
+    "filter.exclude_zero_player_tsi": "Escludi i giocatori 0-TSI",
+
+    "match.accuracy": "Precisione",
+    "match.consider_tactics_type": "Considera il tipo di tattica",
+    "match.consider_tactics_skill": "Considera l'abilità tattica",
+    "match.consider_set_pieces": "considera il livello dei calci piazzati"
 }

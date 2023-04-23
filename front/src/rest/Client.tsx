@@ -9,18 +9,11 @@ import LevelRequest from './models/request/LevelRequest';
 import { LeagueUnitTeamStatHistoryInfo } from './models/team/LeagueUnitTeamStat';
 import TeamRankingsStats from './models/team/TeamRankingsStats'
 import NearestMatch, { NearestMatches } from './models/match/NearestMatch';
-import PlayerGoalGames from './models/player/PlayerGoalsGames'
-import PlayerCards from './models/player/PlayerCards'
-import PlayerSalaryTSI from './models/player/PlayerSalaryTSI'
-import PlayerRating from './models/player/PlayerRating'
-import PlayerInjury from './models/player/PlayerInjury'
 import TeamCards from './models/team/TeamCards'
 import TeamRating from './models/team/TeamRating'
 import TeamAgeInjury from './models/team/TeamAgeInjury'
 import TeamGoalPoints from './models/team/TeamGoalPoints'
 import TeamPowerRating from './models/team/TeamPowerRating'
-import TeamFanclubFlags from './models/team/TeamFanclubFlags'
-import TeamStreakTrophies from './models/team/TeamStreakTrophies'
 import OldestTeam from './models/team/OldestTeam'
 import MatchTopHatstats from './models/match/MatchTopHatstats'
 import MatchSpectators from './models/match/MatchSpectators'
@@ -36,7 +29,6 @@ import TeamSearchResult from './models/TeamSearchResult'
 import { LoadingEnum } from '../common/enums/LoadingEnum';
 import TeamMatch from './models/match/TeamMatch'
 import SingleMatch from './models/match/SingleMatch'
-import SimilarMatchesStats from './models/match/SimilarMatchesStats'
 import MatchAttendanceOverview from './models/overview/MatchAttendanceOverview'
 import DreamTeamPlayer from './models/player/DreamTeamPlayer';
 import PlayersParameters from './models/PlayersParameters'
@@ -134,19 +126,6 @@ export function getSingleMatch(matchId: number, callback: (loadingEnum: LoadingE
         .catch(e => callback(LoadingEnum.ERROR))
 }
 
-export function getSimilarMatchesStats(matchId: number, accuracy: number, 
-        callback: (loadingEnum: LoadingEnum, result?: SimilarMatchesStats) => void): void {
-    axios.get<SimilarMatchesStats>('/api/matches/similarMatches?matchId=' + matchId + '&accuracy=' + accuracy)
-        .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
-}
-
-export function getSimilarMatchesByRatings(singleMatch: SingleMatch, accuracy: number,
-        callback: (loadingEnum: LoadingEnum, result?: SimilarMatchesStats) => void): void {
-    axios.post<SimilarMatchesStats>('/api/matches/similarMatchesByRatings?accuracy=' + accuracy, singleMatch)
-        .then(response => parseAxiosResponse(response, callback))
-        .catch(_e => callback(LoadingEnum.ERROR))
-}
 export function getDreamTeam(request: LevelRequest, season: number, statType: StatsType, sortBy: string,
         callback: (loadingEnum: LoadingEnum, players?: Array<DreamTeamPlayer>) => void,) {
     var values: any = {}

@@ -1,4 +1,4 @@
-import ax, {AxiosResponse} from 'axios';
+import ax from 'axios';
 import {LoadingEnum} from '../../common/enums/LoadingEnum';
 import DivisionLevelDataProps from '../../divisionlevel/DivisionLevelDataProps';
 import LeagueLevelDataProps from '../../league/LeagueLevelDataProps';
