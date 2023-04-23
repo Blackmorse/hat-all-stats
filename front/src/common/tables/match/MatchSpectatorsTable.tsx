@@ -5,14 +5,14 @@ import MatchSpectators from '../../../rest/models/match/MatchSpectators'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
 import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import HookAbstractTableSection from '../HookAbstractTableSection'
+import TableSection from '../TableSection'
 import { SelectorsEnum } from '../SelectorsEnum'
 import TableColumns from '../TableColumns'
 
 const MatchSpectatorsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
     
-    return <HookAbstractTableSection<LevelProps, MatchSpectators>
+    return <TableSection<LevelProps, MatchSpectators>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getMatchSpectators(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='sold_total'

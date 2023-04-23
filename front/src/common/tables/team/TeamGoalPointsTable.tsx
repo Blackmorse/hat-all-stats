@@ -5,14 +5,14 @@ import {StatsTypeEnum} from '../../../rest/models/StatisticsParameters'
 import TeamGoalPoints from '../../../rest/models/team/TeamGoalPoints'
 import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, {LevelDataPropsWrapper} from '../../LevelDataProps'
-import HookAbstractTableSection from '../HookAbstractTableSection'
+import TableSection from '../TableSection'
 import {SelectorsEnum} from '../SelectorsEnum'
 import TableColumns from '../TableColumns'
 
 const TeamGoalPointsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
 
-    return <HookAbstractTableSection<LevelProps, TeamGoalPoints>
+    return <TableSection<LevelProps, TeamGoalPoints>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getTeamGoalPoints(props.levelDataProps.createLevelRequest(), request.statisticsParameters, request.playedAllMatches, request.oneTeamPerUnit, callback)}
         defaultSortingField='points'

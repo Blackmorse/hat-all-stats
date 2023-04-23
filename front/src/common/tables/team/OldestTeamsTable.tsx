@@ -1,7 +1,7 @@
 import React from 'react'
 import LevelDataProps, { LevelDataPropsWrapper } from "../../LevelDataProps";
 import { useTranslation } from 'react-i18next';
-import HookAbstractTableSection from '../HookAbstractTableSection';
+import TableSection from '../TableSection';
 import OldestTeam from '../../../rest/models/team/OldestTeam'
 import { getOldestTeams } from '../../../rest/Client'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
@@ -14,7 +14,7 @@ import { dateFormatter } from '../../Formatters';
 const OldestTeamsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
     
-    return <HookAbstractTableSection<LevelProps, OldestTeam>
+    return <TableSection<LevelProps, OldestTeam>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getOldestTeams(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='founded_date'

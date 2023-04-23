@@ -4,12 +4,12 @@ import PlayerInjury from '../../../rest/models/player/PlayerInjury'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
 import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import HookAbstractTableSection from '../HookAbstractTableSection'
+import TableSection from '../TableSection'
 import { SelectorsEnum } from '../SelectorsEnum'
 import TableColumns from '../TableColumns'
 
 const PlayerInjuriesTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
-    return <HookAbstractTableSection<LevelProps, PlayerInjury>
+    return <TableSection<LevelProps, PlayerInjury>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getPlayerInjuries(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='injury'

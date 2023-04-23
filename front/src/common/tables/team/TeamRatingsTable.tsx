@@ -5,14 +5,14 @@ import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
 import TeamRating from '../../../rest/models/team/TeamRating'
 import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import HookAbstractTableSection from '../HookAbstractTableSection'
+import TableSection from '../TableSection'
 import { SelectorsEnum } from '../SelectorsEnum'
 import TableColumns from '../TableColumns'
 
 const TeamRatingsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
 
-    return <HookAbstractTableSection<LevelProps, TeamRating>
+    return <TableSection<LevelProps, TeamRating>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getTeamRatings(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='rating'

@@ -28,7 +28,10 @@ export default function pages(): Map<PagesEnum, (props: LeagueLevelDataProps) =>
     const pagesMap = new Map<PagesEnum, (props: LeagueUnitLevelDataProps,) => JSX.Element>()
     pagesMap.set(PagesEnum.TEAM_HATSTATS, 
         props => <>
-            <TeamPositionsTable levelDataProps={props} />
+           <Section  
+                element={<TeamPositionsTable levelDataProps={props} />}
+                title=''
+            />
             <Section
                 element={<TeamHatstatsTable<LeagueUnitLevelDataProps> levelDataProps={props} />}
                 title=''

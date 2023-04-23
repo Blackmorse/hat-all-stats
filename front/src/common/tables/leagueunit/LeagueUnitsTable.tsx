@@ -1,7 +1,7 @@
 import React from 'react'
 import LeagueUnitRating from '../../../rest/models/leagueunit/LeagueUnitRating'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import HookAbstractTableSection from '../HookAbstractTableSection'
+import TableSection from '../TableSection'
 import { getLeagueUnits } from '../../../rest/Client'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
 import { SelectorsEnum } from '../SelectorsEnum'
@@ -14,7 +14,7 @@ import { PagesEnum } from '../../enums/PagesEnum'
 const LeagueUnitsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
 
-    return <HookAbstractTableSection<LevelProps, LeagueUnitRating>
+    return <TableSection<LevelProps, LeagueUnitRating>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getLeagueUnits(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='hatstats'

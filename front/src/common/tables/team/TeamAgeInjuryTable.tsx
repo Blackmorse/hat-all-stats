@@ -6,14 +6,14 @@ import TeamAgeInjury from '../../../rest/models/team/TeamAgeInjury'
 import { PagesEnum } from '../../enums/PagesEnum'
 import { injuryFormatter } from '../../Formatters'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import HookAbstractTableSection from '../HookAbstractTableSection'
+import TableSection from '../TableSection'
 import { SelectorsEnum } from '../SelectorsEnum'
 import TableColumns from '../TableColumns'
 
 const TeamAgeInjuryTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
 
-    return <HookAbstractTableSection<LevelProps, TeamAgeInjury>
+    return <TableSection<LevelProps, TeamAgeInjury>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getTeamAgeInjuries(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='age'

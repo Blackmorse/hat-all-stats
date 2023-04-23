@@ -5,7 +5,7 @@ import PlayerSalaryTSI from "../../../rest/models/player/PlayerSalaryTSI"
 import {StatsTypeEnum} from "../../../rest/models/StatisticsParameters"
 import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, {LevelDataPropsWrapper} from "../../LevelDataProps"
-import HookAbstractTableSection from "../HookAbstractTableSection"
+import TableSection from "../TableSection"
 import {SelectorsEnum} from "../SelectorsEnum"
 import TableColumns from '../TableColumns'
 
@@ -13,7 +13,7 @@ import TableColumns from '../TableColumns'
 const PlayerSalaryTsiTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
 
-    return <HookAbstractTableSection<LevelProps, PlayerSalaryTSI>
+    return <TableSection<LevelProps, PlayerSalaryTSI>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getPlayerSalaryTsi(props.levelDataProps.createLevelRequest(), request.statisticsParameters, request.playerParameters, callback)}
         defaultSortingField='tsi'

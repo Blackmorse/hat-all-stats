@@ -5,14 +5,14 @@ import PlayerCards from '../../../rest/models/player/PlayerCards'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
 import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import HookAbstractTableSection from '../HookAbstractTableSection'
+import TableSection from '../TableSection'
 import { SelectorsEnum } from '../SelectorsEnum'
 import TableColumns from '../TableColumns'
 
 const PlayerCardsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
 const [ t, _i18n ] = useTranslation()
 
-return <HookAbstractTableSection<LevelProps, PlayerCards>
+return <TableSection<LevelProps, PlayerCards>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getPlayerCards(props.levelDataProps.createLevelRequest(), request.statisticsParameters, request.playerParameters, callback)}
         defaultSortingField='yellow_cards'

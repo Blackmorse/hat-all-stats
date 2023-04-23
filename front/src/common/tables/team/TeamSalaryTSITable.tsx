@@ -6,14 +6,14 @@ import TeamSalaryTSI from '../../../rest/models/team/TeamSalaryTSI';
 import { PagesEnum } from '../../enums/PagesEnum';
 import { doubleSalaryFormatter } from '../../Formatters';
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps';
-import HookAbstractTableSection from '../HookAbstractTableSection';
+import TableSection from '../TableSection';
 import { SelectorsEnum } from '../SelectorsEnum';
 import TableColumns from '../TableColumns';
 
 const TeamSalaryTSITable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
 
-    return <HookAbstractTableSection<LevelProps, TeamSalaryTSI>
+    return <TableSection<LevelProps, TeamSalaryTSI>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => 
             getTeamSalaryTSI(props.levelDataProps.createLevelRequest(), request.statisticsParameters, 

@@ -5,14 +5,14 @@ import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
 import TeamStreakTrophies from '../../../rest/models/team/TeamStreakTrophies'
 import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import HookAbstractTableSection from '../HookAbstractTableSection'
+import TableSection from '../TableSection'
 import { SelectorsEnum } from '../SelectorsEnum'
 import TableColumns from '../TableColumns'
 
 const TeamStreakTrophiesTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
 
-    return <HookAbstractTableSection<LevelProps, TeamStreakTrophies>
+    return <TableSection<LevelProps, TeamStreakTrophies>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getTeamStreakTrophies(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='trophies_number'

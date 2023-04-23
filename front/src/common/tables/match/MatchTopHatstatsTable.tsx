@@ -4,7 +4,7 @@ import MatchTopHatstats from '../../../rest/models/match/MatchTopHatstats';
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import '../../../i18n'
 import { getMatchesTopHatstats } from '../../../rest/Client';
-import HookAbstractTableSection from '../HookAbstractTableSection';
+import TableSection from '../TableSection';
 import {SelectorsEnum} from '../SelectorsEnum';
 import TableColumns from '../TableColumns';
 import TeamMatchInfoExecutableSection from '../../../team/matches/TeamMatchInfoExecutableSection';
@@ -12,7 +12,7 @@ import { PagesEnum } from '../../enums/PagesEnum';
 
 const MatchTopHatstatsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
 
-    return <HookAbstractTableSection<LevelProps, MatchTopHatstats>
+    return <TableSection<LevelProps, MatchTopHatstats>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getMatchesTopHatstats(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='sum_hatstats'

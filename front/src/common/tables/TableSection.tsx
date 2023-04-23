@@ -25,8 +25,9 @@ import Mappings from '../enums/Mappings'
 import { useLocation } from 'react-router'
 import Popup from 'reactjs-popup'
 import { useTranslation } from 'react-i18next'
+import './TableSection.css'
 
-interface Request {
+export interface Request {
     statisticsParameters: StatisticsParameters
     selectedRow?: number,
     playerParameters: PlayersParameters
@@ -119,7 +120,7 @@ interface Properties<LevelProps extends LevelDataProps, Model> {
 }
 
 
-const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(props: Properties<LevelProps, Model>) => {
+const TableSection = <LevelProps extends LevelDataProps, Model>(props: Properties<LevelProps, Model>) => {
     let queryParameters = parseParams(props)
     let location = useLocation()  
     let [ t, _i18n ] = useTranslation()
@@ -408,4 +409,4 @@ const HookAbstractTableSection = <LevelProps extends LevelDataProps, Model>(prop
     </>
 }
 
-export default HookAbstractTableSection
+export default TableSection

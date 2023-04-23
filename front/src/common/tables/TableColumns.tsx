@@ -129,9 +129,9 @@ class TableColumns {
             }
      }
 
-     static simpleNumber<T>(numberFunc: (t: T) => number, title: string, sortingField?: string): TableColumn<T> {
+     static simpleNumber<T>(numberFunc: (t: T) => number, title: {title: string, poppedHint?: string}, sortingField?: string): TableColumn<T> {
          return {
-             columnHeader: {title: title, center: true, sortingField: sortingField},
+             columnHeader: {title: title.title, center: true, poppedHint: title.poppedHint, sortingField: sortingField},
              columnValue: {provider: (t) => numberFunc(t).toString(), center: true}
          }
      }

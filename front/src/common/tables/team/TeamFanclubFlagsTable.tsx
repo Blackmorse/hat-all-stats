@@ -5,14 +5,14 @@ import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
 import TeamFanclubFlags from '../../../rest/models/team/TeamFanclubFlags'
 import { PagesEnum } from '../../enums/PagesEnum'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import HookAbstractTableSection from '../HookAbstractTableSection'
+import TableSection from '../TableSection'
 import { SelectorsEnum } from '../SelectorsEnum'
 import TableColumns from '../TableColumns'
 
 const TeamFanclubFlagsTable = <LevelProps extends LevelDataProps>(props: LevelDataPropsWrapper<LevelProps>) => {
     const [ t, _i18n ] = useTranslation()
 
-    return <HookAbstractTableSection<LevelProps, TeamFanclubFlags>
+    return <TableSection<LevelProps, TeamFanclubFlags>
         levelProps={props.levelDataProps}
         requestFunc={(request, callback) => getTeamFanclubFlags(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)}
         defaultSortingField='fanclub_size'
