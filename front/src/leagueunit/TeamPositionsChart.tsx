@@ -1,29 +1,35 @@
-import React from 'react';
-import { LeagueUnitTeamStatHistoryInfo } from '../rest/models/team/LeagueUnitTeamStat';
-import i18n from '../i18n';
+import React, { useState } from 'react'
 import PlotlyChart from 'react-plotly.js';
-import Section, { SectionState } from '../common/sections/Section';
+import { useTranslation } from 'react-i18next'
+import ExecutableComponent, { StateAndRequest } from '../common/sections/HookExecutableComponent'
+import { getTeamPositionsHistory } from '../rest/Client'
+import { LeagueUnitTeamStat } from '../rest/models/team/LeagueUnitTeamStat'
+import LeagueUnitLevelDataProps from './LeagueUnitLevelDataProps';
+import { Col, Container, Row } from 'react-bootstrap';
+import SeasonSelector from '../common/selectors/SeasonSelector';
 
-interface Props {
-    leagueUnitTeamStatHistoryInfo?: LeagueUnitTeamStatHistoryInfo
+interface Request {
+    round: number
+    season: number
 }
 
-class TeamPositionsChartBase extends React.Component<Props, SectionState> {
-    constructor(props: Props) {
-        super(props)
-        this.state={collapsed: false}
-    }
 
-    render(): JSX.Element {
-        if (this.props.leagueUnitTeamStatHistoryInfo === undefined) {
+const TeamPositionsChart = (leagueUnitPropsWrapper: {leagueUnitProps: LeagueUnitLevelDataProps}) => {
+    let leagueUnitProps = leagueUnitPropsWrapper.leagueUnitProps
+    const [ t, _i18n ] = useTranslation()
+    const [ season, setSeason ] = useState(leagueUnitProps.currentSeason())
+
+    const content = (stateAndRequest: StateAndRequest<Request, Array<LeagueUnitTeamStat> | undefined>) => {
+        let positionsHistory = stateAndRequest.currentState
+        if (positionsHistory === undefined) {
             return <></>
         }
-        let currentRound = this.props.leagueUnitTeamStatHistoryInfo.positionsHistory.reduce((a, b) => a.round > b.round ? a : b).round
+        let currentRound = positionsHistory.reduce((a, b) => a.round > b.round ? a : b).round
         let x = Array.from({length: currentRound}, (_, i) => i + 1)
 
         let map: Map<string, Array<number>> = new Map()
          
-        this.props.leagueUnitTeamStatHistoryInfo.positionsHistory
+        positionsHistory
             .sort((a ,b) => (a.round < b.round) ? -1 : 1)
             .forEach (teamStat => {
                 if (map.get(teamStat.teamName) === undefined) {
@@ -56,15 +62,33 @@ class TeamPositionsChartBase extends React.Component<Props, SectionState> {
                 nticks: 8,
                 dtick: 1,
                 title: {
-                    text: i18n.t('table.position')
+                    text: t('table.position')
                 }
             }
         }
         
-        return <PlotlyChart data={chartData} layout={layout} />
+
+        return <Container className='table-responsive'>
+            <Row>
+                <Col lg={3} md={6}>
+                    <SeasonSelector currentSeason={season}
+                        seasonOffset={leagueUnitProps.seasonOffset()}
+                        seasons={leagueUnitProps.seasons()}
+                        callback={setSeason}
+                    />
+                </Col>
+            </Row>
+            <Row>
+                <PlotlyChart data={chartData} layout={layout} />
+            </Row>
+            </Container>
+        
     }
+    return <ExecutableComponent<Request, Array<LeagueUnitTeamStat> | undefined>
+        executeRequest={(_request, callback) => getTeamPositionsHistory(leagueUnitProps.leagueUnitId(), season, callback)}
+        initialRequest={{round: leagueUnitProps.currentRound(), season: leagueUnitProps.currentSeason()}}
+        content={content}
+        responseToState={s => s}
+    />
 }
-
-const TeamPositionsChart = Section(TeamPositionsChartBase, _ => 'table.position')
-
-export default TeamPositionsChart
+ export default TeamPositionsChart

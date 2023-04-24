@@ -21,7 +21,7 @@ import TeamPowerRatingsTable from '../common/tables/team/TeamPowerRatingsTable';
 import TeamRatingsTable from '../common/tables/team/TeamRatingsTable';
 import TeamSalaryTSITable from '../common/tables/team/TeamSalaryTSITable';
 import TeamStreakTrophiesTable from '../common/tables/team/TeamStreakTrophiesTable';
-import TeamPositionsChart from './HookTeamPositionsChart';
+import TeamPositionsChart from './TeamPositionsChart';
 import {default as LeagueLevelDataProps, default as LeagueUnitLevelDataProps} from './LeagueUnitLevelDataProps';
 import TeamPositionsTable from './TeamPositionsTable';
 import i18n from '../i18n'
