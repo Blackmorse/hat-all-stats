@@ -43,6 +43,7 @@ abstract class PlayerOverviewSection extends OverviewTableSection<PlayerStatOver
                     text={playerStat.playerSortingKey.firstName + ' ' + playerStat.playerSortingKey.lastName}
                     externalLink
                     nationality={playerStat.playerSortingKey.nationality}
+                    countriesMap={this.props.levelDataProps.countriesMap()}
                 />
             </td>
             <td>
