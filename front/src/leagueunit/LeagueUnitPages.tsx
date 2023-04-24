@@ -21,8 +21,10 @@ import TeamPowerRatingsTable from '../common/tables/team/TeamPowerRatingsTable';
 import TeamRatingsTable from '../common/tables/team/TeamRatingsTable';
 import TeamSalaryTSITable from '../common/tables/team/TeamSalaryTSITable';
 import TeamStreakTrophiesTable from '../common/tables/team/TeamStreakTrophiesTable';
+import TeamPositionsChart from './HookTeamPositionsChart';
 import {default as LeagueLevelDataProps, default as LeagueUnitLevelDataProps} from './LeagueUnitLevelDataProps';
 import TeamPositionsTable from './TeamPositionsTable';
+import i18n from '../i18n'
 
 export default function pages(): Map<PagesEnum, (props: LeagueLevelDataProps) => JSX.Element> {
     const pagesMap = new Map<PagesEnum, (props: LeagueUnitLevelDataProps,) => JSX.Element>()
@@ -31,6 +33,10 @@ export default function pages(): Map<PagesEnum, (props: LeagueLevelDataProps) =>
            <Section  
                 element={<TeamPositionsTable levelDataProps={props} />}
                 title=''
+            />
+            <Section
+                element={<TeamPositionsChart leagueUnitProps={props}  />}
+                title={i18n.t('table.position')}
             />
             <Section
                 element={<TeamHatstatsTable<LeagueUnitLevelDataProps> levelDataProps={props} />}

@@ -6,7 +6,7 @@ import DivisionLevelRequest from './models/request/DivisionLevelRequest';
 import LeagueRequest from './models/request/LeagueRequest'
 import TeamRequest from './models/request/TeamRequest'
 import LevelRequest from './models/request/LevelRequest';
-import { LeagueUnitTeamStatHistoryInfo } from './models/team/LeagueUnitTeamStat';
+import LeagueUnitTeamStatsWithPositionDiff, { LeagueUnitTeamStat } from './models/team/LeagueUnitTeamStat';
 import TeamRankingsStats from './models/team/TeamRankingsStats'
 import NearestMatch, { NearestMatches } from './models/match/NearestMatch';
 import TeamCards from './models/team/TeamCards'
@@ -219,17 +219,21 @@ export function playersRequest<T>(path: string):
 
 
 
-
-
 export let getLeagueUnits = statisticsRequest<LeagueUnitRating>('leagueUnits')
 
 export function getTeamPositions(request: LevelRequest,
         statisticsParameters: StatisticsParameters,
-        callback: (LoadingEnum: LoadingEnum, model?: LeagueUnitTeamStatHistoryInfo) => void) {
+        callback: (LoadingEnum: LoadingEnum, model?: RestTableData<LeagueUnitTeamStatsWithPositionDiff>) => void) {
     let params = createStatisticsParameters(statisticsParameters)
-    axios.get<LeagueUnitTeamStatHistoryInfo>(startUrl(request) + '/teamPositions?' + params.toString())
+    axios.get<RestTableData<LeagueUnitTeamStatsWithPositionDiff>>(startUrl(request) + '/teamPositions?' + params.toString())
         .then(response => callback(LoadingEnum.OK, response.data))
         .catch(_e => callback(LoadingEnum.ERROR))
+}
+
+export function getTeamPositionsHistory(leagueUnitId: number, season: number, callback: (loadingEnum: LoadingEnum, model?: Array<LeagueUnitTeamStat>) => void) {
+    axios.get<Array<LeagueUnitTeamStat>>('/api/leagueUnit/' + leagueUnitId + '/teamPositionsHistory?season=' + season)
+      .then(response => callback(LoadingEnum.OK, response.data))
+      .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export let getTeamCards = statisticsRequest<TeamCards>('teamCards')

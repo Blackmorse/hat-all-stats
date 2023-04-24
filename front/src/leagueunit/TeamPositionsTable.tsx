@@ -16,16 +16,7 @@ import LeagueUnitLevelDataProps from './LeagueUnitLevelDataProps'
 const TeamPositionsTable = (props: LevelDataPropsWrapper<LeagueUnitLevelDataProps>) => {
     const [ t, _i18n ] = useTranslation()
     const requestF = (request: Request, callback: (loadingEnum: LoadingEnum, result?: RestTableData<LeagueUnitTeamStatsWithPositionDiff>) => void) => {
-        const levelRequest = props.levelDataProps.createLevelRequest()
-
-        getTeamPositions(levelRequest, request.statisticsParameters, 
-        (loadingEnum, statHistoryInfo) => {
-            let restTableData = {
-                entities: (statHistoryInfo === undefined) ? [] : statHistoryInfo.teamsLastRoundWithPositionsDiff,
-                isLastPage: true
-            }
-            callback(loadingEnum, restTableData)
-        })
+        getTeamPositions(props.levelDataProps.createLevelRequest(), request.statisticsParameters, callback)
     }
 
     const trend = (teamPositionWithDiff: LeagueUnitTeamStatsWithPositionDiff) => {

@@ -205,11 +205,29 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
           .map(leagueFixture => {
             val round = restStatisticsParameters.statsType.asInstanceOf[Round].round
 
-            val teams = leagueUnitCalculatorService.calculate(leagueFixture, Some(round),
-                    restStatisticsParameters.sortBy, restStatisticsParameters.sortingDirection)
+            val teamsWithPositionDiff = leagueUnitCalculatorService.calculate(leagueFixture, Some(round),
+                    restStatisticsParameters.sortBy, restStatisticsParameters.sortingDirection).teamsLastRoundWithPositionsDiff
 
-            Ok(Json.toJson(teams))
+            Ok(Json.toJson(RestTableData(teamsWithPositionDiff, true)))
           })
+      })
+  }
+
+  def teamPositionsHistory(leagueUnitId: Int, season: Int): Action[AnyContent] = Action.async {
+    chppClient.executeUnsafe[LeagueDetails, LeagueDetailsRequest](LeagueDetailsRequest(leagueUnitId = Some(leagueUnitId)))
+      .flatMap(leagueDetails => {
+        val offsettedSeason = leagueInfoService.getRelativeSeasonFromAbsolute(season, leagueDetails.leagueId)
+        chppClient.executeUnsafe[LeagueFixtures, LeagueFixturesRequest](LeagueFixturesRequest(leagueLevelUnitId = Some(leagueUnitId), season = Some(offsettedSeason)))
+          .map(leagueFixture => {
+            
+            val round = if(leagueInfoService.leagueInfo(leagueDetails.leagueId).currentSeason() == season) leagueInfoService.leagueInfo(leagueDetails.leagueId).currentRound() else 14
+
+            val positionsHistory = leagueUnitCalculatorService.calculate(leagueFixture, Some(round),
+                    /* doesn't matter what parameters are there */"points", Desc).positionsHistory
+
+            Ok(Json.toJson(positionsHistory))
+          })
+        
       })
   }
 
