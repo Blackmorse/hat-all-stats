@@ -109,7 +109,7 @@ abstract class OverviewPage<LevelProps extends LevelDataProps> extends
                     <SalaryTeamOverviewSection
                         initialData={this.state.totalOverview?.topSalaryTeams} 
                         levelDataProps={this.props.levelDataProps}
-                        linkProvider={this.linkProviderFunc(PagesEnum.TEAM_SALARY_TSI, 'salary')}
+                        linkProvider={this.linkProviderFunc(PagesEnum.TEAM_SALARY_TSI, 'sum_salary')}
                     />
                 </Col>
             </Row>

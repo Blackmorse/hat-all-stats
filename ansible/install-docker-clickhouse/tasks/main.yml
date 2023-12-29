@@ -1,20 +1,20 @@
 ---
 # tasks file for install-docker-clickhouse
-- include: 00-python-dependencies.yml
+  - import_tasks: 00-python-dependencies.yml
 
-- include: 01-copy-configs.yml
+  - import_tasks: 01-copy-configs.yml
 
-- include: 02-docker.yml
+  - import_tasks: 02-docker.yml
 
-- include: 03-grants.yml
+  - import_tasks: 03-grants.yml
 
-- include: 04-cron-local-backup.yml
-  tags:
-   - cron
-   - backup
+  - import_tasks: 04-cron-local-backup.yml
+    tags:
+     - cron
+     - backup
 
-- include: 05-cron-onedrive.yml
-  tags:
-   - cron
-   - remote-cron
-   - backup
+  - import_tasks: 05-cron-onedrive.yml
+    tags:
+     - cron
+     - remote-cron
+     - backup

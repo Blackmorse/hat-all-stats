@@ -12,7 +12,7 @@ CREATE TABLE hattrick.match_details_annoy
     `opposite_rating_indirect_set_pieces_def` UInt8,
     `opposite_rating_indirect_set_pieces_att` UInt8,
     `vector` Array(Float32),
-    INDEX md_annoy_index vector TYPE annoy(100, 'L2Distance') GRANULARITY 5
+    INDEX md_annoy_index vector TYPE annoy('L2Distance', 100) GRANULARITY 5
 )
 ENGINE = MergeTree
 ORDER BY tuple()
