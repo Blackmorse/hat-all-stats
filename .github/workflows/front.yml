@@ -22,4 +22,4 @@ jobs:
         with:
           context: "{{defaultContext}}:front"
           push: true
-          tags: hattid/front:latest-amd64
+          tags: front:latest-amd64
