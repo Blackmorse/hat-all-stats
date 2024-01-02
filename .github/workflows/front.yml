@@ -4,7 +4,7 @@ on:
     branches:
       - actions
 jobs:
-  Build front docker image:
+  build-front-docker-image:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Docker Buildx
