@@ -21,5 +21,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: "{{defaultContext}}:front"
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/blackmorse/hat-all-stats/front:latest-amd64
