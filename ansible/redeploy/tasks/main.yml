@@ -1,20 +1,20 @@
 ---
- - include: 01-web.yml
+ - import_tasks: 01-web.yml
    tags: 
     - web
   
- - include: 02-front.yml
+ - import_tasks: 02-front.yml
    tags: 
     - front
 
- - include: 03-loader.yml
+ - import_tasks: 03-loader.yml
    tags:
     - loader
 
- - include: 04-akka-loader.yml
+ - import_tasks: 04-akka-loader.yml
    tags:
     - akka-loader
 
- - include: 05-hattrick-tests.yml
+ - import_tasks: 05-hattrick-tests.yml
    tags:
     - tests

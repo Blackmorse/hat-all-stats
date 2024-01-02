@@ -153,6 +153,7 @@ GET     /api/matches/similarMatches controllers.MatchController.similarMatches(m
 GET	/api/matches/similarMatchesWithAnnoy	controllers.MatchController.similarMatchesWithAnnoy(matchId: Long, accuracy: Int, considerTacticType: Boolean, considerTacticSkill: Boolean, considerSetPiecesLevels: Boolean)
 + nocsrf
 POST     /api/matches/similarMatchesByRatings controllers.MatchController.similarMatchesByRatings(accuracy: Double)
++ nocsrf
 POST     /api/matches/similarMatchesByRatingsWithAnnoy controllers.MatchController.similarMatchesByRatingsWithAnnoy(accuracy: Int, considerTacticType: Boolean, considerTacticSkill: Boolean, considerSetPiecesLevels: Boolean)
 GET     /api/matches/singleMatch    controllers.MatchController.singleMatch(matchId: Long)
 
