@@ -22,4 +22,4 @@ jobs:
         with:
           context: "{{defaultContext}}:front"
           push: true
-          tags: front:latest-amd64
+          tags: ghcr.io/Blackmorse/hat-all-stats/front:latest-amd64
