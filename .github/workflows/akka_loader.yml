@@ -1,0 +1,34 @@
+name: akka_loader
+on: 
+  push:
+    branches:
+      - master
+    paths:
+      - akka-loader
+      - chpp/**
+      - project/**
+      - scala-common/**
+      - sqlBuilder/**
+      - build.*
+jobs:
+  build-akka-loader-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to ghcr
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: build and push
+        uses: docker/build-push-action@v5
+        with:
+          file: Dockerfile_akka_loader
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/blackmorse/hat-all-stats/akka_loader:latest
+
