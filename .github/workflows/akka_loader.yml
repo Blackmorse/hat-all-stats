@@ -1,17 +1,10 @@
-name: web
-on:
+name: akka_loader
+on: 
   push:
     branches:
       - actions
-    paths:
-      - chpp/**
-      - project/**
-      - scala-common/**
-      - sqlBuilder/**
-      - web/**
-      - build.*
 jobs:
-  build-web-docker-image:
+  build-front-docker-image:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Docker Buildx
@@ -27,8 +20,8 @@ jobs:
       - name: build and push
         uses: docker/build-push-action@v5
         with:
-          file: Dockerfile_web
+          file: Dockerfile_akka_loader
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/blackmorse/hat-all-stats/web:latest
+          tags: ghcr.io/blackmorse/hat-all-stats/akka_loader:latest
 

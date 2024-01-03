@@ -7,3 +7,4 @@ sql
 *.sh
 *.yml
 Dockerfile_web
+Dockerfile_akka_loader
