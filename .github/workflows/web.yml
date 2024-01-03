@@ -20,7 +20,7 @@ jobs:
       - name: build and push
         uses: docker/build-push-action@v5
         with:
-          file: "{{defaultContext}}/Dockerfile_web"
+          file: Dockerfile_web
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/blackmorse/hat-all-stats/web:latest
