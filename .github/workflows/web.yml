@@ -2,7 +2,7 @@ name: web
 on:
   push:
     branches:
-      - actions
+      - master
     paths:
       - chpp/**
       - project/**

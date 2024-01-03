@@ -2,9 +2,16 @@ name: akka_loader
 on: 
   push:
     branches:
-      - actions
+      - master
+    paths:
+      - akka-loader
+      - chpp/**
+      - project/**
+      - scala-common/**
+      - sqlBuilder/**
+      - build.*
 jobs:
-  build-front-docker-image:
+  build-akka-loader-docker-image:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Docker Buildx
