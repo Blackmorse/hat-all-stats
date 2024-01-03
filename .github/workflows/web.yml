@@ -1,12 +1,10 @@
-name: front
-on: 
+name: web
+on:
   push:
     branches:
       - actions
-    paths:
-      - front/**
 jobs:
-  build-front-docker-image:
+  build-web-docker-image:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Docker Buildx
@@ -22,7 +20,8 @@ jobs:
       - name: build and push
         uses: docker/build-push-action@v5
         with:
-          context: "{{defaultContext}}:front"
+          file: "{{defaultContext}}/Dockerfile_web"
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/blackmorse/hat-all-stats/front:latest
+          tags: ghcr.io/blackmorse/hat-all-stats/web:latest
+

@@ -1,0 +1,9 @@
+ansible
+common
+front
+loader
+sql
+*.md
+*.sh
+*.yml
+Dockerfile_web
