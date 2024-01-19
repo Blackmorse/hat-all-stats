@@ -70,6 +70,7 @@ case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
   private var _select: Select = _
   private var limitByNumber = 0
   private var limitByField: Option[String] = None
+  private val settingsMap = mutable.Map[String, Any]()
   var withSelect: Option[WithSelect] = None
 
   def select: Select = {
@@ -108,6 +109,11 @@ case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
     this
   }
 
+  def setting(name: String, value: Any): SqlBuilder = {
+    settingsMap += (name -> value)
+    this
+  }
+
   def parameters: mutable.Buffer[Parameter] = this.withSelect.map(ws => ws.sqlBuilder.parameters).getOrElse(mutable.Buffer()) ++ whereClause.parameters ++ havingClause.parameters ++ this._select.parameters
 
   def sqlWithParameters(): SqlWithParameters = {
@@ -138,6 +144,16 @@ case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
     } else {
       ""
     }
+
+    val settingsPart = if(settingsMap.isEmpty) {
+      ""
+    } else {
+      val set= settingsMap.map{
+        case (k, v: Int) => s"$k = $v"
+        case (k, v: Any) => s"""$k = "$v""""
+      }.mkString(", ")
+      s"SETTINGS $set"
+    }
     withClause +
       s"$selectFrom " +
       s"$where " +
@@ -145,6 +161,7 @@ case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
       s"$havingString " +
       s"$orderBy " +
       s"${this.limitByField.map(lField => s"LIMIT ${this.limitByNumber} BY $lField").getOrElse("")} " +
-      s"$limit"
+      s"$limit " +
+      s"$settingsPart "
   }
 }

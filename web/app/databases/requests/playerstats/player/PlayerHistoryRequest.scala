@@ -4,17 +4,16 @@ import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
 import databases.requests.model.player.PlayerHistory
-import sqlbuilder.Select
+import sqlbuilder.{Select, SqlBuilder}
 
 import scala.concurrent.Future
 
 object PlayerHistoryRequest extends ClickhouseRequest[PlayerHistory] {
   override val rowParser: RowParser[PlayerHistory] = PlayerHistory.mapper
+  import sqlbuilder.SqlBuilder.implicits._
 
-  def execute(playerId: Long)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[PlayerHistory]] = {
-    import sqlbuilder.SqlBuilder.implicits._
-
-    val builder = Select(
+  def builder(playerId: Long): SqlBuilder =
+    Select(
       "league_id",
       "league_unit_id",
       "league_unit_name",
@@ -43,7 +42,8 @@ object PlayerHistoryRequest extends ClickhouseRequest[PlayerHistory] {
       //TODO: ability to add typed parameters with custom name
       .and(s"player_id = $playerId")
       .orderBy("season", "round", "cup_level".asc)
+      .setting("optimize_read_in_order", 0)
 
-    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
-  }
+  def execute(playerId: Long)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[PlayerHistory]] =
+    restClickhouseDAO.execute(builder(playerId).sqlWithParameters().build, rowParser)
 }

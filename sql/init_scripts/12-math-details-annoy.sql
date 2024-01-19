@@ -1,3 +1,5 @@
+set allow_experimental_annoy_index = 1;
+
 CREATE TABLE hattrick.match_details_annoy
 (
     `match_id` UInt64,
@@ -16,4 +18,4 @@ CREATE TABLE hattrick.match_details_annoy
 )
 ENGINE = MergeTree
 ORDER BY tuple()
-SETTINGS index_granularity = 8192
+SETTINGS index_granularity = 8192;
