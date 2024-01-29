@@ -7,6 +7,7 @@ import chpp.OauthTokens
 import chpp.worlddetails.models.WorldDetails
 import clickhouse.PlayerStatsClickhouseClient
 import com.crobox.clickhouse.ClickhouseClient
+import com.crobox.clickhouse.internal.QuerySettings
 import com.crobox.clickhouse.stream.{ClickhouseSink, Insert}
 import com.typesafe.config.Config
 import loadergraph.{CupMatchesFlow, LeagueMatchesFlow}
@@ -22,6 +23,10 @@ class ExecutorActorFactory @Inject()
      val hattidClient: PlayerStatsClickhouseClient,
      val alltidClient: AlltidClient) {
   import actorSystem.dispatcher
+
+  private implicit val querySettings: QuerySettings = QuerySettings(authentication = Some((
+    config.getString("crobox.clickhouse.client.authentication.user"),
+    config.getString("crobox.clickhouse.client.authentication.password"))))
 
   private val chSink = Flow[Insert].log("pipeline_log").toMat(ClickhouseSink.insertSink(config, clickhouseClient))(Keep.right)
 

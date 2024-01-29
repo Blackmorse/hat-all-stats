@@ -2,6 +2,7 @@ package clickhouse
 
 import chpp.worlddetails.models.League
 import com.crobox.clickhouse.ClickhouseClient
+import com.crobox.clickhouse.internal.QuerySettings
 import com.typesafe.config.Config
 import hattid.LoddarStatsUtils
 import org.slf4j.LoggerFactory
@@ -31,6 +32,9 @@ object TeamRankJoiner {
           divisionLevel = level,
           database = config.getString("database_name")
         )
+        implicit val querySettings: QuerySettings = QuerySettings(authentication = Some((
+          config.getString("crobox.clickhouse.client.authentication.user"),
+          config.getString("crobox.clickhouse.client.authentication.password"))))
         client.execute(sql)
       })
 

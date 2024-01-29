@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.League
 import com.crobox.clickhouse.ClickhouseClient
+import com.crobox.clickhouse.internal.QuerySettings
 import com.typesafe.config.Config
 import org.slf4j.LoggerFactory
 
@@ -28,6 +29,9 @@ class PlayerStatsClickhouseClient @Inject()(val config: Config,
         } yield r
   }
 
+  private implicit val querySettings: QuerySettings = QuerySettings(authentication = Some((
+    config.getString("crobox.clickhouse.client.authentication.user"),
+    config.getString("crobox.clickhouse.client.authentication.password"))))
   private def executePlayerJoinRequest(league: League, matchType: MatchType.Value): Future[String] = {
     logger.info(s"Joining player_info with player_events for (${league.leagueId}, ${league.leagueName})...")
     client.execute(PlayerStatsJoiner.playerStatsJoinRequest(league, matchType, databaseName))
