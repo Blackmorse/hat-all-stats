@@ -16,14 +16,14 @@ import java.util.Date
 import scala.concurrent.ExecutionContext
 
 object MatchDetailsFlow {
-  def apply(matchType: MatchType.Value)(implicit oauthTokens: OauthTokens, system: ActorSystem,
+  def apply(matchType: MatchType.Value, lastMatchesWindow: Int)(implicit oauthTokens: OauthTokens, system: ActorSystem,
               executionContext: ExecutionContext): Flow[StreamTeam, StreamMatchDetailsWithLineup, _] = {
     Flow[StreamTeam]
       .filter(_.userId != 0)
       .map(team => (MatchesRequest(teamId = Some(team.id)), team))
       .async
       .via(MatchesHttpFlow())
-      .map{case (matchesArchive, team) => lastMatch(matchesArchive, team, matchType)}
+      .map{case (matchesArchive, team) => lastMatch(matchesArchive, team, matchType, lastMatchesWindow)}
       .flatMapConcat(matchOpt => matchOpt.map(matc => Source.single(matc)).getOrElse(Source.empty[Match]))
       .map(matc => (MatchDetailsRequest(matchId = Some(matc.id)), matc))
       .async
@@ -35,8 +35,8 @@ object MatchDetailsFlow {
       .via(LogProgressFlow("Match Details", Some(_.matc.team.leagueUnit.league.activeTeams)))
   }
 
-  private def lastMatch(matchesArchive: Matches, team: StreamTeam, matchType: MatchType.Value): Option[Match] = {
-    val sevenDaysAgo = new Date(System.currentTimeMillis() - 1000L * 3600 * 24 * 7)
+  private def lastMatch(matchesArchive: Matches, team: StreamTeam, matchType: MatchType.Value, lastMatchesWindow: Int): Option[Match] = {
+    val sevenDaysAgo = new Date(System.currentTimeMillis() - 1000L * 3600 * 24 * lastMatchesWindow) // 7 days by default
     Option(matchesArchive.team.matchList)
       .flatMap(matchList =>
         matchList.filter(_.matchType == matchType)

@@ -1,7 +1,7 @@
-import akka.actor.ActorSystem
-import chpp.matchlineup.MatchLineupRequest
-import chpp.teamdetails.TeamDetailsRequest
-import chpp.{ChppRequestExecutor, OauthTokens}
+import akka.actor.{ActorRef, ActorSystem}
+import chpp.OauthTokens
+import chpp.worlddetails.models.WorldDetails
+import cli.{CommandLine, LoadConfig, ScheduleConfig, TeamRankingsConfig}
 import clickhouse.TeamRankJoiner
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory
@@ -10,13 +10,16 @@ import executors.ExecutorActorFactory
 import executors.TaskExecutorActor.TryToExecute
 import guice.LoaderModule
 import org.slf4j.LoggerFactory
-import scheduler.{CupScheduler, LeagueScheduler}
+import scheduler.{AbstractScheduler, CupScheduler, LeagueScheduler}
 import utils.WorldDetailsSingleRequest
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
+
 object LoaderApp extends App {
+  val cliConfig = new CommandLine(args).toCliConfig
+
   private val logger = Logger(LoggerFactory.getLogger(this.getClass))
 
   implicit val actorSystem: ActorSystem = ActorSystem("LoaderActorSystem")
@@ -35,37 +38,35 @@ object LoaderApp extends App {
 
   private val worldDetails = Await.result(worldDetailsFuture, 30.seconds)
 
-  if (args(0) == "teamRankings") {
-    if (args.length == 2) {
-      Await.result(TeamRankJoiner.joinTeamRankings(config, worldDetails.leagueList.find(_.leagueName == args(1)).get), 3.minute)
-    } else if (args.length == 1) {
+  cliConfig match {
+    case ScheduleConfig(fromOpt, entity, lastMatchWindow) =>
+      val (taskExecutorActor, scheduler) = executorAndScheduler(entity, lastMatchWindow, executorActorFactory, worldDetails)
+      fromOpt match {
+        case Some(from) => scheduler.scheduleFrom(from)
+        case None => scheduler.schedule()
+      }
+      actorSystem.scheduler.scheduleWithFixedDelay(0.second , 5.second)(() => taskExecutorActor ! TryToExecute)
+    case LoadConfig(leagues, entity, lastMatchWindow) =>
+      val (taskExecutorActor, scheduler) = executorAndScheduler(entity, lastMatchWindow, executorActorFactory, worldDetails)
+      scheduler.load(leagues)
+      actorSystem.scheduler.scheduleWithFixedDelay(0.second , 5.second)(() => taskExecutorActor ! TryToExecute)
+    case TeamRankingsConfig(Some(league)) =>
+      Await.result(TeamRankJoiner.joinTeamRankings(config, worldDetails.leagueList.find(_.leagueName == league).get), 3.minute)
+    case TeamRankingsConfig(None) =>
       worldDetails.leagueList.foreach(league => {
         Await.result(TeamRankJoiner.joinTeamRankings(config, league), 3.minute)
       })
+  }
+
+  private def executorAndScheduler(entity: String, lastMatchesWindow: Int, executorActorFactory: ExecutorActorFactory, worldDetails: WorldDetails): (ActorRef, AbstractScheduler) = {
+    if (entity== "league") {
+      val taskExecutorActor = executorActorFactory.createLeagueExecutorActor(worldDetails, lastMatchesWindow)
+      (taskExecutorActor, new LeagueScheduler(worldDetails, taskExecutorActor))
+    } else if (entity == "cup") {
+      val taskExecutorActor = executorActorFactory.createCupExecutorActor(worldDetails, lastMatchesWindow)
+      (taskExecutorActor, new CupScheduler(worldDetails, taskExecutorActor))
+    } else {
+      throw new Exception(s"Unknown/unsupported ${args(1)} match type")
     }
-    System.exit(0)
   }
-
-  val (taskExecutorActor, scheduler) = if (args(1) == "league") {
-    val taskExecutorActor = executorActorFactory.createLeagueExecutorActor(worldDetails)
-    (taskExecutorActor, new LeagueScheduler(worldDetails, taskExecutorActor))
-  } else if (args(1) == "cup") {
-    val taskExecutorActor = executorActorFactory.createCupExecutorActor(worldDetails)
-    (taskExecutorActor, new CupScheduler(worldDetails, taskExecutorActor))
-  } else {
-    throw new Exception(s"Unknown/unsupported ${args(1)} match type")
-  }
-
-  if (args(0) == "schedule") {
-    scheduler.schedule()
-  } else if (args(0) == "scheduleFrom") {
-    scheduler.scheduleFrom(args(2))
-  } else if (args(0) == "load") {
-    scheduler.load(args(2))
-  } else {
-    logger.error("Please specify one of available tasks: schedule, scheduleFrom, load")
-    throw new IllegalArgumentException(s"Unknown args: ${args.mkString("Array(", ", ", ")")}")
-  }
-
-  actorSystem.scheduler.scheduleWithFixedDelay(0.second , 5.second)(() => taskExecutorActor ! TryToExecute)
 }

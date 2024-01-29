@@ -11,12 +11,11 @@ abstract class AbstractScheduler(val worldDetails: WorldDetails) {
 
   def scheduleFrom(leagueName: String): Unit = scheduleFrom(findLeagueIdByName(leagueName))
 
-  protected def load(leagueIds: Seq[Int]): Unit
+  protected def loadIds(leagueIds: Seq[Int]): Unit
 
-  def load(leagueNames: String): Unit = {
-    val leagueIds = leagueNames.split(",")
-      .map(leagueName => findLeagueIdByName(leagueName))
-    load(leagueIds)
+  def load(leagueNames: Seq[String]): Unit = {
+    val leagueIds = leagueNames.map(leagueName => findLeagueIdByName(leagueName))
+    loadIds(leagueIds)
   }
 
   private def findLeagueIdByName(leagueName: String): Int = {

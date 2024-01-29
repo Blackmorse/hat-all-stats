@@ -19,7 +19,7 @@ import models.stream.{LeagueUnit, StreamMatchDetails, StreamTeam}
 import scala.concurrent.ExecutionContext
 
 object CupMatchesFlow {
-  def apply(config: Config, countryMap: Map[Int, Int])(implicit oauthTokens: OauthTokens, system: ActorSystem,
+  def apply(config: Config, countryMap: Map[Int, Int], lastMatchesWindow: Int)(implicit oauthTokens: OauthTokens, system: ActorSystem,
                                                        executionContext: ExecutionContext): Flow[Int, Insert, NotUsed] = {
     val databaseName = config.getString("database_name")
 
@@ -29,7 +29,7 @@ object CupMatchesFlow {
 
         val teamFlow: FlowShape[(LeagueDetails, LeagueUnit), StreamTeam] = builder.add(TeamsFlow())
         val leagueUnitDetailsFlow: FlowShape[Int, (LeagueDetails, LeagueUnit)] = builder.add(LeagueUnitDetailsFlow())
-        val matchDetailsFlow: FlowShape[StreamTeam, StreamMatchDetailsWithLineup] = builder.add(MatchDetailsFlow(MatchType.CUP_MATCH))
+        val matchDetailsFlow: FlowShape[StreamTeam, StreamMatchDetailsWithLineup] = builder.add(MatchDetailsFlow(MatchType.CUP_MATCH, lastMatchesWindow))
 
         val broadcast = builder.add(Broadcast[StreamMatchDetailsWithLineup](3).async)
 

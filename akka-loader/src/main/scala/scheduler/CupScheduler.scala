@@ -40,7 +40,7 @@ class CupScheduler(worldDetails: WorldDetails,
     taskExecutorActor ! ScheduleFinished
   }
 
-  override protected def load(leagueIds: Seq[Int]): Unit = {
+  override protected def loadIds(leagueIds: Seq[Int]): Unit = {
     leagueIds.foreach(leagueID => taskExecutorActor ! ScheduleTask(leagueID, new Date()))
   }
 }

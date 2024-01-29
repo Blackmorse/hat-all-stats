@@ -25,15 +25,15 @@ class ExecutorActorFactory @Inject()
 
   private val chSink = Flow[Insert].log("pipeline_log").toMat(ClickhouseSink.insertSink(config, clickhouseClient))(Keep.right)
 
-  def createLeagueExecutorActor(worldDetails: WorldDetails): ActorRef = {
+  def createLeagueExecutorActor(worldDetails: WorldDetails, lastMatchesWindow: Int): ActorRef = {
     val countryMap = getCountryMap(worldDetails)
-    val graph = LeagueMatchesFlow.apply(config, countryMap).toMat(chSink)(Keep.both)
+    val graph = LeagueMatchesFlow.apply(config, countryMap, lastMatchesWindow).toMat(chSink)(Keep.both)
     actorSystem.actorOf(Props(new LeagueExecutorActor(graph, chSink, hattidClient, worldDetails, config, alltidClient)))
   }
 
-  def createCupExecutorActor(worldDetails: WorldDetails): ActorRef = {
+  def createCupExecutorActor(worldDetails: WorldDetails, lastMatchesWindow: Int): ActorRef = {
     val countryMap = getCountryMap(worldDetails)
-    val graph = CupMatchesFlow(config, countryMap).toMat(chSink)(Keep.right)
+    val graph = CupMatchesFlow(config, countryMap, lastMatchesWindow).toMat(chSink)(Keep.right)
     actorSystem.actorOf(Props(new CupExecutorActor(graph, hattidClient, worldDetails)))
   }
 
