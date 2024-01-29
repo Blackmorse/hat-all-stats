@@ -4,7 +4,7 @@ on:
     branches:
       - master
     paths:
-      - akka-loader
+      - akka-loader/**
       - chpp/**
       - project/**
       - scala-common/**

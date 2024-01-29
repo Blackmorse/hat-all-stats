@@ -1,6 +1,5 @@
 package executors
 
-import akka.Done
 import akka.stream.scaladsl.Sink
 import chpp.OauthTokens
 import chpp.commonmodels.MatchType
@@ -8,10 +7,6 @@ import chpp.worlddetails.models.{League, WorldDetails}
 import clickhouse.PlayerStatsClickhouseClient
 
 import scala.concurrent.Future
-
-object CupExecutorActor {
-  type CupMat = Future[Done]
-}
 
 class CupExecutorActor[CupMat, Done](graph: Sink[Int, Future[Done]],
                                      playerStatsClickhouseClient: PlayerStatsClickhouseClient,
