@@ -150,6 +150,7 @@ case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
     } else {
       val set= settingsMap.map{
         case (k, v: Int) => s"$k = $v"
+        case (k, v: Long) => s"$k = $v"
         case (k, v: Any) => s"""$k = "$v""""
       }.mkString(", ")
       s"SETTINGS $set"
