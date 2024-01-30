@@ -5,14 +5,16 @@ import chpp.OauthTokens
 import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.{League, WorldDetails}
 import clickhouse.PlayerStatsClickhouseClient
+import telegram.LoaderTelegramClient
 
 import scala.concurrent.Future
 
 class CupExecutorActor[CupMat, Done](graph: Sink[Int, Future[Done]],
                                      playerStatsClickhouseClient: PlayerStatsClickhouseClient,
-                                     worldDetails: WorldDetails
+                                     worldDetails: WorldDetails,
+                                     telegramClient: LoaderTelegramClient
                                     ) (implicit oauthTokens: OauthTokens)
-        extends TaskExecutorActor(graph, worldDetails, (m => m): Future[Done] => Future[Done]) {
+        extends TaskExecutorActor(graph, worldDetails, (m => m): Future[Done] => Future[Done], telegramClient) {
   override def postProcessLoadedResults(league: League, matValue: Done): Future[_] = {
     playerStatsClickhouseClient.join(league, MatchType.CUP_MATCH)
   }

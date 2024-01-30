@@ -11,6 +11,7 @@ import com.crobox.clickhouse.internal.QuerySettings
 import com.crobox.clickhouse.stream.{ClickhouseSink, Insert}
 import com.typesafe.config.Config
 import loadergraph.{CupMatchesFlow, LeagueMatchesFlow}
+import telegram.LoaderTelegramClient
 
 import javax.inject.{Inject, Singleton}
 
@@ -21,7 +22,8 @@ class ExecutorActorFactory @Inject()
      val clickhouseClient: ClickhouseClient,
      val config: Config,
      val hattidClient: PlayerStatsClickhouseClient,
-     val alltidClient: AlltidClient) {
+     val alltidClient: AlltidClient,
+     val telegramClient: LoaderTelegramClient) {
   import actorSystem.dispatcher
 
   private implicit val querySettings: QuerySettings = QuerySettings(authentication = Some((
@@ -33,13 +35,13 @@ class ExecutorActorFactory @Inject()
   def createLeagueExecutorActor(worldDetails: WorldDetails, lastMatchesWindow: Int): ActorRef = {
     val countryMap = getCountryMap(worldDetails)
     val graph = LeagueMatchesFlow.apply(config, countryMap, lastMatchesWindow).toMat(chSink)(Keep.both)
-    actorSystem.actorOf(Props(new LeagueExecutorActor(graph, chSink, hattidClient, worldDetails, config, alltidClient)))
+    actorSystem.actorOf(Props(new LeagueExecutorActor(graph, chSink, hattidClient, worldDetails, config, alltidClient, telegramClient)))
   }
 
   def createCupExecutorActor(worldDetails: WorldDetails, lastMatchesWindow: Int): ActorRef = {
     val countryMap = getCountryMap(worldDetails)
     val graph = CupMatchesFlow(config, countryMap, lastMatchesWindow).toMat(chSink)(Keep.right)
-    actorSystem.actorOf(Props(new CupExecutorActor(graph, hattidClient, worldDetails)))
+    actorSystem.actorOf(Props(new CupExecutorActor(graph, hattidClient, worldDetails, telegramClient)))
   }
 
   private def getCountryMap(worldDetails: WorldDetails): Map[Int, Int] = {

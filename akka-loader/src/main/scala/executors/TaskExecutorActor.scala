@@ -7,6 +7,7 @@ import chpp.OauthTokens
 import chpp.worlddetails.models.{League, WorldDetails}
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
+import telegram.LoaderTelegramClient
 import utils.WorldDetailsSingleRequest
 
 import java.util.Date
@@ -27,7 +28,8 @@ object TaskExecutorActor {
 
 abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                         worldDetails: WorldDetails,
-                        matToFuture: GraphMat => Future[MatValue])
+                        matToFuture: GraphMat => Future[MatValue],
+                        telegramClient: LoaderTelegramClient)
                         (implicit oauthTokens: OauthTokens)
   extends Actor {
   private val logger = Logger(LoggerFactory.getLogger(this.getClass))
@@ -74,6 +76,7 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                 logger.error(s"Failed to upload ${task.leagueId}", exception)
                 self ! ScheduleTask(task.leagueId,
                   new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                telegramClient.sendException("Loader failed at streaming stage", exception)
                 self ! TaskFinished
               case Success(matValue) =>
                 val updatedLeagueFuture =  WorldDetailsSingleRequest.request(leagueId = Some(league.leagueId)).map(_.leagueList.head);
@@ -83,6 +86,7 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                   result.onComplete {
                     case Failure(exception) =>
                       logger.error(exception.getMessage, exception)
+                      telegramClient.sendException("Loader failed at post processing stage", exception)
                       self ! TaskFinished
                     case Success(_) =>
                       logger.info(s"(${updatedLeague.leagueId}, ${updatedLeague.leagueName}) successfully loaded")

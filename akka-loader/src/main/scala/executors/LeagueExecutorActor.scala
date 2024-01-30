@@ -12,6 +12,7 @@ import com.crobox.clickhouse.stream.Insert
 import com.typesafe.config.Config
 import models.stream.StreamTeam
 import promotions.PromotionsCalculator
+import telegram.LoaderTelegramClient
 
 import scala.concurrent.Future
 
@@ -25,8 +26,9 @@ class LeagueExecutorActor
  playerStatsClickhouseClient: PlayerStatsClickhouseClient,
  worldDetails: WorldDetails,
  config: Config,
- alltidClient: AlltidClient)(implicit oauthTokens: OauthTokens)
-  extends TaskExecutorActor[LeagueMat, (List[StreamTeam], Done)](graph, worldDetails, lm => lm._1.zip(lm._2)) {
+ alltidClient: AlltidClient,
+ telegramClient: LoaderTelegramClient)(implicit oauthTokens: OauthTokens)
+  extends TaskExecutorActor[LeagueMat, (List[StreamTeam], Done)](graph, worldDetails, lm => lm._1.zip(lm._2), telegramClient) {
 
   import context.{dispatcher, system}
 

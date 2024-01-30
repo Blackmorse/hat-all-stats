@@ -5,6 +5,10 @@ import chpp.OauthTokens
 import com.crobox.clickhouse.ClickhouseClient
 import com.google.inject.AbstractModule
 import com.typesafe.config.Config
+import hattid.telegram.TelegramClient
+import hattid.telegram.TelegramClient.TelegramCreds
+
+import javax.inject.{Inject, Singleton}
 
 class LoaderModule(config: Config, actorSystem: ActorSystem) extends AbstractModule {
   override def configure(): Unit = {
@@ -19,5 +23,7 @@ class LoaderModule(config: Config, actorSystem: ActorSystem) extends AbstractMod
     bind(classOf[Config]).toInstance(config)
     bind(classOf[ClickhouseClient]).toInstance(new ClickhouseClient(Some(config)))
     bind(classOf[OauthTokens]).toInstance(oauthTokens)
+
+    bind(classOf[LoaderTelegramClient]).toInstance(new LoaderTelegramClient(config.ha))
   }
 }
