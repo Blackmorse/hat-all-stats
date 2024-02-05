@@ -68,7 +68,7 @@ class PlayerGamesGoalsRequestTest extends FunSuite with Matchers {
         |)
         |order by games asc, player_id asc
         |limit 16, 17
-        |SETTINGS max_bytes_before_external_group_by = 8000000000
+        |SETTINGS max_bytes_before_external_group_by = 3000000000
         |""".stripMargin.normalize())
   }
 }
