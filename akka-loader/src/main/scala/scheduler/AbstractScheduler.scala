@@ -18,6 +18,8 @@ abstract class AbstractScheduler(val worldDetails: WorldDetails) {
     loadIds(leagueIds)
   }
 
+  def loadScheduled(): Unit
+
   private def findLeagueIdByName(leagueName: String): Int = {
    if (leagueName.forall(_.isDigit)) {
     leagueName.toInt

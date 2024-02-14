@@ -3,10 +3,10 @@ package scheduler
 import executors.TaskExecutorActor.{ScheduleFinished, ScheduleTask}
 import akka.actor.ActorRef
 import chpp.worlddetails.models.WorldDetails
-import hattid.CommonData
+import hattid.{CommonData, CupSchedule}
 import scheduler.LeagueScheduler.{countriesToMinutesOffset, firstLeagueId, lastLeagueId}
 
-import java.util.Date
+import java.util.{Calendar, Date}
 
 object LeagueScheduler {
   private val firstLeagueId = 1000
@@ -73,5 +73,30 @@ class LeagueScheduler(worldDetails: WorldDetails,
       .foreach(taskExecutorActor ! _)
 
     taskExecutorActor ! ScheduleFinished
+  }
+
+  override def loadScheduled(): Unit = {
+    val lastLeague = worldDetails.leagueList.filter(_.leagueId == lastLeagueId).head
+    val firstLeague = worldDetails.leagueList.filter(_.leagueId == firstLeagueId).head
+    val matchesAlreadyFinished = firstLeague.seriesMatchDate.after(new Date()) &&
+      lastLeague.seriesMatchDate.after(new Date()) && lastLeague.seriesMatchDate.after(firstLeague.seriesMatchDate)
+
+    val previousWeekMs = if (matchesAlreadyFinished) 1000L * 3600 * 24 * 7 else 0L
+    worldDetails.leagueList
+      .map(league => {
+        val minutesOffset: Long = countriesToMinutesOffset.getOrElse(league.leagueId, 0)
+
+        val date = if (league.seriesMatchDate.after(lastLeague.seriesMatchDate)) {
+          new Date(league.seriesMatchDate.getTime - 1000L * 3600 * 24 * 7
+            + threeHoursMs + (minutesOffset * 60 * 1000))
+        } else {
+          new Date(league.seriesMatchDate.getTime + threeHoursMs + +minutesOffset * 60 * 1000)
+        }
+
+        ScheduleTask(league.leagueId, new Date(date.getTime - previousWeekMs))
+      })
+      .filter(_.time.before(new Date()))
+      .sortBy(_.time)
+      .foreach(taskExecutorActor ! _)
   }
 }

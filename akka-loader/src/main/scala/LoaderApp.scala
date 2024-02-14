@@ -1,7 +1,7 @@
 import akka.actor.{ActorRef, ActorSystem}
 import chpp.OauthTokens
 import chpp.worlddetails.models.WorldDetails
-import cli.{CommandLine, LoadConfig, ScheduleConfig, TeamRankingsConfig}
+import cli.{CommandLine, LoadConfig, LoadScheduledConfig, ScheduleConfig, TeamRankingsConfig}
 import clickhouse.TeamRankJoiner
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory
@@ -56,6 +56,10 @@ object LoaderApp extends App {
       worldDetails.leagueList.foreach(league => {
         Await.result(TeamRankJoiner.joinTeamRankings(config, league), 3.minute)
       })
+    case LoadScheduledConfig(entity, lastMatchWindow) =>
+      val (taskExecutorActor, scheduler) = executorAndScheduler(entity, lastMatchWindow, executorActorFactory, worldDetails)
+      scheduler.loadScheduled()
+      actorSystem.scheduler.scheduleWithFixedDelay(0.second , 5.second)(() => taskExecutorActor ! TryToExecute)
   }
 
   private def executorAndScheduler(entity: String, lastMatchesWindow: Int, executorActorFactory: ExecutorActorFactory, worldDetails: WorldDetails): (ActorRef, AbstractScheduler) = {

@@ -2,12 +2,12 @@ package clickhouse
 
 import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.League
+import utils.realRound
 
 object PlayerStatsJoiner {
   def playerStatsJoinRequest(league: League, matchType: MatchType.Value, databaseName: String): String = {
     val leagueId = league.leagueId
-    val round = if (matchType == MatchType.LEAGUE_MATCH) league.matchRound - 1 else if (matchType == MatchType.CUP_MATCH) league.matchRound
-    else throw new IllegalArgumentException(matchType.toString)
+    val round = realRound(matchType, league)
     val season = league.season - league.seasonOffset
 
     s"""INSERT INTO $databaseName.player_stats SELECT

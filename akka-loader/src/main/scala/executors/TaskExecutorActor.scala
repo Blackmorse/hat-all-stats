@@ -64,43 +64,51 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
           val task = tasks.head
           if (task.time.before(new Date())) {
             tasks = tasks.drop(1)
-            running = true
             val league = worldDetails.leagueList.filter(_.leagueId == task.leagueId).head
-            notifyLeagueStarted(league)
-            logger.info(s"Started league (${task.leagueId}, ${league.leagueName})")
+            if(checkTaskAlreadyDone(league)) {
+              logger.info(s"(${task.leagueId}, ${league.leagueName}) is already done!")
+              self ! TryToExecute
+            } else {
+              running = true
 
-            val mat = Source.single(task.leagueId).toMat(graph)(Keep.right).run()
+              notifyLeagueStarted(league)
+              logger.info(s"Started league (${task.leagueId}, ${league.leagueName})")
 
-            matToFuture(mat).onComplete {
-              case Failure(exception) =>
-                logger.error(s"Failed to upload ${task.leagueId}", exception)
-                self ! ScheduleTask(task.leagueId,
-                  new Date(System.currentTimeMillis() + 30 * 60 * 1000))
-                telegramClient.sendException("Loader failed at streaming stage", exception)
-                self ! TaskFinished
-              case Success(matValue) =>
-                val updatedLeagueFuture =  WorldDetailsSingleRequest.request(leagueId = Some(league.leagueId)).map(_.leagueList.head);
+              val mat = Source.single(task.leagueId).toMat(graph)(Keep.right).run()
 
-                updatedLeagueFuture.foreach(updatedLeague => {
-                  val result = postProcessLoadedResults(updatedLeague, matValue)
-                  result.onComplete {
-                    case Failure(exception) =>
-                      logger.error(exception.getMessage, exception)
-                      telegramClient.sendException("Loader failed at post processing stage", exception)
-                      self ! TaskFinished
-                    case Success(_) =>
-                      logger.info(s"(${updatedLeague.leagueId}, ${updatedLeague.leagueName}) successfully loaded")
-                      notifyLeagueFinished(updatedLeague)
-                      self ! TaskFinished
-                  }})
+              matToFuture(mat).onComplete {
+                case Failure(exception) =>
+                  logger.error(s"Failed to upload ${task.leagueId}", exception)
+                  self ! ScheduleTask(task.leagueId,
+                    new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                  telegramClient.sendException("Loader failed at streaming stage", exception)
+                  self ! TaskFinished
+                case Success(matValue) =>
+                  val updatedLeagueFuture = WorldDetailsSingleRequest.request(leagueId = Some(league.leagueId)).map(_.leagueList.head);
+
+                  updatedLeagueFuture.foreach(updatedLeague => {
+                    val result = postProcessLoadedResults(updatedLeague, matValue)
+                    result.onComplete {
+                      case Failure(exception) =>
+                        logger.error(exception.getMessage, exception)
+                        telegramClient.sendException("Loader failed at post processing stage", exception)
+                        self ! TaskFinished
+                      case Success(_) =>
+                        logger.info(s"(${updatedLeague.leagueId}, ${updatedLeague.leagueName}) successfully loaded")
+                        notifyLeagueFinished(updatedLeague)
+                        self ! TaskFinished
+                    }
+                  })
+              }
             }
-
           }
         }
       } else {
         logger.debug("Some task is running!")
       }
   }
+
+  def checkTaskAlreadyDone(league: League): Boolean
 
   def notifyScheduled(tasks: List[ScheduleTask])
 

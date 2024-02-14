@@ -25,6 +25,20 @@ class CupScheduler(worldDetails: WorldDetails,
     taskExecutorActor ! ScheduleFinished
   }
 
+  override def loadScheduled(): Unit = {
+    val dayLightSavingOffset = if (CupSchedule.isSummerTimeNow()) 0L else 1000L * 60 * 60
+
+    CupSchedule.normalizeCupScheduleToDayOfWeek(cupSchedule, Calendar.MONDAY)
+      .map(scheduleEntry => {
+        val scheduledDate = new Date(scheduleEntry.date.getTime + threeHoursMs + dayLightSavingOffset)
+        ScheduleTask(scheduleEntry.leagueId, scheduledDate)
+      })
+      .filter(_.time.before(new Date()))
+      .foreach(task => taskExecutorActor ! task)
+
+    taskExecutorActor ! ScheduleFinished
+  }
+
   override protected def scheduleFrom(leagueId: Int): Unit = {
     val dayLightSavingOffset = if (CupSchedule.isSummerTimeNow()) 0L else 1000L * 60 * 60
 

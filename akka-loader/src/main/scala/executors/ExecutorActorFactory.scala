@@ -5,7 +5,7 @@ import akka.stream.scaladsl.{Flow, Keep}
 import alltid.AlltidClient
 import chpp.OauthTokens
 import chpp.worlddetails.models.WorldDetails
-import clickhouse.PlayerStatsClickhouseClient
+import clickhouse.HattidClickhouseClient
 import com.crobox.clickhouse.ClickhouseClient
 import com.crobox.clickhouse.internal.QuerySettings
 import com.crobox.clickhouse.stream.{ClickhouseSink, Insert}
@@ -21,7 +21,7 @@ class ExecutorActorFactory @Inject()
      implicit val oauthTokens: OauthTokens,
      val clickhouseClient: ClickhouseClient,
      val config: Config,
-     val hattidClient: PlayerStatsClickhouseClient,
+     val hattidClient: HattidClickhouseClient,
      val alltidClient: AlltidClient,
      val telegramClient: LoaderTelegramClient) {
   import actorSystem.dispatcher

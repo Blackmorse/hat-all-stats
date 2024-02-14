@@ -7,7 +7,7 @@ import alltid.AlltidClient
 import chpp.OauthTokens
 import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.{League, WorldDetails}
-import clickhouse.{ClickhouseWriter, PlayerStatsClickhouseClient, TeamRankJoiner}
+import clickhouse.{ClickhouseWriter, HattidClickhouseClient, TeamRankJoiner}
 import com.crobox.clickhouse.stream.Insert
 import com.typesafe.config.Config
 import models.stream.StreamTeam
@@ -23,7 +23,7 @@ object LeagueExecutorActor {
 class LeagueExecutorActor
 (graph: Sink[Int, (Future[List[StreamTeam]], Future[Done])],
  chSink: Sink[Insert, Future[Done]],
- playerStatsClickhouseClient: PlayerStatsClickhouseClient,
+ hattidClickhouseClient: HattidClickhouseClient,
  worldDetails: WorldDetails,
  config: Config,
  alltidClient: AlltidClient,
@@ -34,7 +34,7 @@ class LeagueExecutorActor
 
   override def postProcessLoadedResults(league: League, matValue: (List[StreamTeam], Done)): Future[_] = {
     for {
-      _ <- playerStatsClickhouseClient.join(league, MatchType.LEAGUE_MATCH)
+      _ <- hattidClickhouseClient.join(league, MatchType.LEAGUE_MATCH)
       _ <- TeamRankJoiner.joinTeamRankings(config, league)
       promotions <- PromotionsCalculator.calculatePromotions(league, matValue._1)
       finalFuture <- ClickhouseWriter.writeToCh(promotions, chSink, context.system.settings)
@@ -53,5 +53,9 @@ class LeagueExecutorActor
 
   override def notifyScheduled(tasks: List[TaskExecutorActor.ScheduleTask]): Unit = {
     alltidClient.notifyScheduleInfo(tasks)
+  }
+
+  override def checkTaskAlreadyDone(league: League): Boolean = {
+    hattidClickhouseClient.checkDataInMatchDetails(league, MatchType.LEAGUE_MATCH)
   }
 }
