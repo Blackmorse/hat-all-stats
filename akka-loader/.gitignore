@@ -14,4 +14,3 @@ project/metals.sbt
 
 conf/application.conf
 src/main/resources/application.conf
-src/main/resources/logback.xml
