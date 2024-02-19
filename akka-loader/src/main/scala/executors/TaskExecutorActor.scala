@@ -5,6 +5,7 @@ import akka.actor.Actor
 import akka.stream.scaladsl.{Keep, Sink, Source}
 import chpp.OauthTokens
 import chpp.worlddetails.models.{League, WorldDetails}
+import clickhouse.HattidClickhouseClient
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 import telegram.LoaderTelegramClient
@@ -65,12 +66,13 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
           if (task.time.before(new Date())) {
             tasks = tasks.drop(1)
             val league = worldDetails.leagueList.filter(_.leagueId == task.leagueId).head
-            if(checkTaskAlreadyDone(league)) {
+            if(checkTaskAlreadyDoneAndTryToFix(league)) {
               logger.info(s"(${task.leagueId}, ${league.leagueName}) is already done!")
               self ! TryToExecute
             } else {
               running = true
 
+              preCleanupTables(league)
               notifyLeagueStarted(league)
               logger.info(s"Started league (${task.leagueId}, ${league.leagueName})")
 
@@ -95,8 +97,14 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
                         self ! TaskFinished
                       case Success(_) =>
                         logger.info(s"(${updatedLeague.leagueId}, ${updatedLeague.leagueName}) successfully loaded")
-                        notifyLeagueFinished(updatedLeague)
-                        self ! TaskFinished
+                        logTaskFinished(updatedLeague).onComplete {
+                          case Failure(e) =>
+                            telegramClient.sendException("Loader failed at marking task with history log", e)
+                            self ! TaskFinished
+                          case Success(_) =>
+                            notifyLeagueFinished(updatedLeague)
+                            self ! TaskFinished
+                        }
                     }
                   })
               }
@@ -108,7 +116,7 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
       }
   }
 
-  def checkTaskAlreadyDone(league: League): Boolean
+  def checkTaskAlreadyDoneAndTryToFix(league: League): Boolean
 
   def notifyScheduled(tasks: List[ScheduleTask])
 
@@ -117,4 +125,8 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
   def notifyLeagueFinished(league: League)
 
   def postProcessLoadedResults(league: League, matValue: MatValue): Future[_]
+
+  def logTaskFinished(league: League): Future[_]
+
+  def preCleanupTables(league: League): Unit
 }

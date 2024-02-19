@@ -14,7 +14,9 @@ import models.stream.StreamTeam
 import promotions.PromotionsCalculator
 import telegram.LoaderTelegramClient
 
-import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
+import scala.util.{Failure, Success, Try}
 
 object LeagueExecutorActor {
   type LeagueMat = (Future[List[StreamTeam]], Future[Done])
@@ -55,7 +57,38 @@ class LeagueExecutorActor
     alltidClient.notifyScheduleInfo(tasks)
   }
 
-  override def checkTaskAlreadyDone(league: League): Boolean = {
-    hattidClickhouseClient.checkDataInMatchDetails(league, MatchType.LEAGUE_MATCH)
+  override def checkTaskAlreadyDoneAndTryToFix(league: League): Boolean = {
+    if(hattidClickhouseClient.checkUploaded(league, MatchType.LEAGUE_MATCH)) {
+      return true
+    } else {
+      val someDataWasUploaded = !hattidClickhouseClient.checkInMatchDetailsAndPlayerStatsAreEmpty(league, MatchType.LEAGUE_MATCH)
+      if (someDataWasUploaded) {
+        // Something wrong. Should be fixed
+        val future = hattidClickhouseClient.tryToFixLeagueData(league)
+
+        Try { Await.result(future, 3.minutes) } match {
+          case Failure(exception) =>
+            // Smth wrong with the data that can't be fixed. Report and skip the task
+            telegramClient.sendException(s"Corrupted uploaded data can't be fixed. League: ${league.leagueId} ${league.englishName}", exception)
+            return true
+          case Success(_) => return false
+        }
+      } else {
+        return false
+      }
+    }
+  }
+
+  override def logTaskFinished(league: League): Future[_] =
+    hattidClickhouseClient.logUploadEntry(league, MatchType.LEAGUE_MATCH)
+
+
+  override def preCleanupTables(league: League): Unit = {
+
+    val f = for {
+      _ <- hattidClickhouseClient.truncateTable("player_info", league, MatchType.LEAGUE_MATCH)
+      r <- hattidClickhouseClient.truncateTable("player_events", league, MatchType.LEAGUE_MATCH)
+    } yield r
+    Await.result(f, 30.second)
   }
 }
