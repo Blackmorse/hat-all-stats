@@ -13,7 +13,7 @@ case class LoadScheduledConfig(entity: String, lastMatchWindow: Int) extends Cli
 class CommandLine(arguments: Array[String]) extends ScallopConf(arguments) {
   class EntitySubcommand(name: String) extends Subcommand(name) {
     val entity = opt[String](required = true, validate = ent => ent == "league" || ent == "cup")
-    val lastMatchWindow = opt[Int](required = false, default = Some(7))
+    val lastMatchWindow = opt[Int](required = false, default = Some(4))
   }
 
   val schedule = new EntitySubcommand("schedule") {

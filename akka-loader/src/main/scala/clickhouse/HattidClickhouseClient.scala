@@ -123,8 +123,8 @@ class HattidClickhouseClient @Inject()(val config: Config,
 
     for {
       _ <- client.execute(alterDeleteSqlQuery("match_details", cupLevelCondition))
-      _ <- truncateTable(s"$databaseName.player_info", league, MatchType.LEAGUE_MATCH)
-      _ <- truncateTable(s"$databaseName.player_events", league, MatchType.LEAGUE_MATCH)
+      _ <- truncateTable("player_info", league, MatchType.CUP_MATCH)
+      _ <- truncateTable("player_events", league, MatchType.CUP_MATCH)
       r <- client.execute(alterDeleteSqlQuery("player_stats", cupLevelCondition))
     } yield r
   }
