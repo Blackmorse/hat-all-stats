@@ -125,7 +125,7 @@ class HattidClickhouseClient @Inject()(val config: Config,
       _ <- client.execute(alterDeleteSqlQuery("match_details", cupLevelCondition))
       _ <- truncateTable("player_info", league, MatchType.CUP_MATCH)
       _ <- truncateTable("player_events", league, MatchType.CUP_MATCH)
-      r <- client.execute(alterDeleteSqlQuery("player_stats", cupLevelCondition))
+      r <- client.execute(s"ALTER TABLE $databaseName.player_stats DELETE WHERE league_id = ${league.leagueId} AND season = $season AND round = $round  $cupLevelCondition SETTINGS mutations_sync = 1")
     } yield r
   }
 }

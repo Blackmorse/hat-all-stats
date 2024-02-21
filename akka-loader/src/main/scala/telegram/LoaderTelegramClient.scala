@@ -20,6 +20,7 @@ class LoaderTelegramClient @Inject()(config: Config,
       val stacktrace = e.getStackTrace.mkString("\n")
       val text = s"$message: ${e.getMessage} \n\n $stacktrace"
       try {
+        logger.error(s"Error sending to tg: ${e.getMessage}")
         TelegramClient.sendMessage(text.take(4095))
       } catch {
         case e: Exception => logger.warn("Telegram reporting is not working", e)
