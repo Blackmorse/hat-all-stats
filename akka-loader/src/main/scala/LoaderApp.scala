@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory
 import scheduler.{AbstractScheduler, CupScheduler, LeagueScheduler}
 import utils.WorldDetailsSingleRequest
 
+import java.util.Calendar
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
@@ -57,7 +58,19 @@ object LoaderApp extends App {
         Await.result(TeamRankJoiner.joinTeamRankings(config, league), 3.minute)
       })
     case LoadScheduledConfig(entity, lastMatchWindow) =>
-      val (taskExecutorActor, scheduler) = executorAndScheduler(entity, lastMatchWindow, executorActorFactory, worldDetails)
+      val realEntity = if (entity == "auto") {
+        val c = Calendar.getInstance()
+        val dayOfWeek = c.get(Calendar.DAY_OF_WEEK)
+        if (Set(Calendar.FRIDAY, Calendar.SATURDAY, Calendar.SUNDAY, Calendar.MONDAY).contains(dayOfWeek)) {
+          "league"
+        } else {
+          "cup"
+        }
+      } else {
+        entity
+      }
+      logger.info(s"Entity type: $entity")
+      val (taskExecutorActor, scheduler) = executorAndScheduler(realEntity, lastMatchWindow, executorActorFactory, worldDetails)
       scheduler.loadScheduled()
       actorSystem.scheduler.scheduleWithFixedDelay(0.second , 5.second)(() => taskExecutorActor ! TryToExecute)
   }

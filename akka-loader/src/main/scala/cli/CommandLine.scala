@@ -25,7 +25,10 @@ class CommandLine(arguments: Array[String]) extends ScallopConf(arguments) {
   val teamRankings = new Subcommand("teamRankings") {
     val league = opt[String](required = false)
   }
-  val loadScheduled = new EntitySubcommand("loadScheduled") {}
+  val loadScheduled = new Subcommand("loadScheduled") {
+    val lastMatchWindow = opt[Int](required = false, default = Some(4))
+    val entity = opt[String](required = true, validate = ent => ent == "league" || ent == "cup" || ent == "auto")
+  }
   addSubcommand(schedule)
   addSubcommand(load)
   addSubcommand(loadScheduled)
