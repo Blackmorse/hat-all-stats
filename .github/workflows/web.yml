@@ -10,6 +10,7 @@ on:
       - sqlBuilder/**
       - web/**
       - build.*
+      - Dockerfile_web
 jobs:
   build-web-docker-image:
     runs-on: ubuntu-latest
