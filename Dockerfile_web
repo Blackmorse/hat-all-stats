@@ -9,5 +9,4 @@ FROM eclipse-temurin:11.0.21_9-jre-jammy
 WORKDIR /app/
 COPY --from=sources /app/dist /app/
 EXPOSE 9000
-#COPY web/conf/application-docker.conf /app/application.conf
-CMD ["/app/web-1.0-SNAPSHOT/bin/web", "-Dconfig.resource=/config/application.conf"]
+CMD ["/app/web-1.0-SNAPSHOT/bin/web", "-Dconfig.file=/config/application.conf"]
