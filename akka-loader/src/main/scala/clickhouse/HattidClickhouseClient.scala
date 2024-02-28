@@ -77,8 +77,19 @@ class HattidClickhouseClient @Inject()(val config: Config,
     val round = realRound(matchType, league)
     val season = league.season - league.seasonOffset
     val isLeagueMatch = if (matchType == MatchType.LEAGUE_MATCH) 1 else 0
-    client.execute(s"INSERT INTO $databaseName.upload_history (league_id, season, round, is_league_match) VALUES " +
-      s" (${league.leagueId}, $season, $round, $isLeagueMatch)")
+
+    val cupLevelIndexCondition = if(matchType == MatchType.LEAGUE_MATCH) " cup_level_index = 0 " else " cup_level_index != 0 "
+    val countFuture = client.query(s"select count() from $databaseName.match_details where season = $season and " +
+      s"round = $round and league_id = ${league.leagueId} and $cupLevelIndexCondition")
+    val count = Await.result(countFuture, 30.seconds).trim.replace("\n", "").replace("\r", "")
+
+    if (count != "0") {
+      client.execute(s"INSERT INTO $databaseName.upload_history (league_id, season, round, is_league_match) VALUES " +
+        s" (${league.leagueId}, $season, $round, $isLeagueMatch)")
+    } else {
+      logger.info(s"No data was uploaded for league ${league.leagueId} (${league.leagueName})")
+      Future(())
+    }
   }
 
   def checkUploaded(league: League, matchType: MatchType.Value): Boolean = {
