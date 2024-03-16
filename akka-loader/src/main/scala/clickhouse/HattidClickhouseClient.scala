@@ -83,6 +83,22 @@ class HattidClickhouseClient @Inject()(val config: Config,
       s"round = $round and league_id = ${league.leagueId} and $cupLevelIndexCondition")
     val count = Await.result(countFuture, 30.seconds).trim.replace("\n", "").replace("\r", "")
 
+    if (matchType == MatchType.LEAGUE_MATCH) {
+      val (previousSeason, previousRound) = if(round == 1) {
+        (season - 1, 14)
+      } else {
+        (season, round - 1)
+      }
+      val countPreviousFuture = client.query(s"select count() from $databaseName.match_details where season = $previousSeason and " +
+        s"round = $previousRound and league_id = ${league.leagueId} and $cupLevelIndexCondition")
+      val countPrevious = Await.result(countPreviousFuture, 30.seconds).trim.replace("\n", "").replace("\r", "")
+      if (count.toLong / 5 > countPrevious.toLong) {
+        logger.info(s"Previous count: $countPrevious, current count: $count for ${league.leagueId} (${league.leagueName}) " +
+          s" Not marking as uploaded")
+        return Future(())
+      }
+    }
+
     if (count != "0") {
       client.execute(s"INSERT INTO $databaseName.upload_history (league_id, season, round, is_league_match) VALUES " +
         s" (${league.leagueId}, $season, $round, $isLeagueMatch)")
