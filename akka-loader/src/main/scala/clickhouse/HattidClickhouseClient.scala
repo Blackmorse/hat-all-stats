@@ -92,7 +92,7 @@ class HattidClickhouseClient @Inject()(val config: Config,
       val countPreviousFuture = client.query(s"select count() from $databaseName.match_details where season = $previousSeason and " +
         s"round = $previousRound and league_id = ${league.leagueId} and $cupLevelIndexCondition")
       val countPrevious = Await.result(countPreviousFuture, 30.seconds).trim.replace("\n", "").replace("\r", "")
-      if (count.toLong / 5 > countPrevious.toLong) {
+      if (countPrevious.toLong / 5 > count.toLong) {
         logger.info(s"Previous count: $countPrevious, current count: $count for ${league.leagueId} (${league.leagueName}) " +
           s" Not marking as uploaded")
         return Future(())
