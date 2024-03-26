@@ -74,8 +74,10 @@ object LoaderApp extends App {
         scheduler.loadScheduled()
         actorSystem.scheduler.scheduleWithFixedDelay(0.second, 5.second)(() => taskExecutorActor ! TryToExecute)
     }
-  } finally {
-    actorSystem.terminate()
+  } catch {
+    case e: Throwable =>
+      logger.error(e.getMessage, e)
+      actorSystem.terminate()
   }
 
   private def executorAndScheduler(entity: String, lastMatchesWindow: Int, executorActorFactory: ExecutorActorFactory, worldDetails: WorldDetails): (ActorRef, AbstractScheduler) = {
