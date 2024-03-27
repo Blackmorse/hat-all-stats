@@ -18,7 +18,7 @@ object LastMatch extends BaseXmlMapper {
   implicit val reader: XmlReader[LastMatch] = (
       (__ \ "Date").read[String].map(date),
       (__ \ "MatchId").read[Long],
-      (__ \ "PositionCode").read(enum(MatchRoleId)),
+      (__ \ "PositionCode").read(`enum`(MatchRoleId)),
       (__ \ "PlayedMinutes").read[Int],
       (__ \ "Rating").read[String].map(double),
       (__ \ "RatingEndOfGame").read[String].map(double),

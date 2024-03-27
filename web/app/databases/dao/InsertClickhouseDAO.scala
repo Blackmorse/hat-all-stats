@@ -1,6 +1,7 @@
 package databases.dao
 
 import anorm.SQL
+import anorm.execute
 import play.api.db.DBApi
 
 import javax.inject.{Inject, Singleton}

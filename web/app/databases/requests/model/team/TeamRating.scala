@@ -1,6 +1,6 @@
 package databases.requests.model.team
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 import anorm.SqlParser.get
 import anorm.~
 
@@ -9,7 +9,7 @@ case class TeamRating(teamSortingKey: TeamSortingKey,
                       ratingEndOfMatch: Int)
 
 object TeamRating {
-  implicit val writes = Json.writes[TeamRating]
+  implicit val writes: OWrites[TeamRating] = Json.writes[TeamRating]
 
   val mapper = {
       get[Int]("league") ~
@@ -21,8 +21,14 @@ object TeamRating {
       get[Int]("rating_end_of_match") map {
         case leagueId ~ teamId ~ teamName ~ leagueUnitId ~ leagueUnitName ~
           rating ~ ratingEndOfMatch =>
-          val teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId)
-        TeamRating(teamSortingKey, rating, ratingEndOfMatch)
+          val teamSortingKey = TeamSortingKey(teamId = teamId,
+            teamName = teamName,
+            leagueUnitId = leagueUnitId,
+            leagueUnitName = leagueUnitName,
+            leagueId = leagueId)
+          TeamRating(teamSortingKey = teamSortingKey,
+            rating = rating,
+            ratingEndOfMatch = ratingEndOfMatch)
     }
   }
 }

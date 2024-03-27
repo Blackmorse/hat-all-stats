@@ -1,7 +1,7 @@
 package loadergraph.teamdetails
 
-import akka.actor.ActorSystem
-import akka.stream.scaladsl.Flow
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.scaladsl.Flow
 import chpp.OauthTokens
 import chpp.teamdetails.TeamDetailsRequest
 import com.crobox.clickhouse.stream.Insert

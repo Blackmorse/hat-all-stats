@@ -24,7 +24,7 @@ case class PlayerHistory(playerSortingKey: PlayerSortingKey,
                         )
 
 object PlayerHistory {
-  implicit val writes: OWrites[PlayerHistory] = Json.writes[PlayerHistory]
+//  implicit val writes: OWrites[PlayerHistory] = Json.writes[PlayerHistory]
 
   val mapper: RowParser[PlayerHistory] = {
     get[Int]("league_id") ~

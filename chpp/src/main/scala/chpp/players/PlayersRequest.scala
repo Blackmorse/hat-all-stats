@@ -1,6 +1,6 @@
 package chpp.players
 
-import akka.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.HttpRequest
 import chpp.players.models.Players
 import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 

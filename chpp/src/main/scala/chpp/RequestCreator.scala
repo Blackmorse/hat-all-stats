@@ -4,8 +4,8 @@ import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import akka.http.scaladsl.model.HttpRequest
-import akka.http.scaladsl.model.headers.RawHeader
+import org.apache.pekko.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.headers.RawHeader
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import org.apache.commons.codec.binary.Base64

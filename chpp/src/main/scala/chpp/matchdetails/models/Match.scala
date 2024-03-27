@@ -26,7 +26,7 @@ case class Match(matchId: Long,
 object Match extends BaseXmlMapper {
   implicit val reader: XmlReader[Match] = (
     (__ \ "MatchID").read[Long],
-    (__ \ "MatchType").read(enum(MatchType)),
+    (__ \ "MatchType").read(`enum`(MatchType)),
     (__ \ "MatchContextId").read[Int],
     (__ \ "MatchRuleId").read[Int],
     (__ \ "CupLevel").read[Int],

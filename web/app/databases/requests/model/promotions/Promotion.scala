@@ -2,7 +2,7 @@ package databases.requests.model.promotions
 
 import anorm.SqlParser.get
 import anorm.~
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 
 case class PromoteTeam(teamId: Long, teamName: String, divisionLevel: Int, leagueUnitId: Long,
                        leagueUnitName: String, position: Int, points: Int, diff: Int, scored: Int)
@@ -11,8 +11,8 @@ case class Promotion (season: Int, leagueId: Int, upDivisionLevel: Int, promoteT
                       downTeams: Array[PromoteTeam], upTeams: Array[PromoteTeam])
 
 object Promotion {
-  implicit val promoteTeamWrites = Json.writes[PromoteTeam]
-  implicit val writes = Json.writes[Promotion]
+  implicit val promoteTeamWrites: OWrites[PromoteTeam] = Json.writes[PromoteTeam]
+  implicit val writes: OWrites[Promotion] = Json.writes[Promotion]
 
   val promotionMapper = {
     get[Int]("season") ~

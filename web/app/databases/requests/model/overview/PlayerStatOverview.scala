@@ -3,14 +3,14 @@ package databases.requests.model.overview
 import anorm.SqlParser.get
 import anorm.~
 import databases.requests.model.player.PlayerSortingKey
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 
 case class PlayerStatOverview(leagueId: Int,
                               playerSortingKey: PlayerSortingKey,
                               value: Int)
 
 object PlayerStatOverview {
-  implicit val writes = Json.writes[PlayerStatOverview]
+  implicit val writes: OWrites[PlayerStatOverview] = Json.writes[PlayerStatOverview]
 
   val mapper = {
     get[Int]("league_id") ~

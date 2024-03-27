@@ -5,7 +5,7 @@ import play.api.mvc.QueryStringBindable
 case class PlayersParameters(role: Option[String], nationality: Option[Int], minAge: Option[Int], maxAge: Option[Int])
 
 object PlayersParameters {
-  implicit def queryStringBindable(implicit stringBuilder: QueryStringBindable[String]) = new QueryStringBindable[PlayersParameters] {
+  implicit def queryStringBindable(implicit stringBuilder: QueryStringBindable[String]): QueryStringBindable[PlayersParameters] = new QueryStringBindable[PlayersParameters] {
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, PlayersParameters]] = {
       val roleOptionEither = stringBuilder.bind("role", params)
         .map(roleEither => roleEither.map(role => if (role.isEmpty) None else Some(role)))

@@ -1,6 +1,6 @@
 package webclients
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import chpp.chpperror.ChppError
 import chpp.{AbstractRequest, ChppRequestExecutor, OauthTokens}
 import com.lucidchart.open.xtract.XmlReader

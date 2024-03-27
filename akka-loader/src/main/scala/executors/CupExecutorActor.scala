@@ -1,7 +1,7 @@
 package executors
 
-import akka.actor.ActorSystem
-import akka.stream.scaladsl.Sink
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.scaladsl.Sink
 import chpp.OauthTokens
 import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.{League, WorldDetails}

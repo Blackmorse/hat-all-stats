@@ -1,6 +1,6 @@
 package chpp.matchdetails
 
-import akka.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.HttpRequest
 import chpp.matchdetails.models.MatchDetails
 import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 

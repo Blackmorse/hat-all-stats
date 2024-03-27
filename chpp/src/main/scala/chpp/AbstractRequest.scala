@@ -1,6 +1,6 @@
 package chpp
 
-import akka.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.HttpRequest
 
 abstract class AbstractRequest[Model] {
   type T = Model

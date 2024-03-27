@@ -1,8 +1,8 @@
 package executors
 
 import executors.LeagueExecutorActor.LeagueMat
-import akka.Done
-import akka.stream.scaladsl.Sink
+import org.apache.pekko.Done
+import org.apache.pekko.stream.scaladsl.Sink
 import alltid.AlltidClient
 import chpp.OauthTokens
 import chpp.commonmodels.MatchType

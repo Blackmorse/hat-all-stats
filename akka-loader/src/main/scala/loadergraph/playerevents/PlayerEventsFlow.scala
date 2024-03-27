@@ -1,7 +1,7 @@
 package loadergraph.playerevents
 
-import akka.actor.ActorSystem
-import akka.stream.scaladsl.{Flow, Source}
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
 import chpp.matchdetails.models.{BookingType, InjuryType}
 import com.crobox.clickhouse.stream.Insert
@@ -13,7 +13,7 @@ import scala.collection.mutable
 import scala.concurrent.ExecutionContext
 
 object PlayerEventsFlow {
-    def apply(databaseName: String)(implicit oauthTokens: OauthTokens, system: ActorSystem,
+  def apply(databaseName: String)(implicit oauthTokens: OauthTokens, system: ActorSystem,
               executionContext: ExecutionContext): Flow[StreamMatchDetailsWithLineup, Insert, _] = {
     Flow[StreamMatchDetailsWithLineup].flatMapConcat(streamMatchDetails => {
       val playersMap = mutable.Map[Long, PlayerEventsAccumulator]()

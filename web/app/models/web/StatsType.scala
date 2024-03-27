@@ -23,7 +23,7 @@ case class Round(round: Int) extends StatsType {
 }
 
 object StatsType {
-  implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]) = new QueryStringBindable[StatsType] {
+  implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[StatsType] = new QueryStringBindable[StatsType] {
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, StatsType]] = {
       stringBinder.bind("statType", params)
         .map(typeEither => typeEither.flatMap{

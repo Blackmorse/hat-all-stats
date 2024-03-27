@@ -1,7 +1,7 @@
 package chpp.matchesarchive
 
 import java.util.Date
-import akka.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.HttpRequest
 import chpp.matchesarchive.models.MatchesArchive
 import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 

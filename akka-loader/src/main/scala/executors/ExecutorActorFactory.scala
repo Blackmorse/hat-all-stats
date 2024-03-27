@@ -1,7 +1,7 @@
 package executors
 
-import akka.actor.{ActorRef, ActorSystem, Props}
-import akka.stream.scaladsl.{Flow, Keep}
+import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
+import org.apache.pekko.stream.scaladsl.{Flow, Keep}
 import alltid.AlltidClient
 import chpp.OauthTokens
 import chpp.worlddetails.models.WorldDetails
@@ -17,13 +17,13 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ExecutorActorFactory @Inject()
-    (implicit val actorSystem: ActorSystem,
-     implicit val oauthTokens: OauthTokens,
-     val clickhouseClient: ClickhouseClient,
+    (val clickhouseClient: ClickhouseClient,
      val config: Config,
      val hattidClient: HattidClickhouseClient,
      val alltidClient: AlltidClient,
-     val telegramClient: LoaderTelegramClient) {
+     val telegramClient: LoaderTelegramClient,
+     implicit val actorSystem: ActorSystem,
+     implicit val oauthTokens: OauthTokens) {
   import actorSystem.dispatcher
 
   private implicit val querySettings: QuerySettings = QuerySettings(authentication = Some((

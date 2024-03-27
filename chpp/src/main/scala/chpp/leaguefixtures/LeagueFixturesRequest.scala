@@ -1,6 +1,6 @@
 package chpp.leaguefixtures
 
-import akka.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.HttpRequest
 import chpp.leaguefixtures.models.LeagueFixtures
 import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 

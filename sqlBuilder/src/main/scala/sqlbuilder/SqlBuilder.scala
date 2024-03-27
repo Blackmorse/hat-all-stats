@@ -2,6 +2,7 @@ package sqlbuilder
 
 import anorm.{NamedParameter, ParameterValue, Row, SQL, SimpleSql}
 import sqlbuilder.clause.{ClauseEntry, HavingClause, WhereClause}
+import anorm.on
 
 import scala.collection.mutable
 
@@ -38,7 +39,7 @@ case class WithSelect(sqlBuilder: SqlBuilder, alias: String, builderName: String
 case class SqlWithParameters(sql: String, parameters: Seq[Parameter]) {
   def build: SimpleSql[Row] = {
     SQL(sql)
-      .on(parameters.toSeq
+      .on(parameters
         //TODO match with subtypes, (use .collect but not .filter)
         .filter(parameter => parameter.isInstanceOf[ValueParameter[Any]])
         .map(_.asInstanceOf[ValueParameter[Any]])

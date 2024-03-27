@@ -1,4 +1,4 @@
-import akka.actor.{ActorRef, ActorSystem}
+import org.apache.pekko.actor.{ActorRef, ActorSystem}
 import chpp.OauthTokens
 import chpp.worlddetails.models.WorldDetails
 import cli.{CommandLine, LoadConfig, LoadScheduledConfig, ScheduleConfig, TeamRankingsConfig}

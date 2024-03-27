@@ -1,7 +1,7 @@
 package chpp
 
-import akka.actor.{ActorSystem, Scheduler}
-import akka.http.scaladsl.Http
+import org.apache.pekko.actor.{ActorSystem, Scheduler}
+import org.apache.pekko.http.scaladsl.Http
 import chpp.chpperror.ChppError
 import com.lucidchart.open.xtract.{ParseError, XmlReader}
 
@@ -31,7 +31,7 @@ object ChppRequestExecutor {
     import system.dispatcher
     implicit val scheduler: Scheduler =  system.scheduler
     //Throwing exceptions insides to enable retries, as it triggered by throwing exceptions
-    akka.pattern.retry(
+    org.apache.pekko.pattern.retry(
       attempt = () => execute(request),
       attempts = retries,
       minBackoff = 300.millisecond,

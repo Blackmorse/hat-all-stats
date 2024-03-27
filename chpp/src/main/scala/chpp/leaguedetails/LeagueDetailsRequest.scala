@@ -1,6 +1,6 @@
 package chpp.leaguedetails
 
-import akka.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.HttpRequest
 import chpp.leaguedetails.models.LeagueDetails
 import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 

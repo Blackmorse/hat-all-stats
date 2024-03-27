@@ -1,6 +1,6 @@
 package cli
 
-import org.rogach.scallop.{ScallopConf, Subcommand}
+import org.rogach.scallop._
 
 sealed trait CliConfig
 
@@ -16,16 +16,16 @@ class CommandLine(arguments: Array[String]) extends ScallopConf(arguments) {
     val lastMatchWindow = opt[Int](required = false, default = Some(4))
   }
 
-  val schedule = new EntitySubcommand("schedule") {
-    val from = opt[String](required = false)
+  object schedule extends EntitySubcommand("schedule") {
+    val from: ScallopOption[String] = opt[String](required = false)
   }
-  val load = new EntitySubcommand("load") {
-    val leagues = opt[List[String]](required = true)
+  object load extends EntitySubcommand("load") {
+    val leagues: ScallopOption[List[String]] = opt[List[String]](required = true)
   }
-  val teamRankings = new Subcommand("teamRankings") {
+  object teamRankings extends Subcommand("teamRankings") {
     val league = opt[String](required = false)
   }
-  val loadScheduled = new Subcommand("loadScheduled") {
+  object loadScheduled extends Subcommand("loadScheduled") {
     val lastMatchWindow = opt[Int](required = false, default = Some(4))
     val entity = opt[String](required = true, validate = ent => ent == "league" || ent == "cup" || ent == "auto")
   }

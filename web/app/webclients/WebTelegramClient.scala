@@ -1,6 +1,6 @@
 package webclients
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import hattid.telegram.TelegramClient
 import hattid.telegram.TelegramClient.TelegramCreds
 import play.api.Configuration

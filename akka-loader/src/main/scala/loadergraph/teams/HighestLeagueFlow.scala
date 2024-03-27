@@ -1,8 +1,8 @@
 package loadergraph.teams
 
-import akka.NotUsed
-import akka.actor.ActorSystem
-import akka.stream.scaladsl.Flow
+import org.apache.pekko.NotUsed
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.scaladsl.Flow
 import chpp.OauthTokens
 import hattid.CommonData.higherLeagueMap
 import models.stream.LeagueUnit

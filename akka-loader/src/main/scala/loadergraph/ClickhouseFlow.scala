@@ -1,6 +1,6 @@
 package loadergraph
 
-import akka.stream.scaladsl.Flow
+import org.apache.pekko.stream.scaladsl.Flow
 import com.crobox.clickhouse.stream.Insert
 import spray.json._
 

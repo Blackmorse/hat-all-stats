@@ -1,6 +1,6 @@
 package chpp.avatars
 
-import akka.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.HttpRequest
 import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 import chpp.avatars.models.AvatarContainer
 

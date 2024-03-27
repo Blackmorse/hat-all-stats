@@ -1,8 +1,8 @@
 package loadergraph
 
-import akka.actor.ActorSystem
-import akka.stream.FlowShape
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge}
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.FlowShape
+import org.apache.pekko.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge}
 import chpp.OauthTokens
 import chpp.commonmodels.MatchType
 import chpp.leaguedetails.models.LeagueDetails
@@ -25,7 +25,7 @@ object LeagueMatchesFlow {
     val databaseName = config.getString("database_name")
 
     Flow.fromGraph(
-      GraphDSL.create(PromotionsSink()) { implicit builder =>
+      GraphDSL.createGraph(PromotionsSink()) { implicit builder =>
         promotionsSink =>
           import GraphDSL.Implicits._
 

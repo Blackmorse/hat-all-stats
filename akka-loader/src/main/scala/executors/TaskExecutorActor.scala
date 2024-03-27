@@ -1,8 +1,8 @@
 package executors
 
 import executors.TaskExecutorActor.{ScheduleFinished, ScheduleTask, TaskFinished, TryToExecute}
-import akka.actor.Actor
-import akka.stream.scaladsl.{Keep, Sink, Source}
+import org.apache.pekko.actor.Actor
+import org.apache.pekko.stream.scaladsl.{Keep, Sink, Source}
 import chpp.OauthTokens
 import chpp.worlddetails.models.{League, WorldDetails}
 import clickhouse.HattidClickhouseClient
@@ -118,11 +118,11 @@ abstract class TaskExecutorActor[GraphMat, MatValue](graph: Sink[Int, GraphMat],
 
   def checkTaskAlreadyDoneAndTryToFix(league: League): Boolean
 
-  def notifyScheduled(tasks: List[ScheduleTask])
+  def notifyScheduled(tasks: List[ScheduleTask]): Unit
 
-  def notifyLeagueStarted(league: League)
+  def notifyLeagueStarted(league: League): Unit
 
-  def notifyLeagueFinished(league: League)
+  def notifyLeagueFinished(league: League): Unit
 
   def postProcessLoadedResults(league: League, matValue: MatValue): Future[_]
 
