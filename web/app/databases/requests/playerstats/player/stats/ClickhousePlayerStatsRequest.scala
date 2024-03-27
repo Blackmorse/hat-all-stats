@@ -5,6 +5,7 @@ import databases.requests.model.Roles
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import models.web.{PlayersParameters, RestStatisticsParameters, Round}
 import sqlbuilder.SqlBuilder
+import databases.dao.SqlBuilderParameters
 
 import scala.concurrent.Future
 

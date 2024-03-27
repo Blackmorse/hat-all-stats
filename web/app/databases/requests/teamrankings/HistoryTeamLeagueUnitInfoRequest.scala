@@ -5,6 +5,7 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
 import models.clickhouse.HistoryTeamLeagueUnitInfo
 import sqlbuilder.Select
+import databases.dao.SqlBuilderParameters
 
 import scala.concurrent.Future
 

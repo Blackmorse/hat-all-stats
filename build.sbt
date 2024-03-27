@@ -92,11 +92,6 @@ lazy val chpp = (project in file("chpp"))
   .settings(chppSettings)
 
 lazy val sqlBuilder = (project in file("sqlBuilder"))
-  .settings(Seq(
-    libraryDependencies ++= Seq(
-      anormVersion
-    )
-  ))
 
 lazy val akkaLoader = (project in file("akka-loader"))
   .dependsOn(scalaCommon)

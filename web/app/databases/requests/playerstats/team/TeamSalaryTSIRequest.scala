@@ -8,6 +8,7 @@ import databases.requests.model.team.TeamSalaryTSI
 import models.web.{RestStatisticsParameters, Round}
 import sqlbuilder.Select
 import sqlbuilder.functions.sum
+import databases.dao.SqlBuilderParameters
 
 import scala.concurrent.Future
 

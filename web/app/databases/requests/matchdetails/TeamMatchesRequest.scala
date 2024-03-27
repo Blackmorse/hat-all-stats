@@ -6,6 +6,7 @@ import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.`match`.TeamMatch
 import sqlbuilder.Select
+import databases.dao.SqlBuilderParameters
 
 import scala.concurrent.Future
 

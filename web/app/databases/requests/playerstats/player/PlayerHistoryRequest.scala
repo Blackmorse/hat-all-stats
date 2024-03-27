@@ -5,6 +5,7 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
 import databases.requests.model.player.PlayerHistory
 import sqlbuilder.{Select, SqlBuilder}
+import databases.dao.SqlBuilderParameters
 
 import scala.concurrent.Future
 

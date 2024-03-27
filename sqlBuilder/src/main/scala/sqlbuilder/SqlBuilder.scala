@@ -1,8 +1,6 @@
 package sqlbuilder
 
-import anorm.{NamedParameter, ParameterValue, Row, SQL, SimpleSql}
 import sqlbuilder.clause.{ClauseEntry, HavingClause, WhereClause}
-import anorm.on
 
 import scala.collection.mutable
 
@@ -33,27 +31,6 @@ case class WithSelect(sqlBuilder: SqlBuilder, alias: String, builderName: String
     val selectSqlBuilder = new SqlBuilder(builderName)
     selectSqlBuilder.withSelect = Some(this)
     selectSqlBuilder.select(fields: _*)
-  }
-}
-
-case class SqlWithParameters(sql: String, parameters: Seq[Parameter]) {
-  def build: SimpleSql[Row] = {
-    SQL(sql)
-      .on(parameters
-        //TODO match with subtypes, (use .collect but not .filter)
-        .filter(parameter => parameter.isInstanceOf[ValueParameter[Any]])
-        .map(_.asInstanceOf[ValueParameter[Any]])
-        .map(parameter => {
-          val parameterValue = parameter match {
-            case i @ IntParameter(_, _, _, _) => i.value: ParameterValue
-            case l @ LongParameter(_, _, _, _) => l.value: ParameterValue
-            case s @ StringParameter(_, _, _, _) => s.value: ParameterValue
-            case d @ DateParameter(_, _, _, _) => d.value: ParameterValue
-          }
-
-          NamedParameter.namedWithString((s"${parameter.sqlBuilderName}_${parameter.name}_${parameter.parameterNumber}", parameterValue))
-        }): _*
-      )
   }
 }
 
@@ -115,15 +92,11 @@ case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
     this
   }
 
-  def parameters: mutable.Buffer[Parameter] = this.withSelect.map(ws => ws.sqlBuilder.parameters).getOrElse(mutable.Buffer()) ++ whereClause.parameters ++ havingClause.parameters ++ this._select.parameters
-
-  def sqlWithParameters(): SqlWithParameters = {
-    val str = buildStringSql()
-    SqlWithParameters(
-      sql = str,
-      parameters = this.parameters.toSeq
-    )
-  }
+  def parameters: mutable.Buffer[Parameter] = this.withSelect.map(ws => ws.sqlBuilder.parameters).getOrElse(mutable.Buffer()) ++
+    whereClause.parameters ++
+    havingClause.parameters ++
+    this._select.parameters
+  
 
   def buildStringSql(): String = {
     val withClause = this.withSelect.map(ws => "WITH (" + ws.sqlBuilder.buildStringSql() + ") AS " + ws.alias + " ").getOrElse("")

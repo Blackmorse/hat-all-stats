@@ -2,9 +2,9 @@ package databases.requests
 
 import anorm.{NamedParameter, ParameterValue, Row, RowParser, SQL, SimpleSql, ToParameterValue}
 import databases.requests.model.Roles
-import sqlbuilder.{DateParameter, IntParameter, LongParameter, SqlWithParameters, StringParameter, ValueParameter}
+import sqlbuilder.{DateParameter, IntParameter, LongParameter, StringParameter, ValueParameter}
 import sqlbuilder.clause.ClauseEntry
-
+import databases.dao.SqlBuilderParameters
 
 trait ClickhouseRequest[T] {
   val rowParser: RowParser[T]

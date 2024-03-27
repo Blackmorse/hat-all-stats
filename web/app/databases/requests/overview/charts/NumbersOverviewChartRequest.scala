@@ -7,6 +7,7 @@ import databases.requests.OrderingKeyPath
 import databases.requests.model.overview.NumbersChartModel
 import databases.requests.overview.OverviewChartRequest
 import sqlbuilder.{Select, SqlBuilder}
+import databases.dao.SqlBuilderParameters
 
 import scala.concurrent.Future
 

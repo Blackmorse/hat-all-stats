@@ -6,6 +6,7 @@ import databases.requests.ClickhouseRequest
 import databases.requests.model.team.CreatedSameTimeTeam
 import service.DatesRange
 import sqlbuilder.Select
+import databases.dao.SqlBuilderParameters
 
 import scala.concurrent.Future
 

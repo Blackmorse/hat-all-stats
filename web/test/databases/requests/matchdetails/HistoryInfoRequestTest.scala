@@ -1,10 +1,12 @@
 package databases.requests.matchdetails
 
 import common.StringExt.StringExt
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
 import sqlbuilder.ValueParameter
+import databases.dao.SqlBuilderParameters
+import org.scalatest.matchers.should.Matchers
 
-class HistoryInfoRequestTest extends FunSuite with Matchers {
+class HistoryInfoRequestTest extends AnyFunSuite with Matchers {
   test("No parameters results in no filters") {
     val builder = HistoryInfoRequest.builder(None, None, None)
     val sql = builder.sqlWithParameters().sql

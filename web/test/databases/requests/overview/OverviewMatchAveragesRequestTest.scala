@@ -2,9 +2,11 @@ package databases.requests.overview
 
 import common.StringExt.StringExt
 import databases.sql.Fields.hatstats
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
+import databases.dao.SqlBuilderParameters
 
-class OverviewMatchAveragesRequestTest extends FunSuite with Matchers {
+class OverviewMatchAveragesRequestTest extends AnyFunSuite with Matchers {
   test("OverviewMatchAveragesRequest sql generated with all parameters") {
     val builder = OverviewMatchAveragesRequest.builder(1, 2, Some(3), Some(4))
     val sql = builder.sqlWithParameters().sql

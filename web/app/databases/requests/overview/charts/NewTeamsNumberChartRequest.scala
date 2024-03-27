@@ -8,6 +8,7 @@ import databases.requests.model.overview.NumbersChartModel
 import databases.requests.overview.OverviewChartRequest
 import sqlbuilder.functions.max
 import sqlbuilder.{Select, SqlBuilder, WSelect, With}
+import databases.dao.SqlBuilderParameters
 
 //TODO ?!
 import scala.concurrent.ExecutionContext.Implicits.global

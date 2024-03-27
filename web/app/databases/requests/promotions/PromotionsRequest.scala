@@ -4,7 +4,8 @@ import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.model.promotions.Promotion
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
-import sqlbuilder.Select
+import sqlbuilder.{Select, SqlBuilder}
+import databases.dao.SqlBuilderParameters
 
 import scala.concurrent.Future
 
@@ -19,7 +20,7 @@ object PromotionsRequest extends ClickhouseRequest[Promotion] {
     val hasTeamIdCondition = orderingKeyPath.teamId.map(id => s"has(`going_down_teams.team_id`, $id) OR has(`going_up_teams.team_id`, $id) ")
 
     import sqlbuilder.SqlBuilder.implicits._
-    val newBuilder = Select(
+    val newBuilder: SqlBuilder = Select(
         "season",
         "league_id",
         "up_division_level",

@@ -3,9 +3,11 @@ package databases.requests.playerstats.player.stats
 import common.StringExt.StringExt
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import models.web.{Accumulate, Asc, PlayersParameters, RestStatisticsParameters}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import databases.dao.SqlBuilderParameters
+import org.scalatest.matchers.should.Matchers
 
-class PlayerGamesGoalsRequestTest extends FunSuite with Matchers {
+class PlayerGamesGoalsRequestTest extends AnyFunSuite with Matchers {
   test("Test having clause") {
     val orderingKeyPath = OrderingKeyPath(
       season = Some(1),

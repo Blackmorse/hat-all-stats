@@ -9,6 +9,7 @@ import sqlbuilder.{NestedSelect, Select}
 
 import scala.concurrent.Future
 import sqlbuilder.functions.{countIf, If, avg}
+import databases.dao.SqlBuilderParameters
 
 object AnnoySimilarMatchesRequest extends ClickhouseRequest[SimilarMatchesStats] {
   override val rowParser: RowParser[SimilarMatchesStats] = SimilarMatchesStats.mapper

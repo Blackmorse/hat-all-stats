@@ -1,11 +1,13 @@
 package databases.requests.overview.charts
 
 import databases.requests.OrderingKeyPath
-import org.scalatest.{FunSuite, Matchers}
 import common.StringExt.StringExt
 import databases.sql.Fields.hatstats
+import org.scalatest.funsuite.AnyFunSuite
+import databases.dao.SqlBuilderParameters
+import org.scalatest.matchers.should.Matchers
 
-class AverageHatstatsChartRequestTest extends FunSuite with Matchers {
+class AverageHatstatsChartRequestTest extends AnyFunSuite with Matchers {
   test("Test AverageHatstatsChartRequest") {
     val orderingKeyPath = OrderingKeyPath(
       leagueId = Some(11),

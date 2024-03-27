@@ -4,6 +4,8 @@ import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
 import models.clickhouse.TeamRankings
+import databases.dao.SqlBuilderParameters
+import sqlbuilder.SqlBuilder
 
 import scala.concurrent.Future
 
@@ -12,7 +14,7 @@ object CompareTeamRankingsRequest extends ClickhouseRequest[TeamRankings] {
 
   def execute(teamId1: Long, teamId2: Long, fromSeason: Int, fromRound: Int)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamRankings]] = {
-    val builder = TeamRankingsRequest.select
+    val builder: SqlBuilder = TeamRankingsRequest.select
       //(season = fromSeason && round >= fromRound) OR (season >= fromSeason + 1) AND
       //(team_id = teamId1 OR team_id = teamId2) AND rank_type = league_id
       //-- with opened brackets

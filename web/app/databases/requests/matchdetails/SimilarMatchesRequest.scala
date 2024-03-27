@@ -6,6 +6,7 @@ import databases.requests.ClickhouseRequest
 import databases.requests.model.`match`.SimilarMatchesStats
 import models.web.matches.SingleMatch
 import sqlbuilder.{NestedSelect, Select}
+import databases.dao.SqlBuilderParameters
 
 import scala.concurrent.Future
 
