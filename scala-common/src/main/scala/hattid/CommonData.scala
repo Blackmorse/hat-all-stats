@@ -155,9 +155,11 @@ object CommonData {
       168 -> CommonLeagueUnitInfo(265768, "A-Division"),
       169 -> CommonLeagueUnitInfo(266045, "I.1"),
       170 -> CommonLeagueUnitInfo(266066, "I.1"),
+      171 -> CommonLeagueUnitInfo(266940, "Championnat National"),
       1000 -> CommonLeagueUnitInfo(256687, "I.1"),
       1001 -> CommonLeagueUnitInfo(258900, "I.1"),
       1002 -> CommonLeagueUnitInfo(260265, "I.1"),
+      1003 -> CommonLeagueUnitInfo(266599, "I.1"),
     )
   }
 
