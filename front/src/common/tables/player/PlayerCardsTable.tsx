@@ -29,7 +29,7 @@ return <TableSection<LevelProps, PlayerCards>
             TableColumns.leagueUnitTableColumn(pc => pc.playerSortingKey),
             TableColumns.role(pc => pc.role),
             TableColumns.ageTableColumn(pc => pc.age, 'age'),
-            TableColumns.simpleNumber(pc => pc.games, t('table.games')),
+            TableColumns.simpleNumber(pc => pc.games, { title: t('table.games_abbr'), poppedHint: t('table.games') }, "games"),
             TableColumns.yellowCards(pc => pc.yellowCards, 'yellow_cards'),
             TableColumns.redCards(pc => pc.redCards, 'red_cards')
         ]}

@@ -9,7 +9,7 @@ import models.web.{PlayersParameters, RestStatisticsParameters}
 import sqlbuilder.{Select, SqlBuilder}
 
 object PlayerGamesGoalsRequest extends ClickhousePlayerStatsRequest[PlayerGamesGoals] {
-  override val sortingColumns: Seq[String] = Seq("games", "played", "scored", "goal_rate")
+  override val sortingColumns: Seq[String] = Seq("games", "played", "scored", "goal_rate", "age")
   override val rowParser: RowParser[PlayerGamesGoals] = PlayerGamesGoals.mapper
 
   override def buildSql(orderingKeyPath: OrderingKeyPath,

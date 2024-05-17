@@ -25,9 +25,9 @@ const TeamStreakTrophiesTable = <LevelProps extends LevelDataProps>(props: Level
             TableColumns.postitionsTableColumn(),
             TableColumns.teamTableColumn(tst => tst.teamSortingKey, props.showCountryFlags),
             TableColumns.leagueUnitTableColumn(tst => tst.teamSortingKey),
-            TableColumns.simpleNumber(tst => tst.trophiesNumber, t('table.trophies'), 'trophies_number'),
-            TableColumns.simpleNumber(tst => tst.numberOfVictories, t('table.victories'), 'number_of_victories'),
-            TableColumns.simpleNumber(tst => tst.numberOfUndefeated, t('table.undefeated'), 'number_of_undefeated')
+            TableColumns.simpleNumber(tst => tst.trophiesNumber, { title: t('table.trophies') }, 'trophies_number'),
+            TableColumns.simpleNumber(tst => tst.numberOfVictories, { title: t('table.victories') }, 'number_of_victories'),
+            TableColumns.simpleNumber(tst => tst.numberOfUndefeated, { title: t('table.undefeated') }, 'number_of_undefeated')
         ]}
     />
 }

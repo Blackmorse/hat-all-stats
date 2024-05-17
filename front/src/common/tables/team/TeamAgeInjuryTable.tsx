@@ -31,7 +31,7 @@ const TeamAgeInjuryTable = <LevelProps extends LevelDataProps>(props: LevelDataP
                 columnHeader: { title: t('table.total_injury_weeks'), sortingField: 'injury', center: true },
                 columnValue:  { provider: tai => injuryFormatter(tai.injury), center: true }
             },
-            TableColumns.simpleNumber(tai => tai.injuryCount, t('table.total_injury_number'), 'injury_count')
+            TableColumns.simpleNumber(tai => tai.injuryCount, { title: t('table.total_injury_number_abbr'), poppedHint: t('table.total_injury_number') }, 'injury_count')
         ]}
     />
 }

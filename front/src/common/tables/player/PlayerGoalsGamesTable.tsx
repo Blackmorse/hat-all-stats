@@ -29,12 +29,12 @@ const PlayerGoalsGamesTable = <LevelProps extends LevelDataProps>(props: LevelDa
             TableColumns.teamTableColumn(pgg => pgg.playerSortingKey, props.showCountryFlags),
             TableColumns.leagueUnitTableColumn(pgg => pgg.playerSortingKey),
             TableColumns.role(pgg => pgg.role),
-            TableColumns.ageTableColumn(pgg => pgg.age),
-            TableColumns.simpleNumber(pgg => pgg.games, t('table.games'), 'games'),
-            TableColumns.simpleNumber(pgg => pgg.playedMinutes, t('table.minutes'), 'played'),
-            TableColumns.simpleNumber(pgg => pgg.scored, t('table.scored'), 'scored'),
+            TableColumns.ageTableColumn(pgg => pgg.age, 'age'),
+            TableColumns.simpleNumber(pgg => pgg.games, { title: t('table.games_abbr'), poppedHint: t('table.games') }, 'games'),
+            TableColumns.simpleNumber(pgg => pgg.playedMinutes, { title: t('table.minutes_abbr'), poppedHint: t('table.minutes') }, 'played'),
+            TableColumns.simpleNumber(pgg => pgg.scored, { title: t('table.scored') }, 'scored'),
             {
-                columnHeader: { title: t('table.minutes_per_goal_abbr'), sortingField: 'goal_rate', poppedHint: t('table.minutes_per_goal_abbr'), center: true },
+                columnHeader: { title: t('table.minutes_per_goal_abbr'), sortingField: 'goal_rate', poppedHint: t('table.minutes_per_goal'), center: true },
                 columnValue: { provider: (pgg) => Math.floor(pgg.goalRate).toString(), center: true }
             }
         ]}
