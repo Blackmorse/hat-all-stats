@@ -222,8 +222,15 @@ public class CommonData {
         higherLeagueMap.put(163, new CommonLeagueUnitInfo(258645L, "I.1"));
         higherLeagueMap.put(164, new CommonLeagueUnitInfo(258666L, "I.1"));
         higherLeagueMap.put(165, new CommonLeagueUnitInfo(258687L, "I.1"));
+        higherLeagueMap.put(166, new CommonLeagueUnitInfo(265726L, "Premier League"));
+        higherLeagueMap.put(167, new CommonLeagueUnitInfo(265747L, "Premier League"));
+        higherLeagueMap.put(168, new CommonLeagueUnitInfo(265768L, "A-Division"));
+        higherLeagueMap.put(169, new CommonLeagueUnitInfo(266045L, "I.1"));
+        higherLeagueMap.put(170, new CommonLeagueUnitInfo(266066L, "I.1"));
+        higherLeagueMap.put(171, new CommonLeagueUnitInfo(266940, "Championnat National"));
         higherLeagueMap.put(1000, new CommonLeagueUnitInfo(256687L, "I.1"));
         higherLeagueMap.put(1001, new CommonLeagueUnitInfo(258900L, "I.1"));
         higherLeagueMap.put(1002, new CommonLeagueUnitInfo(260265L, "I.1"));
+        higherLeagueMap.put(1003, new CommonLeagueUnitInfo(266599L, "I.1"));
     }
 }
