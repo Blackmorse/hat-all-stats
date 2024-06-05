@@ -59,7 +59,7 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
         //TODO
         let cback: () => void = () => {}
         if(this.props.forceRefresh !== undefined && this.props.forceRefresh) {
-            cback = () => {setTimeout( () => {window.location.reload()}, 100)}
+            cback = () => {setTimeout( () => {window.location.replace(this.baseString() + '?' + queryParams)  }, 100)}
         } 
 
         return <> 
