@@ -78,6 +78,10 @@ object LoaderApp extends App {
     case e: Throwable =>
       logger.error(e.getMessage, e)
       actorSystem.terminate()
+
+      // clickhouse-scheduled may not be terminated
+      Thread.sleep(10000)
+      System.exit(0)
   }
 
   private def executorAndScheduler(entity: String, lastMatchesWindow: Int, executorActorFactory: ExecutorActorFactory, worldDetails: WorldDetails): (ActorRef, AbstractScheduler) = {

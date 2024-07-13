@@ -6,4 +6,4 @@ RUN sbt akkaLoader/assembly
 FROM eclipse-temurin:11.0.21_9-jre-jammy
 WORKDIR /app/
 COPY --from=sources /app/akka-loader/target/scala-2.13/akka-loader-assembly-0.1.jar /app/
-ENTRYPOINT ["java", "-Xmx6096m", "-Xms256m", "-jar", "/app/akka-loader-assembly-0.1.jar"]
+ENTRYPOINT ["timeout", "4h", "java", "-Xmx6096m", "-Xms256m", "-jar", "/app/akka-loader-assembly-0.1.jar"]
