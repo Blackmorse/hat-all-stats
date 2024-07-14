@@ -2,17 +2,16 @@ package scheduler
 
 import executors.TaskExecutorActor.{ScheduleFinished, ScheduleTask}
 import akka.actor.ActorRef
-import chpp.worlddetails.models.WorldDetails
-import hattid.{CommonData, CupSchedule}
-import scheduler.LeagueScheduler.{countriesToMinutesOffset, firstLeagueId, lastLeagueId}
+import chpp.worlddetails.models.{League, WorldDetails}
+import hattid.CupSchedule.normalizeCupScheduleToDayOfWeek
+import hattid.ScheduleEntry
+import scheduler.LeagueScheduler.countriesToMinutesOffset
 
 import java.util.{Calendar, Date}
 
 object LeagueScheduler {
-  private val firstLeagueId = 1000
-  private val lastLeagueId = CommonData.LAST_SERIES_LEAGUE_ID
 
-  val countriesToMinutesOffset = Map(
+  val countriesToMinutesOffset: Map[Int, Long] = Map(
     24 -> 90L,  //Poland
     4 -> 30L,   //Italy
     36 -> 60L,  //Spain
@@ -49,8 +48,8 @@ class LeagueScheduler(worldDetails: WorldDetails,
 
 
   override protected def scheduleFrom(leagueId: Int): Unit = {
-    val lastLeague = worldDetails.leagueList.filter(_.leagueId == lastLeagueId).head
-    val firstLeague = worldDetails.leagueList.filter(_.leagueId == firstLeagueId).head
+    val (firstLeague, lastLeague) = firstAndLastLeagues(worldDetails)
+
     val matchesAlreadyFinished = firstLeague.seriesMatchDate.after(new Date()) &&
       lastLeague.seriesMatchDate.after(new Date()) && lastLeague.seriesMatchDate.after(firstLeague.seriesMatchDate)
 
@@ -75,9 +74,20 @@ class LeagueScheduler(worldDetails: WorldDetails,
     taskExecutorActor ! ScheduleFinished
   }
 
+  private def firstAndLastLeagues(worldDetails: WorldDetails): (League, League) = {
+    val seriesMatches = worldDetails.leagueList.map(league => ScheduleEntry(league.leagueId, league.seriesMatchDate))
+
+    val normalizedAndSorted = normalizeCupScheduleToDayOfWeek(seriesMatches, Calendar.THURSDAY)
+      .sortBy(_.date)
+
+    val first = worldDetails.leagueList.find(_.leagueId == normalizedAndSorted.head.leagueId).get
+    val last  = worldDetails.leagueList.find(_.leagueId == normalizedAndSorted.last.leagueId).get
+    (first, last)
+  }
+
   override def loadScheduled(): Unit = {
-    val lastLeague = worldDetails.leagueList.filter(_.leagueId == lastLeagueId).head
-    val firstLeague = worldDetails.leagueList.filter(_.leagueId == firstLeagueId).head
+    val (firstLeague, lastLeague) = firstAndLastLeagues(worldDetails)
+
     val matchesAlreadyFinished = firstLeague.seriesMatchDate.after(new Date()) &&
       lastLeague.seriesMatchDate.after(new Date()) && lastLeague.seriesMatchDate.after(firstLeague.seriesMatchDate)
 
