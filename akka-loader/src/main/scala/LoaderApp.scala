@@ -69,7 +69,7 @@ object LoaderApp extends App {
         } else {
           entity
         }
-        logger.info(s"Entity type: $entity")
+        logger.info(s"Entity type: $entity, real entity $realEntity")
         val (taskExecutorActor, scheduler) = executorAndScheduler(realEntity, lastMatchWindow, executorActorFactory, worldDetails)
         scheduler.loadScheduled()
         actorSystem.scheduler.scheduleWithFixedDelay(0.second, 5.second)(() => taskExecutorActor ! TryToExecute)

@@ -93,7 +93,7 @@ class LeagueScheduler(worldDetails: WorldDetails,
 
     val previousWeekMs = if (matchesAlreadyFinished) 1000L * 3600 * 24 * 7 else 0L
     worldDetails.leagueList
-      .filter(_.matchRound < 15) // check at the end of the season!
+      .filter(_.matchRound < 16) // check at the end of the season!
       .map(league => {
         val minutesOffset: Long = countriesToMinutesOffset.getOrElse(league.leagueId, 0)
 
