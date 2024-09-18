@@ -21,7 +21,7 @@ const TeamPositionsChart = (leagueUnitPropsWrapper: {leagueUnitProps: LeagueUnit
 
     const content = (stateAndRequest: StateAndRequest<Request, Array<LeagueUnitTeamStat> | undefined>) => {
         let positionsHistory = stateAndRequest.currentState
-        if (positionsHistory === undefined) {
+        if (positionsHistory === undefined || positionsHistory.length === 0) {
             return <></>
         }
         let currentRound = positionsHistory.reduce((a, b) => a.round > b.round ? a : b).round

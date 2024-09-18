@@ -20,7 +20,21 @@ class LeagueUnitCalculatorService  {
       }
     }
 
-  def calculate(leagueFixture: LeagueFixtures, tillRound: Option[Int] = None, sortingField: String = "points", sortingDirection: SortingDirection = Desc): LeagueUnitTeamStatHistoryInfo = {
+  /**
+   * In case of any errors (e.g. https://github.com/Blackmorse/hat-all-stats/issues/480) will return Left
+   */
+  def calculateSafe(leagueFixture: LeagueFixtures,
+                tillRound: Option[Int] = None,
+                sortingField: String = "points",
+                sortingDirection: SortingDirection = Desc): Either[Unit, LeagueUnitTeamStatHistoryInfo] = {
+    try {
+      Right(calculate(leagueFixture, tillRound, sortingField, sortingDirection))
+    } catch {
+      case _: Throwable => Left(())
+    }
+  }
+
+  private def calculate(leagueFixture: LeagueFixtures, tillRound: Option[Int] = None, sortingField: String = "points", sortingDirection: SortingDirection = Desc): LeagueUnitTeamStatHistoryInfo = {
     val ordering = sortingField match {
       case "points" => orderingFactory(_.points)
       case "teamName" => orderingFactory(_.teamName)

@@ -18,10 +18,10 @@ import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattid.CommonData
 import models.web._
 import models.web.leagueUnit.RestLeagueUnitData
-import play.api.libs.json.{Json, OWrites, Writes}
+import play.api.libs.json.{JsValue, Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
 import service.leagueinfo.LeagueInfoService
-import service.leagueunit.LeagueUnitCalculatorService
+import service.leagueunit.{LeagueUnitCalculatorService, LeagueUnitTeamStat, LeagueUnitTeamStatHistoryInfo, LeagueUnitTeamStatsWithPositionDiff}
 import utils.{LeagueNameParser, Romans}
 import webclients.ChppClient
 
@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 
 class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
-                                           val controllerComponents: ControllerComponents,
+                                          val controllerComponents: ControllerComponents,
                                           val leagueInfoService: LeagueInfoService,
                                           implicit val restClickhouseDAO: RestClickhouseDAO,
                                           val leagueUnitCalculatorService: LeagueUnitCalculatorService) extends RestController {
@@ -196,39 +196,62 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
   def oldestTeams(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(OldestTeamsRequest, leagueUnitId, restStatisticsParameters)
 
+
+  private def lastRoundPositionsDiffFromLeagueDetails(leagueDetails: LeagueDetails): Seq[LeagueUnitTeamStatsWithPositionDiff] = {
+    leagueDetails.teams.map { team =>
+      LeagueUnitTeamStatsWithPositionDiff(
+        positionDiff = team.positionChange,
+        leagueUnitTeamStat = LeagueUnitTeamStat(
+          round = leagueDetails.currentMatchRound,
+          position = team.position,
+          teamId = team.teamId,
+          teamName = team.teamName,
+          games = team.matches,
+          scored = team.goalsFor,
+          missed = team.goalsAgainst,
+          win = team.won,
+          draw = team.draws,
+          lost = team.lost,
+          points = team.points
+        )
+      )
+    }
+  }
+
   def teamPositions(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = Action.async {
-    chppClient.executeUnsafe[LeagueDetails, LeagueDetailsRequest](LeagueDetailsRequest(leagueUnitId = Some(leagueUnitId)))
-      .flatMap(leagueDetails => {
-        val offsettedSeason = leagueInfoService.getRelativeSeasonFromAbsolute(restStatisticsParameters.season, leagueDetails.leagueId)
-
-        chppClient.executeUnsafe[LeagueFixtures, LeagueFixturesRequest](LeagueFixturesRequest(leagueLevelUnitId = Some(leagueUnitId), season = Some(offsettedSeason)))
-          .map(leagueFixture => {
-            val round = restStatisticsParameters.statsType.asInstanceOf[Round].round
-
-            val teamsWithPositionDiff = leagueUnitCalculatorService.calculate(leagueFixture, Some(round),
-                    restStatisticsParameters.sortBy, restStatisticsParameters.sortingDirection).teamsLastRoundWithPositionsDiff
-
-            Ok(Json.toJson(RestTableData(teamsWithPositionDiff, true)))
-          })
-      })
+    val season = restStatisticsParameters.season
+    teamPositionsInternal(leagueUnitId, season, _.teamsLastRoundWithPositionsDiff, lastRoundPositionsDiffFromLeagueDetails)
+      .map { positionsWithDiff => Ok(Json.toJson(RestTableData(positionsWithDiff, isLastPage = true))) }
   }
 
   def teamPositionsHistory(leagueUnitId: Int, season: Int): Action[AnyContent] = Action.async {
-    chppClient.executeUnsafe[LeagueDetails, LeagueDetailsRequest](LeagueDetailsRequest(leagueUnitId = Some(leagueUnitId)))
-      .flatMap(leagueDetails => {
-        val offsettedSeason = leagueInfoService.getRelativeSeasonFromAbsolute(season, leagueDetails.leagueId)
-        chppClient.executeUnsafe[LeagueFixtures, LeagueFixturesRequest](LeagueFixturesRequest(leagueLevelUnitId = Some(leagueUnitId), season = Some(offsettedSeason)))
-          .map(leagueFixture => {
-            
-            val round = if(leagueInfoService.leagueInfo(leagueDetails.leagueId).currentSeason() == season) leagueInfoService.leagueInfo(leagueDetails.leagueId).currentRound() else 14
+    teamPositionsInternal(leagueUnitId, season, _.positionsHistory, _ => Seq())
+      .map { positionsHistory => Ok(Json.toJson(positionsHistory)) }
+  }
 
-            val positionsHistory = leagueUnitCalculatorService.calculate(leagueFixture, Some(round),
-                    /* doesn't matter what parameters are there */"points", Desc).positionsHistory
+  private def teamPositionsInternal[T](leagueUnitId: Int,
+                               season: Int,
+                               resultFunc: LeagueUnitTeamStatHistoryInfo => Seq[T],
+                               fallbackResultFunc: LeagueDetails => Seq[T]): Future[Seq[T]] = {
+    chppClient.execute[LeagueDetails, LeagueDetailsRequest](LeagueDetailsRequest(leagueUnitId = Some(leagueUnitId)))
+      .flatMap {
+        case Right(leagueDetails) =>
+          val offsettedSeason = leagueInfoService.getRelativeSeasonFromAbsolute(season, leagueDetails.leagueId)
+          chppClient.execute[LeagueFixtures, LeagueFixturesRequest](
+              LeagueFixturesRequest(leagueLevelUnitId = Some(leagueUnitId), season = Some(offsettedSeason)))
+            .map {
+              case Right(leagueFixture) =>
+                val round = if(leagueInfoService.leagueInfo(leagueDetails.leagueId).currentSeason() == season) leagueInfoService.leagueInfo(leagueDetails.leagueId).currentRound() else 14
+                leagueUnitCalculatorService.calculateSafe(leagueFixture, Some(round),
+                  /* doesn't matter what parameters are there */"points", Desc) match {
+                  case Right(leagueUnitTeamHistoryInfo) => resultFunc(leagueUnitTeamHistoryInfo)
+                  case Left(_) => fallbackResultFunc(leagueDetails)
+                }
 
-            Ok(Json.toJson(positionsHistory))
-          })
-        
-      })
+              case Left(_) => fallbackResultFunc(leagueDetails)
+            }
+        case Left(_) => Future(Seq())
+      }
   }
 
   def promotions(leagueUnitId: Int): Action[AnyContent] = Action.async {
