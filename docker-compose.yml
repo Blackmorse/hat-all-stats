@@ -6,7 +6,7 @@ networks:
 
 services:
   hattrick-clickhouse:
-    image: yandex/clickhouse-server:20.4.4.18
+    image: clickhouse/clickhouse-server:24.1.2.5
     container_name: hattrick-clickhouse
     expose:
      - "8123"

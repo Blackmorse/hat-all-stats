@@ -40,7 +40,9 @@ object PlayerStatsJoiner {
        |player_events.red_cards,
        |player_events.goals,
        |player_info.nationality,
-       |player_info.match_duration
+       |player_info.match_duration,
+       |player_events.left_minute,
+       |player_events.starting_lineup
        |FROM $databaseName.player_info
        |LEFT JOIN
        |(

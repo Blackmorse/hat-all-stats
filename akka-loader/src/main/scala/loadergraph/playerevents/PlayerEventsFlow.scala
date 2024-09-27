@@ -1,8 +1,6 @@
 package loadergraph.playerevents
 
-import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Source}
-import chpp.OauthTokens
 import chpp.matchdetails.models.{BookingType, InjuryType}
 import com.crobox.clickhouse.stream.Insert
 import loadergraph.ClickhouseFlow
@@ -10,11 +8,9 @@ import loadergraph.matchlineup.StreamMatchDetailsWithLineup
 import models.clickhouse.PlayerEventsModelCH
 
 import scala.collection.mutable
-import scala.concurrent.ExecutionContext
 
 object PlayerEventsFlow {
-    def apply(databaseName: String)(implicit oauthTokens: OauthTokens, system: ActorSystem,
-              executionContext: ExecutionContext): Flow[StreamMatchDetailsWithLineup, Insert, _] = {
+    def apply(databaseName: String): Flow[StreamMatchDetailsWithLineup, Insert, _] = {
     Flow[StreamMatchDetailsWithLineup].flatMapConcat(streamMatchDetails => {
       val playersMap = mutable.Map[Long, PlayerEventsAccumulator]()
 
@@ -22,6 +18,7 @@ object PlayerEventsFlow {
       updateInjuriesForPlayers(streamMatchDetails, playersMap)
       updateCardsForPlayers(streamMatchDetails, playersMap)
       updateSubstitutionTime(streamMatchDetails, playersMap)
+      updateStartingLineup(streamMatchDetails, playersMap)
 
       Source(playersMap.values.map(_.build).toList)
     })
@@ -70,14 +67,25 @@ object PlayerEventsFlow {
       })
   }
 
-  private def updateSubstitutionTime(streamMatchDetailsWithLineup: StreamMatchDetailsWithLineup, playersMap: mutable.Map[Long, PlayerEventsAccumulator]): Unit = {
-    streamMatchDetailsWithLineup.matchLineup.team.substitutions
+  private def updateSubstitutionTime(streamMatchDetails: StreamMatchDetailsWithLineup, playersMap: mutable.Map[Long, PlayerEventsAccumulator]): Unit = {
+    streamMatchDetails.matchLineup.team.substitutions
       .foreach(substitution => {
         val playerAccumulator = playersMap.getOrElseUpdate(substitution.subjectPlayerId,
-          createPlayerAccumulator(streamMatchDetailsWithLineup, substitution.subjectPlayerId))
+          createPlayerAccumulator(streamMatchDetails, substitution.subjectPlayerId))
 
         playerAccumulator.leftFieldMinute = substitution.matchMinute
       })
+  }
+
+  private def updateStartingLineup(streamMatchDetailsWithLineup: StreamMatchDetailsWithLineup, playersMap: mutable.Map[Long, PlayerEventsAccumulator]): Unit = {
+    streamMatchDetailsWithLineup.matchLineup.team.startingLineup
+      .filter(s => s.roleId.id >= 100 && s.roleId.id <= 113) // Without captains, subs and set pieces
+      .foreach{ startingLineupPlayer =>
+        val playerAccumulator = playersMap.getOrElseUpdate(startingLineupPlayer.playerId,
+          createPlayerAccumulator(streamMatchDetailsWithLineup, startingLineupPlayer.playerId))
+
+        playerAccumulator.startingLineup = true
+      }
   }
 
   private def createPlayerAccumulator(streamMatchDetails: StreamMatchDetailsWithLineup, playerId: Long): PlayerEventsAccumulator =

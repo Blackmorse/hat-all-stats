@@ -30,6 +30,8 @@
     `goals` UInt8,
     `nationality` UInt8,
     `match_duration` UInt8,
+    `left_minute` Int8,
+    `starting_lineup` UInt8,
     PROJECTION by_player_id (SELECT * ORDER BY (player_id, season, round))
 )
 ENGINE = MergeTree()

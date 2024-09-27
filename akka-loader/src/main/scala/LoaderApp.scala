@@ -1,7 +1,7 @@
 import akka.actor.{ActorRef, ActorSystem}
 import chpp.OauthTokens
 import chpp.worlddetails.models.WorldDetails
-import cli.{CommandLine, LoadConfig, LoadScheduledConfig, ScheduleConfig, TeamRankingsConfig}
+import cli._
 import clickhouse.TeamRankJoiner
 import com.google.inject.Guice
 import com.typesafe.config.ConfigFactory

@@ -21,10 +21,10 @@ object PlayerInfoFlow {
       .via(PlayersHttpFlow())
       .async
       .via(LogProgressFlow("Players of teams", Some(_._2.matc.team.leagueUnit.league.activeTeams)))
-      .flatMapConcat{case(players, matchDetails) =>
+      .flatMapConcat{case(players, matchDetailsWithLineup) =>
         val matchDuration = players.team.playerList
           .flatMap(_.lastMatch)
-          .filter(lastMatch => lastMatch.matchId == matchDetails.matc.id)
+          .filter(lastMatch => lastMatch.matchId == matchDetailsWithLineup.matc.id)
           .map(_.playedMinutes)
           .maxOption
           .getOrElse(0)
@@ -32,7 +32,7 @@ object PlayerInfoFlow {
         val playerInfos = players.team.playerList
           .map(player =>
             PlayerInfoModelCH.convert(player = player,
-              matchDetails = matchDetails,
+              matchDetails = matchDetailsWithLineup,
               matchDuration = matchDuration,
               countryMap = countryMap)
           )

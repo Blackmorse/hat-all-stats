@@ -1,22 +1,23 @@
 package chpp
 
+
+import akka.http.scaladsl.model.headers.RawHeader
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpRequest}
+import akka.util.ByteString
+import org.apache.commons.codec.binary.Base64
+
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Date
-
-import akka.http.scaladsl.model.HttpRequest
-import akka.http.scaladsl.model.headers.RawHeader
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
-import org.apache.commons.codec.binary.Base64
-
 import scala.util.Random
 
 case class  RequestCreator()
 
 object RequestCreator {
-  val URL = "chpp.hattrick.org"
-  val API_ENDPOINT = "/chppxml.ashx"
+  private val URL = "chpp.hattrick.org"
+  private val API_ENDPOINT = "/chppxml.ashx"
 
   def create(requestParams: Map[String, String])
             (implicit oauthTokens: OauthTokens): HttpRequest = {
@@ -55,8 +56,11 @@ object RequestCreator {
     val header = "OAuth " +
       (oauthParameters + ("oauth_signature" -> URLEncoder.encode(result, "UTF-8"))).map{case(key, value) => s"""$key="$value""""}.mkString(", ");
 
-    HttpRequest(uri = s"https://$URL" + url)
-      .withHeaders(RawHeader("Authorization", header))
+    HttpRequest(uri = s"https://$URL" + url,
+      entity = HttpEntity.Strict(ContentTypes.`text/xml(UTF-8)`, data = ByteString.empty))
+      .withHeaders(
+        RawHeader("Authorization", header),
+      )
   }
 
   def params(file: String, version: String, params: (String, Option[Any])*): Map[String, String] = {

@@ -7,7 +7,8 @@
     `red_cards` UInt8, 
     `goals` UInt8, 
     `injury` UInt8, 
-    `left_minute` Int8
+    `left_minute` Int8,
+    `starting_lineup` UInt8
 )
 ENGINE = MergeTree()
 ORDER BY (season, round, cityHash64(player_id), yellow_cards, red_cards, goals, injury, left_minute)

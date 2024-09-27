@@ -34,8 +34,8 @@ object ChppRequestExecutor {
     akka.pattern.retry(
       attempt = () => execute(request),
       attempts = retries,
-      minBackoff = 300.millisecond,
-      maxBackoff = 2.seconds,
+      minBackoff = 800.millisecond,
+      maxBackoff = 10.seconds,
       randomFactor = 0.3
     ) transform {
       case Success(model) => Try(Right(model))

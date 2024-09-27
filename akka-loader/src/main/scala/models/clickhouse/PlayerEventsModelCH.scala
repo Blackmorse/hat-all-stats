@@ -9,7 +9,8 @@ case class PlayerEventsModelCH(season: Int,
                                redCards: Int,
                                goals: Int,
                                injury: Int,
-                               leftFieldMinute: Int)
+                               leftFieldMinute: Int,
+                               startingLineup: Int)
 
 object PlayerEventsModelCH {
   implicit val format: JsonFormat[PlayerEventsModelCH] = new JsonFormat[PlayerEventsModelCH] {
@@ -25,6 +26,7 @@ object PlayerEventsModelCH {
         ("goals", JsNumber(obj.goals)),
         ("injury", JsNumber(obj.injury)),
         ("left_minute", JsNumber(obj.leftFieldMinute)),
+        ("starting_lineup", JsNumber(obj.startingLineup))
       )
     }
   }
