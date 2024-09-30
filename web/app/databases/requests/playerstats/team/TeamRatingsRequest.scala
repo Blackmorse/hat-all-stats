@@ -16,20 +16,32 @@ object TeamRatingsRequest extends ClickhouseStatisticsRequest[TeamRating] {
                                parameters: RestStatisticsParameters,
                                round: Int): SqlBuilder = {
     import SqlBuilder.implicits._
-    Select(
-        "any(league_id)" as "league",
-        "argMax(team_name, round)" as "team_name",
-        "team_id",
-        "league_unit_id",
-        "league_unit_name",
-        "sum(rating)" as "rating",
-        "sum(rating_end_of_match)" as "rating_end_of_match"
-      ).from("hattrick.player_stats")
+    val clauseEntry = Select(
+      "any(league_id)" as "league",
+      "argMax(team_name, round)" as "team_name",
+      "team_id",
+      "league_unit_id",
+      "league_unit_name",
+      "sum(rating)" as "rating",
+      "sum(rating_end_of_match)" as "rating_end_of_match"
+    ).from("hattrick.player_stats")
       .where
-        .season(parameters.season)
-        .orderingKeyPath(orderingKeyPath)
-        .round(round)
-        .isLeagueMatch
+      .season(parameters.season)
+      .orderingKeyPath(orderingKeyPath)
+      .round(round)
+      .isLeagueMatch
+
+    //fix applied from 3th round of 89th season
+    val finalClause = if(parameters.season <= 88 ||
+      (parameters.season == 89 && (round == 1 || round == 2))) {
+      clauseEntry
+    } else if (parameters.sortBy == "rating") {
+      clauseEntry.startingLineup
+    } else {
+      clauseEntry.playedToTheEnd
+    }
+
+    finalClause
       .groupBy("team_id", "league_unit_id", "league_unit_name")
       .orderBy(
         parameters.sortBy.to(parameters.sortingDirection.toSql),

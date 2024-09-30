@@ -130,8 +130,8 @@ object TeamRankJoiner {
 
         SqlRequestParam("sum(tsi)", "tsi", player_stats_request, cupLevelField = true),
         SqlRequestParam("sum(salary)", "salary", player_stats_request, cupLevelField = true),
-        SqlRequestParam("sum(rating)", "rating", player_stats_request, cupLevelField = true),
-        SqlRequestParam("sum(rating_end_of_match)", "rating_end_of_match", player_stats_request, cupLevelField = true),
+        SqlRequestParam("sumIf(rating, starting_lineup = 1)", "rating", player_stats_request, cupLevelField = true),
+        SqlRequestParam("sumIf(rating_end_of_match, left_minute <= 0)", "rating_end_of_match", player_stats_request, cupLevelField = true),
         SqlRequestParam("avg((age * 112) + days)", "age", player_stats_request, cupLevelField = true),
         SqlRequestParam("sumIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury", player_stats_request, cupLevelField = true),
         SqlRequestParam("countIf(injury_level, (played_minutes > 0) AND (injury_level > 0))", "injury_count", player_stats_request, cupLevelField = true),

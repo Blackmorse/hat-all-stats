@@ -65,6 +65,20 @@ case class ClauseEntry(sqlBuilder: SqlBuilder) {
     this
   }
 
+  def startingLineup: ClauseEntry = {
+    val startingLineupParameter = IntParameter(sqlBuilder.parametersNumber, "starting_lineup", this, sqlBuilder.name)
+    startingLineupParameter(1)
+    addParameter(startingLineupParameter)
+    this
+  }
+
+  def playedToTheEnd: ClauseEntry = {
+    val playedToTheEndParameter = IntParameter(sqlBuilder.parametersNumber, "left_minute", this, sqlBuilder.name)
+    playedToTheEndParameter.lessEqual(0)
+    addParameter(playedToTheEndParameter)
+    this
+  }
+
   def createSql: Option[String] = {
     val whereParameters = parameters.filter(parameter => {
       parameter match {
