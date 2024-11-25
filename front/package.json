@@ -20,7 +20,7 @@
     "i18next": "^21.6.6",
     "js-cookie": "^3.0.1",
     "moment": "^2.29.4",
-    "plotly.js": "^2.8.3",
+    "plotly.js": "^2.21.0",
     "react": "^17.0.2",
     "react-bootstrap": "^2.1.1",
     "react-device-detect": "^2.1.2",
