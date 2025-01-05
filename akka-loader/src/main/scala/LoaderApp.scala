@@ -1,5 +1,6 @@
-import akka.actor.{ActorRef, ActorSystem}
-import chpp.OauthTokens
+import org.apache.pekko.actor.{ActorRef, ActorSystem}
+import chpp.{ChppRequestExecutor, OauthTokens}
+import chpp.leaguedetails.LeagueDetailsRequest
 import chpp.worlddetails.models.WorldDetails
 import cli._
 import clickhouse.TeamRankJoiner

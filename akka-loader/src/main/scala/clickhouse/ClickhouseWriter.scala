@@ -1,8 +1,8 @@
 package clickhouse
 
-import akka.Done
-import akka.actor.ActorSystem
-import akka.stream.scaladsl.{Keep, Sink, Source}
+import org.apache.pekko.Done
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.scaladsl.{Keep, Sink, Source}
 import com.crobox.clickhouse.stream.Insert
 import loadergraph.ClickhouseFlow
 import org.slf4j.LoggerFactory

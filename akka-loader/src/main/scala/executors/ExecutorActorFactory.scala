@@ -1,7 +1,7 @@
 package executors
 
-import akka.actor.{ActorRef, ActorSystem, Props}
-import akka.stream.scaladsl.{Flow, Keep}
+import org.apache.pekko.actor.{ActorRef, ActorSystem, Props}
+import org.apache.pekko.stream.scaladsl.{Flow, Keep}
 import alltid.AlltidClient
 import chpp.OauthTokens
 import chpp.worlddetails.models.WorldDetails

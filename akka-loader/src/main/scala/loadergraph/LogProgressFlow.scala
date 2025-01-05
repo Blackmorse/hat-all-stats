@@ -1,7 +1,7 @@
 package loadergraph
 
-import akka.stream.FlowShape
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Sink}
+import org.apache.pekko.stream.FlowShape
+import org.apache.pekko.stream.scaladsl.{Broadcast, Flow, GraphDSL, Sink}
 import com.typesafe.scalalogging.Logger
 import org.slf4j.LoggerFactory
 

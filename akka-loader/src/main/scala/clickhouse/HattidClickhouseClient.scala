@@ -1,6 +1,6 @@
 package clickhouse
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import chpp.commonmodels.MatchType
 import chpp.worlddetails.models.League
 import com.crobox.clickhouse.ClickhouseClient

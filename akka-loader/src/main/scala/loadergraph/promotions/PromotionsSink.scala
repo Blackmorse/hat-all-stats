@@ -1,6 +1,6 @@
 package loadergraph.promotions
 
-import akka.stream.scaladsl.{Flow, Keep, Sink}
+import org.apache.pekko.stream.scaladsl.{Flow, Keep, Sink}
 import models.stream.StreamTeam
 
 import scala.concurrent.{ExecutionContext, Future}

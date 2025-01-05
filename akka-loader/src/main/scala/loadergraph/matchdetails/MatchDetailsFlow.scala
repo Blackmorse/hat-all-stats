@@ -1,7 +1,7 @@
 package loadergraph.matchdetails
 
-import akka.actor.ActorSystem
-import akka.stream.scaladsl.{Flow, Source}
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.scaladsl.{Flow, Source}
 import chpp.OauthTokens
 import chpp.commonmodels.MatchType
 import chpp.matchdetails.MatchDetailsRequest

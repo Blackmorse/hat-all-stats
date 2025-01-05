@@ -1,6 +1,6 @@
 package chpp.worlddetails
 
-import akka.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.HttpRequest
 import chpp.worlddetails.models.WorldDetails
 import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 

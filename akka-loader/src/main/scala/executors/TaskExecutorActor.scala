@@ -1,8 +1,8 @@
 package executors
 
 import executors.TaskExecutorActor.{ScheduleFinished, ScheduleTask, TaskFinished, TryToExecute}
-import akka.actor.Actor
-import akka.stream.scaladsl.{Keep, Sink, Source}
+import org.apache.pekko.actor.Actor
+import org.apache.pekko.stream.scaladsl.{Keep, Sink, Source}
 import chpp.OauthTokens
 import chpp.worlddetails.models.{League, WorldDetails}
 import clickhouse.HattidClickhouseClient

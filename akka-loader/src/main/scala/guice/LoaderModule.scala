@@ -1,6 +1,6 @@
 package guice
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import chpp.OauthTokens
 import com.crobox.clickhouse.ClickhouseClient
 import com.google.inject.AbstractModule

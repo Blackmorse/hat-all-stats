@@ -31,17 +31,15 @@ lazy val webSettings = Seq(
 )
 
 val guiceVersion = "5.0.1"
-val akkaVersion = "2.6.14"
-val akkaHttpVersion = "10.1.14"
+val pekkoVersion = "1.1.0"
+//val pekkoHttpVersion = "10.1.14"
 lazy val akkaLoaderDependencies = Seq(
-  // akka streams
-  "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-  // akka http
-  "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+  "org.apache.pekko" %% "pekko-stream" % pekkoVersion,
+  "org.apache.pekko" %% "pekko-http" % pekkoVersion,
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "io.spray" %% "spray-json" % "1.3.6",
-  "com.crobox.clickhouse" %% "client" % "0.9.19",
+  "com.crobox.clickhouse" %% "client" % "1.2.6",
   "com.google.inject" % "guice" % guiceVersion,
   "com.google.inject.extensions" % "guice-assistedinject" % guiceVersion,
   "org.rogach" %% "scallop" % "5.0.1"
@@ -58,15 +56,15 @@ lazy val chppSettings = Seq(
   libraryDependencies ++= Seq(
     "commons-codec" % "commons-codec" % "1.15",
     "com.lucidchart" %% "xtract" % "2.2.1",
-    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-    "com.typesafe.akka" %% "akka-stream" % akkaVersion //TODO  akka-streams instead of just akka-actor, because of strange errors with missing classes (check that it's true oO)
+    "org.apache.pekko" %% "pekko-http" % pekkoVersion,
+    "org.apache.pekko" %% "pekko-stream" % pekkoVersion
   )
 )
 
 lazy val scalaCommonSettings = Seq(
   libraryDependencies ++= Seq(
-    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
-    "com.typesafe.akka" %% "akka-stream" % akkaVersion //TODO  akka-streams instead of just akka-actor, because of strange errors with missing classes (check that it's true oO)
+    "org.apache.pekko" %% "pekko-http" % pekkoVersion,
+    "org.apache.pekko" %% "pekko-stream" % pekkoVersion
   )
 )
 

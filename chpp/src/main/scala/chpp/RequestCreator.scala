@@ -1,9 +1,9 @@
 package chpp
 
 
-import akka.http.scaladsl.model.headers.RawHeader
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpRequest}
-import akka.util.ByteString
+import org.apache.pekko.http.scaladsl.model.headers.RawHeader
+import org.apache.pekko.http.scaladsl.model.{ContentTypes, HttpEntity, HttpRequest}
+import org.apache.pekko.util.ByteString
 import org.apache.commons.codec.binary.Base64
 
 import java.net.URLEncoder

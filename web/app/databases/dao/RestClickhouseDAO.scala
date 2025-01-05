@@ -1,6 +1,6 @@
 package databases.dao
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import anorm.{Row, RowParser, SimpleSql}
 import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext

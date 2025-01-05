@@ -1,9 +1,9 @@
 package loadergraph.teams
 
-import akka.NotUsed
-import akka.actor.ActorSystem
-import akka.stream.FlowShape
-import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge}
+import org.apache.pekko.NotUsed
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.FlowShape
+import org.apache.pekko.stream.scaladsl.{Broadcast, Flow, GraphDSL, Merge}
 import chpp.OauthTokens
 import chpp.leaguedetails.models.LeagueDetails
 import chpp.leaguedetails.LeagueDetailsRequest

@@ -1,7 +1,7 @@
 package utils
 
-import akka.actor.ActorSystem
-import akka.stream.scaladsl.Source
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.scaladsl.Source
 import chpp.OauthTokens
 import chpp.worlddetails.models.WorldDetails
 import chpp.worlddetails.WorldDetailsRequest

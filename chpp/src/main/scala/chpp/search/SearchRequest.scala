@@ -1,6 +1,6 @@
 package chpp.search
 
-import akka.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.HttpRequest
 import chpp.search.models.{Search, SearchType}
 import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 

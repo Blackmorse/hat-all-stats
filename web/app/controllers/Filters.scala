@@ -2,7 +2,7 @@ package controllers
 
 
 import javax.inject.Inject
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import databases.dao.InsertClickhouseDAO
 import play.api.Logging
 import play.api.mvc._

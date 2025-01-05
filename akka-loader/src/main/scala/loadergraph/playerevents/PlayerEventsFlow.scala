@@ -1,6 +1,6 @@
 package loadergraph.playerevents
 
-import akka.stream.scaladsl.{Flow, Source}
+import org.apache.pekko.stream.scaladsl.{Flow, Source}
 import chpp.matchdetails.models.{BookingType, InjuryType}
 import com.crobox.clickhouse.stream.Insert
 import loadergraph.ClickhouseFlow

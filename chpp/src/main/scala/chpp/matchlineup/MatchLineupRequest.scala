@@ -1,6 +1,6 @@
 package chpp.matchlineup
 
-import akka.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.HttpRequest
 import chpp.matchlineup.models.{MatchLineup, Team}
 import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 

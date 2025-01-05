@@ -1,8 +1,8 @@
 package alltid
 import executors.TaskExecutorActor.ScheduleTask
-import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest}
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest}
 import chpp.worlddetails.models.League
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger

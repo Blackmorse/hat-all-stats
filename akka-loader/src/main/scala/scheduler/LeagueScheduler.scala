@@ -1,7 +1,7 @@
 package scheduler
 
 import executors.TaskExecutorActor.{ScheduleFinished, ScheduleTask}
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import chpp.worlddetails.models.{League, WorldDetails}
 import hattid.CupSchedule.normalizeCupScheduleToDayOfWeek
 import hattid.ScheduleEntry

@@ -1,6 +1,6 @@
 package tests
 
-import akka.actor.ActorSystem
+import org.apache.pekko.actor.ActorSystem
 import chpp.{ChppRequestExecutor, OauthTokens}
 import chpp.worlddetails.WorldDetailsRequest
 import com.typesafe.config.ConfigFactory
