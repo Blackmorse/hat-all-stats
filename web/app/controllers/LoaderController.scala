@@ -29,16 +29,20 @@ class LoaderController @Inject()(val controllerComponents: ControllerComponents,
   def leagueRound(season: Int, leagueId: Int, round: Int): Action[AnyContent] = Action.async { implicit request =>
     HistoryInfoRequest.execute(leagueId = Some(leagueId), season = Some(season), round = Some(round))
       .map(roundInfos => {
-        leagueInfoService.leagueInfo.add(roundInfos)
-        leagueInfoService.leagueInfo(leagueId).loadingInfo = Finished
+        if (roundInfos.isEmpty) {
+          NotFound(s"Not found history for league $leagueId, season $season, round $round")
+        } else {
+          leagueInfoService.leagueInfo.add(roundInfos)
+          leagueInfoService.leagueInfo(leagueId).loadingInfo = Finished
 
-        //Salvador is the last league
-        if(leagueId == CommonData.LAST_SERIES_LEAGUE_ID) {
-          cache.remove("overview.world")
-          leagueInfoService.leagueInfo.leagueInfo.values.foreach(leagueInfo => leagueInfo.loadingInfo = Finished)
+          //Salvador is the last league
+          if (leagueId == CommonData.LAST_SERIES_LEAGUE_ID) {
+            cache.remove("overview.world")
+            leagueInfoService.leagueInfo.leagueInfo.values.foreach(leagueInfo => leagueInfo.loadingInfo = Finished)
+          }
+          cache.remove(s"overview.$leagueId")
+          Ok("")
         }
-        cache.remove(s"overview.$leagueId")
-        Ok("")
       })
   }
 
