@@ -1,9 +1,9 @@
 package databases.requests.model.`match`
 
 import anorm.SqlParser.get
-import anorm.~
+import anorm.{RowParser, ~}
 import databases.requests.model.team.TeamSortingKey
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 
 case class MatchSpectators(homeTeam: TeamSortingKey,
                            awayTeam: TeamSortingKey,
@@ -13,9 +13,9 @@ case class MatchSpectators(homeTeam: TeamSortingKey,
                            matchId: Long)
 
 object MatchSpectators {
-  implicit val writes = Json.writes[MatchSpectators]
+  implicit val writes: OWrites[MatchSpectators] = Json.writes[MatchSpectators]
 
-  val mapper = {
+  val mapper: RowParser[MatchSpectators] = {
     get[Int]("league_id") ~
     get[Long]("league_unit_id") ~
     get[String]("league_unit_name") ~

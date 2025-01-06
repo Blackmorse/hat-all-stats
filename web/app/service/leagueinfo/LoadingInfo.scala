@@ -13,7 +13,7 @@ object Finished extends LoadingInfo
 case class Scheduled(date: Date) extends LoadingInfo
 
 object LoadingInfo {
-  implicit val writes = new Writes[LoadingInfo] {
+  implicit val writes: Writes[LoadingInfo] = new Writes[LoadingInfo] {
     override def writes(o: LoadingInfo): JsValue = o match {
       case Loading => Json.obj("loadingInfo" -> JsString("loading"))
       case Finished => Json.obj("loadingInfo" -> JsString("finished"))

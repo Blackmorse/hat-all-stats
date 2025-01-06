@@ -1,11 +1,11 @@
-FROM sbtscala/scala-sbt:eclipse-temurin-focal-11.0.21_9_1.9.8_3.3.1 as sources
+FROM sbtscala/scala-sbt:eclipse-temurin-21.0.5_11_1.10.7_3.6.2 as sources
 COPY . /app
 WORKDIR /app/
 RUN sbt web/test web/clean web/dist
 RUN apt update && apt install unzip
 RUN mkdir /app/dist && unzip /app/web/target/universal/*.zip -d /app/dist
 
-FROM eclipse-temurin:11.0.21_9-jre-jammy
+FROM eclipse-temurin:21-jre-ubi9-minimal
 WORKDIR /app/
 COPY --from=sources /app/dist /app/
 EXPOSE 9000

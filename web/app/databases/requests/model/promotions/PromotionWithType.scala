@@ -1,7 +1,7 @@
 package databases.requests.model.promotions
 
 import hattid.CommonData
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 import utils.Romans
 
 
@@ -14,7 +14,7 @@ case class PromotionWithType(upDivisionLevel: Int,
 
 
 object PromotionWithType {
-  implicit val writes = Json.writes[PromotionWithType]
+  implicit val writes: OWrites[PromotionWithType] = Json.writes[PromotionWithType]
 
   def convert(promotions: List[Promotion]): Seq[PromotionWithType] = {
     promotions.groupBy(promotion => (promotion.upDivisionLevel, promotion.promoteType))

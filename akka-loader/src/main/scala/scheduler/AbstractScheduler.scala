@@ -7,7 +7,7 @@ abstract class AbstractScheduler(val worldDetails: WorldDetails) {
 
   def schedule(): Unit
 
-  protected def scheduleFrom(leagueId: Int)
+  protected def scheduleFrom(leagueId: Int): Unit
 
   def scheduleFrom(leagueName: String): Unit = scheduleFrom(findLeagueIdByName(leagueName))
 

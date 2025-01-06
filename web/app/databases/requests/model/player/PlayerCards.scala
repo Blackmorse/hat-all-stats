@@ -1,9 +1,9 @@
 package databases.requests.model.player
 
 import anorm.SqlParser.get
-import anorm.~
+import anorm.{RowParser, ~}
 import databases.requests.model.Roles
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites}
 
 case class PlayerCards(playerSortingKey: PlayerSortingKey,
                        games: Int,
@@ -14,9 +14,9 @@ case class PlayerCards(playerSortingKey: PlayerSortingKey,
                        age: Int)
 
 object PlayerCards {
-  implicit val writes = Json.writes[PlayerCards]
+  implicit val writes: OWrites[PlayerCards] = Json.writes[PlayerCards]
 
-  val mapper = {
+  val mapper: RowParser[PlayerCards] = {
     get[Int]("league") ~
     get[Long]("player_id") ~
     get[String]("first_name") ~

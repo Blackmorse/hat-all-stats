@@ -17,7 +17,7 @@ object Arena {
   implicit val reader: XmlReader[Arena] = (
     (__ \ "ArenaID").read[Int],
     (__ \ "ArenaName").read[String],
-    (__ \ "WeatherID").read(enum(WeatherId)),
+    (__ \ "WeatherID").read(`enum`(WeatherId)),
     (__ \ "SoldTotal").read[Int],
     (__ \ "SoldTerraces").read[Int].optional,
     (__ \ "SoldBasic").read[Int].optional,

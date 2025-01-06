@@ -1,17 +1,17 @@
 package databases.requests.model.overview
 
 import anorm.SqlParser.get
-import anorm.~
-import play.api.libs.json.Json
+import anorm.{RowParser, ~}
+import play.api.libs.json.{Json, OWrites}
 
 case class OverviewMatchAverages(hatstats: Int,
                                  spectators: Int,
                                  goals: Double)
 
 object OverviewMatchAverages {
-  implicit val writes = Json.writes[OverviewMatchAverages]
+  implicit val writes: OWrites[OverviewMatchAverages] = Json.writes[OverviewMatchAverages]
 
-  val mapper = {
+  val mapper: RowParser[OverviewMatchAverages] = {
     get[Int]("avg_hatstats") ~
     get[Int]("avg_sold_total") ~
     get[Double]("avg_goals") map {
@@ -26,9 +26,9 @@ case class OverviewTeamPlayerAverages(age: Int,
                                       rating: Double)
 
 object OverviewTeamPlayerAverages {
-  implicit val writes = Json.writes[OverviewTeamPlayerAverages]
+  implicit val writes: OWrites[OverviewTeamPlayerAverages] = Json.writes[OverviewTeamPlayerAverages]
 
-  val mapper = {
+  val mapper: RowParser[OverviewTeamPlayerAverages] = {
     get[Int]("avg_age") ~
     get[Int]("avg_salary") ~
     get[Double]("avg_rating") map {
@@ -42,5 +42,5 @@ case class AveragesOverview(matchAverages: OverviewMatchAverages,
                             teamPlayerAverages: OverviewTeamPlayerAverages)
 
 object AveragesOverview {
-  implicit val writes = Json.writes[AveragesOverview]
+  implicit val writes: OWrites[AveragesOverview] = Json.writes[AveragesOverview]
 }

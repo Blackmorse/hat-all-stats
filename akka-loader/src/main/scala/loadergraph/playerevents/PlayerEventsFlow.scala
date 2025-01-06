@@ -10,7 +10,7 @@ import models.clickhouse.PlayerEventsModelCH
 import scala.collection.mutable
 
 object PlayerEventsFlow {
-    def apply(databaseName: String): Flow[StreamMatchDetailsWithLineup, Insert, _] = {
+  def apply(databaseName: String): Flow[StreamMatchDetailsWithLineup, Insert, _] = {
     Flow[StreamMatchDetailsWithLineup].flatMapConcat(streamMatchDetails => {
       val playersMap = mutable.Map[Long, PlayerEventsAccumulator]()
 

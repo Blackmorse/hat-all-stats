@@ -1,9 +1,10 @@
 package databases.requests.overview
 
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 import common.StringExt.StringExt
 
-class OverviewTeamPlayerAveragesRequestTest extends FunSuite with Matchers {
+class OverviewTeamPlayerAveragesRequestTest extends AnyFunSuite with Matchers {
   test("Nested select should be nested") {
     val builder = OverviewTeamPlayerAveragesRequest.builder(75, 14, Some(10), Some(4))
     val sqlParameters = builder.sqlWithParameters()

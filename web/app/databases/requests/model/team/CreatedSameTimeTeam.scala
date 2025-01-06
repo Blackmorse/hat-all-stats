@@ -2,8 +2,8 @@ package databases.requests.model.team
 
 import java.util.Date
 import anorm.SqlParser.get
-import anorm.~
-import play.api.libs.json.Json
+import anorm.{RowParser, ~}
+import play.api.libs.json.{Json, OWrites}
 
 case class CreatedSameTimeTeam(teamSortingKey: TeamSortingKey,
                                hatstats: Int,
@@ -21,9 +21,9 @@ case class CreatedSameTimeTeam(teamSortingKey: TeamSortingKey,
                                powerRating: Int)
 
 object CreatedSameTimeTeam {
-  implicit val writes = Json.writes[CreatedSameTimeTeam]
+  implicit val writes: OWrites[CreatedSameTimeTeam] = Json.writes[CreatedSameTimeTeam]
 
-  val createdSameTimeTeamMapper = {
+  val createdSameTimeTeamMapper: RowParser[CreatedSameTimeTeam] = {
     get[Int]("league_id") ~
     get[Long]("team_id") ~
     get[String]("team_name") ~

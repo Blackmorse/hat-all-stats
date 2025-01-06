@@ -17,13 +17,14 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ExecutorActorFactory @Inject()
-    (implicit val actorSystem: ActorSystem,
-     implicit val oauthTokens: OauthTokens,
+    (
      val clickhouseClient: ClickhouseClient,
      val config: Config,
      val hattidClient: HattidClickhouseClient,
      val alltidClient: AlltidClient,
-     val telegramClient: LoaderTelegramClient) {
+     val telegramClient: LoaderTelegramClient,
+     implicit val actorSystem: ActorSystem,
+     implicit val oauthTokens: OauthTokens) {
   import actorSystem.dispatcher
 
   private implicit val querySettings: QuerySettings = QuerySettings(authentication = Some((

@@ -16,7 +16,7 @@ case class Trophy(trophyTypeId: TrophyTypeId.Value,
 
 object Trophy extends BaseXmlMapper  {
   implicit val reader: XmlReader[Trophy] = (
-    (__ \ "TrophyTypeId").read(enum(TrophyTypeId)),
+    (__ \ "TrophyTypeId").read(`enum`(TrophyTypeId)),
     (__ \ "TrophySeason").read[Int],
     (__ \ "LeagueLevel").read[Int],
     (__ \ "LeagueLevelUnitName").read[String],

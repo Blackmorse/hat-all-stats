@@ -2,9 +2,10 @@ package databases.requests.playerstats.player
 
 import common.StringExt.StringExt
 import databases.requests.ClickhouseRequest
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
-class PlayerHistoryRequestTest extends FunSuite with Matchers {
+class PlayerHistoryRequestTest extends AnyFunSuite with Matchers {
   test("Test player history request with settings") {
     PlayerHistoryRequest.builder(1L).sqlWithParameters()
       .sql

@@ -3,19 +3,19 @@
 name := "hattid-scala"
 trapExit := false
 
-ThisBuild / scalaVersion := "2.13.5"
+ThisBuild / scalaVersion := "3.3.4"
 ThisBuild / organization := "com.blackmorse.hattrick"
 
 val clickhouseVersion = "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
-val anormVersion = "org.playframework.anorm" %% "anorm" % "2.6.4"
+val anormVersion = "org.playframework.anorm" %% "anorm" % "2.8.1"
 
 lazy val webDependencies = Seq(
   guice,
   jdbc,
   caffeine,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % Test,
   clickhouseVersion,
-  "ai.x" %% "play-json-extensions" % "0.42.0",
+//  "ai.x" %% "play-json-extensions" % "0.42.0",
   anormVersion
 )
 
@@ -31,15 +31,18 @@ lazy val webSettings = Seq(
 )
 
 val guiceVersion = "5.0.1"
-val pekkoVersion = "1.1.0"
-//val pekkoHttpVersion = "10.1.14"
+val pekkoVersion = "1.0.3"
+val pekkoHttpVersion = "1.1.0"
 lazy val akkaLoaderDependencies = Seq(
   "org.apache.pekko" %% "pekko-stream" % pekkoVersion,
-  "org.apache.pekko" %% "pekko-http" % pekkoVersion,
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
+  "org.apache.pekko" %% "pekko-http" % pekkoHttpVersion,
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4",
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "io.spray" %% "spray-json" % "1.3.6",
-  "com.crobox.clickhouse" %% "client" % "1.2.6",
+  ("com.crobox.clickhouse" %% "client" % "1.2.6"),
+//  .exclude("org.apache.pekko", "pekko-stream")
+//  .exclude("org.apache.pekko", "pekko-actor")
+//  .exclude("org.apache.pekko", "pekko-http"),
   "com.google.inject" % "guice" % guiceVersion,
   "com.google.inject.extensions" % "guice-assistedinject" % guiceVersion,
   "org.rogach" %% "scallop" % "5.0.1"
@@ -55,15 +58,18 @@ lazy val akkaLoaderSetting = Seq(
 lazy val chppSettings = Seq(
   libraryDependencies ++= Seq(
     "commons-codec" % "commons-codec" % "1.15",
-    "com.lucidchart" %% "xtract" % "2.2.1",
-    "org.apache.pekko" %% "pekko-http" % pekkoVersion,
+    ("com.lucidchart" %% "xtract" % "2.3.0")
+      .exclude("org.scala-lang.modules", "scala-xml_2.13")
+      .cross(CrossVersion.for3Use2_13),
+    "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
+    "org.apache.pekko" %% "pekko-http" % pekkoHttpVersion,
     "org.apache.pekko" %% "pekko-stream" % pekkoVersion
   )
 )
 
 lazy val scalaCommonSettings = Seq(
   libraryDependencies ++= Seq(
-    "org.apache.pekko" %% "pekko-http" % pekkoVersion,
+    "org.apache.pekko" %% "pekko-http" % pekkoHttpVersion,
     "org.apache.pekko" %% "pekko-stream" % pekkoVersion
   )
 )

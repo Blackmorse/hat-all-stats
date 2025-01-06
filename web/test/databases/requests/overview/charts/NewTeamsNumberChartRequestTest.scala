@@ -1,10 +1,11 @@
 package databases.requests.overview.charts
 
 import databases.requests.OrderingKeyPath
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 import common.StringExt.StringExt
 
-class NewTeamsNumberChartRequestTest extends FunSuite with Matchers {
+class NewTeamsNumberChartRequestTest extends AnyFunSuite with Matchers {
   test("NewTeamsNumberChartRequest should be created") {
     val orderingKeyPath = OrderingKeyPath(
       leagueId = Some(35),

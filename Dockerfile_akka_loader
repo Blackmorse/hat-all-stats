@@ -1,9 +1,9 @@
-FROM sbtscala/scala-sbt:eclipse-temurin-focal-11.0.21_9_1.9.8_3.3.1 as sources
+FROM sbtscala/scala-sbt:eclipse-temurin-21.0.5_11_1.10.7_3.6.2  as sources
 COPY . /app
 WORKDIR /app/
 RUN sbt akkaLoader/assembly
 
-FROM eclipse-temurin:11.0.21_9-jre-jammy
+FROM eclipse-temurin:21-jre-ubi9-minimal
 WORKDIR /app/
-COPY --from=sources /app/akka-loader/target/scala-2.13/akka-loader-assembly-0.1.jar /app/
+COPY --from=sources /app/akka-loader/target/scala-3.3.4/akka-loader-assembly-0.1.jar /app/
 ENTRYPOINT ["timeout", "4h", "java", "-Xmx6096m", "-Xms256m", "-jar", "/app/akka-loader-assembly-0.1.jar"]

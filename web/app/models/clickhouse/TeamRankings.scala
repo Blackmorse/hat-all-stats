@@ -1,9 +1,8 @@
 package models.clickhouse
 
-import ai.x.play.json.{BaseNameEncoder, Jsonx}
 import anorm.SqlParser.get
-import anorm.~
-import play.api.libs.json.OFormat
+import anorm.{RowParser, ~}
+import play.api.libs.json.{Json, OFormat, OWrites}
 
 import java.util.Date
 
@@ -44,10 +43,9 @@ case class TeamRankings(teamId: Long,
                        )
 
 object TeamRankings {
-  implicit val encoder = BaseNameEncoder()
-  implicit val writes: OFormat[TeamRankings] = Jsonx.formatCaseClass[TeamRankings]
+  implicit val writes: OWrites[TeamRankings] = Json.writes[TeamRankings]
 
-  val teamRankingsMapper = {
+  val teamRankingsMapper: RowParser[TeamRankings] = {
     get[Long]("team_id") ~
     get[String]("team_name") ~
     get[Int]("division_level") ~

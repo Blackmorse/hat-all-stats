@@ -1,8 +1,8 @@
 package databases.requests.model.team
 
 import anorm.SqlParser.get
-import anorm.~
-import play.api.libs.json.Json
+import anorm.{RowParser, ~}
+import play.api.libs.json.{Json, OWrites}
 
 case class TeamFanclubFlags(teamSortingKey: TeamSortingKey,
                             fanclubSize: Int,
@@ -11,9 +11,9 @@ case class TeamFanclubFlags(teamSortingKey: TeamSortingKey,
                             allFlags: Int)
 
 object TeamFanclubFlags {
-  implicit val writes = Json.writes[TeamFanclubFlags]
+  implicit val writes: OWrites[TeamFanclubFlags] = Json.writes[TeamFanclubFlags]
 
-  val mapper = {
+  val mapper: RowParser[TeamFanclubFlags] = {
     get[Int]("league_id") ~
     get[Long]("team_id") ~
     get[String]("team_name") ~

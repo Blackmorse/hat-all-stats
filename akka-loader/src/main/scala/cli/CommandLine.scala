@@ -1,6 +1,7 @@
 package cli
 
-import org.rogach.scallop.{ScallopConf, Subcommand}
+import org.rogach.scallop.{ScallopConf, ScallopOption, Subcommand, intConverter, stringConverter, stringListConverter}
+import org.rogach.scallop._
 
 sealed trait CliConfig
 
@@ -16,16 +17,16 @@ class CommandLine(arguments: Array[String]) extends ScallopConf(arguments) {
     val lastMatchWindow = opt[Int](required = false, default = Some(4))
   }
 
-  val schedule = new EntitySubcommand("schedule") {
-    val from = opt[String](required = false)
+  object schedule extends EntitySubcommand("schedule") {
+    val from: ScallopOption[String] = opt[String](required = false)
   }
-  val load = new EntitySubcommand("load") {
+  object load extends EntitySubcommand("load") {
     val leagues = opt[List[String]](required = true)
   }
-  val teamRankings = new Subcommand("teamRankings") {
+  object teamRankings extends Subcommand("teamRankings") {
     val league = opt[String](required = false)
   }
-  val loadScheduled = new Subcommand("loadScheduled") {
+  object loadScheduled extends Subcommand("loadScheduled") {
     val lastMatchWindow = opt[Int](required = false, default = Some(4))
     val entity = opt[String](required = true, validate = ent => ent == "league" || ent == "cup" || ent == "auto")
   }
@@ -40,6 +41,7 @@ class CommandLine(arguments: Array[String]) extends ScallopConf(arguments) {
       case Some(this.load) => LoadConfig(this.load.leagues(), this.load.entity(), this.schedule.lastMatchWindow())
       case Some(this.teamRankings) => TeamRankingsConfig(this.teamRankings.league.toOption)
       case Some(this.loadScheduled) => LoadScheduledConfig(this.loadScheduled.entity(), this.loadScheduled.lastMatchWindow())
+      case _ => throw RuntimeException("Invalid command")
     }
   }
 }

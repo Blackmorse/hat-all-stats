@@ -10,7 +10,7 @@ case class RestStatisticsParameters(page: Int,
                                     season: Int)
 
 object RestStatisticsParameters {
-  implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]) = new QueryStringBindable[RestStatisticsParameters] {
+  implicit def queryStringBindable(implicit stringBinder: QueryStringBindable[String]): QueryStringBindable[RestStatisticsParameters] = new QueryStringBindable[RestStatisticsParameters] {
     override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, RestStatisticsParameters]] = {
       val pageOptionEither = ParametersUtils.bindInt("page", params)
 

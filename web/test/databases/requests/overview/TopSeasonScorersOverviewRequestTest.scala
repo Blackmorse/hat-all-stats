@@ -1,9 +1,10 @@
 package databases.requests.overview
 
 import common.StringExt.StringExt
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
-class TopSeasonScorersOverviewRequestTest extends FunSuite with Matchers {
+class TopSeasonScorersOverviewRequestTest extends AnyFunSuite with Matchers {
   test("TopSeasonScorersOverviewRequest generates for the world") {
     val builder = TopSeasonScorersOverviewRequest.builder(77, 12, None, None)
     val request = builder.sqlWithParameters().sql

@@ -25,7 +25,7 @@ object LeagueMatchesFlow {
     val databaseName = config.getString("database_name")
 
     Flow.fromGraph(
-      GraphDSL.create(PromotionsSink()) { implicit builder =>
+      GraphDSL.createGraph(PromotionsSink()) { implicit builder =>
         promotionsSink =>
           import GraphDSL.Implicits._
 

@@ -1,13 +1,10 @@
 package databases.requests.model.`match`
 
 import java.util.Date
-import ai.x.play.json.Jsonx
 import databases.requests.model.team.TeamSortingKey
 import anorm.{RowParser, ~}
 import anorm.SqlParser.get
-import play.api.libs.json.{Json, OFormat}
-import ai.x.play.json.implicits._
-import ai.x.play.json.{BaseNameEncoder, Jsonx}
+import play.api.libs.json.{Json, OFormat, OWrites, Reads}
 
 case class TeamMatch(season: Int,
                      date: Date,
@@ -36,14 +33,12 @@ case class MatchRatings(formation: String,
                        )
 
 object MatchRatings {
-  implicit val encoder: BaseNameEncoder = BaseNameEncoder()
-  implicit val writesRatings: OFormat[MatchRatings] = Jsonx.formatCaseClass[MatchRatings]
+  implicit val writesRatings: OWrites[MatchRatings] = Json.writes[MatchRatings]
+  implicit val readsRatings: Reads[MatchRatings] = Json.reads[MatchRatings]
 }
 
 object TeamMatch {
-  implicit val encoder: BaseNameEncoder = BaseNameEncoder()
-  implicit val sortingKey: OFormat[TeamSortingKey] = Jsonx.formatCaseClass[TeamSortingKey]
-  implicit val writes: OFormat[TeamMatch] = Jsonx.formatCaseClass[TeamMatch]
+  implicit val writes: OWrites[TeamMatch] = Json.writes[TeamMatch]
 
   val mapper: RowParser[TeamMatch] = {
     get[Int]("season") ~
@@ -131,10 +126,10 @@ object TeamMatch {
           val (homeMatchRatings, awayMatchRatings) = if(isHomeMatch == "home") (matchRatings, oppositeMatchRatings) else (oppositeMatchRatings, matchRatings)
           val (homeGoals, awayGoals) = if(isHomeMatch == "home") (goals, oppositeGoals) else (oppositeGoals, goals)
 
-        TeamMatch(season, date, round,
-          homeTeam, awayTeam, matchId,
-          homeGoals, awayGoals,
-          homeMatchRatings, awayMatchRatings)
+          TeamMatch(season, date, round,
+            homeTeam, awayTeam, matchId,
+            homeGoals, awayGoals,
+            homeMatchRatings, awayMatchRatings)
     }
   }
 }

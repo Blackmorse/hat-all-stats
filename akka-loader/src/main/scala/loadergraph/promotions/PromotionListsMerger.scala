@@ -52,14 +52,15 @@ object PromotionListsMerger {
     var previous = iterator.next
     var next: PromotionModelCH = null
 
-    do {
+    while {
       next = iterator.next
       if (previous.upTeams == next.upTeams) {
         iterator.remove()
         previous.addDownTeams(next.downTeams)
       }
       else previous = next
-    } while (iterator.hasNext)
+      iterator.hasNext
+    } do ()
 
     javaResult.asScala.toList
   }
