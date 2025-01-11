@@ -4,8 +4,8 @@ import org.apache.pekko.actor.{ActorSystem, Scheduler}
 import org.apache.pekko.http.scaladsl.Http
 import chpp.chpperror.ChppError
 import com.lucidchart.open.xtract.{ParseError, XmlReader}
-import org.apache.pekko.http.scaladsl.model.{HttpRequest, HttpResponse}
-import org.apache.pekko.stream.scaladsl.{Flow, Sink, Source}
+import org.apache.pekko.http.scaladsl.settings.ConnectionPoolSettings
+import org.apache.pekko.stream.scaladsl.Source
 
 import scala.concurrent.Future
 import scala.concurrent.duration.*
@@ -46,22 +46,16 @@ object ChppRequestExecutor {
     }
   }
 
+ 
+  
   private def execute[Model](request: AbstractRequest[Model])
                        (implicit oauthTokens: OauthTokens, system: ActorSystem, reader: XmlReader[Model]): Future[Model] = {
     import system.dispatcher
 
-    val connectionFlow: Flow[HttpRequest, HttpResponse,
-      Future[Http.OutgoingConnection]] =
-      Http().outgoingConnection(host = "chpp.hattrick.org")
-
-
-    val r = Source.single(request.createRequest())
-      .via(connectionFlow)
-      .runWith(Sink.head)
-
-
-
-    for (response <- r;
+    val poolSettings = ConnectionPoolSettings(system)
+      .withMaxConnections(100) // Maximum connections to the same host
+      .withPipeliningLimit(10) // Maximum pipelined requests per connection
+    for (response <- Http().singleRequest(request.createRequest());
                  responseBody <- response.entity.toStrict(3.minute)) yield {
       val rawResponse = responseBody.data.utf8String
       val preprocessed = request.preprocessResponseBody(rawResponse)
