@@ -17,7 +17,7 @@ abstract class AbstractHttpFlow[Request <: AbstractRequest[Model], Model] {
 
     import system.dispatcher
     Flow[(Request, T)]
-      .mapAsyncUnordered(32) {
+      .mapAsyncUnordered(512) {
         case (request, t) =>
           ChppRequestExecutor.executeWithRetry(request)
             .recover {
