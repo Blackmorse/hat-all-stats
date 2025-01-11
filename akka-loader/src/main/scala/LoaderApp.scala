@@ -19,8 +19,11 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 
-object LoaderApp extends App {
-  private val logger = Logger(LoggerFactory.getLogger(this.getClass))
+
+@main def main(argss: String*): Unit = {
+  val args = argss.toArray
+
+  val logger = Logger(LoggerFactory.getLogger(this.getClass))
 
   implicit val actorSystem: ActorSystem = ActorSystem("LoaderActorSystem")
   import actorSystem.dispatcher
@@ -42,14 +45,14 @@ object LoaderApp extends App {
 
     cliConfig match {
       case ScheduleConfig(fromOpt, entity, lastMatchWindow) =>
-        val (taskExecutorActor, scheduler) = executorAndScheduler(entity, lastMatchWindow, executorActorFactory, worldDetails)
+        val (taskExecutorActor, scheduler) = executorAndScheduler(args(1), entity, lastMatchWindow, executorActorFactory, worldDetails)
         fromOpt match {
           case Some(from) => scheduler.scheduleFrom(from)
           case None => scheduler.schedule()
         }
         actorSystem.scheduler.scheduleWithFixedDelay(0.second, 5.second)(() => taskExecutorActor ! TryToExecute)
       case LoadConfig(leagues, entity, lastMatchWindow) =>
-        val (taskExecutorActor, scheduler) = executorAndScheduler(entity, lastMatchWindow, executorActorFactory, worldDetails)
+        val (taskExecutorActor, scheduler) = executorAndScheduler(args(1), entity, lastMatchWindow, executorActorFactory, worldDetails)
         scheduler.load(leagues)
         actorSystem.scheduler.scheduleWithFixedDelay(0.second, 5.second)(() => taskExecutorActor ! TryToExecute)
       case TeamRankingsConfig(Some(league)) =>
@@ -71,7 +74,7 @@ object LoaderApp extends App {
           entity
         }
         logger.info(s"Entity type: $entity, real entity $realEntity")
-        val (taskExecutorActor, scheduler) = executorAndScheduler(realEntity, lastMatchWindow, executorActorFactory, worldDetails)
+        val (taskExecutorActor, scheduler) = executorAndScheduler(args(1), realEntity, lastMatchWindow, executorActorFactory, worldDetails)
         scheduler.loadScheduled()
         actorSystem.scheduler.scheduleWithFixedDelay(0.second, 5.second)(() => taskExecutorActor ! TryToExecute)
     }
@@ -85,15 +88,16 @@ object LoaderApp extends App {
       System.exit(0)
   }
 
-  private def executorAndScheduler(entity: String, lastMatchesWindow: Int, executorActorFactory: ExecutorActorFactory, worldDetails: WorldDetails): (ActorRef, AbstractScheduler) = {
-    if (entity== "league") {
-      val taskExecutorActor = executorActorFactory.createLeagueExecutorActor(worldDetails, lastMatchesWindow)
-      (taskExecutorActor, new LeagueScheduler(worldDetails, taskExecutorActor))
-    } else if (entity == "cup") {
-      val taskExecutorActor = executorActorFactory.createCupExecutorActor(worldDetails, lastMatchesWindow)
-      (taskExecutorActor, new CupScheduler(worldDetails, taskExecutorActor))
-    } else {
-      throw new Exception(s"Unknown/unsupported ${args(1)} match type")
-    }
+}
+
+def executorAndScheduler(arg: String, entity: String, lastMatchesWindow: Int, executorActorFactory: ExecutorActorFactory, worldDetails: WorldDetails): (ActorRef, AbstractScheduler) = {
+  if (entity== "league") {
+    val taskExecutorActor = executorActorFactory.createLeagueExecutorActor(worldDetails, lastMatchesWindow)
+    (taskExecutorActor, new LeagueScheduler(worldDetails, taskExecutorActor))
+  } else if (entity == "cup") {
+    val taskExecutorActor = executorActorFactory.createCupExecutorActor(worldDetails, lastMatchesWindow)
+    (taskExecutorActor, new CupScheduler(worldDetails, taskExecutorActor))
+  } else {
+    throw new Exception(s"Unknown/unsupported ${arg} match type")
   }
 }
