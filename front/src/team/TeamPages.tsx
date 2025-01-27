@@ -20,7 +20,8 @@ import TeamRankingsTable from './TeamRankingsTable';
 import TeamSamePeriodTeams from './sameperiod/TeamSamePeriodTeam';
 import { Card } from 'react-bootstrap'
 import '../i18n'
-import { Translation } from 'react-i18next';
+import {Translation, useTranslation} from 'react-i18next';
+import Section from "../common/sections/HookSection";
 
 export default function pages(): Map<PagesEnum, (props: TeamLevelDataProps) => JSX.Element> {
     const pagesMap = new Map<PagesEnum, (props: TeamLevelDataProps) => JSX.Element>()
@@ -30,7 +31,10 @@ export default function pages(): Map<PagesEnum, (props: TeamLevelDataProps) => J
             <Card.Body>
                 <CompareSearchSection levelDataProps={props}/>
                 <OpponentAnalyzerSection props={props}/>
-                <TeamRankingsTable levelDataProps={props} />
+                <Section
+                    element={<TeamRankingsTable props={props} />}
+                    title={i18n.t('menu.team_rankings')}
+                />
             </Card.Body>
         </Card>}
     </Translation>)

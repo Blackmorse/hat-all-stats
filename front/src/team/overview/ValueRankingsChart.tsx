@@ -13,8 +13,13 @@ interface Props {
 class RankingsChart extends React.Component<Props, {}> {
 
     render() {
-        
-        let x = this.props.leagueRankings.map(l => l.round)
+        const seasons = this.props.leagueRankings.map(l => l.season)
+        const uniqSeasons = Array.from(new Set( seasons))
+
+        let x = uniqSeasons.length > 1
+            ? this.props.leagueRankings.map((_, index) => index)
+            : this.props.leagueRankings.map((l) => l.round)
+
         let yy = this.props.leagueRankings.map(this.props.valueFunc)
         let y = (this.props.formatterFunc !== undefined) ? yy.map(this.props.formatterFunc) : yy
         let chartData = [{

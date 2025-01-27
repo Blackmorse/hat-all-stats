@@ -234,5 +234,7 @@
     "match.accuracy": "Exactitud",
     "match.consider_tactics_type": "Considere el tipo de táctica",
     "match.consider_tactics_skill": "Considere la habilidad táctica",
-    "match.consider_set_pieces": "Considere el nivel de jugadas a balón parado"
+    "match.consider_set_pieces": "Considere el nivel de jugadas a balón parado",
+
+    "selectors.all": "Todo"
 }

@@ -233,6 +233,8 @@
     "match.accuracy": "Genauigkeit",
     "match.consider_tactics_type": "Betrachten Sie den Taktiktyp",
     "match.consider_tactics_skill": "Betrachten Sie taktisches Geschick",
-    "match.consider_set_pieces": "Betrachten Sie das Niveau der Standardsituationen"
+    "match.consider_set_pieces": "Betrachten Sie das Niveau der Standardsituationen",
+
+    "selectors.all": "Alle"
 }
 

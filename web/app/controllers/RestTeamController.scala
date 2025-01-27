@@ -126,24 +126,26 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
     stats(MatchSpectatorsRequest, teamId, restStatisticsParameters)
 
 
-  def teamRankings(teamId: Long, season: Int): Action[AnyContent] = Action.async { implicit request =>
+  def teamRankings(teamId: Long, season: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
     chppService.getTeamByIdUnsafe(teamId).flatMap(teamOpt => teamOpt.map(team => {
       val leagueId = team.league.leagueId
 
       TeamRankingsRequest.execute(OrderingKeyPath(
-        season = Some(season),
+        season = season,
         leagueId = Some(leagueId),
         teamId = Some(teamId),
       )).map(teamRankings => {
           val leagueInfo = leagueInfoService.leagueInfo(leagueId)
+         
+          val selectedSeason = season.getOrElse(leagueInfo.currentSeason())
 
-          val leagueTeamsRoundToCounts = leagueInfo.seasonInfo(season).roundInfo
+          val leagueTeamsRoundToCounts = leagueInfo.seasonInfo(selectedSeason).roundInfo
             .map{case (round, roundInfo) =>
               val leagueTeamsNumber = roundInfo.divisionLevelInfo.values.map(_.count).sum
               (round, leagueTeamsNumber)
             }.toSeq
           val divisionLevel = teamRankings.map(_.divisionLevel).headOption.getOrElse(team.leagueLevelUnit.leagueLevel)
-          val divisionLevelTeamsCounts = leagueInfo.seasonInfo(season).roundInfo
+          val divisionLevelTeamsCounts = leagueInfo.seasonInfo(selectedSeason).roundInfo
             .map{case (round, roundInfo) =>
               (round, roundInfo.divisionLevelInfo.get(divisionLevel).map(_.count).getOrElse(0))
             }.toSeq

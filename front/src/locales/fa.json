@@ -234,5 +234,7 @@
     "match.accuracy": "دقت",
     "match.consider_tactics_type": "نوع تاکتیک را در نظر بگیرید",
     "match.consider_tactics_skill": "مهارت تاکتیکی را در نظر بگیرید",
-    "match.consider_set_pieces": "سطح قطعات مجموعه را در نظر بگیرید"
+    "match.consider_set_pieces": "سطح قطعات مجموعه را در نظر بگیرید",
+
+    "selectors.all": "همه"
   }

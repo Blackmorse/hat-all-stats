@@ -234,5 +234,7 @@
     "match.accuracy": "Точность",
     "match.consider_tactics_type": "Учитывать тактику",
     "match.consider_tactics_skill": "Учитывать уровень владению тактикой",
-    "match.consider_set_pieces": "Учитывать стандарты"
+    "match.consider_set_pieces": "Учитывать стандарты",
+
+    "selectors.all": "Все"
 }

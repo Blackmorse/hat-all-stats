@@ -234,5 +234,7 @@
     "match.accuracy": "Accuracy",
     "match.consider_tactics_type": "Consider tactics type",
     "match.consider_tactics_skill": "Consider tactics skill",
-    "match.consider_set_pieces": "Consider set pieces levels"
+    "match.consider_set_pieces": "Consider set pieces levels",
+
+    "selectors.all": "All"
   }

@@ -85,6 +85,14 @@ export function getTeamRankings(request: LevelRequest, season: number,
         .catch(_e => callback(LoadingEnum.ERROR))
 }
 
+export function getTeamRankings2(teamId: number, season: number,
+                                 callback: (loadingEnum: LoadingEnum, teamRankingsStats?: TeamRankingsStats) => void) {
+    const seasonFilter = (season !== -1) ? `season=${season}` : ""
+    axios.get<TeamRankingsStats>(`/api/team/${teamId}/teamRankings?${seasonFilter}`)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(_e => callback(LoadingEnum.ERROR))
+}
+
 export function getNearestMatches(request: TeamRequest, 
         callback: (loadingEnum: LoadingEnum, nearestMatches?: NearestMatches) => void) {
     axios.get<NearestMatches>('/api/team/' + request.teamId + "/nearestMatches")

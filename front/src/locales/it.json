@@ -235,5 +235,7 @@
     "match.accuracy": "Precisione",
     "match.consider_tactics_type": "Considera il tipo di tattica",
     "match.consider_tactics_skill": "Considera l'abilità tattica",
-    "match.consider_set_pieces": "considera il livello dei calci piazzati"
+    "match.consider_set_pieces": "considera il livello dei calci piazzati",
+
+    "selectors.all": "Tutto"
 }
