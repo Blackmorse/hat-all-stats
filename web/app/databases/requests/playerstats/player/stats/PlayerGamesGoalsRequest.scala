@@ -50,6 +50,6 @@ object PlayerGamesGoalsRequest extends ClickhousePlayerStatsRequest[PlayerGamesG
       .orderBy(parameters.sortBy.to(parameters.sortingDirection.toSql),
         "player_id".to(parameters.sortingDirection.toSql))
       .limit(page = parameters.page, pageSize = parameters.pageSize)
-      .setting("max_bytes_before_external_group_by", 3000000000L)
+      .setting("max_bytes_before_external_group_by", 1000000000L)
   }
 }
