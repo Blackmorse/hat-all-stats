@@ -1,6 +1,5 @@
 import React from 'react';
 import './About.css'
-import { PayPalButton } from "react-paypal-button-v2";
 import i18n from '../i18n'
 import { Link } from 'react-router-dom';
 import { SectionState } from '../common/sections/Section';
@@ -33,17 +32,25 @@ class AboutSection extends React.Component<{}, SectionState> {
         </p>
     
     <span>
-    <PayPalButton
-        amount="5.00"
-    
-    onSuccess={(details: any, data: any) => {
-        alert("Transaction completed by " + details.payer.name.given_name);
-
-    }}
-    options={{
-        clientId: "AR1D88EuepqIo1C7LI6Qb7W_JTiagLEcyl2nAAVco-YTmOzw_ZvQZ_fyOWWwWcce7XdGH7kzQBDJZGcT"
-    }}
-/>
+        <a 
+            href="https://www.buymeacoffee.com/hattid" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{
+                display: 'inline-block',
+                textDecoration: 'none'
+            }}
+        >
+            <img 
+                src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" 
+                alt="Buy Me A Coffee" 
+                height="50"
+                style={{
+                    height: '50px',
+                    width: '217px'
+                }}
+            />
+        </a>
     </span>
 </article>
 </Card.Body>
