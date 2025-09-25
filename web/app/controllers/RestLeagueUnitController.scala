@@ -24,6 +24,7 @@ import service.leagueinfo.LeagueInfoService
 import service.leagueunit.{LeagueUnitCalculatorService, LeagueUnitTeamStat, LeagueUnitTeamStatHistoryInfo, LeagueUnitTeamStatsWithPositionDiff}
 import utils.{LeagueNameParser, Romans}
 import webclients.ChppClient
+import service.ChppService
 
 import javax.inject.Inject
 //TODO execution context!
@@ -32,6 +33,7 @@ import scala.concurrent.Future
 
 
 class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
+                                          val chppService: ChppService,
                                           val controllerComponents: ControllerComponents,
                                           val leagueInfoService: LeagueInfoService,
                                           implicit val restClickhouseDAO: RestClickhouseDAO,
@@ -71,129 +73,108 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
     }
   }
 
-  private def leagueUnitDataFromId(leagueUnitId: Int): Future[Either[NotFoundError, RestLeagueUnitData]] = {
-    chppClient.execute[LeagueDetails, LeagueDetailsRequest](LeagueDetailsRequest(leagueUnitId = Some(leagueUnitId)))
-      .map{
-        case Left(chppError) => Left(NotFoundError(
-          entityType = NotFoundError.LEAGUE_UNIT,
-          entityId = leagueUnitId.toString,
-          description = chppError.error
-        ))
-        case Right(leagueDetails) =>
-          val league = leagueInfoService.leagueInfo(leagueDetails.leagueId).league
-          Right(RestLeagueUnitData(leagueDetails, league, leagueUnitId, leagueInfoService))
-      }
-  }
-
-  private def withLeagueUnit[T](leagueUnitId: Int)(func: RestLeagueUnitData => Future[T])(implicit tjs: Writes[T]): Future[Result] = {
-    leagueUnitDataFromId(leagueUnitId).flatMap {
-      case Left(notFoundError) => Future(NotFound(Json.toJson(notFoundError)))
-      case Right(restLeagueUnitData) => func(restLeagueUnitData)
-        .map(r => Ok(Json.toJson(r)))
-    }
-  }
-
-  def getLeagueUnitData(leagueUnitId: Int): Action[AnyContent] = Action.async {
-    withLeagueUnit(leagueUnitId)(Future(_))
+  def getLeagueUnitData(leagueUnitId: Int): Action[JsValue] = asyncZio {
+    chppService.leagueUnitDataById(leagueUnitId)
   }
 
   private def stats[T](chRequest: ClickhouseStatisticsRequest[T],
                        leagueUnitId: Int,
                        restStatisticsParameters: RestStatisticsParameters)
-              (implicit writes: Writes[T]): Action[AnyContent] = Action.async {
-    withLeagueUnit(leagueUnitId){leagueUnitData =>
-      chRequest.execute(
-        OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
+                      (implicit writes: Writes[T]): Action[JsValue] = asyncZio {
+    for {
+      leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
+      entities <- chRequest.executeZIO(OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
           leagueUnitId = Some(leagueUnitId)),
-        restStatisticsParameters
-      ).map(entities => restTableData(entities, restStatisticsParameters.pageSize))
-    }
+        restStatisticsParameters)
+    } yield restTableData(entities, restStatisticsParameters.pageSize)
   }
 
   private def playersRequest[T](plRequest: ClickhousePlayerStatsRequest[T],
                                 leagueUnitId: Int,
                                 restStatisticsParameters: RestStatisticsParameters,
-                                playersParameters: PlayersParameters)(implicit writes: Writes[T]): Action[AnyContent] = Action.async {
-    withLeagueUnit(leagueUnitId){leagueUnitData =>
-      plRequest.execute(
+                                playersParameters: PlayersParameters)(implicit writes: Writes[T]) = asyncZio {
+    for {
+      leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
+      entities <- plRequest.executeZIO(
         OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
           leagueUnitId = Some(leagueUnitId)),
         restStatisticsParameters,
         playersParameters
-      ).map(entities => restTableData(entities, restStatisticsParameters.pageSize))
-    }
+      )
+    } yield restTableData(entities, restStatisticsParameters.pageSize)
   }
 
-  def teamHatstats(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def teamHatstats(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(TeamHatstatsRequest, leagueUnitId, restStatisticsParameters)
 
-  def playerGoalGames(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[AnyContent] =
+  def playerGoalGames(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[JsValue] =
     playersRequest(PlayerGamesGoalsRequest, leagueUnitId, restStatisticsParameters, playersParameters)
 
   def playerCards(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters,
-                  playersParameters: PlayersParameters): Action[AnyContent] =
+                  playersParameters: PlayersParameters): Action[JsValue] =
     playersRequest(PlayerCardsRequest, leagueUnitId, restStatisticsParameters, playersParameters)
 
-  def playerTsiSalary(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[AnyContent] =
+  def playerTsiSalary(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[JsValue] =
     playersRequest(PlayerSalaryTSIRequest, leagueUnitId, restStatisticsParameters, playersParameters)
 
-  def playerRatings(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[AnyContent] =
+  def playerRatings(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playersParameters: PlayersParameters): Action[JsValue] =
     playersRequest(PlayerRatingsRequest, leagueUnitId, restStatisticsParameters, playersParameters)
 
-  def playerInjuries(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def playerInjuries(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(PlayerInjuryRequest, leagueUnitId, restStatisticsParameters)
 
-  def teamSalaryTsi(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[AnyContent] = Action.async {
-    withLeagueUnit(leagueUnitId){leagueUnitData =>
-      TeamSalaryTSIRequest.execute(
+  def teamSalaryTsi(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[JsValue] = asyncZio {
+    for {
+      leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
+      entities <- TeamSalaryTSIRequest.executeZIO(
         OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
           leagueUnitId = Some(leagueUnitId)),
         restStatisticsParameters,
         playedInLastMatch = playedInLastMatch,
         excludeZeroTsi = excludeZeroTsi
-      ).map(entities => restTableData(entities, restStatisticsParameters.pageSize))
-    }
+      )
+    } yield restTableData(entities, restStatisticsParameters.pageSize)
   }
 
-  def teamCards(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = Action.async {
-    withLeagueUnit(leagueUnitId){leagueUnitData =>
-      TeamCardsRequest.execute(
+  def teamCards(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] = asyncZio {
+    for {
+      leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
+      entities <- TeamCardsRequest.executeZIO(
         OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
-          leagueUnitId = Some(leagueUnitData.leagueUnitId)),
+          leagueUnitId = Some(leagueUnitId)),
         restStatisticsParameters)
-        .map(entities => restTableData(entities, restStatisticsParameters.pageSize))
-    }
+    } yield restTableData(entities, restStatisticsParameters.pageSize)
   }
 
-  def teamRatings(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def teamRatings(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(TeamRatingsRequest, leagueUnitId, restStatisticsParameters)
 
-  def teamAgeInjuries(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def teamAgeInjuries(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(TeamAgeInjuryRequest, leagueUnitId, restStatisticsParameters)
 
-  def teamPowerRatings(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def teamPowerRatings(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(TeamPowerRatingsRequest, leagueUnitId, restStatisticsParameters)
 
-  def teamFanclubFlags(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def teamFanclubFlags(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(TeamFanclubFlagsRequest, leagueUnitId, restStatisticsParameters)
 
-  def teamStreakTrophies(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def teamStreakTrophies(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(TeamStreakTrophiesRequest, leagueUnitId, restStatisticsParameters)
 
-  def topMatches(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def topMatches(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(MatchTopHatstatsRequest, leagueUnitId, restStatisticsParameters)
 
-  def surprisingMatches(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def surprisingMatches(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(MatchSurprisingRequest, leagueUnitId, restStatisticsParameters)
 
-  def matchSpectators(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def matchSpectators(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(MatchSpectatorsRequest, leagueUnitId, restStatisticsParameters)
 
-  def oldestTeams(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
+  def oldestTeams(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[JsValue] =
     stats(OldestTeamsRequest, leagueUnitId, restStatisticsParameters)
 
 
@@ -254,19 +235,21 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
       }
   }
 
-  def promotions(leagueUnitId: Int): Action[AnyContent] = Action.async {
-    withLeagueUnit(leagueUnitId){leagueUnitData =>
-      PromotionsRequest.execute(OrderingKeyPath(
-        leagueId = Some(leagueUnitData.leagueId),
-        divisionLevel = Some(leagueUnitData.divisionLevel),
-        leagueUnitId = Some(leagueUnitData.leagueUnitId)), leagueInfoService.leagueInfo.currentSeason(leagueUnitData.leagueId))
-        .map(PromotionWithType.convert)
-    }
+  def promotions(leagueUnitId: Int): Action[JsValue] = asyncZio {
+    for {
+      leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
+      promotions <- PromotionsRequest.execute(OrderingKeyPath(
+          leagueId = Some(leagueUnitData.leagueId),
+          divisionLevel = Some(leagueUnitData.divisionLevel),
+          leagueUnitId = Some(leagueUnitData.leagueUnitId)), 
+        leagueInfoService.leagueInfo.currentSeason(leagueUnitData.leagueId))
+    } yield PromotionWithType.convert(promotions)
   }
 
-  def dreamTeam(season: Int, leagueUnitId: Int, sortBy: String, statsType: StatsType): Action[AnyContent] = Action.async {
-    withLeagueUnit(leagueUnitId) {leagueUnitData =>
-      DreamTeamRequest.execute(
+  def dreamTeam(season: Int, leagueUnitId: Int, sortBy: String, statsType: StatsType): Action[JsValue] = asyncZio {
+    for {
+      leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
+      players <- DreamTeamRequest.executeZIO(
         OrderingKeyPath(season = Some(season),
           leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
@@ -274,6 +257,6 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
         statsType,
         sortBy
       )
-    }
+    } yield players
   }
 }

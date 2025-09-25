@@ -4,15 +4,16 @@ import chpp.playerdetails.PlayerDetailsRequest
 import chpp.playerdetails.models.PlayerDetails
 import databases.dao.RestClickhouseDAO
 import databases.requests.playerstats.player.PlayerHistoryRequest
-import models.web.NotFoundError
 import models.web.player.{CurrentPlayerCharacteristics, RestPlayerData, RestPlayerDetails}
-import play.api.libs.json.Json
+import models.web.{HattidError, NotFoundError}
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc
-import play.api.mvc.{AnyContent, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.LeagueInfoService
 import service.{ChppService, PlayerService, TranslationsService}
 import utils.{CurrencyUtils, Romans}
 import webclients.ChppClient
+import zio.IO
 
 import scala.concurrent.Future
 
@@ -29,23 +30,22 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
                                       val translationsService: TranslationsService,
                                       implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
 
-  private def getRestPlayerData(playerDetails: PlayerDetails): Future[Either[NotFoundError, RestPlayerData]] = {
-    for {
-      teamDetailsEither <- chppService.getTeamById(playerDetails.player.owningTeam.teamId)
-    } yield {
-      val leagueId = playerDetails.player.owningTeam.leagueId
-      val league = leagueInfoService.leagueInfo(leagueId).league
-      val map = teamDetailsEither.map(teamDetails =>
+
+  private def getRestPlayerData(playerDetails: PlayerDetails): IO[HattidError, RestPlayerData] = {
+    chppService.getTeamById(playerDetails.player.owningTeam.teamId)
+      .map(team => {
+        val leagueId = playerDetails.player.owningTeam.leagueId
+        val league = leagueInfoService.leagueInfo(leagueId).league
         RestPlayerData(
           playerId = playerDetails.player.playerId,
           firstName = playerDetails.player.firstName,
           lastName = playerDetails.player.lastName,
           leagueId = leagueId,
           leagueName = league.englishName,
-          divisionLevel = teamDetails.leagueLevelUnit.leagueLevel,
-          divisionLevelName = Romans(teamDetails.leagueLevelUnit.leagueLevel),
-          leagueUnitId = teamDetails.leagueLevelUnit.leagueLevelUnitId,
-          leagueUnitName = teamDetails.leagueLevelUnit.leagueLevelUnitName,
+          divisionLevel = team.leagueLevelUnit.leagueLevel,
+          divisionLevelName = Romans(team.leagueLevelUnit.leagueLevel),
+          leagueUnitId = team.leagueLevelUnit.leagueLevelUnitId,
+          leagueUnitName = team.leagueLevelUnit.leagueLevelUnitName,
           teamId = playerDetails.player.owningTeam.teamId,
           teamName = playerDetails.player.owningTeam.teamName,
           seasonOffset = league.seasonOffset,
@@ -55,27 +55,15 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
           countries = leagueInfoService.idToStringCountryMap,
           loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo,
           translations = translationsService.translationsMap
-        ))
-      map match {
-        case Left(notFoundError: NotFoundError) => Left(NotFoundError(
-          entityType = NotFoundError.PLAYER,
-          entityId = playerDetails.player.playerId.toString,
-          description = s"No active team for the player ${playerDetails.player.playerId}. Cause ${notFoundError.description}"))
-        case Right(value) => Right(value)
-      }
-    }
+        )
+      })
   }
-  def getPlayerData(playerId: Long): mvc.Action[AnyContent] = Action.async {
-    chppService.playerDetails(playerId).flatMap {
-      case Left(chppError) => Future(Left(NotFoundError(
-        entityType = NotFoundError.PLAYER,
-        entityId = playerId.toString,
-        description = s"Player $playerId not found: ${chppError.error}")))
-      case Right(playerDetails) => getRestPlayerData(playerDetails)
-    } map {
-      case Left(error) => NotFound(Json.toJson(error))
-      case Right(value) => Ok(Json.toJson(value))
-    }
+
+  def getPlayerData(playerId: Long): Action[JsValue] = asyncZio {
+    for {
+      playerDetails <- chppService.playerDetails(playerId)
+      restPlayerData <- getRestPlayerData(playerDetails)
+    } yield restPlayerData
   }
 
   private def getRestPlayerDetails(playerDetails: PlayerDetails): Future[RestPlayerDetails] = {

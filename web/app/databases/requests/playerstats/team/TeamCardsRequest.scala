@@ -1,12 +1,14 @@
 package databases.requests.playerstats.team
 
-import anorm.RowParser
+import anorm.{RowParser, SimpleSql, Row}
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.team.TeamCards
-import models.web.{RestStatisticsParameters, Round}
+import models.web.{HattidError, RestStatisticsParameters, Round, SqlInjectionError}
 import sqlbuilder.Select
+import zio.ZIO
+import ClickhouseRequest._
 
 import scala.concurrent.Future
 
@@ -15,6 +17,35 @@ object TeamCardsRequest extends ClickhouseRequest[TeamCards] {
 
   override val rowParser: RowParser[TeamCards] = TeamCards.mapper
 
+  private def simpleSql(orderingKeyPath: OrderingKeyPath,
+                        parameters: RestStatisticsParameters): SimpleSql[Row] = {
+    val round = parameters.statsType match {
+      case Round(r) => r
+    }
+
+    import sqlbuilder.SqlBuilder.implicits._
+    val builder = Select(
+      "any(league_id)" as "league",
+      "argMax(team_name, round)" as "team_name",
+      "team_id",
+      "league_unit_id",
+      "league_unit_name",
+      "sum(yellow_cards)" as "yellow_cards",
+      "sum(red_cards)" as "red_cards"
+    ).from("hattrick.player_stats")
+      .where
+      .season(parameters.season)
+      .orderingKeyPath(orderingKeyPath)
+      .round.lessEqual(round)
+      .groupBy("team_id", "league_unit_id", "league_unit_name")
+      .orderBy(
+        parameters.sortBy.to(parameters.sortingDirection.toSql),
+        "team_id".asc
+      ).limit(page = parameters.page, pageSize = parameters.pageSize)
+
+    builder.sqlWithParameters().build
+  }
+
   def execute(orderingKeyPath: OrderingKeyPath,
               parameters: RestStatisticsParameters)
              (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamCards]] = {
@@ -22,30 +53,17 @@ object TeamCardsRequest extends ClickhouseRequest[TeamCards] {
     if(!sortingColumns.contains(sortBy))
       throw new Exception("Looks like SQL injection")
 
-    val round = parameters.statsType match {
-      case Round(r) => r
+    restClickhouseDAO.execute(simpleSql(orderingKeyPath, parameters), rowParser)
+  }
+
+  def executeZIO(orderingKeyPath: OrderingKeyPath,
+                 parameters: RestStatisticsParameters)
+                (implicit restClickhouseDAO: RestClickhouseDAO): zio.IO[HattidError, List[TeamCards]] = {
+    if(!sortingColumns.contains(parameters.sortBy)) {
+      ZIO.fail(SqlInjectionError())
+    } else {
+      restClickhouseDAO.executeZIO(simpleSql(orderingKeyPath, parameters), rowParser)
+        .hattidErrors
     }
-
-    import sqlbuilder.SqlBuilder.implicits._
-    val builder = Select(
-        "any(league_id)" as "league",
-        "argMax(team_name, round)" as "team_name",
-        "team_id",
-        "league_unit_id",
-        "league_unit_name",
-        "sum(yellow_cards)" as "yellow_cards",
-        "sum(red_cards)" as "red_cards"
-      ).from("hattrick.player_stats")
-      .where
-        .season(parameters.season)
-        .orderingKeyPath(orderingKeyPath)
-        .round.lessEqual(round)
-      .groupBy("team_id", "league_unit_id", "league_unit_name")
-      .orderBy(
-        sortBy.to(parameters.sortingDirection.toSql),
-        "team_id".asc
-      ).limit(page = parameters.page, pageSize = parameters.pageSize)
-
-    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
   }
 }

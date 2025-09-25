@@ -1,12 +1,14 @@
 package databases.requests.teamrankings
 
-import anorm.RowParser
+import anorm.{Row, RowParser, SimpleSql}
 import databases.dao.RestClickhouseDAO
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import models.clickhouse.TeamRankings
 import sqlbuilder.{Select, SqlBuilder}
 
-import scala.concurrent.Future
+import ClickhouseRequest.*
+import models.web.HattidError
+import zio.IO
 
 object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
 
@@ -51,17 +53,23 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
 
   override val rowParser: RowParser[TeamRankings] = TeamRankings.teamRankingsMapper
 
-  def execute(orderingKeyPath: OrderingKeyPath)
-             (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamRankings]] = {
-    restClickhouseDAO.execute(select
-      .where
-        .season(orderingKeyPath.season)
-        .leagueId(orderingKeyPath.leagueId)
-        .teamId(orderingKeyPath.teamId)
-      .orderBy(
-        "rank_type".asc,
-        "round".asc
-      )
-      .sqlWithParameters().build, rowParser)
+  private def simpleSql(fromSeason: Option[Int], toSeason: Option[Int], leagueId: Int, teamId: Long): SimpleSql[Row] = {
+      select
+        .where
+        .season.greaterEqual(fromSeason)
+        .season.lessEqual(toSeason)
+        .leagueId(leagueId)
+        .teamId(teamId)
+        .orderBy(
+            "rank_type".asc,
+            "round".asc
+        )
+        .sqlWithParameters().build
+  }
+
+  def execute(fromSeason: Option[Int], toSeason: Option[Int], leagueId: Int, teamId: Long)
+             (implicit restClickhouseDAO: RestClickhouseDAO): IO[HattidError, List[TeamRankings]] = {
+      restClickhouseDAO.executeZIO(simpleSql(fromSeason, toSeason, leagueId, teamId), rowParser)
+        .hattidErrors
   }
 }

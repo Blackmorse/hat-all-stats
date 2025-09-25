@@ -3,10 +3,10 @@ package controllers
 import chpp.worlddetails.models.League
 import com.google.inject.{Inject, Singleton}
 import databases.dao.RestClickhouseDAO
-import databases.requests.matchdetails._
+import databases.requests.matchdetails.*
 import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
-import databases.requests.playerstats.player._
+import databases.requests.playerstats.player.*
 import databases.requests.playerstats.player.stats.{ClickhousePlayerStatsRequest, PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
@@ -15,7 +15,7 @@ import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{NotFoundError, PlayersParameters, RestStatisticsParameters, StatsType}
-import play.api.libs.json.{Json, OWrites, Writes}
+import play.api.libs.json.{JsValue, Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfo, LeagueInfoService, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
@@ -162,16 +162,16 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
   def matchSpectators(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(MatchSpectatorsRequest, leagueId, restStatisticsParameters)
 
-  def promotions(leagueId: Int): Action[AnyContent] = Action.async { implicit request =>
+  def promotions(leagueId: Int): Action[JsValue] = asyncZio {
     PromotionsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), leagueInfoService.leagueInfo.currentSeason(leagueId))
-      .map(PromotionWithType.convert).map(result => Ok(Json.toJson(result)))
+      .map(PromotionWithType.convert)
   }
 
   def oldestTeams(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = {
     stats(OldestTeamsRequest, leagueId, restStatisticsParameters)
   }
 
-  def dreamTeam(season: Int, leagueId: Int, sortBy: String, statsType: StatsType): Action[AnyContent] = Action.async { implicit request =>
+  def dreamTeam(season: Int, leagueId: Int, sortBy: String, statsType: StatsType): Action[AnyContent] = Action.async {
     DreamTeamRequest.execute(OrderingKeyPath(season = Some(season), leagueId = Some(leagueId)),
       statsType,
       sortBy)

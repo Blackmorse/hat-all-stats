@@ -2,8 +2,11 @@ package databases.requests
 
 import anorm.{NamedParameter, ParameterValue, Row, RowParser, SQL, SimpleSql, ToParameterValue}
 import databases.requests.model.Roles
+import io.github.gaelrenoux.tranzactio.DbException
+import models.web.{DbError, HattidError, SqlInjectionError}
 import sqlbuilder.{DateParameter, IntParameter, LongParameter, SqlWithParameters, StringParameter, ValueParameter}
 import sqlbuilder.clause.ClauseEntry
+import zio.IO
 
 
 trait ClickhouseRequest[T] {
@@ -11,6 +14,15 @@ trait ClickhouseRequest[T] {
 }
 
 object ClickhouseRequest {
+
+  implicit class HattidDBZIO[Result](zio: IO[SqlInjectionError | Throwable, Result]) {
+    def hattidErrors: IO[HattidError, Result] = zio.mapError {
+      case sqlInjectionError: SqlInjectionError => sqlInjectionError
+      case ex: io.github.gaelrenoux.tranzactio.DbException => DbError(ex)
+      case t: Throwable => DbError(t)
+    }
+  }
+
   def roleIdCase(fieldName: String): String = {
     val rolesList = (for(role <- Roles.all;
         id <- role.htIds) yield s"$id, ${role.internalId},")
