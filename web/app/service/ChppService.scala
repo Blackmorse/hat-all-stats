@@ -2,8 +2,9 @@ package service
 
 import chpp.avatars.AvatarRequest
 import chpp.avatars.models.AvatarContainer
-import chpp.chpperror.ChppError
 import chpp.commonmodels.MatchType
+import chpp.leaguedetails.LeagueDetailsRequest
+import chpp.leaguedetails.models.LeagueDetails
 import chpp.matches.MatchesRequest
 import chpp.matches.models.Matches
 import chpp.playerdetails.PlayerDetailsRequest
@@ -11,37 +12,46 @@ import chpp.playerdetails.models.PlayerDetails
 import chpp.teamdetails.TeamDetailsRequest
 import chpp.teamdetails.models.{Team, TeamDetails}
 import chpp.worlddetails.WorldDetailsRequest
-import chpp.worlddetails.models.WorldDetails
+import chpp.worlddetails.models.{League, WorldDetails}
 import controllers.NearestMatches
 import databases.dao.RestClickhouseDAO
 import databases.requests.teamrankings.HistoryTeamLeagueUnitInfoRequest
+import io.github.gaelrenoux.tranzactio.DbException
 import models.clickhouse.NearestMatch
-import models.web.NotFoundError
+import models.web.leagueUnit.RestLeagueUnitData
 import models.web.player.AvatarPart
+import models.web.{BadRequestError, DbError, HattidError, NotFoundError}
+import service.ChppService.CHPPIO
 import service.leagueinfo.LeagueInfoService
 import webclients.ChppClient
+import zio.{IO, ZIO}
 
 import javax.inject.{Inject, Singleton}
 //TODO
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+object ChppService {
+  type CHPPIO[A] = IO[HattidError, A]
+}
+
+
 @Singleton
 class ChppService @Inject() (val chppClient: ChppClient,
                              val leagueInfoService: LeagueInfoService,
                              implicit val restClickhouseDAO: RestClickhouseDAO) {
-
-
-  def getTeamById(teamId: Long): Future[Either[NotFoundError, Team]] = {
-    chppClient.execute[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
-      .map {
-        case Left(chppError) => Left(NotFoundError(
-          entityType = NotFoundError.TEAM,
-          entityId = teamId.toString,
-          description = chppError.error))
-        case Right(teamDetails) => findTeamId(teamDetails, teamId)
+  def getTeamById(teamId: Long): IO[HattidError, Team] = {
+    chppClient.executeZio[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
+      .flatMap { teamDetails =>
+        findTeamId(teamDetails, teamId) match {
+          case Left(notFoundError) => ZIO.fail(notFoundError)
+          case Right(team) => ZIO.succeed(team)
+        }
       }
   }
+
+  def playerDetails(playerId: Long): IO[HattidError, PlayerDetails] =
+    chppClient.executeZio[PlayerDetails, PlayerDetailsRequest](PlayerDetailsRequest(playerId = playerId))
 
   private def findTeamId(teamDetails: TeamDetails, teamId: Long): Either[NotFoundError, Team] = {
     val teamOpt = teamDetails.teams
@@ -55,36 +65,46 @@ class ChppService @Inject() (val chppClient: ChppClient,
       case Some(team) => Right(team)
     }
   }
-
-  @deprecated
-  def getTeamByIdUnsafe(teamId: Long): Future[Option[Team]] = {
-    chppClient.executeUnsafe[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
-      .map(teamDetails => {
-        teamDetails.teams
-          .find(_.teamId == teamId)
-          .filter(_ => teamDetails.user.userId != 0L && teamDetails.user.userId != 13537902L)
+  
+  def leagueUnitDataById(leagueUnitId: Int): IO[HattidError, RestLeagueUnitData] = {
+    chppClient.executeZio[LeagueDetails, LeagueDetailsRequest](LeagueDetailsRequest(leagueUnitId = Some(leagueUnitId)))
+      .mapError {
+        // Map CHPP errors to our errors
+        case BadRequestError(error) => NotFoundError( 
+          entityType = "LEAGUE_UNIT",
+          entityId = leagueUnitId.toString,
+          description = s"League unit not found, error from CHPP: $error")
+        case e => e
+      }
+      .map(leagueDetails => {
+        val league = leagueInfoService.leagueInfo(leagueDetails.leagueId).league
+        RestLeagueUnitData(leagueDetails, league, leagueUnitId, leagueInfoService)
       })
   }
 
-  def getDivisionLevelAndLeagueUnit(team: Team, season: Int): Future[(Int, Long)] = {
-    chppClient.executeUnsafe[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
-      .map(_.leagueList.head)
-      .flatMap(league => {
-        val htRound = league.matchRound
+  def getDivisionLevelAndLeagueUnit(team: Team, season: Int): CHPPIO[(Int, Long)] = {
+    for {
+      league <- chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
+        .map(_.leagueList.head)
+      result <- getDivisionLevelFromChppOrCh(league, team, season)
+    } yield result
+  }
 
-        if(htRound == 16
-          || leagueInfoService.leagueInfo.currentSeason(team.league.leagueId) > season
-          || league.season - league.seasonOffset > season) {
+  private def getDivisionLevelFromChppOrCh(league: League, team: Team, season: Int): IO[HattidError, (Int, Long)] = {
+    val htRound = league.matchRound
 
-          HistoryTeamLeagueUnitInfoRequest.execute(season, team.league.leagueId, team.teamId)
-            .map(infoOpt => {
-              infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
-                .getOrElse((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId))
-            })
-        } else {
-          Future((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId.toLong))
-        }
-      })
+    if (htRound == 16
+      || leagueInfoService.leagueInfo.currentSeason(team.league.leagueId) > season
+      || league.season - league.seasonOffset > season) {
+
+      HistoryTeamLeagueUnitInfoRequest.executeZIO(season, team.league.leagueId, team.teamId)
+        .map(infoOpt => {
+          infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
+            .getOrElse((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId))
+        })
+    } else {
+      ZIO.succeed((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId.toLong))
+    }
   }
 
   def nearestMatches(teamId: Long): Future[NearestMatches] = {
@@ -105,9 +125,6 @@ class ChppService @Inject() (val chppClient: ChppClient,
         NearestMatches(playedMatches, upcomingMatches)
       })
   }
-
-  def playerDetails(playerId: Long): Future[Either[ChppError, PlayerDetails]] =
-    chppClient.execute[PlayerDetails, PlayerDetailsRequest] (PlayerDetailsRequest(playerId = playerId))
 
   def getPlayerAvatar(teamId: Int, playerId: Long): Future[Seq[AvatarPart]] = {
     chppClient.executeUnsafe[AvatarContainer, AvatarRequest](AvatarRequest(teamId = Some(teamId)))

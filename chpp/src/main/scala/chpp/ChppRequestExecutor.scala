@@ -1,16 +1,49 @@
 package chpp
 
+import chpp.ChppRequestExecutor.{ChppErrorResponse, ChppUnparsableErrorResponse, ModelUnparsableResponse}
 import org.apache.pekko.actor.{ActorSystem, Scheduler}
 import org.apache.pekko.http.scaladsl.Http
 import chpp.chpperror.ChppError
 import com.lucidchart.open.xtract.{ParseError, XmlReader}
 import org.apache.pekko.http.scaladsl.settings.ConnectionPoolSettings
-import org.apache.pekko.stream.scaladsl.Source
+import zio.{Schedule, ZIO}
 
 import scala.concurrent.Future
 import scala.concurrent.duration.*
 import scala.util.{Failure, Success, Try}
 import scala.xml.{Elem, XML}
+
+object ZChppRequestExecutor {
+  trait ChppErrorZ
+
+  case class ExternalChppError(t: Throwable) extends ChppErrorZ
+  case class UnparsableModelErrorZ(errors: Seq[ParseError], rawResponse: String, request: String) extends ChppErrorZ
+  case class UnparsableChppError(errors: Seq[ParseError], rawResponse: String) extends ChppErrorZ
+  case class ChppErrorResponseZ(chppError: ChppError) extends ChppErrorZ
+
+  def executeWithRetry[Model: zio.Tag](request: AbstractRequest[Model]): ZIO[XmlReader[Model] & OauthTokens & ActorSystem, ChppErrorZ, Model] =
+    execute(request).retry(Schedule.exponential(zio.Duration.fromMillis(800L)) && Schedule.recurs(4))
+
+  type ZCHPP[Model] = ZIO[XmlReader[Model] & OauthTokens & ActorSystem, ChppErrorZ, Model]
+
+  private def execute[Model: zio.Tag](request: AbstractRequest[Model]): ZCHPP[Model] = {
+    for {
+      system <- ZIO.service[ActorSystem]
+      tokens <- ZIO.service[OauthTokens]
+      reader <- ZIO.service[XmlReader[Model]]
+      zio    <- ZIO.fromFuture { implicit ec =>
+        ChppRequestExecutor.execute(request)(tokens, system, reader)
+          .map(r => Right(r): Either[ChppErrorZ, Model])
+          .recover {
+            case ChppErrorResponse(chppError) => Left(ChppErrorResponseZ(chppError))
+            case ChppUnparsableErrorResponse(errors, rawResponse) => Left(UnparsableChppError(errors, rawResponse))
+            case ModelUnparsableResponse(errors, rawResponse, req) => Left(UnparsableModelErrorZ(errors, rawResponse, req))
+            case e: Throwable => Left(ExternalChppError(e))
+          }
+      }.orDie.absolve
+    } yield zio
+  }
+}
 
 object ChppRequestExecutor {
   private val retries = 4
@@ -48,7 +81,7 @@ object ChppRequestExecutor {
 
  
   
-  private def execute[Model](request: AbstractRequest[Model])
+  def execute[Model](request: AbstractRequest[Model])
                        (implicit oauthTokens: OauthTokens, system: ActorSystem, reader: XmlReader[Model]): Future[Model] = {
     import system.dispatcher
 

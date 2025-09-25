@@ -6,13 +6,14 @@ import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.`match`.TeamMatch
 import sqlbuilder.Select
-
-import scala.concurrent.Future
+import ClickhouseRequest.*
+import models.web.HattidError
+import zio.IO
 
 object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
   override val rowParser: RowParser[TeamMatch] = TeamMatch.mapper
 
-  def execute(season: Int, orderingKeyPath: OrderingKeyPath)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[TeamMatch]] = {
+  def execute(season: Int, orderingKeyPath: OrderingKeyPath)(implicit restClickhouseDAO: RestClickhouseDAO): IO[HattidError, List[TeamMatch]] = {
     import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
         "season",
@@ -59,6 +60,7 @@ object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
         .season(season)
       .orderBy("round".asc)
 
-    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
+    restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
+      .hattidErrors
   }
 }

@@ -103,6 +103,7 @@ GET     /api/leagueUnit/:leagueUnitId/dreamTeam         controllers.RestLeagueUn
 
 GET     /api/team/:teamId           controllers.RestTeamController.getTeamData(teamId: Long)
 GET     /api/team/:teamId/teamRankings      controllers.RestTeamController.teamRankings(teamId: Long, season: Option[Int] ?= None)
+GET     /api/team/:teamId/teamRankingsRange      controllers.RestTeamController.teamRankingsRange(teamId: Long, fromSeason: Int, toSeason: Int)
 GET     /api/team/:teamId/nearestMatches    controllers.RestTeamController.nearestMatches(teamId: Long)
 GET     /api/team/:teamId/playerGoalGames   controllers.RestTeamController.playerGoalGames(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
 GET     /api/team/:teamId/playerCards   controllers.RestTeamController.playerCards(teamId: Long, restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)

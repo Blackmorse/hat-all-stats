@@ -1,7 +1,7 @@
 package controllers
 
 import databases.dao.RestClickhouseDAO
-import databases.requests.matchdetails._
+import databases.requests.matchdetails.*
 import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player.stats.{ClickhousePlayerStatsRequest, PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
@@ -15,7 +15,7 @@ import javax.inject.{Inject, Singleton}
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import models.web.{NotFoundError, PlayersParameters, RestStatisticsParameters, StatsType}
-import play.api.libs.json.{Json, OWrites, Writes}
+import play.api.libs.json.{JsValue, Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfo, LeagueInfoService, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
@@ -181,13 +181,12 @@ class RestDivisionLevelController @Inject()(val controllerComponents: Controller
   def oldestTeams(leagueId: Int, divisionLevel: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(OldestTeamsRequest, leagueId, divisionLevel, restStatisticsParameters)
 
-  def promotions(leagueId: Int, divisionLevel: Int): Action[AnyContent] = Action.async { implicit request =>
+  def promotions(leagueId: Int, divisionLevel: Int): Action[AnyContent] = asyncZio {
     PromotionsRequest.execute(
         OrderingKeyPath(leagueId = Some(leagueId),
             divisionLevel = Some(divisionLevel)),
           leagueInfoService.leagueInfo.currentSeason(leagueId))
       .map(PromotionWithType.convert)
-      .map(result => Ok(Json.toJson(result)))
   }
 
   def dreamTeam(season: Int, leagueId: Int, divisionLevel: Int, sortBy: String, statsType: StatsType): Action[AnyContent] = Action.async{ implicit request =>

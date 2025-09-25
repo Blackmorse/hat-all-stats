@@ -1,5 +1,3 @@
-
-
 name := "hattid-scala"
 trapExit := false
 
@@ -8,6 +6,8 @@ ThisBuild / organization := "com.blackmorse.hattrick"
 
 val clickhouseVersion = "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
 val anormVersion = "org.playframework.anorm" %% "anorm" % "2.8.1"
+val zioVersion = "2.1.21"
+val tranzactIOVersion = "5.6.0"
 
 lazy val webDependencies = Seq(
   guice,
@@ -15,13 +15,14 @@ lazy val webDependencies = Seq(
   caffeine,
   "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % Test,
   clickhouseVersion,
-//  "ai.x" %% "play-json-extensions" % "0.42.0",
-  anormVersion
+  "io.github.gaelrenoux" %% "tranzactio-anorm" % tranzactIOVersion,
 )
 
 lazy val webSettings = Seq(
   name := "web",
-  resolvers += Resolver.mavenLocal,
+  resolvers ++= Seq(
+    Resolver.mavenLocal,
+  ),
   version := "1.0-SNAPSHOT",
   libraryDependencies ++= webDependencies,
   assemblyMergeStrategy in assembly := {
@@ -60,10 +61,13 @@ lazy val chppSettings = Seq(
     "commons-codec" % "commons-codec" % "1.15",
     ("com.lucidchart" %% "xtract" % "2.3.0")
       .exclude("org.scala-lang.modules", "scala-xml_2.13")
+      .exclude("org.scala-lang.modules", "scala-collection-compat_2.13")
       .cross(CrossVersion.for3Use2_13),
     "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
     "org.apache.pekko" %% "pekko-http" % pekkoHttpVersion,
-    "org.apache.pekko" %% "pekko-stream" % pekkoVersion
+    "org.apache.pekko" %% "pekko-stream" % pekkoVersion,
+    "dev.zio" %% "zio" % zioVersion,
+    "dev.zio" %% "zio-streams" % zioVersion
   )
 )
 
@@ -111,5 +115,3 @@ lazy val hattrickTests = (project in file("hattrick-tests"))
   .dependsOn(scalaCommon)
   .dependsOn(sqlBuilder)
   .settings(testSettings)
-
-

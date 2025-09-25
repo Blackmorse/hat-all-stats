@@ -5,14 +5,15 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.model.promotions.Promotion
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import sqlbuilder.Select
-
-import scala.concurrent.Future
+import ClickhouseRequest.*
+import models.web.HattidError
+import zio.IO
 
 object PromotionsRequest extends ClickhouseRequest[Promotion] {
   override val rowParser: RowParser[Promotion] = Promotion.promotionMapper
 
   def execute(orderingKeyPath: OrderingKeyPath, season: Int)
-             (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[Promotion]] = {
+             (implicit restClickhouseDAO: RestClickhouseDAO): IO[HattidError, List[Promotion]] = {
 
     val divisionLevelCondition = orderingKeyPath.divisionLevel.map(level => s"up_division_level = $level OR up_division_level = ${level - 1}")
     val hasLeagueUnitIdCondition = orderingKeyPath.leagueUnitId.map(id => s"has(`going_down_teams.league_unit_id`, $id) OR has(`going_up_teams.league_unit_id`, $id)")
@@ -50,6 +51,7 @@ object PromotionsRequest extends ClickhouseRequest[Promotion] {
         .and(hasLeagueUnitIdCondition)
         .and(hasTeamIdCondition)
 
-    restClickhouseDAO.execute(newBuilder.sqlWithParameters().build, rowParser)
+    restClickhouseDAO.executeZIO(newBuilder.sqlWithParameters().build, rowParser)
+      .hattidErrors
   }
 }
