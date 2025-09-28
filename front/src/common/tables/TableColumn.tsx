@@ -1,3 +1,5 @@
+import { type JSX } from "react"
+
 interface TableColumn<RowModel> {
     columnHeader: {
         title: string

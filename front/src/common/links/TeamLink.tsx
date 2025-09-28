@@ -1,5 +1,5 @@
+import { type JSX } from 'react'
 import HattidLink, { LinkProps } from './HattidLink';
-import React from 'react'
 import LeagueLink from './LeagueLink'
 import CountryImage from '../elements/CountryImage';
 
@@ -16,7 +16,7 @@ class TeamLink extends HattidLink<Props> {
     additionalContent(): JSX.Element {
         let flagLink: JSX.Element = <></>
         if (this.props.flagCountryNumber !== undefined) {
-            let flagNumber = (this.props.flagCountryNumber) as number
+            const flagNumber = (this.props.flagCountryNumber) as number
             flagLink = <LeagueLink id={flagNumber} forceRefresh={true}
              text={<CountryImage countryId={flagNumber} />}/>
         }

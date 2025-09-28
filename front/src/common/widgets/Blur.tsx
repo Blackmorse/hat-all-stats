@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type JSX } from 'react';
 import {ClipLoader} from "react-spinners";
 import './Blur.css'
 import { Translation } from 'react-i18next'
@@ -15,7 +15,7 @@ class Blur extends React.Component<Props> {
         let content: JSX.Element
         if (this.props.loadingState === LoadingEnum.ERROR) {
             content = <Translation>{
-                (t, { i18n }) =>
+                (t) =>
                     <span className="blur_error">{t('error.loading')} 
                         <span className="table_link" onClick={this.props.updateCallback}>
                             <img className="reload_img" src="/reload.svg" alt="Reload" />

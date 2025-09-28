@@ -1,3 +1,4 @@
+import { type JSX } from 'react'
 import TeamOverviewSection from './TeamOverviewSection'
 import TeamStatOverview from '../../rest/models/overview/TeamStatOverview'
 import { OverviewTableSectionProps } from './OverviewTableSection'

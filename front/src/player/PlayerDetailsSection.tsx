@@ -1,4 +1,3 @@
-import React from "react"
 import { Col, Row, Card } from "react-bootstrap"
 import {useTranslation} from "react-i18next"
 import CountryImage from "../common/elements/CountryImage"
@@ -27,7 +26,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                 <Col lg={5} md={12}>
                     <div className='d-flex flex-row'>
                         <div className='mx-4' style={{position: 'relative', width: '120px', height: '160px'}}>
-                            {stateAndRequest.currentState.avatar.map(avatarPart => <img src={'https://hattrick.org' + avatarPart.url}  
+                            {stateAndRequest.currentState.avatar.map((avatarPart, index) => <img key={`avatar-${index}`} src={'https://hattrick.org' + avatarPart.url}  
                                 style={{position: 'absolute', left: avatarPart.x + 'px', top: avatarPart.y + 'px'}}/>)}
                         </div>
                         <Col>
@@ -38,7 +37,7 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                                 </tr>
                                 <tr>
                                     <td>{t('player.experience')}</td>
-                                    <td className='text-center'>{props.playerProps.skillLevelTranslation(i18n.resolvedLanguage, stateAndRequest.currentState.currentPlayerCharacteristics.experience)}</td>
+                                    <td className='text-center'>{props.playerProps.skillLevelTranslation(i18n.resolvedLanguage || 'en', stateAndRequest.currentState.currentPlayerCharacteristics.experience)}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('table.tsi')}</td>
@@ -52,11 +51,11 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                             <table style={{maxWidth: '220px'}} className='col small-font border border-1 bg-light shadow-sm border-secondary overflow-visible m-2 table'>
                                 <tr>
                                     <td>{t('player.form')}</td>
-                                    <td className='text-center'>{props.playerProps.skillLevelTranslation(i18n.resolvedLanguage, stateAndRequest.currentState.currentPlayerCharacteristics.form)}</td>
+                                    <td className='text-center'>{props.playerProps.skillLevelTranslation(i18n.resolvedLanguage || 'en', stateAndRequest.currentState.currentPlayerCharacteristics.form)}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('player.speciality')}</td>
-                                    <td className='text-center'>{props.playerProps.specialityTranslation(i18n.resolvedLanguage, stateAndRequest.currentState.currentPlayerCharacteristics.speciality)}</td>
+                                    <td className='text-center'>{props.playerProps.specialityTranslation(i18n.resolvedLanguage || 'en', stateAndRequest.currentState.currentPlayerCharacteristics.speciality)}</td>
                                 </tr>
                                 <tr>
                                     <td>{t('table.position')}</td>
@@ -83,8 +82,8 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                             <th>{t('player.minutes')}</th>
                         </thead>
                         <tbody>
-                            {stateAndRequest.currentState?.playerSeasonStats.entries.map(entry => 
-                                <tr>
+                            {stateAndRequest.currentState?.playerSeasonStats.entries.map((entry, index) => 
+                                <tr key={`stats-${index}`}>
                                     <td className='text-center'>{entry.season + props.playerProps.seasonOffset()}</td>
                                     <td className='text-center'>{entry.leagueGoals}</td>
                                     <td className='text-center'>{entry.cupGoals}</td>
@@ -131,8 +130,8 @@ const PlayerDetailsSection = (props: {playerProps: PlayerLevelDataProps}) => {
                 <th className='text-center'>{t('table.salary')}</th>
             </thead>
             <tbody>
-                {stateAndRequest.currentState?.playerLeagueUnitHistory.map(entry =>
-                <tr>
+                {stateAndRequest.currentState?.playerLeagueUnitHistory.map((entry, index) =>
+                <tr key={`history-${index}`}>
                     <td>{entry.season + props.playerProps.seasonOffset()} ({entry.round})</td>
                     <td>
                         <LeagueLink id={entry.fromLeagueId} text={

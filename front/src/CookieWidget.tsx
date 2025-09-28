@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import { Translation } from 'react-i18next'
 import './i18n'
 import './CookieWidget'
@@ -26,7 +26,7 @@ class CookieWidget extends React.Component<{}, State> {
         let cw: JSX.Element = <></>
         if(this.state.cookiesAccepted !== true) {
             cw = <Translation>{
-            (t, { i18n }) => <div id="cookies">
+            (t) => <div id="cookies">
             <header className="cookie_header">{t('cookies.header')}</header>
             <article className="cookie_article">{t('cookies.content')}</article>
             <button id="cookie_yes" onClick={this.onClick}>{t('cookies.accept')}</button>

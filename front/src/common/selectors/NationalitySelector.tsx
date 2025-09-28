@@ -22,14 +22,14 @@ class NationalitySelector extends React.Component<Props> {
     }
 
     onChanged = (event: React.FormEvent<HTMLSelectElement>) => {
-        let nationality = Number(event.currentTarget.value)
+        const nationality = Number(event.currentTarget.value)
         
         this.props.callback((nationality === 0) ? undefined : nationality)
     }
 
     render() {
         return <Translation>
-        { (t, { i18n }) =>
+        { (t) =>
             <div className='d-flex flex-row align-items-center mx-2  my-xs-2 my-sm-2 my-lg-0 my-md-0'>
                 <span className='me-1'>{t('filter.nationality')}</span>
                 <Form.Select size='sm' defaultValue={this.props.value}

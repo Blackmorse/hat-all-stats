@@ -1,4 +1,4 @@
-import React from 'react';
+import { type JSX } from 'react';
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import FormationsOverview from '../../rest/models/overview/FormationsOverview'
 import { getFormationsOverview } from '../../rest/Client'
@@ -13,10 +13,10 @@ class FormationsOverviewSectionBase extends OverviewSection<Array<FormationsOver
     loadOverviewEntity = getFormationsOverview
 
     renderOverviewSection(data: Array<FormationsOverview>): JSX.Element {
-        let totalFormations = data.map(fo => fo.count)
+        const totalFormations = data.map(fo => fo.count)
             .reduce((sum, current) => sum + current, 0);
 
-        let top6 = data.slice(0, 6)
+        const top6 = data.slice(0, 6)
         return <table className="table table-striped table-rounded table-sm small text-center">
             <tbody>
                 {top6.map(formation => {

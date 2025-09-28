@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import { LoadingEnum } from '../enums/LoadingEnum';
 import Blur from '../widgets/Blur';
 import Bot from '../widgets/Bot';

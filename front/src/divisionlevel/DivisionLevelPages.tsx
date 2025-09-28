@@ -1,4 +1,4 @@
-import React from 'react';
+import { type JSX } from 'react';
 import { PagesEnum } from '../common/enums/PagesEnum';
 import DivisionLevelDataProps from './DivisionLevelDataProps'
 import DivisionLevelOverviewPage from './DivisionLevelOverviewPage';

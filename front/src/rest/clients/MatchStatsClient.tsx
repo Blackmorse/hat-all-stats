@@ -4,7 +4,7 @@ import { parseAxiosResponse } from '../Client';
 import SimilarMatchesStats from "../models/match/SimilarMatchesStats";
 import SingleMatch from "../models/match/SingleMatch";
 
-const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
+const axios = ax.create({ baseURL: import.meta.env.VITE_HATTID_SERVER_URL })
 
 export interface SimilarMatchesRequest {
     singleMatch: SingleMatch,
@@ -17,14 +17,14 @@ export interface SimilarMatchesRequest {
 export function getSimilarMatchesByRatingsWithAnnoy(similarMatchesRequest: SimilarMatchesRequest,
     callback: (loadingEnum: LoadingEnum, result?: SimilarMatchesStats) => void): void {
 
-    var parameters: any = {}
+    const parameters: any = {}
 
     parameters.accuracy = similarMatchesRequest.accuracy
     parameters.considerTacticType = similarMatchesRequest.considerTacticType
     parameters.considerTacticSkill = similarMatchesRequest.considerTacticSkill
     parameters.considerSetPiecesLevels = similarMatchesRequest.considerSetPiecesLevels
 
-    let parametersString = new URLSearchParams(parameters).toString()
+    const parametersString = new URLSearchParams(parameters).toString()
 
     axios.post<SimilarMatchesStats>('/api/matches/similarMatchesByRatingsWithAnnoy?' + parametersString, similarMatchesRequest.singleMatch)
         .then(response => parseAxiosResponse(response, callback))

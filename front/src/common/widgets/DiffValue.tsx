@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import TeamRanking from '../../rest/models/team/TeamRanking'
 
 interface Props {
@@ -10,8 +10,8 @@ interface Props {
 
 class DiffValue extends React.Component<Props> {
     render() {
-        let valueFunc = this.props.valueFunc
-        let formatter = this.props.formatter
+        const valueFunc = this.props.valueFunc
+        const formatter = this.props.formatter
         if(valueFunc(this.props.previousRanking) > valueFunc(this.props.lastRanking)) {
             return <>
                 <img className='trend trend_down' src="/trend-red.png" alt="down" />

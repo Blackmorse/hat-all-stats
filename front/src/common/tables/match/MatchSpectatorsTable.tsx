@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { getMatchSpectators } from '../../../rest/Client'
 import MatchSpectators from '../../../rest/models/match/MatchSpectators'

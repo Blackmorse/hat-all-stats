@@ -1,3 +1,4 @@
+import { type JSX } from 'react'
 import { getSurprisingMatchesOverview } from '../../rest/Client'
 import MatchesOverviewSection from './MatchesOverviewSection'
 import Section from '../sections/Section';

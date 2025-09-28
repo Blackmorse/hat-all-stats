@@ -21,8 +21,8 @@ interface State {
 class LeftMenu extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props)
-        let groupsMap = this.groupBy(props.pages)
-        let stateMap = new Map(Array.from(groupsMap.keys()).map(key => [key, true]))
+        const groupsMap = this.groupBy(props.pages)
+        const stateMap = new Map(Array.from(groupsMap.keys()).map(key => [key, true]))
 
         this.state = {
             stateMap: stateMap,
@@ -31,17 +31,17 @@ class LeftMenu extends React.Component<Props, State> {
     }
 
     private groupBy(pages: Array<PagesEnum>): Map<MenuGroupsEnum, Array<PagesEnum>> {
-        let map = new Map<MenuGroupsEnum, Array<PagesEnum>>()
+        const map = new Map<MenuGroupsEnum, Array<PagesEnum>>()
               
-        var i: number
+        let i: number
         for(i = 0; i < pages.length; i++) {
-            let page = pages[i]
+            const page = pages[i]
             if (pages.indexOf(page) > -1) {
-                let group = Mappings.groupMap.get(page)
+                const group = Mappings.groupMap.get(page)
                 if (!group) {
                     continue
                 }
-                let currentGroup = map.get(group)
+                const currentGroup = map.get(group)
                 if(currentGroup) {
                     currentGroup.push(page)
                 } else {
@@ -54,10 +54,9 @@ class LeftMenu extends React.Component<Props, State> {
     }
 
     showHide(group: MenuGroupsEnum) {
-        let newMap = new Map(this.state.stateMap)
-        let oldValue: boolean
-        let mapValue = this.state.stateMap.get(group)
-        oldValue = (mapValue) ? mapValue : false
+        const newMap = new Map(this.state.stateMap)
+        const mapValue = this.state.stateMap.get(group)
+        const oldValue = (mapValue) ? mapValue : false
 
         newMap.set(group, !oldValue)
 
@@ -68,14 +67,14 @@ class LeftMenu extends React.Component<Props, State> {
     }
 
     render() {     
-        let groups = this.state.groupsMap
-        let stateMap = this.state.stateMap
+        const groups = this.state.groupsMap
+        const stateMap = this.state.stateMap
 
-        let down = "▾"
-        let right = "▸"
+        const down = "▾"
+        const right = "▸"
         
         return <Translation>{
-            (t, { i18n }) =>
+            (t) =>
             <Card className="mb-3 shadow">
                 <Card.Header className="lead">{t(this.props.title)}</Card.Header>
                 <Card.Body>

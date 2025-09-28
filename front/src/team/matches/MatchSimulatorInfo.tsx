@@ -1,4 +1,3 @@
-import Slider from '@material-ui/core/Slider'
 import React from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
@@ -9,6 +8,7 @@ import { getSimilarMatchesByRatingsWithAnnoy, SimilarMatchesRequest } from '../.
 import SimilarMatchesStats from '../../rest/models/match/SimilarMatchesStats'
 import SingleMatch from '../../rest/models/match/SingleMatch'
 import './MatchSimulatorInfo.css'
+import { Slider } from '@mui/material'
 
 
 const MatchSimulatorInfo = (props: {singleMatch: SingleMatch}) => {
@@ -72,7 +72,7 @@ const MatchSimulatorInfo = (props: {singleMatch: SingleMatch}) => {
     const content = (stateAndRequest: StateAndRequest<SimilarMatchesRequest | undefined /* for lazy initialization */, SimilarMatchesStats | undefined>) => {
 
         let results = <></>
-        let stats = stateAndRequest.currentState
+        const stats = stateAndRequest.currentState
         if (stats !== undefined) {
             results = resultsContent(stats)
         }

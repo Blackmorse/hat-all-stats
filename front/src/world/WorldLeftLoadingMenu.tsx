@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import '../i18n'
 import { Translation } from 'react-i18next'
 import moment from 'moment'
@@ -15,8 +15,8 @@ const WorldLeftLoadingMenu = (props: Props) => {
     if(!props.worldLevelDataProps || !props.worldLevelDataProps.loadingInfo()) {
         return <></>
     }
-    let worldData = props.worldLevelDataProps
-    let percent = worldData.loadingInfo().proceedCountries / worldData.countries().length
+    const worldData = props.worldLevelDataProps
+    const percent = worldData.loadingInfo().proceedCountries / worldData.countries().length
 
     let currentProcess: JSX.Element
     if(worldData.loadingInfo().currentCountry) {

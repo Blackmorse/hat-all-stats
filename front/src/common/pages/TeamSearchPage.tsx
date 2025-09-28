@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import TeamSearchResult from '../../rest/models/TeamSearchResult'
 import TeamLink from '../links/TeamLink'
 import Section, { SectionState } from '../sections/Section'
@@ -26,7 +26,7 @@ class TeamSearchPageBase extends
     }
 
     render(): JSX.Element {
-        return <Translation>{(t, { i18n } ) => <Card className='mt-3 shadow'>
+        return <Translation>{(t) => <Card className='mt-3 shadow'>
             <Card.Header className='lead'>{t(PagesEnum.TEAM_SEARCH)}</Card.Header>
             <Card.Body>
                 <SearchTeam  callback={results => this.setState({results: results})}/>

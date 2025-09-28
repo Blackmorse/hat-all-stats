@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import ExecutableComponent from "../../sections/ExecutableComponent";
 import NumbersChartModel from '../../../rest/models/overview/NumbersChartModel'
 import { LoadingEnum } from '../../enums/LoadingEnum';
@@ -36,12 +36,12 @@ class NumbersChart extends ExecutableComponent<Props, State, Array<NumbersChartM
         if(this.state.numbers === undefined) {
             return <></>
         }
-        let formatter = this.props.numberFormatter === undefined ? (n: number) => n : this.props.numberFormatter
+        const formatter = this.props.numberFormatter === undefined ? (n: number) => n : this.props.numberFormatter
 
-        let x = this.state.numbers.map(numb => i18n.t('filter.season') + ' ' + numb.season + ' ' + i18n.t("chart.round") + ' ' + numb.round)
-        let y = this.state.numbers.map(numb => numb.count)
+        const x = this.state.numbers.map(numb => i18n.t('filter.season') + ' ' + numb.season + ' ' + i18n.t("chart.round") + ' ' + numb.round)
+        const y = this.state.numbers.map(numb => numb.count)
 
-        let chartData = [
+        const chartData = [
             {
                 type: 'scatter',
                 x: x,
@@ -49,7 +49,7 @@ class NumbersChart extends ExecutableComponent<Props, State, Array<NumbersChartM
             }
         ]
         
-        let layout = {
+        const layout = {
             title: {
                 text: this.props.title
             },

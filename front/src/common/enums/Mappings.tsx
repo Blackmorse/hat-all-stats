@@ -32,7 +32,9 @@ class Mappings {
         [PagesEnum.CREATED_SAME_TIME_TEAMS, MenuGroupsEnum.TEAM],
         [PagesEnum.TEAM_COMPARSION, MenuGroupsEnum.TEAM],
         [PagesEnum.OLDEST_TEAMS, MenuGroupsEnum.TEAM],
-        [PagesEnum.PLAYER_DETAILS, MenuGroupsEnum.PLAYER]
+        [PagesEnum.PLAYER_DETAILS, MenuGroupsEnum.PLAYER],
+        [PagesEnum.MATCH_ANALYZER, MenuGroupsEnum.MATCH],
+        [PagesEnum.TEAM_RANKINGS, MenuGroupsEnum.TEAM]
         ])
     
     static tacticType: Map<number, string> = 
@@ -49,7 +51,7 @@ class Mappings {
     static PAGE = 'page'
 
     static createBiMap<K, V>(arr: Array<[K, V]>): BiMap<K, V> {
-        let biMap = new BiMap<K, V>()
+        const biMap = new BiMap<K, V>()
         arr.forEach(a => {
             biMap.set(a[0], a[1])
         })

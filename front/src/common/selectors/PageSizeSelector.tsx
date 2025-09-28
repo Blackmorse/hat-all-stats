@@ -13,7 +13,7 @@ class PageSizeSelector extends React.Component<PageSizeProperties> {
 
     render() {
         return <Translation>{
-            (t, { i18n }) =><div className="d-flex flex-row align-items-end">
+            (t) =><div className="d-flex flex-row align-items-end">
             <span className="very-small-font ms-auto mx-2 my-xs-2 my-sm-2 my-lg-0 my-md-0">{t('filter.page_size')}</span>
             {this.sizes.map(size => {
                 return <button 

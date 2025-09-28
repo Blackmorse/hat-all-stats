@@ -8,9 +8,10 @@ import { createStatisticsParameters, startUrl, parseAxiosResponse, statisticsReq
 import TeamHatstats from '../models/team/TeamHatstats';
 import TeamFanclubFlags from '../models/team/TeamFanclubFlags';
 import TeamStreakTrophies from '../models/team/TeamStreakTrophies';
+import TeamRankingsStats from '../models/team/TeamRankingsStats';
 
 
-const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
+const axios = ax.create({ baseURL: import.meta.env.VITE_HATTID_SERVER_URL })
 
 
 export function getTeamSalaryTSI(request: LevelRequest,
@@ -18,15 +19,31 @@ export function getTeamSalaryTSI(request: LevelRequest,
         playedInLastMatch: boolean,
         excludeZeroTsi: boolean,
         callback: (loadingEnum: LoadingEnum, entities?: RestTableData<TeamSalaryTSI>) => void) {
-    let params = createStatisticsParameters(statisticsParameters)
+    const params = createStatisticsParameters(statisticsParameters)
     axios.get<RestTableData<TeamSalaryTSI>>(startUrl(request) + '/teamSalaryTsi?' + params.toString() + 
             '&playedInLastMatch=' + playedInLastMatch + '&excludeZeroTsi=' + excludeZeroTsi)
         .then(response => parseAxiosResponse(response, callback))
         .catch(_e => callback(LoadingEnum.ERROR))
 }
 
-export let getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')
+export const getTeamHatstats = statisticsRequest<TeamHatstats>('teamHatstats')
 
-export let getTeamFanclubFlags = statisticsRequest<TeamFanclubFlags>('teamFanclubFlags')
+export const getTeamFanclubFlags = statisticsRequest<TeamFanclubFlags>('teamFanclubFlags')
 
-export let getTeamStreakTrophies = statisticsRequest<TeamStreakTrophies>('teamStreakTrophies')
+export const getTeamStreakTrophies = statisticsRequest<TeamStreakTrophies>('teamStreakTrophies')
+
+export function getTeamRankings(teamId: number, season: number,
+                                 callback: (loadingEnum: LoadingEnum, teamRankingsStats?: TeamRankingsStats) => void) {
+    const seasonFilter = (season !== -1) ? `season=${season}` : ""
+    axios.get<TeamRankingsStats>(`/api/team/${teamId}/teamRankings?${seasonFilter}`)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(_e => callback(LoadingEnum.ERROR))
+}
+
+export function getTeamRankingsRange(teamId: number, fromSeason: number, toSeason: number,
+                                    callback: (loadingEnum: LoadingEnum, teamRankingsStats?: TeamRankingsStats) => void) {
+    const seasonFilter = `fromSeason=${fromSeason}&toSeason=${toSeason}`
+    axios.get<TeamRankingsStats>(`/api/team/${teamId}/teamRankingsRange?${seasonFilter}`)
+        .then(response => parseAxiosResponse(response, callback))
+        .catch(_e => callback(LoadingEnum.ERROR))
+}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import NearestMatch from '../../rest/models/match/NearestMatch'
 import TeamLink from '../../common/links/TeamLink'
 import ExternalMatchLink from '../../common/links/ExternalMatchLink';

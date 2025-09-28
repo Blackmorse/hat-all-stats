@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { getPlayerGoalsGames } from '../../../rest/clients/PlayerStatsClient'
 import PlayerGoalGames from '../../../rest/models/player/PlayerGoalsGames'

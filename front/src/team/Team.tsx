@@ -1,4 +1,3 @@
-import React from 'react';
 import { useMatch } from 'react-router';
 import CountryLevelLayout from '../common/layouts/CountryLevelLayout';
 import {getTeamData} from '../rest/clients/LevelDataClient';

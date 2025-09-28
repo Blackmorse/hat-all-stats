@@ -1,4 +1,5 @@
-import OverviewPage, { LeagueId } from '../common/overview/OverviewPage'
+import { type JSX } from 'react';
+import OverviewPage, { type LeagueId } from '../common/overview/OverviewPage'
 import WorldLevelDataProps from './WorldLevelDataProps'
 import { PagesEnum } from '../common/enums/PagesEnum';
 import LeagueLink from '../common/links/LeagueLink';

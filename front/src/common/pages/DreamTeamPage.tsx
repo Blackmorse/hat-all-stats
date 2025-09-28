@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react';
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps';
 import { LoadingEnum } from '../enums/LoadingEnum';
 import DreamTeamPlayer from '../../rest/models/player/DreamTeamPlayer';
@@ -69,16 +69,16 @@ class DreamTeamPageBase<Props extends LevelDataProps>
     }
 
     statsTypeChanged(statType: StatsType) {
-        let newRequest = Object.assign({}, this.state.dataRequest)
+        const newRequest = Object.assign({}, this.state.dataRequest)
         newRequest.statsType = statType
         
         this.updateWithRequest(newRequest)
     }
 
     seasonChanged(season: number) {
-        let newRequest = Object.assign({}, this.state.dataRequest)
+        const newRequest = Object.assign({}, this.state.dataRequest)
 
-        let rounds = this.props.levelDataProps.rounds(season)
+        const rounds = this.props.levelDataProps.rounds(season)
 
         newRequest.season = season
         newRequest.statsType = {statType: StatsTypeEnum.ROUND, roundNumber: rounds[rounds.length - 1]}
@@ -101,7 +101,7 @@ class DreamTeamPageBase<Props extends LevelDataProps>
     }
 
     private wings(dreamTeamPlayers: Array<DreamTeamPlayer>, linePositions: number, position: string): Array<DreamTeamPlayerPosition> {
-        let result: Array<DreamTeamPlayerPosition> = []
+        const result: Array<DreamTeamPlayerPosition> = []
         if (linePositions === 2) {
             return []
         } else {
@@ -112,7 +112,7 @@ class DreamTeamPageBase<Props extends LevelDataProps>
     }
 
     private centers(dreamTeamPlayers: Array<DreamTeamPlayer>, linePositions: number, position: string): Array<DreamTeamPlayerPosition> {
-        let result: Array<DreamTeamPlayerPosition> = []
+        const result: Array<DreamTeamPlayerPosition> = []
         if(linePositions === 2 || linePositions === 4) {
             this.pushPlayer(result, 0, dreamTeamPlayers, position)
             this.pushPlayer(result, 1, dreamTeamPlayers, position)
@@ -127,7 +127,7 @@ class DreamTeamPageBase<Props extends LevelDataProps>
     }
 
     private forwardsKeeper(dreamTeamPlayers: Array<DreamTeamPlayer>, linePositions: number, position: string): Array<DreamTeamPlayerPosition> {
-        let result: Array<DreamTeamPlayerPosition> = []
+        const result: Array<DreamTeamPlayerPosition> = []
         Array.from(Array(linePositions).keys()).forEach(i => {
             this.pushPlayer(result, i, dreamTeamPlayers, position)
         })
@@ -146,19 +146,19 @@ class DreamTeamPageBase<Props extends LevelDataProps>
             return <></>
         }
 
-        let keepers = this.state.dreamTeamPlayers.filter(player => player.role === 'keeper')
-        let defenders = this.state.dreamTeamPlayers.filter(player => player.role === 'defender')
-        let wingbacks = this.state.dreamTeamPlayers.filter(player => player.role === 'wingback')
-        let midfielders = this.state.dreamTeamPlayers.filter(player => player.role === 'midfielder')
-        let wingers = this.state.dreamTeamPlayers.filter(player => player.role === 'winger')
-        let forwards = this.state.dreamTeamPlayers.filter(player => player.role === 'forward')
+        const keepers = this.state.dreamTeamPlayers.filter(player => player.role === 'keeper')
+        const defenders = this.state.dreamTeamPlayers.filter(player => player.role === 'defender')
+        const wingbacks = this.state.dreamTeamPlayers.filter(player => player.role === 'wingback')
+        const midfielders = this.state.dreamTeamPlayers.filter(player => player.role === 'midfielder')
+        const wingers = this.state.dreamTeamPlayers.filter(player => player.role === 'winger')
+        const forwards = this.state.dreamTeamPlayers.filter(player => player.role === 'forward')
 
-        let displayedKeepers = this.forwardsKeeper(keepers, 1, i18n.t('dream_team.keeper'))
-        let displayedWingbacks = this.wings(wingbacks, this.state.formation.defenders, i18n.t('dream_team.wingback'))
-        let displayedDefs = this.centers(defenders, this.state.formation.defenders, i18n.t('dream_team.defender'))
-        let displayedWings = this.wings(wingers, this.state.formation.midfielders, i18n.t('dream_team.winger'))
-        let displayedMidfielders = this.centers(midfielders, this.state.formation.midfielders, i18n.t('dream_team.midfielder'))
-        let displayedForwards = this.forwardsKeeper(forwards, this.state.formation.forwards, i18n.t('dream_team.forward'))
+        const displayedKeepers = this.forwardsKeeper(keepers, 1, i18n.t('dream_team.keeper'))
+        const displayedWingbacks = this.wings(wingbacks, this.state.formation.defenders, i18n.t('dream_team.wingback'))
+        const displayedDefs = this.centers(defenders, this.state.formation.defenders, i18n.t('dream_team.defender'))
+        const displayedWings = this.wings(wingers, this.state.formation.midfielders, i18n.t('dream_team.winger'))
+        const displayedMidfielders = this.centers(midfielders, this.state.formation.midfielders, i18n.t('dream_team.midfielder'))
+        const displayedForwards = this.forwardsKeeper(forwards, this.state.formation.forwards, i18n.t('dream_team.forward'))
 
         let sumStars = 0
         sumStars += this.starsOfPlayers(displayedKeepers)
@@ -191,7 +191,7 @@ class DreamTeamPageBase<Props extends LevelDataProps>
             </Row>
             <Row className='justify-content-around my-3'>
                 <Col lg={2} className=""></Col>
-                    {displayedKeepers.map(keeper => <Col lg={2}>
+                    {displayedKeepers.map(keeper => <Col lg={2} key={`keeper-${keeper.player?.playerSortingKey.playerId || Math.random()}`}>
                         <DreamTeamPlayerCard dreamTeamPlayerPosition={keeper} 
                                              showTeamCountryFlag={this.props.showCountryFlags}
                                              key={'dream_team_player_' + keeper.player?.playerSortingKey.playerId} />
@@ -204,7 +204,7 @@ class DreamTeamPageBase<Props extends LevelDataProps>
                 <Col className='mx-0' lg={2}>
                     <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWingbacks[0]} showTeamCountryFlag={this.props.showCountryFlags} />
                 </Col>
-                    {displayedDefs.map(def => <Col lg={2} className='mx-0'>
+                    {displayedDefs.map(def => <Col lg={2} className='mx-0' key={`def-${def.player?.playerSortingKey.playerId || Math.random()}`}>
                         <DreamTeamPlayerCard dreamTeamPlayerPosition={def} 
                                              showTeamCountryFlag={this.props.showCountryFlags} 
                                              key={'dream_team_player_' + def.player?.playerSortingKey.playerId}/>
@@ -220,7 +220,7 @@ class DreamTeamPageBase<Props extends LevelDataProps>
                     <DreamTeamPlayerCard dreamTeamPlayerPosition={displayedWings[0]} showTeamCountryFlag={this.props.showCountryFlags} />
                 </Col>
                 
-                    {displayedMidfielders.map(midfielder => <Col className='mx-0' lg={2}  >
+                    {displayedMidfielders.map(midfielder => <Col className='mx-0' lg={2} key={`mid-${midfielder.player?.playerSortingKey.playerId || Math.random()}`}>
                         <DreamTeamPlayerCard dreamTeamPlayerPosition={midfielder} 
                                              showTeamCountryFlag={this.props.showCountryFlags} 
                                              key={'dream_team_player_' + midfielder.player?.playerSortingKey.playerId} />
@@ -234,7 +234,7 @@ class DreamTeamPageBase<Props extends LevelDataProps>
                 {/* attack */}
             <Row className='justify-content-around align-items-stretch my-3'>
                 <Col className='mx-0' lg={2}></Col>
-                {displayedForwards.map(forward => <Col className='mx-0' lg={2}>
+                {displayedForwards.map(forward => <Col className='mx-0' lg={2} key={`fwd-${forward.player?.playerSortingKey.playerId || Math.random()}`}>
                     <DreamTeamPlayerCard dreamTeamPlayerPosition={forward} 
                                             showTeamCountryFlag={this.props.showCountryFlags} 
                                             key={'dream_team_player_' + forward.player?.playerSortingKey.playerId} />

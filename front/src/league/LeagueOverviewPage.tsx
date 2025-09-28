@@ -1,3 +1,4 @@
+import { type JSX } from 'react'
 import OverviewPage, { LeagueId } from '../common/overview/OverviewPage'
 import LeagueLevelDataProps from './LeagueLevelDataProps'
 import { PagesEnum } from '../common/enums/PagesEnum';

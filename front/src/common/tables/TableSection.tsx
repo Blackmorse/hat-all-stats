@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import { type JSX, useEffect, useState} from 'react'
 import {Col, Container, Row} from 'react-bootstrap'
 import RestTableData from '../../rest/models/RestTableData'
 import StatisticsParameters, {SortingDirection, StatsType, StatsTypeEnum} from '../../rest/models/StatisticsParameters'
@@ -61,14 +61,14 @@ interface TableQueryParams {
 }
 
 function parseParams<LevelProps extends LevelDataProps, Model>(props: Properties<LevelProps, Model>): TableQueryParams {
-    let params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window.location.search);
 
-    let selectedRow = (params.get('selectedRow') === null) ? undefined : Number(params.get('selectedRow'))
-    let cookiesPageSize = (Cookies.get('hattid_page_size') === undefined) ? 16 : Number(Cookies.get('hattid_page_size'))
-    let pageSize = (params.get('pageSize') === null) ? cookiesPageSize : Number(params.get('pageSize'))
-    let pageNumberFromParams = (params.get('pageNumber') === null) ? undefined : Number(params.get('pageNumber'))
+    const selectedRow = (params.get('selectedRow') === null) ? undefined : Number(params.get('selectedRow'))
+    const cookiesPageSize = (Cookies.get('hattid_page_size') === undefined) ? 16 : Number(Cookies.get('hattid_page_size'))
+    const pageSize = (params.get('pageSize') === null) ? cookiesPageSize : Number(params.get('pageSize'))
+    const pageNumberFromParams = (params.get('pageNumber') === null) ? undefined : Number(params.get('pageNumber'))
 
-    let pageNumberFromSelectedRow = (selectedRow) ? Math.floor(Number(selectedRow) / pageSize) : 0
+    const pageNumberFromSelectedRow = (selectedRow) ? Math.floor(Number(selectedRow) / pageSize) : 0
 
     let pageNumber: number
     if (pageNumberFromParams === undefined) {
@@ -76,7 +76,7 @@ function parseParams<LevelProps extends LevelDataProps, Model>(props: Properties
     } else {
         pageNumber = (pageNumberFromParams === undefined) ? 0 : pageNumberFromParams
     }
-    let statType = (params.get('statType') === null) ? props.defaultStatsType?.statType : Mappings.statsTypeMappings.ForwardMap.get(params.get('statType')!)!
+    const statType = (params.get('statType') === null) ? props.defaultStatsType?.statType : Mappings.statsTypeMappings.ForwardMap.get(params.get('statType')!)!
     let statTypeRound: number | undefined = undefined
     if (statType === StatsTypeEnum.ROUND) {
         statTypeRound = (params.get('round') === null) ? props.levelProps.currentRound() : Number(params.get('round'))
@@ -121,9 +121,9 @@ interface Properties<LevelProps extends LevelDataProps, Model> {
 
 
 const TableSection = <LevelProps extends LevelDataProps, Model>(props: Properties<LevelProps, Model>) => {
-    let queryParameters = parseParams(props)
-    let location = useLocation()  
-    let [ t, _i18n ] = useTranslation()
+    const queryParameters = parseParams(props)
+    const location = useLocation()  
+    const [ t, _i18n ] = useTranslation()
     const [ updateCounter, setUpdateCounter ] = useState(0)
     const [ loadingEnum, setLoadingEnum ] = useState(LoadingEnum.LOADING)
     const [ oneTeamPerUnit, setOneTeamPerUnit ] = useState(queryParameters.oneTeamPerUnit)
@@ -300,7 +300,7 @@ const TableSection = <LevelProps extends LevelDataProps, Model>(props: Propertie
             </Col>
     }
 
-    let shareParams: TableQueryParams = {
+    const shareParams: TableQueryParams = {
         pageName: queryParameters.pageName,
         selectedRow: queryParameters.selectedRow,
         season: season,
@@ -320,9 +320,9 @@ const TableSection = <LevelProps extends LevelDataProps, Model>(props: Propertie
         oneTeamPerUnit: oneTeamPerUnit,
         excludeZeroTsi: excludeZeroTsi
     }
-    let anyParams: any = Object.assign({}, shareParams)
-    let params = new URLSearchParams(anyParams)
-    let keysToDel: Array<string> = []
+    const anyParams: any = Object.assign({}, shareParams)
+    const params = new URLSearchParams(anyParams)
+    const keysToDel: Array<string> = []
     params.forEach((value, key) => {
         if (value === undefined || value === 'undefined') {
             keysToDel.push(key)
@@ -331,8 +331,8 @@ const TableSection = <LevelProps extends LevelDataProps, Model>(props: Propertie
 
     keysToDel.forEach(key => params.delete(key))
 
-    let sharedLink = window.location.protocol + '//' + window.location.host + location.pathname + '?' + params.toString()
-    let sharedLinkPopup = <Popup position='bottom center' nested trigger={<button className='btn btn-sm btn-success me-5'> Share <i className="bi bi-caret-down-fill"></i></button>}>
+    const sharedLink = window.location.protocol + '//' + window.location.host + location.pathname + '?' + params.toString()
+    const sharedLinkPopup = <Popup position='bottom center' nested trigger={<button className='btn btn-sm btn-success me-5'> Share <i className="bi bi-caret-down-fill"></i></button>}>
             <div className='input-group bg-light border border-success p-2'>
                 <input type="text" className="form-control" value={sharedLink} />
                 <button type="button" className="btn btn-outline-secondary" onClick={() => {navigator.clipboard.writeText(sharedLink)}}>
@@ -343,7 +343,7 @@ const TableSection = <LevelProps extends LevelDataProps, Model>(props: Propertie
                 </button>
             </div>
         </Popup>
-    let content = 
+    const content = 
             <Card className="mt-3 shadow">
                 <Card.Header className="lead d-flex flex-row justify-content-between">{t(props.pageEnum)}{sharedLinkPopup}</Card.Header>
                 <Card.Body>
@@ -375,12 +375,13 @@ const TableSection = <LevelProps extends LevelDataProps, Model>(props: Propertie
                 <tr>
                 {(props.expandedRowFunc === undefined) ? <></> : <td></td>}
                 {
-                    props.tableColumns.map(tableColumn => {
-                        let sortingInfo = (tableColumn.columnHeader.sortingField === undefined) ? undefined : {
+                    props.tableColumns.map((tableColumn, index) => {
+                        const sortingInfo = (tableColumn.columnHeader.sortingField === undefined) ? undefined : {
                             field: tableColumn.columnHeader.sortingField, 
                             state: {callback: updateSorting, currentSorting: sorting.field, sortingDirection: sorting.direction}
                         }
                         return <SortingTableTh
+                           key={`th-${index}`}
                             title={tableColumn.columnHeader.title}
                             poppedHint={tableColumn.columnHeader.poppedHint}
                             sorting={sortingInfo}

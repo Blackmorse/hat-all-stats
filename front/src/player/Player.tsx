@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import {useMatch} from 'react-router'
 import {PagesEnum} from '../common/enums/PagesEnum'
 import CountryLevelLayout from '../common/layouts/CountryLevelLayout'

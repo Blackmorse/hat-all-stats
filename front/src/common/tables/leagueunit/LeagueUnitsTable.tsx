@@ -1,4 +1,3 @@
-import React from 'react'
 import LeagueUnitRating from '../../../rest/models/leagueunit/LeagueUnitRating'
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
 import TableSection from '../TableSection'

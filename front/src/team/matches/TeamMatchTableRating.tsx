@@ -9,7 +9,7 @@ interface Props {
 class TeamMatchTableRating extends React.Component<Props> {
     render() {
 
-        let leftRightRate = Math.floor(100 * this.props.homeRating / (this.props.homeRating + this.props.awayRating))
+        const leftRightRate = Math.floor(100 * this.props.homeRating / (this.props.homeRating + this.props.awayRating))
 
         return <span className="ratings_ratio">
             <div className="team_rating home" style={{width: leftRightRate.toString() + '%'}}>

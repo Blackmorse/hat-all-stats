@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type JSX } from 'react';
 import LevelDataProps, { LevelDataPropsWrapper } from '../LevelDataProps'
 import { getPromotions } from '../../rest/Client'
 import PromotionWithType from '../../rest/models/promotions/Promotion'

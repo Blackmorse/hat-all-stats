@@ -1,4 +1,3 @@
-import React from 'react'
 import { getWorldData } from '../rest/clients/LevelDataClient'
 import WorldTopMenu from './WorldTopMenu'
 import WorldLeftLoadingMenu from './WorldLeftLoadingMenu'
@@ -8,7 +7,7 @@ import WorldLevelDataProps from './WorldLevelDataProps';
 
 
 const World = () => {
-    let pagesMap = pages()
+    const pagesMap = pages()
 
     return <LevelLayout<WorldLevelDataProps>
             pagesMap={pagesMap}

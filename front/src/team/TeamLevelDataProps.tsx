@@ -1,7 +1,7 @@
-import TeamData from "../rest/models/leveldata/TeamData";
-import LevelRequest from "../rest/models/request/LevelRequest";
-import TeamRequest from "../rest/models/request/TeamRequest";
-import OverviewRequest from "../rest/models/request/OverviewRequest";
+import type TeamData from "../rest/models/leveldata/TeamData";
+import type LevelRequest from "../rest/models/request/LevelRequest";
+import type TeamRequest from "../rest/models/request/TeamRequest";
+import type OverviewRequest from "../rest/models/request/OverviewRequest";
 import CountryLevelDataProps from "../common/CountryLevelDataProps";
 
 class TeamLevelDataProps extends CountryLevelDataProps {

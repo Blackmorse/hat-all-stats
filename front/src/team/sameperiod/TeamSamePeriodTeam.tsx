@@ -13,8 +13,8 @@ const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamLevelDataProps>) =
     const t = useTranslation().t
 
     const onChanged = (event: React.FormEvent<HTMLSelectElement>, setRequest: (request: CreatedSameTimeTeamRequest) => void) => {
-        let periodString = event.currentTarget.value
-        let split = periodString.split('_')
+        const periodString = event.currentTarget.value
+        const split = periodString.split('_')
 
         if (split.length === 1) {
             setRequest({ period: split[0] as 'season' | 'round' })
@@ -32,7 +32,7 @@ const TeamSamePeriodTeams = (props: LevelDataPropsWrapper<TeamLevelDataProps>) =
                     <option value="round">{t('chart.round')}</option>
                     <option value="season">{t('filter.season')}</option>
                     {Array.from(Array(16), (_, index) => index + 1).map(round => 
-                        <option value={"weeks_" + round}>{t('filter.weeks_within').replace('#', round.toString())}</option>
+                        <option key={`week-${round}`} value={"weeks_" + round}>{t('filter.weeks_within').replace('#', round.toString())}</option>
                     )}
                 </Form.Select>
             </Form>

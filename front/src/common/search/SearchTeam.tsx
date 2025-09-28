@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import ExecutableComponent from '../sections/ExecutableComponent'
 import TeamSearchResult from '../../rest/models/TeamSearchResult'
 import { SectionState } from '../sections/Section'
@@ -38,7 +38,7 @@ class SearchTeam extends
 
     executeDataRequest(dataRequest: DataRequest, callback: (loadingState: LoadingEnum, result?: TeamSearchResult[]) => void): void {
         if (dataRequest.searchType === TeamSearchType.NAME) {
-            let name = dataRequest.search
+            const name = dataRequest.search
             if (name && name.trim().length > 0) {
                 searchTeam(this.state.dataRequest.search, callback)
                 return
@@ -81,9 +81,9 @@ class SearchTeam extends
     }
 
     renderSection(): JSX.Element {
-        let a = i18n.t('menu.search')
+        const a = i18n.t('menu.search')
         return <Translation>{
-            (t, { i18n }) => <div className="search_section">
+            (t) => <div className="search_section">
             <select defaultValue={this.state.dataRequest.searchType} onChange={this.searchTypeChangeHandler}>
                 <option value={TeamSearchType.NAME.toString()}>{t('table.team')}</option>
                 <option value={TeamSearchType.ID.toString()}>ID</option>

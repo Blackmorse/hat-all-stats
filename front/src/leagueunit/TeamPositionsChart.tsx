@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import PlotlyChart from 'react-plotly.js';
 import { useTranslation } from 'react-i18next'
 import ExecutableComponent, { StateAndRequest } from '../common/sections/HookExecutableComponent'
@@ -15,19 +15,19 @@ interface Request {
 
 
 const TeamPositionsChart = (leagueUnitPropsWrapper: {leagueUnitProps: LeagueUnitLevelDataProps}) => {
-    let leagueUnitProps = leagueUnitPropsWrapper.leagueUnitProps
+    const leagueUnitProps = leagueUnitPropsWrapper.leagueUnitProps
     const [ t, _i18n ] = useTranslation()
     const [ season, setSeason ] = useState(leagueUnitProps.currentSeason())
 
     const content = (stateAndRequest: StateAndRequest<Request, Array<LeagueUnitTeamStat> | undefined>) => {
-        let positionsHistory = stateAndRequest.currentState
+        const positionsHistory = stateAndRequest.currentState
         if (positionsHistory === undefined || positionsHistory.length === 0) {
             return <></>
         }
-        let currentRound = positionsHistory.reduce((a, b) => a.round > b.round ? a : b).round
-        let x = Array.from({length: currentRound}, (_, i) => i + 1)
+        const currentRound = positionsHistory.reduce((a, b) => a.round > b.round ? a : b).round
+        const x = Array.from({length: currentRound}, (_, i) => i + 1)
 
-        let map: Map<string, Array<number>> = new Map()
+        const map: Map<string, Array<number>> = new Map()
          
         positionsHistory
             .sort((a ,b) => (a.round < b.round) ? -1 : 1)
@@ -37,7 +37,7 @@ const TeamPositionsChart = (leagueUnitPropsWrapper: {leagueUnitProps: LeagueUnit
                 }
                 map.get(teamStat.teamName)?.push(teamStat.position)
             })
-        let chartData = Array.from(map.keys()).map(key => {
+        const chartData = Array.from(map.keys()).map(key => {
             return {
                 type: 'scatter',
                 name: key,
@@ -46,7 +46,7 @@ const TeamPositionsChart = (leagueUnitPropsWrapper: {leagueUnitProps: LeagueUnit
             }
         })
 
-        let layout = {
+        const layout = {
             autosize: false,
             width: '100%',
             height: 300,

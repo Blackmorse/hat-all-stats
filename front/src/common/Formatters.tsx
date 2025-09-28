@@ -1,5 +1,5 @@
+import { type JSX } from 'react';
 import moment from 'moment';
-import React from 'react';
 import './Formatters.css'
 
 export function commasSeparated(value: number): JSX.Element {
@@ -12,7 +12,7 @@ export function stringCommasSeparated(value: number): string {
 
 export function stringAgeFormatter(value?: number): string {
     if (value === undefined) return ''
-    let age =  Math.floor(value / 112).toString() + '(' + (value % 112).toString() + ')'
+    const age =  Math.floor(value / 112).toString() + '(' + (value % 112).toString() + ')'
     return age
 }
 
@@ -71,7 +71,7 @@ export function salaryFormatter(value?: number, currencyRate?: number): JSX.Elem
 }
 
 export function doubleSalaryFormatter(value: number, currencyRate?: number): number {
-    let val = value / ((currencyRate === undefined) ? 1 : currencyRate)
+    const val = value / ((currencyRate === undefined) ? 1 : currencyRate)
     return Math.ceil(val * 100) / 100
 }
 

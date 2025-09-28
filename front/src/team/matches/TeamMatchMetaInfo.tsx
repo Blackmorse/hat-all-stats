@@ -10,10 +10,10 @@ interface Props {
 
 class TeamMatchMetaInfo extends React.Component<Props> {
     render() {
-        let matchRatings = this.props.matchRatings
+        const matchRatings = this.props.matchRatings
 
         return <Translation>{
-            (t, { i18n }) => <table 
+            (t)=> <table 
             className='small-font border border-1 bg-light shadow-sm border-secondary overflow-visible mt-2 table'
             >
             <tbody>

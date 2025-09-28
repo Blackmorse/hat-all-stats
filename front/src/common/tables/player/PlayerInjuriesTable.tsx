@@ -1,4 +1,3 @@
-import React from 'react'
 import { getPlayerInjuries } from '../../../rest/clients/PlayerStatsClient'
 import PlayerInjury from '../../../rest/models/player/PlayerInjury'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'

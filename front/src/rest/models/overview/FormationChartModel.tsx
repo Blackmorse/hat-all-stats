@@ -1,5 +1,5 @@
 export default interface FormationChartModel {
-    formation: String,
+    formation: string,
     season: number, 
     round: number, 
     count: number

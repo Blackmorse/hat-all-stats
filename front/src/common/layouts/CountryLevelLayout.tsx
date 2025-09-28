@@ -1,5 +1,5 @@
+import { type JSX } from 'react'
 import { PagesEnum } from '../enums/PagesEnum'
-import React from 'react'
 import LeftMenu from '../../common/menu/LeftMenu'
 import '../../i18n'
 import './CountryLevelLayout.css'

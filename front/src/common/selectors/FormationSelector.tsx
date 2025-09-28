@@ -19,7 +19,7 @@ export class Formation {
     }
 
     static fromString(formation: string): Formation {
-        let split = formation.split("-")
+        const split = formation.split("-")
         return new Formation(Number(split[0]), Number(split[1]), Number(split[2]))
     }
 }
@@ -50,13 +50,13 @@ class FormationSelector extends React.Component<FormationSelectorProps> {
     }
 
     onChanged = (event: React.FormEvent<HTMLSelectElement>) => {
-        let formation = Formation.fromString(event.currentTarget.value)
+        const formation = Formation.fromString(event.currentTarget.value)
         this.props.callback(formation)
     }
 
     render() {
         return <Translation>
-            { (t, { i18n }) =>
+            { (t) =>
             <div className="d-flex flex-row align-items-center mx-2  my-xs-2 my-sm-2 my-lg-0 my-md-0">
                 <span className='me-1'>{t('matches.formation')}:</span>
                 <Form.Select size='sm' value={this.props.currentFormation.toString()}

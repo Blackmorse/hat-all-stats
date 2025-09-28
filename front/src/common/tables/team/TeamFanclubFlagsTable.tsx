@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { getTeamFanclubFlags } from '../../../rest/clients/TeamStatsClient'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'

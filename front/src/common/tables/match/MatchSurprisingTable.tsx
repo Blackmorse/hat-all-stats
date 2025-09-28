@@ -1,5 +1,4 @@
 import LevelDataProps, { LevelDataPropsWrapper } from '../../LevelDataProps'
-import React from 'react';
 import MatchTopHatstats from '../../../rest/models/match/MatchTopHatstats';
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters';
 import '../../../i18n'

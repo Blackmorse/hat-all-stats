@@ -1,7 +1,5 @@
-import React from 'react';
 import { NearestMatches } from '../../rest/models/match/NearestMatch'
 import '../../i18n'
-import { Translation } from 'react-i18next'
 import Section from '../../common/sections/Section';
 import NearestMatchesTable from './NearestMatchesTable'
 import { LoadingEnum } from '../../common/enums/LoadingEnum';
@@ -48,9 +46,8 @@ class PlayedAndUpcomingMatchesTable extends ExecutableComponent<Props, State, Ne
         if (this.state.nearestMatches === undefined) {
             return <></>
         }
-        let nearestMatches = this.state.nearestMatches
-        return  <Translation>
-            {(t, { i18n}) => <Row>
+        const nearestMatches = this.state.nearestMatches
+        return <Row>
                 <Col lg={6} className='my-1'>
                     <PlayedNearestMatches nearestMatches={nearestMatches.playedMatches} />
                 </Col>
@@ -58,8 +55,6 @@ class PlayedAndUpcomingMatchesTable extends ExecutableComponent<Props, State, Ne
                     <UpcomingNearestMatches nearestMatches={nearestMatches.upcomingMatches} />
                 </Col>
             </Row>
-    }
-    </Translation>
     }
 }
 

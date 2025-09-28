@@ -7,6 +7,7 @@
     "menu.player_state": "Player round stats",
     "menu.formal_team_stats": "Team season stats",
     "menu.matches": "Matches",
+    "menu.match_analyzer": "Match Analyzer",
     "menu.team_rankings": "Team Rankings",
     "menu.search": "Search",
     "menu.team_search": "Team search",
@@ -215,6 +216,26 @@
     "overview.number_of_new_teams": "Number of new teams",
 
     "team.compare": "Compare",
+
+    "team_charts.title": "Team Charts",
+    "team_charts.season_range": "Season Range:",
+    "team_charts.tab.hatstats": "Hatstats",
+    "team_charts.tab.rating": "Rating",
+    "team_charts.tab.power_rating": "Power Rating",
+    "team_charts.tab.salary": "Team Salary",
+    "team_charts.tab.tsi": "TSI",
+    "team_charts.hatstats.title": "Team Hatstats and Ratings",
+    "team_charts.hatstats.empty": "This section will display team hatstats when data is available.",
+    "team_charts.rating.title": "Team Ratings",
+    "team_charts.rating.empty": "This section will display team rating statistics when data is available.",
+    "team_charts.power_rating.title": "Team Power Rating",
+    "team_charts.power_rating.empty": "This section will display team power rating statistics when data is available.",
+    "team_charts.salary.title": "Team Financial Value",
+    "team_charts.salary.empty": "This section will display team financial value statistics when data is available.",
+    "team_charts.tsi.title": "Team Skill Index (TSI)",
+    "team_charts.tsi.empty": "This section will display team TSI statistics when data is available.",
+    "table.tsi_full": "TSI (Total Skill Index)",
+
 
     "filter.weeks_within": "Within # weeks",
 

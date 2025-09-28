@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import { type JSX, useState} from 'react'
 import {useTranslation} from 'react-i18next'
 import SortingTableTh from '../../common/elements/SortingTableTh'
 import {PagesEnum} from '../../common/enums/PagesEnum'
@@ -42,15 +42,16 @@ const TeamSamePeriodTeamsTable = (props: Props) => {
                     <th></th>
                     <th className="text-center">{t('table.team')}</th>
                     <th className="text-center">{t('table.league')}</th>
-                    {props.rowsWithTitle.map(rowWithTitle =>{
+                    {props.rowsWithTitle.map((rowWithTitle, index) =>{
                         return <SortingTableTh 
+                            key={`header-${index}`}
                             title={rowWithTitle.title}
                             sorting={{
                             field: rowWithTitle.title,
                             state: {
                                 callback: (_sortBy: string) => {
                                     if (sortingField === rowWithTitle.title) {
-                                        let newSortingDirection = (sortingDirection === SortingDirection.ASC) ? SortingDirection.DESC : SortingDirection.ASC
+                                        const newSortingDirection = (sortingDirection === SortingDirection.ASC) ? SortingDirection.DESC : SortingDirection.ASC
                                         setSorting([sortingField, sortingFunc, newSortingDirection])
                                     } else {
                                         setSorting([rowWithTitle.title, rowWithTitle.valueFunc, SortingDirection.DESC])
@@ -73,8 +74,8 @@ const TeamSamePeriodTeamsTable = (props: Props) => {
                             <td>{index + 1}</td>
                             <td><TeamLink text={team.createdSameTimeTeam.teamSortingKey.teamName} id={team.createdSameTimeTeam.teamSortingKey.teamId}/></td>
                             <td className="text-center"><LeagueUnitLink id={team.createdSameTimeTeam.teamSortingKey.leagueUnitId} text={team.createdSameTimeTeam.teamSortingKey.leagueUnitName} /></td>
-                            {props.rowsWithTitle.map(rowWithTitle => {
-                                return <td className='text-center'>{rowWithTitle.rowFunc(team.createdSameTimeTeam)}</td>
+                            {props.rowsWithTitle.map((rowWithTitle, idx) => {
+                                return <td className='text-center' key={`cell-${idx}`}>{rowWithTitle.rowFunc(team.createdSameTimeTeam)}</td>
                             })}
                             <td className="text-center">{team.season + props.levelDataPropsWrapper.levelDataProps.levelData.seasonOffset}</td>
                             <td className="text-center">{dateFormatter(team.createdSameTimeTeam.foundedDate)}</td>

@@ -23,7 +23,7 @@ interface PromotionWithType {
     upDivisionLevel: number, 
     upDivisionLevelName: string,
     downDivisionLevelName: string,
-    promoteType: String, 
+    promoteType: string, 
     promotions: Array<Promotion>
 }
 

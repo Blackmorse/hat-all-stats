@@ -16,12 +16,12 @@ class PositionRankingChart extends React.Component<Props, {}> {
     render() {
         const seasons = this.props.leagueRankings.map(l => l.season)
         const uniqSeasons = Array.from(new Set( seasons))
-        let x = uniqSeasons.length > 1
+        const x = uniqSeasons.length > 1
             ? this.props.leagueRankings.map((_, index) => index)
             : this.props.leagueRankings.map((l) => l.round)
 
-        let leagueY = this.props.leagueRankings.map(v => this.props.positionFunc(v) + 1)
-        let divisionLevelY = this.props.divisionLevelRankings.map(v => this.props.positionFunc(v) + 1)
+        const leagueY = this.props.leagueRankings.map(v => this.props.positionFunc(v) + 1)
+        const divisionLevelY = this.props.divisionLevelRankings.map(v => this.props.positionFunc(v) + 1)
 
         const leagueChart = {
             type: 'scatter',
@@ -47,7 +47,7 @@ class PositionRankingChart extends React.Component<Props, {}> {
             ? [leagueChart]
             : [leagueChart, divisionLevelChart]
 
-        let layout = {
+        const layout = {
             title: {
                 text: i18n.t('table.position')
             },

@@ -1,12 +1,11 @@
-import React from 'react'
 import ExternalPlayerLink from '../common/links/ExternalPlayerLink'
 import TopMenu from '../common/menu/TopMenu'
 import PlayerLevelDataProps from './PlayerLevelDataProps'
 
 const PlayerTopMenu = (props: {levelProps?: PlayerLevelDataProps}) => {
-    let externalLink = <ExternalPlayerLink id={props.levelProps?.playerId() || 0} black={false} />
+    const externalLink = <ExternalPlayerLink id={props.levelProps?.playerId() || 0} black={false} />
 
-    let links = [
+    const links = [
         {
             href: "/league/" + props.levelProps?.leagueId(),
             content: props.levelProps?.leagueName()

@@ -1,4 +1,3 @@
-import React from 'react'
 import LevelDataProps, { LevelDataPropsWrapper } from "../../LevelDataProps";
 import { useTranslation } from 'react-i18next';
 import TableSection from '../TableSection';

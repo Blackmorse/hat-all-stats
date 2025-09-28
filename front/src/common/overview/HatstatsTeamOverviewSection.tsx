@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import TeamOverviewSection from './TeamOverviewSection'
 import { OverviewTableSectionProps } from './OverviewTableSection'
 import TeamStatOverview from '../../rest/models/overview/TeamStatOverview'

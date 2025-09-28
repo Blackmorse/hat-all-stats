@@ -7,7 +7,6 @@ import LeagueRequest from './models/request/LeagueRequest'
 import TeamRequest from './models/request/TeamRequest'
 import LevelRequest from './models/request/LevelRequest';
 import LeagueUnitTeamStatsWithPositionDiff, { LeagueUnitTeamStat } from './models/team/LeagueUnitTeamStat';
-import TeamRankingsStats from './models/team/TeamRankingsStats'
 import NearestMatch, { NearestMatches } from './models/match/NearestMatch';
 import TeamCards from './models/team/TeamCards'
 import TeamRating from './models/team/TeamRating'
@@ -41,7 +40,7 @@ import FormationChartModel from './models/overview/FormationChartModel'
 import { CreatedSameTimeTeamRequest } from './models/team/CreatedSameTimeTeamExtended'
 import PlayerDetails from './models/player/PlayerDetails';
 
-const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
+const axios = ax.create({ baseURL: import.meta.env.VITE_HATTID_SERVER_URL })
 
 export function parseAxiosResponse<T>(response: AxiosResponse<T>,
     callback: (loadingEnum: LoadingEnum, entities?: T) => void) {
@@ -71,26 +70,11 @@ export function statisticsRequest<T>(path: string):
             return function(request: LevelRequest,
                 statisticsParameters: StatisticsParameters,
                 callback: (loadingEnum: LoadingEnum, entities?: RestTableData<T>) => void): void {
-                    let params = createStatisticsParameters(statisticsParameters)
+                    const params = createStatisticsParameters(statisticsParameters)
                     axios.get<RestTableData<T>>(startUrl(request) + '/' + path + '?' + params.toString())
                         .then(response => parseAxiosResponse(response, callback))
                         .catch(_e => callback(LoadingEnum.ERROR))
                 }
-}
-
-export function getTeamRankings(request: LevelRequest, season: number,
-        callback: (loadingEnum: LoadingEnum, teamRankingsStats?: TeamRankingsStats) => void) {
-    axios.get<TeamRankingsStats>(startUrl(request) + '/teamRankings?season=' + season)
-        .then(response => parseAxiosResponse(response, callback))
-        .catch(_e => callback(LoadingEnum.ERROR))
-}
-
-export function getTeamRankings2(teamId: number, season: number,
-                                 callback: (loadingEnum: LoadingEnum, teamRankingsStats?: TeamRankingsStats) => void) {
-    const seasonFilter = (season !== -1) ? `season=${season}` : ""
-    axios.get<TeamRankingsStats>(`/api/team/${teamId}/teamRankings?${seasonFilter}`)
-        .then(response => parseAxiosResponse(response, callback))
-        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function getNearestMatches(request: TeamRequest, 
@@ -118,25 +102,25 @@ export function searchTeamById(id: number,
         callback: (loadingEnum: LoadingEnum, results?: Array<TeamSearchResult>) => void): void {
     axios.get<Array<TeamSearchResult>>('/api/teamSearchById?id=' + id)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function getTeamMatches(teamId: number, season: number,
        callback: (loadingEnum: LoadingEnum, results?: Array<TeamMatch>) => void) {
     axios.get<Array<TeamMatch>>('/api/team/' + teamId + '/teamMatches?season=' + season)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function getSingleMatch(matchId: number, callback: (loadingEnum: LoadingEnum, result?: SingleMatch) => void) {
     axios.get<SingleMatch>('/api/matches/singleMatch?matchId=' + matchId)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 export function getDreamTeam(request: LevelRequest, season: number, statType: StatsType, sortBy: string,
         callback: (loadingEnum: LoadingEnum, players?: Array<DreamTeamPlayer>) => void,) {
-    var values: any = {}
+    const values: any = {}
 
     values.sortBy = sortBy
     values.statType = statType.statType
@@ -146,7 +130,7 @@ export function getDreamTeam(request: LevelRequest, season: number, statType: St
         values.statRoundNumber = statType.roundNumber
     }
 
-    let queryParams = new URLSearchParams(values).toString()
+    const queryParams = new URLSearchParams(values).toString()
 
     axios.get<Array<DreamTeamPlayer>>(startUrl(request) + '/dreamTeam?' + queryParams)
         .then(response => parseAxiosResponse(response, callback))
@@ -178,12 +162,12 @@ export function combineMatches(firstTeamId: number, firstMatchId: number, second
 
 export function getCreatedSameTimeTeams(leagueId: number, foundedDate: number, request: CreatedSameTimeTeamRequest,
         callback: (loadingEnum: LoadingEnum, results?: Array<CreatedSameTimeTeamExtended>) => void) {
-    var values: any = {}
+    const values: any = {}
     values.period = request.period
     if (request.weeksNumber !== undefined) {
         values.weeksNumber = request.weeksNumber
     }
-    let periodParams = new URLSearchParams(values).toString()
+    const periodParams = new URLSearchParams(values).toString()
 
     axios.get<Array<CreatedSameTimeTeamExtended>>('/api/team/stats/teamsFoundedSameDate?leagueId=' + leagueId + 
             '&foundedDate=' + foundedDate + '&' + periodParams)
@@ -217,8 +201,8 @@ export function playersRequest<T>(path: string):
                 statisticsParameters: StatisticsParameters,
                 playersParameters: PlayersParameters,
                 callback: (loadingEnum: LoadingEnum, entities?: RestTableData<T>) => void): void {
-                    let params = createStatisticsParameters(statisticsParameters)
-                    let playerParams = createPlayersParameters(playersParameters)
+                    const params = createStatisticsParameters(statisticsParameters)
+                    const playerParams = createPlayersParameters(playersParameters)
                     axios.get<RestTableData<T>>(startUrl(request) + '/' + path + '?' + params.toString() + '&' + playerParams)
                         .then(response => parseAxiosResponse(response, callback))
                         .catch(_e => callback(LoadingEnum.ERROR))
@@ -227,12 +211,12 @@ export function playersRequest<T>(path: string):
 
 
 
-export let getLeagueUnits = statisticsRequest<LeagueUnitRating>('leagueUnits')
+export const getLeagueUnits = statisticsRequest<LeagueUnitRating>('leagueUnits')
 
 export function getTeamPositions(request: LevelRequest,
         statisticsParameters: StatisticsParameters,
         callback: (LoadingEnum: LoadingEnum, model?: RestTableData<LeagueUnitTeamStatsWithPositionDiff>) => void) {
-    let params = createStatisticsParameters(statisticsParameters)
+    const params = createStatisticsParameters(statisticsParameters)
     axios.get<RestTableData<LeagueUnitTeamStatsWithPositionDiff>>(startUrl(request) + '/teamPositions?' + params.toString())
         .then(response => callback(LoadingEnum.OK, response.data))
         .catch(_e => callback(LoadingEnum.ERROR))
@@ -244,75 +228,75 @@ export function getTeamPositionsHistory(leagueUnitId: number, season: number, ca
       .catch(_e => callback(LoadingEnum.ERROR))
 }
 
-export let getTeamCards = statisticsRequest<TeamCards>('teamCards')
+export const getTeamCards = statisticsRequest<TeamCards>('teamCards')
 
-export let getTeamRatings = statisticsRequest<TeamRating>('teamRatings')
+export const getTeamRatings = statisticsRequest<TeamRating>('teamRatings')
 
-export let getTeamAgeInjuries = statisticsRequest<TeamAgeInjury>('teamAgeInjuries')
+export const getTeamAgeInjuries = statisticsRequest<TeamAgeInjury>('teamAgeInjuries')
 
-export let getOldestTeams = statisticsRequest<OldestTeam>('oldestTeams')
+export const getOldestTeams = statisticsRequest<OldestTeam>('oldestTeams')
 
 export function getTeamGoalPoints(request: LevelRequest,
         statisticsParameters: StatisticsParameters,
         playedAllMatches: boolean,
         oneTeamPerUnit: boolean,
         callback: (loadingEnum: LoadingEnum, entities?: RestTableData<TeamGoalPoints>) => void){
-    let params = createStatisticsParameters(statisticsParameters)
+    const params = createStatisticsParameters(statisticsParameters)
     axios.get<RestTableData<TeamGoalPoints>>(startUrl(request) + '/teamGoalPoints?' + params.toString() + 
         '&playedAllMatches=' + playedAllMatches + '&oneTeamPerUnit=' + oneTeamPerUnit)
         .then(response => parseAxiosResponse(response, callback))
         .catch(_e => callback(LoadingEnum.ERROR))
 }
 
-export let getTeamPowerRatings = statisticsRequest<TeamPowerRating>('teamPowerRatings')
+export const getTeamPowerRatings = statisticsRequest<TeamPowerRating>('teamPowerRatings')
 
 
 
-export let getMatchesTopHatstats = statisticsRequest<MatchTopHatstats>('topMatches')
+export const getMatchesTopHatstats = statisticsRequest<MatchTopHatstats>('topMatches')
 
-export let getSurprisingMatches = statisticsRequest<MatchTopHatstats>('surprisingMatches')
+export const getSurprisingMatches = statisticsRequest<MatchTopHatstats>('surprisingMatches')
 
-export let getMatchSpectators = statisticsRequest<MatchSpectators>('matchSpectators')
+export const getMatchSpectators = statisticsRequest<MatchSpectators>('matchSpectators')
 
 
 //Chart numbers section
-export let teamNumbersChart = numbersChart('teamNumbersChart')
+export const teamNumbersChart = numbersChart('teamNumbersChart')
 
-export let playerNumbersChart = numbersChart('playerNumbersChart')
+export const playerNumbersChart = numbersChart('playerNumbersChart')
 
-export let goalNumbersChart = numbersChart('goalNumbersChart')
+export const goalNumbersChart = numbersChart('goalNumbersChart')
 
-export let injuryNumbersChart = numbersChart('injuryNumbersChart')
+export const injuryNumbersChart = numbersChart('injuryNumbersChart')
 
-export let yellowCardNumbersChart = numbersChart('yellowCardNumbersChart')
+export const yellowCardNumbersChart = numbersChart('yellowCardNumbersChart')
 
-export let redCardNumbersChart = numbersChart('redCardNumbersChart')
+export const redCardNumbersChart = numbersChart('redCardNumbersChart')
 
-export let averageHatstatNumbersChart = numbersChart('averageHatstatNumbersChart')
+export const averageHatstatNumbersChart = numbersChart('averageHatstatNumbersChart')
 
-export let averageSpectatorNumbersChart = numbersChart('averageSpectatorNumbersChart')
+export const averageSpectatorNumbersChart = numbersChart('averageSpectatorNumbersChart')
 
-export let averageGoalNumbersChart = numbersChart('averageGoalNumbersChart')
+export const averageGoalNumbersChart = numbersChart('averageGoalNumbersChart')
 
-export let newTeamNumbersChart = numbersChart('newTeamNumbersChart')
+export const newTeamNumbersChart = numbersChart('newTeamNumbersChart')
 
 function numbersChart(path: string): 
     (request: LevelRequest, callback: (loadingEnum: LoadingEnum, entities?: Array<NumbersChartModel>) => void) => void {
         return function(request: LevelRequest, callback: (loadingEnum: LoadingEnum, entities?: Array<NumbersChartModel>) => void) {
-            let params = createLevelRequestParameters(request)
+            const params = createLevelRequestParameters(request)
             
             axios.get<Array<NumbersChartModel>>('/api/overview/' + path + '' + params)
                 .then(response => parseAxiosResponse(response, callback))
-                .catch(e => callback(LoadingEnum.ERROR))
+                .catch(_e => callback(LoadingEnum.ERROR))
         }
     }
 
 export function formationsChart(request: LevelRequest, callback: (loadingEnum: LoadingEnum, entities?: Array<FormationChartModel>) => void): void {
-    let params = createLevelRequestParameters(request)
+    const params = createLevelRequestParameters(request)
 
     axios.get<Array<FormationChartModel>>('/api/overview/formationsChart' + params)
         .then(response => parseAxiosResponse(response, callback))
-        .catch(e => callback(LoadingEnum.ERROR))
+        .catch(_e => callback(LoadingEnum.ERROR))
 }
 
 
@@ -336,41 +320,41 @@ function requestOverview<T>(path: string):
 
         return function(overviewRequest: OverviewRequest, 
             callback: (loadingEnum: LoadingEnum, data?: T) => void) {
-                let params = createOverviewParameters(overviewRequest)
+                const params = createOverviewParameters(overviewRequest)
                 axios.get<T>('/api/overview/' + path + '?' + params)
                     .then(response => {
                         console.log()
                         return parseAxiosResponse(response, callback)
                     })
-                    .catch(e => callback(LoadingEnum.ERROR))
+                    .catch(_e => callback(LoadingEnum.ERROR))
             }
     }
 
-export let getTotalOverview = requestOverview<TotalOverview>('totalOverview')
+export const getTotalOverview = requestOverview<TotalOverview>('totalOverview')
 
-export let getNumberOverview = requestOverview<NumberOverview>('numberOverview')
+export const getNumberOverview = requestOverview<NumberOverview>('numberOverview')
 
-export let getFormationsOverview = requestOverview<Array<FormationsOverview>>('formations')
+export const getFormationsOverview = requestOverview<Array<FormationsOverview>>('formations')
 
-export let getAveragesOverview = requestOverview<AveragesOverview>('averagesOverview')
+export const getAveragesOverview = requestOverview<AveragesOverview>('averagesOverview')
 
-export let getSurprisingMatchesOverview = requestOverview<Array<MatchTopHatstats>>('surprisingMatches')
+export const getSurprisingMatchesOverview = requestOverview<Array<MatchTopHatstats>>('surprisingMatches')
 
-export let getTopHatstatsTeamsOverview = requestOverview<Array<TeamStatOverview>>('topHatstatsTeams')
+export const getTopHatstatsTeamsOverview = requestOverview<Array<TeamStatOverview>>('topHatstatsTeams')
 
-export let getTopSalaryTeamsOverview = requestOverview<Array<TeamStatOverview>>('topSalaryTeams')
+export const getTopSalaryTeamsOverview = requestOverview<Array<TeamStatOverview>>('topSalaryTeams')
 
-export let getTopMatchesOverview = requestOverview<Array<MatchTopHatstats>>('topMatches')
+export const getTopMatchesOverview = requestOverview<Array<MatchTopHatstats>>('topMatches')
 
-export let getTopSalaryPlayersOverview = requestOverview<Array<PlayerStatOverview>>('topSalaryPlayers')
+export const getTopSalaryPlayersOverview = requestOverview<Array<PlayerStatOverview>>('topSalaryPlayers')
 
-export let getTopRatingPlayersOverview = requestOverview<Array<PlayerStatOverview>>('topRatingPlayers')
+export const getTopRatingPlayersOverview = requestOverview<Array<PlayerStatOverview>>('topRatingPlayers')
 
-export let getTopMatchAttendance = requestOverview<Array<MatchAttendanceOverview>>('matchAttendance')
+export const getTopMatchAttendance = requestOverview<Array<MatchAttendanceOverview>>('matchAttendance')
 
-export let getTopTeamVictories = requestOverview<Array<TeamStatOverview>>('topVictories')
+export const getTopTeamVictories = requestOverview<Array<TeamStatOverview>>('topVictories')
 
-export let getTopSeasonScorers = requestOverview<Array<PlayerStatOverview>>('topSeasonScorers')
+export const getTopSeasonScorers = requestOverview<Array<PlayerStatOverview>>('topSeasonScorers')
 
 export function startUrl(request: LevelRequest): string {
     if (request.type === 'LeagueRequest') {
@@ -390,7 +374,7 @@ export function startUrl(request: LevelRequest): string {
 }
 
 export function createStatisticsParameters(statisticsParameters: StatisticsParameters) {
-    var values: any = {}
+    const values: any = {}
 
     values.page = statisticsParameters.page.toString()
     values.pageSize = statisticsParameters.pageSize.toString()
@@ -407,7 +391,7 @@ export function createStatisticsParameters(statisticsParameters: StatisticsParam
 }
 
 function createPlayersParameters(playersParameters: PlayersParameters): string {
-    var values: any = {}
+    const values: any = {}
 
     if(playersParameters.role !== undefined) {
         values.role = playersParameters.role
@@ -426,7 +410,7 @@ function createPlayersParameters(playersParameters: PlayersParameters): string {
 }
 
 function createOverviewParameters(overviewRequest: OverviewRequest) {
-    var values: any = {}
+    const values: any = {}
 
     values.season = overviewRequest.season
     values.round = overviewRequest.round

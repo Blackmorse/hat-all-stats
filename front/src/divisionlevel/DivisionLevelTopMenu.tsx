@@ -7,9 +7,9 @@ import {getLeagueUnitIdByName} from '../rest/Client';
 import DivisionLevelDataProps from './DivisionLevelDataProps';
 
 const DivisionLevelTopMenu = (props: {levelProps?: DivisionLevelDataProps}) => {
-    let navigate = useNavigate()
+    const navigate = useNavigate()
 
-    let links = [
+    const links = [
         {
             href: "/league/" + props.levelProps?.leagueId(),
             content: props.levelProps?.leagueName()
@@ -20,14 +20,14 @@ const DivisionLevelTopMenu = (props: {levelProps?: DivisionLevelDataProps}) => {
         }
       ]
 
-    let onChanged = (e: React.FormEvent<HTMLSelectElement>) => { 
+    const onChanged = (e: React.FormEvent<HTMLSelectElement>) => { 
         getLeagueUnitIdByName(Number(props.levelProps?.leagueId()), props.levelProps?.divisionLevelName() + '.' + e.currentTarget.value, id => {
             navigate('/leagueUnit/' + id)
         })
         
     }
 
-    let selectBox = <Form>
+    const selectBox = <Form>
         <Form.Select  size="sm" className="mt-3 mb-3 pr-3" max-width="200" 
             onChange={onChanged}>
                 <option value={undefined}>Select...</option>

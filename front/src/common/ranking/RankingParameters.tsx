@@ -1,3 +1,4 @@
+import { type JSX } from "react";
 import TeamRanking from "../../rest/models/team/TeamRanking";
 import { PagesEnum } from "../enums/PagesEnum";
 

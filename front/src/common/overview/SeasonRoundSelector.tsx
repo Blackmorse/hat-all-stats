@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type JSX } from 'react';
 import './SeasonRoundSelector.css'
 import '../../i18n'
 import { Translation } from 'react-i18next'
@@ -14,13 +14,13 @@ interface Props {
 class SeasonRoundSelector extends React.Component<Props> {
         
     previousRound(): [number, number] | undefined {
-        let map = new Map(this.props.seasonRoundInfo)
-        let rounds = map.get(this.props.season)
+        const map = new Map(this.props.seasonRoundInfo)
+        const rounds = map.get(this.props.season)
 
         if(rounds && rounds.indexOf(this.props.round - 1) > -1) {
             return [this.props.season, this.props.round - 1]
         } else {
-            let previousRounds = map.get(this.props.season - 1)
+            const previousRounds = map.get(this.props.season - 1)
             if(previousRounds && previousRounds.indexOf(14) > -1) {
                 return [this.props.season - 1, 14]
             } else {
@@ -30,13 +30,13 @@ class SeasonRoundSelector extends React.Component<Props> {
     }
 
     nextRound(): [number, number] | undefined {
-        let map = new Map(this.props.seasonRoundInfo)
-        let rounds = map.get(this.props.season)
+        const map = new Map(this.props.seasonRoundInfo)
+        const rounds = map.get(this.props.season)
 
         if(rounds && rounds.indexOf(this.props.round + 1) > -1) {
             return [this.props.season, this.props.round + 1]
         } else {
-            let nextRounds = map.get(this.props.season + 1)
+            const nextRounds = map.get(this.props.season + 1)
             if(nextRounds && nextRounds.indexOf(1) > -1) {
                 return [this.props.season + 1, 1]
             } else {
@@ -47,9 +47,9 @@ class SeasonRoundSelector extends React.Component<Props> {
 
     render() {
         let leftLink: JSX.Element
-        let previousRound = this.previousRound()
+        const previousRound = this.previousRound()
         if(previousRound) {
-            let previousRoundDefined = previousRound
+            const previousRoundDefined = previousRound
             leftLink = <span className="season_round_selector_link" 
                 onClick={() => this.props.callback(previousRoundDefined[0], previousRoundDefined[1])}>
                 ◀
@@ -59,9 +59,9 @@ class SeasonRoundSelector extends React.Component<Props> {
         }
 
         let rightLink: JSX.Element
-        let nextRound = this.nextRound()
+        const nextRound = this.nextRound()
         if(nextRound) {
-            let nextRoundDefined = nextRound
+            const nextRoundDefined = nextRound
             rightLink = <span className="season_round_selector_link" 
                 onClick={() => this.props.callback(nextRoundDefined[0], nextRoundDefined[1])}>
             ▶
@@ -71,7 +71,7 @@ class SeasonRoundSelector extends React.Component<Props> {
         }
 
         return <Translation>
-        {(t, { i18n}) => <nav className="season_round_selector">
+        {(t) => <nav className="season_round_selector">
             {leftLink}
             <span className="season_round_selector_center">
                 <span className="srselector_info">{t('filter.season')}: {this.props.offsettedSeason}</span>

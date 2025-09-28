@@ -51,7 +51,7 @@ export function toRoman(division: number): string {
 }
 
 function splitLeagueUnit(leagueUnit: string): [string, number?] {
-    let split = leagueUnit.split('.')
+    const split = leagueUnit.split('.')
     if (split.length !== 2) {
         return [leagueUnit]
     }
@@ -61,7 +61,7 @@ function splitLeagueUnit(leagueUnit: string): [string, number?] {
     return [split[0], Number(split[1])]
 }
 
-let numberLeagueUnitsMap: Map<string, number> = new Map<string, number>([
+const numberLeagueUnitsMap: Map<string, number> = new Map<string, number>([
     ['II', 4],
     ['III', 16],
     ['IV', 64],
@@ -73,7 +73,7 @@ let numberLeagueUnitsMap: Map<string, number> = new Map<string, number>([
 ])
 
 export function nextLeagueUnit(leagueUnit: string): string | undefined {
-    let [division, leagueUnitNumber] = splitLeagueUnit(leagueUnit)
+    const [division, leagueUnitNumber] = splitLeagueUnit(leagueUnit)
     if (leagueUnitNumber === undefined) {
         return undefined
     }
@@ -84,7 +84,7 @@ export function nextLeagueUnit(leagueUnit: string): string | undefined {
 }
 
 export function previousLeagueUnit(leagueUnit: string): string | undefined {
-    let [division, leagueUnitNumber] = splitLeagueUnit(leagueUnit)
+    const [division, leagueUnitNumber] = splitLeagueUnit(leagueUnit)
     if (leagueUnitNumber === undefined) {
         return undefined
     }

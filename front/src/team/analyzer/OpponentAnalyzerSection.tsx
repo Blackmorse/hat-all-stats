@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import {Col, Form, Row} from 'react-bootstrap'
 import {useTranslation} from 'react-i18next'
 import {LoadingEnum} from '../../common/enums/LoadingEnum'
@@ -54,9 +54,9 @@ const OpponentAnalyzerSection = (props: Props) => {
     const i18n = useTranslation().i18n
 
     const updateSelectedOriginMatch = (matchId: number, state: State, setState: (st: State) => void) => {
-        let selectedNextOpponent = state.selectedNextOpponent
+        const selectedNextOpponent = state.selectedNextOpponent
         if (selectedNextOpponent !== undefined && state.selectedOpponentMatchId !== undefined) {
-            let newState: State = {
+            const newState: State = {
                 ...state,
                 selectedOriginMatchId: matchId,
                 simulatedMatch: {loadingEnum: LoadingEnum.LOADING}
@@ -66,7 +66,7 @@ const OpponentAnalyzerSection = (props: Props) => {
             combineMatches(props.props.teamId(), matchId, selectedNextOpponent[0], state.selectedOpponentMatchId,
                 (loadingEnum, result) => {
 
-                    let newState: State = {
+                    const newState: State = {
                         ...state,
                         selectedOriginMatchId: matchId,
                         simulatedMatch: {
@@ -77,7 +77,7 @@ const OpponentAnalyzerSection = (props: Props) => {
                     setState(newState)
                 })
         } else {
-            let newState: State = {
+            const newState: State = {
                 ...state,
                 selectedOriginMatchId: matchId
             }
@@ -87,7 +87,7 @@ const OpponentAnalyzerSection = (props: Props) => {
 
     const updateSelectedOpponentMatch = (matchId: number, state: State, setState: (st: State) => void) => {      
         if(state.selectedOriginMatchId !== undefined && state.selectedNextOpponent !== undefined) {
-            let newState: State = {
+            const newState: State = {
                 ...state,
                 selectedOpponentMatchId: matchId,
                 simulatedMatch: {loadingEnum: LoadingEnum.LOADING},
@@ -96,7 +96,7 @@ const OpponentAnalyzerSection = (props: Props) => {
         
             combineMatches(props.props.teamId(), state.selectedOriginMatchId, state.selectedNextOpponent[0], matchId,
                 (loadingEnum, result) => {
-                    let newStateInner: State = {
+                    const newStateInner: State = {
                         ...newState,
                         simulatedMatch: {
                             loadingEnum: loadingEnum,
@@ -106,7 +106,7 @@ const OpponentAnalyzerSection = (props: Props) => {
                     setState(newStateInner)
                 })
         } else {
-            let newState: State = {
+            const newState: State = {
                 ...state,
                 selectedOpponentMatchId: matchId
             }
@@ -115,11 +115,11 @@ const OpponentAnalyzerSection = (props: Props) => {
     }
 
     const opponentChanged = (event: React.FormEvent<HTMLSelectElement> | number, state: State, setState: (st: State) => void) => {
-        let teamNumber = typeof(event) === 'number' ? event : Number(event.currentTarget.value)
+        const teamNumber = typeof(event) === 'number' ? event : Number(event.currentTarget.value)
         if (state.nextOpponents !== undefined) {
-            let team = state.nextOpponents.find(team => team[0] === teamNumber) as Team  
+            const team = state.nextOpponents.find(team => team[0] === teamNumber) as Team  
 
-            let newState: State  = {
+            const newState: State  = {
                 ...state,
                 playedOpponentMatches: {loadingEnum: LoadingEnum.LOADING},
                 selectedNextOpponent: team
@@ -127,7 +127,7 @@ const OpponentAnalyzerSection = (props: Props) => {
             setState(newState)
 
             opponentTeamMatches(teamNumber, (loadingEnum, matches) => {        
-                let newState: State = {
+                const newState: State = {
                     ...state,
                     selectedNextOpponent: team,
                     playedOpponentMatches: {
@@ -145,7 +145,7 @@ const OpponentAnalyzerSection = (props: Props) => {
     }
 
     const content = (stateAndRequest: StateAndRequest<TeamId, State>) => {
-        let originTeamAndMatches = stateAndRequest.currentState.originTeamAndMatches
+        const originTeamAndMatches = stateAndRequest.currentState.originTeamAndMatches
         let originMatchesTable: JSX.Element | undefined = undefined
         if (originTeamAndMatches !== undefined && originTeamAndMatches.matches.length > 0 && stateAndRequest.currentState.selectedOriginMatchId !== undefined) {
             originMatchesTable = <MatchSelectorTable matches={originTeamAndMatches.matches} 
@@ -166,7 +166,7 @@ const OpponentAnalyzerSection = (props: Props) => {
                 () => opponentChanged(stateAndRequest.currentState.selectedNextOpponent![0], stateAndRequest.currentState, stateAndRequest.setState))
         }
 
-        let simulatedMatchElement = showStateElement(stateAndRequest.currentState.simulatedMatch, 
+        const simulatedMatchElement = showStateElement(stateAndRequest.currentState.simulatedMatch, 
             (singleMatch) => <Section element={<TeamMatchInfo singleMatch={singleMatch}/>} title={i18n.t('team.simulate_match')}/>,
             () => updateSelectedOpponentMatch(stateAndRequest.currentState.selectedOpponentMatchId!, stateAndRequest.currentState, stateAndRequest.setState))
 
@@ -182,7 +182,7 @@ const OpponentAnalyzerSection = (props: Props) => {
                 <div className='mb-1'>
                     <Form.Select size='sm' defaultValue={stateAndRequest.currentState.selectedNextOpponent?.[0]} onChange={event => opponentChanged(event, stateAndRequest.currentState, stateAndRequest.setState)}>
                         {stateAndRequest.currentState.nextOpponents?.map(team =>
-                            <option value={team[0]}>{team[1]}</option>)}
+                            <option key={`${team[0]}`} value={team[0]}>{team[1]}</option>)}
                     </Form.Select>
                 </div> 
                 
@@ -208,7 +208,7 @@ const OpponentAnalyzerSection = (props: Props) => {
             return currentState === undefined ? initialState : currentState
         }
 
-        let newState: State = {
+        const newState: State = {
             originTeamAndMatches: {
                 team: [props.props.teamId(), props.props.teamName()],
                 matches: result.currentTeamPlayedMatches

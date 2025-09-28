@@ -1,7 +1,7 @@
 import TeamSortingKey from '../team/TeamSortingKey'
 
 export interface MatchRatings {
-    formation: String,
+    formation: string,
     tacticType: number,
     tacticSkill: number,
     ratingMidfield: number,

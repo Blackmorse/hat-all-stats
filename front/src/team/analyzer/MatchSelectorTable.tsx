@@ -45,7 +45,7 @@ class MatchSelectorTable extends React.Component<Props, State> {
 
         getSingleMatch(matchId, 
             (_loadingEnum, result) => {
-                let cache = [...this.state.matchesCache]
+                const cache = [...this.state.matchesCache]
                 if (result !== undefined) {
                     cache.push(result)
                 }
@@ -74,7 +74,7 @@ class MatchSelectorTable extends React.Component<Props, State> {
         <tbody>
             <tr></tr>
         {this.props.matches.map((match) => 
-            <tr className={match.matchId === this.props.selectedMatchId ? "match_selected" : undefined} 
+            <tr key={`${match.matchId}-match`} className={match.matchId === this.props.selectedMatchId ? "match_selected" : undefined} 
                     onClick={() => this.onClick(match.matchId)} >
                 <td className={match.homeTeamId === this.props.selectedTeamId ? "text-success" : ""}>{match.homeTeamName}</td>
                 <td className="">{match.homeGoals} : {match.awayGoals}</td>

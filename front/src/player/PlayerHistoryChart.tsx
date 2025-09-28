@@ -1,4 +1,3 @@
-import React from "react"
 import {PlayerChartEntry} from "../rest/models/player/PlayerDetails"
 import PlotlyChart from 'react-plotly.js'
 import {stringAgeFormatter} from "../common/Formatters"
@@ -19,9 +18,9 @@ interface Props {
 const PlayerHistoryChart = (props: Props) => {
     if (props.history === undefined) return <></>
 
-    let x = props.history.map(h => h.age).map(age => stringAgeFormatter(age))
+    const x = props.history.map(h => h.age).map(age => stringAgeFormatter(age))
 
-    let chartData = props.chartLines.map(chartLine => { return {
+    const chartData = props.chartLines.map(chartLine => { return {
         type: 'scatter',
         name: chartLine.title,
         line: {
@@ -32,7 +31,7 @@ const PlayerHistoryChart = (props: Props) => {
     }})
 
 
-    var layout = {
+    const layout = {
           autosize: false,
           width: 500,
         title: {

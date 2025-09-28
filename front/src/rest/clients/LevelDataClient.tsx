@@ -15,7 +15,7 @@ import TeamData from '../models/leveldata/TeamData';
 import WorldData from '../models/leveldata/WorldData';
 import NotFoundError from '../models/NotFoundLevel';
 
-const axios = ax.create({ baseURL: process.env.REACT_APP_HATTID_SERVER_URL })
+const axios = ax.create({ baseURL: import.meta.env.VITE_HATTID_SERVER_URL })
 
 
 function catchError<T>(e: any, callback: Callback<T>) {

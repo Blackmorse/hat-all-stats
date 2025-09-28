@@ -1,4 +1,3 @@
-import React from 'react'
 import { getTeamCards } from '../../../rest/Client'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'
 import TeamCards from '../../../rest/models/team/TeamCards'

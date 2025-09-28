@@ -5,12 +5,12 @@ import PlayerInjury from '../models/player/PlayerInjury';
 import PlayerRating from '../models/player/PlayerRating';
 import PlayerSalaryTSI from '../models/player/PlayerSalaryTSI';
 
-export let getPlayerSalaryTsi = playersRequest<PlayerSalaryTSI>('playerTsiSalary')
+export const getPlayerSalaryTsi = playersRequest<PlayerSalaryTSI>('playerTsiSalary')
 
-export let getPlayerCards = playersRequest<PlayerCards>('playerCards')
+export const getPlayerCards = playersRequest<PlayerCards>('playerCards')
 
-export let getPlayerGoalsGames = playersRequest<PlayerGoalGames>('playerGoalGames')
+export const getPlayerGoalsGames = playersRequest<PlayerGoalGames>('playerGoalGames')
 
-export let getPlayerInjuries = statisticsRequest<PlayerInjury>('playerInjuries')
+export const getPlayerInjuries = statisticsRequest<PlayerInjury>('playerInjuries')
 
-export let getPlayerRatings = playersRequest<PlayerRating>('playerRatings')
+export const getPlayerRatings = playersRequest<PlayerRating>('playerRatings')

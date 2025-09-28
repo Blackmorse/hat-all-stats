@@ -10,7 +10,7 @@ class CountryImage extends React.Component<Props> {
         if(this.props.countryId === 0) {
             return <></>
         }
-        let offset = (this.props.countryId === 1000) ? 0 : this.props.countryId * 20
+        const offset = (this.props.countryId === 1000) ? 0 : this.props.countryId * 20
         return <img className=" border me-1 border-secondary" 
             src="/dot.gif" 
             style={{

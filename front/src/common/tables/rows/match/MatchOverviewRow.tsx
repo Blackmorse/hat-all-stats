@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import MatchTopHatstats from '../../../../rest/models/match/MatchTopHatstats';
 import { loddarStats } from '../../../Formatters';
 import ExternalMatchLink from '../../../links/ExternalMatchLink';
@@ -15,8 +15,8 @@ interface Props extends TableRowProps<MatchTopHatstats> {
 
 
 class MatchOverviewRow extends MatchRow<MatchTopHatstats, Props> {
-    columns(rowIndex: number, matc: MatchTopHatstats): JSX.Element[] {
-        let country = this.props.leagueNameFunc(matc.homeTeam.leagueId)
+    columns(_rowIndex: number, matc: MatchTopHatstats): JSX.Element[] {
+        const country = this.props.leagueNameFunc(matc.homeTeam.leagueId)
         return [
             (country === undefined ) ? <></> : country ,
             <td key={'match_row_' + matc.matchId + '_' + Math.random()} className="text-center">

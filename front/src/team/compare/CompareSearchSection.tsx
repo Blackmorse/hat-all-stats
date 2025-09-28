@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import { PagesEnum } from '../../common/enums/PagesEnum';
 import TeamLink from '../../common/links/TeamLink';
 import SearchTeam from '../../common/search/SearchTeam';
@@ -26,6 +26,7 @@ class CompareSearch extends React.Component<Props, State & SectionState>{
             <div className="search_results">
             {this.state.results?.map(team => {
                 return <TeamLink text={team.teamName} 
+                    key={`team-${team.teamId}`}
                     id={this.props.levelDataProps.teamId()} 
                     page={PagesEnum.TEAM_COMPARSION}
                     queryParams={{

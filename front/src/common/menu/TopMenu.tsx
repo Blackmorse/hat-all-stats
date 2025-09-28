@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import { Link } from 'react-router-dom'
 import { Navbar, Container, Image, Nav, NavLink} from 'react-bootstrap'
 
@@ -18,11 +18,11 @@ export interface TopMenuLink {
 }
 
 const TopMenu = <Data extends {}>(props: Props<Data>) => {
-   let selectBox = props.selectBox
-   let links = props.links
-   let arrow = <>&#8674;</>
+   const selectBox = props.selectBox
+   const links = props.links
+   const arrow = <>&#8674;</>
 
-   let placeholder = <span className="placeholder-glow"><span className="placeholder placeholder-lg w-100 bg-light rounded" style={{minWidth: "70px"}}></span></span>
+   const placeholder = <span className="placeholder-glow"><span className="placeholder placeholder-lg w-100 bg-light rounded" style={{minWidth: "70px"}}></span></span>
     
 
    return <Container fluid>

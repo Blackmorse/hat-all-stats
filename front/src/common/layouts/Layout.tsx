@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Fragment} from 'react'
+import { type JSX, useState, useEffect, Fragment } from 'react'
 import { YMInitializer } from 'react-yandex-metrika';
 import {  Col, Container, Row } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
@@ -35,9 +35,9 @@ const Layout = (props: Props) => {
     } else {
         leftMenu = props.leftMenu
     }
-    let arrow = (collapsed) ? <>&#9656;</> : <>&#9666;</>
+    const arrow = (collapsed) ? <>&#9656;</> : <>&#9666;</>
 
-    let collapsibleLeftMenu =  <div className='mt-3 d-flex flex-row'>
+    const collapsibleLeftMenu =  <div className='mt-3 d-flex flex-row'>
             <button 
                 className={'mb-3 shadow border-start border-top border-bottom bg-light text-center hide_left_menu p-0 collapse_button ' + ((collapsed) ? 'border-end rounded' : 'border-end-0 rounded-start')}
                 onClick={() => setCollapsed(!collapsed)}
@@ -49,9 +49,9 @@ const Layout = (props: Props) => {
             
         </div>
 
-    let direction = (i18n.language === 'fa') ? 'rtl' : 'ltr'
+    const direction = (i18n.language === 'fa') ? 'rtl' : 'ltr'
 
-    let body = (!collapsed) ? <Container d-flex='true' dir={direction} fluid>
+    const body = (!collapsed) ? <Container d-flex='true' dir={direction} fluid>
         <Row>
             <Col lg={3} md={4} xs={12} sm={12}>
                 {collapsibleLeftMenu}
@@ -67,7 +67,7 @@ const Layout = (props: Props) => {
          <div className='w-100'>{props.content}</div>
      </Container>
 
-     let metrika = (process.env.MODE !== undefined && process.env.MODE === 'DEV') ? <></> : <YMInitializer accounts={[67069579]} /> 
+     const metrika = (import.meta.env.MODE !== undefined && import.meta.env.MODE === 'DEV') ? <></> : <YMInitializer accounts={[67069579]} /> 
 
     return <Fragment>
                  <header dir={direction}>

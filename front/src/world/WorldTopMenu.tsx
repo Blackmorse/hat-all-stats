@@ -7,14 +7,14 @@ import WorldLevelDataProps from './WorldLevelDataProps'
 
 const WorldTopMenu = (props: {levelProps?: WorldLevelDataProps}) => {
     const t = useTranslation().t
-    let navigate = useNavigate()
+    const navigate = useNavigate()
 
-    let sectionLinks = [
+    const sectionLinks = [
         {href: '/about', text: t('menu.about')},
         {href: '/worldOverview', text: t('overview.world_overview')}
     ]
 
-    let selectBox = <Form>
+    const selectBox = <Form>
             <Form.Select  size="sm" className="my-1 pr-3 me-md-5" max-width="100" 
                     onChange={(e: React.FormEvent<HTMLSelectElement>) => navigate('/league/' + Number(e.currentTarget.value))}>
             <option value={undefined}>Select...</option>

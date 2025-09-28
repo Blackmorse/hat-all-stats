@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { getTeamRatings } from '../../../rest/Client'
 import { StatsTypeEnum } from '../../../rest/models/StatisticsParameters'

@@ -43,11 +43,11 @@ class PlayerLevelDataProps extends CountryLevelDataProps {
     }
 
     private getTranslation(lang: string, level: number, entryFunc: (languageTranslations: LanguageTranslations) => Array<TranslationLevel>): string {
-        let translations = this.playerData.translations.find(it => lang === it[0])
+        const translations = this.playerData.translations.find(it => lang === it[0])
         if (translations === undefined) {
             return level.toString()
         }
-        let translation = entryFunc(translations[1]).find(levelTranslation => levelTranslation.level === level)
+        const translation = entryFunc(translations[1]).find(levelTranslation => levelTranslation.level === level)
         if (translation === undefined) return level.toString()
         return translation.translation + ' (' + level + ')'
     }

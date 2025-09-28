@@ -1,4 +1,3 @@
-import React from 'react'
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu';
 import ExternalLeagueUnitLink from '../common/links/ExternalLeagueUnitLink';
@@ -9,9 +8,9 @@ import {getLeagueUnitIdByName} from '../rest/Client';
 import LeagueUnitLevelDataProps from './LeagueUnitLevelDataProps';
 
 const LeagueUnitTopMenu = (props: {levelProps?: LeagueUnitLevelDataProps}) => {
-    let navigate = useNavigate()
+    const navigate = useNavigate()
 
-    let openLeagueUnit = (leagueUnitName: string) => {
+    const openLeagueUnit = (leagueUnitName: string) => {
         getLeagueUnitIdByName(props.levelProps!.leagueId(), leagueUnitName, id => {
             navigate('/leagueUnit/' + id)
             //workaround :( Can't refresh
@@ -20,20 +19,20 @@ const LeagueUnitTopMenu = (props: {levelProps?: LeagueUnitLevelDataProps}) => {
     }
 
 
-    let prevLeagueUnitName = (props.levelProps === undefined) ? undefined : previousLeagueUnit(props.levelProps.leagueUnitName())
-    let nextLeagueUnitName = (props.levelProps === undefined) ? undefined : nextLeagueUnit(props.levelProps.leagueUnitName())
+    const prevLeagueUnitName = (props.levelProps === undefined) ? undefined : previousLeagueUnit(props.levelProps.leagueUnitName())
+    const nextLeagueUnitName = (props.levelProps === undefined) ? undefined : nextLeagueUnit(props.levelProps.leagueUnitName())
 
-    let prevLeagueUnitLink = (prevLeagueUnitName === undefined) ? undefined :
+    const prevLeagueUnitLink = (prevLeagueUnitName === undefined) ? undefined :
         <svg onClick={() => {openLeagueUnit(prevLeagueUnitName!)}} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="neighboor_league_unit_link bi bi-arrow-left-square" viewBox="0 0 16 16">
           <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm11.5 5.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"></path>
     </svg>
 
-    let nextLeagueUnitLink = (nextLeagueUnitName === undefined) ? undefined :
+    const nextLeagueUnitLink = (nextLeagueUnitName === undefined) ? undefined :
         <svg onClick={() => openLeagueUnit(nextLeagueUnitName!)} xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="neighboor_league_unit_link me-1 bi bi-arrow-right-square" viewBox="0 0 16 16">
           <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"></path>
     </svg>
 
-    let links = [
+    const links = [
             {
                 href: "/league/" + props.levelProps?.leagueId(), 
                 content: props.levelProps?.leagueName()
@@ -50,9 +49,9 @@ const LeagueUnitTopMenu = (props: {levelProps?: LeagueUnitLevelDataProps}) => {
             }
         ]
 
-    let externalLink = <ExternalLeagueUnitLink id={props.levelProps?.leagueUnitId() || 0} black={false} />
+    const externalLink = <ExternalLeagueUnitLink id={props.levelProps?.leagueUnitId() || 0} black={false} />
 
-    let selectBox = <Form>
+    const selectBox = <Form>
             <Form.Select  size="sm" className="mt-3 mb-3 pr-3" max-width="200" onChange={e => navigate('/team/' + e.currentTarget.value)}>
                 <option value={undefined}>Select...</option>
                 {props.levelProps?.teams().map(([teamId, teamName]) => {

@@ -13,17 +13,17 @@ interface Props {
 
 class CompareTeamsValuesChart extends React.Component<Props> {
     render() {
-        let team1Rankings = this.props.teamComparsion.team1Rankings
-        let team2Rankings = this.props.teamComparsion.team2Rankings
+        const team1Rankings = this.props.teamComparsion.team1Rankings
+        const team2Rankings = this.props.teamComparsion.team2Rankings
 
-        let x = team1Rankings.map(ranking => i18n.t('filter.season') + ' ' + ranking.season + ' ' + i18n.t("chart.round") + ' ' + ranking.round)
+        const x = team1Rankings.map(ranking => i18n.t('filter.season') + ' ' + ranking.season + ' ' + i18n.t("chart.round") + ' ' + ranking.round)
         let team1Y = team1Rankings.map(ranking => this.props.valueFunc(ranking))
         let team2Y = team2Rankings.map(ranking => this.props.valueFunc(ranking))
 
         team1Y = (this.props.formatterFunc !== undefined) ? team1Y.map(this.props.formatterFunc) : team1Y
         team2Y = (this.props.formatterFunc !== undefined) ? team2Y.map(this.props.formatterFunc) : team2Y
 
-        let chartData = [
+        const chartData = [
             {
                 type: 'scatter',
                 name: team1Rankings[team1Rankings.length - 1].teamName,
@@ -46,7 +46,7 @@ class CompareTeamsValuesChart extends React.Component<Props> {
             }
         ]
 
-        let layout = {
+        const layout = {
             title: {
                 text: this.props.title
             },

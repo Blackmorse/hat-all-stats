@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type JSX } from 'react';
 import TeamComparsion from '../../rest/models/team/TeamComparsion';
 import DiffPosition from '../../common/widgets/DiffPosition'
 import DiffValue from '../../common/widgets/DiffValue'
@@ -43,12 +43,12 @@ class CompareTeamsTable extends React.Component<Props> {
     }
 
     render() {
-        let team1Rankings = this.props.teamComparsion.team1Rankings
-        let team1LastRanking = team1Rankings[team1Rankings.length - 1]
-        let team1PreviousRanking = (team1Rankings.length > 1) ? team1Rankings[team1Rankings.length - 2] : undefined
-        let team2Rankings = this.props.teamComparsion.team2Rankings
-        let team2PreviousRanking = (team2Rankings.length > 1) ? team2Rankings[team2Rankings.length - 2] : undefined
-        let team2LastRanking = team2Rankings[team2Rankings.length - 1]
+        const team1Rankings = this.props.teamComparsion.team1Rankings
+        const team1LastRanking = team1Rankings[team1Rankings.length - 1]
+        const team1PreviousRanking = (team1Rankings.length > 1) ? team1Rankings[team1Rankings.length - 2] : undefined
+        const team2Rankings = this.props.teamComparsion.team2Rankings
+        const team2PreviousRanking = (team2Rankings.length > 1) ? team2Rankings[team2Rankings.length - 2] : undefined
+        const team2LastRanking = team2Rankings[team2Rankings.length - 1]
 
         let team1PreviousPositionDiff: JSX.Element = <></>
         let team1PreviousValueDiff: JSX.Element = <></>
@@ -56,7 +56,7 @@ class CompareTeamsTable extends React.Component<Props> {
         let team2PreviousPositionDiff: JSX.Element = <></>
         let team2PreviousValueDiff: JSX.Element = <></>
         if (team1PreviousRanking !== undefined && team2PreviousRanking !== undefined) {
-            let team1PreviousPositionDiffNumber = <DiffPosition
+            const team1PreviousPositionDiffNumber = <DiffPosition
                 positionFunc={this.props.rankingParameters.positionFunc}
                 previousRanking={team1PreviousRanking}
                 lastRanking={team1LastRanking} />
@@ -72,7 +72,7 @@ class CompareTeamsTable extends React.Component<Props> {
                 }}
             />
 
-            let team1PreviousValueDiffNumber = <DiffValue
+            const team1PreviousValueDiffNumber = <DiffValue
                 valueFunc={this.props.rankingParameters.valueFunc}
                 previousRanking={team1PreviousRanking}
                 lastRanking={team1LastRanking}
@@ -90,7 +90,7 @@ class CompareTeamsTable extends React.Component<Props> {
                 }}
             />
 
-            let team2PreviousPositionDiffValue = <DiffPosition
+            const team2PreviousPositionDiffValue = <DiffPosition
                 positionFunc={this.props.rankingParameters.positionFunc}
                 previousRanking={team2PreviousRanking}
                 lastRanking={team2LastRanking} />
@@ -106,7 +106,7 @@ class CompareTeamsTable extends React.Component<Props> {
                 }}
             />
 
-            let team2PreviousValueDiffNumber = <DiffValue
+            const team2PreviousValueDiffNumber = <DiffValue
                 valueFunc={this.props.rankingParameters.valueFunc}
                 previousRanking={team2PreviousRanking}
                 lastRanking={team2LastRanking}

@@ -1,4 +1,4 @@
-import React from 'react';
+import { type JSX } from "react";
 import TotalOverview from "../../rest/models/overview/TotalOverview";
 import { getTotalOverview } from '../../rest/Client'
 import LevelDataProps from '../LevelDataProps';
@@ -49,7 +49,7 @@ abstract class OverviewPage<LevelProps extends LevelDataProps> extends
     }
 
     executeDataRequest(_dataRequest: {}, callback: (loadingState: LoadingEnum, result?: TotalOverview) => void) {
-        let request = this.props.levelDataProps.createOverviewRequest()
+        const request = this.props.levelDataProps.createOverviewRequest()
         getTotalOverview(request, callback)
     }
 
@@ -65,7 +65,7 @@ abstract class OverviewPage<LevelProps extends LevelDataProps> extends
     renderSection(): JSX.Element {
         if (!this.state.totalOverview) {
             return <></>
-        } else { return <Translation>{ (t, { i18n} ) => <Card className="mt-3 shadow">
+        } else { return <Translation>{ (_t, { i18n} ) => <Card className="mt-3 shadow">
         <Card.Header className="lead">{i18n.t(PagesEnum.OVERVIEW)}</Card.Header>
         <Card.Body>
             <Row className="mb-2"> 

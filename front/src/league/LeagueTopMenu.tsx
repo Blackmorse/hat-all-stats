@@ -1,4 +1,3 @@
-import React from 'react';
 import '../common/menu/TopMenu.css'
 import TopMenu from '../common/menu/TopMenu'
 import { toArabian } from "../common/Utils"
@@ -8,18 +7,18 @@ import {useNavigate} from 'react-router';
 import LeagueLevelDataProps from './LeagueLevelDataProps';
 
 const LeagueTopMenu = (props: {levelProps?: LeagueLevelDataProps}) => {
-    let navigate = useNavigate()
+    const navigate = useNavigate()
 
-    let links = [
+    const links = [
         {
             href: "/league/" + props.levelProps?.leagueId(),
             content: props.levelProps?.leagueName()
         }
     ]
 
-    let externalLink = <ExternalLeagueLink id={props.levelProps?.leagueId() || 1000} black={false} />
+    const externalLink = <ExternalLeagueLink id={props.levelProps?.leagueId() || 1000} black={false} />
 
-    let selectBox = <Form>
+    const selectBox = <Form>
         <Form.Select  size="sm" className="mt-3 mb-3 pr-3" max-width="200" 
              onChange={e => navigate('/league/' + props.levelProps?.leagueId() + '/divisionLevel/' + toArabian(e.currentTarget.value))}>
             <option value={undefined}>Select...</option>

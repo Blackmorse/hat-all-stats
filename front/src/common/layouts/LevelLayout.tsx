@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import { type JSX, useEffect, useState } from 'react'
 import {Link} from 'react-router-dom'
 import LeftMenu from '../../common/menu/LeftMenu'
 import { Callback, Failure, Success } from '../../rest/models/Https'
@@ -11,7 +11,7 @@ import Layout from './Layout'
 
 
 function parsePage(): string | undefined {
-    let params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window.location.search);
 
     return (params.get('pageName') === null) ? undefined : params.get('pageName') as string | undefined;
 }
@@ -39,7 +39,7 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
     useEffect(() => {
        props.fetchLevelData(payload => {
             if (payload.loadingEnum === LoadingEnum.OK) {
-                let success = payload as Success<LevelProps>
+                const success = payload as Success<LevelProps>
                 setResponseState(success)
                 setLevelProps(success.model)
                 document.title = props.documentTitle(success.model!) + ' - Hattid'
@@ -51,7 +51,7 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
         })
     }, [])
 
-    let leftMenu = <>
+    const leftMenu = <>
             {(levelProps !== undefined) ? props.topLeftMenu(levelProps, setPage): <></>}
             <LeftMenu pages={Array.from(props.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH && /*TODO */  p !== PagesEnum.TEAM_COMPARSION))} 
                     callback={leaguePage => setPage(leaguePage)}
@@ -71,7 +71,7 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
             </span>
         </div>
     } else if (responseState.loadingEnum === LoadingEnum.NOT_FOUND) {
-        let notFoundError = (responseState as Failure).error as NotFoundError
+        const notFoundError = (responseState as Failure).error as NotFoundError
         errorPopup = <div className="error_popup">
             <img src="/warning.gif" className="warning_img" alt="warning" />
             <span>
@@ -82,13 +82,13 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
         errorPopup = <></>
     }
     let res: JSX.Element
-    let jsxFunction = props.pagesMap.get(page!)
+    const jsxFunction = props.pagesMap.get(page!)
     if (levelProps && jsxFunction) {
         res = jsxFunction(levelProps)
     } else {
         res = <></>
     }
-    let content = <>
+    const content = <>
             {errorPopup}
             {res}
         </>

@@ -1,4 +1,4 @@
-import React from 'react';
+import { type JSX } from 'react';
 import {PagesEnum} from '../common/enums/PagesEnum';
 import DreamTeamPage from '../common/pages/DreamTeamPage';
 import PromotionsTable from '../common/pages/PromotionsTable';

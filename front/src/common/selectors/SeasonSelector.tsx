@@ -1,6 +1,6 @@
 import React from 'react'
 import '../../i18n'
-import {Translation, useTranslation} from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { Form } from 'react-bootstrap'
 
 interface SeasonSelectorProps {
@@ -18,7 +18,7 @@ const SeasonSelector = (props: SeasonSelectorProps) => {
         if (event.currentTarget.value === "all") {
             props.callback(-1)
         } else {
-            let season = Number(event.currentTarget.value)
+            const season = Number(event.currentTarget.value)
             props.callback(season)
         }
     }

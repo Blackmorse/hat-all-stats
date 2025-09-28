@@ -10,13 +10,13 @@ interface Props {
 
 class CheckBoxSelector extends React.Component<Props> {
     onChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
-        let checked = event.currentTarget.checked
+        const checked = event.currentTarget.checked
         this.props.callback(checked)
     }
 
     render() {
         return <Translation>
-        { (t, { i18n }) => <div className='d-flex flex-row align-items-center mx-2 my-xs-2 my-sm-2 my-lg-0 my-md-0'>
+        { (t) => <div className='d-flex flex-row align-items-center mx-2 my-xs-2 my-sm-2 my-lg-0 my-md-0'>
             <input type="checkbox" 
                 className='me-1'
                 id={"checkbox_" + this.props.title} 

@@ -1,5 +1,5 @@
-import React from 'react'
-import ExecutableComponent, { LoadableState } from '../sections/ExecutableComponent'
+import { type JSX } from 'react'
+import ExecutableComponent  from '../sections/ExecutableComponent'
 
 interface ChartOpenedState {
     chart: boolean

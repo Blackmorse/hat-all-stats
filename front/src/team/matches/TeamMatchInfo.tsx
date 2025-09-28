@@ -1,4 +1,3 @@
-import React from 'react'
 import {Col, Container, Row} from 'react-bootstrap'
 import ExternalMatchLink from '../../common/links/ExternalMatchLink'
 import TeamLink from '../../common/links/TeamLink'
@@ -14,7 +13,7 @@ interface Props {
 
 const TeamMatchInfo = (props: Props) => {
 
-    let singleMatch = props.singleMatch
+    const singleMatch = props.singleMatch
     
     return  <div>
         <Row className='mb-2'>

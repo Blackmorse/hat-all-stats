@@ -1,4 +1,4 @@
-import React from 'react';
+import { type JSX } from 'react';
 import MatchTopHatstats from '../../rest/models/match/MatchTopHatstats'
 import '../../i18n'
 import { Translation } from 'react-i18next'

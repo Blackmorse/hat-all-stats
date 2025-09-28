@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { getPlayerRatings } from '../../../rest/clients/PlayerStatsClient'
 import PlayerRating from '../../../rest/models/player/PlayerRating'

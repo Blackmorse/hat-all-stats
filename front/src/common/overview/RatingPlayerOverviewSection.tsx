@@ -1,3 +1,4 @@
+import { type JSX } from 'react';
 import PlayerOverviewSection from './PlayerOverviewSection'
 import { getTopRatingPlayersOverview } from '../../rest/Client'
 import PlayerStatOverview from '../../rest/models/overview/PlayerStatOverview';

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { type JSX, useState } from 'react'
 import TeamMatchInfoExecutableSection from '../../../../team/matches/TeamMatchInfoExecutableSection'
 import '../../../links/TableLink.css'
 import TableColumn from '../../TableColumn'
@@ -22,13 +22,13 @@ interface HookMatchRowProperties<RowModel> {
     expandedRowFunc?: (model: RowModel) => JSX.Element
 }
 
-export const HookMatchRow = <RowModel extends {}>(props: HookMatchRowProperties<RowModel>) => {
+export const HookMatchRow = <RowModel extends unknown>(props: HookMatchRowProperties<RowModel>) => {
     const [ expanded, setExpanded ] = useState(false)
 
     function row(): JSX.Element {
         return <>
-                {props.tableColumns.map(tableColumn => {
-                    return <td className={(tableColumn.columnValue.center === undefined || !tableColumn.columnValue.center) ? '' : 'text-center'}>{tableColumn.columnValue.provider(props.entity, props.rowNum)}</td>
+                {props.tableColumns.map((tableColumn, index) => {
+                    return <td key={`cell-${index}`} className={(tableColumn.columnValue.center === undefined || !tableColumn.columnValue.center) ? '' : 'text-center'}>{tableColumn.columnValue.provider(props.entity, props.rowNum)}</td>
                 } ) }
             </>
     }
@@ -71,7 +71,7 @@ abstract class MatchRow<RowModel extends {matchId: number}, Props extends TableR
     abstract columns(rowIndex: number, rowModel: RowModel): Array<JSX.Element>
 
     render() {
-        let columns = this.columns(this.props.rowIndex, this.props.rowModel)
+        const columns = this.columns(this.props.rowIndex, this.props.rowModel)
         if (!this.state.expanded) {
             return <tr className={this.props.className}>
                 <td key={'match_row' + this.props.rowModel.matchId + '_' + Math.random()}>                   

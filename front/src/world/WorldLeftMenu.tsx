@@ -20,7 +20,7 @@ class WorldLeftMenu extends React.Component<Props, {}> {
             return <></>
         }
 
-        let countries = this.props.worldLevelDataProps.countries()
+        const countries = this.props.worldLevelDataProps.countries()
 
         return <Translation>{
             t =>

@@ -1,4 +1,3 @@
-import React from 'react'
 import TeamHatstats from '../../../rest/models/team/TeamHatstats';
 import LevelDataProps, { LevelDataPropsWrapper } from "../../LevelDataProps";
 import TableSection from '../TableSection';

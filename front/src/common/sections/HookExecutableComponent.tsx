@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react'
-import {LoadingEnum} from '../enums/LoadingEnum'
+import { type JSX } from 'react'
+import { useEffect, useState } from 'react'
+import { LoadingEnum } from '../enums/LoadingEnum'
 import Blur from '../widgets/Blur'
 import Bot from '../widgets/Bot'
 import Section from './HookSection'
@@ -11,7 +12,7 @@ export interface StateAndRequest<Request, State> {
     currentRequest: Request
 }
 
-interface Props<Request, Response, State=Response> {
+interface Props<Request, Response, State = Response> {
     initialRequest: Request
     responseToState: (response?: Response, currentState?: State) => State
     executeRequest: (request: Request, callback: (loadingState: LoadingEnum, result?: Response) => void) => void
@@ -20,7 +21,7 @@ interface Props<Request, Response, State=Response> {
     sectionTitle?: (state: State) => string | JSX.Element
 }
 
-const ExecutableComponent = <Request, Response, State=Response>(props: Props<Request, Response, State>) => {
+const ExecutableComponent = <Request, Response, State = Response>(props: Props<Request, Response, State>) => {
     const [state, setState] = useState(props.responseToState(undefined as Response | undefined))
     const [loadingEnum, setLoadingEnum] = useState(LoadingEnum.LOADING)
     const [request, setRequest] = useState(props.initialRequest)
@@ -38,19 +39,19 @@ const ExecutableComponent = <Request, Response, State=Response>(props: Props<Req
         return <Bot />
     }
 
-    let stateAndRequest: StateAndRequest<Request, State> = {
-setRequest: setRequest, setState: setState, currentState: state, currentRequest: request
+    const stateAndRequest: StateAndRequest<Request, State> = {
+        setRequest: setRequest, setState: setState, currentState: state, currentRequest: request
     }
-    let render = <>
-                <Blur loadingState={loadingEnum}
-                    updateCallback={() => {setUpdateCounter(updateCounter + 1)}} />               
-                {props.content(stateAndRequest)}
-            </>
+    const render = <>
+        <Blur loadingState={loadingEnum}
+            updateCallback={() => { setUpdateCounter(updateCounter + 1) }} />
+        {props.content(stateAndRequest)}
+    </>
 
     if (props.sectionTitle === undefined) {
         return render
     } else {
-        return <Section element={render} title={props.sectionTitle(state)}/>
+        return <Section element={render} title={props.sectionTitle(state)} />
     }
 }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import ExecutableComponent from "../../sections/ExecutableComponent";
 import FormationChartModel from '../../../rest/models/overview/FormationChartModel'
 import LevelRequest from '../../../rest/models/request/LevelRequest';
@@ -44,25 +44,25 @@ class FormationsChart extends ExecutableComponent<Props, State, Array<FormationC
             return <></>
         }
 
-        let x = Array.from(new Set(this.state.formations.map(this.formName)))
+        const x = Array.from(new Set(this.state.formations.map(this.formName)))
 
-        let allFormations = Array.from(new Set(this.state.formations.map(f => f.formation)))
+        const allFormations = Array.from(new Set(this.state.formations.map(f => f.formation)))
 
-        let chartData = allFormations.map(formation => {
-            let formationsArray = this.state.formations?.filter(f => f.formation === formation)
+        const chartData = allFormations.map(formation => {
+            const formationsArray = this.state.formations?.filter(f => f.formation === formation)
             return {
                 type: 'scatter',
                 name: formation,
                 x: x,
                 //filling gaps for (season, round)
                 y: x.map(xx => {
-                    let xxIndex = formationsArray!.map(f => this.formName({season: f.season, round: f.round})).indexOf(xx)
+                    const xxIndex = formationsArray!.map(f => this.formName({season: f.season, round: f.round})).indexOf(xx)
                     return xxIndex > -1 ? formationsArray![xxIndex].count  : 0 
                     })
             }
         })
 
-        let layout = {
+        const layout = {
             title: {
                 text: i18n.t('overview.formations')
             },

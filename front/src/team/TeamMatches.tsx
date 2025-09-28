@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import { Fragment, type JSX } from 'react'
 import { LevelDataPropsWrapper } from '../common/LevelDataProps';
 import TeamLevelDataProps from './TeamLevelDataProps'
 import { LoadingEnum } from '../common/enums/LoadingEnum';

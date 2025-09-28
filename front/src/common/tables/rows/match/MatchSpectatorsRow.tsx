@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import MatchSpectators from '../../../../rest/models/match/MatchSpectators'
 import { commasSeparated } from '../../../Formatters'
 import ExternalMatchLink from '../../../links/ExternalMatchLink'

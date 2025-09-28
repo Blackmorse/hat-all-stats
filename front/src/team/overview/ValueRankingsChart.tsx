@@ -16,13 +16,13 @@ class RankingsChart extends React.Component<Props, {}> {
         const seasons = this.props.leagueRankings.map(l => l.season)
         const uniqSeasons = Array.from(new Set( seasons))
 
-        let x = uniqSeasons.length > 1
+        const x = uniqSeasons.length > 1
             ? this.props.leagueRankings.map((_, index) => index)
             : this.props.leagueRankings.map((l) => l.round)
 
-        let yy = this.props.leagueRankings.map(this.props.valueFunc)
-        let y = (this.props.formatterFunc !== undefined) ? yy.map(this.props.formatterFunc) : yy
-        let chartData = [{
+        const yy = this.props.leagueRankings.map(this.props.valueFunc)
+        const y = (this.props.formatterFunc !== undefined) ? yy.map(this.props.formatterFunc) : yy
+        const chartData = [{
             type: 'scatter',
             x: x,
             y: y,
@@ -31,7 +31,7 @@ class RankingsChart extends React.Component<Props, {}> {
             }
         }]
 
-        var layout = {
+        const layout = {
             title: {
               text: this.props.title
             },

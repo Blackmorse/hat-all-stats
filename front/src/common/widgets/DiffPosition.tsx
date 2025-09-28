@@ -9,7 +9,7 @@ interface Props {
 
 class DiffPosition extends React.Component<Props> {
     render() {
-        let positionFunc = this.props.positionFunc
+        const positionFunc = this.props.positionFunc
         if(positionFunc(this.props.previousRanking) > positionFunc(this.props.lastRanking)) {
             return <>
                 <img className="trend_up" src="/trend-green.png" alt="up"/>

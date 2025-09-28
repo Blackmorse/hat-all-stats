@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import { useTranslation } from 'react-i18next'
 import { LoadingEnum } from '../common/enums/LoadingEnum'
 import { PagesEnum } from '../common/enums/PagesEnum'

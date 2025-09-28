@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import TeamMatchInfo from './TeamMatchInfo'
 import i18n from '../../i18n'
 import SingleMatch from '../../rest/models/match/SingleMatch'
@@ -17,8 +17,8 @@ class TeamMatchInfoComponent extends React.Component<Props, SectionState> {
     }
 
     render(): JSX.Element {
-        let teamMatch = this.props.teamMatch
-        let singleMatch: SingleMatch = {
+        const teamMatch = this.props.teamMatch
+        const singleMatch: SingleMatch = {
             homeTeamId: teamMatch.homeTeam.teamId,
             homeTeamName: teamMatch.homeTeam.teamName,
             homeGoals: teamMatch.homegoals,

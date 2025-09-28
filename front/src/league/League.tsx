@@ -1,4 +1,3 @@
-import React from 'react';
 import { useMatch} from 'react-router';
 import CountryLevelLayout from '../common/layouts/CountryLevelLayout';
 import {getLeagueData} from '../rest/clients/LevelDataClient';
@@ -9,7 +8,7 @@ import LeagueTopMenu from './LeagueTopMenu';
 const League = () => {
     const params = useMatch('league/:league')
 
-    let pagesMap = pages()
+    const pagesMap = pages()
 
     return <CountryLevelLayout<LeagueLevelDataProps>
             pagesMap={pagesMap}

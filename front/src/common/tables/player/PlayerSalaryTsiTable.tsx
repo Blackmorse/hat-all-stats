@@ -1,4 +1,3 @@
-import React from 'react'
 import {useTranslation} from 'react-i18next'
 import { getPlayerSalaryTsi } from '../../../rest/clients/PlayerStatsClient'
 import PlayerSalaryTSI from "../../../rest/models/player/PlayerSalaryTSI"

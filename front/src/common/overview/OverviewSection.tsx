@@ -1,4 +1,4 @@
-import React from 'react';
+import { type JSX } from 'react';
 import LevelDataProps from '../../common/LevelDataProps';
 import OverviewRequest from '../../rest/models/request/OverviewRequest';
 import SeasonRoundSelector from './SeasonRoundSelector'
@@ -49,7 +49,7 @@ abstract class OverviewSection<OverviewEntity, OverviewProps extends OverviewSec
 
     executeDataRequest(dataRequest: Request, 
             callback: (loadingState: LoadingEnum, result?: OverviewEntity) => void) {
-        let request: OverviewRequest = this.props.levelDataProps.createOverviewRequest()
+        const request: OverviewRequest = this.props.levelDataProps.createOverviewRequest()
         request.season = dataRequest.season
         request.round = dataRequest.round
 
@@ -64,9 +64,9 @@ abstract class OverviewSection<OverviewEntity, OverviewProps extends OverviewSec
     }
 
     renderSection(): JSX.Element {
-        let data = this.state.data
+        const data = this.state.data
         if (data) {
-            let dataDefined = data
+            const dataDefined = data
             return <>
                 
                 {this.renderOverviewSection(dataDefined)}

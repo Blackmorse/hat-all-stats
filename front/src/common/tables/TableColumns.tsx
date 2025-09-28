@@ -1,4 +1,3 @@
-import React from "react";
 import i18n from "../../i18n";
 import Mappings from "../enums/Mappings";
 import {ageFormatter, commasSeparated, injuryFormatter, loddarStats, ratingFormatter, redCards, salaryFormatter, yellowCards} from "../Formatters";

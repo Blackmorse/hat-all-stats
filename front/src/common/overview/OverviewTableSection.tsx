@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import OverviewSection, { OverviewSectionProps } from './OverviewSection'
 import LeagueLink from '../../common/links/LeagueLink';
 import HattidLink from '../links/HattidLink';
@@ -22,7 +22,7 @@ abstract class OverviewTableSection<Entity>
         let leagueNameFunc: (id: number) => JSX.Element | undefined
 
         if (this.isWorldData) {
-            let nameMap = this.props.levelDataProps.countriesMap()
+            const nameMap = this.props.levelDataProps.countriesMap()
             leagueNameFunc = (id) => <td key={'match_row_' + id + '_' + Math.random()} className="value">
                     <LeagueLink id={id} text={<CountryImage countryId={id} text={nameMap.get(id)} />}/>
                     

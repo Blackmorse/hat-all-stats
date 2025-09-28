@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type JSX } from 'react';
 import './About.css'
 import i18n from '../i18n'
 import { Link } from 'react-router-dom';
@@ -28,7 +28,7 @@ class AboutSection extends React.Component<{}, SectionState> {
             Start exploring the world of Hattrick statistics from the <Link to="/worldOverview">{i18n.t('overview.world_overview')}</Link> and have fun!
         </p>
         <p>
-            This is non-commercial project with no advertisments and It's maintained by my own money. I will appreciate any donations. Thanks!
+            This is non-commercial project with no advertisments and It&apos;s maintained by my own money. I will appreciate any donations. Thanks!
         </p>
     
     <span>

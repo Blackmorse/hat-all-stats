@@ -1,4 +1,3 @@
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { getPlayerCards } from '../../../rest/clients/PlayerStatsClient'
 import PlayerCards from '../../../rest/models/player/PlayerCards'

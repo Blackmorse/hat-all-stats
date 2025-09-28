@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import './TableLink.css'
 import HattidLink, { LinkProps } from './HattidLink';
 import ExternalPlayerLink from './ExternalPlayerLink';

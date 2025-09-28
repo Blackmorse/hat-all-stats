@@ -1,4 +1,3 @@
-import React from 'react'
 import TeamLevelDataProps from '../TeamLevelDataProps'
 import { LevelDataPropsWrapper } from "../../common/LevelDataProps";
 import ExecutableComponent, {StateAndRequest} from "../../common/sections/HookExecutableComponent"
@@ -12,8 +11,8 @@ import CompareTeamsTable from './CompareTeamsTable'
 import { PagesEnum } from '../../common/enums/PagesEnum';
 
 const CompareTeamsPage = (props: LevelDataPropsWrapper<TeamLevelDataProps>) => {
-    let params = new URLSearchParams(window.location.search);
-    let teamId = (params.get('teamId') === null) ? undefined : Number(params.get('teamId'))
+    const params = new URLSearchParams(window.location.search);
+    const teamId = (params.get('teamId') === null) ? undefined : Number(params.get('teamId'))
 
     const [t, _i18n] = useTranslation() 
 
@@ -25,7 +24,7 @@ const CompareTeamsPage = (props: LevelDataPropsWrapper<TeamLevelDataProps>) => {
             return <>{t('team.unable_to_compare')}</>
         }
               
-        let teamComparsion = stateAndRequest.currentState
+        const teamComparsion = stateAndRequest.currentState
         return <Card className='mt-3 shadow'> 
         <Card.Header className='lead'>{t(PagesEnum.TEAM_COMPARSION)}</Card.Header>
         <Card.Body>

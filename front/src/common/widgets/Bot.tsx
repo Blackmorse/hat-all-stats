@@ -6,7 +6,7 @@ import './Bot.css'
 class Bot extends React.Component<{}, {}> {
     render() {
         return <Translation>
-        {(t, { i18n}) => <div className="info_div">
+        {(t) => <div className="info_div">
         <div className="info_text">{t('bot.description')}</div>
         <div className="info_image">
             <img src="/football-robot.png" alt="This is bot"/>

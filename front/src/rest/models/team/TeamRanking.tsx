@@ -35,4 +35,4 @@ interface TeamRanking {
     foundedPosition: number
 }
 
-export default TeamRanking
+export type { TeamRanking as default };

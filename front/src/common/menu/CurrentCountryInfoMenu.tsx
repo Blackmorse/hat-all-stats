@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import '../../i18n'
 import { Translation } from 'react-i18next'
 import moment from 'moment'

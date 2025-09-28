@@ -1,7 +1,6 @@
 
+import { Slider } from '@mui/material';
 import React from 'react'
-import Slider from '@material-ui/core/Slider';
-import { makeStyles } from '@material-ui/core';
 
 interface Props {
   left?: number,
@@ -38,17 +37,16 @@ export default function TwoThumbs(props: Props) {
         props.callback([minAge, maxAge])
     };
   
-    const rootStyles = makeStyles({
-        root: {
-            color: 'green',
-        }
-    })
+    // const rootStyles = makeStyles({
+    //     root: {
+    //         color: 'green',
+    //     }
+    // })
 
-    const classes = rootStyles();
+    // const classes = rootStyles();
 
     return (
         <Slider
-          classes={classes}
           value={value}
           onChange={handleChange}
           onChangeCommitted={handleCommited}

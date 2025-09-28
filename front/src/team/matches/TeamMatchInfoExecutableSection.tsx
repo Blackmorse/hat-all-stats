@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import { LoadingEnum } from '../../common/enums/LoadingEnum';
 import SingleMatch from '../../rest/models/match/SingleMatch';
 import { getSingleMatch } from '../../rest/Client'
@@ -45,7 +45,7 @@ class TeamMatchInfoExecutableSectionBase extends
     }
 }
 
-function sectionTitle(props: Props, state: LoadableState<number> & State & SectionState): {header: JSX.Element} {
+function sectionTitle(_props: Props, state: LoadableState<number> & State & SectionState): {header: JSX.Element} {
     if (state.singleMatch === undefined) {
         return {header: <></>}
     }

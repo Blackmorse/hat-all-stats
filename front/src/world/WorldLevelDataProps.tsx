@@ -1,8 +1,8 @@
 import LevelDataProps from "../common/LevelDataProps";
-import WorldData, { WorldLoadingInfo } from "../rest/models/leveldata/WorldData";
-import LevelRequest from "../rest/models/request/LevelRequest";
-import OverviewRequest from "../rest/models/request/OverviewRequest";
-import WorldRequest from '../rest/models/request/WorldRequest'
+import WorldData, { type WorldLoadingInfo } from "../rest/models/leveldata/WorldData";
+import type LevelRequest from "../rest/models/request/LevelRequest";
+import type OverviewRequest from "../rest/models/request/OverviewRequest";
+import type WorldRequest from '../rest/models/request/WorldRequest'
 
 class WorldLevelDataProps extends LevelDataProps {
     worldData: WorldData

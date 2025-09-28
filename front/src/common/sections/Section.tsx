@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import '../../i18n'
@@ -29,13 +29,13 @@ export default function Section<P, S extends SectionState, TBase extends GSectio
         }
 
         collapse() {
-            let newState: S = Object.assign({}, this.state)
+            const newState: S = Object.assign({}, this.state)
             newState.collapsed = !this.state.collapsed
             this.setState(newState)
         }
 
         render(): JSX.Element {
-            let titleBase: string | HeaderElement= titleFunc === undefined ? '' : titleFunc(this.props, this.state)
+            const titleBase: string | HeaderElement= titleFunc === undefined ? '' : titleFunc(this.props, this.state)
                       
             let title: JSX.Element
             let additionalElement: JSX.Element = <></>
@@ -50,7 +50,7 @@ export default function Section<P, S extends SectionState, TBase extends GSectio
                 additionalElement = titleBase.additionalElement === undefined? <></> : titleBase.additionalElement
             }
     
-            let triangle = (!this.state.collapsed) ? <i className="bi bi-caret-down-fill"></i> : <i className="bi bi-caret-right-fill"></i>
+            const triangle = (!this.state.collapsed) ? <i className="bi bi-caret-down-fill"></i> : <i className="bi bi-caret-right-fill"></i>
 
             return <Card className="shadow-sm mt-3">
                 <Card.Header className="lead text-start"  onClick={this.collapse}>

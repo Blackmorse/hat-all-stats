@@ -1,5 +1,5 @@
-import React from 'react';
-import TeamRanking from '../../rest/models/team/TeamRanking'
+import React, { type JSX } from 'react';
+import type TeamRanking from '../../rest/models/team/TeamRanking'
 import '../../i18n'
 import '../../common/elements/Trends.css'
 import TeamLevelDataProps from '../TeamLevelDataProps';
@@ -8,7 +8,7 @@ import DivisionLevelLink from '../../common/links/DivisionLevelLink';
 import { toRoman } from "../../common/Utils"
 import DiffPosition from '../../common/widgets/DiffPosition'
 import DiffValue from '../../common/widgets/DiffValue'
-import RankingParameters from '../../common/ranking/RankingParameters';
+import type RankingParameters from '../../common/ranking/RankingParameters';
 import '../../common/charts/Charts.css'
 import ChartLink from '../../common/charts/ChartLink';
 import ValueRankingsChart from './ValueRankingsChart';
@@ -53,18 +53,18 @@ class RankingTable extends React.Component<Props>{
     }
 
     render() {
-        let formatter = this.props.rankingParameters.formatter
-        let valueFunc = this.props.rankingParameters.valueFunc
-        let positionFunc = this.props.rankingParameters.positionFunc
+        const formatter = this.props.rankingParameters.formatter
+        const valueFunc = this.props.rankingParameters.valueFunc
+        const positionFunc = this.props.rankingParameters.positionFunc
 
-        let divisionLevelRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rankType === "division_level")
-        let leagueRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rankType === "league_id")
+        const divisionLevelRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rankType === "division_level")
+        const leagueRankings = this.props.rankingData.teamRankings.filter(teamRanking => teamRanking.rankType === "league_id")
 
-        let lastLeagueRanking = leagueRankings[leagueRankings.length - 1]
-        let previousLeagueRanking = (leagueRankings.length > 1) ? leagueRankings[leagueRankings.length - 2] : undefined
+        const lastLeagueRanking = leagueRankings[leagueRankings.length - 1]
+        const previousLeagueRanking = (leagueRankings.length > 1) ? leagueRankings[leagueRankings.length - 2] : undefined
 
-        let lastDivisionLevelRanking = divisionLevelRankings[divisionLevelRankings.length - 1]
-        let previousDivisionLevelRanking = (divisionLevelRankings.length > 1) ? divisionLevelRankings[divisionLevelRankings.length - 2] : undefined;
+        const lastDivisionLevelRanking = divisionLevelRankings[divisionLevelRankings.length - 1]
+        const previousDivisionLevelRanking = (divisionLevelRankings.length > 1) ? divisionLevelRankings[divisionLevelRankings.length - 2] : undefined;
 
         let diffValueContent: JSX.Element | undefined = undefined
         let divisionLevelDiffPositionContent: JSX.Element | undefined = undefined

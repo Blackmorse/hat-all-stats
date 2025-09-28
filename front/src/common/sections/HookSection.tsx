@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import { type JSX, useState } from 'react'
 import {Card} from 'react-bootstrap'
 import {Link} from 'react-router-dom'
 
@@ -10,7 +10,7 @@ interface Props {
 const Section = (props: Props) => {
     const [collapsed, setCollapsed] = useState(false)
 
-    let triangle = (!collapsed) ? <i className="bi bi-caret-down-fill"></i> : <i className="bi bi-caret-right-fill"></i>
+    const triangle = (!collapsed) ? <i className="bi bi-caret-down-fill"></i> : <i className="bi bi-caret-right-fill"></i>
    return <Card className="shadow-sm">
             <Card.Header className="lead text-start"  onClick={() => setCollapsed(!collapsed)}>
                 {triangle} <Link to='#' className="link-dark section-cursor"> {props.title}</Link> 

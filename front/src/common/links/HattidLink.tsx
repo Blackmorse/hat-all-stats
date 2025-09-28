@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { type JSX } from 'react'
 import { PagesEnum } from "../enums/PagesEnum";
 import Mappings from '../enums/Mappings'
 import { NavLink } from 'react-bootstrap'
@@ -27,16 +27,16 @@ abstract class HattidLink<Props extends LinkProps> extends React.Component<Props
     }
 
     render() {
-        let parameters: any = Object.assign({}, this.props.queryParams)
+        const parameters: any = Object.assign({}, this.props.queryParams)
         
-        let page: PagesEnum | undefined = this.props.page
+        const page: PagesEnum | undefined = this.props.page
         if(page !== undefined) {    
             parameters.pageName = Mappings.queryParamToPageMap.getKey(page!)
         }
 
-        let queryParams = new URLSearchParams(parameters)
+        const queryParams = new URLSearchParams(parameters)
 
-        let keysToDel: Array<string> = []
+        const keysToDel: Array<string> = []
         queryParams.forEach((key, value) => {
             if (value === undefined || value === 'undefined') {
                 keysToDel.push(key)

@@ -1,4 +1,4 @@
-import React from 'react'
+import { type JSX } from 'react'
 import WorldOverviewPage from './WorldOverviewPage'
 import WorldLevelDataProps from './WorldLevelDataProps'
 import { PagesEnum } from '../common/enums/PagesEnum'

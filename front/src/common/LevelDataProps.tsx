@@ -33,12 +33,12 @@ abstract class LevelDataProps {
         return this.seasonRoundInfo().map(seasonInfo => seasonInfo[0])
     }
     currentRound(): number {
-        let rounds = this.seasonRoundInfo()[this.seasonRoundInfo().length - 1][1]
+        const rounds = this.seasonRoundInfo()[this.seasonRoundInfo().length - 1][1]
         return rounds[rounds.length - 1]
     }
 
     rounds(seas: number): Array<number> {
-        let r = this.seasonRoundInfo().filter(season => season[0] === seas )
+        const r = this.seasonRoundInfo().filter(season => season[0] === seas )
         return r[0][1]
     }
 
