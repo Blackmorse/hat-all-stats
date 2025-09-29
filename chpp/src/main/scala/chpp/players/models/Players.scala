@@ -15,5 +15,5 @@ object Players {
     (__ \ "ActionType").read[String],
     (__ \ "IsPlayingMatch").read[Boolean],
     (__ \ "Team").read[Team],
-    ).mapN(apply _)
+    ).mapN(apply)
 }

@@ -5,10 +5,9 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import models.clickhouse.TeamRankings
 import sqlbuilder.{Select, SqlBuilder}
-
 import ClickhouseRequest.*
 import models.web.HattidError
-import zio.IO
+import zio.{IO, ZIO}
 
 object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
 
@@ -39,7 +38,7 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
       "rating_position",
       "rating_end_of_match",
       "rating_end_of_match_position",
-      "age".toInt32 as "age",
+      "age".toInt32 `as` "age",
       "age_position",
       "injury",
       "injury_position",
@@ -68,8 +67,10 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
   }
 
   def execute(fromSeason: Option[Int], toSeason: Option[Int], leagueId: Int, teamId: Long)
-             (implicit restClickhouseDAO: RestClickhouseDAO): IO[HattidError, List[TeamRankings]] = {
-      restClickhouseDAO.executeZIO(simpleSql(fromSeason, toSeason, leagueId, teamId), rowParser)
-        .hattidErrors
+             : DBIO[List[TeamRankings]] = wrapErrors {
+    for {
+      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
+      result <- restClickhouseDAO.executeZIO(simpleSql(fromSeason, toSeason, leagueId, teamId), rowParser)
+    } yield result
   }
 }

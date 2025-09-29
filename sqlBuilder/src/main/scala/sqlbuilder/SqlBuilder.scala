@@ -31,7 +31,7 @@ case class WithSelect(sqlBuilder: SqlBuilder, alias: String, builderName: String
   def select(fields: Field*): From = {
     val selectSqlBuilder = new SqlBuilder(builderName)
     selectSqlBuilder.withSelect = Some(this)
-    selectSqlBuilder.select(fields: _*)
+    selectSqlBuilder.select(fields*)
   }
 }
 
@@ -51,7 +51,7 @@ case class SqlWithParameters(sql: String, parameters: Seq[Parameter]) {
           }
 
           NamedParameter.namedWithString((s"${parameter.sqlBuilderName}_${parameter.name}_${parameter.parameterNumber}", parameterValue))
-        }): _*
+        })*
       )
   }
 }
@@ -65,9 +65,9 @@ case class SqlBuilder(var name: String = "main"/*for the nested requests*/) {
   private var limitSimple: Option[Int] = None
   private[sqlbuilder] val whereClause = new WhereClause(this)
   private[sqlbuilder] val havingClause = new HavingClause(this)
-  private var _groupBy: GroupBy = _
-  private var _orderBy: OrderBy = _
-  private var _select: Select = _
+  private var _groupBy: GroupBy = scala.compiletime.uninitialized
+  private var _orderBy: OrderBy = scala.compiletime.uninitialized
+  private var _select: Select = scala.compiletime.uninitialized
   private var limitByNumber = 0
   private var limitByField: Option[String] = None
   private val settingsMap = mutable.Map[String, Any]()

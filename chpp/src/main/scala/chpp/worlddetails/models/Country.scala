@@ -21,5 +21,5 @@ object Country extends BaseXmlMapper{
       (__ \ "CountryCode").read[String],
       (__ \ "DateFormat").read[String],
       (__ \ "TimeFormat").read[String]
-    ).mapN(apply _)
+    ).mapN(apply)
 }

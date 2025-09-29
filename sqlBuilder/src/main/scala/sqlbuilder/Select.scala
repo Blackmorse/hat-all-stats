@@ -4,25 +4,25 @@ import scala.collection.mutable
 
 object NestedSelect {
   def apply(fields: Field*): From = {
-    new SqlBuilder("nested_req").select(fields: _*)
+    new SqlBuilder("nested_req").select(fields*)
   }
 }
 
 object WSelect {
   def apply(fields: Field*): From = {
-    new SqlBuilder("with").select(fields: _*)
+    new SqlBuilder("with").select(fields*)
   }
 }
 
 object Select {
   def apply(fields: Field*): From = {
-    new SqlBuilder("main").select(fields: _*)
+    new SqlBuilder("main").select(fields*)
   }
 }
 
 class Select(sqlBuild: SqlBuilder) {
   val from = From(sqlBuild)
-  private var fields: Seq[Field] = _
+  private var fields: Seq[Field] = scala.compiletime.uninitialized
   def apply(fields: Field*): From = {
     this.fields = fields
     from
@@ -49,7 +49,9 @@ class Select(sqlBuild: SqlBuilder) {
   }
 }
 
-class Field (val name: String) {
+private case class Window(partitionBy: String, orderBy: String)
+
+class Field (val name: String, val window: Option[Window] = None) {
   private var alias: Option[String] = None
 
   def as(alias: String): Field = {
@@ -63,6 +65,10 @@ class Field (val name: String) {
     field
   }
 
+  def over(partitionBy: String, orderBy: String): Field = {
+    new Field(name, Some(Window(partitionBy, orderBy)))
+  }
+
   def toInt32: Field = function("toInt32")
   def toInt64: Field = function("toInt64")
   def toUInt16: Field = function("toUInt16")
@@ -74,13 +80,15 @@ class Field (val name: String) {
   }
 
   override def toString: String = {
-    s"$name${alias.map(a => s" as $a").getOrElse("")}"
+    val aliasString = alias.map(a => s" as $a").getOrElse("")
+    val windowString = window.map(w => s" OVER (PARTITION BY ${w.partitionBy} ORDER BY ${w.orderBy})").getOrElse("")
+    s"$name$windowString$aliasString"
   }
 }
 
 case class From(sqlBuilder: SqlBuilder) {
-  var _name: String = _
-  var _innerSqlBuilder: SqlBuilder = _
+  var _name: String = scala.compiletime.uninitialized
+  var _innerSqlBuilder: SqlBuilder = scala.compiletime.uninitialized
   def from(name: String): SqlBuilder = {
     this._name = name
     sqlBuilder

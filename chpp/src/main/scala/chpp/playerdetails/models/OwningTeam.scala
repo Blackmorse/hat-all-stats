@@ -11,5 +11,5 @@ object OwningTeam {
     (__ \ "TeamID").read[Long],
     (__ \ "TeamName").read[String],
     (__ \ "LeagueID").read[Int]
-  ).mapN(apply _)
+  ).mapN(apply)
 }

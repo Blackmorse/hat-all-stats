@@ -10,5 +10,5 @@ object MatchesArchive {
   implicit val reader: XmlReader[MatchesArchive] = (
     (__ \ "IsYouth").read[Boolean],
     (__ \ "Team").read[Team],
-    ).mapN(apply _)
+    ).mapN(apply)
 }

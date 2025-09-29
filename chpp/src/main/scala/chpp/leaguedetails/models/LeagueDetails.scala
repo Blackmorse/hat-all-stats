@@ -25,5 +25,5 @@ object LeagueDetails extends BaseXmlMapper {
     (__ \ "LeagueLevelUnitName").read[String],
     (__ \ "CurrentMatchRound").read[Int],
     (__ \ "Team").read(seq[Team]),
-    ).mapN(apply _)
+    ).mapN(apply)
 }

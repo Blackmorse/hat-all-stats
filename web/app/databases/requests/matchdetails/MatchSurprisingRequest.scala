@@ -31,14 +31,14 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
         "is_home_match",
         "goals",
         "enemy_goals",
-        "abs(goals - enemy_goals)" as "abs_goals_difference",
-        hatstats as "hatstats",
-        oppositeHatstats as "opposite_hatstats",
-        "hatstats - opposite_hatstats" as "hatstats_difference",
-        "abs(hatstats_difference)" as "abs_hatstats_difference",
-        loddarStats as "loddar_stats",
-        oppositeLoddarStats as "opposite_loddar_stats",
-        "abs(loddar_stats - opposite_loddar_stats)" as "abs_loddar_stats_difference"
+        "abs(goals - enemy_goals)" `as` "abs_goals_difference",
+        hatstats `as` "hatstats",
+        oppositeHatstats `as` "opposite_hatstats",
+        "hatstats - opposite_hatstats" `as` "hatstats_difference",
+        "abs(hatstats_difference)" `as` "abs_hatstats_difference",
+        loddarStats `as` "loddar_stats",
+        oppositeLoddarStats `as` "opposite_loddar_stats",
+        "abs(loddar_stats - opposite_loddar_stats)" `as` "abs_loddar_stats_difference"
       ).from("hattrick.match_details")
       .where
         .season(parameters.season)
@@ -68,14 +68,14 @@ object MatchSurprisingRequest extends ClickhouseStatisticsRequest[MatchTopHatsta
         "is_home_match",
         "goals",
         "enemy_goals",
-        "abs(goals - enemy_goals)" as "abs_goals_difference",
-        hatstats as "hatstats",
-        oppositeHatstats as "opposite_hatstats",
-        "hatstats - opposite_hatstats" as "hatstats_difference",
-        "abs(hatstats_difference)" as "abs_hatstats_difference",
-        loddarStats as "loddar_stats",
-        oppositeLoddarStats as "opposite_loddar_stats",
-        "abs(loddar_stats - opposite_loddar_stats)" as "abs_loddar_stats_difference"
+        "abs(goals - enemy_goals)" `as` "abs_goals_difference",
+        hatstats `as` "hatstats",
+        oppositeHatstats `as` "opposite_hatstats",
+        "hatstats - opposite_hatstats" `as` "hatstats_difference",
+        "abs(hatstats_difference)" `as` "abs_hatstats_difference",
+        loddarStats `as` "loddar_stats",
+        oppositeLoddarStats `as` "opposite_loddar_stats",
+        "abs(loddar_stats - opposite_loddar_stats)" `as` "abs_loddar_stats_difference"
       ).from("hattrick.match_details")
       .where
         .season(parameters.season)

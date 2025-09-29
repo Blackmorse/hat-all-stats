@@ -54,5 +54,5 @@ object Player extends BaseXmlMapper {
     (__ \ "Salary").read[Long],
     (__ \ "CareerGoals").read[Int].optional,
     (__ \ "CareerHattricks").read[Int].optional,
-  ).mapN(apply _)
+  ).mapN(apply)
 }

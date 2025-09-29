@@ -21,5 +21,5 @@ object Goal {
     (__ \ "ScorerAwayGoals").read[Int],
     (__ \ "ScorerMinute").read[Int],
     (__ \ "MatchPart").read[Int],
-  ).mapN(apply _)
+  ).mapN(apply)
 }

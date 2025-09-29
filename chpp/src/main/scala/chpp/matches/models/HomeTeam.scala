@@ -13,5 +13,5 @@ object HomeTeam {
     (__ \ "HomeTeamID").read[Long],
     (__ \ "HomeTeamName").read[String],
     (__ \ "HomeTeamNameShortName").read[String]
-  ).mapN(apply _)
+  ).mapN(apply)
 }

@@ -40,4 +40,4 @@ class Filters @Inject() (
                           defaultFilters: EnabledFilters,
                           requestSourceFilter: RequestSourceFilter,
                           logUrlsFilter: LogUrlsFilter
-                        ) extends DefaultHttpFilters(defaultFilters.filters :+ requestSourceFilter :+ logUrlsFilter: _*)
+                        ) extends DefaultHttpFilters(defaultFilters.filters :+ requestSourceFilter :+ logUrlsFilter*)

@@ -25,7 +25,7 @@ object TopAttendanceMatchesOverviewRequest extends ClickhouseOverviewRequest[Mat
         "is_home_match",
         "goals",
         "enemy_goals",
-        "sold_total" as "spectators"
+        "sold_total" `as` "spectators"
       )
       .from("hattrick.match_details")
       .where

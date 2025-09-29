@@ -22,5 +22,5 @@ object LastMatch extends BaseXmlMapper {
       (__ \ "PlayedMinutes").read[Int],
       (__ \ "Rating").read[String].map(double),
       (__ \ "RatingEndOfGame").read[String].map(double),
-    ).mapN(apply _)
+    ).mapN(apply)
 }

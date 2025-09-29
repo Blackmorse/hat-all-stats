@@ -16,12 +16,12 @@ object NumberOverviewRequest extends ClickhouseOverviewRequest[NumberOverviewPla
     import SqlBuilder.implicits._
 
     Select(
-        "uniq(team_id)" as "numberOfTeams",
-        "count()" as "numberOfPlayers",
-        "countIf(injury_level > 0)" as "injuried",
-        "sum(goals)" as "goals",
-        "sum(yellow_cards)" as "yellow_cards",
-        "sum(red_cards)" as "red_cards"
+        "uniq(team_id)" `as` "numberOfTeams",
+        "count()" `as` "numberOfPlayers",
+        "countIf(injury_level > 0)" `as` "injuried",
+        "sum(goals)" `as` "goals",
+        "sum(yellow_cards)" `as` "yellow_cards",
+        "sum(red_cards)" `as` "red_cards"
       )
       .from("hattrick.player_stats")
       .where

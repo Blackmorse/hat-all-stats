@@ -22,7 +22,7 @@ object TopRatingPlayerOverviewRequest extends ClickhouseOverviewRequest[PlayerSt
         "player_id",
         "first_name",
         "last_name",
-        "rating" as "value",
+        "rating" `as` "value",
         "nationality"
       )
       .from("hattrick.player_stats")

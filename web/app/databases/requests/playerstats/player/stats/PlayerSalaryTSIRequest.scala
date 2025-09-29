@@ -24,11 +24,11 @@ object PlayerSalaryTSIRequest extends ClickhousePlayerStatsRequest[PlayerSalaryT
       "player_id",
       "first_name",
       "last_name",
-      "((age * 112) + days)" as "age",
+      "((age * 112) + days)" `as` "age",
       "tsi",
       "salary",
       "nationality",
-      ClickhouseRequest.roleIdCase("role_id") as "role"
+      ClickhouseRequest.roleIdCase("role_id") `as` "role"
     ).from("hattrick.player_stats")
       .where
       .season(parameters.season)

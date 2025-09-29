@@ -10,5 +10,5 @@ object MotherClub {
   implicit val reader: XmlReader[MotherClub] = (
     (__ \ "TeamID").read[Long],
     (__ \ "TeamName").read[String]
-  ).mapN(apply _)
+  ).mapN(apply)
 }

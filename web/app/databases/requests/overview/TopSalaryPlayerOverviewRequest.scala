@@ -22,7 +22,7 @@ object TopSalaryPlayerOverviewRequest extends ClickhouseOverviewRequest[PlayerSt
         "player_id",
         "first_name",
         "last_name",
-        "salary" as "value",
+        "salary" `as` "value",
         "nationality"
       )
       .from("hattrick.player_stats")

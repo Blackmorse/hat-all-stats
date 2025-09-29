@@ -56,5 +56,5 @@ object League extends BaseXmlMapper {
     },
     (__ \ "SeriesMatchDate").read[String].map(date),
     (__ \ "NumberOfLevels").read[Int]
-    ).mapN(apply _)
+    ).mapN(apply)
 }

@@ -15,5 +15,5 @@ object LeagueFixtures {
     (__ \ "LeagueLevelUnitName").read[String],
     (__ \ "Season").read[Int],
     (__ \ "Match").read(seq[Match]),
-  ).mapN(apply _)
+  ).mapN(apply)
 }

@@ -14,14 +14,14 @@ object OverviewTeamPlayerAveragesRequest extends ClickhouseOverviewRequest[Overv
                        divisionLevel: Option[Int]): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
-        "toUInt16(avg(avg_age))" as "avg_age",
-        "toUInt32(avg(sum_salary))" as "avg_salary",
-        "avg(sum_rating)" as "avg_rating"
+        "toUInt16(avg(avg_age))" `as` "avg_age",
+        "toUInt32(avg(sum_salary))" `as` "avg_salary",
+        "avg(sum_rating)" `as` "avg_rating"
       ).from(
       NestedSelect(
-          "avg((age * 112) + days)" as "avg_age",
-          "sum(rating)" as "sum_rating",
-          "sum(salary)" as "sum_salary"
+          "avg((age * 112) + days)" `as` "avg_age",
+          "sum(rating)" `as` "sum_rating",
+          "sum(salary)" `as` "sum_salary"
         ).from("hattrick.player_stats")
         .where
           .round(round)

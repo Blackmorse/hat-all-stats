@@ -13,5 +13,5 @@ object Flag {
     (__ \ "LeagueId").read[Int],
     (__ \ "LeagueName").read[String],
     (__ \ "CountryCode").read[String],
-  ).mapN(apply _)
+  ).mapN(apply)
 }

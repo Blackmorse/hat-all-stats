@@ -24,7 +24,7 @@ object TeamFanclubFlagsRequest extends ClickhouseStatisticsRequest[TeamFanclubFl
         "fanclub_size",
         "home_flags",
         "away_flags",
-        "home_flags + away_flags" as "all_flags"
+        "home_flags + away_flags" `as` "all_flags"
       )
       .from("hattrick.team_details")
       .where

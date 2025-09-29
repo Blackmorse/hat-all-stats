@@ -8,12 +8,12 @@ import databases.requests.model.`match`.TeamMatch
 import sqlbuilder.Select
 import ClickhouseRequest.*
 import models.web.HattidError
-import zio.IO
+import zio.{IO, ZIO}
 
 object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
   override val rowParser: RowParser[TeamMatch] = TeamMatch.mapper
 
-  def execute(season: Int, orderingKeyPath: OrderingKeyPath)(implicit restClickhouseDAO: RestClickhouseDAO): IO[HattidError, List[TeamMatch]] = {
+  def execute(season: Int, orderingKeyPath: OrderingKeyPath): DBIO[List[TeamMatch]] = wrapErrors {
     import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
         "season",
@@ -60,7 +60,9 @@ object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
         .season(season)
       .orderBy("round".asc)
 
-    restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
-      .hattidErrors
+    for {
+      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
+      result <- restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
+    } yield result
   }
 }

@@ -2,8 +2,8 @@ package controllers
 
 import models.web.{HattidError, RestTableData}
 import play.api.libs.json.{JsValue, Json, Writes}
-import play.api.mvc.{AnyContent, BaseController, Result}
-import zio.{Unsafe, ZIO}
+import play.api.mvc.{Action, AnyContent, BaseController, Request, Result}
+import zio.{Unsafe, ZIO, ZLayer}
 
 trait ZioActionBuilder {
   self: BaseController =>
@@ -20,14 +20,21 @@ trait ZioActionBuilder {
       }
     }
   }
+
+  def asyncZioPost[A, Model: Writes](zio: ZIO[Request[JsValue], HattidError, Model]): Action[JsValue] = {
+    Action.async(parse.json) { request =>
+      Unsafe.unsafe { implicit unsafe =>
+        runtime.unsafe.runToFuture {
+          zio.map(model => Ok(Json.toJson(model)))
+            .catchAll(error => ZIO.succeed(error.toPlayHttpResult))
+            .provide(ZLayer.succeed(request))
+        }
+      }
+    }
+  }
 }
 
 abstract class RestController extends BaseController with ZioActionBuilder {
-  def restTableDataJson[T](entities: List[T], pageSize: Int)(implicit writes: Writes[T]): Result = {
-      val rtd = restTableData[T](entities, pageSize)
-      Ok(Json.toJson(rtd))
-  }
-
   def restTableData[T](entities: List[T], pageSize: Int): RestTableData[T] = {
     val isLastPage = entities.size <= pageSize
 

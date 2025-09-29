@@ -11,5 +11,5 @@ object Flags {
   implicit val reader: XmlReader[Flags] = (
     (__ \ "HomeFlags" \ "Flag").read(seq[Flag]),
     (__ \ "AwayFlags" \ "Flag").read(seq[Flag]),
-    ).mapN(apply _)
+    ).mapN(apply)
 }

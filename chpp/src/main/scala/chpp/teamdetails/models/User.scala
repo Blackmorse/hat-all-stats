@@ -30,5 +30,5 @@ object User extends BaseXmlMapper {
     (__ \ "ActivationDate").read[String].map(date),
     (__ \ "LastLoginDate").read[String].map(date),
     (__ \ "HasManagerLicese").read[Boolean],
-  ).mapN(apply _)
+  ).mapN(apply)
 }

@@ -23,5 +23,5 @@ object MatchLineup {
     (__ \ "MatchContextId").read[Int],
     (__ \ "Arena").read[Arena],
     (__ \ "Team").read[Team]
-  ).mapN(apply _)
+  ).mapN(apply)
 }

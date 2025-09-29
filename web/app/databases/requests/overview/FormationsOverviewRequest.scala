@@ -17,7 +17,7 @@ object FormationsOverviewRequest extends ClickhouseOverviewRequest[FormationsOve
 
     Select(
         "formation",
-        "count()" as "count"
+        "count()" `as` "count"
       )
       .from("hattrick.match_details")
       .where

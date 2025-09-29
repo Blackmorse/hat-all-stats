@@ -11,5 +11,5 @@ object TrainerData {
   implicit val reader: XmlReader[TrainerData] = (
     (__ \ "TrainerType").read[Int],
     (__ \ "TrainerSkill").read[Int],
-    ).mapN(apply _)
+    ).mapN(apply)
 }

@@ -11,7 +11,7 @@ case object Descending extends SqlSortingDirection {
 }
 
 class OrderBy(val sqlBuilder: SqlBuilder) {
-  private var orderByFields: Seq[OrderByField] = _
+  private var orderByFields: Seq[OrderByField] = scala.compiletime.uninitialized
 
   def apply(orderByFields: OrderByField*): SqlBuilder = {
     this.orderByFields = orderByFields

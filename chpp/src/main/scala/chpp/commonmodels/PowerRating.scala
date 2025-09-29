@@ -15,5 +15,5 @@ object PowerRating {
     (__ \ "LeagueRanking").read[Int],
     (__ \ "RegionRanking").read[Int],
     (__ \ "PowerRating").read[Int],
-    ).mapN(apply _)
+    ).mapN(apply)
 }

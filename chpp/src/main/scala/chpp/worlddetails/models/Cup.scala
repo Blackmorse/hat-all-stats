@@ -20,5 +20,5 @@ object Cup {
     (__ \ "CupLevelIndex").read[Int],
     (__ \ "MatchRound").read[Int],
     (__ \ "MatchRoundsLeft").read[Int]
-    ).mapN(apply _)
+    ).mapN(apply)
 }

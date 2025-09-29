@@ -29,6 +29,5 @@ object ChppError extends BaseXmlMapper {
     (__ \\ "Server").read[String],
     (__ \\ "Request").read[String],
     (__ \\ "LineNumber").read[Int].optional
-
-  ).mapN(apply _)
+  ).mapN(apply)
 }

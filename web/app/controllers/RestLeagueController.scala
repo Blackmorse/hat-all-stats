@@ -19,6 +19,7 @@ import play.api.libs.json.{JsValue, Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfo, LeagueInfoService, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
+import zio.ZLayer
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,7 +40,7 @@ object RestLeagueData {
 
 @Singleton
 class RestLeagueController @Inject() (val controllerComponents: ControllerComponents,
-                                      implicit val restClickhouseDAO: RestClickhouseDAO,
+                                      val restClickhouseDAO: RestClickhouseDAO,
                                   val leagueInfoService: LeagueInfoService) extends RestController  {
 
   def getLeagueData(leagueId: Int): Action[AnyContent] = Action { implicit request =>
@@ -71,23 +72,25 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
       countries = leagueInfoService.idToStringCountryMap)
   }
 
-  private def stats[T](chRequest: ClickhouseStatisticsRequest[T],
+  private def stats[T : Writes](chRequest: ClickhouseStatisticsRequest[T],
                        leagueId: Int,
-                       restStatisticsParameters: RestStatisticsParameters)
-                      (implicit writes: Writes[T]) = Action.async { implicit request =>
-    chRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), restStatisticsParameters)
-      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+                       restStatisticsParameters: RestStatisticsParameters) = asyncZio {
+    chRequest.execute(orderingKeyPath = OrderingKeyPath(leagueId = Some(leagueId)),
+        parameters = restStatisticsParameters)
+      .map(entities => restTableData(entities, restStatisticsParameters.pageSize))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
-  private def playersRequest[T](plRequest: ClickhousePlayerStatsRequest[T],
+  private def playersRequest[T : Writes](plRequest: ClickhousePlayerStatsRequest[T],
                                 leagueId: Int,
                                 restStatisticsParameters: RestStatisticsParameters,
-                                playersParameters: PlayersParameters)(implicit writes: Writes[T])  = Action.async { implicit request =>
+                                playersParameters: PlayersParameters)  = asyncZio {
     plRequest.execute(
         OrderingKeyPath(leagueId = Some(leagueId)),
         restStatisticsParameters,
         playersParameters)
-      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+      .map(entities => restTableData(entities, restStatisticsParameters.pageSize))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def teamHatstats(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
@@ -111,20 +114,22 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
   def playerInjuries(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(PlayerInjuryRequest, leagueId, restStatisticsParameters)
 
-  def teamSalaryTsi(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[AnyContent] = Action.async { implicit request =>
+  def teamSalaryTsi(leagueId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[AnyContent] = asyncZio {
     TeamSalaryTSIRequest.execute(
         orderingKeyPath = OrderingKeyPath(leagueId = Some(leagueId)),
         parameters = restStatisticsParameters,
         playedInLastMatch = playedInLastMatch,
         excludeZeroTsi = excludeZeroTsi)
-      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+      .map(entities => restTableData(entities, restStatisticsParameters.pageSize))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
-  def teamCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = Action.async { implicit request =>
+  def teamCards(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = asyncZio {
     TeamCardsRequest.execute(
-      OrderingKeyPath(leagueId = Some(leagueId)),
-      restStatisticsParameters)
-      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+      orderingKeyPath = OrderingKeyPath(leagueId = Some(leagueId)),
+      parameters = restStatisticsParameters)
+      .map(entities => restTableData(entities, restStatisticsParameters.pageSize))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def teamRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
@@ -134,14 +139,15 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
     stats(TeamAgeInjuryRequest, leagueId, restStatisticsParameters)
 
   def teamGoalPoints(leagueId: Int, restStatisticsParameters: RestStatisticsParameters,
-                     playedAllMatches: Boolean, oneTeamPerUnit: Boolean): Action[AnyContent] = Action.async { implicit request =>
-    TeamGoalPointsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)),
-          restStatisticsParameters,
-          playedAllMatches,
-          leagueInfoService.leagueInfo(leagueId).seasonInfo(restStatisticsParameters.season).roundInfo.size,
-          oneTeamPerUnit
-          )
-      .map(entities => restTableDataJson(entities, restStatisticsParameters.pageSize))
+                     playedAllMatches: Boolean, oneTeamPerUnit: Boolean): Action[AnyContent] = asyncZio {
+    TeamGoalPointsRequest.execute(
+        orderingKeyPath = OrderingKeyPath(leagueId = Some(leagueId)),
+        parameters = restStatisticsParameters,
+        playedAllMatches = playedAllMatches,
+        currentRound = leagueInfoService.leagueInfo(leagueId).seasonInfo(restStatisticsParameters.season).roundInfo.size,
+        oneTeamPerUnit = oneTeamPerUnit)
+      .map(entities => restTableData(entities, restStatisticsParameters.pageSize))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def teamPowerRatings(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
@@ -163,19 +169,21 @@ class RestLeagueController @Inject() (val controllerComponents: ControllerCompon
     stats(MatchSpectatorsRequest, leagueId, restStatisticsParameters)
 
   def promotions(leagueId: Int): Action[AnyContent] = asyncZio {
-    PromotionsRequest.execute(OrderingKeyPath(leagueId = Some(leagueId)), leagueInfoService.leagueInfo.currentSeason(leagueId))
+    PromotionsRequest.execute(orderingKeyPath = OrderingKeyPath(leagueId = Some(leagueId)),
+        season = leagueInfoService.leagueInfo.currentSeason(leagueId))
       .map(PromotionWithType.convert)
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def oldestTeams(leagueId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = {
     stats(OldestTeamsRequest, leagueId, restStatisticsParameters)
   }
 
-  def dreamTeam(season: Int, leagueId: Int, sortBy: String, statsType: StatsType): Action[AnyContent] = Action.async {
-    DreamTeamRequest.execute(OrderingKeyPath(season = Some(season), leagueId = Some(leagueId)),
-      statsType,
-      sortBy)
-      .map(players => Ok(Json.toJson(players)))
+  def dreamTeam(season: Int, leagueId: Int, sortBy: String, statsType: StatsType): Action[AnyContent] = asyncZio {
+    DreamTeamRequest.execute(orderingKeyPath = OrderingKeyPath(season = Some(season), leagueId = Some(leagueId)),
+      statsType = statsType,
+      sortBy = sortBy)
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 }
 

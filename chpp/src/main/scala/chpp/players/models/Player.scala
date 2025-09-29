@@ -52,7 +52,7 @@ object PlayerPart extends BaseXmlMapper {
     (__ \ "Agreeability").read[Int],
     (__ \ "Aggressiveness").read[Int],
     (__ \ "Honesty").read[Int],
-  ).mapN(apply _)
+  ).mapN(apply)
 }
 
 case class Player(playerPart: PlayerPart,
@@ -96,5 +96,5 @@ object Player extends BaseXmlMapper{
       (__ \ "StaminaSkill").read[Int],
       (__ \ "TrainerData").read[TrainerData].optional,
       (__ \ "LastMatch").read[LastMatch].optional,
-    ).mapN(apply _)
+    ).mapN(apply)
 }

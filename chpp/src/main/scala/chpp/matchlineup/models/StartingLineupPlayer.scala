@@ -20,5 +20,5 @@ object StartingLineupPlayer {
     (__ \ "LastName").read[String],
     (__ \ "NickName").read[String],
     (__ \ "Behaviour").read[Int].optional,
-  ).mapN (apply _)
+  ).mapN (apply)
 }

@@ -17,5 +17,5 @@ object SearchParams extends BaseXmlMapper {
     (__ \ "SearchString2").read[String],
     (__ \ "SearchID").read[Int],
     (__ \ "SearchLeagueID").read[Int],
-  ).mapN(apply _)
+  ).mapN(apply)
 }

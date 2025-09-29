@@ -25,12 +25,12 @@ object TopMatchesOverviewRequest extends ClickhouseOverviewRequest[MatchTopHatst
         "is_home_match",
         "goals",
         "enemy_goals",
-        hatstats as "hatstats",
-        oppositeHatstats as "opposite_hatstats",
-        "hatstats + opposite_hatstats" as "sum_hatstats",
-        loddarStats as "loddar_stats",
-        oppositeLoddarStats as "opposite_loddar_stats",
-        "loddar_stats + opposite_loddar_stats" as "sum_loddar_stats"
+        hatstats `as` "hatstats",
+        oppositeHatstats `as` "opposite_hatstats",
+        "hatstats + opposite_hatstats" `as` "sum_hatstats",
+        loddarStats `as` "loddar_stats",
+        oppositeLoddarStats `as` "opposite_loddar_stats",
+        "loddar_stats + opposite_loddar_stats" `as` "sum_loddar_stats"
       )
       .from("hattrick.match_details")
       .where

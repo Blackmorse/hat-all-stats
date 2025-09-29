@@ -3,8 +3,10 @@ package databases.requests.matchdetails
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
+import databases.requests.ClickhouseRequest.DBIO
 import models.clickhouse.HistoryInfo
 import sqlbuilder.{Select, SqlBuilder}
+import zio.ZIO
 
 import scala.concurrent.Future
 
@@ -13,8 +15,11 @@ object HistoryInfoRequest extends ClickhouseRequest[HistoryInfo] {
 
   def execute(leagueId: Option[Int],
               season: Option[Int],
-              round: Option[Int])(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[HistoryInfo]] = {
-    restClickhouseDAO.execute(builder(leagueId, season, round).sqlWithParameters().build, rowParser)
+              round: Option[Int]): DBIO[List[HistoryInfo]] = wrapErrors {
+    for {
+      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
+      result <- restClickhouseDAO.executeZIO(builder(leagueId, season, round).sqlWithParameters().build, rowParser)
+    } yield result
   }
 
   def builder(leagueId: Option[Int],
@@ -26,7 +31,7 @@ object HistoryInfoRequest extends ClickhouseRequest[HistoryInfo] {
         "league_id",
         "division_level",
         "round",
-        "count()" as "cnt"
+        "count()" `as` "cnt"
       ).from("hattrick.match_details")
       .where
         .leagueId(leagueId)

@@ -21,5 +21,5 @@ object Team {
     (__ \ "League").read[League],
     (__ \ "LeagueLevelUnit").read[LeagueLevelUnit],
     (__ \ "MatchList" \ "Match").read(seq[Match])
-  ).mapN(apply _)
+  ).mapN(apply)
 }

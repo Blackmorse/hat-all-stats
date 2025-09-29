@@ -35,5 +35,5 @@ object Match extends BaseXmlMapper {
     (__ \ "HomeGoals").read[Int].optional,
     (__ \ "AwayGoals").read[Int].optional,
     (__ \ "Status").read[String]
-  ).mapN(apply _)
+  ).mapN(apply)
 }

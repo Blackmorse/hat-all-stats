@@ -3,11 +3,13 @@ package controllers
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.HistoryInfoRequest
 import hattid.CommonData
+import models.web.NotFoundError
 import play.api.Logging
 import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import service.leagueinfo.{Finished, LeagueInfoService, Loading, Scheduled}
+import zio.{ZIO, ZLayer}
 
 import java.util.Date
 import javax.inject.{Inject, Singleton}
@@ -21,16 +23,17 @@ object LeagueTime {
 
 @Singleton
 class LoaderController @Inject()(val controllerComponents: ControllerComponents,
-                                 implicit val restClickhouseDAO: RestClickhouseDAO,
+                                 val restClickhouseDAO: RestClickhouseDAO,
                                  val leagueInfoService: LeagueInfoService,
                                  val cache: AsyncCacheApi)
-    extends BaseController with Logging {
+    extends RestController with Logging {
 
-  def leagueRound(season: Int, leagueId: Int, round: Int): Action[AnyContent] = Action.async { implicit request =>
+  def leagueRound(season: Int, leagueId: Int, round: Int): Action[AnyContent] = asyncZio {
     HistoryInfoRequest.execute(leagueId = Some(leagueId), season = Some(season), round = Some(round))
-      .map(roundInfos => {
+      .flatMap(roundInfos => {
         if (roundInfos.isEmpty) {
           NotFound(s"Not found history for league $leagueId, season $season, round $round")
+          ZIO.fail(NotFoundError("", "", ""))
         } else {
           leagueInfoService.leagueInfo.add(roundInfos)
           leagueInfoService.leagueInfo(leagueId).loadingInfo = Finished
@@ -41,9 +44,9 @@ class LoaderController @Inject()(val controllerComponents: ControllerComponents,
             leagueInfoService.leagueInfo.leagueInfo.values.foreach(leagueInfo => leagueInfo.loadingInfo = Finished)
           }
           cache.remove(s"overview.$leagueId")
-          Ok("")
+          ZIO.succeed("")
         }
-      })
+      }).provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def scheduleInfo(): Action[JsValue] = Action(parse.json) { request =>

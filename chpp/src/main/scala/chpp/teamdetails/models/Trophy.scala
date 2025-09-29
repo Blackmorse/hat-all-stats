@@ -22,5 +22,5 @@ object Trophy extends BaseXmlMapper  {
     (__ \ "LeagueLevelUnitName").read[String],
     (__ \ "GainedDate").read[String].map(date),
     (__ \ "ImageUrl").read[String].optional,
-    ).mapN(apply _)
+    ).mapN(apply)
 }

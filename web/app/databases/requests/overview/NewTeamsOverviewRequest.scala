@@ -29,7 +29,7 @@ object NewTeamsOverviewRequest extends ClickhouseOverviewRequest[NumberOverviewT
           .isLeagueMatch
     ).as("dt")
       .select(
-          s"countIf($leagueDay - founded_date < multiIf(round = 1, 21, 7))" as "numberOfNewTeams"
+          s"countIf($leagueDay - founded_date < multiIf(round = 1, 21, 7))" `as` "numberOfNewTeams"
         )
           .from("hattrick.team_details")
           .where

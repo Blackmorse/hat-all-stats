@@ -42,7 +42,7 @@ case class LeaguesInfo(leagueInfo: Map[Int, LeagueInfo]) {
     leagueInfo(historyInfo.leagueId).seasonInfo
       .getOrElseUpdate(historyInfo.season, SeasonInfo(historyInfo.season, mutable.Map()))
       .roundInfo.getOrElseUpdate(historyInfo.round, RoundInfo(historyInfo.round, mutable.Map(
-        historyInfos.map(histInfo => histInfo.divisionLevel -> DivisionLevelInfo(histInfo.divisionLevel, histInfo.count)): _*
+        historyInfos.map(histInfo => histInfo.divisionLevel -> DivisionLevelInfo(histInfo.divisionLevel, histInfo.count))*
     )))
   }
 }

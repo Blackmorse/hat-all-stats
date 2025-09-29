@@ -11,5 +11,5 @@ object Country {
   implicit val reader: XmlReader[Country] = (
     (__ \ "CountryID").read[Int],
     (__ \ "CountryName").read[String],
-    ).mapN(apply _)
+    ).mapN(apply)
 }

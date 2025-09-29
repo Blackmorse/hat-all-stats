@@ -11,5 +11,5 @@ object League {
   implicit val reader: XmlReader[League] = (
     (__ \ "LeagueID").read[Int],
     (__ \ "LeagueName").read[String],
-    ).mapN(apply _)
+    ).mapN(apply)
 }

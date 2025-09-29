@@ -19,7 +19,7 @@ object TopVictoriesTeamsOverviewRequest extends ClickhouseOverviewRequest[TeamSt
         "league_unit_name",
         "team_id",
         "team_name",
-        "number_of_victories" as "value"
+        "number_of_victories" `as` "value"
       )
       .from("hattrick.team_details")
       .where

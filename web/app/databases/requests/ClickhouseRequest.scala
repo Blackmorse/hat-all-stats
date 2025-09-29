@@ -1,22 +1,41 @@
 package databases.requests
 
 import anorm.{NamedParameter, ParameterValue, Row, RowParser, SQL, SimpleSql, ToParameterValue}
+import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.model.Roles
 import io.github.gaelrenoux.tranzactio.DbException
 import models.web.{DbError, HattidError, SqlInjectionError}
 import sqlbuilder.{DateParameter, IntParameter, LongParameter, SqlWithParameters, StringParameter, ValueParameter}
 import sqlbuilder.clause.ClauseEntry
-import zio.IO
+import zio.{IO, ZIO, ZLayer}
 
 
 trait ClickhouseRequest[T] {
   val rowParser: RowParser[T]
+
+  def wrapErrorsOpt(zio: ZIO[RestClickhouseDAO, Throwable | SqlInjectionError, Option[T]]): DBIO[Option[T]] = {
+    zio mapError {
+      case sqlInjectionError: SqlInjectionError => sqlInjectionError
+      case ex: DbException => DbError(ex)
+      case t: Throwable => DbError(t)
+    }
+  }
+  
+  def wrapErrors(zio: ZIO[RestClickhouseDAO, Throwable | SqlInjectionError, List[T]]): DBIO[List[T]] = {
+    zio mapError {
+      case sqlInjectionError: SqlInjectionError => sqlInjectionError
+      case ex: DbException => DbError(ex)
+      case t: Throwable => DbError(t)
+    }
+  }
 }
 
 object ClickhouseRequest {
+  type DBIO[T] = ZIO[RestClickhouseDAO, HattidError, T]
 
-  implicit class HattidDBZIO[Result](zio: IO[SqlInjectionError | Throwable, Result]) {
-    def hattidErrors: IO[HattidError, Result] = zio.mapError {
+  implicit class HattidDBZIO[Result](zio: ZIO[RestClickhouseDAO, Throwable | SqlInjectionError, Result]) {
+    def hattidErrors: DBIO[Result] = zio.mapError {
       case sqlInjectionError: SqlInjectionError => sqlInjectionError
       case ex: io.github.gaelrenoux.tranzactio.DbException => DbError(ex)
       case t: Throwable => DbError(t)

@@ -31,5 +31,5 @@ object Team extends BaseXmlMapper {
     (__ \ "Won").read[Int],
     (__ \ "Draws").read[Int],
     (__ \ "Lost").read[Int],
-    ).mapN(apply _)
+    ).mapN(apply)
 }

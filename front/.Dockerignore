@@ -1,2 +1,3 @@
 Dockerfile
 package-lock.json
+dist/

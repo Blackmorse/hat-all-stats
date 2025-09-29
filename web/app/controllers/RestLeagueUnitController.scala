@@ -10,13 +10,13 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
 import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
-import databases.requests.playerstats.player.stats._
+import databases.requests.playerstats.player.stats.*
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattid.CommonData
-import models.web._
+import models.web.*
 import models.web.leagueUnit.RestLeagueUnitData
 import play.api.libs.json.{JsValue, Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
@@ -25,6 +25,7 @@ import service.leagueunit.{LeagueUnitCalculatorService, LeagueUnitTeamStat, Leag
 import utils.{LeagueNameParser, Romans}
 import webclients.ChppClient
 import service.ChppService
+import zio.ZLayer
 
 import javax.inject.Inject
 //TODO execution context!
@@ -36,7 +37,7 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
                                           val chppService: ChppService,
                                           val controllerComponents: ControllerComponents,
                                           val leagueInfoService: LeagueInfoService,
-                                          implicit val restClickhouseDAO: RestClickhouseDAO,
+                                          val restClickhouseDAO: RestClickhouseDAO,
                                           val leagueUnitCalculatorService: LeagueUnitCalculatorService) extends RestController {
   case class LongWrapper(id: Long)
   implicit val writes: OWrites[LongWrapper] = Json.writes[LongWrapper]
@@ -77,33 +78,34 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
     chppService.leagueUnitDataById(leagueUnitId)
   }
 
-  private def stats[T](chRequest: ClickhouseStatisticsRequest[T],
+  private def stats[T : Writes](chRequest: ClickhouseStatisticsRequest[T],
                        leagueUnitId: Int,
-                       restStatisticsParameters: RestStatisticsParameters)
-                      (implicit writes: Writes[T]): Action[AnyContent] = asyncZio {
-    for {
+                       restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = asyncZio {
+    (for {
       leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
-      entities <- chRequest.executeZIO(OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
+      entities <- chRequest.execute(OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
           leagueUnitId = Some(leagueUnitId)),
         restStatisticsParameters)
-    } yield restTableData(entities, restStatisticsParameters.pageSize)
+    } yield restTableData(entities, restStatisticsParameters.pageSize))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   private def playersRequest[T](plRequest: ClickhousePlayerStatsRequest[T],
                                 leagueUnitId: Int,
                                 restStatisticsParameters: RestStatisticsParameters,
                                 playersParameters: PlayersParameters)(implicit writes: Writes[T]) = asyncZio {
-    for {
+    (for {
       leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
-      entities <- plRequest.executeZIO(
+      entities <- plRequest.execute(
         OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
           leagueUnitId = Some(leagueUnitId)),
         restStatisticsParameters,
         playersParameters
       )
-    } yield restTableData(entities, restStatisticsParameters.pageSize)
+    } yield restTableData(entities, restStatisticsParameters.pageSize))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def teamHatstats(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
@@ -126,9 +128,9 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
     stats(PlayerInjuryRequest, leagueUnitId, restStatisticsParameters)
 
   def teamSalaryTsi(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[AnyContent] = asyncZio {
-    for {
+    (for {
       leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
-      entities <- TeamSalaryTSIRequest.executeZIO(
+      entities <- TeamSalaryTSIRequest.execute(
         OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
           leagueUnitId = Some(leagueUnitId)),
@@ -136,18 +138,20 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
         playedInLastMatch = playedInLastMatch,
         excludeZeroTsi = excludeZeroTsi
       )
-    } yield restTableData(entities, restStatisticsParameters.pageSize)
+    } yield restTableData(entities, restStatisticsParameters.pageSize))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def teamCards(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = asyncZio {
-    for {
+    (for {
       leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
-      entities <- TeamCardsRequest.executeZIO(
+      entities <- TeamCardsRequest.execute(
         OrderingKeyPath(leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
           leagueUnitId = Some(leagueUnitId)),
         restStatisticsParameters)
-    } yield restTableData(entities, restStatisticsParameters.pageSize)
+    } yield restTableData(entities, restStatisticsParameters.pageSize))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def teamRatings(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
@@ -236,20 +240,21 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
   }
 
   def promotions(leagueUnitId: Int): Action[AnyContent] = asyncZio {
-    for {
+    (for {
       leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
       promotions <- PromotionsRequest.execute(OrderingKeyPath(
           leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
           leagueUnitId = Some(leagueUnitData.leagueUnitId)), 
         leagueInfoService.leagueInfo.currentSeason(leagueUnitData.leagueId))
-    } yield PromotionWithType.convert(promotions)
+    } yield PromotionWithType.convert(promotions))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def dreamTeam(season: Int, leagueUnitId: Int, sortBy: String, statsType: StatsType): Action[AnyContent] = asyncZio {
-    for {
+    (for {
       leagueUnitData <- chppService.leagueUnitDataById(leagueUnitId)
-      players <- DreamTeamRequest.executeZIO(
+      players <- DreamTeamRequest.execute(
         OrderingKeyPath(season = Some(season),
           leagueId = Some(leagueUnitData.leagueId),
           divisionLevel = Some(leagueUnitData.divisionLevel),
@@ -257,6 +262,7 @@ class RestLeagueUnitController @Inject() (val chppClient: ChppClient,
         statsType,
         sortBy
       )
-    } yield players
+    } yield players)
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 }

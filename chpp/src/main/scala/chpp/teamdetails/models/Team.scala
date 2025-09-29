@@ -52,5 +52,5 @@ object Team extends BaseXmlMapper {
     (__ \ "YouthTeamName").read[String],
     (__ \ "Flags").read[Flags],
     (__ \ "TrophyList" \ "Trophy").read(seq[Trophy]),
-    ).mapN(apply _)
+    ).mapN(apply)
 }

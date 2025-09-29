@@ -17,15 +17,15 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
                                round: Int): SqlBuilder = {
     import SqlBuilder.implicits._
     Select("team_id",
-        "league_id" as "league",
+        "league_id" `as` "league",
         "team_name",
         "league_unit_id",
         "league_unit_name",
-        hatstats as "hatstats",
-        "rating_midfield" as "midfield",
-        "toInt32(rating_right_def + rating_left_def + rating_mid_def)" as "defense",
-        "toInt32(rating_right_att + rating_mid_att + rating_left_att)" as "attack",
-        loddarStats as "loddar_stats"
+        hatstats `as` "hatstats",
+        "rating_midfield" `as` "midfield",
+        "toInt32(rating_right_def + rating_left_def + rating_mid_def)" `as` "defense",
+        "toInt32(rating_right_att + rating_mid_att + rating_left_att)" `as` "attack",
+        loddarStats `as` "loddar_stats"
       )
       .from("hattrick.match_details")
       .where
@@ -46,15 +46,15 @@ object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
     import SqlBuilder.implicits._
     Select(
         "team_id",
-        "any(league_id)" as "league",
+        "any(league_id)" `as` "league",
         "argMax(team_name, round) as team_name",
         "league_unit_id",
         "league_unit_name",
-        aggregateFunction(hatstats).toInt32 as "hatstats",
-        aggregateFunction("rating_midfield").toInt32 as " midfield",
-        aggregateFunction("rating_right_def + rating_left_def + rating_mid_def").toInt32 as "defense",
-        aggregateFunction("rating_right_att + rating_mid_att + rating_left_att").toInt32 as "attack",
-        aggregateFunction(loddarStats) as "loddar_stats"
+        aggregateFunction(hatstats).toInt32 `as` "hatstats",
+        aggregateFunction("rating_midfield").toInt32 `as` " midfield",
+        aggregateFunction("rating_right_def + rating_left_def + rating_mid_def").toInt32 `as` "defense",
+        aggregateFunction("rating_right_att + rating_mid_att + rating_left_att").toInt32 `as` "attack",
+        aggregateFunction(loddarStats) `as` "loddar_stats"
       )
       .from("hattrick.match_details")
       .where

@@ -1,7 +1,7 @@
 name := "hattid-scala"
 trapExit := false
 
-ThisBuild / scalaVersion := "3.3.4"
+ThisBuild / scalaVersion := "3.7.3"
 ThisBuild / organization := "com.blackmorse.hattrick"
 
 val clickhouseVersion = "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
@@ -13,6 +13,8 @@ lazy val webDependencies = Seq(
   guice,
   jdbc,
   caffeine,
+  "dev.zio" %% "zio-cache" % "0.2.5",
+  "dev.zio" %% "zio-prelude" % "1.0.0-RC41",
   "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % Test,
   clickhouseVersion,
   "io.github.gaelrenoux" %% "tranzactio-anorm" % tranzactIOVersion,

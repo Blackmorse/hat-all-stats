@@ -10,5 +10,5 @@ object Result extends BaseXmlMapper {
   implicit val reader: XmlReader[Result] = (
     (__ \ "ResultID").read[Long],
     (__ \ "ResultName").read[String]
-  ).mapN(apply _)
+  ).mapN(apply)
 }

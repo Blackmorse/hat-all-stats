@@ -13,5 +13,5 @@ object LeagueLevelUnit {
     (__ \ "LeagueLevelUnitID").read[Int],
     (__ \ "LeagueLevelUnitName").read[String],
     (__ \ "LeagueLevel").read[Int],
-    ).mapN(apply _)
+    ).mapN(apply)
 }

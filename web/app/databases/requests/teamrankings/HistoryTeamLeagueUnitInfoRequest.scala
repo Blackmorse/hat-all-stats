@@ -5,11 +5,8 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
 import databases.requests.ClickhouseRequest.*
 import models.clickhouse.HistoryTeamLeagueUnitInfo
-import models.web.HattidError
 import sqlbuilder.Select
-import zio.IO
-
-import scala.concurrent.Future
+import zio.ZIO
 
 object HistoryTeamLeagueUnitInfoRequest extends ClickhouseRequest[HistoryTeamLeagueUnitInfo] {
   override val rowParser: RowParser[HistoryTeamLeagueUnitInfo] = HistoryTeamLeagueUnitInfo.historyTeamLeagueUnitInfoMapper
@@ -28,13 +25,10 @@ object HistoryTeamLeagueUnitInfoRequest extends ClickhouseRequest[HistoryTeamLea
       .limit(1)
   }
 
-  def execute(season: Int, leagueId: Int, teamId: Long)
-             (implicit restClickhouseDAO: RestClickhouseDAO): Future[Option[HistoryTeamLeagueUnitInfo]] =
-    restClickhouseDAO.executeSingleOpt(buildRequest(season, leagueId, teamId).sqlWithParameters().build, rowParser)
-
-  def executeZIO(season: Int, leagueId: Int, teamId: Long)
-             (implicit restClickhouseDAO: RestClickhouseDAO): IO[HattidError, Option[HistoryTeamLeagueUnitInfo]] = {
-    restClickhouseDAO.executeSingleOptZIO(buildRequest(season, leagueId, teamId).sqlWithParameters().build, rowParser)
-      .hattidErrors
+  def execute(season: Int, leagueId: Int, teamId: Long): DBIO[Option[HistoryTeamLeagueUnitInfo]] = wrapErrorsOpt {
+    for {
+      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
+      res <- restClickhouseDAO.executeSingleOptZIO(buildRequest(season, leagueId, teamId).sqlWithParameters().build, rowParser)
+    } yield res
   }
 }

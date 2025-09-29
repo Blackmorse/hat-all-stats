@@ -3,8 +3,10 @@ package databases.requests.playerstats.player
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
+import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.model.player.PlayerHistory
 import sqlbuilder.{Select, SqlBuilder}
+import zio.ZIO
 
 import scala.concurrent.Future
 
@@ -22,12 +24,12 @@ object PlayerHistoryRequest extends ClickhouseRequest[PlayerHistory] {
       "last_name",
       "team_id",
       "team_name",
-      "(age * 112) + days" as "age",
+      "(age * 112) + days" `as` "age",
       "tsi",
       "rating",
       "rating_end_of_match",
       "cup_level",
-      ClickhouseRequest.roleIdCase("role_id") as "role",
+      ClickhouseRequest.roleIdCase("role_id") `as` "role",
       "played_minutes",
       "injury_level",
       "salary",
@@ -44,6 +46,10 @@ object PlayerHistoryRequest extends ClickhouseRequest[PlayerHistory] {
       .orderBy("season", "round", "cup_level".asc)
       .setting("optimize_read_in_order", 0)
 
-  def execute(playerId: Long)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[PlayerHistory]] =
-    restClickhouseDAO.execute(builder(playerId).sqlWithParameters().build, rowParser)
+  def execute(playerId: Long): DBIO[List[PlayerHistory]] = wrapErrors {
+    for {
+      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
+      result <- restClickhouseDAO.executeZIO(builder(playerId).sqlWithParameters().build, rowParser)
+    } yield result
+  }
 }

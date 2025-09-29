@@ -21,21 +21,21 @@ object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitR
     Select(
         "league_unit_id",
         "league_unit_name",
-        aggregateFunction("hatstats").toInt32 as "hatstats",
-        aggregateFunction("midfield").toInt32 as "midfield",
-        aggregateFunction("defense").toInt32 as "defense",
-        aggregateFunction("attack").toInt32 as "attack",
-        aggregateFunction("loddar_stats") as "loddar_stats"
+        aggregateFunction("hatstats").toInt32 `as` "hatstats",
+        aggregateFunction("midfield").toInt32 `as` "midfield",
+        aggregateFunction("defense").toInt32 `as` "defense",
+        aggregateFunction("attack").toInt32 `as` "attack",
+        aggregateFunction("loddar_stats") `as` "loddar_stats"
       ).from(
         NestedSelect(
             "league_unit_id",
             "league_unit_name",
             "round",
-            avg(hatstats).toInt32 as "hatstats",
-            avg("rating_midfield").toInt32 as "midfield",
-            avg("rating_right_def + rating_left_def + rating_mid_def").toInt32 as "defense",
-            avg("rating_right_att + rating_mid_att + rating_left_att").toInt32 as "attack",
-            avg(loddarStats) as "loddar_stats"
+            avg(hatstats).toInt32 `as` "hatstats",
+            avg("rating_midfield").toInt32 `as` "midfield",
+            avg("rating_right_def + rating_left_def + rating_mid_def").toInt32 `as` "defense",
+            avg("rating_right_att + rating_mid_att + rating_left_att").toInt32 `as` "attack",
+            avg(loddarStats) `as` "loddar_stats"
           )
           .from("hattrick.match_details")
           .where
@@ -58,11 +58,11 @@ object LeagueUnitHatstatsRequest extends ClickhouseStatisticsRequest[LeagueUnitR
     Select(
         "league_unit_id",
         "league_unit_name",
-        avg(hatstats).toInt32 as "hatstats",
-        avg("rating_midfield").toInt32 as "midfield",
-        avg("rating_right_def + rating_left_def + rating_mid_def").toInt32 as "defense",
-        avg("rating_right_att + rating_mid_att + rating_left_att").toInt32 as "attack",
-        avg(loddarStats) as "loddar_stats"
+        avg(hatstats).toInt32 `as` "hatstats",
+        avg("rating_midfield").toInt32 `as` "midfield",
+        avg("rating_right_def + rating_left_def + rating_mid_def").toInt32 `as` "defense",
+        avg("rating_right_att + rating_mid_att + rating_left_att").toInt32 `as` "attack",
+        avg(loddarStats) `as` "loddar_stats"
       ).from("hattrick.match_details")
       .where
         .season(parameters.season)

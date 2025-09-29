@@ -32,9 +32,20 @@ object functions {
       new Field(s"sum(${field.name})")
   }
 
+  object any extends func {
+    override def apply(field: Field): Field =
+      new Field(s"any(${field.name})")
+  }
+
   object countIf {
     def apply(condition: String): Field =
       new Field(s"countIf($condition)")
+  }
+
+  object argMax {
+    def apply(arg: String, value: String): Field = {
+      new Field(s"argMax($arg, $value)")
+    }
   }
 
   object If {

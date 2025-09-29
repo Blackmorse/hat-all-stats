@@ -1,25 +1,21 @@
 package controllers
 
-import chpp.playerdetails.PlayerDetailsRequest
 import chpp.playerdetails.models.PlayerDetails
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.playerstats.player.PlayerHistoryRequest
+import models.web.HattidError
 import models.web.player.{CurrentPlayerCharacteristics, RestPlayerData, RestPlayerDetails}
-import models.web.{HattidError, NotFoundError}
-import play.api.libs.json.{JsValue, Json}
 import play.api.mvc
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.LeagueInfoService
 import service.{ChppService, PlayerService, TranslationsService}
 import utils.{CurrencyUtils, Romans}
 import webclients.ChppClient
-import zio.IO
-
-import scala.concurrent.Future
+import zio.{IO, ZLayer}
 
 //TODO execution context!
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class RestPlayerController @Inject() (val chppClient: ChppClient,
@@ -27,8 +23,8 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
                                       val leagueInfoService: LeagueInfoService,
                                       val chppService: ChppService,
                                       val playerService: PlayerService,
-                                      val translationsService: TranslationsService,
-                                      implicit val restClickhouseDAO: RestClickhouseDAO) extends RestController {
+                                      val restClickhouseDAO: RestClickhouseDAO,
+                                      val translationsService: TranslationsService) extends RestController {
 
 
   private def getRestPlayerData(playerDetails: PlayerDetails): IO[HattidError, RestPlayerData] = {
@@ -66,7 +62,7 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
     } yield restPlayerData
   }
 
-  private def getRestPlayerDetails(playerDetails: PlayerDetails): Future[RestPlayerDetails] = {
+  private def getRestPlayerDetails(playerDetails: PlayerDetails): DBIO[RestPlayerDetails] = {
     for {
       playerHistoryList <- PlayerHistoryRequest.execute(playerDetails.player.playerId)
       avatarParts <- chppService.getPlayerAvatar(playerDetails.player.owningTeam.teamId.toInt, playerDetails.player.playerId)
@@ -93,16 +89,11 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
       )
   }
 
-  def getPlayerHistory(playerId: Long): mvc.Action[AnyContent] = Action.async {
-    val playerDetailsFuture = chppClient.execute[PlayerDetails, PlayerDetailsRequest](PlayerDetailsRequest(playerId = playerId))
-
-    playerDetailsFuture.flatMap{
-      case Left(chppError) => Future(NotFound(Json.toJson(NotFoundError(
-        entityType = NotFoundError.PLAYER,
-        entityId = playerId.toString,
-        description = s"Player with id $playerId not found. Cause: ${chppError.error}"
-      ))))
-      case Right(playerDetails) => getRestPlayerDetails(playerDetails).map(pd => Ok(Json.toJson(pd)))
-    }
+  def getPlayerHistory(playerId: Long): Action[AnyContent] = asyncZio {
+    (for {
+      playerDetails <- chppService.playerDetails(playerId)
+      restPlayerDetails <- getRestPlayerDetails(playerDetails)
+    } yield restPlayerDetails
+      ).provide(ZLayer.succeed(restClickhouseDAO))
   }
 }

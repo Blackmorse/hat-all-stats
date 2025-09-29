@@ -7,5 +7,5 @@ case class PlayerDetails(player: Player)
 object PlayerDetails {
   implicit val reader: XmlReader[PlayerDetails] = (
     (__ \ "Player").read[Player]
-  ).map(apply _)
+  ).map(apply)
 }

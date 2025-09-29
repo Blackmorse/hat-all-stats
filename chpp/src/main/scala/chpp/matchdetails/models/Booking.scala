@@ -19,5 +19,5 @@ object Booking {
     (__ \ "BookingType").read(`enum`(BookingType)),
     (__ \ "BookingMinute").read[Int],
     (__ \ "MatchPart").read[Int],
-  ).mapN(apply _)
+  ).mapN(apply)
 }

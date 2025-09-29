@@ -7,6 +7,7 @@ import databases.requests.matchdetails.HistoryInfoRequest
 import hattid.CommonData
 import webclients.ChppClient
 import play.api.Configuration
+import zio.{Unsafe, ZLayer}
 
 import javax.inject.{Inject, Singleton}
 import scala.collection.mutable
@@ -18,6 +19,8 @@ import scala.concurrent.duration.DurationInt
 class LeagueInfoService @Inject() (val chppClient: ChppClient,
                                    implicit val restClickhouseDAO: RestClickhouseDAO,
                                    val configuration: Configuration) {
+  private val runtime = zio.Runtime.default
+
   lazy val leagueNumbersMap: Map[Int, Seq[Int]] = Map(1 -> Seq(1),
     2 -> (1 to 4),
     3 -> (1 to 16),
@@ -41,11 +44,27 @@ class LeagueInfoService @Inject() (val chppClient: ChppClient,
   def getRelativeSeasonFromAbsolute(season: Int, leagueId: Int): Int = leagueInfo(leagueId).league.seasonOffset + season
 
   val leagueInfo: LeaguesInfo = {
+
     val leagueIdToCountryNameMap = Await.result(chppClient.executeUnsafe[WorldDetails, WorldDetailsRequest](WorldDetailsRequest())
       .map(_.leagueList.map(league => league.leagueId -> league)), 60.seconds)
 
 
-    val leagueHistoryInfos = Await.result(HistoryInfoRequest.execute(None, None, None), 1.minute)
+
+
+//    val leagueHistoryInfos = Await.result(HistoryInfoRequest.execute(None, None, None), 1.minute)
+//      .groupBy(_.leagueId)
+
+    val zioHistory = HistoryInfoRequest.execute(None, None, None)
+      .provide(ZLayer.succeed(restClickhouseDAO))
+
+    // TODO ZIO!
+    val future = Unsafe.unsafe { implicit unsafe =>
+      runtime.unsafe.runToFuture(
+        zioHistory.catchAll(e => zio.ZIO.fail(new Exception("Failed to get league history info " + e.toString)))
+      )
+    }
+
+    val leagueHistoryInfos = Await.result(future, 1.minute)
       .groupBy(_.leagueId)
 
     val seq = for ((lId, league) <- leagueIdToCountryNameMap) yield {
@@ -70,6 +89,6 @@ class LeagueInfoService @Inject() (val chppClient: ChppClient,
     .sortBy(_._2)
 
   implicit def toMutable[T](map: Map[Int, T]): mutable.Map[Int, T] = {
-    mutable.Map(map.toSeq: _*)
+    mutable.Map(map.toSeq*)
   }
 }

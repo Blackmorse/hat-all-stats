@@ -34,7 +34,7 @@ object NewTeamsNumberChartRequest extends OverviewChartRequest[NumbersChartModel
     Select(
       "season",
       "round",
-      "count()" as "count"
+      "count()" `as` "count"
     ).from(
       With(
         WSelect(
@@ -49,8 +49,8 @@ object NewTeamsNumberChartRequest extends OverviewChartRequest[NumbersChartModel
         .select(
           "season",
           "round",
-          s"(dt - ((($currentSeason - season) * 16) * 7)) - (($currentRound - round) * 7)" as "league_match_day",
-          "league_match_day - founded_date" as "diff"
+          s"(dt - ((($currentSeason - season) * 16) * 7)) - (($currentRound - round) * 7)" `as` "league_match_day",
+          "league_match_day - founded_date" `as` "diff"
         ).from("hattrick.team_details")
         .where
           .season.greaterEqual(START_SEASON)

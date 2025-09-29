@@ -13,5 +13,5 @@ object Fanclub {
     (__ \ "FanclubID").read[Int],
     (__ \ "FanclubName").read[String],
     (__ \ "FanclubSize").read[Int],
-    ).mapN(apply _)
+    ).mapN(apply)
 }

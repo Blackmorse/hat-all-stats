@@ -25,8 +25,8 @@ object PlayerInjuryRequest extends ClickhouseStatisticsRequest[PlayerInjury] {
       "player_id",
       "first_name",
       "last_name",
-      "((age * 112) + days)" as "age",
-      "injury_level" as "injury",
+      "((age * 112) + days)" `as` "age",
+      "injury_level" `as` "injury",
       "nationality"
     ).from("hattrick.player_stats")
       .where

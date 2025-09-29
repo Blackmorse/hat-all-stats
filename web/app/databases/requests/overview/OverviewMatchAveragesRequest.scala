@@ -16,10 +16,10 @@ object OverviewMatchAveragesRequest extends ClickhouseOverviewRequest[OverviewMa
                        divisionLevel: Option[Int]): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
-      avgIf("sold_total", "is_home_match = 'home'").toInt32 as "avg_sold_total",
+      avgIf("sold_total", "is_home_match = 'home'").toInt32 `as` "avg_sold_total",
       //TODO avg and toUInt16 into functions
-        avg(hatstats).toUInt16 as "avg_hatstats",
-        avg("goals") as "avg_goals"
+        avg(hatstats).toUInt16 `as` "avg_hatstats",
+        avg("goals") `as` "avg_goals"
       )
       .from("hattrick.match_details")
       .where

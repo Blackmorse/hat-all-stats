@@ -33,5 +33,5 @@ object Match extends BaseXmlMapper {
     (__ \ "CupLevelIndex").read[Int],
     (__ \ "HomeGoals").read[Int],
     (__ \ "AwayGoals").read[Int],
-  ).mapN(apply _)
+  ).mapN(apply)
 }

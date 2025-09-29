@@ -7,6 +7,6 @@ case class WorldDetails(leagueList: Seq[League])
 
 object WorldDetails {
   implicit val reader: XmlReader[WorldDetails] = (
-    (__ \ "LeagueList" \ "League").read(seq[League])
-  ).map(apply _)
+    (__ \ "LeagueList" \ "League").read(using seq[League])
+  ).map(apply)
 }

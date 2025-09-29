@@ -2,21 +2,19 @@ package databases.requests.playerstats.dreamteam
 
 import anorm.{Row, RowParser, SimpleSql}
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.*
 import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
-import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.player.DreamTeamPlayer
-import models.web.{Accumulate, HattidError, Round, SqlInjectionError, StatsType}
+import databases.requests.{ClickhouseRequest, OrderingKeyPath}
+import models.web.{Accumulate, Round, SqlInjectionError, StatsType}
 import sqlbuilder.{Field, NestedSelect, Select}
-import zio.{IO, ZIO}
-import ClickhouseRequest._
-
-import scala.concurrent.Future
+import zio.ZIO
 
 object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
   override val rowParser: RowParser[DreamTeamPlayer] = DreamTeamPlayer.mapper
 
   private def simpleSql(orderingKeyPath: OrderingKeyPath, statsType: StatsType, sortBy: String): SimpleSql[Row] = {
-    import sqlbuilder.SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits.*
     val fields: Seq[Field] = Seq("league_id",
       "player_id",
       "first_name",
@@ -26,7 +24,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
       "league_unit_id",
       "league_unit_name",
       "round",
-      ClickhouseRequest.roleIdCase("role_id") as "role",
+      ClickhouseRequest.roleIdCase("role_id") `as` "role",
       "rating",
       "rating_end_of_match",
       "nationality")
@@ -39,17 +37,17 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
     val builder = statsType match {
       case Accumulate =>
         Select("*").from(
-          NestedSelect(fields: _*).from("hattrick.player_stats")
+          NestedSelect(fields*).from("hattrick.player_stats")
             .where
             .orderingKeyPath(orderingKeyPath)
             .season(orderingKeyPath.season)
             .isLeagueMatch
             .and("role_id != 0")
-            .orderBy(sortings: _*)
+            .orderBy(sortings*)
             .limitBy(1, "role, player_id")
         ).limitBy(4, "role")
       case Round(r) =>
-        Select(fields: _*)
+        Select(fields*)
           .from("hattrick.player_stats")
           .where
           .orderingKeyPath(orderingKeyPath)
@@ -57,7 +55,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
           .isLeagueMatch
           .round(r)
           .and("role_id != 0")
-          .orderBy(sortings: _*)
+          .orderBy(sortings*)
           .limitBy(4, "role")
     }
     
@@ -65,20 +63,14 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
   }
   
   def execute(orderingKeyPath: OrderingKeyPath, statsType: StatsType, sortBy: String)
-             (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[DreamTeamPlayer]] = {
-    if(!Seq("rating", "rating_end_of_match").contains(sortBy)) {
-      throw new Exception("Unknown sorting field")
-    }
-    restClickhouseDAO.execute(simpleSql(orderingKeyPath, statsType, sortBy), rowParser)
-  }
-  
-  def executeZIO(orderingKeyPath: OrderingKeyPath, statsType: StatsType, sortBy: String)
-                (implicit restClickhouseDAO: RestClickhouseDAO): IO[HattidError, List[DreamTeamPlayer]] = {
+                : DBIO[List[DreamTeamPlayer]] = wrapErrors {
     if(!Seq("rating", "rating_end_of_match").contains(sortBy)) {
       ZIO.fail(SqlInjectionError())
     } else {
-      restClickhouseDAO.executeZIO(simpleSql(orderingKeyPath, statsType, sortBy), rowParser)
-        .hattidErrors
+      for {
+        restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
+        result <- restClickhouseDAO.executeZIO(simpleSql(orderingKeyPath, statsType, sortBy), rowParser)
+      } yield result
     }
   }
 }

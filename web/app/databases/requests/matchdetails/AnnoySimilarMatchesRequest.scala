@@ -3,12 +3,14 @@ package databases.requests.matchdetails
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
+import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.model.`match`.SimilarMatchesStats
 import models.web.matches.SingleMatch
 import sqlbuilder.{NestedSelect, Select}
 
 import scala.concurrent.Future
-import sqlbuilder.functions.{countIf, If, avg}
+import sqlbuilder.functions.{If, avg, countIf}
+import zio.ZIO
 
 object AnnoySimilarMatchesRequest extends ClickhouseRequest[SimilarMatchesStats] {
   override val rowParser: RowParser[SimilarMatchesStats] = SimilarMatchesStats.mapper
@@ -17,8 +19,7 @@ object AnnoySimilarMatchesRequest extends ClickhouseRequest[SimilarMatchesStats]
               accuracy: Int,
               considerTacticType: Boolean,
               considerTacticSkill: Boolean,
-              considerSetPiecesLevels: Boolean)
-             (implicit restClickhouseDAO: RestClickhouseDAO): Future[Option[SimilarMatchesStats]] = {
+              considerSetPiecesLevels: Boolean): DBIO[Option[SimilarMatchesStats]] = wrapErrorsOpt {
     val homeTeamRatings = singleMatch.homeMatchRatings
     val awayTeamRatings = singleMatch.awayMatchRatings
 
@@ -64,6 +65,11 @@ object AnnoySimilarMatchesRequest extends ClickhouseRequest[SimilarMatchesStats]
           .orderBy("dist".desc)
      )
 
-    restClickhouseDAO.executeSingleOpt(builder.sqlWithParameters().build, rowParser)
+   
+
+    for {
+      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
+      result <-  restClickhouseDAO.executeSingleOptZIO(builder.sqlWithParameters().build, rowParser)
+    } yield result
   }
 }

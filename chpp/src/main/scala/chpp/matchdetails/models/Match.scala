@@ -40,5 +40,5 @@ object Match extends BaseXmlMapper {
     (__ \ "Scorers" \ "Goal").read(seq[Goal]),
     (__ \ "Bookings" \ "Booking").read(seq[Booking]),
     (__ \ "Injuries" \ "Injury").read(seq[Injury]),
-    ).mapN(apply _)
+    ).mapN(apply)
 }

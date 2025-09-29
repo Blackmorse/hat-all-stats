@@ -14,15 +14,15 @@ object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerS
                        divisionLevel: Option[Int]): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
-        "any(league_id)" as "league_id",
+        "any(league_id)" `as` "league_id",
         "player_id",
         "first_name",
         "last_name",
         "team_id",
-        "argMax(team_name, round)" as "team_name",
+        "argMax(team_name, round)" `as` "team_name",
         "league_unit_id",
         "league_unit_name",
-        "sum(goals)" as "value",
+        "sum(goals)" `as` "value",
         "argMax(nationality, round) as nationality"
       ).from(
         NestedSelect(

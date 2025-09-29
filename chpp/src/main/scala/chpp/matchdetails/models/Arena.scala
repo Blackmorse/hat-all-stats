@@ -23,5 +23,5 @@ object Arena {
     (__ \ "SoldBasic").read[Int].optional,
     (__ \ "SoldRoof").read[Int].optional,
     (__ \ "SoldVIP").read[Int].optional,
-  ).mapN(apply _)
+  ).mapN(apply)
 }

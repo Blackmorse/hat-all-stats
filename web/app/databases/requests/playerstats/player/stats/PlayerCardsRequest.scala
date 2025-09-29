@@ -19,21 +19,21 @@ object PlayerCardsRequest extends ClickhousePlayerStatsRequest[PlayerCards] {
                         role: Option[String], round: Int): SqlBuilder = {
     import SqlBuilder.implicits._
     Select(
-      "any(league_id)" as "league",
+      "any(league_id)" `as` "league",
       "player_id",
       "first_name",
       "last_name",
       "team_id",
-      "argMax(team_name, round)" as "team_name",
+      "argMax(team_name, round)" `as` "team_name",
       "league_unit_id",
       "league_unit_name",
-      "countIf(played_minutes > 0)" as "games",
-      "sum(played_minutes)" as "played",
-      "sum(yellow_cards)" as "yellow_cards",
-      "sum(red_cards)" as "red_cards",
-      "argMax(nationality, round)" as "nationality",
-      s"arrayFirst(x -> x != 0, topK(2)(${ClickhouseRequest.roleIdCase("role_id")}))" as "role",
-      "((argMax(age, round) * 112) + argMax(days, round))" as "age"
+      "countIf(played_minutes > 0)" `as` "games",
+      "sum(played_minutes)" `as` "played",
+      "sum(yellow_cards)" `as` "yellow_cards",
+      "sum(red_cards)" `as` "red_cards",
+      "argMax(nationality, round)" `as` "nationality",
+      s"arrayFirst(x -> x != 0, topK(2)(${ClickhouseRequest.roleIdCase("role_id")}))" `as` "role",
+      "((argMax(age, round) * 112) + argMax(days, round))" `as` "age"
     ).from("hattrick.player_stats")
       .where
       .season(parameters.season)

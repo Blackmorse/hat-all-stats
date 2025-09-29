@@ -27,7 +27,7 @@ trait NumbersOverviewChartRequest extends OverviewChartRequest[NumbersChartModel
     Select(
       "season",
       "round",
-      aggregateFunction as "count")
+      aggregateFunction `as` "count")
       .from(table)
       .where
         .orderingKeyPath(orderingKeyPath)

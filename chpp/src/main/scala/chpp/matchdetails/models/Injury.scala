@@ -19,5 +19,5 @@ object Injury {
     (__ \ "InjuryType").read(`enum`(InjuryType)),
     (__ \ "InjuryMinute").read[Int],
     (__ \ "MatchPart").read[Int],
-  ).mapN(apply _)
+  ).mapN(apply)
 }

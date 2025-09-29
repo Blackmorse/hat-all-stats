@@ -25,5 +25,5 @@ object Substitution {
     (__ \ "NewPositionBehaviour").read[Int],
     (__ \ "MatchMinute").read[Int],
     (__ \ "MatchPart").read[Int],
-  ).mapN(apply _)
+  ).mapN(apply)
 }

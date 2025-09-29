@@ -11,5 +11,5 @@ object Matches {
   implicit val reader: XmlReader[Matches] = (
     (__ \ "IsYouth").read[Boolean],
     (__ \ "Team").read[Team]
-  ).mapN(apply _)
+  ).mapN(apply)
 }

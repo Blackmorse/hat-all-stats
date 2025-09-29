@@ -25,5 +25,5 @@ object LineupPlayer extends BaseXmlMapper {
     (__ \ "RatingStars").read[String].map(double).optional,
     (__ \ "RatingStarsEndOfMatch").read[String].map(double).optional,
     (__ \ "Behaviour").read[Int].optional,
-  ).mapN (apply _)
+  ).mapN (apply)
 }

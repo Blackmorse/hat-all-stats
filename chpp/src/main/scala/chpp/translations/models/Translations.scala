@@ -14,12 +14,12 @@ object Translations {
     (__ \ "Language").read[String],
     (__ \ "Texts" \ "SkillLevels" \ "Level").read(seq[SkillLevel]),
     (__ \ "Texts" \ "PlayerSpecialties" \ "Item").read(seq[SkillLevel])
-  ).mapN(apply _)
+  ).mapN(apply)
 }
 
 object SkillLevel {
   implicit val reader: XmlReader[SkillLevel] = (
     attribute[Int]("Value"),
     (__).read[String]
-  ).mapN(apply _)
+  ).mapN(apply)
 }

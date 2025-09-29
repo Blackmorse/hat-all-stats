@@ -20,7 +20,7 @@ object FormationsChartRequest extends OverviewChartRequest[FormationChartModel] 
       "formation",
       "season",
       "round",
-      "count()" as "count"
+      "count()" `as` "count"
     ).from("hattrick.match_details")
       .where
         .orderingKeyPath(orderingKeyPath)

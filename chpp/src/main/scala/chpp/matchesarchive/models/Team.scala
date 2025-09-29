@@ -13,5 +13,5 @@ object Team {
     (__ \ "TeamID").read[Int],
     (__ \ "TeamName").read[String],
     (__ \ "MatchList" \ "Match").read(seq[Match]),
-    ).mapN(apply _)
+    ).mapN(apply)
 }

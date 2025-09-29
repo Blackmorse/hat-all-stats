@@ -43,7 +43,7 @@ object PromotionModelCH {
         ("promotion_type", JsString(obj.promoteType.valueStr))) :::
       teamJsValue("going_down_teams", obj.downTeams.toList) :::
       teamJsValue("going_up_teams", obj.upTeams)
-      JsObject(fieldList: _*)
+      JsObject(fieldList*)
     }
   }
 }

@@ -8,5 +8,5 @@ case class Trainer(playerId: Long)
 object Trainer {
   implicit val reader: XmlReader[Trainer] = (
     (__ \ "PlayerID").read[Long],
-    ).map(apply _)
+    ).map(apply)
 }

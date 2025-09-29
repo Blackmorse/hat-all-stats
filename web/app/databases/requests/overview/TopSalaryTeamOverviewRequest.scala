@@ -19,7 +19,7 @@ object TopSalaryTeamOverviewRequest extends ClickhouseOverviewRequest[TeamStatOv
         "league_unit_name",
         "team_name",
         "team_id",
-        "sum(salary)" as "value"
+        "sum(salary)" `as` "value"
       )
       .from("hattrick.player_stats")
       .where

@@ -17,13 +17,13 @@ object TeamRatingsRequest extends ClickhouseStatisticsRequest[TeamRating] {
                                round: Int): SqlBuilder = {
     import SqlBuilder.implicits._
     val clauseEntry = Select(
-      "any(league_id)" as "league",
-      "argMax(team_name, round)" as "team_name",
+      "any(league_id)" `as` "league",
+      "argMax(team_name, round)" `as` "team_name",
       "team_id",
       "league_unit_id",
       "league_unit_name",
-      "sum(rating)" as "rating",
-      "sum(rating_end_of_match)" as "rating_end_of_match"
+      "sum(rating)" `as` "rating",
+      "sum(rating_end_of_match)" `as` "rating_end_of_match"
     ).from("hattrick.player_stats")
       .where
       .season(parameters.season)

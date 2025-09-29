@@ -9,7 +9,7 @@ case class AvatarContainer(team: Team)
 object AvatarContainer {
   implicit val reader: XmlReader[AvatarContainer] = (
     (__ \ "Team").read[Team]
-      .map(apply _)
+      .map(apply)
   )
 }
 
@@ -19,5 +19,5 @@ object Team {
   implicit val reader: XmlReader[Team] = (
     (__ \ "TeamId").read[Int],
     (__ \ "Players" \ "Player").read(seq[Player])
-  ).mapN(apply _)
+  ).mapN(apply)
 }

@@ -22,5 +22,5 @@ object Team {
     (__ \ "StartingLineup" \ "Player").read(seq[StartingLineupPlayer]),
     (__ \ "Substitutions" \ "Substitution").read(seq[Substitution]),
     (__ \ "Lineup" \ "Player").read(seq[LineupPlayer])
-  ).mapN(apply _)
+  ).mapN(apply)
 }

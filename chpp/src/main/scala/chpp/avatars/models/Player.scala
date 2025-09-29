@@ -13,7 +13,7 @@ object Layer {
     (__ \ "Image").read[String],
     attribute[Int]("x"),
     attribute[Int]("y")
-  ).mapN(apply _)
+  ).mapN(apply)
 }
 
 object Player {
@@ -21,5 +21,5 @@ object Player {
     (__ \ "PlayerID").read[Long],
     (__ \ "Avatar" \ "BackgroundImage").read[String],
     (__ \ "Avatar" \ "Layer" ).read(seq[Layer])
-  ).mapN(apply _)
+  ).mapN(apply)
 }
