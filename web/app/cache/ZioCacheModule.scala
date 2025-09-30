@@ -1,7 +1,7 @@
 package cache
 
 import cache.ZioCacheModule.ZDreamTeamCache
-import com.google.inject.AbstractModule
+import com.google.inject.{AbstractModule, TypeLiteral}
 import com.google.inject.name.Names
 import databases.dao.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
@@ -24,8 +24,8 @@ class ZioCacheModule extends AbstractModule {
       timeToLive = Duration.Infinity,
       lookup = Lookup({ (key: (OrderingKeyPath, StatsType, String)) => DreamTeamRequest.execute(key._1, key._2, key._3) })
     )
-    
-    bind(classOf[URIO[RestClickhouseDAO, ZDreamTeamCache]])
+
+    bind(new TypeLiteral[URIO[RestClickhouseDAO, ZDreamTeamCache]](){})
       .annotatedWith(Names.named("DreamTeamCache"))
       .toInstance(zDreamTeamCache)
   }
