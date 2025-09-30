@@ -19,8 +19,8 @@ object TeamCardsChart {
       get[Long]("league_unit_id") ~
       get[String]("league_unit_name") ~
       get[Int]("round") ~
-      get[Int]("yellow_cards") ~
-      get[Int]("red_cards") map {
+      get[Int]("yellow_cards_sum") ~
+      get[Int]("red_cards_sum") map {
       case leagueId ~
         teamId ~
         teamName ~

@@ -25,8 +25,8 @@ object TeamCardsChartRequest extends ClickhouseRequest[TeamCardsChart] {
       sum("yellow_cards") `as` "yellow_cards_round",
       sum("red_cards") `as` "red_cards_round",
       "round",
-      sum("yellow_cards_round").over(partitionBy = "team_id", orderBy = "round") `as` "yellow_cards",
-      sum("red_cards_round").over(partitionBy = "team_id", orderBy = "round") `as` "red_cards"
+      sum("yellow_cards_round").over(partitionBy = "team_id", orderBy = "round") `as` "yellow_cards_sum",
+      sum("red_cards_round").over(partitionBy = "team_id", orderBy = "round") `as` "red_cards_sum"
     ).from("hattrick.player_stats")
       .where
       .season(season)
@@ -39,9 +39,6 @@ object TeamCardsChartRequest extends ClickhouseRequest[TeamCardsChart] {
   def execute(orderingKeyPath: OrderingKeyPath, season: Int): DBIO[List[TeamCardsChart]] =  wrapErrors {
     val simpleSql = builder(orderingKeyPath, season).sqlWithParameters().build
 
-    for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-      result <- restClickhouseDAO.executeZIO(simpleSql, rowParser)
-    } yield result
+    ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO => restClickhouseDAO.executeZIO(simpleSql, rowParser))
   }
 }

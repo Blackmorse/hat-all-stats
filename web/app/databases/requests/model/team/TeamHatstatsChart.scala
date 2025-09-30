@@ -5,8 +5,12 @@ import anorm.{RowParser, ~}
 import play.api.libs.json.{Json, OWrites}
 
 case class TeamHatstatsChart(teamSortingKey: TeamSortingKey,
-                        hatStats: Int, midfield: Int, defense: Int, attack: Int,
-                        loddarStats: Double)
+                             round: Int,
+                             hatStats: Int,
+                             midfield: Int,
+                             defense: Int,
+                             attack: Int,
+                             loddarStats: Double)
 
 object TeamHatstatsChart {
   implicit val writes: OWrites[TeamHatstatsChart] = Json.writes[TeamHatstatsChart]
@@ -36,6 +40,7 @@ object TeamHatstatsChart {
         loddarStats =>
         TeamHatstatsChart(
           teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId),
+          round = round,
           hatStats = hatstats,
           midfield = midfield,
           defense = defense,
