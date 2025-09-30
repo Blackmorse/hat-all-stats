@@ -6,12 +6,16 @@ import chpp.avatars.models.AvatarContainer
 import chpp.commonmodels.MatchType
 import chpp.leaguedetails.LeagueDetailsRequest
 import chpp.leaguedetails.models.LeagueDetails
+import chpp.leaguefixtures.LeagueFixturesRequest
+import chpp.leaguefixtures.models.LeagueFixtures
 import chpp.matchdetails.MatchDetailsRequest
 import chpp.matchdetails.models.MatchDetails
 import chpp.matches.MatchesRequest
 import chpp.matches.models.Matches
 import chpp.playerdetails.PlayerDetailsRequest
 import chpp.playerdetails.models.PlayerDetails
+import chpp.search.SearchRequest
+import chpp.search.models.Search
 import chpp.teamdetails.TeamDetailsRequest
 import chpp.teamdetails.models.{Team, TeamDetails}
 import chpp.worlddetails.WorldDetailsRequest
@@ -21,10 +25,8 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.teamrankings.HistoryTeamLeagueUnitInfoRequest
 import models.clickhouse.NearestMatch
-import models.web.leagueUnit.RestLeagueUnitData
 import models.web.player.AvatarPart
-import models.web.{BadRequestError, DbError, HattidError, NotFoundError}
-import service.ChppService.CHPPIO
+import models.web.{BadRequestError, HattidError, NotFoundError}
 import service.leagueinfo.LeagueInfoService
 import webclients.ChppClient
 import zio.{IO, ZIO}
@@ -75,7 +77,7 @@ class ChppService @Inject() (val chppClient: ChppClient,
     }
   }
   
-  def leagueUnitDataById(leagueUnitId: Int): IO[HattidError, RestLeagueUnitData] = {
+  def leagueDetails(leagueUnitId: Int): IO[HattidError, LeagueDetails] = {
     chppClient.executeZio[LeagueDetails, LeagueDetailsRequest](LeagueDetailsRequest(leagueUnitId = Some(leagueUnitId)))
       .mapError {
         // Map CHPP errors to our errors
@@ -85,10 +87,6 @@ class ChppService @Inject() (val chppClient: ChppClient,
           description = s"League unit not found, error from CHPP: $error")
         case e => e
       }
-      .map(leagueDetails => {
-        val league = leagueInfoService.leagueInfo(leagueDetails.leagueId).league
-        RestLeagueUnitData(leagueDetails, league, leagueUnitId, leagueInfoService)
-      })
   }
 
   def getDivisionLevelAndLeagueUnit(team: Team, season: Int): DBIO[(Int, Long)] = {
@@ -155,5 +153,13 @@ class ChppService @Inject() (val chppClient: ChppClient,
         Seq(AvatarPart(player.backgroundUrl, 0, 0)) ++
           player.layers.map(layer => AvatarPart(layer.image, layer.x, layer.y))
       })
+  }
+  
+  def search(searchRequest: SearchRequest): IO[HattidError, Search] = {
+    chppClient.executeZio[Search, SearchRequest](searchRequest)
+  }
+  
+  def leagueFixtures(leagueUnitId: Int, offsettedSeason: Int): IO[HattidError, LeagueFixtures] = {
+    chppClient.executeZio[LeagueFixtures, LeagueFixturesRequest](LeagueFixturesRequest(leagueLevelUnitId = Some(leagueUnitId), season = Some(offsettedSeason)))
   }
 }

@@ -2,15 +2,14 @@ package databases.requests.playerstats.team
 
 import anorm.{Row, RowParser, SimpleSql}
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.*
 import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
-import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.model.team.TeamCards
-import models.web.{HattidError, RestStatisticsParameters, Round, SqlInjectionError}
+import databases.requests.{ClickhouseRequest, OrderingKeyPath}
+import models.web.{RestStatisticsParameters, Round, SqlInjectionError}
 import sqlbuilder.Select
-import zio.ZIO
-import ClickhouseRequest.*
-import databases.requests.playerstats.team.TeamCardsRequest.simpleSql
 import sqlbuilder.functions.*
+import zio.ZIO
 
 object TeamCardsRequest extends ClickhouseRequest[TeamCards] {
   val sortingColumns: Seq[String] = Seq("yellow_cards", "red_cards")
@@ -23,9 +22,9 @@ object TeamCardsRequest extends ClickhouseRequest[TeamCards] {
       case Round(r) => r
     }
 
-    import sqlbuilder.SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits.*
     val builder = Select(
-      any("(league_id)") `as` "league",
+      any("league_id") `as` "league",
       argMax("team_name", "round") `as` "team_name",
       "team_id",
       "league_unit_id",

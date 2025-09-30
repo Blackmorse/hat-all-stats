@@ -80,6 +80,7 @@ GET     /api/league/:leagueId/divisionLevel/:divisionLevel/dreamTeam         con
 
 GET     /api/leagueUnit/:leagueUnitId   controllers.RestLeagueUnitController.getLeagueUnitData(leagueUnitId: Int)
 GET     /api/leagueUnit/:leagueUnitId/teamHatstats  controllers.RestLeagueUnitController.teamHatstats(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/leagueUnit/:leagueUnitId/teamHatstatsChart  controllers.RestLeagueUnitController.teamHatstatsChart(leagueUnitId: Int, season: Int)
 GET     /api/leagueUnit/:leagueUnitId/teamPositions controllers.RestLeagueUnitController.teamPositions(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/teamPositionsHistory controllers.RestLeagueUnitController.teamPositionsHistory(leagueUnitId: Int, season: Int)
 GET     /api/leagueUnit/:leagueUnitId/playerGoalGames   controllers.RestLeagueUnitController.playerGoalGames(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters, playersParameters: models.web.PlayersParameters)
@@ -89,6 +90,7 @@ GET     /api/leagueUnit/:leagueUnitId/playerRatings   controllers.RestLeagueUnit
 GET     /api/leagueUnit/:leagueUnitId/playerInjuries   controllers.RestLeagueUnitController.playerInjuries(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/teamSalaryTsi   controllers.RestLeagueUnitController.teamSalaryTsi(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean)
 GET     /api/leagueUnit/:leagueUnitId/teamCards   controllers.RestLeagueUnitController.teamCards(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
+GET     /api/leagueUnit/:leagueUnitId/teamCardsChart   controllers.RestLeagueUnitController.teamCardsChart(leagueUnitId: Int, season: Int)
 GET     /api/leagueUnit/:leagueUnitId/teamRatings   controllers.RestLeagueUnitController.teamRatings(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/teamAgeInjuries   controllers.RestLeagueUnitController.teamAgeInjuries(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)
 GET     /api/leagueUnit/:leagueUnitId/teamPowerRatings   controllers.RestLeagueUnitController.teamPowerRatings(leagueUnitId: Int, restStatisticsParameters: models.web.RestStatisticsParameters)

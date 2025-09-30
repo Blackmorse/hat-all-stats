@@ -10,12 +10,12 @@ import sqlbuilder.{Select, SqlBuilder, functions}
 
 object TeamHatstatsRequest extends ClickhouseStatisticsRequest[TeamHatstats]{
   override val sortingColumns: Seq[String] = Seq("hatstats", "midfield", "defense", "attack", "loddar_stats")
-  override val rowParser: RowParser[TeamHatstats] = TeamHatstats.teamRatingMapper.asInstanceOf[RowParser[TeamHatstats]]
+  override val rowParser: RowParser[TeamHatstats] = TeamHatstats.teamRatingMapper
 
   override def oneRoundBuilder(orderingKeyPath: OrderingKeyPath,
                                parameters: RestStatisticsParameters,
                                round: Int): SqlBuilder = {
-    import SqlBuilder.implicits._
+    import SqlBuilder.implicits.*
     Select("team_id",
         "league_id" `as` "league",
         "team_name",

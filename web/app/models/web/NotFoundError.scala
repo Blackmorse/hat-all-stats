@@ -1,6 +1,5 @@
 package models.web
 
-import io.github.gaelrenoux.tranzactio.DbException
 import play.api.libs.json.{Json, OWrites}
 import play.api.mvc.Result
 import play.api.mvc.Results.{BadGateway, BadRequest, InternalServerError, NotFound}
@@ -23,6 +22,9 @@ case class NotFoundError(entityType: String,
 case class DbError(dbException: Throwable) extends HattidError {
   override def toPlayHttpResult: Result = InternalServerError(dbException.getMessage)
 }
+
+case class InternalError(description: String) extends HattidError:
+  override def toPlayHttpResult: Result = InternalServerError(description)
 
 case class SqlInjectionError() extends HattidError {
   override def toPlayHttpResult: Result = BadRequest("Illegal parameters")

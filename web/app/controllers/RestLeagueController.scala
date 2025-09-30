@@ -1,13 +1,11 @@
 package controllers
 
-import chpp.worlddetails.models.League
 import com.google.inject.{Inject, Singleton}
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.*
 import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
-import databases.requests.playerstats.player.*
-import databases.requests.playerstats.player.stats.{ClickhousePlayerStatsRequest, PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest, PlayerRatingsRequest, PlayerSalaryTSIRequest}
+import databases.requests.playerstats.player.stats.*
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import databases.requests.promotions.PromotionsRequest
 import databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
@@ -20,9 +18,6 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfo, LeagueInfoService, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
 import zio.ZLayer
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 case class RestLeagueData(leagueId: Int,
                           leagueName: String,

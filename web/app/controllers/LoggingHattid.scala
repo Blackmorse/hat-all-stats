@@ -11,12 +11,11 @@ import scala.util.Random
 case class LoggingHattid[A](action: Action[A]) extends Action[A]  {
 
   def apply(request: Request[A]): Future[Result] = {
-    println("Calling action!!!!")
 
     if (new Random().nextDouble() > 0.5) {
       action(request)
     } else {
-      Future(Forbidden("Access denied"))(executionContext)
+      Future(Forbidden("Access denied"))(using executionContext)
     }
   }
 

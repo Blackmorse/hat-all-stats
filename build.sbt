@@ -30,7 +30,8 @@ lazy val webSettings = Seq(
   assemblyMergeStrategy in assembly := {
     case PathList("META-INF", xs @ _*) => MergeStrategy.discard
     case x => MergeStrategy.first
-  }
+  },
+  Test / parallelExecution := false
 )
 
 val guiceVersion = "5.0.1"
