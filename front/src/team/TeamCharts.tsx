@@ -8,7 +8,7 @@ import type TeamRankingsStats from '../rest/models/team/TeamRankingsStats';
 import type TeamRanking from '../rest/models/team/TeamRanking';
 import { Box, Card, CardContent, CardHeader, Slider, Tab, Tabs, Typography } from '@mui/material';
 import '../common/Formatters.css';
-import TeamRatingsChart, { type TeamRatingsChartProps } from './TeamRankingsChart';
+import TeamRatingsChart, { type ChartDataProps } from './TeamRankingsChart';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -57,75 +57,52 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
     const maxSeason = Math.max(...seasons);
 
     // Configs using t
-    const hatstatsConfig = [
-        { field: 'hatstats' as keyof TeamRanking, label: t('table.hatstats'), color: '#0a720a', strokeWidth: 2 },
-        { field: 'defense' as keyof TeamRanking, label: t('table.defense'), color: '#1976d2', strokeWidth: 1 },
-        { field: 'attack' as keyof TeamRanking, label: t('table.attack'), color: '#d32f2f', strokeWidth: 1 },
-        { field: 'midfield' as keyof TeamRanking, label: t('table.midfield'), color: '#fbc02d', strokeWidth: 1 }
+    const hatstatsConfig: ChartDataProps<TeamRanking>["fieldConfig"] = [
+        { fieldFunction: (tr: TeamRanking) => tr.hatstats, label: t('table.hatstats'), color: '#0a720a', strokeWidth: 2 },
+        { fieldFunction: (tr: TeamRanking) => tr.defense, label: t('table.defense'), color: '#1976d2', strokeWidth: 1 },
+        { fieldFunction: (tr: TeamRanking) => tr.attack, label: t('table.attack'), color: '#d32f2f', strokeWidth: 1 },
+        { fieldFunction: (tr: TeamRanking) => tr.midfield * 3, label: t('table.midfield'), color: '#fbc02d', strokeWidth: 1 }
     ];
 
-    const ratingFieldConfig: TeamRatingsChartProps["fieldConfig"] = [
+    const ratingFieldConfig: ChartDataProps<TeamRanking>["fieldConfig"] = [
         {
-            field: 'rating' as keyof TeamRanking,
+            fieldFunction: (tr: TeamRanking) => tr.rating,
             label: t('table.rating'),
             color: '#1976d2',
             strokeWidth: 2,
-            format: {
-                type: 'ratio',
-                divideBy: 10,
-                decimals: 1
-            }
         },
         {
-            field: 'ratingEndOfMatch' as keyof TeamRanking,
+            fieldFunction: (tr: TeamRanking) => tr.ratingEndOfMatch,
             label: t('table.rating_end_of_match'),
             color: '#0a720a',
             strokeWidth: 2,
-            format: {
-                type: 'ratio',
-                divideBy: 10,
-                decimals: 1
-            }
         },
     ];
 
-    const powerRatingConfig: TeamRatingsChartProps["fieldConfig"] = [
+    const powerRatingConfig: ChartDataProps<TeamRanking>["fieldConfig"] = [
         {
-            field: 'powerRating' as keyof TeamRanking,
+            fieldFunction: (tr: TeamRanking) => tr.powerRating,
             label: t('table.power_rating'),
             color: '#0a720a',
             strokeWidth: 2,
-            format: {
-                type: 'number',
-                decimals: 0
-            }
         },
     ];
 
-    const tsiConfig: TeamRatingsChartProps["fieldConfig"] = [
+    const tsiConfig: ChartDataProps<TeamRanking>["fieldConfig"] = [
         {
-            field: 'tsi' as keyof TeamRanking,
+            fieldFunction: (tr: TeamRanking) => tr.tsi,
             label: t('table.tsi_full'),
             color: '#0a720a',
             strokeWidth: 2,
-            format: {
-                type: 'number',
-                decimals: 0
-            }
         }
     ];
 
-    const salaryConfig: TeamRatingsChartProps["fieldConfig"] = [
+    const salaryConfig: ChartDataProps<TeamRanking>["fieldConfig"] = [
         {
-            field: 'salary' as keyof TeamRanking,
+            fieldFunction: (tr: TeamRanking) => tr.salary,
             label: t('table.salary'),
             color: '#0a720a',
             strokeWidth: 2,
-            format: {
-                type: 'currency',
-                decimals: 0,
-                showCurrency: true
-            }
         },
     ];
 
@@ -213,13 +190,14 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                     <CardContent>
                         <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
                             <Typography variant="caption" color="textSecondary" sx={{ mb: 0.5 }}>
-                                {t('team_charts.season_range')} {seasonRange[0]} - {seasonRange[1]}
+                                {t('team_charts.season_range')} {seasonRange[0] + props.seasonOffset()} - {seasonRange[1] + props.seasonOffset()}
                             </Typography>
                             <Slider
                                 value={seasonRange}
                                 onChange={handleSeasonChange}
                                 onChangeCommitted={handleSeasonChangeCommitted}
                                 valueLabelDisplay="auto"
+                                valueLabelFormat={value => (value + props.seasonOffset()).toString()}
                                 min={minSeason}
                                 max={maxSeason}
                                 sx={{
@@ -251,6 +229,7 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                                         emptyMessage={t('team_charts.hatstats.empty')}
                                         currencyName={stateAndRequest.currentState.currencyName}
                                         currencyRate={stateAndRequest.currentState.currencyRate}
+                                        seasonOffset={props.seasonOffset()}
                                     />
                                 </Box>
                             </Box>
@@ -263,9 +242,15 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                                         chartData={teamRankings}
                                         title={t('team_charts.rating.title')}
                                         fieldConfig={ratingFieldConfig}
+                                        format={{
+                                            type: 'rating',
+                                            divideBy: 10,
+                                            decimals: 1
+                                        }}
                                         emptyMessage={t('team_charts.rating.empty')}
                                         currencyName={stateAndRequest.currentState.currencyName}
                                         currencyRate={stateAndRequest.currentState.currencyRate}
+                                        seasonOffset={props.seasonOffset()}kj
                                     />
                                 </Box>
                             </Box>
@@ -277,10 +262,15 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                                     <TeamRatingsChart
                                         chartData={teamRankings}
                                         title={t('team_charts.power_rating.title')}
+                                        format={{
+                                            type: 'number',
+                                            decimals: 0
+                                        }}
                                         fieldConfig={powerRatingConfig}
                                         emptyMessage={t('team_charts.power_rating.empty')}
                                         currencyName={stateAndRequest.currentState.currencyName}
                                         currencyRate={stateAndRequest.currentState.currencyRate}
+                                        seasonOffset={props.seasonOffset()}
                                     />
                                 </Box>
                             </Box>
@@ -292,10 +282,16 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                                     <TeamRatingsChart
                                         chartData={teamRankings}
                                         title={t('team_charts.salary.title')}
+                                        format={{
+                                            type: 'currency',
+                                            decimals: 0,
+                                            showCurrency: true
+                                        }}
                                         fieldConfig={salaryConfig}
                                         emptyMessage={t('team_charts.salary.empty')}
                                         currencyName={stateAndRequest.currentState.currencyName}
                                         currencyRate={stateAndRequest.currentState.currencyRate}
+                                        seasonOffset={props.seasonOffset()}
                                     />
                                 </Box>
                             </Box>
@@ -307,10 +303,15 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                                     <TeamRatingsChart
                                         chartData={teamRankings}
                                         title={t('team_charts.tsi.title')}
+                                        format={{
+                                            type: 'number',
+                                            decimals: 0
+                                        }}
                                         fieldConfig={tsiConfig}
                                         emptyMessage={t('team_charts.tsi.empty')}
                                         currencyName={stateAndRequest.currentState.currencyName}
                                         currencyRate={stateAndRequest.currentState.currencyRate}
+                                        seasonOffset={props.seasonOffset()}
                                     />
                                 </Box>
                             </Box>
