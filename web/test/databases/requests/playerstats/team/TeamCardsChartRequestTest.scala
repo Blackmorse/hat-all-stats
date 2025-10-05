@@ -17,7 +17,7 @@ class TeamCardsChartRequestTest extends AnyFunSuite with Matchers {
 
     sql.normalize() should be (
       """
-        |SELECT any(league_id) as league, argMax(team_name, round) as team_name, team_id, league_unit_id, league_unit_name, sum(yellow_cards) as yellow_cards_round, sum(red_cards) as red_cards_round, round, sum(yellow_cards_round) OVER (PARTITION BY team_id ORDER BY round) as yellow_cards_sum, sum(red_cards_round) OVER (PARTITION BY team_id ORDER BY round) as red_cards_sum
+        |SELECT any(league_id) as league, argMax(team_name, round) as team_name, team_id, league_unit_id, league_unit_name, sum(yellow_cards) as yellow_cards_round, sum(red_cards) as red_cards_round, season, round, sum(yellow_cards_round) OVER (PARTITION BY team_id ORDER BY round) as yellow_cards_sum, sum(red_cards_round) OVER (PARTITION BY team_id ORDER BY round) as red_cards_sum
         |FROM hattrick.player_stats
         | WHERE ((season = {main_season_0}) AND (league_id = {main_league_id_1}) AND (division_level = {main_division_level_2}) AND (team_id = {main_team_id_4}))  GROUP BY team_id, league_unit_id, league_unit_name, round   ORDER BY team_id ASC , round ASC
         |""".stripMargin.normalize())

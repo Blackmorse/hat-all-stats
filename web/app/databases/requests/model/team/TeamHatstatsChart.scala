@@ -5,6 +5,7 @@ import anorm.{RowParser, ~}
 import play.api.libs.json.{Json, OWrites}
 
 case class TeamHatstatsChart(teamSortingKey: TeamSortingKey,
+                             season: Int,
                              round: Int,
                              hatStats: Int,
                              midfield: Int,
@@ -21,6 +22,7 @@ object TeamHatstatsChart {
       get[String]("team_name") ~
       get[Long]("league_unit_id") ~
       get[String]("league_unit_name") ~
+      get[Int]("season") ~
       get[Int]("round") ~
       get[Int]("hatstats") ~
       get[Int]("midfield") ~
@@ -32,6 +34,7 @@ object TeamHatstatsChart {
         teamName ~
         leagueUnitId ~
         leagueUnitName ~
+        season ~
         round ~
         hatstats ~
         midfield ~
@@ -40,6 +43,7 @@ object TeamHatstatsChart {
         loddarStats =>
         TeamHatstatsChart(
           teamSortingKey = TeamSortingKey(teamId, teamName, leagueUnitId, leagueUnitName, leagueId),
+          season = season,
           round = round,
           hatStats = hatstats,
           midfield = midfield,

@@ -21,6 +21,7 @@ object TeamHatstatsChartRequest extends ClickhouseRequest[TeamHatstatsChart] {
       "team_name",
       "league_unit_id",
       "league_unit_name",
+      "season",
       "round",
       hatstats `as` "hatstats",
       "rating_midfield" `as` "midfield",

@@ -24,6 +24,7 @@ object TeamCardsChartRequest extends ClickhouseRequest[TeamCardsChart] {
       "league_unit_name",
       sum("yellow_cards") `as` "yellow_cards_round",
       sum("red_cards") `as` "red_cards_round",
+      "season",
       "round",
       sum("yellow_cards_round").over(partitionBy = "team_id", orderBy = "round") `as` "yellow_cards_sum",
       sum("red_cards_round").over(partitionBy = "team_id", orderBy = "round") `as` "red_cards_sum"
