@@ -20,7 +20,7 @@ case class NotFoundError(entityType: String,
   override def toPlayHttpResult: Result = NotFound( entityType + " with id " + entityId + " not found. " + description)
   
 case class DbError(dbException: Throwable) extends HattidError {
-  override def toPlayHttpResult: Result = InternalServerError(dbException.getMessage)
+  override def toPlayHttpResult: Result = InternalServerError("Internal error")
 }
 
 case class InternalError(description: String) extends HattidError:

@@ -32,7 +32,7 @@ object TeamCardsChartRequest extends ClickhouseRequest[TeamCardsChart] {
       .where
       .season(season)
       .orderingKeyPath(orderingKeyPath)
-      .groupBy("team_id", "league_unit_id", "league_unit_name", "round")
+      .groupBy("team_id", "league_unit_id", "league_unit_name", "season", "round")
       .orderBy("team_id".asc, "round".asc)
       
   }
