@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Tab, Tabs, Box } from '@mui/material';
-import TeamRatingsChart from '../../../team/TeamRankingsChart';
 import { TeamHatstatsChart } from '../../../rest/models/team/TeamHatstats';
 import LeagueUnitLevelDataProps from '../../LeagueUnitLevelDataProps';
+import RechartsSeasonChart from '../../../common/charts/RechartsSeasonChart';
 
 interface ChartEntry {
 	season: number,
@@ -71,7 +71,7 @@ const TeamHatstatsCharts = (props: TeamHatstatsChartsProps) => {
         </Tabs>
 
         <TabPanel value={activeTab} index={0}>
-            <TeamRatingsChart
+            <RechartsSeasonChart
                 chartData={props.chartEntries}
                 title={t('table.hatstats')}
                 format={{ type: 'number', decimals: 0 }}
@@ -82,7 +82,7 @@ const TeamHatstatsCharts = (props: TeamHatstatsChartsProps) => {
             />
         </TabPanel>
         <TabPanel value={activeTab} index={1}>
-            <TeamRatingsChart
+            <RechartsSeasonChart
                 chartData={props.chartEntries}
                 title={t('table.midfield')}
                 format={{ type: 'number', decimals: 0 }}
@@ -93,7 +93,7 @@ const TeamHatstatsCharts = (props: TeamHatstatsChartsProps) => {
             />
         </TabPanel>
         <TabPanel value={activeTab} index={2}>
-            <TeamRatingsChart
+            <RechartsSeasonChart
                 chartData={props.chartEntries}
                 title={t('table.defense')}
                 format={{ type: 'number', decimals: 0 }}
@@ -104,7 +104,7 @@ const TeamHatstatsCharts = (props: TeamHatstatsChartsProps) => {
             />
         </TabPanel>
         <TabPanel value={activeTab} index={3}>
-            <TeamRatingsChart
+            <RechartsSeasonChart
                 chartData={props.chartEntries}
                 title={t('table.attack')}
                 format={{ type: 'number', decimals: 0 }}

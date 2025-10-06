@@ -1,5 +1,4 @@
 import MaterialsOfflineTable, { leagueUnitLinkColumn, positionsColumn, teamLinkColumn } from "../../common/tables/MaterialsOfflineTable";
-import LeagueUnitLevelDataProps from "../LeagueUnitLevelDataProps";
 import { ChartConfig, ChartData } from "./LeagueUnitChartAndTable";
 
 

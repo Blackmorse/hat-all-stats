@@ -1,9 +1,9 @@
 import { Components, createTheme, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, ThemeProvider } from "@mui/material";
 import { useMemo, useState, type JSX } from "react";
-import { ChartData } from "../../leagueunit/pages/LeagueUnitChartAndTable";
 import i18n from '../../i18n'
 import TeamLink from "../links/TeamLink";
 import LeagueUnitLink from "../links/LeagueUnitLink";
+import { ChartData } from "../../leagueunit/seasonchart/LeagueUnitChartAndTable";
 
 export const tableComponents: Components = {
 	MuiTable: {

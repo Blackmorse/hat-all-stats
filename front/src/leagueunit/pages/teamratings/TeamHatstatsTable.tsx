@@ -1,8 +1,6 @@
 import MaterialsOfflineTable, { leagueUnitLinkColumn, positionsColumn, teamLinkColumn } from '../../../common/tables/MaterialsOfflineTable';
 import { TeamHatstatsChart } from '../../../rest/models/team/TeamHatstats';
 import { useTranslation } from 'react-i18next';
-import TeamLink from '../../../common/links/TeamLink';
-import LeagueUnitLink from '../../../common/links/LeagueUnitLink';
 import { loddarStats } from '../../../common/Formatters';
 
 interface TeamHatstatsTableProps {
