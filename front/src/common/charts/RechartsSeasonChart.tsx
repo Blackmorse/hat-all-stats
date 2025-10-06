@@ -1,19 +1,27 @@
 import { type JSX } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine, TooltipProps } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine, TooltipProps, DefaultLegendContent } from 'recharts';
 import { Box, Typography } from '@mui/material';
-import '../common/Formatters.css';
-import { ratingFormatter, stringSalaryFormatter } from '../common/Formatters';
+import '../Formatters.css';
+import { ratingFormatter, stringSalaryFormatter } from '../Formatters';
 import { NameType, Payload, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
-type TimeSeries = { season: number; round: number };
+export type TimeSeries = { season: number; round: number };
 
-export interface ChartDataProps<Data extends TimeSeries> {
-    chartData: Array<Data>;
+export interface ChartFormat {
+    type: 'number' | 'currency' | 'rating'; // Type of formatting to apply
+    divideBy?: number; // Value to divide by (e.g. 10 for ratings)
+    decimals?: number; // Number of decimal places
+    showCurrency?: boolean; // Whether to show currency symbol
+}
+
+export interface ChartDataProps<T extends TimeSeries> {
     title?: string;
     emptyMessage?: string;
     currencyName?: string;
     currencyRate?: number;
     seasonOffset: number;
+    legendPosition: 'bottom' | 'right';
+    showXAxisRounds?: boolean;
     format?: {
         type: 'number' | 'currency' | 'rating'; // Type of formatting to apply
         divideBy?: number; // Value to divide by (e.g. 10 for ratings)
@@ -21,7 +29,7 @@ export interface ChartDataProps<Data extends TimeSeries> {
         showCurrency?: boolean; // Whether to show currency symbol
     };
     fieldConfig: Array<{
-        fieldFunction: (data: Data) => number; // Field from TeamRanking to display
+        fieldFunction: (data: T) => number | undefined; // Field from TeamRanking to display
         label: string; // Custom label for the legend
         color: string;  // Line color
         strokeWidth?: number; // Line thickness
@@ -49,7 +57,7 @@ const VerticalLabel = (props: any) => {
 };
 
 
-const formatValue = <Data extends TimeSeries>(value: number, config?: ChartDataProps<Data>['format'], currencyRate?: number, currencyName?: string): string => {
+const formatValue = <T extends TimeSeries>(value: number, config?: ChartDataProps<T>['format'], currencyRate?: number, currencyName?: string): string => {
     if (!config) {
         return value.toLocaleString();
     }
@@ -78,7 +86,7 @@ const formatValue = <Data extends TimeSeries>(value: number, config?: ChartDataP
 };
 
 
-const TeamRatingsChart = <Data extends TimeSeries>({
+const RechartsSeasonChart = <T extends TimeSeries>({
     chartData,
     title,
     format,
@@ -87,7 +95,9 @@ const TeamRatingsChart = <Data extends TimeSeries>({
     currencyRate = 1,
     fieldConfig,
     seasonOffset,
-}: ChartDataProps<Data>) => {
+    legendPosition,
+    showXAxisRounds
+}: ChartDataProps<T> & { chartData: T[] }) => {
     // Handle empty data case
     if (!chartData || chartData.length === 0) {
         return (
@@ -101,7 +111,7 @@ const TeamRatingsChart = <Data extends TimeSeries>({
             </Box>
         );
     }
-    const chartDataCopy = chartData.map(cd => { return {...cd, season: cd.season + seasonOffset}});
+    const chartDataCopy = chartData.map(cd => { return { ...cd, season: cd.season + seasonOffset } });
     if (chartDataCopy.length > 0) {
         chartDataCopy.sort((a, b) => {
             if (a.season !== b.season) {
@@ -145,9 +155,8 @@ const TeamRatingsChart = <Data extends TimeSeries>({
 
     const renderCustomAxisTick = (props: any) => {
         const { x, y, payload } = props;
-        // const round = (payload.index % modulo === 0) ? payload.value.split(' ')[1] : '';
-        // for now disabling the round ticks
-        return <text x={x} y={y + 15} textAnchor="middle" fill="#666" className={"dist_" + payload.index}></text>;
+        const round = payload.value.split(' ')[1];
+        return showXAxisRounds ? <text x={x} y={y + 15} textAnchor="middle" fill="#666" className={"dist_" + payload.index}>{round}</text> : <></>;
     };
 
     const renderCustomYAxisTick = (props: any) => {
@@ -192,7 +201,7 @@ const TeamRatingsChart = <Data extends TimeSeries>({
         return formatValue(value, format, currencyRate, currencyName);
     };
 
-    const TP = <Data extends TimeSeries>(props: TooltipProps<ValueType, NameType> & { payload: Array<Payload<ValueType, NameType>> }) => {
+    const CustomTooltip = <Data extends TimeSeries>(props: TooltipProps<ValueType, NameType> & { payload: Array<Payload<ValueType, NameType>> }) => {
         if (props.active) {
             const payload = props.payload[0].payload as Data;
             const season = payload.season;
@@ -201,34 +210,59 @@ const TeamRatingsChart = <Data extends TimeSeries>({
                 <Typography variant="subtitle2" sx={{ mb: 1 }}>
                     Season {season}, Round {round}
                 </Typography>
-                {props.payload.map((entry: any) => {
-                    // Find the field config for this entry 
-                    const isRating = format?.type === 'rating'
-                    return (
-                        <Box key={entry.name} sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                            <Box sx={{ width: 12, height: 12, bgcolor: entry.color, mr: 1 }} />
-                            <Typography variant="body2" sx={{ mr: 1 }}>
-                                {entry.name}:
-                            </Typography>
-                            <Typography variant="body2" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center' }}>
-                                {isRating ? (ratingFormatter(entry.value)) : (
-                                    formatValue(
-                                        entry.value,
-                                        format,
-                                        currencyRate,
-                                        currencyName
-                                    )
-                                )}
-                            </Typography>
-                        </Box>
-                    );
-                })
+                {props.payload
+                    .sort((a, b) => {
+                        const aValue = a.value as number;
+                        const bValue = b.value as number;
+                        return (bValue || 0) - (aValue || 0);
+                    })
+                    .map((entry: any) => {
+                        // Find the field config for this entry 
+                        // payload
+                        const typed = entry as { value: number | undefined, payload: Data }
+                        const isRating = format?.type === 'rating'
+                        return (
+                            <Box key={entry.name} sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                                <Box sx={{ width: 12, height: 12, bgcolor: entry.color, mr: 1 }} />
+                                <Typography variant="body2" sx={{ mr: 1 }}>
+                                    {entry.name}:
+                                </Typography>
+                                <Typography variant="body2" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center' }}>
+                                    {isRating ? (ratingFormatter(typed.value)) : (
+                                        formatValue(
+                                            entry.value,
+                                            format,
+                                            currencyRate,
+                                            currencyName
+                                        )
+                                    )}
+                                </Typography>
+                            </Box>
+                        );
+                    })
                 }
 
             </Box>
         }
         return null;
     }
+
+    // Custom legend to reverse the order of items
+    const renderLegend = (props: any) => {
+        const reversedPayload = props.payload ? [...props.payload].reverse() : [];
+        const newProps = { ...props, payload: reversedPayload };
+        return (
+            // ul here will help to make left margin
+            <ul> {<DefaultLegendContent {...newProps} />} </ul>
+        );
+    }
+
+    const legend = legendPosition === 'bottom' ?
+        <Legend wrapperStyle={{ marginRight: 0, marginLeft: 20 }} />
+        : <Legend content={renderLegend} align="right" verticalAlign='middle' layout="vertical" wrapperStyle={{ marginRight: 0, marginLeft: 20 }} />
+
+    const minSeason = Math.min(...chartData.map(cd => cd.season));
+    const maxSeason = Math.max(...chartData.map(cd => cd.season));
     return (
         <Box sx={{ width: '100%', height: 430 }}>
             <Typography variant="h6" sx={{ mb: 1, textAlign: 'center' }}>
@@ -251,27 +285,27 @@ const TeamRatingsChart = <Data extends TimeSeries>({
                         domain={[minY, maxY]}
                         tick={renderCustomYAxisTick}
                     />
-                    <XAxis dataKey={(data: Data) => { return data.season.toString() + " " + data.round.toString() }} tick={renderCustomAxisTick} />
-                    <Tooltip content={TP} />
+                    <XAxis dataKey={(data: T) => { return data.season.toString() + " " + data.round.toString() }} tick={renderCustomAxisTick} />
+                    <Tooltip content={CustomTooltip} />
                     <CartesianGrid strokeDasharray="1 9" />
                     {fieldConfig.map((config, index) => (
                         <Line
                             key={"ChartLine_" + index}
-                            dot={false}
-                            type="natural"
-                            dataKey={(data: Data) => { return config.fieldFunction(data) }}
+                            type="monotone"
+                            dataKey={(data: T) => { return config.fieldFunction(data) }}
                             name={config.label}
                             stroke={config.color}
-                            fill={config.color}
+                            activeDot={{ r: 8 }}
+                            dot={maxSeason - minSeason <= 3}
                             strokeWidth={config.strokeWidth || 1}
                         />
                     ))}
                     {referenceLines}
-                    <Legend />
+                    {legend}
                 </LineChart>
             </ResponsiveContainer>
         </Box>
     );
 }
 
-export default TeamRatingsChart;
+export default RechartsSeasonChart;

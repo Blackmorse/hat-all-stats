@@ -6,4 +6,6 @@ interface TeamCards {
     redCards: number
 }
 
+export type TeamCardsChart = TeamCards & { season: number, round: number }
+
 export default TeamCards

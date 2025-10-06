@@ -152,7 +152,7 @@ const TableSection = <LevelProps extends LevelDataProps, Model>(props: Propertie
     }, [ sorting, updateCounter, season, statType, playedAllMatches, playedInLastMatch, excludeZeroTsi, pageSize, pageNumber,  nationality, role, minAge, maxAge, oneTeamPerUnit ])
 
     function row(rowNum: number, entity: Model, className?: string): JSX.Element {
-       return <HookMatchRow
+       return <HookMatchRow key={`row-${rowNum}`}
            rowNum={rowNum}
            entity={entity}
            tableColumns={props.tableColumns}

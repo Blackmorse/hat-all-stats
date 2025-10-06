@@ -17,7 +17,7 @@ class TopSeasonScorersOverviewRequestTest extends AnyFunSuite with Matchers {
         |FROM hattrick.player_stats
         | WHERE ((season = {nested_req_season_0}) AND (round <= {nested_req_round_3}) AND (cup_level = {nested_req_cup_level_4}))     )
         |   GROUP BY player_id, first_name, last_name, team_id, league_unit_id, league_unit_name   ORDER BY value DESC   LIMIT 0, 6
-        |   SETTINGS max_bytes_before_external_group_by = 1000000000
+        |   SETTINGS max_bytes_before_external_group_by = 700000000
         |""".stripMargin.normalize()
     )
   }

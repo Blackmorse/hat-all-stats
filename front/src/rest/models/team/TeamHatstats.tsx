@@ -9,4 +9,6 @@ interface TeamHatstats {
     loddarStats: number
 }
 
+export type TeamHatstatsChart = TeamHatstats & { season: number, round: number }
+
 export default TeamHatstats

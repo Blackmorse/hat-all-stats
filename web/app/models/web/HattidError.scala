@@ -17,7 +17,7 @@ case class BadRequestError(description: String) extends HattidError:
 case class NotFoundError(entityType: String,
                          entityId: String,
                          description: String) extends HattidError:
-  override def toPlayHttpResult: Result = NotFound( entityType + " with id " + entityId + " not found. " + description)
+  override def toPlayHttpResult: Result = NotFound(Json.toJson(this))
   
 case class DbError(dbException: Throwable) extends HattidError {
   override def toPlayHttpResult: Result = InternalServerError("Internal error")
@@ -31,7 +31,6 @@ case class SqlInjectionError() extends HattidError {
 }
 
 object NotFoundError {
-  @deprecated
   implicit val writes: OWrites[NotFoundError] = Json.writes[NotFoundError]
 
   val PLAYER: String = "PLAYER"

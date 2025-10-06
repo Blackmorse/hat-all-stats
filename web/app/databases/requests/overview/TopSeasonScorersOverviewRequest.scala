@@ -53,6 +53,6 @@ object TopSeasonScorersOverviewRequest extends ClickhouseOverviewRequest[PlayerS
         "league_unit_name"
     ).orderBy("value".desc)
       .limit(pageSize = 5, page = 0)
-      .setting("max_bytes_before_external_group_by", 1000000000L)
+      .setting("max_bytes_before_external_group_by", 700000000L)
   }
 }

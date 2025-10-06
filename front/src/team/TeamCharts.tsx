@@ -1,14 +1,13 @@
-import React from 'react';
-import { useState, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import TeamLevelDataProps from './TeamLevelDataProps';
+import React, { useRef, useState } from 'react';
+import TeamLevelDataProps from '../team/TeamLevelDataProps';
 import ExecutableComponent, { type StateAndRequest } from '../common/sections/HookExecutableComponent';
 import { getTeamRankingsRange } from '../rest/clients/TeamStatsClient';
 import type TeamRankingsStats from '../rest/models/team/TeamRankingsStats';
 import type TeamRanking from '../rest/models/team/TeamRanking';
 import { Box, Card, CardContent, CardHeader, Slider, Tab, Tabs, Typography } from '@mui/material';
 import '../common/Formatters.css';
-import TeamRatingsChart, { type ChartDataProps } from './TeamRankingsChart';
+import { useTranslation } from 'react-i18next';
+import RechartsSeasonChart, { ChartDataProps } from '../common/charts/RechartsSeasonChart';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -177,11 +176,11 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
             };
 
             const card = (
-                <Card sx={{ mt: 2, boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
+                <Card sx={{ mt: 2, boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }} >
                     <CardHeader
                         title={t('menu.team_overview')}
                         sx={{
-                            backgroundColor: '#f8f9fa', // Bootstrap light header
+                            backgroundColor: 'rgba(10, 114, 10, 0.1)', // Bootstrap light header
                             fontWeight: 500,
                             fontSize: '1.25rem',
                             borderBottom: '1px solid #dee2e6'
@@ -222,7 +221,7 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                         <TabPanel value={activeTab} index={0}>
                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                                 <Box sx={{ width: '100%', maxWidth: '1200px' }}>
-                                    <TeamRatingsChart
+                                    <RechartsSeasonChart
                                         chartData={teamRankings}
                                         title={t('team_charts.hatstats.title')}
                                         fieldConfig={hatstatsConfig}
@@ -230,6 +229,7 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                                         currencyName={stateAndRequest.currentState.currencyName}
                                         currencyRate={stateAndRequest.currentState.currencyRate}
                                         seasonOffset={props.seasonOffset()}
+                                        legendPosition='bottom'
                                     />
                                 </Box>
                             </Box>
@@ -238,7 +238,7 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                         <TabPanel value={activeTab} index={1}>
                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                                 <Box sx={{ width: '100%', maxWidth: '1200px' }}>
-                                    <TeamRatingsChart
+                                    <RechartsSeasonChart
                                         chartData={teamRankings}
                                         title={t('team_charts.rating.title')}
                                         fieldConfig={ratingFieldConfig}
@@ -250,7 +250,8 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                                         emptyMessage={t('team_charts.rating.empty')}
                                         currencyName={stateAndRequest.currentState.currencyName}
                                         currencyRate={stateAndRequest.currentState.currencyRate}
-                                        seasonOffset={props.seasonOffset()}kj
+                                        seasonOffset={props.seasonOffset()}
+                                        legendPosition='bottom'
                                     />
                                 </Box>
                             </Box>
@@ -259,7 +260,7 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                         <TabPanel value={activeTab} index={2}>
                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                                 <Box sx={{ width: '100%', maxWidth: '1200px' }}>
-                                    <TeamRatingsChart
+                                    <RechartsSeasonChart
                                         chartData={teamRankings}
                                         title={t('team_charts.power_rating.title')}
                                         format={{
@@ -271,6 +272,7 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                                         currencyName={stateAndRequest.currentState.currencyName}
                                         currencyRate={stateAndRequest.currentState.currencyRate}
                                         seasonOffset={props.seasonOffset()}
+                                        legendPosition='bottom'
                                     />
                                 </Box>
                             </Box>
@@ -279,7 +281,7 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                         <TabPanel value={activeTab} index={3}>
                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                                 <Box sx={{ width: '100%', maxWidth: '1200px' }}>
-                                    <TeamRatingsChart
+                                    <RechartsSeasonChart
                                         chartData={teamRankings}
                                         title={t('team_charts.salary.title')}
                                         format={{
@@ -292,6 +294,7 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                                         currencyName={stateAndRequest.currentState.currencyName}
                                         currencyRate={stateAndRequest.currentState.currencyRate}
                                         seasonOffset={props.seasonOffset()}
+                                        legendPosition='bottom'
                                     />
                                 </Box>
                             </Box>
@@ -300,7 +303,7 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                         <TabPanel value={activeTab} index={4}>
                             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
                                 <Box sx={{ width: '100%', maxWidth: '1200px' }}>
-                                    <TeamRatingsChart
+                                    <RechartsSeasonChart
                                         chartData={teamRankings}
                                         title={t('team_charts.tsi.title')}
                                         format={{
@@ -312,6 +315,7 @@ const TeamsCharts: React.FC<Props> = ({ props }) => {
                                         currencyName={stateAndRequest.currentState.currencyName}
                                         currencyRate={stateAndRequest.currentState.currencyRate}
                                         seasonOffset={props.seasonOffset()}
+                                        legendPosition='bottom'
                                     />
                                 </Box>
                             </Box>
