@@ -1,21 +1,18 @@
 package service
 
-import chpp.teamdetails.TeamDetailsRequest
-import chpp.teamdetails.models.TeamDetails
+import chpp.teamdetails.models.{Team, TeamDetails}
 import databases.dao.RestClickhouseDAO
 import databases.requests.model.team.CreatedSameTimeTeam
 import databases.requests.teamdetails.TeamsCreatedSameTimeRequest
 import databases.requests.teamrankings.CompareTeamRankingsRequest
-import webclients.ChppClient
-import models.web.TeamComparsion
+import models.web.{HattidError, TeamComparison}
 import play.api.libs.json.{Json, OWrites}
 import play.api.mvc.QueryStringBindable
 import service.leagueinfo.LeagueInfoService
+import zio.ZIO
 
 import java.util.Date
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 case class CreatedSameTimeTeamExtended(season: Int,
                                        round: Int,
@@ -24,7 +21,6 @@ case class CreatedSameTimeTeamExtended(season: Int,
 object CreatedSameTimeTeamExtended {
   implicit val writes: OWrites[CreatedSameTimeTeamExtended] = Json.writes[CreatedSameTimeTeamExtended]
 }
-
 
 trait HattrickPeriod
 
@@ -68,11 +64,11 @@ object HattrickPeriod {
 
 class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
                              seasonsService: SeasonsService,
-                             chppClient: ChppClient,
-                             implicit val restClickhouseDAO: RestClickhouseDAO) {
+                             chppService: ChppService,
+                             val restClickhouseDAO: RestClickhouseDAO) {
 
   def teamsCreatedSamePeriod(period: HattrickPeriod, foundedDate: Date,
-                             leagueId: Int): Future[List[CreatedSameTimeTeamExtended]] = {
+                             leagueId: Int): ZIO[RestClickhouseDAO, HattidError, List[CreatedSameTimeTeamExtended]] = {
     val round = leagueInfoService.leagueInfo(leagueId).currentRound()
     val season = leagueInfoService.leagueInfo(leagueId).currentSeason()
     val ranges = seasonsService.getSeasonAndRoundRanges(foundedDate)
@@ -91,33 +87,34 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
           createdSameTimeTeam = cstt)
       }))
   }
+  
+  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[RestClickhouseDAO, HattidError, TeamComparison] = {
+    val team1Zio = chppService.getTeamById(teamId1)
+    val team2Zio = chppService.getTeamById(teamId2)
+    
+    for {
+      (team1, team1Details, (team2, teams2Details)) <- team1Zio <&> team2Zio
+      comparison                                    <- combine(team1, team1Details, team2, teams2Details)
+    } yield comparison
+  }
+  
+  private def combine(team1: Team, team1Details: TeamDetails, team2: Team, team2Details: TeamDetails): ZIO[RestClickhouseDAO, HattidError, TeamComparison] = {
+    if (team1.league.leagueId != team2.league.leagueId ||
+      team1Details.user.userId == 0 || team2Details.user.userId == 0) {
+      ZIO.succeed(TeamComparison.empty())
+    } else {
+      val teamCreateRanges1 = seasonsService.getSeasonAndRoundRanges(team1.foundedDate)
+      val teamCreateRanges2 = seasonsService.getSeasonAndRoundRanges(team2.foundedDate)
+      val (fromSeason, fromRound) = getCommonSeasonAndRound(teamCreateRanges1, teamCreateRanges2)
 
-  def compareTwoTeams(teamId1: Long, teamId2: Long): Future[TeamComparsion] = {
-    val team1Future = chppClient.executeUnsafe[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId1)))
-
-    val team2Future = chppClient.executeUnsafe[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId2)))
-
-    team1Future.zipWith(team2Future){case (teamDetails1, teamDetails2) =>
-      val team1 = teamDetails1.teams.filter(_.teamId == teamId1).head
-      val team2 = teamDetails2.teams.filter(_.teamId == teamId2).head
-
-      if (team1.league.leagueId != team2.league.leagueId ||
-          teamDetails1.user.userId == 0 || teamDetails2.user.userId == 0) {
-        Future(TeamComparsion(List(), List()))
-      } else {
-        val teamCreateRanges1 = seasonsService.getSeasonAndRoundRanges(team1.foundedDate)
-        val teamCreateRanges2 = seasonsService.getSeasonAndRoundRanges(team2.foundedDate)
-        val (fromSeason, fromRound) = getCommonSeasonAndRound(teamCreateRanges1, teamCreateRanges2)
-
-        CompareTeamRankingsRequest.execute(team1.teamId, team2.teamId,
+      CompareTeamRankingsRequest.execute(team1.teamId, team2.teamId,
           fromSeason, fromRound)
-          .map(_.groupBy(_.teamId))
-          .map(map => TeamComparsion(
-            team1Rankings = map(team1.teamId).sortBy(t => (t.season, t.round)),
-            team2Rankings = map(team2.teamId).sortBy(t => (t.season, t.round))
-          ))
-      }
-    }.flatten
+        .map(_.groupBy(_.teamId))
+        .map(map => TeamComparison(
+          team1Rankings = map(team1.teamId).sortBy(t => (t.season, t.round)),
+          team2Rankings = map(team2.teamId).sortBy(t => (t.season, t.round))
+        ))
+    }
   }
 
   private def getCommonSeasonAndRound(ranges1: TeamCreatedRanges, ranges2: TeamCreatedRanges): (Int, Int) = {

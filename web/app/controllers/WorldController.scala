@@ -1,6 +1,6 @@
 package controllers
 
-import cache.ZioCacheModule.{DreamTeamCacheKey, ZDreamTeamCache}
+import cache.ZioCacheModule.{DreamTeamCacheKey, HattidEnv, ZDreamTeamCache}
 import databases.dao.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
 import databases.requests.matchdetails.{MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
@@ -11,27 +11,27 @@ import databases.requests.teamdetails.OldestTeamsRequest
 import models.web.{HattidError, PlayersParameters, RestStatisticsParameters, StatsType}
 import play.api.cache.AsyncCacheApi
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import service.leagueinfo.LeagueInfoService
-import webclients.ChppClient
+import service.leagueinfo.{LeagueInfoService, LeagueInfoServiceZIO}
 import zio.cache.Cache
 import zio.{URIO, ZIO, ZLayer}
 
 import javax.inject.{Inject, Named, Singleton}
-//TODO
 import databases.requests.matchdetails.{MatchSpectatorsRequest, TeamGoalPointsRequest}
 import databases.requests.model.player.PlayerCards
 import databases.requests.playerstats.player.stats.{PlayerCardsRequest, PlayerGamesGoalsRequest, PlayerInjuryRequest}
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest}
 import databases.requests.teamdetails.{TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
+import service.ChppService
 
 @Singleton
 class WorldController @Inject() (val controllerComponents: ControllerComponents,
              val restClickhouseDAO: RestClickhouseDAO,
-             val leagueInfoService: LeagueInfoService,
-             val chppClient: ChppClient,
+             val chppService: ChppService,
              val cache: AsyncCacheApi,
+             val hattidEnvironment: zio.ZEnvironment[HattidEnv],
              @Named("DreamTeamCache") val zDreamTeamCache: URIO[RestClickhouseDAO, ZDreamTeamCache])
         extends RestController {
+  private val leagueInfoServiceLayer = LeagueInfoServiceZIO.layer
 
   def teamHatstats(restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = asyncZio {
     TeamHatstatsRequest.execute(OrderingKeyPath(), restStatisticsParameters)
@@ -133,14 +133,18 @@ class WorldController @Inject() (val controllerComponents: ControllerComponents,
   }
 
   def teamGoalPoints(restStatisticsParameters: RestStatisticsParameters,
-                     playedAllMatches: Boolean, oneTeamPerUnit: Boolean): Action[AnyContent] = asyncZio {
-    TeamGoalPointsRequest.execute(orderingKeyPath = OrderingKeyPath(),
-          parameters = restStatisticsParameters,
-          playedAllMatches = playedAllMatches,
-          currentRound = leagueInfoService.leagueInfo(100).seasonInfo(restStatisticsParameters.season).roundInfo.size,
-          oneTeamPerUnit = oneTeamPerUnit)
-      .map(entities => restTableData(entities, restStatisticsParameters.pageSize))
-      .provide(ZLayer.succeed(restClickhouseDAO))
+                        playedAllMatches: Boolean,
+                        oneTeamPerUnit: Boolean): Action[AnyContent] = asyncZio {
+    (for {
+      leagueInfoService <- ZIO.service[LeagueInfoServiceZIO]
+      round             <- leagueInfoService.leagueRoundForSeason(100, restStatisticsParameters.season)
+      entities          <- TeamGoalPointsRequest.execute(orderingKeyPath = OrderingKeyPath(),
+        parameters = restStatisticsParameters,
+        playedAllMatches = playedAllMatches,
+        currentRound = round,
+        oneTeamPerUnit = oneTeamPerUnit)
+    } yield restTableData(entities, restStatisticsParameters.pageSize))
+      .provideEnvironment(hattidEnvironment)
   }
 
   def teamPowerRatings(restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = asyncZio {

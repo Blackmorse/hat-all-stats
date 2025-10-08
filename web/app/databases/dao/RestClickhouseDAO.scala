@@ -9,18 +9,10 @@ import play.api.db.DBApi
 import play.api.libs.concurrent.CustomExecutionContext
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
 @Singleton
-class RestClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionContext) {
+class RestClickhouseDAO @Inject()(dbApi: DBApi) {
   private val db = dbApi.database("default")
-
-  def execute[T](simpleRow: SimpleSql[Row],
-                 rowParser: RowParser[T]): Future[List[T]] = Future {
-    db.withConnection{ implicit connection =>
-      simpleRow.as(rowParser.*)
-    }
-  }
 
   def executeZIO[T](simpleRow: SimpleSql[Row], rowParser: RowParser[T]): ZIO[Any, Throwable, List[T]] = {
     val resource = ZIO.acquireRelease(ZIO.attempt(db.getConnection()))
@@ -45,12 +37,6 @@ class RestClickhouseDAO @Inject()(dbApi: DBApi)(implicit ec: DatabaseExecutionCo
           simpleSql.as(rowParser.singleOpt)
         }.provide(ZLayer.succeed(connection))
       }
-    }
-  }
-
-  def executeSingleOpt[T](simpleRow: SimpleSql[Row], rowParser: RowParser[T]): Future[Option[T]] = Future {
-    db.withConnection { implicit connection =>
-      simpleRow.as(rowParser.singleOpt)
     }
   }
 }

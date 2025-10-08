@@ -29,7 +29,7 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
 
   private def getRestPlayerData(playerDetails: PlayerDetails): IO[HattidError, RestPlayerData] = {
     chppService.getTeamById(playerDetails.player.owningTeam.teamId)
-      .map(team => {
+      .map((team, _) => {
         val leagueId = playerDetails.player.owningTeam.leagueId
         val league = leagueInfoService.leagueInfo(leagueId).league
         RestPlayerData(

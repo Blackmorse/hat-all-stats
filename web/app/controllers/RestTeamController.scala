@@ -61,7 +61,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   }
 
   def getTeamData(teamId: Long): Action[AnyContent] = asyncZio {
-    chppService.getTeamById(teamId) map getRestTeamData
+    chppService.getTeamById(teamId) map (_._1) map getRestTeamData
   }
 
   private def orderingKeyPathFromTeam(team: Team, divisionLevel: Int, leagueUnitId: Long): OrderingKeyPath =
@@ -76,7 +76,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
                        teamId: Long,
                        restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = asyncZio {
     (for {
-      team <- chppService.getTeamById(teamId)
+      (team, _) <- chppService.getTeamById(teamId)
       res <- chppService.getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
       (divisionLevel, leagueUnitId) = res
       statList <- chRequest.execute(orderingKeyPathFromTeam(team, divisionLevel, leagueUnitId), restStatisticsParameters)
@@ -89,7 +89,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
                                 restStatisticsParameters: RestStatisticsParameters,
                                 playersParameters: PlayersParameters) = asyncZio {
     (for {
-      team <- chppService.getTeamById(teamId)
+      (team, _) <- chppService.getTeamById(teamId)
       res <- chppService.getDivisionLevelAndLeagueUnit(team, restStatisticsParameters.season)
       (divisionLevel, leagueUnitId) = res
       statList <- plRequest.execute(orderingKeyPathFromTeam(team, divisionLevel, leagueUnitId), restStatisticsParameters, playersParameters)
@@ -124,7 +124,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
   def teamRankingsRange(teamId: Long, fromSeason: Int, toSeason: Int): Action[AnyContent] = asyncZio {
     (for {
-      team <- chppService.getTeamById(teamId)
+      (team, _) <- chppService.getTeamById(teamId)
       rankings <- TeamRankingsRequest.execute(Some(fromSeason), Some(toSeason), team.league.leagueId, teamId)
     } yield {
       val leagueInfo = leagueInfoService.leagueInfo(team.league.leagueId)
@@ -142,7 +142,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
   def teamRankings(teamId: Long, season: Option[Int]): Action[AnyContent] = asyncZio {
     (for {
-      team <- chppService.getTeamById(teamId)
+      (team, _) <- chppService.getTeamById(teamId)
       teamRankings <- TeamRankingsRequest.execute(season, season, team.league.leagueId, teamId)
     } yield {
       val leagueInfo = leagueInfoService.leagueInfo(team.league.leagueId)
@@ -178,7 +178,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
   def promotions(teamId: Long): Action[AnyContent] = asyncZio {
     (for {
-      team <- chppService.getTeamById(teamId)
+      (team, _) <- chppService.getTeamById(teamId)
       season = leagueInfoService.leagueInfo.currentSeason(team.league.leagueId)
       res <- chppService.getDivisionLevelAndLeagueUnit(team, season)
       (divisionLevel, leagueUnitId) = res
@@ -189,7 +189,7 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
 
   def teamMatches(teamId: Long, season: Int): Action[AnyContent] = asyncZio {
     (for {
-      team <- chppService.getTeamById(teamId)
+      (team, _) <- chppService.getTeamById(teamId)
       res <- chppService.getDivisionLevelAndLeagueUnit(team, season)
       (divisionLevel, leagueUnitId) = res
       matches <- TeamMatchesRequest.execute(season, orderingKeyPathFromTeam(team, divisionLevel, leagueUnitId))
@@ -198,13 +198,13 @@ class RestTeamController @Inject() (val controllerComponents: ControllerComponen
   }
 
 
-  def teamsFoundedSameDate(period: HattrickPeriod, leagueId: Int, foundedDate: Long): Action[AnyContent] = Action.async { implicit request =>
+  def teamsFoundedSameDate(period: HattrickPeriod, leagueId: Int, foundedDate: Long): Action[AnyContent] = asyncZio {
     teamsService.teamsCreatedSamePeriod(period, new Date(foundedDate), leagueId)
-      .map(teams => Ok(Json.toJson(teams)))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
-  def compareTeams(team1: Long, team2: Long): Action[AnyContent] = Action.async{ implicit request =>
+  def compareTeams(team1: Long, team2: Long): Action[AnyContent] = asyncZio {
     teamsService.compareTwoTeams(team1, team2)
-      .map(rankings => Ok(Json.toJson(rankings)))
+      .provide(ZLayer.succeed(restClickhouseDAO))
   }
 }

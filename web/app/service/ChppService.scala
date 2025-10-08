@@ -44,12 +44,12 @@ object ChppService {
 class ChppService @Inject() (val chppClient: ChppClient,
                              val leagueInfoService: LeagueInfoService,
                              val restClickhouseDAO: RestClickhouseDAO) {
-  def getTeamById(teamId: Long): IO[HattidError, Team] = {
+  def getTeamById(teamId: Long): IO[HattidError, (Team, TeamDetails)] = {
     chppClient.executeZio[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
       .flatMap { teamDetails =>
         findTeamId(teamDetails, teamId) match {
           case Left(notFoundError) => ZIO.fail(notFoundError)
-          case Right(team) => ZIO.succeed(team)
+          case Right(team) => ZIO.succeed((team, teamDetails))
         }
       }
   }
@@ -88,7 +88,11 @@ class ChppService @Inject() (val chppClient: ChppClient,
         case e => e
       }
   }
-
+  
+  def getWorldDetails(): IO[HattidError, WorldDetails] =
+    chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest())
+    
+    
   def getDivisionLevelAndLeagueUnit(team: Team, season: Int): DBIO[(Int, Long)] = {
     for {
       league <- chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))

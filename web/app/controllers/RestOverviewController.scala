@@ -13,9 +13,7 @@ import play.api.libs.json.{Json, OWrites}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.RestOverviewStatsService
 import service.leagueinfo.{Finished, LeagueInfoService, Loading, Scheduled}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import zio.{ZIO, ZLayer}
 
 case class WorldLoadingInfo(proceedCountries: Int,
                             nextCountry: Option[(Int, String, Date)],
@@ -38,13 +36,13 @@ object WorldData {
 }
 
 class RestOverviewController @Inject()(val controllerComponents: ControllerComponents,
-                                       implicit val restClickhouseDAO: RestClickhouseDAO,
+                                       val restClickhouseDAO: RestClickhouseDAO,
                                        val restOverviewStatsService: RestOverviewStatsService,
                                        val leagueInfoService: LeagueInfoService)
                                   extends RestController {
   private val lastLeagueId = 100
 
-  def getWorldData: Action[AnyContent] = Action.async{ implicit request =>
+  def getWorldData: Action[AnyContent] = asyncZio {
     val countries = leagueInfoService.idToStringCountryMap
 
     val leagueInfoCountries = leagueInfoService.leagueInfo.leagueInfo.values.toSeq
@@ -77,83 +75,70 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
       isWorldData = "true"
       )
 
-    Future(Ok(Json.toJson(worldData)))
+    ZIO.succeed(worldData)
   }
 
-  def numberOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def numberOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.numberOverview(season, round, leagueId, divisionLevel)
-      .map(numberOverview => Ok(Json.toJson(numberOverview)))
   }
 
-  def formations(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async{ implicit request =>
+  def formations(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.formations(season, round, leagueId, divisionLevel)
-      .map(formations => Ok(Json.toJson(formations)))
   }
 
-  def averagesOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def averagesOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.averageOverview(season, round, leagueId, divisionLevel)
-      .map(averages => Ok(Json.toJson(averages)))
   }
 
-  def surprisingMatches(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def surprisingMatches(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.surprisingMatches(season, round, leagueId, divisionLevel)
-      .map(matches => Ok(Json.toJson(matches)))
   }
 
-  def topHatstatsTeams(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def topHatstatsTeams(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.topHatstatsTeams(season, round, leagueId, divisionLevel)
-      .map(teams => Ok(Json.toJson(teams)))
   }
 
-  def topSalaryTeams(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async{ implicit request =>
+  def topSalaryTeams(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.topSalaryTeams(season, round, leagueId, divisionLevel)
-      .map(teams => Ok(Json.toJson(teams)))
   }
 
-  def topMatches(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async{ implicit request =>
+  def topMatches(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.topMatches(season, round, leagueId, divisionLevel)
-      .map(matches => Ok(Json.toJson(matches)))
   }
 
-  def topSalaryPlayers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async{ implicit request =>
+  def topSalaryPlayers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.topSalaryPlayers(season, round, leagueId, divisionLevel)
-      .map(players => Ok(Json.toJson(players)))
   }
 
-  def topRatingPlayers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def topRatingPlayers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.topRatingPlayers(season, round, leagueId, divisionLevel)
-      .map(players => Ok(Json.toJson(players)))
   }
 
-  def topMatchAttendance(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async{ implicit request =>
+  def topMatchAttendance(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.topMatchAttendance(season, round, leagueId, divisionLevel)
-      .map(matches => Ok(Json.toJson(matches)))
   }
 
-  def topTeamVictories(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async{ implicit request =>
+  def topTeamVictories(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     restOverviewStatsService.topTeamVictories(season, round, leagueId, divisionLevel)
-      .map(teams => Ok(Json.toJson(teams)))
   }
 
-  def topSeasonScorers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async{ implicit request =>
+  def topSeasonScorers(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
       restOverviewStatsService.topSeasonScorers(season, round, leagueId, divisionLevel)
-        .map(players => Ok(Json.toJson(players)))
   }
 
-  def totalOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async { implicit request =>
+  def totalOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     //in case divisionLevel or league is Empty - return nothing
     if (leagueId.isDefined && !leagueInfoService.leagueInfo.leagueInfo.contains(leagueId.get)
     ||
       leagueId.isDefined && divisionLevel.isDefined
             && !leagueInfoService.leagueInfo(leagueId.get).seasonInfo(season).roundInfo(round).divisionLevelInfo.contains(divisionLevel.get)) {
-      Future(Ok(Json.toJson(TotalOverview.empty())))
+      ZIO.succeed(TotalOverview.empty())
     } else {
       restOverviewStatsService.totalOverview(season, round, leagueId, divisionLevel)
-        .map(totalOverview => Ok(Json.toJson(totalOverview)))
     }
   }
 
-  private def numbersChart(request: NumbersOverviewChartRequest)(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async {
+  private def numbersChart(request: NumbersOverviewChartRequest)(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     val currentRound = leagueId.map(lid => leagueInfoService.leagueInfo.currentRound(lid)).getOrElse(leagueInfoService.lastFullRound())
     val currentSeason = leagueId.map(lid => leagueInfoService.leagueInfo.currentSeason(lid)).getOrElse(leagueInfoService.lastFullSeason())
 
@@ -161,7 +146,7 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
       orderingKeyPath = OrderingKeyPath(leagueId = leagueId, divisionLevel = divisionLevel),
       currentRound = currentRound,
       currentSeason = currentSeason
-    ).map(numbers => Ok(Json.toJson(numbers)))
+    ).provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def teamNumbersChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] =
@@ -182,7 +167,7 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
   def redCardNumbersChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] =
     numbersChart(RedCardsNumberOverviewRequest)(leagueId, divisionLevel)
 
-  def formationsChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async {
+  def formationsChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     val currentRound = leagueId.map(lid => leagueInfoService.leagueInfo.currentRound(lid)).getOrElse(leagueInfoService.lastFullRound())
     val currentSeason = leagueId.map(lid => leagueInfoService.leagueInfo.currentSeason(lid)).getOrElse(leagueInfoService.lastFullSeason())
 
@@ -190,7 +175,7 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
       orderingKeyPath = OrderingKeyPath(leagueId = leagueId, divisionLevel = divisionLevel),
       currentRound = currentRound,
       currentSeason = currentSeason
-    ).map(formations => Ok(Json.toJson(formations)))
+    ).provide(ZLayer.succeed(restClickhouseDAO))
   }
 
   def averageHatstatNumbersChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] =
@@ -202,13 +187,13 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
   def averageGoalNumbersChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] =
     numbersChart(AverageGoalsChartRequest)(leagueId, divisionLevel)
 
-  def newTeamNumbersChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = Action.async {
+  def newTeamNumbersChart(leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {
     val currentRound = leagueId.map(lid => leagueInfoService.leagueInfo.currentRound(lid)).getOrElse(leagueInfoService.lastFullRound())
     val currentSeason = leagueId.map(lid => leagueInfoService.leagueInfo.currentSeason(lid)).getOrElse(leagueInfoService.lastFullSeason())
     NewTeamsNumberChartRequest.execute(
       orderingKeyPath = OrderingKeyPath(leagueId = leagueId, divisionLevel = divisionLevel),
       currentRound = currentRound,
       currentSeason = currentSeason
-    ).map(newTeams => Ok(Json.toJson(newTeams)))
+    ).provide(ZLayer.succeed(restClickhouseDAO))
   }
 }

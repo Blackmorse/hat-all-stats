@@ -1,19 +1,24 @@
 package cache
 
-import cache.ZioCacheModule.ZDreamTeamCache
-import com.google.inject.{AbstractModule, TypeLiteral}
+import cache.ZioCacheModule.{HattidEnv, ZDreamTeamCache}
 import com.google.inject.name.Names
+import com.google.inject.{AbstractModule, Provides, TypeLiteral}
 import databases.dao.RestClickhouseDAO
 import databases.requests.OrderingKeyPath
 import databases.requests.model.player.DreamTeamPlayer
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
+import jakarta.inject.Singleton
 import models.web.{HattidError, StatsType}
+import service.ChppService
+import service.leagueinfo.LeagueInfoServiceZIO
 import zio.cache.{Cache, Lookup}
-import zio.{Duration, URIO}
+import zio.{cache, *}
 
 object ZioCacheModule {
   type DreamTeamCacheKey = (OrderingKeyPath, StatsType, String)
   type ZDreamTeamCache = Cache[DreamTeamCacheKey, HattidError, List[DreamTeamPlayer]]
+
+  type HattidEnv = LeagueInfoServiceZIO & RestClickhouseDAO & ChppService
 }
 
 class ZioCacheModule extends AbstractModule {
@@ -29,4 +34,28 @@ class ZioCacheModule extends AbstractModule {
       .annotatedWith(Names.named("DreamTeamCache"))
       .toInstance(zDreamTeamCache)
   }
+
+  @Provides
+  @Singleton
+  def zioEnvironment(restClickhouseDAO: RestClickhouseDAO, chppService: ChppService): ZEnvironment[HattidEnv] = {
+    val clickhouseLayer: ULayer[RestClickhouseDAO] = ZLayer.succeed(restClickhouseDAO)
+    val chppServiceLayer: ULayer[ChppService] = ZLayer.succeed(chppService)
+    val leagueInfoLayer: ZLayer[RestClickhouseDAO & ChppService, Nothing, LeagueInfoServiceZIO] = LeagueInfoServiceZIO.layer
+      .mapError(he => new Exception(he.toString))
+      .orDie
+    val env: ZEnvironment[LeagueInfoServiceZIO & RestClickhouseDAO & ChppService] = Unsafe.unsafe { implicit unsafe =>
+      Runtime.default.unsafe.run {
+        ZIO.scoped {
+          ((clickhouseLayer ++ chppServiceLayer) >>> leagueInfoLayer ).build
+            .flatMap(leagueInfoEnv =>
+            ZIO.succeed(leagueInfoEnv ++
+              ZEnvironment(restClickhouseDAO) ++
+              ZEnvironment(chppService)))
+        }
+      }.getOrThrowFiberFailure()
+    }
+
+    env
+  }
+
 }

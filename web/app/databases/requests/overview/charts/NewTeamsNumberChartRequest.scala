@@ -2,26 +2,26 @@ package databases.requests.overview.charts
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.OrderingKeyPath
 import databases.requests.model.overview.NumbersChartModel
 import databases.requests.overview.OverviewChartRequest
 import sqlbuilder.functions.max
 import sqlbuilder.{Select, SqlBuilder, WSelect, With}
+import zio.ZIO
 
-//TODO ?!
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 object NewTeamsNumberChartRequest extends OverviewChartRequest[NumbersChartModel] {
   override val rowParser: RowParser[NumbersChartModel] = NumbersChartModel.mapper
 
   override def execute(orderingKeyPath: OrderingKeyPath,
-    currentSeason: Int,
-    currentRound: Int)(implicit restClickhouseDAO: RestClickhouseDAO): Future[List[NumbersChartModel]] = {
-
-    restClickhouseDAO.execute(builder(orderingKeyPath, currentSeason, currentRound).sqlWithParameters().build, rowParser)
-      .map(numbers => numbers.filterNot(ncm => ncm.season == currentSeason && ncm.round > currentRound)) //filter out, because WITH FILL will fill out current season up to 14 round
+                       currentSeason: Int,
+                       currentRound: Int): DBIO[List[NumbersChartModel]] = wrapErrors {
+    ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO =>
+      restClickhouseDAO.executeZIO(builder(orderingKeyPath, currentSeason, currentRound).sqlWithParameters().build, rowParser)
+        .map(numbers => numbers.filterNot(ncm => ncm.season == currentSeason && ncm.round > currentRound)) //filter out, because WITH FILL will fill out current season up to 14 round
+    )
   }
 
   def builder(orderingKeyPath: OrderingKeyPath,

@@ -6,7 +6,7 @@ import play.api.mvc.{Action, AnyContent, BaseController, Request, Result}
 import zio.{Unsafe, ZIO, ZLayer}
 
 trait ZioActionBuilder {
-  self: BaseController =>
+  self: RestController =>
 
   private val runtime = zio.Runtime.default
 

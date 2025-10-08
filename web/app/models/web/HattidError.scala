@@ -23,7 +23,7 @@ case class DbError(dbException: Throwable) extends HattidError {
   override def toPlayHttpResult: Result = InternalServerError("Internal error")
 }
 
-case class InternalError(description: String) extends HattidError:
+case class HattidInternalError(description: String) extends HattidError:
   override def toPlayHttpResult: Result = InternalServerError(description)
 
 case class SqlInjectionError() extends HattidError {

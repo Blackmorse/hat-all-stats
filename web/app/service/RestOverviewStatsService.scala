@@ -2,123 +2,171 @@ package service
 
 import databases.dao.RestClickhouseDAO
 import databases.requests.model.`match`.MatchTopHatstats
-import databases.requests.model.overview.{AveragesOverview, FormationsOverview, MatchAttendanceOverview, NumberOverview, NumberOverviewPlayerStats, PlayerStatOverview, TeamStatOverview, TotalOverview}
-import databases.requests.overview.{FormationsOverviewRequest, NewTeamsOverviewRequest, NumberOverviewRequest, OverviewMatchAveragesRequest, OverviewTeamPlayerAveragesRequest, SurprisingMatchesOverviewRequest, TopAttendanceMatchesOverviewRequest, TopHatstatsTeamOverviewRequest, TopMatchesOverviewRequest, TopRatingPlayerOverviewRequest, TopSalaryPlayerOverviewRequest, TopSalaryTeamOverviewRequest, TopSeasonScorersOverviewRequest, TopVictoriesTeamsOverviewRequest}
+import databases.requests.model.overview.*
+import databases.requests.overview.*
+import models.web.{HattidError, HattidInternalError}
+import play.api.cache.AsyncCacheApi
+import service.CacheKey.EntityType
+import zio.cache.{Cache, Lookup}
+import zio.{IO, URIO, ZIO, ZLayer}
 
 import javax.inject.{Inject, Singleton}
-import play.api.cache.AsyncCacheApi
-
-import scala.concurrent.duration._
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.*
 import scala.language.postfixOps
+import scala.reflect.ClassTag
 
+object CacheKey {
+  type EntityType = "numberOverview" | "formations" | "averageOverview" | "surprisingMatches" |
+    "topHatstatsTeams" | "topSalaryTeams" | "topMatches" | "topSalaryPlayers" |
+    "topRatingPlayers" | "topMatchAttendance" | "topTeamVictories" | "topSeasonScorers"
+}
+
+case class CacheKey(
+                   entityType: EntityType,
+                   season: Int,
+                   round: Int,
+                   leagueId: Option[Int],
+                   divisionLevel: Option[Int],
+                   )
 
 @Singleton
 class RestOverviewStatsService @Inject()
-            (implicit val restClickhouseDAO: RestClickhouseDAO,
+            (val restClickhouseDAO: RestClickhouseDAO,
              cache: AsyncCacheApi) {
+  private val zioCache: URIO[RestClickhouseDAO, Cache[CacheKey, HattidError, List[Any]]] = Cache.make(
+    capacity = 50000,
+    timeToLive = zio.Duration.fromScala(28.days),
+    lookup = Lookup({ (key: CacheKey) =>
+      key.entityType match {
+        case "numberOverview" =>
+          for {
+            numbers <- NumberOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel).map(_.head)
+            newTeams <- NewTeamsOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel).map(_.head)
+          } yield NumberOverview(numbers, newTeams) :: Nil
+        case "formations" =>
+          FormationsOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+        case "averageOverview" =>
+          for {
+            matchAverages <- OverviewMatchAveragesRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+            teamPlayerAverages <- OverviewTeamPlayerAveragesRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+          } yield AveragesOverview(matchAverages.head, teamPlayerAverages.head) :: Nil
+        case "surprisingMatches" =>
+          SurprisingMatchesOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+        case "topHatstatsTeams" =>
+          TopHatstatsTeamOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+        case "topSalaryTeams" =>
+          TopSalaryTeamOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+        case "topMatches" =>
+          TopMatchesOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+        case "topSalaryPlayers" =>
+          TopSalaryPlayerOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+        case "topRatingPlayers" =>
+          TopRatingPlayerOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+        case "topMatchAttendance" =>
+          TopAttendanceMatchesOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+        case "topTeamVictories" =>
+          TopVictoriesTeamsOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+        case "topSeasonScorers" =>
+          TopSeasonScorersOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel)
+      }
+    })
+  )
 
-  private def cacheName(name: String, season: Int, round: Int,
-                        leagueId: Option[Int], divisionLevel: Option[Int]) =
-    s"$name.season=$season.round=$round.league=${leagueId.map(_.toString).getOrElse("world")}${divisionLevel.map(level => s"divisionLevel=$level").getOrElse("")}"
+  private def fetchFromCache[T: ClassTag](entityType: EntityType,
+                                          season: Int,
+                                          round: Int,
+                                          leagueId: Option[Int],
+                                          divisionLevel: Option[Int]): IO[HattidError, List[T]] = {
+    val key = CacheKey(entityType, season, round, leagueId, divisionLevel)
+
+    (for {
+      cache <- zioCache
+      result <- cache.get(key)
+      typed <- result.headOption match {
+        case Some(head: T) => ZIO.succeed(result.asInstanceOf[List[T]])
+        case None => ZIO.succeed(Nil)
+        case _ => ZIO.fail(models.web.HattidInternalError("Cache type error"))
+      }
+    } yield typed)
+      .provide(ZLayer.succeed(restClickhouseDAO))
+  }
 
   def numberOverview(season: Int, round: Int,
-                     leagueId: Option[Int], divisionLevel: Option[Int]): Future[NumberOverview] = {
-    val name = cacheName("numberOverview", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days){
-      for {
-        numbers <- NumberOverviewRequest.execute(season, round, leagueId, divisionLevel).map(_.head)
-        newTeams <- NewTeamsOverviewRequest.execute(season, round, leagueId, divisionLevel).map(_.head)
-      } yield NumberOverview(numbers, newTeams)
-    }
+                     leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, NumberOverview] = {
+    for {
+      list <- fetchFromCache[NumberOverview]("numberOverview", season, round, leagueId, divisionLevel)
+      head <- ZIO.fromOption(list.headOption)
+        .mapError(_ => HattidInternalError("No data in cache") )
+    } yield head
   }
+
 
   def formations(season: Int, round: Int,
-                 leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[FormationsOverview]] = {
-    val name = cacheName("formations", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(FormationsOverviewRequest.execute(season, round, leagueId, divisionLevel))
-  }
+                 leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[FormationsOverview]] =
+    fetchFromCache[FormationsOverview]("formations", season, round, leagueId, divisionLevel)
+
 
   def averageOverview(season: Int, round: Int,
-                      leagueId: Option[Int], divisionLevel: Option[Int]): Future[AveragesOverview] = {
-    val name = cacheName("averageOverview", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days){
-      OverviewMatchAveragesRequest.execute(season, round, leagueId, divisionLevel)
-        .zipWith(OverviewTeamPlayerAveragesRequest.execute(season, round, leagueId, divisionLevel))
-        {case(matchAverages, teamPlayerAverages) => AveragesOverview(matchAverages.head, teamPlayerAverages.head)}
-    }
+                      leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, AveragesOverview] = {
+    for {
+      list <- fetchFromCache[AveragesOverview]("averageOverview", season, round, leagueId, divisionLevel)
+      head <- ZIO.fromOption(list.headOption)
+        .mapError(_ => HattidInternalError("No data in cache") )
+    } yield head
   }
 
   def surprisingMatches(season: Int, round: Int,
-                        leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[MatchTopHatstats]] = {
-    val name = cacheName("surprisingMatches", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(SurprisingMatchesOverviewRequest.execute(season, round, leagueId, divisionLevel))
-  }
+                        leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[MatchTopHatstats]] =
+    fetchFromCache[MatchTopHatstats]("surprisingMatches", season, round, leagueId, divisionLevel)
 
   def topHatstatsTeams(season: Int, round: Int,
-                       leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[TeamStatOverview]] = {
-    val name = cacheName("topHatstatsTeams", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(TopHatstatsTeamOverviewRequest.execute(season, round, leagueId, divisionLevel))
-  }
+                       leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[TeamStatOverview]] =
+    fetchFromCache[TeamStatOverview]("topHatstatsTeams", season, round, leagueId, divisionLevel)
 
   def topSalaryTeams(season: Int, round: Int,
-                     leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[TeamStatOverview]] = {
-    val name = cacheName("topSalaryTeams", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(TopSalaryTeamOverviewRequest.execute(season, round, leagueId, divisionLevel))
-  }
+                     leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[TeamStatOverview]] =
+    fetchFromCache[TeamStatOverview]("topSalaryTeams", season, round, leagueId, divisionLevel)
 
   def topMatches(season: Int, round: Int,
-                 leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[MatchTopHatstats]] = {
-    val name = cacheName("topMatches", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(TopMatchesOverviewRequest.execute(season, round, leagueId, divisionLevel))
-  }
+                 leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[MatchTopHatstats]] =
+    fetchFromCache[MatchTopHatstats]("topMatches", season, round, leagueId, divisionLevel)
 
   def topSalaryPlayers(season: Int, round: Int,
-                       leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[PlayerStatOverview]] = {
-    val name = cacheName("topSalaryPlayers", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(TopSalaryPlayerOverviewRequest.execute(season, round, leagueId, divisionLevel))
-  }
+                       leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[PlayerStatOverview]] =
+    fetchFromCache[PlayerStatOverview]("topSalaryPlayers", season, round, leagueId, divisionLevel)
 
   def topRatingPlayers(season: Int, round: Int,
-                       leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[PlayerStatOverview]] = {
-    val name = cacheName("topRatingPlayers", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(TopRatingPlayerOverviewRequest.execute(season, round, leagueId, divisionLevel))
-  }
+                       leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[PlayerStatOverview]] =
+    fetchFromCache[PlayerStatOverview]("topRatingPlayers", season, round, leagueId, divisionLevel)
 
   def topMatchAttendance(season: Int, round: Int,
-                         leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[MatchAttendanceOverview]] = {
-    val name = cacheName("topMatchAttendance", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(TopAttendanceMatchesOverviewRequest.execute(season, round, leagueId, divisionLevel))
-  }
+                         leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[MatchAttendanceOverview]] =
+    fetchFromCache[MatchAttendanceOverview]("topMatchAttendance", season, round, leagueId, divisionLevel)
 
   def topTeamVictories(season: Int, round: Int,
-                       leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[TeamStatOverview]] = {
-    val name = cacheName("topTeamVictories", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(TopVictoriesTeamsOverviewRequest.execute(season, round, leagueId, divisionLevel))
-  }
+                       leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[TeamStatOverview]] =
+    fetchFromCache[TeamStatOverview]("topTeamVictories", season, round, leagueId, divisionLevel)
 
   def topSeasonScorers(season: Int, round: Int,
-                       leagueId: Option[Int], divisionLevel: Option[Int]): Future[List[PlayerStatOverview]] = {
-    val name = cacheName("topSeasonScorers", season, round, leagueId, divisionLevel)
-    cache.getOrElseUpdate(name, 28 days)(TopSeasonScorersOverviewRequest.execute(season, round, leagueId, divisionLevel))
-  }
+                       leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[PlayerStatOverview]] =
+    fetchFromCache[PlayerStatOverview]("topSeasonScorers", season, round, leagueId, divisionLevel)
 
   def totalOverview(season: Int, round: Int,
-                    leagueId: Option[Int], divisionLevel: Option[Int]): Future[TotalOverview] = {
-    for(numberOverviewData     <- numberOverview(season, round, leagueId, divisionLevel);
-        formationsData         <- formations(season, round, leagueId, divisionLevel);
-        averageOverviewData    <- averageOverview(season, round, leagueId, divisionLevel);
-        surprisingMatchesData  <- surprisingMatches(season, round, leagueId, divisionLevel);
-        topHatstatsTeamsData   <- topHatstatsTeams(season, round, leagueId, divisionLevel);
-        topSalaryTeamsData     <- topSalaryTeams(season, round, leagueId, divisionLevel);
-        topMatchesData         <- topMatches(season, round, leagueId, divisionLevel);
-        topSalaryPlayersData   <- topSalaryPlayers(season, round, leagueId, divisionLevel);
-        topRatingPlayersData   <- topRatingPlayers(season, round, leagueId, divisionLevel);
-        topMatchAttendanceData <- topMatchAttendance(season, round, leagueId, divisionLevel);
-        topTeamVictoriesData   <- topTeamVictories(season, round, leagueId, divisionLevel);
-        topSeasonScorersData   <- topSeasonScorers(season, round, leagueId, divisionLevel)) yield
-
+                    leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, TotalOverview] = {
+    for {
+      numberOverviewData     <- numberOverview(season, round, leagueId, divisionLevel);
+      formationsData         <- formations(season, round, leagueId, divisionLevel);
+      averageOverviewData    <- averageOverview(season, round, leagueId, divisionLevel);
+      surprisingMatchesData  <- surprisingMatches(season, round, leagueId, divisionLevel);
+      topHatstatsTeamsData   <- topHatstatsTeams(season, round, leagueId, divisionLevel);
+      topSalaryTeamsData     <- topSalaryTeams(season, round, leagueId, divisionLevel);
+      topMatchesData         <- topMatches(season, round, leagueId, divisionLevel);
+      topSalaryPlayersData   <- topSalaryPlayers(season, round, leagueId, divisionLevel);
+      topRatingPlayersData   <- topRatingPlayers(season, round, leagueId, divisionLevel);
+      topMatchAttendanceData <- topMatchAttendance(season, round, leagueId, divisionLevel);
+      topTeamVictoriesData   <- topTeamVictories(season, round, leagueId, divisionLevel);
+      topSeasonScorersData   <- topSeasonScorers(season, round, leagueId, divisionLevel)
+    } yield
       TotalOverview(numberOverview = numberOverviewData,
         formations = formationsData,
         averageOverview = averageOverviewData,

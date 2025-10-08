@@ -264,7 +264,7 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
       round = if(leagueInfoService.leagueInfo(leagueDetails.leagueId).currentSeason() == season) leagueInfoService.leagueInfo(leagueDetails.leagueId).currentRound() else 14
       leagueUnitTeamHistoryInfo <- ZIO.fromEither(leagueUnitCalculatorService.calculateSafe(leagueFixture, Some(round),
           /* doesn't matter what parameters are there */"points", Desc))
-        .mapError(u => InternalError("Unable to calculate league unit team history info"))
+        .mapError(u => HattidInternalError("Unable to calculate league unit team history info"))
     } yield leagueUnitTeamHistoryInfo
   }
 

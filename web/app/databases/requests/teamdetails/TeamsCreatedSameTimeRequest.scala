@@ -3,18 +3,18 @@ package databases.requests.teamdetails
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest
+import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.model.team.CreatedSameTimeTeam
 import service.DatesRange
 import sqlbuilder.Select
+import zio.ZIO
 
 import scala.concurrent.Future
 
 object TeamsCreatedSameTimeRequest extends ClickhouseRequest[CreatedSameTimeTeam] {
   override val rowParser: RowParser[CreatedSameTimeTeam] = CreatedSameTimeTeam.createdSameTimeTeamMapper
 
-  def execute(leagueId: Int, currentSeason: Int, currentRound: Int, datesRange: DatesRange)
-             (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[CreatedSameTimeTeam]] = {
-
+  def execute(leagueId: Int, currentSeason: Int, currentRound: Int, datesRange: DatesRange): DBIO[List[CreatedSameTimeTeam]] = wrapErrors {
     import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
         "league_id",
@@ -45,6 +45,6 @@ object TeamsCreatedSameTimeRequest extends ClickhouseRequest[CreatedSameTimeTeam
         .founded.less(datesRange.max)
       .limitBy(1, "team_id")
 
-    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
+    ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO => restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser))
   }
 }

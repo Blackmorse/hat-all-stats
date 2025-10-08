@@ -2,19 +2,18 @@ package databases.requests.overview.charts
 
 import anorm.RowParser
 import databases.dao.RestClickhouseDAO
+import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.OrderingKeyPath
 import databases.requests.model.overview.FormationChartModel
 import databases.requests.overview.OverviewChartRequest
 import sqlbuilder.Select
-
-import scala.concurrent.Future
+import zio.ZIO
 
 object FormationsChartRequest extends OverviewChartRequest[FormationChartModel] {
   override val rowParser: RowParser[FormationChartModel] = FormationChartModel.mapper
 
-  def execute(orderingKeyPath: OrderingKeyPath, currentSeason: Int, currentRound: Int)
-             (implicit restClickhouseDAO: RestClickhouseDAO): Future[List[FormationChartModel]] = {
+  def execute(orderingKeyPath: OrderingKeyPath, currentSeason: Int, currentRound: Int): DBIO[List[FormationChartModel]] = wrapErrors {
     import sqlbuilder.SqlBuilder.implicits._
     val builder = Select(
       "formation",
@@ -33,6 +32,6 @@ object FormationsChartRequest extends OverviewChartRequest[FormationChartModel] 
       .orderBy("season".asc, "round".asc)
       .limitBy(10, "(season, round)")
 
-    restClickhouseDAO.execute(builder.sqlWithParameters().build, rowParser)
+    ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO => restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser))
   }
 }

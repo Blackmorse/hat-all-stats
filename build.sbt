@@ -15,6 +15,7 @@ lazy val webDependencies = Seq(
   caffeine,
   "dev.zio" %% "zio-cache" % "0.2.5",
   "dev.zio" %% "zio-prelude" % "1.0.0-RC41",
+  "dev.zio" %% "zio-concurrent" % zioVersion,
   "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % Test,
   clickhouseVersion,
   "io.github.gaelrenoux" %% "tranzactio-anorm" % tranzactIOVersion,

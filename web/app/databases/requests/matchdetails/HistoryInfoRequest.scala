@@ -21,6 +21,7 @@ object HistoryInfoRequest extends ClickhouseRequest[HistoryInfo] {
       result <- restClickhouseDAO.executeZIO(builder(leagueId, season, round).sqlWithParameters().build, rowParser)
     } yield result
   }
+  
 
   def builder(leagueId: Option[Int],
               season: Option[Int],

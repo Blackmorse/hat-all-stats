@@ -4,8 +4,64 @@ import common.StringExt.StringExt
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import sqlbuilder.ValueParameter
+import zio.{Unsafe, ZIO, ZLayer}
+import zio.Console.*
+import zio.*
+
+import java.io.IOException
+
+class Service() {
+  def echo = printLine("job")
+}
+
+object Service {
+  def make: ZIO[Any, IOException, Service] = {
+    for {
+      _ <- printLine("Init!")
+      service <- ZIO.succeed(new Service())
+    } yield service
+  }
+}
 
 class HistoryInfoRequestTest extends AnyFunSuite with Matchers {
+  test("ZIO") {
+    val layer = ZLayer{ Service.make }
+
+    
+    
+
+    
+
+    val env = ZIO.scoped {
+     layer.build
+    }
+
+    val program = (for {
+      service <- ZIO.service[Service]
+      _ <- service.echo
+    } yield ())
+
+//    val env = Unsafe.unsafe { implicit unsafe =>
+////      Runtime.default.unsafe.run(
+//        
+////      ).getOrThrowFiberFailure()
+//    }
+    
+//    val env = Unsafe.unsafe { implicit unsafe =>
+//      Runtime.default.unsafe.run(layer.build()).getOrThrowFiberFailure()
+//    }
+
+    Unsafe.unsafe(implicit unsafe =>
+      val builtEnv = Runtime.default.unsafe.run(
+        ZIO.scoped(layer.build)
+      ).getOrThrowFiberFailure()
+      
+      
+      Runtime.default.unsafe.run(program.provideEnvironment(builtEnv))
+      Runtime.default.unsafe.run(program.provideEnvironment(builtEnv))
+    )
+  }
+
   test("No parameters results in no filters") {
     val builder = HistoryInfoRequest.builder(None, None, None)
     val sql = builder.sqlWithParameters().sql
