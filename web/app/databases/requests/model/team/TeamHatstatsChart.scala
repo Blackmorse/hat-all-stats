@@ -2,6 +2,7 @@ package databases.requests.model.team
 
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
+import databases.requests.model.Chart
 import play.api.libs.json.{Json, OWrites}
 
 case class TeamHatstatsChart(teamSortingKey: TeamSortingKey,
@@ -11,7 +12,7 @@ case class TeamHatstatsChart(teamSortingKey: TeamSortingKey,
                              midfield: Int,
                              defense: Int,
                              attack: Int,
-                             loddarStats: Double)
+                             loddarStats: Double) extends Chart
 
 object TeamHatstatsChart {
   implicit val writes: OWrites[TeamHatstatsChart] = Json.writes[TeamHatstatsChart]

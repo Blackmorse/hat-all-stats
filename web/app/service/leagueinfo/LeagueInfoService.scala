@@ -134,7 +134,6 @@ object RoundInfoZio {
 @Singleton
 class LeagueInfoService @Inject() (val chppClient: ChppClient,
                                    implicit val restClickhouseDAO: RestClickhouseDAO,
-                                   val chppService: ChppService,
                                   ) {
   private val runtime = zio.Runtime.default
 
@@ -160,16 +159,16 @@ class LeagueInfoService @Inject() (val chppClient: ChppClient,
 
   def getRelativeSeasonFromAbsolute(season: Int, leagueId: Int): Int = leagueInfo(leagueId).league.seasonOffset + season
 
-  val leagueInfoZio: ZIO[RestClickhouseDAO & ChppService, HattidError, LeaguesInfo] = {
-    for {
-      chppService <- ZIO.service[ChppService]
-      worldDetails <- chppService.getWorldDetails()
-      leagueIdToCountryNameMap = worldDetails.leagueList.map(league => league.leagueId -> league)
-      history <- HistoryInfoRequest.execute(None, None, None)
-      leagueHistoryInfos = history.groupBy(_.leagueId)
-
-    } yield LeaguesInfo(leagueInfoFromMap(leagueHistoryInfos, leagueIdToCountryNameMap).toMap)
-  }
+//  val leagueInfoZio: ZIO[RestClickhouseDAO & ChppService, HattidError, LeaguesInfo] = {
+//    for {
+//      chppService <- ZIO.service[ChppService]
+//      worldDetails <- chppService.getWorldDetails()
+//      leagueIdToCountryNameMap = worldDetails.leagueList.map(league => league.leagueId -> league)
+//      history <- HistoryInfoRequest.execute(None, None, None)
+//      leagueHistoryInfos = history.groupBy(_.leagueId)
+//
+//    } yield LeaguesInfo(leagueInfoFromMap(leagueHistoryInfos, leagueIdToCountryNameMap).toMap)
+//  }
 
   private def leagueInfoFromMap(leagueHistoryInfos: Map[Int, List[HistoryInfo]], leagueIdToCountryNameMap: Seq[(Int, League)]) = {
     for ((lId, league) <- leagueIdToCountryNameMap) yield {

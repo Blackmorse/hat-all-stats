@@ -1,21 +1,18 @@
-package databases.requests.playerstats.team
+package databases.requests.playerstats.team.chart
 
 import anorm.RowParser
-import databases.dao.RestClickhouseDAO
-import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.team.TeamCardsChart
+import databases.requests.teamrankings.ClickhouseChartRequest
 import databases.requests.{ClickhouseRequest, OrderingKeyPath}
-import sqlbuilder.{Select, SqlBuilder}
 import sqlbuilder.functions.*
-import zio.ZIO
+import sqlbuilder.{Select, SqlBuilder}
 
-object TeamCardsChartRequest extends ClickhouseRequest[TeamCardsChart] {
+object TeamCardsChartRequest extends ClickhouseChartRequest[TeamCardsChart] {
   override val rowParser: RowParser[TeamCardsChart] = TeamCardsChart.mapper
   
-  def builder(orderingKeyPath: OrderingKeyPath, season: Int): SqlBuilder = {
+  def sqlBuilder(orderingKeyPath: OrderingKeyPath, season: Int): SqlBuilder = {
     import sqlbuilder.SqlBuilder.implicits.*
-
     Select(
       any("league_id") `as` "league",
       argMax("team_name", "round") `as` "team_name",
@@ -34,12 +31,5 @@ object TeamCardsChartRequest extends ClickhouseRequest[TeamCardsChart] {
       .orderingKeyPath(orderingKeyPath)
       .groupBy("team_id", "league_unit_id", "league_unit_name", "season", "round")
       .orderBy("team_id".asc, "round".asc)
-      
-  }
-  
-  def execute(orderingKeyPath: OrderingKeyPath, season: Int): DBIO[List[TeamCardsChart]] =  wrapErrors {
-    val simpleSql = builder(orderingKeyPath, season).sqlWithParameters().build
-
-    ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO => restClickhouseDAO.executeZIO(simpleSql, rowParser))
   }
 }

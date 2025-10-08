@@ -21,8 +21,6 @@ import service.leagueinfo.{LeagueInfo, LeagueInfoService, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
 import zio.ZLayer
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 case class RestDivisionLevelData(leagueId: Int,
                                  leagueName: String,
                                  divisionLevel: Int,

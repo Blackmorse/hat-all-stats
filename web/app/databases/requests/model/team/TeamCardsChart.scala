@@ -2,13 +2,14 @@ package databases.requests.model.team
 
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
+import databases.requests.model.Chart
 import play.api.libs.json.{Json, OWrites}
 
 case class TeamCardsChart(teamSortingKey: TeamSortingKey,
                           season: Int,
                           round: Int,
                           yellowCards: Int,
-                          redCards: Int)
+                          redCards: Int) extends Chart
 
 object TeamCardsChart {
   implicit val writes: OWrites[TeamCardsChart] = Json.writes[TeamCardsChart]

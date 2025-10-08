@@ -1,18 +1,19 @@
-package databases.requests.matchdetails
+package databases.requests.matchdetails.chart
 
 import anorm.RowParser
-import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.requests.ClickhouseRequest.DBIO
+import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.team.{TeamHatstats, TeamHatstatsChart}
+import databases.requests.teamrankings.ClickhouseChartRequest
+import databases.requests.{ClickhouseRequest, OrderingKeyPath}
 import databases.sql.Fields.{hatstats, loddarStats}
 import sqlbuilder.{Select, SqlBuilder}
-import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import zio.ZIO
 
-object TeamHatstatsChartRequest extends ClickhouseRequest[TeamHatstatsChart] {
+object TeamHatstatsChartRequest extends ClickhouseChartRequest[TeamHatstatsChart] {
   override val rowParser: RowParser[TeamHatstatsChart] = TeamHatstatsChart.teamRatingMapper
 
-  def builder(orderingKeyPath: OrderingKeyPath, season: Int): SqlBuilder = {
+  override def sqlBuilder(orderingKeyPath: OrderingKeyPath, season: Int): SqlBuilder = {
     import SqlBuilder.implicits.*
 
     Select(
@@ -33,14 +34,5 @@ object TeamHatstatsChartRequest extends ClickhouseRequest[TeamHatstatsChart] {
       .season(season)
       .orderingKeyPath(orderingKeyPath)
       .isLeagueMatch
-  }
-  
-  def execute(orderingKeyPath: OrderingKeyPath, season: Int): DBIO[List[TeamHatstatsChart]] = wrapErrors {
-    val sqlBuilder = builder(orderingKeyPath, season)
-    
-    for {
-      restClickhouseDAO <- ZIO.service[databases.dao.RestClickhouseDAO]
-      result <- restClickhouseDAO.executeZIO(sqlBuilder.sqlWithParameters().build, rowParser)
-    } yield result
   }
 }

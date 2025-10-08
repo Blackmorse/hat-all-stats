@@ -2,6 +2,7 @@ package databases.requests.matchdetails
 
 import common.StringExt.StringExt
 import databases.requests.OrderingKeyPath
+import databases.requests.matchdetails.chart.TeamHatstatsChartRequest
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 

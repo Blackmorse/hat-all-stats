@@ -22,9 +22,9 @@ trait ClickhouseRequest[T] {
     }
   }
   
-  def wrapErrors(zio: ZIO[RestClickhouseDAO, Throwable | SqlInjectionError, List[T]]): DBIO[List[T]] = {
+  def wrapErrors(zio: ZIO[RestClickhouseDAO, Throwable | HattidError, List[T]]): DBIO[List[T]] = {
     zio mapError {
-      case sqlInjectionError: SqlInjectionError => sqlInjectionError
+      case hattidError: HattidError => hattidError
       case ex: DbException => DbError(ex)
       case t: Throwable => DbError(t)
     }

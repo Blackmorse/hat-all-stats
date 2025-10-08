@@ -4,13 +4,18 @@ import chpp.leaguedetails.models.LeagueDetails
 import chpp.search.SearchRequest
 import chpp.search.models.SearchType
 import databases.dao.RestClickhouseDAO
-import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsChartRequest, TeamHatstatsRequest}
+import databases.requests.matchdetails.chart.TeamHatstatsChartRequest
+import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
+import databases.requests.model.Chart
 import databases.requests.model.promotions.PromotionWithType
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player.stats.*
 import databases.requests.playerstats.team.*
+import databases.requests.playerstats.team.chart.{TeamAgeInjuryChartRequest, TeamCardsChartRequest, TeamRatingsChartRequest, TeamSalaryTSIChartRequest}
 import databases.requests.promotions.PromotionsRequest
+import databases.requests.teamdetails.chart.{TeamFanclubFlagsChartRequest, TeamPowerRatingsChartRequest, TeamStreakTrophiesChartRequest}
 import databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
+import databases.requests.teamrankings.ClickhouseChartRequest
 import databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import hattid.CommonData
 import models.web.*
@@ -115,10 +120,10 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
       .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
-  def teamHatstatsChart(leagueUnitId: Int, season: Int): Action[AnyContent] = asyncZio {
+  private def teamChart[T <: Chart : Writes](chartRequest: ClickhouseChartRequest[T], leagueUnitId: Int, season: Int): Action[AnyContent] = asyncZio {
     (for {
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
-      entities <- TeamHatstatsChartRequest.execute(
+      entities <- chartRequest.execute(
         orderingKeyPath = OrderingKeyPath(
           leagueId = Some(leagueDetails.leagueId),
           divisionLevel = Some(leagueDetails.leagueLevel),
@@ -127,6 +132,9 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
     } yield entities)
       .provide(ZLayer.succeed(restClickhouseDAO))
   }
+
+  def teamHatstatsChart(leagueUnitId: Int, season: Int): Action[AnyContent] =
+    teamChart(TeamHatstatsChartRequest, leagueUnitId, season)
 
   def teamHatstats(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamHatstatsRequest, leagueUnitId, restStatisticsParameters)
@@ -162,6 +170,22 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
       .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
+  def teamSalaryTsiChart(leagueUnitId: Int, season: Int, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[AnyContent] = asyncZio {
+    (for {
+      leagueDetails <- chppService.leagueDetails(leagueUnitId)
+      entities      <- TeamSalaryTSIChartRequest.execute(
+        orderingKeyPath = OrderingKeyPath(
+          leagueId = Some(leagueDetails.leagueId),
+          divisionLevel = Some(leagueDetails.leagueLevel),
+          leagueUnitId = Some(leagueUnitId)
+        ),
+        season = season,
+        playedInLastMatch = playedInLastMatch,
+        excludeZeroTsi = excludeZeroTsi)
+    } yield entities)
+    .provide(ZLayer.succeed(restClickhouseDAO))
+  }
+
   def teamCards(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = asyncZio {
     (for {
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
@@ -174,33 +198,38 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
       .provide(ZLayer.succeed(restClickhouseDAO))
   }
 
-  def teamCardsChart(leagueUnitId: Int, season: Int): Action[AnyContent] = asyncZio {
-    (for {
-      leagueDetails <- chppService.leagueDetails(leagueUnitId)
-      chartData <- TeamCardsChartRequest.execute(
-        orderingKeyPath = OrderingKeyPath(leagueId = Some(leagueDetails.leagueId),
-          divisionLevel = Some(leagueDetails.leagueLevel),
-          leagueUnitId = Some(leagueUnitId)),
-        season = season
-      )
-    } yield chartData)
-      .provide(ZLayer.succeed(restClickhouseDAO))
-  }
+  def teamCardsChart(leagueUnitId: Int, season: Int): Action[AnyContent] =
+    teamChart(TeamCardsChartRequest, leagueUnitId, season)
 
   def teamRatings(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamRatingsRequest, leagueUnitId, restStatisticsParameters)
+    
+  def teamRatingsChart(leagueUnitId: Int, season: Int): Action[AnyContent] =
+    teamChart(TeamRatingsChartRequest, leagueUnitId, season)
 
   def teamAgeInjuries(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamAgeInjuryRequest, leagueUnitId, restStatisticsParameters)
 
+  def teamAgeInjuriesChart(leagueUnitId: Int, season: Int): Action[AnyContent] =
+    teamChart(TeamAgeInjuryChartRequest, leagueUnitId, season)
+  
   def teamPowerRatings(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamPowerRatingsRequest, leagueUnitId, restStatisticsParameters)
+    
+  def teamPowerRatingsChart(leagueUnitId: Int, season: Int): Action[AnyContent] =
+    teamChart(TeamPowerRatingsChartRequest, leagueUnitId, season)
 
   def teamFanclubFlags(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamFanclubFlagsRequest, leagueUnitId, restStatisticsParameters)
+    
+  def teamFanclubFlagsChart(leagueUnitId: Int, season: Int): Action[AnyContent] =
+    teamChart(TeamFanclubFlagsChartRequest, leagueUnitId, season)
 
   def teamStreakTrophies(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(TeamStreakTrophiesRequest, leagueUnitId, restStatisticsParameters)
+    
+  def teamStreakTrophiesChart(leagueUnitId: Int, season: Int): Action[AnyContent] =
+    teamChart(TeamStreakTrophiesChartRequest, leagueUnitId, season)
 
   def topMatches(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] =
     stats(MatchTopHatstatsRequest, leagueUnitId, restStatisticsParameters)
