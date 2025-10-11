@@ -9,7 +9,7 @@ import databases.requests.model.player.DreamTeamPlayer
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import jakarta.inject.Singleton
 import models.web.{HattidError, StatsType}
-import service.ChppService
+import service.{ChppService, TranslationsService}
 import service.leagueinfo.LeagueInfoServiceZIO
 import zio.cache.{Cache, Lookup}
 import zio.{cache, *}
@@ -18,7 +18,7 @@ object ZioCacheModule {
   type DreamTeamCacheKey = (OrderingKeyPath, StatsType, String)
   type ZDreamTeamCache = Cache[DreamTeamCacheKey, HattidError, List[DreamTeamPlayer]]
 
-  type HattidEnv = LeagueInfoServiceZIO & RestClickhouseDAO & ChppService
+  type HattidEnv = LeagueInfoServiceZIO & RestClickhouseDAO & ChppService & TranslationsService
 }
 
 class ZioCacheModule extends AbstractModule {
@@ -43,19 +43,22 @@ class ZioCacheModule extends AbstractModule {
     val leagueInfoLayer: ZLayer[RestClickhouseDAO & ChppService, Nothing, LeagueInfoServiceZIO] = LeagueInfoServiceZIO.layer
       .mapError(he => new Exception(he.toString))
       .orDie
-    val env: ZEnvironment[LeagueInfoServiceZIO & RestClickhouseDAO & ChppService] = Unsafe.unsafe { implicit unsafe =>
+    val translationLayer: ZLayer[ChppService, HattidError, TranslationsService] = TranslationsService.layer
+    
+    val env: ZEnvironment[HattidEnv] = Unsafe.unsafe { implicit unsafe =>
       Runtime.default.unsafe.run {
         ZIO.scoped {
-          ((clickhouseLayer ++ chppServiceLayer) >>> leagueInfoLayer ).build
-            .flatMap(leagueInfoEnv =>
-            ZIO.succeed(leagueInfoEnv ++
-              ZEnvironment(restClickhouseDAO) ++
-              ZEnvironment(chppService)))
+          for {
+            leagueInfoEnv <- ((clickhouseLayer ++ chppServiceLayer) >>> leagueInfoLayer ).build
+            translationEnv <- (chppServiceLayer >>> translationLayer).build
+          } yield leagueInfoEnv ++
+            translationEnv ++
+            ZEnvironment(restClickhouseDAO) ++
+            ZEnvironment(chppService)
         }
       }.getOrThrowFiberFailure()
     }
 
     env
   }
-
 }

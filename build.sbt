@@ -8,6 +8,7 @@ val clickhouseVersion = "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
 val anormVersion = "org.playframework.anorm" %% "anorm" % "2.8.1"
 val zioVersion = "2.1.21"
 val tranzactIOVersion = "5.6.0"
+val zioConfigVersion = "4.0.5"
 
 lazy val webDependencies = Seq(
   guice,
@@ -19,6 +20,8 @@ lazy val webDependencies = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % Test,
   clickhouseVersion,
   "io.github.gaelrenoux" %% "tranzactio-anorm" % tranzactIOVersion,
+//  "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
+//  "dev.zio" %% "zio-config" % zioConfigVersion
 )
 
 lazy val webSettings = Seq(

@@ -39,13 +39,4 @@ class ChppClient @Inject()(val configuration: Configuration,
         ZLayer.succeed(actorSystem),
         ZLayer.succeed(reader)
       )
-
-  @deprecated
-  def executeUnsafe[Model, Request <: AbstractRequest[Model]](request: Request)(implicit reader: XmlReader[Model]): Future[Model] = {
-    import actorSystem.dispatcher
-    ChppRequestExecutor.executeWithRetry(request) map {
-      case Right(value) => value
-      case Left(err) => throw new Exception(s"Error while parsing: $err")
-    }
-  }
 }

@@ -18,16 +18,16 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class RestPlayerController @Inject() (val controllerComponents: ControllerComponents,
                                       val playerService: PlayerService,
-                                      val translationsService: TranslationsService,
                                       val hattidEnvironment: zio.ZEnvironment[HattidEnv]) extends RestController(hattidEnvironment) {
 
-  private def getRestPlayerData(playerDetails: PlayerDetails): ZIO[ChppService & LeagueInfoServiceZIO, HattidError, RestPlayerData] = {
+  private def getRestPlayerData(playerDetails: PlayerDetails): ZIO[ChppService & LeagueInfoServiceZIO & TranslationsService, HattidError, RestPlayerData] = {
     val leagueId = playerDetails.player.owningTeam.leagueId
     for {
-      leagueInfoService <- ZIO.service[LeagueInfoServiceZIO]
-      chppService       <- ZIO.service[ChppService]
-      leagueState       <- leagueInfoService.leagueState(leagueId)
-      (team, _)         <- chppService.getTeamById(playerDetails.player.owningTeam.teamId)
+      leagueInfoService   <- ZIO.service[LeagueInfoServiceZIO]
+      chppService         <- ZIO.service[ChppService]
+      translationsService <- ZIO.service[TranslationsService]
+      leagueState         <- leagueInfoService.leagueState(leagueId)
+      (team, _)           <- chppService.getTeamById(playerDetails.player.owningTeam.teamId)
     } yield RestPlayerData(
         playerId = playerDetails.player.playerId,
         firstName = playerDetails.player.firstName,
@@ -46,7 +46,7 @@ class RestPlayerController @Inject() (val controllerComponents: ControllerCompon
         currencyRate = CurrencyUtils.currencyRate(leagueState.league.country),
         countries = leagueState.idToCountryName,
         loadingInfo = leagueState.loadingInfo,
-        translations = translationsService.translationsMap
+        translations = translationsService.translations
       )
   }
 

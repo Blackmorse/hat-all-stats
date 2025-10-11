@@ -18,6 +18,8 @@ import chpp.search.SearchRequest
 import chpp.search.models.Search
 import chpp.teamdetails.TeamDetailsRequest
 import chpp.teamdetails.models.{Team, TeamDetails}
+import chpp.translations.TranslationsRequest
+import chpp.translations.models.Translations
 import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.{League, WorldDetails}
 import controllers.NearestMatches
@@ -48,6 +50,9 @@ class ChppService @Inject() (val chppClient: ChppClient) {
         }
       }
   }
+  
+  def getTeamsSimple(teamId: Long): IO[HattidError, TeamDetails] =
+    chppClient.executeZio[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
 
   def playerDetails(playerId: Long): IO[HattidError, PlayerDetails] =
     chppClient.executeZio[PlayerDetails, PlayerDetailsRequest](PlayerDetailsRequest(playerId = playerId))
@@ -140,7 +145,7 @@ class ChppService @Inject() (val chppClient: ChppClient) {
     }
   }
   
-  def matches(teamId: Long) = {
+  def matches(teamId: Long): IO[HattidError, Matches] = {
     chppClient.executeZio[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
   }
 
@@ -200,4 +205,7 @@ class ChppService @Inject() (val chppClient: ChppClient) {
   def leagueFixtures(leagueUnitId: Int, offsettedSeason: Int): IO[HattidError, LeagueFixtures] = {
     chppClient.executeZio[LeagueFixtures, LeagueFixturesRequest](LeagueFixturesRequest(leagueLevelUnitId = Some(leagueUnitId), season = Some(offsettedSeason)))
   }
+  
+  def translations(languageId: Int): IO[HattidError, Translations] = 
+    chppClient.executeZio[Translations, TranslationsRequest](TranslationsRequest(languageId = languageId))
 }
