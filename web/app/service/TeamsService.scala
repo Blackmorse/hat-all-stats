@@ -1,5 +1,6 @@
 package service
 
+import chpp.AuthConfig
 import chpp.teamdetails.models.{Team, TeamDetails}
 import databases.dao.RestClickhouseDAO
 import databases.requests.model.team.CreatedSameTimeTeam
@@ -88,7 +89,7 @@ class TeamsService @Inject()(seasonsService: SeasonsService) {
     })
   }
   
-  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[ChppService & RestClickhouseDAO, HattidError, TeamComparison] = {
+  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[AuthConfig & ChppService & RestClickhouseDAO, HattidError, TeamComparison] = {
     val team1Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId1))
     val team2Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId2))
     

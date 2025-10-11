@@ -20,8 +20,9 @@ lazy val webDependencies = Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.1" % Test,
   clickhouseVersion,
   "io.github.gaelrenoux" %% "tranzactio-anorm" % tranzactIOVersion,
-//  "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
-//  "dev.zio" %% "zio-config" % zioConfigVersion
+  "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
+  "dev.zio" %% "zio-config" % zioConfigVersion,
+  "dev.zio" %% "zio-config-magnolia" % zioConfigVersion
 )
 
 lazy val webSettings = Seq(

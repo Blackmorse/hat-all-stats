@@ -1,6 +1,7 @@
 package controllers
 
 import cache.ZioCacheModule.HattidEnv
+import chpp.AuthConfig
 import chpp.playerdetails.models.PlayerDetails
 import databases.dao.RestClickhouseDAO
 import databases.requests.playerstats.player.PlayerHistoryRequest
@@ -20,7 +21,7 @@ class RestPlayerController @Inject() (val controllerComponents: ControllerCompon
                                       val playerService: PlayerService,
                                       val hattidEnvironment: zio.ZEnvironment[HattidEnv]) extends RestController(hattidEnvironment) {
 
-  private def getRestPlayerData(playerDetails: PlayerDetails): ZIO[ChppService & LeagueInfoServiceZIO & TranslationsService, HattidError, RestPlayerData] = {
+  private def getRestPlayerData(playerDetails: PlayerDetails): ZIO[AuthConfig & ChppService & LeagueInfoServiceZIO & TranslationsService, HattidError, RestPlayerData] = {
     val leagueId = playerDetails.player.owningTeam.leagueId
     for {
       leagueInfoService   <- ZIO.service[LeagueInfoServiceZIO]
@@ -58,7 +59,7 @@ class RestPlayerController @Inject() (val controllerComponents: ControllerCompon
     } yield restPlayerData
   }
 
-  private def getRestPlayerDetails(playerDetails: PlayerDetails): ZIO[RestClickhouseDAO & ChppService, HattidError, RestPlayerDetails] = {
+  private def getRestPlayerDetails(playerDetails: PlayerDetails): ZIO[AuthConfig & RestClickhouseDAO & ChppService, HattidError, RestPlayerDetails] = {
     for {
       chppService       <- ZIO.service[ChppService]
       playerHistoryList <- PlayerHistoryRequest.execute(playerDetails.player.playerId)

@@ -6,12 +6,14 @@ import org.apache.pekko.http.scaladsl.Http
 import chpp.chpperror.ChppError
 import com.lucidchart.open.xtract.{ParseError, XmlReader}
 import org.apache.pekko.http.scaladsl.settings.ConnectionPoolSettings
-import zio.{Schedule, ZIO}
+import zio.{Config, Schedule, ZIO}
 
 import scala.concurrent.Future
 import scala.concurrent.duration.*
 import scala.util.{Failure, Success, Try}
 import scala.xml.{Elem, XML}
+
+case class AuthConfig(customerKey: String, customerSecret: String, accessToken: String, accessTokenSecret: String)
 
 object ZChppRequestExecutor {
   trait ChppErrorZ
@@ -21,18 +23,18 @@ object ZChppRequestExecutor {
   case class UnparsableChppError(errors: Seq[ParseError], rawResponse: String) extends ChppErrorZ
   case class ChppErrorResponseZ(chppError: ChppError) extends ChppErrorZ
 
-  def executeWithRetry[Model: zio.Tag](request: AbstractRequest[Model]): ZIO[XmlReader[Model] & OauthTokens & ActorSystem, ChppErrorZ, Model] =
+  def executeWithRetry[Model: zio.Tag](request: AbstractRequest[Model]): ZIO[XmlReader[Model] & AuthConfig & ActorSystem, ChppErrorZ, Model] =
     execute(request).retry(Schedule.exponential(zio.Duration.fromMillis(800L)) && Schedule.recurs(4))
 
-  type ZCHPP[Model] = ZIO[XmlReader[Model] & OauthTokens & ActorSystem, ChppErrorZ, Model]
+  type ZCHPP[Model] = ZIO[XmlReader[Model] & AuthConfig & ActorSystem, ChppErrorZ, Model]
 
   private def execute[Model: zio.Tag](request: AbstractRequest[Model]): ZCHPP[Model] = {
     for {
-      system <- ZIO.service[ActorSystem]
-      tokens <- ZIO.service[OauthTokens]
-      reader <- ZIO.service[XmlReader[Model]]
-      zio    <- ZIO.fromFuture { implicit ec =>
-        ChppRequestExecutor.execute(request)(using tokens, system, reader)
+      system     <- ZIO.service[ActorSystem]
+      authConfig <- ZIO.service[AuthConfig]
+      reader     <- ZIO.service[XmlReader[Model]]
+      zio        <- ZIO.fromFuture { implicit ec =>
+        ChppRequestExecutor.execute(request)(using OauthTokens(authConfig.accessToken, authConfig.customerKey, authConfig.customerSecret, authConfig.accessTokenSecret), system, reader)
           .map(r => Right(r): Either[ChppErrorZ, Model])
           .recover {
             case ChppErrorResponse(chppError) => Left(ChppErrorResponseZ(chppError))

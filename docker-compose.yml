@@ -11,7 +11,6 @@ services:
     expose:
      - "8123"
     ports:
-     - 9000:9000
      - 8123:8123
     networks:
      - hattrick_network

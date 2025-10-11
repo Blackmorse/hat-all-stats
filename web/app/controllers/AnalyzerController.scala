@@ -1,6 +1,7 @@
 package controllers
 
 import cache.ZioCacheModule.HattidEnv
+import chpp.AuthConfig
 import chpp.commonmodels.MatchType
 import models.clickhouse.NearestMatch
 import models.web.HattidError
@@ -53,7 +54,7 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
   private def combineMatchesOptZio(firstTeamId: Long, 
                                       firstMatchIdOpt: Option[Long],
                                       secondTeamIdOpt: Option[Long], 
-                                      secondMatchIdOpt: Option[Long]): ZIO[ChppService, HattidError, Option[SingleMatch]] = {
+                                      secondMatchIdOpt: Option[Long]): ZIO[AuthConfig & ChppService, HattidError, Option[SingleMatch]] = {
     (for {
       firstMatchId <- firstMatchIdOpt
       secondTeamId <- secondTeamIdOpt
@@ -76,7 +77,7 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
     }).opt
   }
 
-  private def getTeamPlayedMatches(teamOpt: Option[Team]): ZIO[ChppService, HattidError, Seq[NearestMatch]] = {
+  private def getTeamPlayedMatches(teamOpt: Option[Team]): ZIO[AuthConfig & ChppService, HattidError, Seq[NearestMatch]] = {
     teamOpt.map(team => {
       ZIO.serviceWithZIO[ChppService](_.matches(team._1))
         .map(opponentMatches => {
@@ -90,7 +91,7 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
     }).getOrElse(ZIO.succeed(Seq()))
   }
 
-  private def currentTeamPlayedMatchesAndUpcomingOpponents(teamId: Long): ZIO[ChppService, HattidError, (Seq[NearestMatch], Seq[(Long, String)])] = {
+  private def currentTeamPlayedMatchesAndUpcomingOpponents(teamId: Long): ZIO[AuthConfig & ChppService, HattidError, (Seq[NearestMatch], Seq[(Long, String)])] = {
     ZIO.serviceWithZIO[ChppService](_.matches(teamId))
       .map(matches => {
         val currentTeamPlayedMatches = matches.team.matchList
@@ -117,7 +118,7 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
       })
   }
 
-  private def teamPlayedMatches(teamId: Long): ZIO[ChppService, HattidError, Seq[NearestMatch]] =
+  private def teamPlayedMatches(teamId: Long): ZIO[AuthConfig & ChppService, HattidError, Seq[NearestMatch]] =
     ZIO.serviceWithZIO[ChppService](_.matches(teamId))
       .map(opponentMatches => {
         opponentMatches.team.matchList
