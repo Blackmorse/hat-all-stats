@@ -19,7 +19,7 @@ object LoadingInfo {
       case Finished => Json.obj("loadingInfo" -> JsString("finished"))
       case Scheduled(date) => Json.obj(
         "loadingInfo" -> JsString("scheduled"),
-        "date" -> date
+        "date"        -> date
       )
     }
   }

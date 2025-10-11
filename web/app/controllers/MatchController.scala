@@ -1,5 +1,6 @@
 package controllers
 
+import cache.ZioCacheModule.HattidEnv
 import chpp.matchdetails.MatchDetailsRequest
 import chpp.matchdetails.models.MatchDetails
 import databases.dao.RestClickhouseDAO
@@ -30,7 +31,8 @@ class MatchController @Inject()(val controllerComponents: ControllerComponents,
                                 val similarMatchesService: SimilarMatchesService,
                                 val chppClient: ChppClient,
                                 val chppService: ChppService,
-                                val restClickhouseDAO: RestClickhouseDAO) extends RestController {
+                                val restClickhouseDAO: RestClickhouseDAO,
+                                val hattidEnvironment: zio.ZEnvironment[HattidEnv]) extends RestController(hattidEnvironment) {
 
   def similarMatches(matchId: Long, accuracy: Double): Action[AnyContent] = asyncZio {
     similarMatchesService.similarMatchesStats(matchId, accuracy)

@@ -32,7 +32,7 @@ object ZChppRequestExecutor {
       tokens <- ZIO.service[OauthTokens]
       reader <- ZIO.service[XmlReader[Model]]
       zio    <- ZIO.fromFuture { implicit ec =>
-        ChppRequestExecutor.execute(request)(tokens, system, reader)
+        ChppRequestExecutor.execute(request)(using tokens, system, reader)
           .map(r => Right(r): Either[ChppErrorZ, Model])
           .recover {
             case ChppErrorResponse(chppError) => Left(ChppErrorResponseZ(chppError))

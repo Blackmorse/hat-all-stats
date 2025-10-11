@@ -22,28 +22,23 @@ import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.{League, WorldDetails}
 import controllers.NearestMatches
 import databases.dao.RestClickhouseDAO
-import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.teamrankings.HistoryTeamLeagueUnitInfoRequest
 import models.clickhouse.NearestMatch
 import models.web.player.AvatarPart
 import models.web.{BadRequestError, HattidError, NotFoundError}
-import service.leagueinfo.LeagueInfoService
+import service.leagueinfo.LeagueInfoServiceZIO
 import webclients.ChppClient
 import zio.{IO, ZIO}
 
 import javax.inject.{Inject, Singleton}
 //TODO
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 object ChppService {
   type CHPPIO[A] = IO[HattidError, A]
 }
 
 @Singleton
-class ChppService @Inject() (val chppClient: ChppClient,
-                             val leagueInfoService: LeagueInfoService,
-                             val restClickhouseDAO: RestClickhouseDAO) {
+class ChppService @Inject() (val chppClient: ChppClient) {
   def getTeamById(teamId: Long): IO[HattidError, (Team, TeamDetails)] = {
     chppClient.executeZio[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
       .flatMap { teamDetails =>
@@ -93,7 +88,7 @@ class ChppService @Inject() (val chppClient: ChppClient,
     chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest())
     
     
-  def getDivisionLevelAndLeagueUnit(team: Team, season: Int): DBIO[(Int, Long)] = {
+  def getDivisionLevelAndLeagueUnit(team: Team, season: Int): ZIO[RestClickhouseDAO & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
     for {
       league <- chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
         .map(_.leagueList.head)
@@ -101,39 +96,78 @@ class ChppService @Inject() (val chppClient: ChppClient,
     } yield result
   }
 
-  private def getDivisionLevelFromChppOrCh(league: League, team: Team, season: Int): DBIO[(Int, Long)] = {
+  private def getDivisionLevelFromChppOrCh(league: League, team: Team, season: Int): ZIO[RestClickhouseDAO & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
     val htRound = league.matchRound
+    
+    val currentSeasonZIO = for {
+      leagueInfoService <- ZIO.service[LeagueInfoServiceZIO]
+      currentSeason     <- leagueInfoService.currentSeason(team.league.leagueId)
+    } yield currentSeason
 
-    if (htRound == 16
-      || leagueInfoService.leagueInfo.currentSeason(team.league.leagueId) > season
-      || league.season - league.seasonOffset > season) {
+    currentSeasonZIO.flatMap { currentSeason =>
+      if (htRound == 16
+        || currentSeason > season
+        || league.season - league.seasonOffset > season) {
 
-      HistoryTeamLeagueUnitInfoRequest.execute(season, team.league.leagueId, team.teamId)
-        .map(infoOpt => {
-          infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
-            .getOrElse((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId))
-        })
-    } else {
-      ZIO.succeed((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId.toLong))
+        HistoryTeamLeagueUnitInfoRequest.execute(season, team.league.leagueId, team.teamId)
+          .map(infoOpt => {
+            infoOpt.map(info => (info.divisionLevel, info.leagueUnitId))
+              .getOrElse((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId))
+          })
+      } else {
+        ZIO.succeed((team.leagueLevelUnit.leagueLevel, team.leagueLevelUnit.leagueLevelUnitId.toLong))
+      }
     }
   }
+  
+  def nearestMatches(teamId: Long): IO[HattidError, NearestMatches] = {
+    for {
+      response   <- chppClient.executeZio[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
+    } yield {
+      val matches = response.team.matchList
+        .filter(_.matchType == MatchType.LEAGUE_MATCH)
+        .map(NearestMatch.chppMatchToNearestMatch)
 
-  def nearestMatches(teamId: Long): Future[NearestMatches] = {
-    chppClient.executeUnsafe[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
-      .map(response => {
-        val matches = response.team.matchList
-          .filter(_.matchType == MatchType.LEAGUE_MATCH)
-          .map(NearestMatch.chppMatchToNearestMatch)
+      val playedMatches = matches
+        .filter(_.status == "FINISHED")
+        .sortBy(_.matchDate)
+        .takeRight(3)
 
-        val playedMatches = matches
+      val upcomingMatches = matches.filter(_.status == "UPCOMING")
+        .sortBy(_.matchDate)
+        .take(3)
+      NearestMatches(playedMatches, upcomingMatches)
+    }
+  }
+  
+  def matches(teamId: Long) = {
+    chppClient.executeZio[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
+  }
+
+  def currentTeamPlayedMatchesAndUpcomingOpponents(teamId: Long): IO[HattidError, (Seq[NearestMatch], Seq[(Long, String)])] = {
+    chppClient.executeZio[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
+      .map(matches => {
+        val currentTeamPlayedMatches = matches.team.matchList
+          .filter(m => m.matchType == MatchType.LEAGUE_MATCH || m.matchType == MatchType.CUP_MATCH)
           .filter(_.status == "FINISHED")
           .sortBy(_.matchDate)
           .takeRight(3)
+          .map(NearestMatch.chppMatchToNearestMatch)
 
-        val upcomingMatches = matches.filter(_.status == "UPCOMING")
+        val currentTeamNextOpponents = matches.team.matchList
+          .filter(m => m.matchType == MatchType.LEAGUE_MATCH || m.matchType == MatchType.CUP_MATCH)
+          .filter(_.status == "UPCOMING")
           .sortBy(_.matchDate)
           .take(3)
-        NearestMatches(playedMatches, upcomingMatches)
+          .map(matc => {
+            if (matc.homeTeam.homeTeamId == teamId) {
+              (matc.awayTeam.awayTeamId, matc.awayTeam.awayTeamName)
+            } else {
+              (matc.homeTeam.homeTeamId, matc.homeTeam.homeTeamName)
+            }
+          })
+
+        (currentTeamPlayedMatches, currentTeamNextOpponents)
       })
   }
 

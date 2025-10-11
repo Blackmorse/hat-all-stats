@@ -40,9 +40,6 @@ class ChppClient @Inject()(val configuration: Configuration,
         ZLayer.succeed(reader)
       )
 
-  def execute[Model, Request <: AbstractRequest[Model]](request: Request)(implicit reader: XmlReader[Model]): Future[Either[ChppError, Model]] =
-    ChppRequestExecutor.executeWithRetry(request)
-
   @deprecated
   def executeUnsafe[Model, Request <: AbstractRequest[Model]](request: Request)(implicit reader: XmlReader[Model]): Future[Model] = {
     import actorSystem.dispatcher

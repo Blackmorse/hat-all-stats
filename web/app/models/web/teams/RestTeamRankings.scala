@@ -8,7 +8,7 @@ object RestTeamRankings {
 }
 
 case class RestTeamRankings(teamRankings: Seq[TeamRankings],
-                            leagueTeamsCounts: Seq[(Int, Int)],
-                            divisionLevelTeamsCounts: Seq[(Int, Int)],
+                            leagueTeamsCounts: Seq[(Int, Long)],
+                            divisionLevelTeamsCounts: Seq[(Int, Long)],
                             currencyRate: Double,
                             currencyName: String)

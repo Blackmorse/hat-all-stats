@@ -1,11 +1,10 @@
 package models.web.leagueUnit
 
 import chpp.leaguedetails.models.LeagueDetails
-import chpp.worlddetails.models.League
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import play.api.libs.json.{Json, OWrites}
-import service.leagueinfo.{LeagueInfoService, LoadingInfo}
+import service.leagueinfo.{LeagueState, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
 
 case class RestLeagueUnitData(leagueId: Int,
@@ -25,20 +24,20 @@ case class RestLeagueUnitData(leagueId: Int,
 object RestLeagueUnitData {
   implicit val writes: OWrites[RestLeagueUnitData] = Json.writes[RestLeagueUnitData]
 
-  def apply(leagueDetails: LeagueDetails, league: League, leagueUnitId: Long, leagueInfoService: LeagueInfoService): RestLeagueUnitData =
+  def apply(leagueDetails: LeagueDetails, leagueState: LeagueState, leagueUnitId: Long): RestLeagueUnitData =
     RestLeagueUnitData(
       leagueId = leagueDetails.leagueId,
-      leagueName = league.englishName,
+      leagueName = leagueState.league.englishName,
       divisionLevel = leagueDetails.leagueLevel,
       divisionLevelName = Romans(leagueDetails.leagueLevel),
       leagueUnitId = leagueUnitId,
       leagueUnitName = leagueDetails.leagueLevelUnitName,
       teams = leagueDetails.teams.toSeq.map(team => (team.teamId, team.teamName)),
-      seasonOffset = league.seasonOffset,
-      seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueDetails.leagueId),
-      currency = CurrencyUtils.currencyName(league.country),
-      currencyRate = CurrencyUtils.currencyRate(league.country),
-      loadingInfo = leagueInfoService.leagueInfo(leagueDetails.leagueId).loadingInfo,
-      countries = leagueInfoService.idToStringCountryMap
+      seasonOffset = leagueState.league.seasonOffset,
+      seasonRoundInfo = leagueState.seasonRoundInfo,
+      currency = CurrencyUtils.currencyName(leagueState.league.country),
+      currencyRate = CurrencyUtils.currencyRate(leagueState.league.country),
+      loadingInfo = leagueState.loadingInfo,
+      countries = leagueState.idToCountryName
     )
 }

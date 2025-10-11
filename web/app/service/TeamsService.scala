@@ -8,7 +8,7 @@ import databases.requests.teamrankings.CompareTeamRankingsRequest
 import models.web.{HattidError, TeamComparison}
 import play.api.libs.json.{Json, OWrites}
 import play.api.mvc.QueryStringBindable
-import service.leagueinfo.LeagueInfoService
+import service.leagueinfo.LeagueInfoServiceZIO
 import zio.ZIO
 
 import java.util.Date
@@ -62,15 +62,11 @@ object HattrickPeriod {
   }
 }
 
-class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
-                             seasonsService: SeasonsService,
-                             chppService: ChppService,
-                             val restClickhouseDAO: RestClickhouseDAO) {
+class TeamsService @Inject()(seasonsService: SeasonsService) {
 
-  def teamsCreatedSamePeriod(period: HattrickPeriod, foundedDate: Date,
-                             leagueId: Int): ZIO[RestClickhouseDAO, HattidError, List[CreatedSameTimeTeamExtended]] = {
-    val round = leagueInfoService.leagueInfo(leagueId).currentRound()
-    val season = leagueInfoService.leagueInfo(leagueId).currentSeason()
+  def teamsCreatedSamePeriod(period: HattrickPeriod, 
+                             foundedDate: Date,
+                             leagueId: Int): ZIO[LeagueInfoServiceZIO & RestClickhouseDAO, HattidError, List[CreatedSameTimeTeamExtended]] = {
     val ranges = seasonsService.getSeasonAndRoundRanges(foundedDate)
 
     val range = period match {
@@ -79,18 +75,22 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
       case Weeks(weeksNumber) => seasonsService.getWeeksRange(foundedDate, weeksNumber)
     }
 
-    TeamsCreatedSameTimeRequest.execute(leagueId, season, round, range)
-      .map(list => list.map(cstt => {
-        val sameTeamRanges = seasonsService.getSeasonAndRoundRanges(cstt.foundedDate)
-        CreatedSameTimeTeamExtended(season = sameTeamRanges.season,
-          round = sameTeamRanges.round,
-          createdSameTimeTeam = cstt)
-      }))
+    for {
+      leagueInfoService <- ZIO.service[LeagueInfoServiceZIO]
+      season            <- leagueInfoService.currentSeason(leagueId)
+      round             <- leagueInfoService.leagueRoundForSeason(leagueId, season)
+      list              <- TeamsCreatedSameTimeRequest.execute(leagueId, season, round, range)
+    } yield list.map(cstt => {
+      val sameTeamRanges = seasonsService.getSeasonAndRoundRanges(cstt.foundedDate)
+      CreatedSameTimeTeamExtended(season = sameTeamRanges.season,
+        round = sameTeamRanges.round,
+        createdSameTimeTeam = cstt)
+    })
   }
   
-  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[RestClickhouseDAO, HattidError, TeamComparison] = {
-    val team1Zio = chppService.getTeamById(teamId1)
-    val team2Zio = chppService.getTeamById(teamId2)
+  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[ChppService & RestClickhouseDAO, HattidError, TeamComparison] = {
+    val team1Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId1))
+    val team2Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId2))
     
     for {
       (team1, team1Details, (team2, teams2Details)) <- team1Zio <&> team2Zio

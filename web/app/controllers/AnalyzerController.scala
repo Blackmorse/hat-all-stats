@@ -1,41 +1,35 @@
 package controllers
 
+import cache.ZioCacheModule.HattidEnv
 import chpp.commonmodels.MatchType
-import chpp.matchdetails.MatchDetailsRequest
-import chpp.matchdetails.models.MatchDetails
-import chpp.matches.MatchesRequest
-import chpp.matches.models.Matches
 import models.clickhouse.NearestMatch
+import models.web.HattidError
 import models.web.analyzer.MatchOpponentCombinedInfo
 import models.web.matches.SingleMatch
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import webclients.ChppClient
+import service.ChppService
+import zio.ZIO
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 class AnalyzerController @Inject()(val controllerComponents: ControllerComponents,
-                                   val chppClient: ChppClient) extends RestController {
+                                   val hattidEnvironment: zio.ZEnvironment[HattidEnv]) extends RestController(hattidEnvironment) {
   type Team = (Long, String)
 
   def combineMatches(firstTeamId: Long, firstMatchId: Long,
-                     secondTeamId: Long, secondMatchId: Long): Action[AnyContent] = Action.async { implicit request =>
-    combineMatchesOptFuture(firstTeamId, Some(firstMatchId), Some(secondTeamId), Some(secondMatchId))
-      .map(singleMatch => Ok(Json.toJson(singleMatch)))
+                     secondTeamId: Long, secondMatchId: Long): Action[AnyContent] = asyncZio {
+    combineMatchesOptZio(firstTeamId, Some(firstMatchId), Some(secondTeamId), Some(secondMatchId))
   }
 
-  def opponentTeamMatches(opponentTeamId: Long): Action[AnyContent] = Action.async { implicit request =>
+  def opponentTeamMatches(opponentTeamId: Long): Action[AnyContent] = asyncZio {
     teamPlayedMatches(opponentTeamId)
-      .map(matches => Ok(Json.toJson(matches)))
   }
 
-  def currentTeamAndOpponentTeamMatches(teamId: Long): Action[AnyContent] = Action.async { implicit request =>
-    (for {
+  def currentTeamAndOpponentTeamMatches(teamId: Long): Action[AnyContent] = asyncZio {
+    for {
       (currentTeamPlayedMatches, currentTeamNextOpponents) <- currentTeamPlayedMatchesAndUpcomingOpponents(teamId)
       opponentPlayedMatches <- getTeamPlayedMatches(currentTeamNextOpponents.headOption)
-      combinedMatchOpt <- combineMatchesOptFuture(firstTeamId = teamId,
+      combinedMatchOpt      <- combineMatchesOptZio(firstTeamId = teamId,
                                                   currentTeamPlayedMatches.lastOption.map(_.matchId),
                                                   secondTeamIdOpt = currentTeamNextOpponents.headOption.map(_._1),
                                                   secondMatchIdOpt = opponentPlayedMatches.lastOption.map(_.matchId))
@@ -46,20 +40,29 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
         opponentPlayedMatches = opponentPlayedMatches,
         simulatedMatch = combinedMatchOpt
       )
-    }).map(r => Ok(Json.toJson(r)))
+    }
   }
 
-  private def combineMatchesOptFuture(firstTeamId: Long, firstMatchIdOpt: Option[Long],
-                                   secondTeamIdOpt: Option[Long], secondMatchIdOpt: Option[Long]): Future[Option[SingleMatch]] = {
+  extension [R, E, A](zio: Option[ZIO[R, E, A]])
+    def opt: ZIO[R, E, Option[A]] =
+      zio match {
+        case Some(z) => z.map(Some(_))
+        case None    => ZIO.succeed(None)
+      }
+
+  private def combineMatchesOptZio(firstTeamId: Long, 
+                                      firstMatchIdOpt: Option[Long],
+                                      secondTeamIdOpt: Option[Long], 
+                                      secondMatchIdOpt: Option[Long]): ZIO[ChppService, HattidError, Option[SingleMatch]] = {
     (for {
-      firstMatchId  <- firstMatchIdOpt
-      secondTeamId  <- secondTeamIdOpt
+      firstMatchId <- firstMatchIdOpt
+      secondTeamId <- secondTeamIdOpt
       secondMatchId <- secondMatchIdOpt
     } yield {
-      val firstMatchFuture = chppClient.executeUnsafe[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(firstMatchId)))
-      val secondMatchFuture = chppClient.executeUnsafe[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(secondMatchId)))
+      val firstMatchDetailsZIO = ZIO.serviceWithZIO[ChppService](_.matchDetails(firstMatchId))
+      val secondMatchDetailsZIO = ZIO.serviceWithZIO[ChppService](_.matchDetails(secondMatchId))
 
-      firstMatchFuture.zip(secondMatchFuture).map { case (firstMatch, secondMatch) =>
+      firstMatchDetailsZIO <&> secondMatchDetailsZIO map { case (firstMatch, secondMatch) =>
         val firstTeam = if (firstMatch.matc.homeTeam.teamId == firstTeamId) firstMatch.matc.homeTeam else firstMatch.matc.awayTeam
         val secondTeam = if (secondMatch.matc.homeTeam.teamId == secondTeamId) secondMatch.matc.homeTeam else secondMatch.matc.awayTeam
 
@@ -70,15 +73,12 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
           awayGoals = None,
           matchId = None)
       }
-    }) match {
-      case Some(future) => future.map(Some(_))
-      case None => Future(None)
-    }
+    }).opt
   }
 
-  private def getTeamPlayedMatches(teamOpt: Option[Team]): Future[Seq[NearestMatch]] = {
+  private def getTeamPlayedMatches(teamOpt: Option[Team]): ZIO[ChppService, HattidError, Seq[NearestMatch]] = {
     teamOpt.map(team => {
-      chppClient.executeUnsafe[Matches, MatchesRequest](MatchesRequest(teamId = Some(team._1)))
+      ZIO.serviceWithZIO[ChppService](_.matches(team._1))
         .map(opponentMatches => {
           opponentMatches.team.matchList
             .filter(m => m.matchType == MatchType.LEAGUE_MATCH || m.matchType == MatchType.CUP_MATCH)
@@ -87,11 +87,11 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
             .takeRight(3)
             .map(NearestMatch.chppMatchToNearestMatch)
         })
-    }).getOrElse(Future(Seq()))
+    }).getOrElse(ZIO.succeed(Seq()))
   }
 
-  private def currentTeamPlayedMatchesAndUpcomingOpponents(teamId: Long): Future[(Seq[NearestMatch], Seq[Team])] = {
-    chppClient.executeUnsafe[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
+  private def currentTeamPlayedMatchesAndUpcomingOpponents(teamId: Long): ZIO[ChppService, HattidError, (Seq[NearestMatch], Seq[(Long, String)])] = {
+    ZIO.serviceWithZIO[ChppService](_.matches(teamId))
       .map(matches => {
         val currentTeamPlayedMatches = matches.team.matchList
           .filter(m => m.matchType == MatchType.LEAGUE_MATCH || m.matchType == MatchType.CUP_MATCH)
@@ -117,8 +117,8 @@ class AnalyzerController @Inject()(val controllerComponents: ControllerComponent
       })
   }
 
-  private def teamPlayedMatches(teamId: Long): Future[Seq[NearestMatch]] =
-    chppClient.executeUnsafe[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
+  private def teamPlayedMatches(teamId: Long): ZIO[ChppService, HattidError, Seq[NearestMatch]] =
+    ZIO.serviceWithZIO[ChppService](_.matches(teamId))
       .map(opponentMatches => {
         opponentMatches.team.matchList
           .filter(m => m.matchType == MatchType.LEAGUE_MATCH || m.matchType == MatchType.CUP_MATCH)

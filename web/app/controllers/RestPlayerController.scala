@@ -1,71 +1,68 @@
 package controllers
 
+import cache.ZioCacheModule.HattidEnv
 import chpp.playerdetails.models.PlayerDetails
 import databases.dao.RestClickhouseDAO
-import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.playerstats.player.PlayerHistoryRequest
 import models.web.HattidError
 import models.web.player.{CurrentPlayerCharacteristics, RestPlayerData, RestPlayerDetails}
-import play.api.mvc
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import service.leagueinfo.LeagueInfoService
+import service.leagueinfo.LeagueInfoServiceZIO
 import service.{ChppService, PlayerService, TranslationsService}
 import utils.{CurrencyUtils, Romans}
-import webclients.ChppClient
-import zio.{IO, ZLayer}
+import zio.ZIO
 
 //TODO execution context!
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RestPlayerController @Inject() (val chppClient: ChppClient,
-                                      val controllerComponents: ControllerComponents,
-                                      val leagueInfoService: LeagueInfoService,
-                                      val chppService: ChppService,
+class RestPlayerController @Inject() (val controllerComponents: ControllerComponents,
                                       val playerService: PlayerService,
-                                      val restClickhouseDAO: RestClickhouseDAO,
-                                      val translationsService: TranslationsService) extends RestController {
+                                      val translationsService: TranslationsService,
+                                      val hattidEnvironment: zio.ZEnvironment[HattidEnv]) extends RestController(hattidEnvironment) {
 
-
-  private def getRestPlayerData(playerDetails: PlayerDetails): IO[HattidError, RestPlayerData] = {
-    chppService.getTeamById(playerDetails.player.owningTeam.teamId)
-      .map((team, _) => {
-        val leagueId = playerDetails.player.owningTeam.leagueId
-        val league = leagueInfoService.leagueInfo(leagueId).league
-        RestPlayerData(
-          playerId = playerDetails.player.playerId,
-          firstName = playerDetails.player.firstName,
-          lastName = playerDetails.player.lastName,
-          leagueId = leagueId,
-          leagueName = league.englishName,
-          divisionLevel = team.leagueLevelUnit.leagueLevel,
-          divisionLevelName = Romans(team.leagueLevelUnit.leagueLevel),
-          leagueUnitId = team.leagueLevelUnit.leagueLevelUnitId,
-          leagueUnitName = team.leagueLevelUnit.leagueLevelUnitName,
-          teamId = playerDetails.player.owningTeam.teamId,
-          teamName = playerDetails.player.owningTeam.teamName,
-          seasonOffset = league.seasonOffset,
-          seasonRoundInfo = leagueInfoService.leagueInfo.seasonRoundInfo(leagueId),
-          currency = CurrencyUtils.currencyName(league.country),
-          currencyRate = CurrencyUtils.currencyRate(league.country),
-          countries = leagueInfoService.idToStringCountryMap,
-          loadingInfo = leagueInfoService.leagueInfo(leagueId).loadingInfo,
-          translations = translationsService.translationsMap
-        )
-      })
+  private def getRestPlayerData(playerDetails: PlayerDetails): ZIO[ChppService & LeagueInfoServiceZIO, HattidError, RestPlayerData] = {
+    val leagueId = playerDetails.player.owningTeam.leagueId
+    for {
+      leagueInfoService <- ZIO.service[LeagueInfoServiceZIO]
+      chppService       <- ZIO.service[ChppService]
+      leagueState       <- leagueInfoService.leagueState(leagueId)
+      (team, _)         <- chppService.getTeamById(playerDetails.player.owningTeam.teamId)
+    } yield RestPlayerData(
+        playerId = playerDetails.player.playerId,
+        firstName = playerDetails.player.firstName,
+        lastName = playerDetails.player.lastName,
+        leagueId = leagueId,
+        leagueName = leagueState.league.englishName,
+        divisionLevel = team.leagueLevelUnit.leagueLevel,
+        divisionLevelName = Romans(team.leagueLevelUnit.leagueLevel),
+        leagueUnitId = team.leagueLevelUnit.leagueLevelUnitId,
+        leagueUnitName = team.leagueLevelUnit.leagueLevelUnitName,
+        teamId = playerDetails.player.owningTeam.teamId,
+        teamName = playerDetails.player.owningTeam.teamName,
+        seasonOffset = leagueState.league.seasonOffset,
+        seasonRoundInfo = leagueState.seasonRoundInfo,
+        currency = CurrencyUtils.currencyName(leagueState.league.country),
+        currencyRate = CurrencyUtils.currencyRate(leagueState.league.country),
+        countries = leagueState.idToCountryName,
+        loadingInfo = leagueState.loadingInfo,
+        translations = translationsService.translationsMap
+      )
   }
 
   def getPlayerData(playerId: Long): Action[AnyContent] = asyncZio {
     for {
-      playerDetails <- chppService.playerDetails(playerId)
+      chppService    <- ZIO.service[ChppService]
+      playerDetails  <- chppService.playerDetails(playerId)
       restPlayerData <- getRestPlayerData(playerDetails)
     } yield restPlayerData
   }
 
-  private def getRestPlayerDetails(playerDetails: PlayerDetails): DBIO[RestPlayerDetails] = {
+  private def getRestPlayerDetails(playerDetails: PlayerDetails): ZIO[RestClickhouseDAO & ChppService, HattidError, RestPlayerDetails] = {
     for {
+      chppService       <- ZIO.service[ChppService]
       playerHistoryList <- PlayerHistoryRequest.execute(playerDetails.player.playerId)
-      avatarParts <- chppService.getPlayerAvatar(playerDetails.player.owningTeam.teamId.toInt, playerDetails.player.playerId)
+      avatarParts       <- chppService.getPlayerAvatar(playerDetails.player.owningTeam.teamId.toInt, playerDetails.player.playerId)
     } yield RestPlayerDetails(
         playerId = playerDetails.player.playerId,
         firstName = playerDetails.player.firstName,
@@ -90,10 +87,10 @@ class RestPlayerController @Inject() (val chppClient: ChppClient,
   }
 
   def getPlayerHistory(playerId: Long): Action[AnyContent] = asyncZio {
-    (for {
-      playerDetails <- chppService.playerDetails(playerId)
+    for {
+      chppService       <- ZIO.service[ChppService]
+      playerDetails     <- chppService.playerDetails(playerId)
       restPlayerDetails <- getRestPlayerDetails(playerDetails)
     } yield restPlayerDetails
-      ).provide(ZLayer.succeed(restClickhouseDAO))
   }
 }

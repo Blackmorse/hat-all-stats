@@ -5,7 +5,6 @@ import databases.requests.model.`match`.MatchTopHatstats
 import databases.requests.model.overview.*
 import databases.requests.overview.*
 import models.web.{HattidError, HattidInternalError}
-import play.api.cache.AsyncCacheApi
 import service.CacheKey.EntityType
 import zio.cache.{Cache, Lookup}
 import zio.{IO, URIO, ZIO, ZLayer}
@@ -31,8 +30,7 @@ case class CacheKey(
 
 @Singleton
 class RestOverviewStatsService @Inject()
-            (val restClickhouseDAO: RestClickhouseDAO,
-             cache: AsyncCacheApi) {
+            (val restClickhouseDAO: RestClickhouseDAO) {
   private val zioCache: URIO[RestClickhouseDAO, Cache[CacheKey, HattidError, List[Any]]] = Cache.make(
     capacity = 50000,
     timeToLive = zio.Duration.fromScala(28.days),
