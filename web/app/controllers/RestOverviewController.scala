@@ -110,12 +110,12 @@ class RestOverviewController @Inject()(val controllerComponents: ControllerCompo
   }
 
   private def leagueSetButNotExists(leagueId: Option[Int]): ZIO[LeagueInfoServiceZIO, Nothing, Boolean] =
-    leagueId.map(id => ZIO.serviceWithZIO[LeagueInfoServiceZIO](serv => !serv.leagueExists(id))).getOrElse(ZIO.succeed(true))
+    leagueId.map(id => ZIO.serviceWithZIO[LeagueInfoServiceZIO](serv => !serv.leagueExists(id))).getOrElse(ZIO.succeed(false))
     
   private def divisionLevelSetButNotExists(leagueId: Option[Int], divisionLevel: Option[Int], season: Int, round: Int): ZIO[LeagueInfoServiceZIO, Nothing, Boolean] =
     (leagueId, divisionLevel) match {
-      case (Some(lId), Some(dLevel)) => ZIO.serviceWithZIO[LeagueInfoServiceZIO](serv => !serv.divisionLevelExists(lId, dLevel, season, round))
-      case _ => ZIO.succeed(true)
+      case (Some(lId), Some(dLevel)) => ZIO.serviceWithZIO[LeagueInfoServiceZIO](serv => !serv.divisionLevelExists(lId, season, round, dLevel))
+      case _ => ZIO.succeed(false)
     }
 
   def totalOverview(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): Action[AnyContent] = asyncZio {

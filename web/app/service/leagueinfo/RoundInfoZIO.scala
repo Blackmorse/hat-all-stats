@@ -12,7 +12,9 @@ class RoundInfoZIO(round: Int, private val divisionLevelInfoMap: ConcurrentMap[D
     divisionLevelInfoMap.put(divisionLevel, DivisionLevelInfo(divisionLevel, roundInfo.count))
 
   def divisionLevelExists(divisionLevel: DivisionLevel): UIO[Boolean] =
-    divisionLevelInfoMap.get(divisionLevel).map(_.isDefined)
+    for {
+      level <- divisionLevelInfoMap.get(divisionLevel)
+    } yield level.isDefined
 
   def sumAllDivisionLevelTeamsNumber(divisionLevel: Option[DivisionLevel]): IO[NotFoundError, Long] = {
     divisionLevel match {
