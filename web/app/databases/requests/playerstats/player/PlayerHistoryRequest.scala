@@ -8,11 +8,9 @@ import databases.requests.model.player.PlayerHistory
 import sqlbuilder.{Select, SqlBuilder}
 import zio.ZIO
 
-import scala.concurrent.Future
-
 object PlayerHistoryRequest extends ClickhouseRequest[PlayerHistory] {
   override val rowParser: RowParser[PlayerHistory] = PlayerHistory.mapper
-  import sqlbuilder.SqlBuilder.implicits._
+  import sqlbuilder.SqlBuilder.implicits.*
 
   def builder(playerId: Long): SqlBuilder =
     Select(

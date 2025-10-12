@@ -3,8 +3,7 @@ trapExit := false
 
 ThisBuild / scalaVersion := "3.7.3"
 ThisBuild / organization := "com.blackmorse.hattrick"
-
-val clickhouseVersion = "ru.yandex.clickhouse" % "clickhouse-jdbc" % "0.2.3"
+val clickhouseVersion = "com.clickhouse" % "clickhouse-jdbc" % "0.9.1"
 val anormVersion = "org.playframework.anorm" %% "anorm" % "2.8.1"
 val zioVersion = "2.1.21"
 val tranzactIOVersion = "5.6.0"

@@ -2,22 +2,15 @@ package controllers
 
 import cache.ZioCacheModule.HattidEnv
 import chpp.search.SearchRequest
-import chpp.search.models.{Search, SearchType}
-import chpp.teamdetails.TeamDetailsRequest
-import chpp.teamdetails.models.TeamDetails
-import models.web.HattidError
+import chpp.search.models.SearchType
 import models.web.teams.TeamSearchResult
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.{ChppService, RequestCounterService}
-import webclients.ChppClient
 import zio.ZIO
-//TODO
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CommonController @Inject() (val controllerComponents: ControllerComponents,
-                                  val chppClient: ChppClient,
                                   val requestCounterService: RequestCounterService,
                                   val hattidEnvironment: zio.ZEnvironment[HattidEnv]) extends RestController(hattidEnvironment) {
 

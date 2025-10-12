@@ -1,12 +1,12 @@
 package chpp
 
 import chpp.ChppRequestExecutor.{ChppErrorResponse, ChppUnparsableErrorResponse, ModelUnparsableResponse}
-import org.apache.pekko.actor.{ActorSystem, Scheduler}
-import org.apache.pekko.http.scaladsl.Http
 import chpp.chpperror.ChppError
 import com.lucidchart.open.xtract.{ParseError, XmlReader}
+import org.apache.pekko.actor.{ActorSystem, Scheduler}
+import org.apache.pekko.http.scaladsl.Http
 import org.apache.pekko.http.scaladsl.settings.ConnectionPoolSettings
-import zio.{Config, Schedule, ZIO}
+import zio.{Schedule, ZIO}
 
 import scala.concurrent.Future
 import scala.concurrent.duration.*

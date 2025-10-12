@@ -2,6 +2,7 @@ package service
 
 import chpp.AuthConfig
 import chpp.teamdetails.models.{Team, TeamDetails}
+import databases.ClickhousePool.ClickhousePool
 import databases.dao.RestClickhouseDAO
 import databases.requests.model.team.CreatedSameTimeTeam
 import databases.requests.teamdetails.TeamsCreatedSameTimeRequest
@@ -67,7 +68,7 @@ class TeamsService @Inject()(seasonsService: SeasonsService) {
 
   def teamsCreatedSamePeriod(period: HattrickPeriod, 
                              foundedDate: Date,
-                             leagueId: Int): ZIO[LeagueInfoServiceZIO & RestClickhouseDAO, HattidError, List[CreatedSameTimeTeamExtended]] = {
+                             leagueId: Int): ZIO[LeagueInfoServiceZIO & ClickhousePool & RestClickhouseDAO, HattidError, List[CreatedSameTimeTeamExtended]] = {
     val ranges = seasonsService.getSeasonAndRoundRanges(foundedDate)
 
     val range = period match {
@@ -89,7 +90,7 @@ class TeamsService @Inject()(seasonsService: SeasonsService) {
     })
   }
   
-  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[AuthConfig & ChppService & RestClickhouseDAO, HattidError, TeamComparison] = {
+  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[AuthConfig & ChppService & ClickhousePool & RestClickhouseDAO, HattidError, TeamComparison] = {
     val team1Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId1))
     val team2Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId2))
     
@@ -99,7 +100,7 @@ class TeamsService @Inject()(seasonsService: SeasonsService) {
     } yield comparison
   }
   
-  private def combine(team1: Team, team1Details: TeamDetails, team2: Team, team2Details: TeamDetails): ZIO[RestClickhouseDAO, HattidError, TeamComparison] = {
+  private def combine(team1: Team, team1Details: TeamDetails, team2: Team, team2Details: TeamDetails): ZIO[ClickhousePool &RestClickhouseDAO, HattidError, TeamComparison] = {
     if (team1.league.leagueId != team2.league.leagueId ||
       team1Details.user.userId == 0 || team2Details.user.userId == 0) {
       ZIO.succeed(TeamComparison.empty())

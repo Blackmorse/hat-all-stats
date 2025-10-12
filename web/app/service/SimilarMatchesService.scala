@@ -1,6 +1,7 @@
 package service
 
 import chpp.AuthConfig
+import databases.ClickhousePool.ClickhousePool
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.matchdetails.{AnnoySimilarMatchesRequest, SimilarMatchesRequest}
@@ -14,7 +15,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class SimilarMatchesService @Inject() {
-  def similarMatchesStats(matchId: Long, accuracy: Double): ZIO[AuthConfig & ChppService & RestClickhouseDAO, HattidError, Option[SimilarMatchesStats]] = {
+  def similarMatchesStats(matchId: Long, accuracy: Double): ZIO[AuthConfig & ChppService & ClickhousePool & RestClickhouseDAO, HattidError, Option[SimilarMatchesStats]] = {
     for {
       chppService  <- ZIO.service[ChppService]
       matchDetails <- chppService.matchDetails(matchId)
@@ -28,7 +29,7 @@ class SimilarMatchesService @Inject() {
     } yield res
   }
 
-  def similarMatchesAnnoyStats(matchId: Long, accuracy: Int, considerTacticType: Boolean, considerTacticSkill: Boolean, considerSetPiecesLevel: Boolean): ZIO[AuthConfig & ChppService & RestClickhouseDAO, HattidError, Option[SimilarMatchesStats]] = {
+  def similarMatchesAnnoyStats(matchId: Long, accuracy: Int, considerTacticType: Boolean, considerTacticSkill: Boolean, considerSetPiecesLevel: Boolean): ZIO[AuthConfig & ChppService & ClickhousePool & RestClickhouseDAO, HattidError, Option[SimilarMatchesStats]] = {
     for {
       chppService  <- ZIO.service[ChppService]
       matchDetails <- chppService.matchDetails(matchId)

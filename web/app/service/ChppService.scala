@@ -24,6 +24,7 @@ import chpp.translations.models.Translations
 import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.{League, WorldDetails}
 import controllers.NearestMatches
+import databases.ClickhousePool.ClickhousePool
 import databases.dao.RestClickhouseDAO
 import databases.requests.teamrankings.HistoryTeamLeagueUnitInfoRequest
 import models.clickhouse.NearestMatch
@@ -94,7 +95,7 @@ class ChppService @Inject() (val chppClient: ChppClient) {
     chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest())
     
     
-  def getDivisionLevelAndLeagueUnit(team: Team, season: Int): ZIO[AuthConfig & RestClickhouseDAO & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
+  def getDivisionLevelAndLeagueUnit(team: Team, season: Int): ZIO[AuthConfig & ClickhousePool & RestClickhouseDAO & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
     for {
       league <- chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
         .map(_.leagueList.head)
@@ -102,7 +103,7 @@ class ChppService @Inject() (val chppClient: ChppClient) {
     } yield result
   }
 
-  private def getDivisionLevelFromChppOrCh(league: League, team: Team, season: Int): ZIO[RestClickhouseDAO & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
+  private def getDivisionLevelFromChppOrCh(league: League, team: Team, season: Int): ZIO[ClickhousePool & RestClickhouseDAO & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
     val htRound = league.matchRound
     
     val currentSeasonZIO = for {

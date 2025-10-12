@@ -3,6 +3,7 @@ package service.leagueinfo
 import chpp.AuthConfig
 import chpp.worlddetails.models.League
 import controllers.LeagueTime
+import databases.ClickhousePool.ClickhousePool
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.HistoryInfoRequest
 import hattid.CommonData
@@ -216,7 +217,7 @@ object LeagueInfoServiceZIO {
     9 -> (1 to 2048)
   )
 
-  lazy val layer: ZLayer[AuthConfig & RestClickhouseDAO & ChppService, HattidError, LeagueInfoServiceZIO] = {
+  lazy val layer: ZLayer[AuthConfig & ClickhousePool & RestClickhouseDAO & ChppService, HattidError, LeagueInfoServiceZIO] = {
     ZLayer {
       for {
         chppService <- ZIO.service[ChppService]

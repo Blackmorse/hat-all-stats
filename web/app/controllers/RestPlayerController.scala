@@ -3,6 +3,7 @@ package controllers
 import cache.ZioCacheModule.HattidEnv
 import chpp.AuthConfig
 import chpp.playerdetails.models.PlayerDetails
+import databases.ClickhousePool.ClickhousePool
 import databases.dao.RestClickhouseDAO
 import databases.requests.playerstats.player.PlayerHistoryRequest
 import models.web.HattidError
@@ -59,7 +60,7 @@ class RestPlayerController @Inject() (val controllerComponents: ControllerCompon
     } yield restPlayerData
   }
 
-  private def getRestPlayerDetails(playerDetails: PlayerDetails): ZIO[AuthConfig & RestClickhouseDAO & ChppService, HattidError, RestPlayerDetails] = {
+  private def getRestPlayerDetails(playerDetails: PlayerDetails): ZIO[AuthConfig & ClickhousePool & RestClickhouseDAO & ChppService, HattidError, RestPlayerDetails] = {
     for {
       chppService       <- ZIO.service[ChppService]
       playerHistoryList <- PlayerHistoryRequest.execute(playerDetails.player.playerId)

@@ -9,13 +9,11 @@ import service.DatesRange
 import sqlbuilder.Select
 import zio.ZIO
 
-import scala.concurrent.Future
-
 object TeamsCreatedSameTimeRequest extends ClickhouseRequest[CreatedSameTimeTeam] {
   override val rowParser: RowParser[CreatedSameTimeTeam] = CreatedSameTimeTeam.createdSameTimeTeamMapper
 
   def execute(leagueId: Int, currentSeason: Int, currentRound: Int, datesRange: DatesRange): DBIO[List[CreatedSameTimeTeam]] = wrapErrors {
-    import sqlbuilder.SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits.*
     val builder = Select(
         "league_id",
         "team_id",

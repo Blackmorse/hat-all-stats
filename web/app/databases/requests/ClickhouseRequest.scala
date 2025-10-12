@@ -1,6 +1,7 @@
 package databases.requests
 
 import anorm.{NamedParameter, ParameterValue, Row, RowParser, SQL, SimpleSql, ToParameterValue}
+import databases.ClickhousePool.ClickhousePool
 import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest.DBIO
 import databases.requests.model.Roles
@@ -14,7 +15,7 @@ import zio.{IO, ZIO, ZLayer}
 trait ClickhouseRequest[T] {
   val rowParser: RowParser[T]
 
-  def wrapErrorsOpt(zio: ZIO[RestClickhouseDAO, Throwable | SqlInjectionError, Option[T]]): DBIO[Option[T]] = {
+  def wrapErrorsOpt(zio: ZIO[ClickhousePool & RestClickhouseDAO, Throwable | SqlInjectionError, Option[T]]): DBIO[Option[T]] = {
     zio mapError {
       case sqlInjectionError: SqlInjectionError => sqlInjectionError
       case ex: DbException => DbError(ex)
@@ -22,7 +23,7 @@ trait ClickhouseRequest[T] {
     }
   }
   
-  def wrapErrors(zio: ZIO[RestClickhouseDAO, Throwable | HattidError, List[T]]): DBIO[List[T]] = {
+  def wrapErrors(zio: ZIO[ClickhousePool & RestClickhouseDAO, Throwable | HattidError, List[T]]): DBIO[List[T]] = {
     zio mapError {
       case hattidError: HattidError => hattidError
       case ex: DbException => DbError(ex)
@@ -32,7 +33,7 @@ trait ClickhouseRequest[T] {
 }
 
 object ClickhouseRequest {
-  type DBIO[T] = ZIO[RestClickhouseDAO, HattidError, T]
+  type DBIO[T] = ZIO[ClickhousePool & RestClickhouseDAO, HattidError, T]
 
   implicit class HattidDBZIO[Result](zio: ZIO[RestClickhouseDAO, Throwable | SqlInjectionError, Result]) {
     def hattidErrors: DBIO[Result] = zio.mapError {

@@ -16,6 +16,9 @@ services:
      - hattrick_network
     volumes:
      - ./sql/init_scripts:/docker-entrypoint-initdb.d
+    environment:
+     - CLICKHOUSE_USER=hattrick
+     - CLICKHOUSE_PASSWORD=hattrick
 
   hattid-web:
     image: mozilla/sbt:11.0.8_1.3.13
