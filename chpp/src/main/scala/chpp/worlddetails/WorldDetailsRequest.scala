@@ -1,21 +1,14 @@
 package chpp.worlddetails
 
-import org.apache.pekko.http.scaladsl.model.HttpRequest
+import chpp.AbstractRequest
 import chpp.worlddetails.models.WorldDetails
-import chpp.{AbstractRequest, OauthTokens, RequestCreator}
 
 case class WorldDetailsRequest(leagueId: Option[Int] = None,
                                countryId: Option[Int] = None,
-                               includeRegions: Option[Boolean] = None) extends AbstractRequest[WorldDetails] {
-
-  override def createRequest()(implicit oauthTokens: OauthTokens): HttpRequest = {
-    val map = RequestCreator.params("worlddetails", "1.9",
-      "leagueID" -> leagueId,
-      "countryID" -> countryId,
-      "includeRegions" -> includeRegions)
-
-    RequestCreator.create(map)
-  }
+                               includeRegions: Option[Boolean] = None) extends AbstractRequest[WorldDetails]("worlddetails", "1.9",
+  "leagueID" -> leagueId,
+  "countryID" -> countryId,
+  "includeRegions" -> includeRegions) {
 
   override def preprocessResponseBody(body: String): String =
     body.replace("<Country Available=False />", "")

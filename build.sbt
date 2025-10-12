@@ -21,7 +21,8 @@ lazy val webDependencies = Seq(
   "io.github.gaelrenoux" %% "tranzactio-anorm" % tranzactIOVersion,
   "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
   "dev.zio" %% "zio-config" % zioConfigVersion,
-  "dev.zio" %% "zio-config-magnolia" % zioConfigVersion
+  "dev.zio" %% "zio-config-magnolia" % zioConfigVersion,
+  "dev.zio" %% "zio-http" % "3.5.1",
 )
 
 lazy val webSettings = Seq(
@@ -73,8 +74,6 @@ lazy val chppSettings = Seq(
     "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
     "org.apache.pekko" %% "pekko-http" % pekkoHttpVersion,
     "org.apache.pekko" %% "pekko-stream" % pekkoVersion,
-    "dev.zio" %% "zio" % zioVersion,
-    "dev.zio" %% "zio-streams" % zioVersion
   )
 )
 

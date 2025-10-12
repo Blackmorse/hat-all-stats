@@ -1,7 +1,6 @@
 package cache
 
 import cache.ZioCacheModule.{HattidEnv, ZDreamTeamCache}
-import chpp.AuthConfig
 import com.google.inject.name.Names
 import com.google.inject.{AbstractModule, Provides, TypeLiteral}
 import databases.ClickhousePool.ClickhousePool
@@ -14,12 +13,18 @@ import models.web.{HattidError, StatsType}
 import play.api.Configuration
 import service.{ChppService, TranslationsService}
 import service.leagueinfo.LeagueInfoServiceZIO
+import webclients.AuthConfig
 import zio.cache.{Cache, Lookup}
 import zio.{cache, *}
 import zio.config.*
 import zio.config.magnolia.deriveConfig
 import zio.config.typesafe.TypesafeConfigProvider
+//import zio.http.ZClient.Config
+import zio.http.{Client, ClientDriver, DnsResolver}
+import zio.http.netty.NettyConfig
+import zio.http.netty.client.NettyClientDriver
 
+import java.net.http.HttpClient
 import java.sql.{Connection, DriverManager}
 import java.util.Properties
 
@@ -36,7 +41,8 @@ object ZioCacheModule {
     TranslationsService &
     DatabaseConfig &
     AuthConfig &
-    ClickhousePool
+    ClickhousePool &
+    Client
 }
 
 case class DatabaseConfig(driver: String,
@@ -70,15 +76,17 @@ class ZioCacheModule extends AbstractModule {
                      configuration: Configuration): ZEnvironment[HattidEnv] = {
     val clickhouseLayer: ULayer[RestClickhouseDAO] = ZLayer.succeed(restClickhouseDAO)
     val chppServiceLayer: ULayer[ChppService] = ZLayer.succeed(chppService)
-    val leagueInfoLayer: ZLayer[AuthConfig & ClickhousePool & RestClickhouseDAO & ChppService, Nothing, LeagueInfoServiceZIO] = LeagueInfoServiceZIO.layer
+    val leagueInfoLayer: ZLayer[Client & AuthConfig & ClickhousePool & RestClickhouseDAO & ChppService, Nothing, LeagueInfoServiceZIO] = LeagueInfoServiceZIO.layer
       .mapError(he => new Exception(he.toString))
       .orDie
-    val translationLayer: ZLayer[AuthConfig & ChppService, HattidError, TranslationsService] = TranslationsService.layer
+    val translationLayer: ZLayer[Client & AuthConfig & ChppService, HattidError, TranslationsService] = TranslationsService.layer
+
     val databaseConfigLayer: ZLayer[Any, Config.Error, DatabaseConfig] = ZLayer {
       TypesafeConfigProvider
         .fromTypesafeConfig(configuration.underlying)
         .load(DatabaseConfig.config)
     }
+
 
     val chppAuthConfigLayer: ZLayer[Any, Config.Error, AuthConfig] = ZLayer {
       TypesafeConfigProvider
@@ -108,23 +116,29 @@ class ZioCacheModule extends AbstractModule {
     )
 
     val poolLayer: ZLayer[DatabaseConfig & Scope, Nothing, ZPool[Nothing, Connection]] = ZLayer.fromZIO(zPool)
+    val httpClientLayer: ZLayer[Any, Throwable, Client] = Client.default
+
 
     val env: ZEnvironment[HattidEnv] = Unsafe.unsafe { implicit unsafe =>
       Runtime.default.unsafe.run {
         ZIO.scoped {
           for {
-            leagueInfoEnv  <- ((clickhouseLayer ++ chppServiceLayer ++ chppAuthConfigLayer ++ (databaseConfigLayer >>> poolLayer)) >>> leagueInfoLayer).build
-            translationEnv <- ((chppAuthConfigLayer ++ chppServiceLayer) >>> translationLayer).build
+            leagueInfoEnv  <- ((clickhouseLayer ++ chppServiceLayer ++ chppAuthConfigLayer ++ httpClientLayer ++ (databaseConfigLayer >>> poolLayer)) >>> leagueInfoLayer).build
+            translationEnv <- ((chppAuthConfigLayer ++ chppServiceLayer ++ httpClientLayer) >>> translationLayer).build
             dbConfigEnv    <- databaseConfigLayer.build
             chppConfigEnv  <- chppAuthConfigLayer.build
             zPoolEnv       <- (databaseConfigLayer >>> poolLayer).build
+            httpClientEnv  <- httpClientLayer.build
+//            netty          <- (ZLayer.succeed(NettyConfig.default) >>> NettyClientDriver.live).build
           } yield leagueInfoEnv ++
             translationEnv ++
             ZEnvironment(restClickhouseDAO) ++
             ZEnvironment(chppService) ++
             dbConfigEnv ++
             chppConfigEnv ++
-            zPoolEnv
+            zPoolEnv ++
+            httpClientEnv
+//            netty
         }
       }.getOrThrowFiberFailure()
     }

@@ -1,6 +1,5 @@
 package service
 
-import chpp.AuthConfig
 import chpp.teamdetails.models.{Team, TeamDetails}
 import databases.ClickhousePool.ClickhousePool
 import databases.dao.RestClickhouseDAO
@@ -11,7 +10,9 @@ import models.web.{HattidError, TeamComparison}
 import play.api.libs.json.{Json, OWrites}
 import play.api.mvc.QueryStringBindable
 import service.leagueinfo.LeagueInfoServiceZIO
+import webclients.AuthConfig
 import zio.ZIO
+import zio.http.Client
 
 import java.util.Date
 import javax.inject.Inject
@@ -90,7 +91,7 @@ class TeamsService @Inject()(seasonsService: SeasonsService) {
     })
   }
   
-  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[AuthConfig & ChppService & ClickhousePool & RestClickhouseDAO, HattidError, TeamComparison] = {
+  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[Client & AuthConfig & ChppService & ClickhousePool & RestClickhouseDAO, HattidError, TeamComparison] = {
     val team1Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId1))
     val team2Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId2))
     
