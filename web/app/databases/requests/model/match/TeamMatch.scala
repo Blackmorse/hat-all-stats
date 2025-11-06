@@ -1,10 +1,12 @@
 package databases.requests.model.`match`
 
-import java.util.Date
-import databases.requests.model.team.TeamSortingKey
-import anorm.{RowParser, ~}
 import anorm.SqlParser.get
-import play.api.libs.json.{Json, OFormat, OWrites, Reads}
+import anorm.{RowParser, ~}
+import databases.requests.model.team.TeamSortingKey
+import play.api.libs.json.{Json, OWrites, Reads}
+import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
+
+import java.util.Date
 
 case class TeamMatch(season: Int,
                      date: Date,
@@ -35,10 +37,14 @@ case class MatchRatings(formation: String,
 object MatchRatings {
   implicit val writesRatings: OWrites[MatchRatings] = Json.writes[MatchRatings]
   implicit val readsRatings: Reads[MatchRatings] = Json.reads[MatchRatings]
+  implicit val jsonEncoder: JsonEncoder[MatchRatings] = DeriveJsonEncoder.gen[MatchRatings]
+  implicit val jsonDecoder: JsonDecoder[MatchRatings] = DeriveJsonDecoder.gen[MatchRatings]
 }
 
 object TeamMatch {
   implicit val writes: OWrites[TeamMatch] = Json.writes[TeamMatch]
+  implicit val jsonEncoder: JsonEncoder[TeamMatch] = DeriveJsonEncoder.gen[TeamMatch]
+  implicit val dateEncoder: JsonEncoder[Date] = JsonEncoder[Long].contramap(_.getTime)
 
   val mapper: RowParser[TeamMatch] = {
     get[Int]("season") ~

@@ -3,6 +3,7 @@ package models.clickhouse
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 import play.api.libs.json.{Json, OFormat, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 import java.util.Date
 
@@ -44,6 +45,8 @@ case class TeamRankings(teamId: Long,
 
 object TeamRankings {
   implicit val writes: OWrites[TeamRankings] = Json.writes[TeamRankings]
+  implicit val jsonEncoder: JsonEncoder[TeamRankings] = DeriveJsonEncoder.gen[TeamRankings]
+  implicit val dateEncoder: JsonEncoder[Date] = JsonEncoder[Long].contramap(_.getTime)
 
   val teamRankingsMapper: RowParser[TeamRankings] = {
     get[Long]("team_id") ~

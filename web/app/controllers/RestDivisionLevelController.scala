@@ -18,6 +18,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfoServiceZIO, LeagueState, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
 import zio.ZIO
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 import javax.inject.{Inject, Singleton}
 
@@ -35,6 +36,7 @@ case class RestDivisionLevelData(leagueId: Int,
 
 object RestDivisionLevelData {
   implicit val writes: OWrites[RestDivisionLevelData] = Json.writes[RestDivisionLevelData]
+  implicit val jsonEncoder: JsonEncoder[RestDivisionLevelData] = DeriveJsonEncoder.gen[RestDivisionLevelData]
 }
 
 @Singleton

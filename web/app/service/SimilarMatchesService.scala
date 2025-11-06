@@ -15,7 +15,7 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class SimilarMatchesService @Inject() {
-  def similarMatchesStats(matchId: Long, accuracy: Double): ZIO[Client & AuthConfig & ChppService & ClickhousePool & RestClickhouseDAO, HattidError, Option[SimilarMatchesStats]] = {
+  def similarMatchesStats(matchId: Long, accuracy: Double): ZIO[ChppClient & Client & AuthConfig & ChppService & ClickhousePool & RestClickhouseDAO, HattidError, Option[SimilarMatchesStats]] = {
     for {
       chppService  <- ZIO.service[ChppService]
       matchDetails <- chppService.matchDetails(matchId)
@@ -29,7 +29,7 @@ class SimilarMatchesService @Inject() {
     } yield res
   }
 
-  def similarMatchesAnnoyStats(matchId: Long, accuracy: Int, considerTacticType: Boolean, considerTacticSkill: Boolean, considerSetPiecesLevel: Boolean): ZIO[Client & AuthConfig & ChppService & ClickhousePool & RestClickhouseDAO, HattidError, Option[SimilarMatchesStats]] = {
+  def similarMatchesAnnoyStats(matchId: Long, accuracy: Int, considerTacticType: Boolean, considerTacticSkill: Boolean, considerSetPiecesLevel: Boolean): ZIO[ChppClient & Client & AuthConfig & ChppService & ClickhousePool & RestClickhouseDAO, HattidError, Option[SimilarMatchesStats]] = {
     for {
       chppService  <- ZIO.service[ChppService]
       matchDetails <- chppService.matchDetails(matchId)

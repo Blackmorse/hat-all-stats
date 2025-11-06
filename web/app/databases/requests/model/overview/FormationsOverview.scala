@@ -3,11 +3,13 @@ package databases.requests.model.overview
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class FormationsOverview(formation: String, count: Int)
 
 object FormationsOverview {
   implicit val writes: OWrites[FormationsOverview] = Json.writes[FormationsOverview]
+  implicit val jsonEncoder: JsonEncoder[FormationsOverview] = DeriveJsonEncoder.gen[FormationsOverview]
 
   val mapper: RowParser[FormationsOverview] = {
     get[String]("formation") ~

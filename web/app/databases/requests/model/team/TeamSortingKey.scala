@@ -7,4 +7,5 @@ case class TeamSortingKey(teamId: Long, teamName: String, leagueUnitId: Long,
 
 object TeamSortingKey {
   implicit val writes: OWrites[TeamSortingKey] = Json.writes[TeamSortingKey]
+  implicit val jsonEncoder: zio.json.JsonEncoder[TeamSortingKey] = zio.json.DeriveJsonEncoder.gen[TeamSortingKey]
 }

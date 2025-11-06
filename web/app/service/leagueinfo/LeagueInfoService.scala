@@ -10,7 +10,7 @@ import models.clickhouse.HistoryInfo
 import models.web.{HattidError, HattidInternalError, NotFoundError}
 import service.ChppService
 import service.leagueinfo.LeagueInfoServiceZIO.{DivisionLevel, LeagueId, Round, Season}
-import webclients.AuthConfig
+import webclients.{AuthConfig, ChppClient}
 import zio.concurrent.ConcurrentMap
 import zio.*
 import zio.http.Client
@@ -87,7 +87,7 @@ class LeagueInfoServiceZIO(private val leagueInfoMap: ConcurrentMap[LeagueId, Le
   def addAnotherRound(leagueId: LeagueId, 
                       season: Season, 
                       round: Round, 
-                      roundInfos: List[HistoryInfo]): ZIO[Client & AuthConfig & ChppService, HattidInternalError, Unit] = {
+                      roundInfos: List[HistoryInfo]): ZIO[ChppClient & Client & AuthConfig & ChppService, HattidInternalError, Unit] = {
     for {
       chppService   <- ZIO.service[ChppService]
       leagueInfoOpt <- leagueInfoMap.get(leagueId)
@@ -140,7 +140,7 @@ class LeagueInfoServiceZIO(private val leagueInfoMap: ConcurrentMap[LeagueId, Le
     } yield season
   }
 
-  def lastRound(leagueId: LeagueId, season: Season): IO[NotFoundError, RuntimeFlags] = {
+  def lastRound(leagueId: LeagueId, season: Season): IO[NotFoundError, Round] = {
     for {
       leagueInfo <- leagueInfo(leagueId)
       round      <- leagueInfo.lastRound(season)
@@ -218,7 +218,7 @@ object LeagueInfoServiceZIO {
     9 -> (1 to 2048)
   )
 
-  lazy val layer: ZLayer[Client & AuthConfig & ClickhousePool & RestClickhouseDAO & ChppService, HattidError, LeagueInfoServiceZIO] = {
+  lazy val layer: ZLayer[ChppClient & Client & AuthConfig & ClickhousePool & RestClickhouseDAO & ChppService, HattidError, LeagueInfoServiceZIO] = {
     ZLayer {
       for {
         chppService <- ZIO.service[ChppService]

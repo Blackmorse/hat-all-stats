@@ -31,8 +31,8 @@ case class CacheKey(
 
 @Singleton
 class RestOverviewStatsService @Inject()
-            (val restClickhouseDAO: RestClickhouseDAO) {
-  private val zioCache: URIO[ClickhousePool &RestClickhouseDAO, Cache[CacheKey, HattidError, List[Any]]] = Cache.make(
+            () {
+  private val zioCache: URIO[ClickhousePool & RestClickhouseDAO, Cache[CacheKey, HattidError, List[Any]]] = Cache.make(
     capacity = 50000,
     timeToLive = zio.Duration.fromScala(28.days),
     lookup = Lookup({ (key: CacheKey) =>

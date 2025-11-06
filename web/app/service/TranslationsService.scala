@@ -2,7 +2,7 @@ package service
 
 import models.web.HattidError
 import models.web.translations.LanguageTranslations
-import webclients.AuthConfig
+import webclients.{AuthConfig, ChppClient}
 import zio.http.Client
 import zio.{ZIO, ZLayer}
 
@@ -18,7 +18,7 @@ object TranslationsService {
     "fa" -> 75 //Persian
   )
   
-  lazy val layer: ZLayer[Client & AuthConfig & ChppService, HattidError, TranslationsService] = ZLayer {
+  lazy val layer: ZLayer[ChppClient & Client & AuthConfig & ChppService, HattidError, TranslationsService] = ZLayer {
     for {
       chppService  <- ZIO.service[ChppService]
       translations <- ZIO.foreach(languages.map { case (languageAbbr, languageId) =>

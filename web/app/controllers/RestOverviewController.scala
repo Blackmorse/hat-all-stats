@@ -12,6 +12,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.RestOverviewStatsService
 import service.leagueinfo.LeagueInfoServiceZIO
 import zio.ZIO
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 import java.util.Date
 import javax.inject.Inject
@@ -22,6 +23,8 @@ case class WorldLoadingInfo(proceedCountries: Int,
 
 object WorldLoadingInfo {
   implicit val writes: OWrites[WorldLoadingInfo] = Json.writes[WorldLoadingInfo]
+  implicit val jsonEncoder: JsonEncoder[WorldLoadingInfo] = DeriveJsonEncoder.gen[WorldLoadingInfo]
+  implicit val dateEncoder: JsonEncoder[Date] = JsonEncoder[Long].contramap(_.getTime)
 }
 
 case class WorldData(countries: Seq[(Int, String)],
@@ -34,6 +37,7 @@ case class WorldData(countries: Seq[(Int, String)],
 
 object WorldData {
   implicit val writes: OWrites[WorldData] = Json.writes[WorldData]
+  implicit val jsonEncoder: JsonEncoder[WorldData] = DeriveJsonEncoder.gen[WorldData]
 }
 
 class RestOverviewController @Inject()(val controllerComponents: ControllerComponents,

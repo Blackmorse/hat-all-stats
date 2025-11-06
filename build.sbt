@@ -23,6 +23,7 @@ lazy val webDependencies = Seq(
   "dev.zio" %% "zio-config" % zioConfigVersion,
   "dev.zio" %% "zio-config-magnolia" % zioConfigVersion,
   "dev.zio" %% "zio-http" % "3.5.1",
+  "dev.zio" %% "zio-json" % "0.7.44"
 )
 
 lazy val webSettings = Seq(
@@ -115,6 +116,12 @@ lazy val web = (project in file("web"))
   .dependsOn(sqlBuilder)
   .settings(webSettings)
   .enablePlugins(PlayScala)
+
+lazy val webZio = (project in file("web-zio"))
+  .dependsOn(web)
+  .settings(Seq(
+    Compile / scalaSource := baseDirectory.value / "app"
+  ))
 
 lazy val hattrickTests = (project in file("hattrick-tests"))
   .dependsOn(chpp)

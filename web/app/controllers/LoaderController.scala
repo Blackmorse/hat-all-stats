@@ -10,6 +10,7 @@ import play.api.cache.AsyncCacheApi
 import play.api.libs.json.{JsSuccess, JsValue, Json, Reads}
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Request}
 import service.leagueinfo.*
+import zio.json.{DeriveJsonDecoder, JsonDecoder}
 import zio.prelude.Validation
 import zio.{Unsafe, ZIO, ZLayer}
 
@@ -20,6 +21,8 @@ case class LeagueTime(leagueId: Int, time: Date)
 
 object LeagueTime {
   implicit val reads: Reads[LeagueTime] = Json.reads[LeagueTime]
+  implicit val jsonDecoder: JsonDecoder[LeagueTime] = DeriveJsonDecoder.gen[LeagueTime]
+  implicit val dateDecoder: JsonDecoder[Date] = JsonDecoder[Long].map(millis => new Date(millis))
 }
 
 @Singleton

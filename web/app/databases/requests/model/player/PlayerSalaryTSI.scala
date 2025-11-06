@@ -4,6 +4,7 @@ import play.api.libs.json.{Json, OWrites}
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 import databases.requests.model.Roles
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class PlayerSalaryTSI(sortingKey: PlayerSortingKey,
                            age: Int,
@@ -13,6 +14,7 @@ case class PlayerSalaryTSI(sortingKey: PlayerSortingKey,
 
 object PlayerSalaryTSI {
   implicit val writes: OWrites[PlayerSalaryTSI] = Json.writes[PlayerSalaryTSI]
+  implicit val jsonEncoder: JsonEncoder[PlayerSalaryTSI] = DeriveJsonEncoder.gen[PlayerSalaryTSI]
 
   val mapper: RowParser[PlayerSalaryTSI] = {
     get[Int]("league_id") ~

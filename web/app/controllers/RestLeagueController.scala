@@ -4,6 +4,7 @@ import cache.ZioCacheModule.HattidEnv
 import com.google.inject.{Inject, Singleton}
 import databases.requests.matchdetails.*
 import databases.requests.model.promotions.PromotionWithType
+import databases.requests.model.team.OldestTeam
 import databases.requests.playerstats.dreamteam.DreamTeamRequest
 import databases.requests.playerstats.player.stats.*
 import databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
@@ -18,6 +19,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.leagueinfo.{LeagueInfoServiceZIO, LeagueState, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
 import zio.ZIO
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class RestLeagueData(leagueId: Int,
                           leagueName: String,
@@ -31,6 +33,7 @@ case class RestLeagueData(leagueId: Int,
 
 object RestLeagueData {
   implicit val writes: OWrites[RestLeagueData] = Json.writes[RestLeagueData]
+  implicit val jsonEncoder: JsonEncoder[RestLeagueData] = DeriveJsonEncoder.gen[RestLeagueData]
 }
 
 @Singleton

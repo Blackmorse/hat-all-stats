@@ -5,13 +5,13 @@ import databases.dao.RestClickhouseDAO
 import databases.requests.ClickhouseRequest.*
 import databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
 import databases.requests.model.team.TeamCards
-import databases.requests.{ClickhouseRequest, OrderingKeyPath}
+import databases.requests.{ClickhouseRequest, ClickhouseStatisticsRequest, OrderingKeyPath}
 import models.web.{RestStatisticsParameters, Round, SqlInjectionError}
-import sqlbuilder.Select
+import sqlbuilder.{Select, SqlBuilder}
 import sqlbuilder.functions.*
 import zio.ZIO
 
-object TeamCardsRequest extends ClickhouseRequest[TeamCards] {
+object TeamCardsRequest extends ClickhouseStatisticsRequest[TeamCards] {
   val sortingColumns: Seq[String] = Seq("yellow_cards", "red_cards")
 
   override val rowParser: RowParser[TeamCards] = TeamCards.mapper
@@ -45,7 +45,7 @@ object TeamCardsRequest extends ClickhouseRequest[TeamCards] {
     builder.sqlWithParameters().build
   }
 
-  def execute(orderingKeyPath: OrderingKeyPath,
+  override def execute(orderingKeyPath: OrderingKeyPath,
               parameters: RestStatisticsParameters): DBIO[List[TeamCards]] = wrapErrors {
     if(!sortingColumns.contains(parameters.sortBy)) {
       ZIO.fail(SqlInjectionError())
@@ -56,4 +56,9 @@ object TeamCardsRequest extends ClickhouseRequest[TeamCards] {
        } yield result
     }
   }
+
+  // Not the best abstraction. But need an execute method for calling from routes
+  override def oneRoundBuilder(orderingKeyPath: OrderingKeyPath, parameters: RestStatisticsParameters, round: Int): SqlBuilder = ???
+
+  override def aggregateBuilder(orderingKeyPath: OrderingKeyPath, parameters: RestStatisticsParameters, aggregateFunction: func): SqlBuilder = ???
 }

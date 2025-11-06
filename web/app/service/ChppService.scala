@@ -34,15 +34,15 @@ import zio.http.Client
 import zio.{IO, ZIO}
 
 import javax.inject.{Inject, Singleton}
-//TODO
 
-object ChppService {
-  type CHPPIO[A] = IO[HattidError, A]
-}
 
 @Singleton
-class ChppService @Inject() (val chppClient: ChppClient) {
-  def getTeamById(teamId: Long): ZIO[Client & AuthConfig, HattidError, (Team, TeamDetails)] = {
+class ChppService @Inject() () {
+
+  private def withClient[R, E, A](f: (chppClient: ChppClient) => ZIO[R, E, A]): ZIO[R & ChppClient, E, A] =
+    ZIO.serviceWithZIO[ChppClient](f)
+
+  def getTeamById(teamId: Long): ZIO[ChppClient & Client & AuthConfig, HattidError, (Team, TeamDetails)] = withClient { chppClient =>
     chppClient.executeZio[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
       .flatMap { teamDetails =>
         findTeamId(teamDetails, teamId) match {
@@ -51,11 +51,12 @@ class ChppService @Inject() (val chppClient: ChppClient) {
         }
       }
   }
-  
-  def getTeamsSimple(teamId: Long): ZIO[Client & AuthConfig, HattidError, TeamDetails] =
-    chppClient.executeZio[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
 
-  def playerDetails(playerId: Long): ZIO[Client & AuthConfig, HattidError, PlayerDetails] =
+  def getTeamsSimple(teamId: Long): ZIO[ChppClient & Client & AuthConfig, HattidError, TeamDetails] = withClient { chppClient =>
+      chppClient.executeZio[TeamDetails, TeamDetailsRequest](TeamDetailsRequest(teamId = Some(teamId)))
+    }
+
+  def playerDetails(playerId: Long): ZIO[ChppClient & Client & AuthConfig, HattidError, PlayerDetails] = withClient { chppClient =>
     chppClient.executeZio[PlayerDetails, PlayerDetailsRequest](PlayerDetailsRequest(playerId = playerId))
       .mapError {
         case BadRequestError(_) => NotFoundError(
@@ -64,6 +65,7 @@ class ChppService @Inject() (val chppClient: ChppClient) {
           description = s"Player not found, error from CHPP")
         case e => e
       }
+  }
 
   private def findTeamId(teamDetails: TeamDetails, teamId: Long): Either[NotFoundError, Team] = {
     val teamOpt = teamDetails.teams
@@ -78,7 +80,7 @@ class ChppService @Inject() (val chppClient: ChppClient) {
     }
   }
   
-  def leagueDetails(leagueUnitId: Int): ZIO[Client & AuthConfig, HattidError, LeagueDetails] = {
+  def leagueDetails(leagueUnitId: Int): ZIO[ChppClient & Client & AuthConfig, HattidError, LeagueDetails] = withClient { chppClient =>
     chppClient.executeZio[LeagueDetails, LeagueDetailsRequest](LeagueDetailsRequest(leagueUnitId = Some(leagueUnitId)))
       .mapError {
         // Map CHPP errors to our errors
@@ -90,15 +92,17 @@ class ChppService @Inject() (val chppClient: ChppClient) {
       }
   }
   
-  def getWorldDetails(): ZIO[Client & AuthConfig, HattidError, WorldDetails] =
+  def getWorldDetails(): ZIO[ChppClient & Client & AuthConfig, HattidError, WorldDetails] = withClient { chppClient =>
     chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest())
+  }
     
     
-  def getDivisionLevelAndLeagueUnit(team: Team, season: Int): ZIO[Client & AuthConfig & ClickhousePool & RestClickhouseDAO & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
+  def getDivisionLevelAndLeagueUnit(team: Team, season: Int): ZIO[ChppClient & Client & AuthConfig & ClickhousePool & RestClickhouseDAO & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
     for {
-      league <- chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
+      chppClient <- ZIO.service[ChppClient]
+      league     <- chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
         .map(_.leagueList.head)
-      result <- getDivisionLevelFromChppOrCh(league, team, season)
+      result     <- getDivisionLevelFromChppOrCh(league, team, season)
     } yield result
   }
 
@@ -126,8 +130,9 @@ class ChppService @Inject() (val chppClient: ChppClient) {
     }
   }
   
-  def nearestMatches(teamId: Long): ZIO[Client & AuthConfig, HattidError, NearestMatches] = {
+  def nearestMatches(teamId: Long): ZIO[ChppClient & Client & AuthConfig, HattidError, NearestMatches] = {
     for {
+      chppClient <- ZIO.service[ChppClient]
       response   <- chppClient.executeZio[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
     } yield {
       val matches = response.team.matchList
@@ -146,11 +151,11 @@ class ChppService @Inject() (val chppClient: ChppClient) {
     }
   }
   
-  def matches(teamId: Long): ZIO[Client & AuthConfig, HattidError, Matches] = {
+  def matches(teamId: Long): ZIO[ChppClient & Client & AuthConfig, HattidError, Matches] = withClient { chppClient =>
     chppClient.executeZio[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
   }
 
-  def currentTeamPlayedMatchesAndUpcomingOpponents(teamId: Long): ZIO[Client & AuthConfig, HattidError, (Seq[NearestMatch], Seq[(Long, String)])] = {
+  def currentTeamPlayedMatchesAndUpcomingOpponents(teamId: Long): ZIO[ChppClient & Client & AuthConfig, HattidError, (Seq[NearestMatch], Seq[(Long, String)])] = withClient { chppClient =>
     chppClient.executeZio[Matches, MatchesRequest](MatchesRequest(teamId = Some(teamId)))
       .map(matches => {
         val currentTeamPlayedMatches = matches.team.matchList
@@ -177,7 +182,7 @@ class ChppService @Inject() (val chppClient: ChppClient) {
       })
   }
 
-  def matchDetails(matchId: Long): ZIO[Client & AuthConfig, HattidError, MatchDetails] = {
+  def matchDetails(matchId: Long): ZIO[ChppClient & Client & AuthConfig, HattidError, MatchDetails] = withClient { chppClient =>
     chppClient.executeZio[MatchDetails, MatchDetailsRequest](MatchDetailsRequest(matchId = Some(matchId)))
       .mapError {
         case BadRequestError(error) => NotFoundError(
@@ -188,7 +193,7 @@ class ChppService @Inject() (val chppClient: ChppClient) {
       }
   }
 
-  def getPlayerAvatar(teamId: Int, playerId: Long): ZIO[Client & AuthConfig, HattidError, Seq[AvatarPart]] = {
+  def getPlayerAvatar(teamId: Int, playerId: Long): ZIO[ChppClient & Client & AuthConfig, HattidError, Seq[AvatarPart]] = withClient { chppClient =>
     chppClient.executeZio[AvatarContainer, AvatarRequest](AvatarRequest(teamId = Some(teamId)))
       .map(avatar => {
         val player = avatar.team.players.filter(_.playerId == playerId)
@@ -199,14 +204,15 @@ class ChppService @Inject() (val chppClient: ChppClient) {
       })
   }
   
-  def search(searchRequest: SearchRequest): ZIO[Client & AuthConfig, HattidError, Search] = {
+  def search(searchRequest: SearchRequest): ZIO[ChppClient & Client & AuthConfig, HattidError, Search] = withClient { chppClient =>
     chppClient.executeZio[Search, SearchRequest](searchRequest)
   }
   
-  def leagueFixtures(leagueUnitId: Int, offsettedSeason: Int): ZIO[Client & AuthConfig, HattidError, LeagueFixtures] = {
+  def leagueFixtures(leagueUnitId: Int, offsettedSeason: Int): ZIO[ChppClient & Client & AuthConfig, HattidError, LeagueFixtures] = withClient { chppClient =>
     chppClient.executeZio[LeagueFixtures, LeagueFixturesRequest](LeagueFixturesRequest(leagueLevelUnitId = Some(leagueUnitId), season = Some(offsettedSeason)))
   }
   
-  def translations(languageId: Int): ZIO[Client & AuthConfig, HattidError, Translations] = 
+  def translations(languageId: Int): ZIO[ChppClient & Client & AuthConfig, HattidError, Translations] =  withClient { chppClient =>
     chppClient.executeZio[Translations, TranslationsRequest](TranslationsRequest(languageId = languageId))
+  }
 }

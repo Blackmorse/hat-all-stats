@@ -3,6 +3,7 @@ package databases.requests.model.team
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class TeamCards(teamSortingKey: TeamSortingKey,
                      yellowCards: Int,
@@ -10,6 +11,7 @@ case class TeamCards(teamSortingKey: TeamSortingKey,
 
 object TeamCards {
   implicit val writes: OWrites[TeamCards] = Json.writes[TeamCards]
+  implicit val jsonEncoder: JsonEncoder[TeamCards] = DeriveJsonEncoder.gen[TeamCards]
 
   val mapper: RowParser[TeamCards] = {
       get[Int]("league") ~

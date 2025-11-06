@@ -4,6 +4,7 @@ import chpp.matches.models.Match
 
 import java.util.Date
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class NearestMatch(matchDate: Date,
                         status: String,
@@ -17,7 +18,9 @@ case class NearestMatch(matchDate: Date,
 
 object NearestMatch {
   implicit val writes: OWrites[NearestMatch] = Json.writes[NearestMatch]
-
+  implicit val jsonEncoder: JsonEncoder[NearestMatch] = DeriveJsonEncoder.gen[NearestMatch]
+  implicit val dateEncoder: JsonEncoder[Date] = JsonEncoder[Long].contramap(_.getTime)
+  
   def chppMatchToNearestMatch(matc: Match): NearestMatch =
     NearestMatch(
       matchDate = matc.matchDate,

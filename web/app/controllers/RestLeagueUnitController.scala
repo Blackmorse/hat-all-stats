@@ -26,7 +26,7 @@ import service.ChppService
 import service.leagueinfo.LeagueInfoServiceZIO
 import service.leagueunit.{LeagueUnitCalculatorService, LeagueUnitTeamStat, LeagueUnitTeamStatHistoryInfo, LeagueUnitTeamStatsWithPositionDiff}
 import utils.{LeagueNameParser, Romans}
-import webclients.AuthConfig
+import webclients.{AuthConfig, ChppClient}
 import zio.ZIO
 import zio.http.Client
 
@@ -44,7 +44,7 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
       .map(id => LongWrapper(id))
   }
 
-  private def findLeagueUnitIdByName(leagueUnitName: String, leagueId: Int): ZIO[Client & AuthConfig & ChppService, HattidError, Long] = {
+  private def findLeagueUnitIdByName(leagueUnitName: String, leagueId: Int): ZIO[ChppClient & Client & AuthConfig & ChppService, HattidError, Long] = {
     if(leagueUnitName == "I.1") {
       ZIO.succeed(CommonData.higherLeagueMap(leagueId).leagueUnitId): ZIO[Any, HattidError, Long]
     } else {
@@ -280,7 +280,7 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
   private def teamPositionsInternal[T](leagueUnitId: Int,
                                        season: Int,
                                        resultFunc: LeagueUnitTeamStatHistoryInfo => Seq[T],
-                                       fallbackResultFunc: LeagueDetails => Seq[T]): ZIO[Client & AuthConfig & ChppService & LeagueInfoServiceZIO, HattidError, Seq[T]] = {
+                                       fallbackResultFunc: LeagueDetails => Seq[T]): ZIO[ChppClient & Client & AuthConfig & ChppService & LeagueInfoServiceZIO, HattidError, Seq[T]] = {
     for {
       chppService   <- ZIO.service[ChppService]
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
@@ -289,7 +289,7 @@ class RestLeagueUnitController @Inject() (val controllerComponents: ControllerCo
     } yield history
   }
 
-  private def historyInfo[T](leagueDetails: LeagueDetails, leagueUnitId: Int, season: Int): ZIO[Client & AuthConfig & ChppService & LeagueInfoServiceZIO, HattidError, LeagueUnitTeamStatHistoryInfo] = {
+  private def historyInfo[T](leagueDetails: LeagueDetails, leagueUnitId: Int, season: Int): ZIO[ChppClient & Client & AuthConfig & ChppService & LeagueInfoServiceZIO, HattidError, LeagueUnitTeamStatHistoryInfo] = {
     val leagueId = leagueDetails.leagueId
     for {
       chppService       <- ZIO.service[ChppService]

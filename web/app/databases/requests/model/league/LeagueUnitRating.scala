@@ -3,6 +3,7 @@ package databases.requests.model.league
 import anorm.SqlParser.get
 import anorm.~
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class LeagueUnitRating(leagueUnitId: Long, leagueUnitName: String,
                             hatStats: Int, midfield: Int, defense: Int, attack: Int,
@@ -10,6 +11,7 @@ case class LeagueUnitRating(leagueUnitId: Long, leagueUnitName: String,
 
 object LeagueUnitRating {
   implicit val writes: OWrites[LeagueUnitRating] = Json.writes[LeagueUnitRating]
+  implicit val jsonEncoder: JsonEncoder[LeagueUnitRating] = DeriveJsonEncoder.gen[LeagueUnitRating]
 
   val leagueUnitRatingMapper = {
     get[Long]("league_unit_id") ~

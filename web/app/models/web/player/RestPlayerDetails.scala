@@ -1,6 +1,7 @@
 package models.web.player
 
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class RestPlayerDetails(playerId: Long,
                              firstName: String,
@@ -25,16 +26,19 @@ case class CurrentPlayerCharacteristics(position: String,
 
 object CurrentPlayerCharacteristics {
   implicit val writes: OWrites[CurrentPlayerCharacteristics] = Json.writes[CurrentPlayerCharacteristics]
+  implicit val jsonEncoder: JsonEncoder[CurrentPlayerCharacteristics] = DeriveJsonEncoder.gen[CurrentPlayerCharacteristics]
 }
 
 object RestPlayerDetails {
   implicit val writes: OWrites[RestPlayerDetails] = Json.writes[RestPlayerDetails]
+  implicit val jsonEncoder: JsonEncoder[RestPlayerDetails] = DeriveJsonEncoder.gen[RestPlayerDetails]
 }
 
 case class AvatarPart(url: String, x: Int, y: Int)
 
 object AvatarPart {
   implicit val writes: OWrites[AvatarPart] = Json.writes[AvatarPart]
+  implicit val jsonEncoder: JsonEncoder[AvatarPart] = DeriveJsonEncoder.gen[AvatarPart]
 }
 
 case class PlayerLeagueUnitEntry(season: Int,
@@ -55,6 +59,7 @@ case class PlayerLeagueUnitEntry(season: Int,
 
 object PlayerLeagueUnitEntry {
   implicit val writes: OWrites[PlayerLeagueUnitEntry] = Json.writes[PlayerLeagueUnitEntry]
+  implicit val jsonEncoder: JsonEncoder[PlayerLeagueUnitEntry] = DeriveJsonEncoder.gen[PlayerLeagueUnitEntry]
 }
 
 
@@ -69,6 +74,7 @@ case class PlayerSeasonStats(entries: List[PlayerSeasonStatsEntry],
 
 object PlayerSeasonStats {
   implicit val writes: OWrites[PlayerSeasonStats] = Json.writes[PlayerSeasonStats]
+  implicit val jsonEncoder: JsonEncoder[PlayerSeasonStats] = DeriveJsonEncoder.gen[PlayerSeasonStats]
 }
 
 case class PlayerSeasonStatsEntry(season: Int,
@@ -82,6 +88,7 @@ case class PlayerSeasonStatsEntry(season: Int,
 
 object PlayerSeasonStatsEntry {
   implicit val writes: OWrites[PlayerSeasonStatsEntry] = Json.writes[PlayerSeasonStatsEntry]
+  implicit val jsonEncoder: JsonEncoder[PlayerSeasonStatsEntry] = DeriveJsonEncoder.gen[PlayerSeasonStatsEntry]
 }
 
 case class PlayerChartEntry(age: Int,
@@ -92,5 +99,6 @@ case class PlayerChartEntry(age: Int,
 
 object PlayerChartEntry {
   implicit val writes: OWrites[PlayerChartEntry] = Json.writes[PlayerChartEntry]
+  implicit val jsonEncoder: JsonEncoder[PlayerChartEntry] = DeriveJsonEncoder.gen[PlayerChartEntry]
 }
 

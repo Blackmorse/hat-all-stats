@@ -22,11 +22,13 @@ import java.util.Date
 import javax.inject.Inject
 import play.api.libs.json.Writes.*
 import play.api.libs.json.*
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class NearestMatches(playedMatches: Seq[NearestMatch], upcomingMatches: Seq[NearestMatch])
 
 object NearestMatches {
   implicit val writes: OWrites[NearestMatches] = Json.writes[NearestMatches]
+  implicit val jsonEncoder: JsonEncoder[NearestMatches] = DeriveJsonEncoder.gen[NearestMatches]
 }
 
 class RestTeamController @Inject() (val controllerComponents: ControllerComponents,

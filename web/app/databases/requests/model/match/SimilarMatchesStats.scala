@@ -3,6 +3,7 @@ package databases.requests.model.`match`
 import anorm.{RowParser, ~}
 import anorm.SqlParser.get
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class SimilarMatchesStats(wins: Int,
                                draws: Int,
@@ -13,7 +14,8 @@ case class SimilarMatchesStats(wins: Int,
 
 object SimilarMatchesStats {
   implicit val writes: OWrites[SimilarMatchesStats] = Json.writes[SimilarMatchesStats]
-
+  implicit val jsonEncoder: JsonEncoder[SimilarMatchesStats] = DeriveJsonEncoder.gen[SimilarMatchesStats]
+  
   val mapper: RowParser[SimilarMatchesStats] = {
     get[Int]("wins") ~
     get[Int]("draws") ~

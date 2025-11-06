@@ -13,7 +13,7 @@ import models.web.{HattidError, StatsType}
 import play.api.Configuration
 import service.{ChppService, TranslationsService}
 import service.leagueinfo.LeagueInfoServiceZIO
-import webclients.AuthConfig
+import webclients.{AuthConfig, ChppClient}
 import zio.cache.{Cache, Lookup}
 import zio.{cache, *}
 import zio.config.*
@@ -42,7 +42,8 @@ object ZioCacheModule {
     DatabaseConfig &
     AuthConfig &
     ClickhousePool &
-    Client
+    Client &
+    ChppClient
 }
 
 case class DatabaseConfig(driver: String,
@@ -73,13 +74,15 @@ class ZioCacheModule extends AbstractModule {
   @Singleton
   def zioEnvironment(restClickhouseDAO: RestClickhouseDAO,
                      chppService: ChppService,
+                     chppClient: ChppClient,
                      configuration: Configuration): ZEnvironment[HattidEnv] = {
     val clickhouseLayer: ULayer[RestClickhouseDAO] = ZLayer.succeed(restClickhouseDAO)
     val chppServiceLayer: ULayer[ChppService] = ZLayer.succeed(chppService)
-    val leagueInfoLayer: ZLayer[Client & AuthConfig & ClickhousePool & RestClickhouseDAO & ChppService, Nothing, LeagueInfoServiceZIO] = LeagueInfoServiceZIO.layer
+    val chppClientLayer: ULayer[ChppClient] = ZLayer.succeed(chppClient)
+    val leagueInfoLayer: ZLayer[ChppClient & Client & AuthConfig & ClickhousePool & RestClickhouseDAO & ChppService, Nothing, LeagueInfoServiceZIO] = LeagueInfoServiceZIO.layer
       .mapError(he => new Exception(he.toString))
       .orDie
-    val translationLayer: ZLayer[Client & AuthConfig & ChppService, HattidError, TranslationsService] = TranslationsService.layer
+    val translationLayer: ZLayer[ChppClient & Client & AuthConfig & ChppService, HattidError, TranslationsService] = TranslationsService.layer
 
     val databaseConfigLayer: ZLayer[Any, Config.Error, DatabaseConfig] = ZLayer {
       TypesafeConfigProvider
@@ -123,12 +126,13 @@ class ZioCacheModule extends AbstractModule {
       Runtime.default.unsafe.run {
         ZIO.scoped {
           for {
-            leagueInfoEnv  <- ((clickhouseLayer ++ chppServiceLayer ++ chppAuthConfigLayer ++ httpClientLayer ++ (databaseConfigLayer >>> poolLayer)) >>> leagueInfoLayer).build
-            translationEnv <- ((chppAuthConfigLayer ++ chppServiceLayer ++ httpClientLayer) >>> translationLayer).build
+            leagueInfoEnv  <- ((clickhouseLayer ++ chppServiceLayer ++ chppAuthConfigLayer ++ httpClientLayer ++ chppClientLayer ++ (databaseConfigLayer >>> poolLayer)) >>> leagueInfoLayer).build
+            translationEnv <- ((chppAuthConfigLayer ++ chppServiceLayer ++ httpClientLayer ++ chppClientLayer) >>> translationLayer).build
             dbConfigEnv    <- databaseConfigLayer.build
             chppConfigEnv  <- chppAuthConfigLayer.build
             zPoolEnv       <- (databaseConfigLayer >>> poolLayer).build
             httpClientEnv  <- httpClientLayer.build
+            chppClientEnv  <- chppClientLayer.build
 //            netty          <- (ZLayer.succeed(NettyConfig.default) >>> NettyClientDriver.live).build
           } yield leagueInfoEnv ++
             translationEnv ++
@@ -137,7 +141,8 @@ class ZioCacheModule extends AbstractModule {
             dbConfigEnv ++
             chppConfigEnv ++
             zPoolEnv ++
-            httpClientEnv
+            httpClientEnv ++
+            chppClientEnv
 //            netty
         }
       }.getOrThrowFiberFailure()

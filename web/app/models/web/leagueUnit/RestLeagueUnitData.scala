@@ -1,11 +1,13 @@
 package models.web.leagueUnit
 
 import chpp.leaguedetails.models.LeagueDetails
+import databases.requests.model.promotions.PromotionWithType
 import models.web.rest.CountryLevelData
 import models.web.rest.LevelData.Rounds
 import play.api.libs.json.{Json, OWrites}
 import service.leagueinfo.{LeagueState, LoadingInfo}
 import utils.{CurrencyUtils, Romans}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class RestLeagueUnitData(leagueId: Int,
                               leagueName: String,
@@ -23,6 +25,7 @@ case class RestLeagueUnitData(leagueId: Int,
 
 object RestLeagueUnitData {
   implicit val writes: OWrites[RestLeagueUnitData] = Json.writes[RestLeagueUnitData]
+  implicit val jsonEncoder: JsonEncoder[RestLeagueUnitData] = DeriveJsonEncoder.gen[RestLeagueUnitData]
 
   def apply(leagueDetails: LeagueDetails, leagueState: LeagueState, leagueUnitId: Long): RestLeagueUnitData =
     RestLeagueUnitData(

@@ -33,3 +33,4 @@ project/project/project/metals.sbt
 project/project/target
 target/
 .metals/
+web-zio/conf/configuration.conf
