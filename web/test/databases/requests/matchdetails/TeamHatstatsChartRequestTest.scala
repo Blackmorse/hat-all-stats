@@ -8,7 +8,7 @@ import org.scalatest.matchers.should.Matchers
 
 class TeamHatstatsChartRequestTest extends AnyFunSuite with Matchers {
   test("Test TeamHatstatsChartRequest") {
-    val builder = TeamHatstatsChartRequest.builder(OrderingKeyPath(
+    val builder = TeamHatstatsChartRequest.sqlBuilder(OrderingKeyPath(
       leagueId = Some(11),
       divisionLevel = Some(1),
       teamId = Some(111),

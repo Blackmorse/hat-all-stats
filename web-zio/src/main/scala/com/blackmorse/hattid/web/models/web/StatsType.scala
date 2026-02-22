@@ -1,0 +1,22 @@
+package com.blackmorse.hattid.web.models.web
+
+import sqlbuilder.{SqlBuilder, functions}
+
+abstract class StatsType
+
+case class MultiplyRoundsType(function: String, aggregateFunction: functions.func) extends StatsType {
+  override def toString: String = function
+}
+
+object Accumulate extends StatsType {
+  override def toString: String = "all"
+}
+
+object Avg extends MultiplyRoundsType("avg", functions.avg)
+
+object Max extends MultiplyRoundsType("max", functions.max)
+
+
+case class Round(round: Int) extends StatsType {
+  override def toString: String = round.toString
+}

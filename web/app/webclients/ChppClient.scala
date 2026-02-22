@@ -1,6 +1,5 @@
 package webclients
 
-import chpp.ChppRequestExecutor.{ChppErrorResponse, ChppUnparsableErrorResponse, ModelUnparsableResponse}
 import chpp.chpperror.ChppError
 import chpp.{AbstractRequest, OauthTokens, ResponseParser}
 import com.lucidchart.open.xtract.{ParseError, XmlReader}
@@ -43,26 +42,25 @@ class ChppClient @Inject()() {
         requestData      = request.requestData(OauthTokens(authConfig.accessToken, authConfig.customerKey, authConfig.customerSecret, authConfig.accessTokenSecret))
         client           <- ZIO.serviceWith[Client](_.host("chpp.hattrick.org/chppxml.ashx").port(443))
         zioHttpRequest   = Request.get(requestData.uri).setHeaders(Headers.apply("Authorization" -> requestData.header))
-        _ <- ZIO.debug(zioHttpRequest.toString)
         res              <- ZClient.batched(zioHttpRequest)
         body             <- res.bodyAs[String]
-        _ <- ZIO.debug(body.substring(0, 20))
         response         <- ZIO.fromTry( Try { ResponseParser.parseResponse(request, body) } )
       } yield response)
         //TODO legacy double errors conversion, should be fixed later
         .mapError {
-          case ChppErrorResponse(chppError) => ChppErrorResponseZ(chppError)
-          case ChppUnparsableErrorResponse(errors, rawResponse) => UnparsableChppError(errors, rawResponse)
-          case ModelUnparsableResponse(errors, rawResponse, req) => UnparsableModelErrorZ(errors, rawResponse, req)
-          case e: Throwable => ExternalChppError(e)
-        }.mapError {
-          case ExternalChppError(t) => BadGatewayError("CHPP service is unavailable, error: " + t.getMessage)
-          case UnparsableModelErrorZ(errors, rawResponse, req) =>
-            val errorsString = errors.map(_.toString).mkString(", ")
-            BadGatewayError("Bad response from CHPP, errors: " + errorsString.substring(0, Math.min(300, errorsString.length)))
-          case UnparsableChppError(errors, rawResponse) => BadGatewayError("Unclear error from CHPP, errors: " + rawResponse.substring(0, Math.min(300, rawResponse.length)))
-          case ChppErrorResponseZ(chppError) => BadRequestError(chppError.error)
+          //          case ChppErrorResponse(chppError) => ChppErrorResponseZ(chppError)
+          //          case ChppUnparsableErrorResponse(errors, rawResponse) => UnparsableChppError(errors, rawResponse)
+          //          case ModelUnparsableResponse(errors, rawResponse, req) => UnparsableModelErrorZ(errors, rawResponse, req)
+          case e => HattidInternalError("tumtum")
         }
+//        }.mapError {
+//          case ExternalChppError(t) => BadGatewayError("CHPP service is unavailable, error: " + t.getMessage)
+//          case UnparsableModelErrorZ(errors, rawResponse, req) =>
+//            val errorsString = errors.map(_.toString).mkString(", ")
+//            BadGatewayError("Bad response from CHPP, errors: " + errorsString.substring(0, Math.min(300, errorsString.length)))
+//          case UnparsableChppError(errors, rawResponse) => BadGatewayError("Unclear error from CHPP, errors: " + rawResponse.substring(0, Math.min(300, rawResponse.length)))
+//          case ChppErrorResponseZ(chppError) => BadRequestError(chppError.error)
+//        }
     }
   }
 }

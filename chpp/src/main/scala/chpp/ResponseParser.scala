@@ -1,10 +1,24 @@
 package chpp
 
-import chpp.ChppRequestExecutor.{ChppErrorResponse, ChppUnparsableErrorResponse, ModelUnparsableResponse}
 import chpp.chpperror.ChppError
-import com.lucidchart.open.xtract.XmlReader
+import com.lucidchart.open.xtract.{ParseError, XmlReader}
 
 import scala.xml.{Elem, XML}
+
+
+
+case class ChppErrorResponse(chppError: ChppError) extends Exception
+case class ChppUnparsableErrorResponse(errors: Seq[ParseError], rawResponse: String) extends Exception {
+  override def toString: String = {
+    s"$errors \n rawResponse: $rawResponse"
+  }
+}
+
+case class ModelUnparsableResponse(errors: Seq[ParseError], rawResponse: String, request: String) extends Exception {
+  override def toString: String = {
+    errors.mkString(", ") + "\n " + rawResponse + s"\n request: $request"
+  }
+}
 
 object ResponseParser {
   def parseResponse[Model](request: AbstractRequest[Model], rawResponse: String)(implicit reader: XmlReader[Model]): Model = {

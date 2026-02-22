@@ -1,0 +1,68 @@
+package com.blackmorse.hattid.web.databases.requests.matchdetails
+
+import anorm.RowParser
+import com.blackmorse.hattid.web.databases.dao.RestClickhouseDAO
+import com.blackmorse.hattid.web.databases.requests.ClickhouseRequest.implicits.ClauseEntryExtended
+import com.blackmorse.hattid.web.databases.requests.{ClickhouseRequest, OrderingKeyPath}
+import com.blackmorse.hattid.web.databases.requests.model.`match`.TeamMatch
+import sqlbuilder.Select
+import ClickhouseRequest.*
+import com.blackmorse.hattid.web.models.web.HattidError
+import zio.{IO, ZIO}
+
+object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
+  override val rowParser: RowParser[TeamMatch] = TeamMatch.mapper
+
+  def execute(season: Int, orderingKeyPath: OrderingKeyPath): DBIO[List[TeamMatch]] = wrapErrors {
+    import sqlbuilder.SqlBuilder.implicits._
+    val builder = Select(
+        "season",
+        "league_id",
+        "dt",
+        "round",
+        "team_name",
+        "team_id",
+        "league_unit_name",
+        "league_unit_id",
+        "opposite_team_name",
+        "opposite_team_id",
+        "match_id",
+        "is_home_match",
+        "goals",
+        "enemy_goals",
+        "formation",
+        "opposite_formation",
+        "tactic_type",
+        "tactic_skill",
+        "opposite_tactic_type",
+        "opposite_tactic_skill",
+        "rating_midfield",
+        "rating_right_def",
+        "rating_mid_def",
+        "rating_left_def",
+        "rating_right_att",
+        "rating_mid_att",
+        "rating_left_att",
+        "rating_indirect_set_pieces_def",
+        "rating_indirect_set_pieces_att",
+        "opposite_rating_midfield",
+        "opposite_rating_left_def",
+        "opposite_rating_mid_def",
+        "opposite_rating_right_def",
+        "opposite_rating_left_att",
+        "opposite_rating_mid_att",
+        "opposite_rating_right_att",
+        "opposite_rating_indirect_set_pieces_def",
+        "opposite_rating_indirect_set_pieces_att"
+      ).from("hattrick.match_details")
+      .where
+        .orderingKeyPath(orderingKeyPath)
+        .season(season)
+      .orderBy("round".asc)
+
+    for {
+      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
+      result <- restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
+    } yield result
+  }
+}
