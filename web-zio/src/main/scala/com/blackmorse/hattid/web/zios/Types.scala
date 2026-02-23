@@ -5,6 +5,7 @@ import com.blackmorse.hattid.web.databases.dao.RestClickhouseDAO
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
 import com.blackmorse.hattid.web.service.leagueunit.LeagueUnitCalculatorService
 import com.blackmorse.hattid.web.service.*
+import com.blackmorse.hattid.web.service.cache.OverviewCache
 import com.blackmorse.hattid.web.webclients.{AuthConfig, ChppClient}
 import zio.ZPool
 import zio.http.{Client, Server}
@@ -22,8 +23,8 @@ type HattidEnv = ChppClient &
   LeagueUnitCalculatorService &
   TeamsService &
   TranslationsService &
-  RestOverviewStatsService &
-  SimilarMatchesService
+  SimilarMatchesService &
+  OverviewCache.CacheType
 
 type CHPPServices = ChppClient & Client & AuthConfig & ChppService
 type DBServices = ClickhousePool & RestClickhouseDAO

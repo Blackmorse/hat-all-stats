@@ -5,6 +5,7 @@ import com.blackmorse.hattid.web.models.web.HattidError
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
 import com.blackmorse.hattid.web.service.leagueunit.LeagueUnitCalculatorService
 import com.blackmorse.hattid.web.service.*
+import com.blackmorse.hattid.web.service.cache.OverviewCache
 import com.blackmorse.hattid.web.webclients.{AuthConfig, ChppClient}
 //import com.clickhouse.jdbc.ClickHouseDriver
 import zio.config.magnolia.deriveConfig
@@ -93,8 +94,8 @@ object HattidEnv {
       httpClientEnv <- httpClientLayer.build
       leagueInfoEnv <- ((clickhouseLayer ++ chppServiceLayer ++ chppAuthConfigLayer ++ httpClientLayer ++ chppClientLayer ++ (databaseConfigLayer >>> poolLayer)) >>> leagueInfoLayer).build
       translationEnv <- ((chppAuthConfigLayer ++ chppServiceLayer ++ httpClientLayer ++ chppClientLayer) >>> translationLayer).build
-      overviewEnv <- ZLayer.succeed(new RestOverviewStatsService()).build
       similarMatchesServiceEnv <- ZLayer.succeed(new SimilarMatchesService()).build
+      overviewCache <- ((clickhouseLayer ++ (databaseConfigLayer >>> poolLayer)) >>> OverviewCache.layer).build
     } yield {
       serverEnv ++
         chppClientEnv ++
@@ -108,8 +109,8 @@ object HattidEnv {
         calculatorServiceEnv ++
         teamServiceEnv ++
         translationEnv ++
-        overviewEnv ++
-        similarMatchesServiceEnv
+        similarMatchesServiceEnv ++
+        overviewCache
     }
 
     res

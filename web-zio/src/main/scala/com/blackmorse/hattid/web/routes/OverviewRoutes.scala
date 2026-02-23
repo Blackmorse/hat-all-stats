@@ -11,6 +11,7 @@ import com.blackmorse.hattid.web.zios.*
 import com.blackmorse.hattid.web.models.web.HattidError
 import com.blackmorse.hattid.web.models.web.world.{WorldData, WorldLoadingInfo}
 import com.blackmorse.hattid.web.service.RestOverviewStatsService
+import com.blackmorse.hattid.web.service.cache.OverviewCache
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
 import zio.*
 import zio.http.*
@@ -20,19 +21,19 @@ object OverviewRoutes {
   private val GetOverview = Method.GET / "api" / "overview"
  
   val routes: Seq[Route[HattidEnv, HattidError]] = Seq(
-    GetOverview / "numberOverview" -> overviewHandler(_.numberOverview),
-    GetOverview / "formations" -> overviewHandler(_.formations),
-    GetOverview / "averagesOverview" -> overviewHandler(_.averageOverview),
-    GetOverview / "surprisingMatches" -> overviewHandler(_.surprisingMatches),
-    GetOverview / "topHatstatsTeams" -> overviewHandler(_.topHatstatsTeams),
-    GetOverview / "topSalaryTeams" -> overviewHandler(_.topSalaryTeams),
-    GetOverview / "topMatches" -> overviewHandler(_.topMatches),
-    GetOverview / "topSalaryPlayers" -> overviewHandler(_.topSalaryPlayers),
-    GetOverview / "topRatingPlayers" -> overviewHandler(_.topRatingPlayers),
+    GetOverview / "numberOverview" -> overviewHandler(RestOverviewStatsService.numberOverview),
+    GetOverview / "formations" -> overviewHandler(RestOverviewStatsService.formations),
+    GetOverview / "averagesOverview" -> overviewHandler(RestOverviewStatsService.averageOverview),
+    GetOverview / "surprisingMatches" -> overviewHandler(RestOverviewStatsService.surprisingMatches),
+    GetOverview / "topHatstatsTeams" -> overviewHandler(RestOverviewStatsService.topHatstatsTeams),
+    GetOverview / "topSalaryTeams" -> overviewHandler(RestOverviewStatsService.topSalaryTeams),
+    GetOverview / "topMatches" -> overviewHandler(RestOverviewStatsService.topMatches),
+    GetOverview / "topSalaryPlayers" -> overviewHandler(RestOverviewStatsService.topSalaryPlayers),
+    GetOverview / "topRatingPlayers" -> overviewHandler(RestOverviewStatsService.topRatingPlayers),
     GetOverview / "totalOverview" -> totalOverviewHandler,
-    GetOverview / "matchAttendance" -> overviewHandler(_.topMatchAttendance),
-    GetOverview / "topVictories" -> overviewHandler(_.topTeamVictories),
-    GetOverview / "topSeasonScorers" -> overviewHandler(_.topSeasonScorers),
+    GetOverview / "matchAttendance" -> overviewHandler(RestOverviewStatsService.topMatchAttendance),
+    GetOverview / "topVictories" -> overviewHandler(RestOverviewStatsService.topTeamVictories),
+    GetOverview / "topSeasonScorers" -> overviewHandler(RestOverviewStatsService.topSeasonScorers),
     GetOverview / "worldData" -> worldDataHandler,
     GetOverview / "teamNumbersChart" -> numbersChartHandler(TeamsNumberOverviewChartRequest),
     GetOverview / "playerNumbersChart" -> numbersChartHandler(PlayersNumberOverviewChartRequest),
@@ -121,12 +122,11 @@ object OverviewRoutes {
       round         <- req.intParam("round")
       leagueId      <- req.intParamOpt("leagueId")
       divisionLevel <- req.intParamOpt("divisionLevel")
-      restOverviewStatsService     <- ZIO.service[RestOverviewStatsService]
       leagueSetButNotExists        <- leagueSetButNotExists(leagueId)
       divisionLevelSetButNotExists <- divisionLevelSetButNotExists(leagueId, divisionLevel, season, round)
       //in case divisionLevel or league is Empty - return nothing
       res                          <- if (leagueSetButNotExists || divisionLevelSetButNotExists) ZIO.succeed(TotalOverview.empty())
-                             else restOverviewStatsService.totalOverview(season, round, leagueId, divisionLevel)
+                             else RestOverviewStatsService.totalOverview(season, round, leagueId, divisionLevel)
 
     } yield Response.json(res.toJson)
   }
@@ -140,16 +140,15 @@ object OverviewRoutes {
       case _ => ZIO.succeed(false)
     }
   
-  private def overviewHandler[T : JsonEncoder](overviewFunc: (service: RestOverviewStatsService) => (season: Int, round: Int,
-                                                                                                     leagueId: Option[Int], divisionLevel: Option[Int]) => ZIO[DBServices, HattidError, T]) 
+  private def overviewHandler[T : JsonEncoder](overviewFunc: (season: Int, round: Int,
+                                                                                                     leagueId: Option[Int], divisionLevel: Option[Int]) => ZIO[DBServices & OverviewCache.CacheType, HattidError, T]) 
   = handler { (req: Request) =>
     for {
       season        <- req.intParam("season")
       round         <- req.intParam("round")
       leagueId      <- req.intParamOpt("leagueId")
       divisionLevel <- req.intParamOpt("divisionLevel")
-      service       <- ZIO.service[RestOverviewStatsService]
-      result        <- overviewFunc(service)(season, round, leagueId, divisionLevel)
+      result        <- overviewFunc(season, round, leagueId, divisionLevel)
     } yield Response.json(result.toJson)
   }
 }
