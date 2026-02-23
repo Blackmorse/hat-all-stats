@@ -34,6 +34,6 @@ object CompareTeamRankingsRequest extends ClickhouseRequest[TeamRankings] {
          .teamId(teamId2)
          .rankType("league_id")
 
-    ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO => restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser))
+    RestClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
   }
 }

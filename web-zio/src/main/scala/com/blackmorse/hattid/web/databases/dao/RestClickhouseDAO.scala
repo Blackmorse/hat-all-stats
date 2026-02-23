@@ -7,7 +7,7 @@ import io.github.gaelrenoux.tranzactio.anorm.*
 import zio.*
 
 
-class RestClickhouseDAO {
+object RestClickhouseDAO {
 
   def executeZIO[T](simpleRow: SimpleSql[Row], rowParser: RowParser[T]): ZIO[ClickhousePool, Throwable, List[T]] = {
     ZIO.scoped {

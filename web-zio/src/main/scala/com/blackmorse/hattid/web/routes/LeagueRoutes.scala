@@ -1,6 +1,6 @@
 package com.blackmorse.hattid.web.routes
 
-import com.blackmorse.hattid.web.zios.{DBServices, HattidEnv, restTableData}
+import com.blackmorse.hattid.web.zios.{HattidEnv, restTableData}
 import com.blackmorse.hattid.web.databases.requests.matchdetails.*
 import com.blackmorse.hattid.web.databases.requests.model.promotions.PromotionWithType
 import com.blackmorse.hattid.web.databases.requests.playerstats.dreamteam.DreamTeamRequest
@@ -9,6 +9,7 @@ import com.blackmorse.hattid.web.databases.requests.playerstats.team.{TeamAgeInj
 import com.blackmorse.hattid.web.databases.requests.promotions.PromotionsRequest
 import com.blackmorse.hattid.web.databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import com.blackmorse.hattid.web.databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
+import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.models.web.league.RestLeagueData
 import com.blackmorse.hattid.web.zios.*
 import com.blackmorse.hattid.web.models.web.{HattidError, NotFoundError}
@@ -59,7 +60,7 @@ object LeagueRoutes {
     } yield Response.json(entities.toJson)
   }
   
-  private def promotionsHandler: Handler[DBServices & LeagueInfoServiceZIO, HattidError, (Int, Request), Response] = handler { (leagueId: Int, req: Request) =>
+  private def promotionsHandler: Handler[ClickhousePool & LeagueInfoServiceZIO, HattidError, (Int, Request), Response] = handler { (leagueId: Int, req: Request) =>
     for {
       leagueInfoService <- ZIO.service[LeagueInfoServiceZIO]
       currentSeason     <- leagueInfoService.currentSeason(leagueId)
@@ -69,7 +70,7 @@ object LeagueRoutes {
     } yield Response.json(PromotionWithType.convert(entities).toJson)
   }
 
-  private def teamGoalPointsHandler: Handler[DBServices & LeagueInfoServiceZIO, HattidError, (Int, Request), Response] = handler { (leagueId: Int, req: Request) =>
+  private def teamGoalPointsHandler: Handler[ClickhousePool & LeagueInfoServiceZIO, HattidError, (Int, Request), Response] = handler { (leagueId: Int, req: Request) =>
     for {
       leagueInfoService        <- ZIO.service[LeagueInfoServiceZIO]
       restStatisticsParameters <- req.restStatisticsParameters()
@@ -85,7 +86,7 @@ object LeagueRoutes {
     } yield Response.json(restTableData(entities, restStatisticsParameters.pageSize).toJson)
   }
   
-  private def teamSalaryTSIHandler: Handler[DBServices, HattidError, (Int, Request), Response] = handler { (leagueId: Int, req: Request) =>
+  private def teamSalaryTSIHandler: Handler[ClickhousePool, HattidError, (Int, Request), Response] = handler { (leagueId: Int, req: Request) =>
     for {
       restStatisticsParameters <- req.restStatisticsParameters()
       playedInLastMatch        <- req.boolParam("playedInLastMatch")
@@ -99,7 +100,7 @@ object LeagueRoutes {
   }
 
 
-  private def playerStatsHandler[T: JsonEncoder, R](clickhouseRequest: ClickhousePlayerStatsRequest[T]): Handler[DBServices, HattidError, (Int, Request), Response] = handler { (leagueId: Int, req: Request) =>
+  private def playerStatsHandler[T: JsonEncoder, R](clickhouseRequest: ClickhousePlayerStatsRequest[T]): Handler[ClickhousePool, HattidError, (Int, Request), Response] = handler { (leagueId: Int, req: Request) =>
     for {
       restStatisticsParameters <- req.restStatisticsParameters()
       playersParameters        <- req.playersParameters()
@@ -112,7 +113,7 @@ object LeagueRoutes {
   }
 
 
-  private def statisticsHandler[T: JsonEncoder, R](clickhouseRequest: ClickhouseStatisticsRequest[T]): Handler[DBServices, HattidError, (Int, Request), Response] = handler { (leagueId: Int, req: Request) =>
+  private def statisticsHandler[T: JsonEncoder, R](clickhouseRequest: ClickhouseStatisticsRequest[T]): Handler[ClickhousePool, HattidError, (Int, Request), Response] = handler { (leagueId: Int, req: Request) =>
     for {
       restStatisticsParameters <- req.restStatisticsParameters()
       entities                 <- clickhouseRequest.execute(

@@ -2,9 +2,9 @@ package com.blackmorse.hattid.web.service.cache
 
 import com.blackmorse.hattid.web.databases.requests.model.overview.{AveragesOverview, NumberOverview}
 import com.blackmorse.hattid.web.databases.requests.overview.*
+import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.models.web.HattidError
 import com.blackmorse.hattid.web.service.cache.CacheKey.EntityType
-import com.blackmorse.hattid.web.zios.DBServices
 import zio.cache.{Cache, Lookup}
 import zio.{ZIO, ZLayer}
 
@@ -37,7 +37,7 @@ case class CacheKey(
 object OverviewCache {
   type CacheType = Cache[CacheKey, HattidError, List[Product]]
   
-  val layer: ZLayer[DBServices, Nothing, CacheType] = ZLayer.fromZIO {
+  val layer: ZLayer[ClickhousePool, Nothing, CacheType] = ZLayer.fromZIO {
     Cache.make(
       capacity = 50000,
       timeToLive = zio.Duration.fromScala(28.days),

@@ -13,10 +13,8 @@ abstract class ClickhouseChartRequest[T <: Chart] extends ClickhouseRequest[T] {
 
   def execute(orderingKeyPath: OrderingKeyPath, season: Int): DBIO[List[T]] = wrapErrors {
     for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-      _                 <- if (orderingKeyPath.isLeagueUnitLevel) ZIO.unit
-                            else ZIO.fail(BadRequestError("Only league level is supported"))
-      result <- restClickhouseDAO.executeZIO(sqlBuilder(orderingKeyPath, season).sqlWithParameters().build, rowParser)
+      _                 <- ZIO.unless(orderingKeyPath.isLeagueUnitLevel)(ZIO.fail(BadRequestError("Only league level is supported")))
+      result            <- RestClickhouseDAO.executeZIO(sqlBuilder(orderingKeyPath, season).sqlWithParameters().build, rowParser)
     } yield result
   }
 }

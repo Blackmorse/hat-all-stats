@@ -1,6 +1,5 @@
 package com.blackmorse.hattid.web.routes
 
-import com.blackmorse.hattid.web.zios.DBServices
 import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.databases.dao.RestClickhouseDAO
 import com.blackmorse.hattid.web.databases.requests.OrderingKeyPath
@@ -140,8 +139,9 @@ object OverviewRoutes {
       case _ => ZIO.succeed(false)
     }
   
-  private def overviewHandler[T : JsonEncoder](overviewFunc: (season: Int, round: Int,
-                                                                                                     leagueId: Option[Int], divisionLevel: Option[Int]) => ZIO[DBServices & OverviewCache.CacheType, HattidError, T]) 
+  private def overviewHandler[T : JsonEncoder](
+        overviewFunc: (season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]) => ZIO[ClickhousePool & OverviewCache.CacheType, HattidError, T]
+        ) 
   = handler { (req: Request) =>
     for {
       season        <- req.intParam("season")

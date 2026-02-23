@@ -14,10 +14,7 @@ object HistoryInfoRequest extends ClickhouseRequest[HistoryInfo] {
   def execute(leagueId: Option[Int],
               season: Option[Int],
               round: Option[Int]): DBIO[List[HistoryInfo]] = wrapErrors {
-    for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-      result <- restClickhouseDAO.executeZIO(builder(leagueId, season, round).sqlWithParameters().build, rowParser)
-    } yield result
+      RestClickhouseDAO.executeZIO(builder(leagueId, season, round).sqlWithParameters().build, rowParser)
   }
   
 

@@ -2,7 +2,7 @@ name: webZio
 on:
   push:
     branches:
-      - zio_env
+      - master
     paths:
       - chpp/**
       - project/**

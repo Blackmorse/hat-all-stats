@@ -10,6 +10,6 @@ case class TeamDetails(user: User,
 object TeamDetails {
   implicit val reader: XmlReader[TeamDetails] = (
     (__ \ "User").read[User],
-    (__ \ "Teams" \ "Team").read(seq[Team]),
+    (__ \ "Teams" \ "Team").read(using seq[Team]),
   ).mapN(apply)
 }

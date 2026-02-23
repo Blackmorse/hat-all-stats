@@ -47,9 +47,8 @@ trait ClickhousePlayerStatsRequest[T] extends ClickhouseRequest[T] {
               parameters: RestStatisticsParameters,
               playersParameters: PlayersParameters): DBIO[List[T]] = wrapErrors {
     for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
       simpleSql         <- simpleSql(orderingKeyPath, parameters, playersParameters)
-      result            <- restClickhouseDAO.executeZIO(simpleSql, rowParser)
+      result            <- RestClickhouseDAO.executeZIO(simpleSql, rowParser)
     } yield result
   }
 

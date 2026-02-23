@@ -66,10 +66,7 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
         //TODO add Option for limitBy. 12 just greater than 8 - maximum for leagueUnit
         .limitBy(if (oneTeamPerUnit) 1 else 12, "league_unit_id")
 
-      for {
-        restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-        result <- restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
-      } yield result
+        RestClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
     }
   }
 }

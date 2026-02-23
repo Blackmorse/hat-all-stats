@@ -18,10 +18,8 @@ object NewTeamsNumberChartRequest extends OverviewChartRequest[NumbersChartModel
   override def execute(orderingKeyPath: OrderingKeyPath,
                        currentSeason: Int,
                        currentRound: Int): DBIO[List[NumbersChartModel]] = wrapErrors {
-    ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO =>
-      restClickhouseDAO.executeZIO(builder(orderingKeyPath, currentSeason, currentRound).sqlWithParameters().build, rowParser)
-        .map(numbers => numbers.filterNot(ncm => ncm.season == currentSeason && ncm.round > currentRound)) //filter out, because WITH FILL will fill out current season up to 14 round
-    )
+    RestClickhouseDAO.executeZIO(builder(orderingKeyPath, currentSeason, currentRound).sqlWithParameters().build, rowParser)
+      .map(numbers => numbers.filterNot(ncm => ncm.season == currentSeason && ncm.round > currentRound)) //filter out, because WITH FILL will fill out current season up to 14 round
   }
 
   def builder(orderingKeyPath: OrderingKeyPath,

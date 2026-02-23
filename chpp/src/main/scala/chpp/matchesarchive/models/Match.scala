@@ -26,7 +26,7 @@ object Match extends BaseXmlMapper {
     (__ \ "HomeTeam").read[HomeTeam],
     (__ \ "AwayTeam").read[AwayTeam],
     (__ \ "MatchDate").read[String].map(date),
-    (__ \ "MatchType").read(`enum`(MatchType)),
+    (__ \ "MatchType").read(using `enum`(MatchType)),
     (__ \ "MatchContextId").read[Int],
     (__ \ "MatchRuleId").read[Int],
     (__ \ "CupLevel").read[Int],

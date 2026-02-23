@@ -67,8 +67,6 @@ object HattidEnv {
       timeToLive = Duration.fromMillis(30000L)
     )
 
-    val clickhouseLayer: ULayer[RestClickhouseDAO] = ZLayer.succeed(new RestClickhouseDAO())
-
     val leagueInfoLayer = LeagueInfoServiceZIO.layer
 
     val chppServiceLayer: ULayer[ChppService] = ZLayer.succeed(new ChppService)
@@ -86,16 +84,15 @@ object HattidEnv {
       databaseConfigEnv <- databaseConfigLayer.build
       serverEnv <- Server.defaultWithPort(9000).build
       httpClientEnv <- Client.default.build
-      clickhouseEnv <- clickhouseLayer.build
       calculatorServiceEnv <- ZLayer.succeed(new LeagueUnitCalculatorService()).build
       teamServiceEnv <- ZLayer.succeed(new TeamsService()).build
 
       zPoolEnv <- (databaseConfigLayer >>> poolLayer).build
       httpClientEnv <- httpClientLayer.build
-      leagueInfoEnv <- ((clickhouseLayer ++ chppServiceLayer ++ chppAuthConfigLayer ++ httpClientLayer ++ chppClientLayer ++ (databaseConfigLayer >>> poolLayer)) >>> leagueInfoLayer).build
+      leagueInfoEnv <- ((chppServiceLayer ++ chppAuthConfigLayer ++ httpClientLayer ++ chppClientLayer ++ (databaseConfigLayer >>> poolLayer)) >>> leagueInfoLayer).build
       translationEnv <- ((chppAuthConfigLayer ++ chppServiceLayer ++ httpClientLayer ++ chppClientLayer) >>> translationLayer).build
       similarMatchesServiceEnv <- ZLayer.succeed(new SimilarMatchesService()).build
-      overviewCache <- ((clickhouseLayer ++ (databaseConfigLayer >>> poolLayer)) >>> OverviewCache.layer).build
+      overviewCache <- (databaseConfigLayer >>> poolLayer >>> OverviewCache.layer).build
     } yield {
       serverEnv ++
         chppClientEnv ++
@@ -103,7 +100,6 @@ object HattidEnv {
         authConfigEnv ++
         databaseConfigEnv ++
         httpClientEnv ++
-        clickhouseEnv ++
         zPoolEnv ++
         leagueInfoEnv ++
         calculatorServiceEnv ++

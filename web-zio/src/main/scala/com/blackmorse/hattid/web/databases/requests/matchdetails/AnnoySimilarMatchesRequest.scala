@@ -64,6 +64,6 @@ object AnnoySimilarMatchesRequest extends ClickhouseRequest[SimilarMatchesStats]
           .orderBy("dist".desc)
      )
 
-    ZIO.serviceWithZIO[RestClickhouseDAO](_.executeSingleOptZIO(builder.sqlWithParameters().build, rowParser))
+    RestClickhouseDAO.executeSingleOptZIO(builder.sqlWithParameters().build, rowParser)
   }
 }

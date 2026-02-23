@@ -15,7 +15,7 @@ case class StartingLineupPlayer(playerId: Long,
 object StartingLineupPlayer {
   implicit val reader: XmlReader[StartingLineupPlayer] = (
     (__ \ "PlayerID").read[Long],
-    (__ \ "RoleID").read(`enum`(MatchRoleId)),
+    (__ \ "RoleID").read(using `enum`(MatchRoleId)),
     (__ \ "FirstName").read[String],
     (__ \ "LastName").read[String],
     (__ \ "NickName").read[String],

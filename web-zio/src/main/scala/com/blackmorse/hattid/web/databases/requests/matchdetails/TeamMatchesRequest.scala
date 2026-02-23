@@ -60,9 +60,6 @@ object TeamMatchesRequest extends ClickhouseRequest[TeamMatch] {
         .season(season)
       .orderBy("round".asc)
 
-    for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-      result <- restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
-    } yield result
+      RestClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
   }
 }

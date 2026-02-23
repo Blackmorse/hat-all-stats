@@ -63,8 +63,7 @@ object TeamSalaryTSIRequest extends ClickhouseRequest[TeamSalaryTSI] {
     if (!sortingColumns.contains(parameters.sortBy)) {
       ZIO.fail(SqlInjectionError())
     } else {
-      ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO => 
-        restClickhouseDAO.executeZIO(simpleSql(orderingKeyPath, parameters, playedInLastMatch, excludeZeroTsi), rowParser))
+      RestClickhouseDAO.executeZIO(simpleSql(orderingKeyPath, parameters, playedInLastMatch, excludeZeroTsi), rowParser)
     }
   }
 

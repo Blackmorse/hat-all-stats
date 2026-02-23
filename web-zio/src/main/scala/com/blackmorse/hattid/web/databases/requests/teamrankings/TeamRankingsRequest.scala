@@ -68,9 +68,6 @@ object TeamRankingsRequest extends ClickhouseRequest[TeamRankings]{
 
   def execute(fromSeason: Option[Int], toSeason: Option[Int], leagueId: Int, teamId: Long): DBIO[List[TeamRankings]]
   = wrapErrors {
-    for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-      result            <- restClickhouseDAO.executeZIO(simpleSql(fromSeason, toSeason, leagueId, teamId), rowParser)
-    } yield result
+    RestClickhouseDAO.executeZIO(simpleSql(fromSeason, toSeason, leagueId, teamId), rowParser)
   }
 }

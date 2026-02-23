@@ -42,7 +42,7 @@ object League extends BaseXmlMapper {
     (__ \ "EnglishName").read[String],
     (__ \ "LanguageId").read[Int],
     (__ \ "Country").read[Country].optional,
-    (__ \ "Cups" \ "Cup").read(seq[Cup]),
+    (__ \ "Cups" \ "Cup").read(using seq[Cup]),
     (__ \ "NationalTeamId").read[Int],
     (__ \ "U20TeamId").read[Int],
     (__ \ "ActiveTeams").read[Int],

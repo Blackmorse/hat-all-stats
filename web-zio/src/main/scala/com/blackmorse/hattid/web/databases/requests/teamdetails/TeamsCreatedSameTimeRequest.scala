@@ -43,6 +43,6 @@ object TeamsCreatedSameTimeRequest extends ClickhouseRequest[CreatedSameTimeTeam
         .founded.less(datesRange.max)
       .limitBy(1, "team_id")
 
-    ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO => restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser))
+    RestClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
   }
 }

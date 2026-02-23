@@ -18,7 +18,7 @@ case class LineupPlayer(playerId: Long,
 object LineupPlayer extends BaseXmlMapper {
   implicit val reader: XmlReader[LineupPlayer] = (
     (__ \ "PlayerID").read[Long],
-    (__ \ "RoleID").read(`enum`(MatchRoleId)).default(MatchRoleId.UNKNOWN_SLOT),
+    (__ \ "RoleID").read(using `enum`(MatchRoleId)).default(MatchRoleId.UNKNOWN_SLOT),
     (__ \ "FirstName").read[String],
     (__ \ "LastName").read[String],
     (__ \ "NickName").read[String],

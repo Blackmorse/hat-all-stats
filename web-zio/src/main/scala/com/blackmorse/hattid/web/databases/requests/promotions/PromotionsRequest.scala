@@ -50,9 +50,6 @@ object PromotionsRequest extends ClickhouseRequest[Promotion] {
         .and(hasLeagueUnitIdCondition)
         .and(hasTeamIdCondition)
 
-    for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-      result <- restClickhouseDAO.executeZIO(newBuilder.sqlWithParameters().build, rowParser)
-    } yield result
+    RestClickhouseDAO.executeZIO(newBuilder.sqlWithParameters().build, rowParser)
   }
 }

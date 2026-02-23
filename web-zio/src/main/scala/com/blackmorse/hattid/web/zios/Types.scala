@@ -16,8 +16,7 @@ type HattidEnv = ChppClient &
   Client &
   AuthConfig &
   ChppService &
-  ZPool[Nothing, Connection] &
-  RestClickhouseDAO &
+  ClickhousePool &
   Server & 
   LeagueInfoServiceZIO &
   LeagueUnitCalculatorService &
@@ -27,4 +26,3 @@ type HattidEnv = ChppClient &
   OverviewCache.CacheType
 
 type CHPPServices = ChppClient & Client & AuthConfig & ChppService
-type DBServices = ClickhousePool & RestClickhouseDAO

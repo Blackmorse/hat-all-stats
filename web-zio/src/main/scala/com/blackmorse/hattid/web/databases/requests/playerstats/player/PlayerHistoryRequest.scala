@@ -45,9 +45,6 @@ object PlayerHistoryRequest extends ClickhouseRequest[PlayerHistory] {
       .setting("optimize_read_in_order", 0)
 
   def execute(playerId: Long): DBIO[List[PlayerHistory]] = wrapErrors {
-    for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-      result <- restClickhouseDAO.executeZIO(builder(playerId).sqlWithParameters().build, rowParser)
-    } yield result
+    RestClickhouseDAO.executeZIO(builder(playerId).sqlWithParameters().build, rowParser)
   }
 }

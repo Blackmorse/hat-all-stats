@@ -15,7 +15,7 @@ import zio.{IO, ZIO, ZLayer, Console}
 trait ClickhouseRequest[T] {
   val rowParser: RowParser[T]
 
-  def wrapErrorsOpt(zio: ZIO[ClickhousePool & RestClickhouseDAO, Throwable | SqlInjectionError, Option[T]]): DBIO[Option[T]] = {
+  def wrapErrorsOpt(zio: ZIO[ClickhousePool, Throwable | SqlInjectionError, Option[T]]): DBIO[Option[T]] = {
     zio mapError {
       case sqlInjectionError: SqlInjectionError => sqlInjectionError
       case ex: DbException => DbError(ex)
@@ -23,7 +23,7 @@ trait ClickhouseRequest[T] {
     }
   }
   
-  def wrapErrors(zio: ZIO[ClickhousePool & RestClickhouseDAO, Throwable | HattidError, List[T]]): DBIO[List[T]] = {
+  def wrapErrors(zio: ZIO[ClickhousePool, Throwable | HattidError, List[T]]): DBIO[List[T]] = {
     zio
       .tapError {
         case e: Throwable => e.printStackTrace()
@@ -40,13 +40,14 @@ trait ClickhouseRequest[T] {
 }
 
 object ClickhouseRequest {
-  type DBIO[T] = ZIO[ClickhousePool & RestClickhouseDAO, HattidError, T]
+  type DBIO[T] = ZIO[ClickhousePool, HattidError, T]
 
-  implicit class HattidDBZIO[Result](zio: ZIO[RestClickhouseDAO, Throwable | SqlInjectionError, Result]) {
+  implicit class HattidDBZIO[Result](zio: ZIO[Any, Throwable | SqlInjectionError, Result]) {
     def hattidErrors: DBIO[Result] = zio.mapError {
       case sqlInjectionError: SqlInjectionError => sqlInjectionError
       case ex: io.github.gaelrenoux.tranzactio.DbException => DbError(ex)
       case t: Throwable => DbError(t)
+        
     }
   }
 

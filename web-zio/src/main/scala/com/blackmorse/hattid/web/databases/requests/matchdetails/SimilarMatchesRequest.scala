@@ -68,11 +68,7 @@ object SimilarMatchesRequest extends ClickhouseRequest[SimilarMatchesStats] {
                |)""".stripMargin)
     )
 
-    for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-      result <- restClickhouseDAO.executeSingleOptZIO(builder.sqlWithParameters().build, rowParser)
-    } yield result
-
+      RestClickhouseDAO.executeSingleOptZIO(builder.sqlWithParameters().build, rowParser)
   }
 
   private def rates(value1: Int, value2: Int, field1: String, field2: String): String = {

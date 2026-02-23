@@ -6,7 +6,8 @@ import com.blackmorse.hattid.web.databases.requests.teamdetails.TeamsCreatedSame
 import com.blackmorse.hattid.web.databases.requests.teamrankings.CompareTeamRankingsRequest
 import com.blackmorse.hattid.web.models.web.{HattidError, TeamComparison}
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
-import com.blackmorse.hattid.web.zios.{CHPPServices, DBServices}
+import com.blackmorse.hattid.web.zios.CHPPServices
+import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import zio.ZIO
 import zio.http.Client
 import zio.json.{DeriveJsonEncoder, JsonEncoder}
@@ -37,7 +38,7 @@ class TeamsService{
 
   def teamsCreatedSamePeriod(period: HattrickPeriod, 
                              foundedDate: Date,
-                             leagueId: Int): ZIO[LeagueInfoServiceZIO & DBServices, HattidError, List[CreatedSameTimeTeamExtended]] = {
+                             leagueId: Int): ZIO[LeagueInfoServiceZIO & ClickhousePool, HattidError, List[CreatedSameTimeTeamExtended]] = {
     val ranges = getSeasonAndRoundRanges(foundedDate)
 
     val range = period match {
@@ -59,7 +60,7 @@ class TeamsService{
     })
   }
   
-  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[CHPPServices & DBServices, HattidError, TeamComparison] = {
+  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[CHPPServices & ClickhousePool, HattidError, TeamComparison] = {
     val team1Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId1))
     val team2Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId2))
     
@@ -69,7 +70,7 @@ class TeamsService{
     } yield comparison
   }
   
-  private def combine(team1: Team, team1Details: TeamDetails, team2: Team, team2Details: TeamDetails): ZIO[DBServices, HattidError, TeamComparison] = {
+  private def combine(team1: Team, team1Details: TeamDetails, team2: Team, team2Details: TeamDetails): ZIO[ClickhousePool, HattidError, TeamComparison] = {
     if (team1.league.leagueId != team2.league.leagueId ||
       team1Details.user.userId == 0 || team2Details.user.userId == 0) {
       ZIO.succeed(TeamComparison.empty())

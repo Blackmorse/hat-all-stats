@@ -21,7 +21,7 @@ object Substitution {
     (__ \ "SubjectPlayerID").read[Long],
     (__ \ "ObjectPlayerID").read[Long],
     (__ \ "OrderType").read[Int],
-    (__ \ "NewPositionId").read(`enum`(MatchRoleId)),
+    (__ \ "NewPositionId").read(using `enum`(MatchRoleId)),
     (__ \ "NewPositionBehaviour").read[Int],
     (__ \ "MatchMinute").read[Int],
     (__ \ "MatchPart").read[Int],

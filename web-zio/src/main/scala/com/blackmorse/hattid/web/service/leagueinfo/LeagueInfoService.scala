@@ -11,7 +11,8 @@ import zio.concurrent.ConcurrentMap
 import zio.http.Client
 import com.blackmorse.hattid.web.models.web.{HattidError, HattidInternalError, NotFoundError}
 import com.blackmorse.hattid.web.service.ChppService
-import com.blackmorse.hattid.web.zios.{CHPPServices, DBServices}
+import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
+import com.blackmorse.hattid.web.zios.CHPPServices
 
 import java.util.Date
 
@@ -216,7 +217,7 @@ object LeagueInfoServiceZIO {
     9 -> (1 to 2048)
   )
 
-  lazy val layer: ZLayer[CHPPServices & DBServices, HattidError, LeagueInfoServiceZIO] = {
+  lazy val layer: ZLayer[CHPPServices & ClickhousePool, HattidError, LeagueInfoServiceZIO] = {
     ZLayer {
       for {
         chppService <- ZIO.service[ChppService]

@@ -17,8 +17,7 @@ trait NumbersOverviewChartRequest extends OverviewChartRequest[NumbersChartModel
   protected val aggregateFunction: String
 
   def execute(orderingKeyPath: OrderingKeyPath, currentSeason: Int, currentRound: Int): DBIO[List[NumbersChartModel]] = wrapErrors {
-    ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO =>
-      restClickhouseDAO.executeZIO(builder(orderingKeyPath, currentSeason, currentRound).sqlWithParameters().build, rowParser))
+    RestClickhouseDAO.executeZIO(builder(orderingKeyPath, currentSeason, currentRound).sqlWithParameters().build, rowParser)
   }
 
   def builder(orderingKeyPath: OrderingKeyPath, currentSeason: Int, currentRound: Int): SqlBuilder = {

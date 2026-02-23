@@ -48,10 +48,8 @@ object TeamSalaryTSIChartRequest extends ClickhouseRequest[TeamSalaryTSIChart] {
       .groupBy("team_id", "league_unit_id", "league_unit_name", "season", "round")
 
     for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-      _                 <- if(orderingKeyPath.isLeagueUnitLevel) ZIO.unit 
-                            else ZIO.fail(BadRequestError("Only league level is supported"))
-      result            <- restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
+      _                 <- ZIO.unless(orderingKeyPath.isLeagueUnitLevel)(ZIO.fail(BadRequestError("Only league level is supported")))
+      result            <- RestClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
     } yield result
   }
 }

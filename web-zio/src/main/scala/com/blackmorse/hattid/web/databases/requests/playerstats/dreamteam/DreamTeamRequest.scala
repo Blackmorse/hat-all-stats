@@ -67,10 +67,7 @@ object DreamTeamRequest extends ClickhouseRequest[DreamTeamPlayer] {
     if(!Seq("rating", "rating_end_of_match").contains(sortBy)) {
       ZIO.fail(SqlInjectionError())
     } else {
-      for {
-        restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-        result <- restClickhouseDAO.executeZIO(simpleSql(orderingKeyPath, statsType, sortBy), rowParser)
-      } yield result
+      RestClickhouseDAO.executeZIO(simpleSql(orderingKeyPath, statsType, sortBy), rowParser)
     }
   }
 }

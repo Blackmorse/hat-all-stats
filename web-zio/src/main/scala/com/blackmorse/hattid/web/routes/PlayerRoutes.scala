@@ -2,7 +2,8 @@ package com.blackmorse.hattid.web.routes
 
 import chpp.commonmodels.MatchType
 import chpp.playerdetails.models.PlayerDetails
-import com.blackmorse.hattid.web.zios.{CHPPServices, DBServices, HattidEnv}
+import com.blackmorse.hattid.web.zios.{CHPPServices, HattidEnv}
+import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.databases.requests.model.player.PlayerHistory
 import com.blackmorse.hattid.web.databases.requests.playerstats.player.PlayerHistoryRequest
 import com.blackmorse.hattid.web.models.web.HattidError
@@ -32,7 +33,7 @@ object PlayerRoutes {
     } yield Response.json(restPlayerDetails.toJson)
   }
 
-  private def getRestPlayerDetails(playerDetails: PlayerDetails): ZIO[CHPPServices & DBServices, HattidError, RestPlayerDetails] = {
+  private def getRestPlayerDetails(playerDetails: PlayerDetails): ZIO[CHPPServices & ClickhousePool, HattidError, RestPlayerDetails] = {
     for {
       chppService <- ZIO.service[ChppService]
       playerHistoryList <- PlayerHistoryRequest.execute(playerDetails.player.playerId)

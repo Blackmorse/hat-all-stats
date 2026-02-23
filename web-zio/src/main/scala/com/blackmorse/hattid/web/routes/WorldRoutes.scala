@@ -1,6 +1,6 @@
 package com.blackmorse.hattid.web.routes
 
-import com.blackmorse.hattid.web.zios.{DBServices, HattidEnv, restTableData}
+import com.blackmorse.hattid.web.zios.{HattidEnv, restTableData}
 import com.blackmorse.hattid.web.databases.requests.matchdetails.*
 import com.blackmorse.hattid.web.databases.requests.model.player.{PlayerCards, PlayerGamesGoals, PlayerRating, PlayerSalaryTSI}
 import com.blackmorse.hattid.web.databases.requests.model.team.*
@@ -8,6 +8,7 @@ import com.blackmorse.hattid.web.databases.requests.playerstats.player.stats.*
 import com.blackmorse.hattid.web.databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import com.blackmorse.hattid.web.databases.requests.teamdetails.{OldestTeamsRequest, TeamFanclubFlagsRequest, TeamPowerRatingsRequest, TeamStreakTrophiesRequest}
 import com.blackmorse.hattid.web.databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
+import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.zios.*
 import com.blackmorse.hattid.web.zios.HattidCache.zDreamTeamCache
 import com.blackmorse.hattid.web.models.web.{HattidError, RestTableData}
@@ -51,7 +52,7 @@ object WorldRoutes {
     } yield Response.json(entities.toJson)
   }
 
-  private def teamSalaryTSIHandler: Handler[DBServices, HattidError, Request, Response] = handler { (req: Request) =>
+  private def teamSalaryTSIHandler: Handler[ClickhousePool, HattidError, Request, Response] = handler { (req: Request) =>
     for {
       playedInLastMatch        <- req.boolParam("playedInLastMatch")
       excludeZeroTsi           <- req.boolParam("excludeZeroTsi")
@@ -89,7 +90,7 @@ object WorldRoutes {
     } yield Response.json(restTableData(entities, restStatisticsParameters.pageSize).toJson)
   }
 
-  private def teamGoalPointsHandler: Handler[DBServices & LeagueInfoServiceZIO, HattidError, Request, Response] = handler { (req: Request) =>
+  private def teamGoalPointsHandler: Handler[ClickhousePool & LeagueInfoServiceZIO, HattidError, Request, Response] = handler { (req: Request) =>
     for {
       leagueInfoService        <- ZIO.service[LeagueInfoServiceZIO]
       playedAllMatches         <- req.boolParamWithDefault("playedAllMatches", false)

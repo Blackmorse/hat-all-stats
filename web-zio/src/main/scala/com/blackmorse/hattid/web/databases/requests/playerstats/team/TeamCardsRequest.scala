@@ -50,10 +50,7 @@ object TeamCardsRequest extends ClickhouseStatisticsRequest[TeamCards] {
     if(!sortingColumns.contains(parameters.sortBy)) {
       ZIO.fail(SqlInjectionError())
     } else {
-      for {
-        restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-        result <- restClickhouseDAO.executeZIO(simpleSql(orderingKeyPath, parameters), rowParser)
-       } yield result
+      RestClickhouseDAO.executeZIO(simpleSql(orderingKeyPath, parameters), rowParser)
     }
   }
 

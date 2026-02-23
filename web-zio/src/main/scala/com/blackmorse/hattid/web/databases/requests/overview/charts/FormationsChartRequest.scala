@@ -32,6 +32,6 @@ object FormationsChartRequest extends OverviewChartRequest[FormationChartModel] 
       .orderBy("season".asc, "round".asc)
       .limitBy(10, "(season, round)")
 
-    ZIO.serviceWithZIO[RestClickhouseDAO](restClickhouseDAO => restClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser))
+    RestClickhouseDAO.executeZIO(builder.sqlWithParameters().build, rowParser)
   }
 }

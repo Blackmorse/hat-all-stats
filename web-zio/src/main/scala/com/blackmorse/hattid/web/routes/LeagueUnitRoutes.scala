@@ -1,7 +1,8 @@
 package com.blackmorse.hattid.web.routes
 
 import chpp.leaguedetails.models.LeagueDetails
-import com.blackmorse.hattid.web.zios.{CHPPServices, DBServices, HattidEnv, restTableData}
+import com.blackmorse.hattid.web.zios.{CHPPServices, HattidEnv, restTableData}
+import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.databases.requests.matchdetails.chart.TeamHatstatsChartRequest
 import com.blackmorse.hattid.web.databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
 import com.blackmorse.hattid.web.databases.requests.model.Chart
@@ -134,7 +135,7 @@ object LeagueUnitRoutes {
     } yield Response.json(restTableData(entities, restStatisticsParameters.pageSize).toJson)
   }
   
-  private def playerStatsHandler[T: JsonEncoder](clickhouseRequest: ClickhousePlayerStatsRequest[T]): Handler[DBServices & CHPPServices, HattidError, LeagueUnitParams, Response] = handler { (leagueUnitId: Int, req: Request) =>
+  private def playerStatsHandler[T: JsonEncoder](clickhouseRequest: ClickhousePlayerStatsRequest[T]): Handler[ClickhousePool & CHPPServices, HattidError, LeagueUnitParams, Response] = handler { (leagueUnitId: Int, req: Request) =>
     for {
       restStatisticsParameters <- req.restStatisticsParameters()
       playersParameters        <- req.playersParameters()

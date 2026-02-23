@@ -32,10 +32,7 @@ trait ClickhouseStatisticsRequest[T] extends ClickhouseRequest[T] {
     if (!sortingColumns.contains(parameters.sortBy)) {
       ZIO.fail(SqlInjectionError())
     } else {
-      for {
-        restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-        result <- restClickhouseDAO.executeZIO(request(orderingKeyPath, parameters), rowParser)
-      } yield result
+      RestClickhouseDAO.executeZIO(request(orderingKeyPath, parameters), rowParser)
     }
   }
 }

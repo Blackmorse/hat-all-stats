@@ -11,8 +11,6 @@ trait ClickhouseOverviewRequest[T] extends ClickhouseRequest[T] {
   protected def builder(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): SqlBuilder
   
   def executeZio(season: Int, round: Int, leagueId: Option[Int], divisionLevel: Option[Int]): DBIO[List[T]] = wrapErrors {
-    ZIO.serviceWithZIO[RestClickhouseDAO] { dao =>
-      dao.executeZIO(builder(season, round, leagueId, divisionLevel).sqlWithParameters().build, rowParser)
-    }
+      RestClickhouseDAO.executeZIO(builder(season, round, leagueId, divisionLevel).sqlWithParameters().build, rowParser)
   }
 }

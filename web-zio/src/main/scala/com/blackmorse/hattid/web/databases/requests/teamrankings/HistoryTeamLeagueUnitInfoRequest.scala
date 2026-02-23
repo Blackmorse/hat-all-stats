@@ -26,9 +26,6 @@ object HistoryTeamLeagueUnitInfoRequest extends ClickhouseRequest[HistoryTeamLea
   }
 
   def execute(season: Int, leagueId: Int, teamId: Long): DBIO[Option[HistoryTeamLeagueUnitInfo]] = wrapErrorsOpt {
-    for {
-      restClickhouseDAO <- ZIO.service[RestClickhouseDAO]
-      res <- restClickhouseDAO.executeSingleOptZIO(buildRequest(season, leagueId, teamId).sqlWithParameters().build, rowParser)
-    } yield res
+    RestClickhouseDAO.executeSingleOptZIO(buildRequest(season, leagueId, teamId).sqlWithParameters().build, rowParser)
   }
 }

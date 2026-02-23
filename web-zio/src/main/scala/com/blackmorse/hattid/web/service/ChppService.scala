@@ -21,13 +21,13 @@ import chpp.translations.TranslationsRequest
 import chpp.translations.models.Translations
 import chpp.worlddetails.WorldDetailsRequest
 import chpp.worlddetails.models.{League, WorldDetails}
+import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.databases.requests.teamrankings.HistoryTeamLeagueUnitInfoRequest
 import com.blackmorse.hattid.web.models.clickhouse.NearestMatch
 import com.blackmorse.hattid.web.models.web.player.AvatarPart
 import com.blackmorse.hattid.web.models.web.{BadRequestError, HattidError, NotFoundError}
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
 import com.blackmorse.hattid.web.webclients.{AuthConfig, ChppClient}
-import com.blackmorse.hattid.web.zios.DBServices
 import zio.ZIO
 import zio.http.Client
 import zio.json.{DeriveJsonEncoder, JsonEncoder}
@@ -99,7 +99,7 @@ class ChppService {
   }
     
     
-  def getDivisionLevelAndLeagueUnit(team: Team, season: Int): ZIO[ChppClient & Client & AuthConfig & DBServices & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
+  def getDivisionLevelAndLeagueUnit(team: Team, season: Int): ZIO[ChppClient & Client & AuthConfig & ClickhousePool & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
     for {
       chppClient <- ZIO.service[ChppClient]
       league     <- chppClient.executeZio[WorldDetails, WorldDetailsRequest](WorldDetailsRequest(leagueId = Some(team.league.leagueId)))
@@ -108,7 +108,7 @@ class ChppService {
     } yield result
   }
 
-  private def getDivisionLevelFromChppOrCh(league: League, team: Team, season: Int): ZIO[Client & DBServices & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
+  private def getDivisionLevelFromChppOrCh(league: League, team: Team, season: Int): ZIO[Client & ClickhousePool & LeagueInfoServiceZIO, HattidError, (Int, Long)] = {
     val htRound = league.matchRound
     
     val currentSeasonZIO = for {
