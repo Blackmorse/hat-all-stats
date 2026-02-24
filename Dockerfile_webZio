@@ -1,0 +1,10 @@
+FROM sbtscala/scala-sbt:eclipse-temurin-21.0.8_9_1.12.0_3.7.4 AS builder
+COPY . /app
+WORKDIR /app/
+RUN sbt webZio/assembly
+
+FROM eclipse-temurin:21-jre-ubi9-minimal
+WORKDIR /app/
+COPY --from=builder /app/web-zio/target/scala-3.7.4/webZio-assembly-0.1.0-SNAPSHOT.jar /app/webZio.jar
+EXPOSE 9000
+CMD ["java", "-jar", "/app/webZio.jar", "/config/configuration.conf"]

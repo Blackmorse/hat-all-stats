@@ -16,7 +16,7 @@ object Booking {
     (__ \ "BookingPlayerID").read[Long],
     (__ \ "BookingPlayerName").read[String],
     (__ \ "BookingTeamID").read[Int],
-    (__ \ "BookingType").read(`enum`(BookingType)),
+    (__ \ "BookingType").read(using `enum`(BookingType)),
     (__ \ "BookingMinute").read[Int],
     (__ \ "MatchPart").read[Int],
   ).mapN(apply)

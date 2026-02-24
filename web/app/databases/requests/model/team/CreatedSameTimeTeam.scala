@@ -4,6 +4,7 @@ import java.util.Date
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class CreatedSameTimeTeam(teamSortingKey: TeamSortingKey,
                                hatstats: Int,
@@ -22,6 +23,8 @@ case class CreatedSameTimeTeam(teamSortingKey: TeamSortingKey,
 
 object CreatedSameTimeTeam {
   implicit val writes: OWrites[CreatedSameTimeTeam] = Json.writes[CreatedSameTimeTeam]
+  implicit val jsonEncoder: JsonEncoder[CreatedSameTimeTeam] = DeriveJsonEncoder.gen[CreatedSameTimeTeam]
+  implicit val dateEncoder: JsonEncoder[Date] = JsonEncoder[Long].contramap(_.getTime)
 
   val createdSameTimeTeamMapper: RowParser[CreatedSameTimeTeam] = {
     get[Int]("league_id") ~

@@ -16,6 +16,6 @@ object Search extends BaseXmlMapper {
     (__ \ "SearchParams").read[SearchParams],
     (__ \ "PageIndex").read[Int],
     (__ \ "Pages").read[Int],
-    (__ \ "SearchResults" \ "Result").read(seq[Result])
+    (__ \ "SearchResults" \ "Result").read(using seq[Result])
     ).mapN(apply)
 }

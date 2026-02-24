@@ -20,6 +20,6 @@ object Player {
   implicit val reader: XmlReader[Player] = (
     (__ \ "PlayerID").read[Long],
     (__ \ "Avatar" \ "BackgroundImage").read[String],
-    (__ \ "Avatar" \ "Layer" ).read(seq[Layer])
+    (__ \ "Avatar" \ "Layer" ).read(using seq[Layer])
   ).mapN(apply)
 }

@@ -1,9 +1,9 @@
 package controllers
 
+import cache.ZioCacheModule.HattidEnv
 import chpp.leaguedetails.models.LeagueDetails
 import chpp.search.SearchRequest
 import chpp.search.models.SearchType
-import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.chart.TeamHatstatsChartRequest
 import databases.requests.matchdetails.{MatchSpectatorsRequest, MatchSurprisingRequest, MatchTopHatstatsRequest, TeamHatstatsRequest}
 import databases.requests.model.Chart
@@ -23,19 +23,19 @@ import models.web.leagueUnit.RestLeagueUnitData
 import play.api.libs.json.{JsValue, Json, OWrites, Writes}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import service.ChppService
-import service.leagueinfo.LeagueInfoService
+import service.leagueinfo.LeagueInfoServiceZIO
 import service.leagueunit.{LeagueUnitCalculatorService, LeagueUnitTeamStat, LeagueUnitTeamStatHistoryInfo, LeagueUnitTeamStatsWithPositionDiff}
 import utils.{LeagueNameParser, Romans}
-import zio.{IO, ZIO, ZLayer}
+import webclients.{AuthConfig, ChppClient}
+import zio.ZIO
+import zio.http.Client
 
 import javax.inject.Inject
 
 
-class RestLeagueUnitController @Inject() (val chppService: ChppService,
-                                          val controllerComponents: ControllerComponents,
-                                          val leagueInfoService: LeagueInfoService,
-                                          val restClickhouseDAO: RestClickhouseDAO,
-                                          val leagueUnitCalculatorService: LeagueUnitCalculatorService) extends RestController {
+class RestLeagueUnitController @Inject() (val controllerComponents: ControllerComponents,
+                                          val leagueUnitCalculatorService: LeagueUnitCalculatorService,
+                                          val hattidEnvironment: zio.ZEnvironment[HattidEnv]) extends RestController(hattidEnvironment) {
   case class LongWrapper(id: Long)
   implicit val writes: OWrites[LongWrapper] = Json.writes[LongWrapper]
 
@@ -44,7 +44,7 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
       .map(id => LongWrapper(id))
   }
 
-  private def findLeagueUnitIdByName(leagueUnitName: String, leagueId: Int): IO[HattidError, Long] = {
+  private def findLeagueUnitIdByName(leagueUnitName: String, leagueId: Int): ZIO[ChppClient & Client & AuthConfig & ChppService, HattidError, Long] = {
     if(leagueUnitName == "I.1") {
       ZIO.succeed(CommonData.higherLeagueMap(leagueId).leagueUnitId): ZIO[Any, HattidError, Long]
     } else {
@@ -70,6 +70,7 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
       }
 
       for {
+        chppService  <- ZIO.service[ChppService]
         searchResult <- chppService.search(searchRequest)
         leagueUnitId <- ZIO.fromOption(searchResult.searchResults.headOption.map(_.resultId))
           .mapError(_ => NotFoundError(
@@ -82,46 +83,48 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
   }
 
   def getLeagueUnitData(leagueUnitId: Int): Action[AnyContent] = asyncZio {
-    chppService.leagueDetails(leagueUnitId)
-          .map(leagueDetails => {
-            val league = leagueInfoService.leagueInfo(leagueDetails.leagueId).league
-            RestLeagueUnitData(leagueDetails, league, leagueUnitId, leagueInfoService)
-          })
+    for {
+      chppService       <- ZIO.service[ChppService]
+      leagueInfoService <- ZIO.service[LeagueInfoServiceZIO]
+      leagueDetails     <- chppService.leagueDetails(leagueUnitId)
+      leagueState       <- leagueInfoService.leagueState(leagueDetails.leagueId)
+    } yield RestLeagueUnitData(leagueDetails, leagueState, leagueUnitId)
   }
 
   private def stats[T : Writes](chRequest: ClickhouseStatisticsRequest[T],
                        leagueUnitId: Int,
                        restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = asyncZio {
-    (for {
+    for {
+      chppService   <- ZIO.service[ChppService]
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
-      entities <- chRequest.execute(
+      entities      <- chRequest.execute(
         orderingKeyPath = OrderingKeyPath(leagueId = Some(leagueDetails.leagueId),
           divisionLevel = Some(leagueDetails.leagueLevel),
           leagueUnitId = Some(leagueUnitId)),
         parameters = restStatisticsParameters)
-    } yield restTableData(entities, restStatisticsParameters.pageSize))
-      .provide(ZLayer.succeed(restClickhouseDAO))
+    } yield restTableData(entities, restStatisticsParameters.pageSize)
   }
 
   private def playersRequest[T](plRequest: ClickhousePlayerStatsRequest[T],
                                 leagueUnitId: Int,
                                 restStatisticsParameters: RestStatisticsParameters,
                                 playersParameters: PlayersParameters)(implicit writes: Writes[T]) = asyncZio {
-    (for {
+    for {
+      chppService   <- ZIO.service[ChppService]
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
-      entities <- plRequest.execute(
+      entities      <- plRequest.execute(
         OrderingKeyPath(leagueId = Some(leagueDetails.leagueId),
           divisionLevel = Some(leagueDetails.leagueLevel),
           leagueUnitId = Some(leagueUnitId)),
         restStatisticsParameters,
         playersParameters
       )
-    } yield restTableData(entities, restStatisticsParameters.pageSize))
-      .provide(ZLayer.succeed(restClickhouseDAO))
+    } yield restTableData(entities, restStatisticsParameters.pageSize)
   }
 
   private def teamChart[T <: Chart : Writes](chartRequest: ClickhouseChartRequest[T], leagueUnitId: Int, season: Int): Action[AnyContent] = asyncZio {
-    (for {
+    for {
+      chppService   <- ZIO.service[ChppService]
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
       entities <- chartRequest.execute(
         orderingKeyPath = OrderingKeyPath(
@@ -129,8 +132,7 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
           divisionLevel = Some(leagueDetails.leagueLevel),
           leagueUnitId = Some(leagueUnitId)),
         season = season)
-    } yield entities)
-      .provide(ZLayer.succeed(restClickhouseDAO))
+    } yield entities
   }
 
   def teamHatstatsChart(leagueUnitId: Int, season: Int): Action[AnyContent] =
@@ -156,7 +158,8 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
     stats(PlayerInjuryRequest, leagueUnitId, restStatisticsParameters)
 
   def teamSalaryTsi(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[AnyContent] = asyncZio {
-    (for {
+    for {
+      chppService   <- ZIO.service[ChppService]
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
       entities <- TeamSalaryTSIRequest.execute(
         OrderingKeyPath(leagueId = Some(leagueDetails.leagueId),
@@ -166,12 +169,12 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
         playedInLastMatch = playedInLastMatch,
         excludeZeroTsi = excludeZeroTsi
       )
-    } yield restTableData(entities, restStatisticsParameters.pageSize))
-      .provide(ZLayer.succeed(restClickhouseDAO))
+    } yield restTableData(entities, restStatisticsParameters.pageSize)
   }
 
   def teamSalaryTsiChart(leagueUnitId: Int, season: Int, playedInLastMatch: Boolean, excludeZeroTsi: Boolean): Action[AnyContent] = asyncZio {
-    (for {
+    for {
+      chppService   <- ZIO.service[ChppService]
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
       entities      <- TeamSalaryTSIChartRequest.execute(
         orderingKeyPath = OrderingKeyPath(
@@ -182,20 +185,19 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
         season = season,
         playedInLastMatch = playedInLastMatch,
         excludeZeroTsi = excludeZeroTsi)
-    } yield entities)
-    .provide(ZLayer.succeed(restClickhouseDAO))
+    } yield entities
   }
 
   def teamCards(leagueUnitId: Int, restStatisticsParameters: RestStatisticsParameters): Action[AnyContent] = asyncZio {
-    (for {
+    for {
+      chppService   <- ZIO.service[ChppService]
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
-      entities <- TeamCardsRequest.execute(
+      entities      <- TeamCardsRequest.execute(
         orderingKeyPath = OrderingKeyPath(leagueId = Some(leagueDetails.leagueId),
           divisionLevel = Some(leagueDetails.leagueLevel),
           leagueUnitId = Some(leagueUnitId)),
         parameters = restStatisticsParameters)
-    } yield restTableData(entities, restStatisticsParameters.pageSize))
-      .provide(ZLayer.succeed(restClickhouseDAO))
+    } yield restTableData(entities, restStatisticsParameters.pageSize)
   }
 
   def teamCardsChart(leagueUnitId: Int, season: Int): Action[AnyContent] =
@@ -278,19 +280,24 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
   private def teamPositionsInternal[T](leagueUnitId: Int,
                                        season: Int,
                                        resultFunc: LeagueUnitTeamStatHistoryInfo => Seq[T],
-                                       fallbackResultFunc: LeagueDetails => Seq[T]): IO[HattidError, Seq[T]] = {
+                                       fallbackResultFunc: LeagueDetails => Seq[T]): ZIO[ChppClient & Client & AuthConfig & ChppService & LeagueInfoServiceZIO, HattidError, Seq[T]] = {
     for {
+      chppService   <- ZIO.service[ChppService]
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
-      history <- historyInfo(leagueDetails, leagueUnitId, season).map(resultFunc)
+      history       <- historyInfo(leagueDetails, leagueUnitId, season).map(resultFunc)
         .onError(_ => ZIO.succeed(fallbackResultFunc(leagueDetails)))
     } yield history
   }
 
-  private def historyInfo[T](leagueDetails: LeagueDetails, leagueUnitId: Int, season: Int): IO[HattidError, LeagueUnitTeamStatHistoryInfo] = {
-    val offsettedSeason = leagueInfoService.getRelativeSeasonFromAbsolute(season, leagueDetails.leagueId)
+  private def historyInfo[T](leagueDetails: LeagueDetails, leagueUnitId: Int, season: Int): ZIO[ChppClient & Client & AuthConfig & ChppService & LeagueInfoServiceZIO, HattidError, LeagueUnitTeamStatHistoryInfo] = {
+    val leagueId = leagueDetails.leagueId
     for {
-      leagueFixture <- chppService.leagueFixtures(leagueUnitId, offsettedSeason)
-      round = if(leagueInfoService.leagueInfo(leagueDetails.leagueId).currentSeason() == season) leagueInfoService.leagueInfo(leagueDetails.leagueId).currentRound() else 14
+      chppService       <- ZIO.service[ChppService]
+      leagueInfoService <- ZIO.service[LeagueInfoServiceZIO]
+      offsettedSeason   <- leagueInfoService.getRelativeSeasonFromAbsolute(season, leagueId)
+      leagueFixture     <- chppService.leagueFixtures(leagueUnitId, offsettedSeason)
+      currentSeason     <- leagueInfoService.currentSeason(leagueId)
+      round             <- if (currentSeason == season) leagueInfoService.lastRound(leagueId, season) else ZIO.succeed(14)
       leagueUnitTeamHistoryInfo <- ZIO.fromEither(leagueUnitCalculatorService.calculateSafe(leagueFixture, Some(round),
           /* doesn't matter what parameters are there */"points", Desc))
         .mapError(u => HattidInternalError("Unable to calculate league unit team history info"))
@@ -298,21 +305,25 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
   }
 
   def promotions(leagueUnitId: Int): Action[AnyContent] = asyncZio {
-    (for {
-      leagueDetails <- chppService.leagueDetails(leagueUnitId)
-      promotions <- PromotionsRequest.execute(OrderingKeyPath(
+    for {
+      leagueInfoService <- ZIO.service[LeagueInfoServiceZIO]
+      chppService       <- ZIO.service[ChppService]
+      leagueDetails     <- chppService.leagueDetails(leagueUnitId)
+      currenSeason      <- leagueInfoService.currentSeason(leagueDetails.leagueId)
+      promotions        <- PromotionsRequest.execute(
+        orderingKeyPath = OrderingKeyPath(
           leagueId = Some(leagueDetails.leagueId),
           divisionLevel = Some(leagueDetails.leagueLevel),
           leagueUnitId = Some(leagueUnitId)),
-        leagueInfoService.leagueInfo.currentSeason(leagueDetails.leagueId))
-    } yield PromotionWithType.convert(promotions))
-      .provide(ZLayer.succeed(restClickhouseDAO))
+        season = currenSeason)
+    } yield PromotionWithType.convert(promotions)
   }
 
   def dreamTeam(season: Int, leagueUnitId: Int, sortBy: String, statsType: StatsType): Action[AnyContent] = asyncZio {
-    (for {
+    for {
+      chppService   <- ZIO.service[ChppService]
       leagueDetails <- chppService.leagueDetails(leagueUnitId)
-      players <- DreamTeamRequest.execute(
+      players       <- DreamTeamRequest.execute(
         OrderingKeyPath(season = Some(season),
           leagueId = Some(leagueDetails.leagueId),
           divisionLevel = Some(leagueDetails.leagueLevel),
@@ -320,7 +331,6 @@ class RestLeagueUnitController @Inject() (val chppService: ChppService,
         statsType,
         sortBy
       )
-    } yield players)
-      .provide(ZLayer.succeed(restClickhouseDAO))
+    } yield players
   }
 }

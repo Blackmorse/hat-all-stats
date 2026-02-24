@@ -20,6 +20,6 @@ object Team {
     (__ \ "ShortTeamName").read[String],
     (__ \ "League").read[League],
     (__ \ "LeagueLevelUnit").read[LeagueLevelUnit],
-    (__ \ "MatchList" \ "Match").read(seq[Match])
+    (__ \ "MatchList" \ "Match").read(using seq[Match])
   ).mapN(apply)
 }

@@ -5,6 +5,7 @@ import models.web.rest.LevelData.Rounds
 import models.web.translations.LanguageTranslations
 import play.api.libs.json.{Json, OWrites}
 import service.leagueinfo.LoadingInfo
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class RestPlayerData(playerId: Long,
                           firstName: String,
@@ -27,4 +28,5 @@ case class RestPlayerData(playerId: Long,
 
 object RestPlayerData {
   implicit val writes: OWrites[RestPlayerData] = Json.writes[RestPlayerData]
+  implicit val jsonEncoder: JsonEncoder[RestPlayerData] = DeriveJsonEncoder.gen[RestPlayerData]
 }

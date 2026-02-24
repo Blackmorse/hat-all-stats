@@ -3,6 +3,7 @@ package databases.requests.model.overview
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class NumberOverview(numberOfTeams:Int,
                           numberOfPlayers: Int,
@@ -14,6 +15,7 @@ case class NumberOverview(numberOfTeams:Int,
 
 object NumberOverview {
   implicit val writes: OWrites[NumberOverview] = Json.writes[NumberOverview]
+  implicit val jsonEncoder: JsonEncoder[NumberOverview] = DeriveJsonEncoder.gen[NumberOverview]
 
   def apply(numberOverviewPlayerStats: NumberOverviewPlayerStats,
             numberOverviewTeamDetails: NumberOverviewTeamDetails): NumberOverview = {

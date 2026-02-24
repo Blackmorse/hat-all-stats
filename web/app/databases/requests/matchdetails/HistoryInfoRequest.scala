@@ -8,8 +8,6 @@ import models.clickhouse.HistoryInfo
 import sqlbuilder.{Select, SqlBuilder}
 import zio.ZIO
 
-import scala.concurrent.Future
-
 object HistoryInfoRequest extends ClickhouseRequest[HistoryInfo] {
   override val rowParser: RowParser[HistoryInfo] = HistoryInfo.mapper
 
@@ -26,7 +24,7 @@ object HistoryInfoRequest extends ClickhouseRequest[HistoryInfo] {
   def builder(leagueId: Option[Int],
               season: Option[Int],
               round: Option[Int]): SqlBuilder = {
-    import sqlbuilder.SqlBuilder.implicits._
+    import sqlbuilder.SqlBuilder.implicits.*
     Select(
         "season",
         "league_id",

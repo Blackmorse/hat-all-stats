@@ -1,44 +1,42 @@
 package databases.dao
 
-import org.apache.pekko.actor.ActorSystem
 import anorm.*
-import io.github.gaelrenoux.tranzactio.anorm._
-import io.github.gaelrenoux.tranzactio._
+import databases.ClickhousePool.ClickhousePool
+import io.github.gaelrenoux.tranzactio.*
+import io.github.gaelrenoux.tranzactio.anorm.*
 import zio.*
-import play.api.db.DBApi
-import play.api.libs.concurrent.CustomExecutionContext
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class RestClickhouseDAO @Inject()(dbApi: DBApi) {
-  private val db = dbApi.database("default")
+class RestClickhouseDAO @Inject()() {
 
-  def executeZIO[T](simpleRow: SimpleSql[Row], rowParser: RowParser[T]): ZIO[Any, Throwable, List[T]] = {
-    val resource = ZIO.acquireRelease(ZIO.attempt(db.getConnection()))
-        (conn => ZIO.succeed(conn.close()))
-
+  def executeZIO[T](simpleRow: SimpleSql[Row], rowParser: RowParser[T]): ZIO[ClickhousePool, Throwable, List[T]] = {
     ZIO.scoped {
-      resource.flatMap { connection =>
-        tzio { implicit conn =>
-          simpleRow.as(rowParser.*)
-        }.provide(ZLayer.succeed(connection))
-      }
+      for {
+        pool       <- ZIO.service[ZPool[Nothing, java.sql.Connection]]
+        connection <- pool.get
+        result     <- ZIO.scoped {
+          tzio { implicit conn =>
+            simpleRow.as(rowParser.*)
+          }.provide(ZLayer.succeed(connection))
+        }
+      } yield result
     }
   }
 
-  def executeSingleOptZIO[T](simpleSql: SimpleSql[Row], rowParser: RowParser[T]): ZIO[Any, Throwable, Option[T]] = {
-    val resource = ZIO.acquireRelease(ZIO.attempt(db.getConnection()))
-      (conn => ZIO.succeed(conn.close()))
-
+  def executeSingleOptZIO[T](simpleSql: SimpleSql[Row], rowParser: RowParser[T]): ZIO[ClickhousePool, Throwable, Option[T]] = {
     ZIO.scoped {
-      resource.flatMap { connection =>
-        tzio { implicit conn =>
-          simpleSql.as(rowParser.singleOpt)
-        }.provide(ZLayer.succeed(connection))
-      }
+      for {
+        pool <- ZIO.service[ZPool[Nothing, java.sql.Connection]]
+        connection <- pool.get
+        result <- ZIO.scoped {
+          tzio { implicit conn =>
+            simpleSql.as(rowParser.singleOpt)
+          }.provide(ZLayer.succeed(connection))
+        }
+      } yield result
     }
   }
 }
 
-class DatabaseExecutionContext @Inject()(system: ActorSystem) extends CustomExecutionContext(system, "database.clickhouse")

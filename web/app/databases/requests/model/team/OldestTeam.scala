@@ -4,6 +4,7 @@ import anorm.RowParser
 import anorm.SqlParser.get
 import play.api.libs.json.{Json, OWrites}
 import anorm.~
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 import java.util.Date
 
@@ -12,6 +13,12 @@ case class OldestTeam(teamSortingKey: TeamSortingKey,
 
 object OldestTeam {
   implicit val writes: OWrites[OldestTeam] = Json.writes[OldestTeam]
+  // Encoder for Date to Long (timestamp). TODO: check if play decoded to ms also
+  implicit val dateEncoder: JsonEncoder[Date] = {
+    JsonEncoder.long.contramap[Date](_.getTime)
+    
+  }
+  implicit val jsonEncoder: JsonEncoder[OldestTeam] = DeriveJsonEncoder.gen[OldestTeam]
 
   val mapper: RowParser[OldestTeam] = {
     get[Int]("league_id") ~

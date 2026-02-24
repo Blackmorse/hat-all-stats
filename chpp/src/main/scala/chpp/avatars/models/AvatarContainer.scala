@@ -18,6 +18,6 @@ case class Team(teamId: Int, players: Seq[Player])
 object Team {
   implicit val reader: XmlReader[Team] = (
     (__ \ "TeamId").read[Int],
-    (__ \ "Players" \ "Player").read(seq[Player])
+    (__ \ "Players" \ "Player").read(using seq[Player])
   ).mapN(apply)
 }

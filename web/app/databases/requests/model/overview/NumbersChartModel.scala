@@ -3,6 +3,7 @@ package databases.requests.model.overview
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class NumbersChartModel(
                             season: Int,
@@ -11,6 +12,7 @@ case class NumbersChartModel(
 
 object NumbersChartModel {
   implicit val writes: OWrites[NumbersChartModel] = Json.writes[NumbersChartModel]
+  implicit val jsonEncoder: JsonEncoder[NumbersChartModel] = DeriveJsonEncoder.gen[NumbersChartModel]
 
   val mapper: RowParser[NumbersChartModel] = {
     get[Int]("season") ~

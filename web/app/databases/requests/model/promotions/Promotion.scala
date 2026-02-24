@@ -3,16 +3,33 @@ package databases.requests.model.promotions
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
-case class PromoteTeam(teamId: Long, teamName: String, divisionLevel: Int, leagueUnitId: Long,
-                       leagueUnitName: String, position: Int, points: Int, diff: Int, scored: Int)
+case class PromoteTeam(teamId: Long,
+                       teamName: String,
+                       divisionLevel: Int,
+                       leagueUnitId: Long,
+                       leagueUnitName: String,
+                       position: Int,
+                       points: Int,
+                       diff: Int,
+                       scored: Int)
 
-case class Promotion (season: Int, leagueId: Int, upDivisionLevel: Int, promoteType: String,
-                      downTeams: Array[PromoteTeam], upTeams: Array[PromoteTeam])
+object PromoteTeam {
+  implicit val jsonEncoder: JsonEncoder[PromoteTeam] = DeriveJsonEncoder.gen[PromoteTeam]
+}
+
+case class Promotion (season: Int,
+                      leagueId: Int,
+                      upDivisionLevel: Int,
+                      promoteType: String,
+                      downTeams: Array[PromoteTeam],
+                      upTeams: Array[PromoteTeam])
 
 object Promotion {
   implicit val promoteTeamWrites: OWrites[PromoteTeam] = Json.writes[PromoteTeam]
   implicit val writes: OWrites[Promotion] = Json.writes[Promotion]
+  implicit val jsonEncoder: JsonEncoder[Promotion] = DeriveJsonEncoder.gen[Promotion]
 
   val promotionMapper: RowParser[Promotion] = {
     get[Int]("season") ~

@@ -12,8 +12,8 @@ case class SkillLevel(level: Int, name: String)
 object Translations {
   implicit val reader: XmlReader[Translations] = (
     (__ \ "Language").read[String],
-    (__ \ "Texts" \ "SkillLevels" \ "Level").read(seq[SkillLevel]),
-    (__ \ "Texts" \ "PlayerSpecialties" \ "Item").read(seq[SkillLevel])
+    (__ \ "Texts" \ "SkillLevels" \ "Level").read(using seq[SkillLevel]),
+    (__ \ "Texts" \ "PlayerSpecialties" \ "Item").read(using seq[SkillLevel])
   ).mapN(apply)
 }
 

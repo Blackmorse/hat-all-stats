@@ -1,18 +1,11 @@
 package chpp.matchlineup
 
-import org.apache.pekko.http.scaladsl.model.HttpRequest
-import chpp.matchlineup.models.{MatchLineup, Team}
-import chpp.{AbstractRequest, OauthTokens, RequestCreator}
+import chpp.AbstractRequest
+import chpp.matchlineup.models.MatchLineup
 
 case class MatchLineupRequest(matchId: Option[Long] = None,
                               teamId: Option[Long] = None,
-                              sourceSystem: Option[String] = None) extends AbstractRequest[MatchLineup] {
-  override def createRequest()(implicit oauthTokens: OauthTokens): HttpRequest = {
-    val map = RequestCreator.params("matchlineup", "2.1",
-      "matchID" -> matchId,
-    "teamID" -> teamId,
-    "sourceSystem" -> sourceSystem)
-
-    RequestCreator.create(map)
-  }
-}
+                              sourceSystem: Option[String] = None) extends AbstractRequest[MatchLineup]("matchlineup", "2.1",
+  "matchID" -> matchId,
+  "teamID" -> teamId,
+  "sourceSystem" -> sourceSystem) 

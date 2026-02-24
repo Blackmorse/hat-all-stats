@@ -16,7 +16,7 @@ object Injury {
     (__ \ "InjuryPlayerID").read[Long],
     (__ \ "InjuryPlayerName").read[String],
     (__ \ "InjuryTeamID").read[Int],
-    (__ \ "InjuryType").read(`enum`(InjuryType)),
+    (__ \ "InjuryType").read(using `enum`(InjuryType)),
     (__ \ "InjuryMinute").read[Int],
     (__ \ "MatchPart").read[Int],
   ).mapN(apply)

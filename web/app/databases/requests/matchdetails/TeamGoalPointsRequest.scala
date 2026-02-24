@@ -10,8 +10,6 @@ import models.web.{RestStatisticsParameters, Round, SqlInjectionError}
 import sqlbuilder.Select
 import zio.ZIO
 
-import scala.concurrent.Future
-
 object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
   val sortingColumns: Seq[String] = Seq("won", "lost", "draw", "goals_for",
       "goals_against", "goals_difference", "points")
@@ -36,7 +34,7 @@ object TeamGoalPointsRequest extends ClickhouseRequest[TeamGoalPoints] {
             (r, None)
           }
       }
-      import sqlbuilder.SqlBuilder.implicits._
+      import sqlbuilder.SqlBuilder.implicits.*
       val builder = Select(
         "any(league_id)" `as` "league",
         "team_id",

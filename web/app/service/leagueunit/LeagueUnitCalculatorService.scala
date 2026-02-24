@@ -57,7 +57,7 @@ class LeagueUnitCalculatorService  {
         }
       }
 
-      val accumulators = accumulatorMap.toSeq.map(_._2).sorted(ordering)
+      val accumulators = accumulatorMap.toSeq.map(_._2).sorted(using ordering)
 
       val accumulatorDirection = sortingDirection match {
         case Desc => accumulators.reverse

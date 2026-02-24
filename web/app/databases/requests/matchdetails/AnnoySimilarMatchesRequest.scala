@@ -8,7 +8,6 @@ import databases.requests.model.`match`.SimilarMatchesStats
 import models.web.matches.SingleMatch
 import sqlbuilder.{NestedSelect, Select}
 
-import scala.concurrent.Future
 import sqlbuilder.functions.{If, avg, countIf}
 import zio.ZIO
 

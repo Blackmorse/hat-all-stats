@@ -1,11 +1,11 @@
 package service
 
+import databases.ClickhousePool.ClickhousePool
 import databases.dao.RestClickhouseDAO
 import databases.requests.model.`match`.MatchTopHatstats
 import databases.requests.model.overview.*
 import databases.requests.overview.*
 import models.web.{HattidError, HattidInternalError}
-import play.api.cache.AsyncCacheApi
 import service.CacheKey.EntityType
 import zio.cache.{Cache, Lookup}
 import zio.{IO, URIO, ZIO, ZLayer}
@@ -31,9 +31,8 @@ case class CacheKey(
 
 @Singleton
 class RestOverviewStatsService @Inject()
-            (val restClickhouseDAO: RestClickhouseDAO,
-             cache: AsyncCacheApi) {
-  private val zioCache: URIO[RestClickhouseDAO, Cache[CacheKey, HattidError, List[Any]]] = Cache.make(
+            () {
+  private val zioCache: URIO[ClickhousePool & RestClickhouseDAO, Cache[CacheKey, HattidError, List[Any]]] = Cache.make(
     capacity = 50000,
     timeToLive = zio.Duration.fromScala(28.days),
     lookup = Lookup({ (key: CacheKey) =>
@@ -76,10 +75,10 @@ class RestOverviewStatsService @Inject()
                                           season: Int,
                                           round: Int,
                                           leagueId: Option[Int],
-                                          divisionLevel: Option[Int]): IO[HattidError, List[T]] = {
+                                          divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[T]] = {
     val key = CacheKey(entityType, season, round, leagueId, divisionLevel)
 
-    (for {
+    for {
       cache <- zioCache
       result <- cache.get(key)
       typed <- result.headOption match {
@@ -87,12 +86,11 @@ class RestOverviewStatsService @Inject()
         case None => ZIO.succeed(Nil)
         case _ => ZIO.fail(models.web.HattidInternalError("Cache type error"))
       }
-    } yield typed)
-      .provide(ZLayer.succeed(restClickhouseDAO))
+    } yield typed
   }
 
   def numberOverview(season: Int, round: Int,
-                     leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, NumberOverview] = {
+                     leagueId: Option[Int], divisionLevel: Option[Int]):  ZIO[ClickhousePool & RestClickhouseDAO, HattidError, NumberOverview] = {
     for {
       list <- fetchFromCache[NumberOverview]("numberOverview", season, round, leagueId, divisionLevel)
       head <- ZIO.fromOption(list.headOption)
@@ -102,12 +100,12 @@ class RestOverviewStatsService @Inject()
 
 
   def formations(season: Int, round: Int,
-                 leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[FormationsOverview]] =
+                 leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[FormationsOverview]] =
     fetchFromCache[FormationsOverview]("formations", season, round, leagueId, divisionLevel)
 
 
   def averageOverview(season: Int, round: Int,
-                      leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, AveragesOverview] = {
+                      leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, AveragesOverview] = {
     for {
       list <- fetchFromCache[AveragesOverview]("averageOverview", season, round, leagueId, divisionLevel)
       head <- ZIO.fromOption(list.headOption)
@@ -116,43 +114,43 @@ class RestOverviewStatsService @Inject()
   }
 
   def surprisingMatches(season: Int, round: Int,
-                        leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[MatchTopHatstats]] =
+                        leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[MatchTopHatstats]] =
     fetchFromCache[MatchTopHatstats]("surprisingMatches", season, round, leagueId, divisionLevel)
 
   def topHatstatsTeams(season: Int, round: Int,
-                       leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[TeamStatOverview]] =
+                       leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[TeamStatOverview]] =
     fetchFromCache[TeamStatOverview]("topHatstatsTeams", season, round, leagueId, divisionLevel)
 
   def topSalaryTeams(season: Int, round: Int,
-                     leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[TeamStatOverview]] =
+                     leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[TeamStatOverview]] =
     fetchFromCache[TeamStatOverview]("topSalaryTeams", season, round, leagueId, divisionLevel)
 
   def topMatches(season: Int, round: Int,
-                 leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[MatchTopHatstats]] =
+                 leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[MatchTopHatstats]] =
     fetchFromCache[MatchTopHatstats]("topMatches", season, round, leagueId, divisionLevel)
 
   def topSalaryPlayers(season: Int, round: Int,
-                       leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[PlayerStatOverview]] =
+                       leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[PlayerStatOverview]] =
     fetchFromCache[PlayerStatOverview]("topSalaryPlayers", season, round, leagueId, divisionLevel)
 
   def topRatingPlayers(season: Int, round: Int,
-                       leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[PlayerStatOverview]] =
+                       leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[PlayerStatOverview]] =
     fetchFromCache[PlayerStatOverview]("topRatingPlayers", season, round, leagueId, divisionLevel)
 
   def topMatchAttendance(season: Int, round: Int,
-                         leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[MatchAttendanceOverview]] =
+                         leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[MatchAttendanceOverview]] =
     fetchFromCache[MatchAttendanceOverview]("topMatchAttendance", season, round, leagueId, divisionLevel)
 
   def topTeamVictories(season: Int, round: Int,
-                       leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[TeamStatOverview]] =
+                       leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[TeamStatOverview]] =
     fetchFromCache[TeamStatOverview]("topTeamVictories", season, round, leagueId, divisionLevel)
 
   def topSeasonScorers(season: Int, round: Int,
-                       leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, List[PlayerStatOverview]] =
+                       leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, List[PlayerStatOverview]] =
     fetchFromCache[PlayerStatOverview]("topSeasonScorers", season, round, leagueId, divisionLevel)
 
   def totalOverview(season: Int, round: Int,
-                    leagueId: Option[Int], divisionLevel: Option[Int]): IO[HattidError, TotalOverview] = {
+                    leagueId: Option[Int], divisionLevel: Option[Int]): ZIO[ClickhousePool & RestClickhouseDAO, HattidError, TotalOverview] = {
     for {
       numberOverviewData     <- numberOverview(season, round, leagueId, divisionLevel);
       formationsData         <- formations(season, round, leagueId, divisionLevel);

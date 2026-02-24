@@ -19,7 +19,7 @@ object MatchLineup {
   implicit val reader: XmlReader[MatchLineup] = (
     (__ \ "HomeTeam").read[HomeTeam],
     (__ \ "AwayTeam").read[AwayTeam],
-    (__ \ "MatchType").read(`enum`(MatchType)),
+    (__ \ "MatchType").read(using `enum`(MatchType)),
     (__ \ "MatchContextId").read[Int],
     (__ \ "Arena").read[Arena],
     (__ \ "Team").read[Team]

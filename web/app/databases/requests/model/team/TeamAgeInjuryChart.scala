@@ -4,6 +4,7 @@ import play.api.libs.json.{Json, OWrites}
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 import databases.requests.model.Chart
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class TeamAgeInjuryChart(teamSortingKey: TeamSortingKey,
                               season: Int, 
@@ -14,6 +15,7 @@ case class TeamAgeInjuryChart(teamSortingKey: TeamSortingKey,
 
 object TeamAgeInjuryChart {
   implicit val writes: OWrites[TeamAgeInjuryChart] = Json.writes[TeamAgeInjuryChart]
+  implicit val jsonEncoder: JsonEncoder[TeamAgeInjuryChart] = DeriveJsonEncoder.gen[TeamAgeInjuryChart]
 
   val mapper: RowParser[TeamAgeInjuryChart] = {
     get[Int]("league") ~

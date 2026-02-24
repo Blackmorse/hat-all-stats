@@ -19,8 +19,8 @@ object Team {
     (__ \ "TeamName").read[String],
     (__ \ "ExperienceLevel").read[Int],
     (__ \ "StyleOfPlay").read[Int],
-    (__ \ "StartingLineup" \ "Player").read(seq[StartingLineupPlayer]),
-    (__ \ "Substitutions" \ "Substitution").read(seq[Substitution]),
-    (__ \ "Lineup" \ "Player").read(seq[LineupPlayer])
+    (__ \ "StartingLineup" \ "Player").read(using seq[StartingLineupPlayer]),
+    (__ \ "Substitutions" \ "Substitution").read(using seq[Substitution]),
+    (__ \ "Lineup" \ "Player").read(using seq[LineupPlayer])
   ).mapN(apply)
 }

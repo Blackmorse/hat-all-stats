@@ -3,11 +3,11 @@ package handlers
 import javax.inject._
 import play.api.http._
 import play.api.mvc.{RequestHeader, Result}
-import webclients.WebTelegramClient
+//import webclients.WebTelegramClient
 
 import scala.concurrent.Future
 
-class HattidErrorHandler @Inject() (telegramClient: WebTelegramClient,
+class HattidErrorHandler @Inject() (//telegramClient: WebTelegramClient,
                                      jsonHandler: JsonHttpErrorHandler,
                                    ) extends PreferredMediaTypeHttpErrorHandler(
   "application/json" -> new HttpErrorHandler {
@@ -18,7 +18,7 @@ class HattidErrorHandler @Inject() (telegramClient: WebTelegramClient,
     override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
       val stacktrace = exception.getStackTrace.mkString("\n")
       val message = s"${request.path} \n\nWeb onServerError: ${exception.getMessage}. Stack Trace: \n $stacktrace"
-      telegramClient.sendMessage(message)
+//      telegramClient.sendMessage(message)
       jsonHandler.onServerError(request, exception)
     }
   },

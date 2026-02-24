@@ -1,28 +1,45 @@
 package service.leagueinfo
 
-import chpp.worlddetails.WorldDetailsRequest
-import chpp.worlddetails.models.{League, WorldDetails}
+import chpp.worlddetails.models.League
+import controllers.LeagueTime
+import databases.ClickhousePool.ClickhousePool
 import databases.dao.RestClickhouseDAO
 import databases.requests.matchdetails.HistoryInfoRequest
 import hattid.CommonData
 import models.clickhouse.HistoryInfo
-import models.web.{HattidError, NotFoundError}
-import webclients.ChppClient
+import models.web.{HattidError, HattidInternalError, NotFoundError}
 import service.ChppService
 import service.leagueinfo.LeagueInfoServiceZIO.{DivisionLevel, LeagueId, Round, Season}
-import zio.{Unsafe, ZIO, ZLayer}
-
-import javax.inject.{Inject, Singleton}
-import scala.collection.mutable
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.DurationInt
-import zio.*
+import webclients.{AuthConfig, ChppClient}
 import zio.concurrent.ConcurrentMap
+import zio.*
+import zio.http.Client
 
+import java.util.Date
 
-class LeagueInfoServiceZIO(private val leagueInfoMap: ConcurrentMap[LeagueId, LeagueInfoZio]) {
-  def leagueInfo(leagueId: LeagueId): IO[NotFoundError, LeagueInfoZio] = {
+case class LeagueState(league: League,
+                       loadingInfo: LoadingInfo,
+                       seasonRoundInfo: List[(Season, List[Round])],
+                       idToCountryName: List[(Int, String)])
+
+extension [T](map: ConcurrentMap[Int, T])
+  def maxKey: UIO[Option[Int]] = map.fold(None: Option[Int]){ case (s, (k, _)) =>
+    s.map(sv => Math.max(sv, k)).orElse(Some(k))
+  }
+
+class LeagueInfoServiceZIO(private val leagueInfoMap: ConcurrentMap[LeagueId, LeagueInfoZIO]) {
+  def leagueState(leagueId: LeagueId): IO[NotFoundError, LeagueState] =
+    for {
+      league            <- leagueData(leagueId)
+      seasonRoundInfo   <- seasonRoundInfo(leagueId)
+      loadingStatus     <- getLoadingStatus(leagueId)
+      idToStringCountry <- idToStringCountryMap
+    } yield LeagueState(league = league,
+      loadingInfo = loadingStatus,
+      seasonRoundInfo = seasonRoundInfo,
+      idToCountryName = idToStringCountry)
+
+  private def leagueInfo(leagueId: LeagueId): IO[NotFoundError, LeagueInfoZIO] = {
     (for {
       leagueInfoOpt <- leagueInfoMap.get(leagueId)
       leagueInfo <- ZIO.fromOption(leagueInfoOpt)
@@ -32,14 +49,156 @@ class LeagueInfoServiceZIO(private val leagueInfoMap: ConcurrentMap[LeagueId, Le
         description = s"Not found league info for leagueId=$leagueId")
       )
   }
+  
+  def leagueData(leagueId: LeagueId): IO[NotFoundError, League] =
+    leagueInfo(leagueId).map(_.league)
 
-  def leagueRoundForSeason(leagueId: LeagueId, season: Int): IO[HattidError, Round] = {
+  def leagueRoundForSeason(leagueId: LeagueId, season: Season): IO[HattidError, Round] = {
     for {
       lInfo      <- leagueInfo(leagueId)
       seasonInfo <- lInfo.seasonInfo(season)
       round      <- seasonInfo.size
     } yield round
   }
+
+  def seasonRoundInfo(leagueId: Int): IO[NotFoundError, List[(Season, List[Round])]] = {
+    for {
+      leagueInfo <- leagueInfo(leagueId)
+      result <- leagueInfo.seasonsRounds
+    } yield result
+
+  }
+  
+  def setLoadingStatus(leagueId: LeagueId, info: LoadingInfo): IO[NotFoundError, Unit] = {
+    for {
+      leagueInfo <- leagueInfo(leagueId)
+      _          <- leagueInfo.setLoadingInfo(info)
+    } yield ()
+  }
+
+  def finishAll(): UIO[List[Unit]] = {
+    for {
+      list <- leagueInfoMap.toList
+      zios = list.map(_._2).map(leagueInfo => leagueInfo.setLoadingInfo(Finished))
+      r <- ZIO.collectAll(zios)
+    } yield r
+  }
+  
+  def addAnotherRound(leagueId: LeagueId, 
+                      season: Season, 
+                      round: Round, 
+                      roundInfos: List[HistoryInfo]): ZIO[ChppClient & Client & AuthConfig & ChppService, HattidInternalError, Unit] = {
+    for {
+      chppService   <- ZIO.service[ChppService]
+      leagueInfoOpt <- leagueInfoMap.get(leagueId)
+      leagueInfo    <- leagueInfoOpt.map(ZIO.succeed).getOrElse(
+                          (for {
+                            worldDetails <- chppService.getWorldDetails()
+                            league       <- ZIO.fromOption(worldDetails.leagueList.find(_.leagueId == leagueId))
+                            leagueInfo   <- LeagueInfoZIO.make(Nil, league)
+                          } yield leagueInfo)
+                            .mapError(_ => HattidInternalError(s"Unable to update league $leagueId"))
+                        )
+      _              <- leagueInfo.addAnotherRound(season, round, roundInfos)
+      _              <- leagueInfoMap.put(leagueId, leagueInfo)
+    } yield ()
+  }
+
+  def updateStatuses(scheduleInfo: Seq[LeagueTime]): Unit = {
+    val zios = scheduleInfo.map { leagueTime =>
+      val zio = for {
+        leagueInfoOpt <- leagueInfoMap.get(leagueTime.leagueId)
+        leagueInfo    <- ZIO.fromOption(leagueInfoOpt)
+        z             <- leagueInfo.setLoadingInfo(Scheduled(leagueTime.time))
+      } yield z
+      leagueTime.leagueId -> zio.either
+    }.map {case (leagueId, zio) => 
+      zio.map { _ => leagueId }
+    }
+    
+    val r = ZIO.collectAll(zios)
+  }
+  
+  def getLoadingStatus(leagueId: LeagueId): IO[NotFoundError, LoadingInfo] = {
+    for {
+      leagueInfo <- leagueInfo(leagueId)
+      status     <- leagueInfo.getLoadingStatus
+    } yield status
+  }
+  
+  def idToStringCountryMap: UIO[List[(LeagueId, String)]] =
+    for {
+      list   <- leagueInfoMap.toList
+      result = list.map{ case (leagueId, leagueInfo) => leagueId -> leagueInfo.league.englishName }
+        .sortBy(_._2)
+    } yield result
+
+  def currentSeason(leagueId: LeagueId): IO[NotFoundError, Season] = {
+    for {
+      leagueInfo <- leagueInfo(leagueId)
+      season     <- leagueInfo.currentSeason
+    } yield season
+  }
+
+  def lastRound(leagueId: LeagueId, season: Season): IO[NotFoundError, Round] = {
+    for {
+      leagueInfo <- leagueInfo(leagueId)
+      round      <- leagueInfo.lastRound(season)
+    } yield round
+  }
+
+  def getRelativeSeasonFromAbsolute(season: Int, leagueId: Int): IO[NotFoundError, Season] =
+    leagueInfo(leagueId).map(_.getRelativeSeasonFromAbsolute(season))
+
+  def getProcessedCountriesNumber: UIO[Int] =
+    for {
+      list <- leagueInfoMap.toList
+      x <- ZIO.foreach(list)(_._2.getLoadingStatus)
+      processedCountriesNumber = list.zip(x).count { case ((_, leagueInfo), status) => status == Scheduled }
+    } yield processedCountriesNumber
+
+  def getNextAndCurrentCountry: UIO[(Option[(LeagueId, String, Date)], Option[(LeagueId, String)])] = {
+    for {
+      list <- leagueInfoMap.toList
+      x <- ZIO.foreach(list)(_._2.getLoadingStatus)
+      zipped = list.zip(x)
+      nextCountry = zipped.filter(_._2.isInstanceOf[Scheduled])
+        .sortBy(_._2.asInstanceOf[Scheduled].date.getTime)
+        .headOption
+        .map{ case ((leagueId, leagueInfoZio), loadingInfo) => (leagueId, leagueInfoZio.league.englishName, loadingInfo.asInstanceOf[Scheduled].date) }
+      currentCountry = zipped.find(_._2 == Loading)
+        .map{ case ((leagueId, leagueInfoZio), _) => leagueId -> leagueInfoZio.league.englishName }
+    } yield (nextCountry, currentCountry)
+  }
+
+  def countriesNumber: UIO[Int] = leagueInfoMap.toList.map(_.size)
+
+  def leagueExists(leagueId: LeagueId): UIO[Boolean] = leagueInfoMap.get(leagueId)
+    .map(_.isDefined)
+
+  def lastFullRound(): IO[NotFoundError, Int] = {
+    for {
+      //Salvador is the last league to load
+      leagueInfo <- leagueInfo(CommonData.LAST_SERIES_LEAGUE_ID)
+      lastSeason <- lastFullSeason()
+      lastRound  <- leagueInfo.lastRound(lastSeason)
+    } yield lastRound
+  }
+
+  def divisionLevelExists(leagueId: LeagueId, season: Season, round: Round, divisionLevel: DivisionLevel): UIO[Boolean] =
+    for {
+      leagueInfo <- leagueInfoMap.get(leagueId)
+      exists     <- leagueInfo.map(_.divisionLevelExists(season, round, divisionLevel)).getOrElse(ZIO.succeed(false))
+    } yield exists
+
+  def lastFullSeason(): IO[NotFoundError, Int] =
+    leagueInfo(CommonData.LAST_SERIES_LEAGUE_ID).flatMap(_.currentSeason)
+
+  def numberOfTeamsForLeaguePerRound(leagueId: LeagueId, divisionLevel: Option[DivisionLevel], season: Season): IO[NotFoundError, List[(Round, Long)]] =
+    for {
+      leagueInfo <- leagueInfo(leagueId)
+      list       <- leagueInfo.numberOfTeamsForLeaguePerRound(season, divisionLevel)
+    } yield list
 }
 
 object LeagueInfoServiceZIO {
@@ -47,95 +206,6 @@ object LeagueInfoServiceZIO {
   type Season = Int
   type Round = Int
   type DivisionLevel = Int
-
-  lazy val layer: ZLayer[RestClickhouseDAO & ChppService, HattidError, LeagueInfoServiceZIO] = {
-    ZLayer {
-      for {
-        chppService <- ZIO.service[ChppService]
-        leagueInfoMap <- ConcurrentMap.make[LeagueId, LeagueInfo]()
-        worldDetails <- chppService.getWorldDetails()
-        leagueIdToCountryNameMap = worldDetails.leagueList.map(league => league.leagueId -> league)
-        history <- HistoryInfoRequest.execute(None, None, None)
-        leagueHistoryInfos = history.groupBy(_.leagueId)
-        map = leagueIdToCountryNameMap.map((leagueId, league) => leagueId -> LeagueInfoZio.make(leagueHistoryInfos(leagueId), league))
-        sequenced <- ZIO.foreach(map){ case (k, vZio) => vZio.map(v => k -> v) }
-        zioMap    <- ConcurrentMap.fromIterable(sequenced)
-      } yield new LeagueInfoServiceZIO(zioMap)
-    }
-  }
-}
-
-
-class LeagueInfoZio(private val leagueId: Int,
-                    private val seasonInfoMap: ConcurrentMap[Season, SeasonInfoZIO],
-                    private val loadingInfo: Ref[LoadingInfo]) {
-  def seasonInfo(season: Season): IO[NotFoundError, SeasonInfoZIO] = {
-    (for {
-      seasonInfoOpt <- seasonInfoMap.get(season)
-      seasonInfo <- ZIO.fromOption(seasonInfoOpt)
-    } yield seasonInfo)
-      .mapError(_ => NotFoundError(entityType = "SEASON",
-        entityId = s"$leagueId-$season",
-        description = s"Not found season info for leagueId=$leagueId, season=$season")
-      )
-  }
-
-
-}
-
-object LeagueInfoZio {
-  def make(historyInfos: List[HistoryInfo], league: League): UIO[LeagueInfoZio] = {
-    val seasonInfoMap = historyInfos.groupBy(_.season).map { case (season, historyInfos) =>
-      season -> SeasonInfoZIO.make(season, historyInfos)
-    }
-
-    for {
-      sequenced <- ZIO.foreach(seasonInfoMap){ case (k, vZio) => vZio.map(v => k -> v) }
-      concurrentMap <- ConcurrentMap.fromIterable(sequenced)
-      ref <- Ref.make[LoadingInfo](Finished)
-    } yield new LeagueInfoZio(league.leagueId, concurrentMap, ref)
-
-  }
-}
-
-class SeasonInfoZIO(private val season: Season, private val roundInfoMap: ConcurrentMap[Round, RoundInfoZio]) {
-  def size: UIO[Int] = roundInfoMap.toList.map(_.length)
-}
-
-object SeasonInfoZIO {
-  def make(season: Int, historyInfos: List[HistoryInfo]): UIO[SeasonInfoZIO] = {
-    val map = historyInfos.groupBy(_.round).map { case (round, historyInfos) =>
-      round -> RoundInfoZio.make(round, historyInfos)
-    }
-
-    for {
-      sequenced <- ZIO.foreach(map){ case (k, vZio) => vZio.map(v => k -> v) }
-      concurrentMap <- ConcurrentMap.fromIterable(sequenced)
-    } yield new SeasonInfoZIO(season, concurrentMap)
-  }
-}
-
-class RoundInfoZio(round: Int, private val divisionLevelInfoMap: ConcurrentMap[DivisionLevel, DivisionLevelInfo])
-
-object RoundInfoZio {
-  def make(round: Int, historyInfos: List[HistoryInfo]): UIO[RoundInfoZio] = {
-    val map = historyInfos.groupBy(_.divisionLevel).map { case (divisionLevel, historyInfos) =>
-      divisionLevel -> DivisionLevelInfo(divisionLevel, historyInfos.head.count)
-    }
-
-    for {
-      sequenced <- ZIO.foreach(map){ case (k, v) => ZIO.succeed(k -> v) }
-      concurrentMap <- ConcurrentMap.fromIterable(sequenced)
-    } yield new RoundInfoZio(round, concurrentMap)
-  }
-}
-
-
-@Singleton
-class LeagueInfoService @Inject() (val chppClient: ChppClient,
-                                   implicit val restClickhouseDAO: RestClickhouseDAO,
-                                  ) {
-  private val runtime = zio.Runtime.default
 
   lazy val leagueNumbersMap: Map[Int, Seq[Int]] = Map(1 -> Seq(1),
     2 -> (1 to 4),
@@ -148,92 +218,20 @@ class LeagueInfoService @Inject() (val chppClient: ChppClient,
     9 -> (1 to 2048)
   )
 
-  def lastFullRound(): Int = {
-    //Salvador has last league matches
-    leagueInfo.currentRound(CommonData.LAST_SERIES_LEAGUE_ID)
-  }
-
-  def lastFullSeason(): Int = {
-    leagueInfo.currentSeason(CommonData.LAST_SERIES_LEAGUE_ID)
-  }
-
-  def getRelativeSeasonFromAbsolute(season: Int, leagueId: Int): Int = leagueInfo(leagueId).league.seasonOffset + season
-
-//  val leagueInfoZio: ZIO[RestClickhouseDAO & ChppService, HattidError, LeaguesInfo] = {
-//    for {
-//      chppService <- ZIO.service[ChppService]
-//      worldDetails <- chppService.getWorldDetails()
-//      leagueIdToCountryNameMap = worldDetails.leagueList.map(league => league.leagueId -> league)
-//      history <- HistoryInfoRequest.execute(None, None, None)
-//      leagueHistoryInfos = history.groupBy(_.leagueId)
-//
-//    } yield LeaguesInfo(leagueInfoFromMap(leagueHistoryInfos, leagueIdToCountryNameMap).toMap)
-//  }
-
-  private def leagueInfoFromMap(leagueHistoryInfos: Map[Int, List[HistoryInfo]], leagueIdToCountryNameMap: Seq[(Int, League)]) = {
-    for ((lId, league) <- leagueIdToCountryNameMap) yield {
-      val leagueId = lId.toInt
-      leagueHistoryInfos.get(leagueId).map(historyInfos =>
-          leagueId -> LeagueInfo(leagueId, historyInfos.groupBy(_.season).map { case (season, historyInfos) =>
-            season -> SeasonInfo(season, historyInfos.groupBy(_.round).map { case (round, historyInfos) =>
-              round -> RoundInfo(round, historyInfos.groupBy(_.divisionLevel).map { case (divisionLevel, historyInfos) =>
-                divisionLevel -> DivisionLevelInfo(divisionLevel, historyInfos.head.count)
-              }
-              )
-            }
-            )
-          }
-            , league, Finished))
-        .getOrElse(leagueId -> LeagueInfo(leagueId, Map(), league, Finished))
+  lazy val layer: ZLayer[ChppClient & Client & AuthConfig & ClickhousePool & RestClickhouseDAO & ChppService, HattidError, LeagueInfoServiceZIO] = {
+    ZLayer {
+      for {
+        chppService <- ZIO.service[ChppService]
+        worldDetails <- chppService.getWorldDetails()
+        leagueIdToCountryNameMap = worldDetails.leagueList.map(league => league.leagueId -> league)
+        history <- HistoryInfoRequest.execute(None, None, None)
+        leagueHistoryInfos = history.groupBy(_.leagueId)
+        map = leagueIdToCountryNameMap
+          .filter{ case (leagueId, _) => leagueHistoryInfos.contains(leagueId) }
+          .map((leagueId, league) => leagueId -> LeagueInfoZIO.make(leagueHistoryInfos(leagueId), league))
+        sequenced <- ZIO.foreach(map){ case (k, vZio) => vZio.map(v => k -> v) }
+        zioMap    <- ConcurrentMap.fromIterable(sequenced)
+      } yield new LeagueInfoServiceZIO(zioMap)
     }
-  }
-
-  val leagueInfo: LeaguesInfo = {
-
-    val leagueIdToCountryNameMap = Await.result(chppClient.executeUnsafe[WorldDetails, WorldDetailsRequest](WorldDetailsRequest())
-      .map(_.leagueList.map(league => league.leagueId -> league)), 60.seconds)
-
-
-
-
-//    val leagueHistoryInfos = Await.result(HistoryInfoRequest.execute(None, None, None), 1.minute)
-//      .groupBy(_.leagueId)
-
-    val zioHistory = HistoryInfoRequest.execute(None, None, None)
-      .provide(ZLayer.succeed(restClickhouseDAO))
-
-    // TODO ZIO!
-    val future = Unsafe.unsafe { implicit unsafe =>
-      runtime.unsafe.runToFuture(
-        zioHistory.catchAll(e => zio.ZIO.fail(new Exception("Failed to get league history info " + e.toString)))
-      )
-    }
-
-    val leagueHistoryInfos = Await.result(future, 1.minute)
-      .groupBy(_.leagueId)
-
-    val seq = for ((lId, league) <- leagueIdToCountryNameMap) yield {
-      val leagueId  = lId.toInt
-      leagueHistoryInfos.get(leagueId).map(historyInfos =>
-        leagueId -> LeagueInfo(leagueId, historyInfos.groupBy(_.season).map{case(season, historyInfos) =>
-          season -> SeasonInfo(season, historyInfos.groupBy(_.round).map{case(round, historyInfos) =>
-            round -> RoundInfo(round, historyInfos.groupBy(_.divisionLevel).map{case(divisionLevel, historyInfos) =>
-              divisionLevel -> DivisionLevelInfo(divisionLevel, historyInfos.head.count)}
-            )}
-          )}
-          , league, Finished))
-        .getOrElse(leagueId -> LeagueInfo(leagueId, Map(), league, Finished))
-    }
-
-    LeaguesInfo(seq.toMap)
-  }
-
-  val idToStringCountryMap: Seq[(Int, String)] = leagueInfo.leagueInfo
-    .toSeq
-    .map{case(leagueId, leagueInfo) => (leagueId, leagueInfo.league.englishName)}
-    .sortBy(_._2)
-
-  implicit def toMutable[T](map: Map[Int, T]): mutable.Map[Int, T] = {
-    mutable.Map(map.toSeq*)
   }
 }

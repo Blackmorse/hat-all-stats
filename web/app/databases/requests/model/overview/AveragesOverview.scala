@@ -3,6 +3,7 @@ package databases.requests.model.overview
 import anorm.SqlParser.get
 import anorm.{RowParser, ~}
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class OverviewMatchAverages(hatstats: Int,
                                  spectators: Int,
@@ -10,6 +11,7 @@ case class OverviewMatchAverages(hatstats: Int,
 
 object OverviewMatchAverages {
   implicit val writes: OWrites[OverviewMatchAverages] = Json.writes[OverviewMatchAverages]
+  implicit val jsonEncoder: JsonEncoder[OverviewMatchAverages] = DeriveJsonEncoder.gen[OverviewMatchAverages]
 
   val mapper: RowParser[OverviewMatchAverages] = {
     get[Int]("avg_hatstats") ~
@@ -27,6 +29,7 @@ case class OverviewTeamPlayerAverages(age: Int,
 
 object OverviewTeamPlayerAverages {
   implicit val writes: OWrites[OverviewTeamPlayerAverages] = Json.writes[OverviewTeamPlayerAverages]
+  implicit val jsonEncoder: JsonEncoder[OverviewTeamPlayerAverages] = DeriveJsonEncoder.gen[OverviewTeamPlayerAverages]
 
   val mapper: RowParser[OverviewTeamPlayerAverages] = {
     get[Int]("avg_age") ~
@@ -43,4 +46,5 @@ case class AveragesOverview(matchAverages: OverviewMatchAverages,
 
 object AveragesOverview {
   implicit val writes: OWrites[AveragesOverview] = Json.writes[AveragesOverview]
+  implicit val jsonEncoder: JsonEncoder[AveragesOverview] = DeriveJsonEncoder.gen[AveragesOverview]
 }

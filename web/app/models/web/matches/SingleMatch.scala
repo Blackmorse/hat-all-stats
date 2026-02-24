@@ -3,6 +3,7 @@ package models.web.matches
 import chpp.matchdetails.models.HomeAwayTeam
 import databases.requests.model.`match`.MatchRatings
 import play.api.libs.json.{Json, OWrites, Reads}
+import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 
 case class SingleMatch(homeTeamName: String,
                        homeTeamId: Long,
@@ -17,6 +18,8 @@ case class SingleMatch(homeTeamName: String,
 object SingleMatch {
   implicit val writes: OWrites[SingleMatch] = Json.writes[SingleMatch]
   implicit val reads: Reads[SingleMatch] = Json.reads[SingleMatch]
+  implicit val jsonEncoder: JsonEncoder[SingleMatch] = DeriveJsonEncoder.gen[SingleMatch]
+  implicit val jsonDecoder: JsonDecoder[SingleMatch] = DeriveJsonDecoder.gen[SingleMatch]
 
   def fromHomeAwayTeams(homeTeam: HomeAwayTeam,
                         awayTeam: HomeAwayTeam,

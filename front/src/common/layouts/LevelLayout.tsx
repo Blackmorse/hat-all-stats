@@ -8,6 +8,7 @@ import Mappings from '../enums/Mappings'
 import {PagesEnum} from '../enums/PagesEnum'
 import LevelDataProps from '../LevelDataProps'
 import Layout from './Layout'
+import Bot from '../widgets/Bot'
 
 
 function parsePage(): string | undefined {
@@ -51,6 +52,13 @@ const LevelLayout = <LevelProps extends LevelDataProps>(props: Props<LevelProps>
         })
     }, [])
 
+    if (responseState.loadingEnum === LoadingEnum.BOT) {
+        return <Layout 
+          leftMenu={<></>}
+          content={<Bot />}
+          topMenu={props.topMenu(levelProps)}
+        />
+    }
     const leftMenu = <>
             {(levelProps !== undefined) ? props.topLeftMenu(levelProps, setPage): <></>}
             <LeftMenu pages={Array.from(props.pagesMap.keys()).filter(p => (p !== PagesEnum.PROMOTIONS && p !== PagesEnum.TEAM_SEARCH && /*TODO */  p !== PagesEnum.TEAM_COMPARSION))} 

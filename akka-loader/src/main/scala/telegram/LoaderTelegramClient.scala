@@ -3,9 +3,8 @@ package telegram
 import org.apache.pekko.actor.ActorSystem
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.Logger
-import hattid.telegram.TelegramClient
-import hattid.telegram.TelegramClient.TelegramCreds
 import org.slf4j.LoggerFactory
+import telegram.TelegramClient.TelegramCreds
 
 import javax.inject.{Inject, Singleton}
 

@@ -1,6 +1,7 @@
 package service
 
 import chpp.teamdetails.models.{Team, TeamDetails}
+import databases.ClickhousePool.ClickhousePool
 import databases.dao.RestClickhouseDAO
 import databases.requests.model.team.CreatedSameTimeTeam
 import databases.requests.teamdetails.TeamsCreatedSameTimeRequest
@@ -8,9 +9,13 @@ import databases.requests.teamrankings.CompareTeamRankingsRequest
 import models.web.{HattidError, TeamComparison}
 import play.api.libs.json.{Json, OWrites}
 import play.api.mvc.QueryStringBindable
-import service.leagueinfo.LeagueInfoService
+import service.leagueinfo.LeagueInfoServiceZIO
+import webclients.{AuthConfig, ChppClient}
 import zio.ZIO
+import zio.http.Client
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
+import java.text.SimpleDateFormat
 import java.util.Date
 import javax.inject.Inject
 
@@ -20,6 +25,7 @@ case class CreatedSameTimeTeamExtended(season: Int,
 
 object CreatedSameTimeTeamExtended {
   implicit val writes: OWrites[CreatedSameTimeTeamExtended] = Json.writes[CreatedSameTimeTeamExtended]
+  implicit val jsonEncoder: JsonEncoder[CreatedSameTimeTeamExtended] = DeriveJsonEncoder.gen[CreatedSameTimeTeamExtended]
 }
 
 trait HattrickPeriod
@@ -62,35 +68,40 @@ object HattrickPeriod {
   }
 }
 
-class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
-                             seasonsService: SeasonsService,
-                             chppService: ChppService,
-                             val restClickhouseDAO: RestClickhouseDAO) {
+class TeamsService @Inject()() {
 
-  def teamsCreatedSamePeriod(period: HattrickPeriod, foundedDate: Date,
-                             leagueId: Int): ZIO[RestClickhouseDAO, HattidError, List[CreatedSameTimeTeamExtended]] = {
-    val round = leagueInfoService.leagueInfo(leagueId).currentRound()
-    val season = leagueInfoService.leagueInfo(leagueId).currentSeason()
-    val ranges = seasonsService.getSeasonAndRoundRanges(foundedDate)
+  private val firstSeasonFirstDate = new SimpleDateFormat("yyyy-MM-dd").parse("1997-09-28") //1 season 1 day!
+
+  private val weekMs: Long = 1000L * 3600 * 24 * 7
+  private val seasonMs = weekMs * 16
+
+  def teamsCreatedSamePeriod(period: HattrickPeriod, 
+                             foundedDate: Date,
+                             leagueId: Int): ZIO[LeagueInfoServiceZIO & ClickhousePool & RestClickhouseDAO, HattidError, List[CreatedSameTimeTeamExtended]] = {
+    val ranges = getSeasonAndRoundRanges(foundedDate)
 
     val range = period match {
       case Round => ranges.roundRange
       case Season => ranges.seasonRange
-      case Weeks(weeksNumber) => seasonsService.getWeeksRange(foundedDate, weeksNumber)
+      case Weeks(weeksNumber) => getWeeksRange(foundedDate, weeksNumber)
     }
 
-    TeamsCreatedSameTimeRequest.execute(leagueId, season, round, range)
-      .map(list => list.map(cstt => {
-        val sameTeamRanges = seasonsService.getSeasonAndRoundRanges(cstt.foundedDate)
-        CreatedSameTimeTeamExtended(season = sameTeamRanges.season,
-          round = sameTeamRanges.round,
-          createdSameTimeTeam = cstt)
-      }))
+    for {
+      leagueInfoService <- ZIO.service[LeagueInfoServiceZIO]
+      season            <- leagueInfoService.currentSeason(leagueId)
+      round             <- leagueInfoService.leagueRoundForSeason(leagueId, season)
+      list              <- TeamsCreatedSameTimeRequest.execute(leagueId, season, round, range)
+    } yield list.map(cstt => {
+      val sameTeamRanges = getSeasonAndRoundRanges(cstt.foundedDate)
+      CreatedSameTimeTeamExtended(season = sameTeamRanges.season,
+        round = sameTeamRanges.round,
+        createdSameTimeTeam = cstt)
+    })
   }
   
-  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[RestClickhouseDAO, HattidError, TeamComparison] = {
-    val team1Zio = chppService.getTeamById(teamId1)
-    val team2Zio = chppService.getTeamById(teamId2)
+  def compareTwoTeams(teamId1: Long, teamId2: Long): ZIO[ChppClient & Client & AuthConfig & ChppService & ClickhousePool & RestClickhouseDAO, HattidError, TeamComparison] = {
+    val team1Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId1))
+    val team2Zio = ZIO.serviceWithZIO[ChppService](_.getTeamById(teamId2))
     
     for {
       (team1, team1Details, (team2, teams2Details)) <- team1Zio <&> team2Zio
@@ -98,13 +109,13 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
     } yield comparison
   }
   
-  private def combine(team1: Team, team1Details: TeamDetails, team2: Team, team2Details: TeamDetails): ZIO[RestClickhouseDAO, HattidError, TeamComparison] = {
+  private def combine(team1: Team, team1Details: TeamDetails, team2: Team, team2Details: TeamDetails): ZIO[ClickhousePool &RestClickhouseDAO, HattidError, TeamComparison] = {
     if (team1.league.leagueId != team2.league.leagueId ||
       team1Details.user.userId == 0 || team2Details.user.userId == 0) {
       ZIO.succeed(TeamComparison.empty())
     } else {
-      val teamCreateRanges1 = seasonsService.getSeasonAndRoundRanges(team1.foundedDate)
-      val teamCreateRanges2 = seasonsService.getSeasonAndRoundRanges(team2.foundedDate)
+      val teamCreateRanges1 = getSeasonAndRoundRanges(team1.foundedDate)
+      val teamCreateRanges2 = getSeasonAndRoundRanges(team2.foundedDate)
       val (fromSeason, fromRound) = getCommonSeasonAndRound(teamCreateRanges1, teamCreateRanges2)
 
       CompareTeamRankingsRequest.execute(team1.teamId, team2.teamId,
@@ -121,5 +132,38 @@ class TeamsService @Inject()(leagueInfoService: LeagueInfoService,
     if (ranges1.season == ranges2.season) (ranges1.season, Math.max(ranges1.round, ranges2.round))
     else if (ranges1.season > ranges2.season) (ranges1.season, ranges1.round)
     else (ranges2.season, ranges2.round)
+  }
+
+  private def getSeasonAndRoundFromDate(date: Date): (Int, Int) = {
+    val season = (date.getTime - firstSeasonFirstDate.getTime) / seasonMs + 1
+    val round = ((date.getTime - firstSeasonFirstDate.getTime) % seasonMs) / weekMs + 1
+    (season.toInt, round.toInt)
+  }
+
+  private def getSeasonAndRoundRanges(date: Date): TeamCreatedRanges = {
+    val (season, round) = getSeasonAndRoundFromDate(date)
+
+    val firstDayOfSeasonMs = firstSeasonFirstDate.getTime + (season - 1) * seasonMs
+    val firstDayOfSeason = new Date(firstDayOfSeasonMs)
+
+    val firstDayOfNextSeason = new Date(firstDayOfSeasonMs + seasonMs)
+
+    val firstDayOfRoundMs = firstDayOfSeasonMs + (round - 1) * weekMs
+    val firstDayOfRound = new Date(firstDayOfRoundMs)
+
+    val firstDayOfNextRound = new Date(firstDayOfRoundMs + weekMs)
+
+    TeamCreatedRanges(
+      season = season,
+      round = round,
+      seasonRange = DatesRange(firstDayOfSeason, firstDayOfNextSeason),
+      roundRange = DatesRange(firstDayOfRound, firstDayOfNextRound))
+  }
+
+  private def getWeeksRange(date: Date, weeksNumber: Int): DatesRange = {
+    val minDate = new Date(date.getTime - weekMs * weeksNumber)
+    val maxDate = new Date(date.getTime + weekMs * weeksNumber)
+
+    DatesRange(minDate, maxDate)
   }
 }

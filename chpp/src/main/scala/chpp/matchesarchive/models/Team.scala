@@ -12,6 +12,6 @@ object Team {
   implicit val reader: XmlReader[Team] = (
     (__ \ "TeamID").read[Int],
     (__ \ "TeamName").read[String],
-    (__ \ "MatchList" \ "Match").read(seq[Match]),
+    (__ \ "MatchList" \ "Match").read(using seq[Match]),
     ).mapN(apply)
 }

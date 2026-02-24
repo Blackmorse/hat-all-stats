@@ -2,6 +2,7 @@ package databases.requests.model.overview
 
 import databases.requests.model.`match`.MatchTopHatstats
 import play.api.libs.json.{Json, OWrites}
+import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
 case class TotalOverview(numberOverview: NumberOverview,
                          formations: List[FormationsOverview],
@@ -17,6 +18,7 @@ case class TotalOverview(numberOverview: NumberOverview,
                          topSeasonScorers: List[PlayerStatOverview])
 object TotalOverview {
   implicit val writes: OWrites[TotalOverview] = Json.writes[TotalOverview]
+  implicit val jsonEncoder: JsonEncoder[TotalOverview] = DeriveJsonEncoder.gen[TotalOverview]
 
   def empty(): TotalOverview =
     TotalOverview(

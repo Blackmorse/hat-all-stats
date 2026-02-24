@@ -9,7 +9,7 @@ case class Flags(homeFlags: Seq[Flag],
 
 object Flags {
   implicit val reader: XmlReader[Flags] = (
-    (__ \ "HomeFlags" \ "Flag").read(seq[Flag]),
-    (__ \ "AwayFlags" \ "Flag").read(seq[Flag]),
+    (__ \ "HomeFlags" \ "Flag").read(using seq[Flag]),
+    (__ \ "AwayFlags" \ "Flag").read(using seq[Flag]),
     ).mapN(apply)
 }
