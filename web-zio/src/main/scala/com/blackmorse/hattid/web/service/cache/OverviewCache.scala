@@ -46,7 +46,6 @@ object OverviewCache {
           case "numberOverview" =>
             for {
               numbers <- NumberOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel).map(_.head)
-              _ <- ZIO.debug("Called! " + key)
               newTeams <- NewTeamsOverviewRequest.executeZio(key.season, key.round, key.leagueId, key.divisionLevel).map(_.head)
             } yield NumberOverview(numbers, newTeams) :: Nil
           case "formations" =>

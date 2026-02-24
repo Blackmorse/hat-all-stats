@@ -91,7 +91,7 @@ object HattidEnv {
       translationEnv <- ((chppAuthConfigLayer ++ chppServiceLayer ++ httpClientLayer ++ chppClientLayer) >>> translationLayer).build
       similarMatchesServiceEnv <- ZLayer.succeed(new SimilarMatchesService()).build
       overviewCache <- (databaseConfigLayer >>> poolLayer >>> OverviewCache.layer).build
-      dreamTeamCache <- (databaseConfigLayer >>> poolLayer >>> DreamTeamCache.layer).build
+      dreamTeamCache <- (databaseConfigLayer >>> poolLayer >>> DreamTeamCache.make).build
     } yield {
       serverEnv ++
         chppClientEnv ++

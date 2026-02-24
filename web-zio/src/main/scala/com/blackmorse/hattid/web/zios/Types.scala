@@ -24,6 +24,6 @@ type HattidEnv = ChppClient &
   TranslationsService &
   SimilarMatchesService &
   OverviewCache.CacheType &
-  DreamTeamCache.CacheType
+  DreamTeamCache
 
 type CHPPServices = ChppClient & Client & AuthConfig & ChppService

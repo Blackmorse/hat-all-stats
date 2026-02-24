@@ -50,11 +50,11 @@ object LeagueRoutes {
   
   private def dreamTeamHandler = handler { (leagueId: Int, req: Request) =>
     for {
-      cache     <- ZIO.service[DreamTeamCache.CacheType]
+      cache     <- ZIO.service[DreamTeamCache]
       season    <- req.intParam("season")
       statsType <- req.statsType()
       sortBy    <- req.stringParam("sortBy")
-      entities  <- cache.get(
+      entities  <- cache.cache.get(
         (OrderingKeyPath(season = Some(season), leagueId = Some(leagueId)),
         statsType,
         sortBy))

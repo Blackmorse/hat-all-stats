@@ -24,11 +24,6 @@ object ZIOWebServer extends ZIOAppDefault {
   val routes: Routes[HattidEnv, Nothing] = Routes(routesSeq.head, routesSeq.tail *)
     .tapErrorZIO(e => ZIO.logError(e.toString))
     .handleError(_.toResponse)
-//  val routes: Routes[Any, Nothing] = Routes(
-//    Method.GET / "api" -> handler{
-//      ZIO.succeed(Response.text("Res"))
-//    }
-//  )
 
   def run = for {
     args   <- getArgs

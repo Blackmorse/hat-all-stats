@@ -1,6 +1,6 @@
 package com.blackmorse.hattid.web.models.web
 
-trait HattidError {
+sealed trait HattidError {
 }
 
 case class BadGatewayError(description: String) extends HattidError
@@ -10,6 +10,8 @@ case class BadRequestError(description: String) extends HattidError
 case class NotFoundError(entityType: String,
                          entityId: String,
                          description: String) extends HattidError
+
+case class TeamNotFoundError(teamId: Long) extends HattidError
   
 case class DbError(dbException: Throwable) extends HattidError
 

@@ -25,7 +25,7 @@ import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.databases.requests.teamrankings.HistoryTeamLeagueUnitInfoRequest
 import com.blackmorse.hattid.web.models.clickhouse.NearestMatch
 import com.blackmorse.hattid.web.models.web.player.AvatarPart
-import com.blackmorse.hattid.web.models.web.{BadRequestError, HattidError, NotFoundError}
+import com.blackmorse.hattid.web.models.web.{BadRequestError, HattidError, NotFoundError, TeamNotFoundError}
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
 import com.blackmorse.hattid.web.webclients.{AuthConfig, ChppClient}
 import zio.ZIO
@@ -69,15 +69,12 @@ class ChppService {
       }
   }
 
-  private def findTeamId(teamDetails: TeamDetails, teamId: Long): Either[NotFoundError, Team] = {
+  private def findTeamId(teamDetails: TeamDetails, teamId: Long): Either[TeamNotFoundError, Team] = {
     val teamOpt = teamDetails.teams
       .find(_.teamId == teamId)
       .filter(_ => teamDetails.user.userId != 0L && teamDetails.user.userId != 13537902L)
     teamOpt match {
-      case None => Left(NotFoundError(
-        entityType = "TEAM",
-        entityId = teamId.toString,
-        description = s"The owner is a bot or has been banned"))
+      case None => Left(TeamNotFoundError(teamId))
       case Some(team) => Right(team)
     }
   }

@@ -59,8 +59,14 @@ export function getLeagueUnitData(leagueUnitId: number, callback: Callback<Leagu
 
 export function getTeamData(leagueId: number, callback: Callback<TeamLevelDataProps>): void {
     axios.get<TeamData>('/api/team/' + leagueId)
-        .then(response => new TeamLevelDataProps(response.data))
-        .then(props => callback({loadingEnum: LoadingEnum.OK, model: props}))
+        .then(response => {
+            if (response.status === 204) {
+                callback({loadingEnum: LoadingEnum.BOT, error: {}})
+            } else {
+                callback({model: new TeamLevelDataProps(response.data), loadingEnum: LoadingEnum.OK })
+            }
+        })
+        // .then(props => callback({loadingEnum: LoadingEnum.OK, model: props}))
         .catch(e => catchError(e, callback))
 }
 

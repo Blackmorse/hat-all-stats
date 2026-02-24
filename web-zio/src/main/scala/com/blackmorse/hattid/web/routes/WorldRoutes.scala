@@ -44,11 +44,11 @@ object WorldRoutes {
 
   private def dreamTeamHandler = handler { (req: Request) =>
     for {
-      cache     <- ZIO.service[DreamTeamCache.CacheType]
+      cache     <- ZIO.service[DreamTeamCache]
       season    <- req.intParam("season")
       statsType <- req.statsType()
       sortBy    <- req.stringParam("sortBy")
-      entities  <- cache.get((OrderingKeyPath(season = Some(season)), statsType, sortBy))
+      entities  <- cache.cache.get((OrderingKeyPath(season = Some(season)), statsType, sortBy))
     } yield Response.json(entities.toJson)
   }
 
