@@ -1,19 +1,17 @@
 package com.blackmorse.hattid.web.zios
 
-import com.blackmorse.hattid.web.databases.dao.RestClickhouseDAO
 import com.blackmorse.hattid.web.models.web.HattidError
+import com.blackmorse.hattid.web.service.*
+import com.blackmorse.hattid.web.service.cache.{DreamTeamCache, OverviewCache}
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
 import com.blackmorse.hattid.web.service.leagueunit.LeagueUnitCalculatorService
-import com.blackmorse.hattid.web.service.*
-import com.blackmorse.hattid.web.service.cache.OverviewCache
 import com.blackmorse.hattid.web.webclients.{AuthConfig, ChppClient}
-//import com.clickhouse.jdbc.ClickHouseDriver
 import zio.config.magnolia.deriveConfig
 import zio.config.typesafe.TypesafeConfigProvider
 import zio.http.*
 import zio.{Config, Duration, Scope, ULayer, ZEnvironment, ZIO, ZLayer, ZPool}
 
-import java.sql.{Connection, DriverManager}
+import java.sql.Connection
 import java.util.Properties
 
 case class DatabaseConfig(driver: String,
@@ -93,6 +91,7 @@ object HattidEnv {
       translationEnv <- ((chppAuthConfigLayer ++ chppServiceLayer ++ httpClientLayer ++ chppClientLayer) >>> translationLayer).build
       similarMatchesServiceEnv <- ZLayer.succeed(new SimilarMatchesService()).build
       overviewCache <- (databaseConfigLayer >>> poolLayer >>> OverviewCache.layer).build
+      dreamTeamCache <- (databaseConfigLayer >>> poolLayer >>> DreamTeamCache.layer).build
     } yield {
       serverEnv ++
         chppClientEnv ++
@@ -106,7 +105,8 @@ object HattidEnv {
         teamServiceEnv ++
         translationEnv ++
         similarMatchesServiceEnv ++
-        overviewCache
+        overviewCache ++
+        dreamTeamCache
     }
 
     res

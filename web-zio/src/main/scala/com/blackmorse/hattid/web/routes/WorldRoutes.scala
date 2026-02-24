@@ -10,8 +10,8 @@ import com.blackmorse.hattid.web.databases.requests.teamdetails.{OldestTeamsRequ
 import com.blackmorse.hattid.web.databases.requests.{ClickhouseStatisticsRequest, OrderingKeyPath}
 import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.zios.*
-import com.blackmorse.hattid.web.zios.HattidCache.zDreamTeamCache
 import com.blackmorse.hattid.web.models.web.{HattidError, RestTableData}
+import com.blackmorse.hattid.web.service.cache.DreamTeamCache
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
 import zio.ZIO
 import zio.http.*
@@ -44,7 +44,7 @@ object WorldRoutes {
 
   private def dreamTeamHandler = handler { (req: Request) =>
     for {
-      cache     <- zDreamTeamCache
+      cache     <- ZIO.service[DreamTeamCache.CacheType]
       season    <- req.intParam("season")
       statsType <- req.statsType()
       sortBy    <- req.stringParam("sortBy")

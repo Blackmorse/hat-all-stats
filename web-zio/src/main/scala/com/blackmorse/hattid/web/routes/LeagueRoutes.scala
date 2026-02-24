@@ -3,7 +3,6 @@ package com.blackmorse.hattid.web.routes
 import com.blackmorse.hattid.web.zios.{HattidEnv, restTableData}
 import com.blackmorse.hattid.web.databases.requests.matchdetails.*
 import com.blackmorse.hattid.web.databases.requests.model.promotions.PromotionWithType
-import com.blackmorse.hattid.web.databases.requests.playerstats.dreamteam.DreamTeamRequest
 import com.blackmorse.hattid.web.databases.requests.playerstats.player.stats.*
 import com.blackmorse.hattid.web.databases.requests.playerstats.team.{TeamAgeInjuryRequest, TeamCardsRequest, TeamRatingsRequest, TeamSalaryTSIRequest}
 import com.blackmorse.hattid.web.databases.requests.promotions.PromotionsRequest
@@ -13,6 +12,7 @@ import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.models.web.league.RestLeagueData
 import com.blackmorse.hattid.web.zios.*
 import com.blackmorse.hattid.web.models.web.{HattidError, NotFoundError}
+import com.blackmorse.hattid.web.service.cache.DreamTeamCache
 import com.blackmorse.hattid.web.service.leagueinfo.{LeagueInfoServiceZIO, LeagueState}
 import com.blackmorse.hattid.web.utils.{CurrencyUtils, Romans}
 import zio.ZIO
@@ -50,13 +50,14 @@ object LeagueRoutes {
   
   private def dreamTeamHandler = handler { (leagueId: Int, req: Request) =>
     for {
+      cache     <- ZIO.service[DreamTeamCache.CacheType]
       season    <- req.intParam("season")
       statsType <- req.statsType()
       sortBy    <- req.stringParam("sortBy")
-      entities  <- DreamTeamRequest.execute(
-        orderingKeyPath = OrderingKeyPath(season = Some(season), leagueId = Some(leagueId)),
-        statsType = statsType,
-        sortBy = sortBy)
+      entities  <- cache.get(
+        (OrderingKeyPath(season = Some(season), leagueId = Some(leagueId)),
+        statsType,
+        sortBy))
     } yield Response.json(entities.toJson)
   }
   
