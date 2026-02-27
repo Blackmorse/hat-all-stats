@@ -10,4 +10,6 @@ interface TeamSalaryTSI {
     salaryPerTsi: number
 }
 
+export type TeamSalaryTSIChart = TeamSalaryTSI & { season: number, round: number }
+
 export default TeamSalaryTSI

@@ -66,7 +66,6 @@ export function getTeamData(leagueId: number, callback: Callback<TeamLevelDataPr
                 callback({model: new TeamLevelDataProps(response.data), loadingEnum: LoadingEnum.OK })
             }
         })
-        // .then(props => callback({loadingEnum: LoadingEnum.OK, model: props}))
         .catch(e => catchError(e, callback))
 }
 

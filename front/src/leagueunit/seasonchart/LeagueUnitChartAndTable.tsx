@@ -8,7 +8,8 @@ import TeamSortingKey from "../../rest/models/team/TeamSortingKey";
 import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import LeagueUnitTeamsSeasonCharts from "./LeagueUnitTeamSeasonCharts";
 import LeagueUnitTeamSeasonTable from "./LeagueUnitTeamSeasonTable";
-import { ChartDataProps, TimeSeries } from "../../common/charts/RechartsSeasonChart";
+import { ChartDataProps, ChartFormat, TimeSeries } from "../../common/charts/RechartsSeasonChart";
+import { RequestParams } from "../../rest/clients/LeagueUnitClient";
 
 export const genericAvgMerge = <T extends object>(data: T[], numericKeys: (keyof T)[]): T | undefined => {
     if (!data || data.length === 0) {
@@ -83,7 +84,7 @@ export interface ChartDefinition<Data extends { season: number, round: number }>
 
 const LeagueUnitChartAndTableContent = <Data extends ChartData>(props: {
     levelDataProps: LeagueUnitLevelDataProps,
-    stateAndRequest: StateAndRequest<number, Data[]>
+    stateAndRequest: StateAndRequest<RequestParams, Data[]>
     charts: ChartConfig<Data>[],
     avgMerger?: (entries: Data[]) => Data | undefined,
     maxMerger?: (entries: Data[]) => Data | undefined,
@@ -98,7 +99,7 @@ const LeagueUnitChartAndTableContent = <Data extends ChartData>(props: {
 
     const chartData = stateAndRequest.currentState.map(ch => {
         return {
-            ...ch, season: stateAndRequest.currentRequest
+            ...ch, season: stateAndRequest.currentRequest.season
         }
     })
     const map = new Map<number, Record<string, Data>>()
@@ -114,23 +115,23 @@ const LeagueUnitChartAndTableContent = <Data extends ChartData>(props: {
 
     const chartEntries: ChartEntry<Data>[] = []
     map.forEach((value, key) => {
-        chartEntries.push({ season: stateAndRequest.currentRequest, round: key, teams: value })
+        chartEntries.push({ season: stateAndRequest.currentRequest.season, round: key, teams: value })
     })
 
     const availableSeasons = levelDataProps.seasons();
-    const roundsForSeason = levelDataProps.rounds(stateAndRequest.currentRequest);
+    const roundsForSeason = levelDataProps.rounds(stateAndRequest.currentRequest.season);
 
     const handleSeasonChange = (event: SelectChangeEvent<number>) => {
         const newSeason = event.target.value as number;
         let newRound;
-        if (newSeason !== stateAndRequest.currentRequest) {
+        if (newSeason !== stateAndRequest.currentRequest.season) {
             const rounds = levelDataProps.rounds(newSeason)
             newRound = rounds[rounds.length - 1];
         } else {
             newRound = round;
         }
 
-        stateAndRequest.setRequest(newSeason);
+        stateAndRequest.setRequest({ ...stateAndRequest.currentRequest, season: newSeason });
         setRound(newRound);
     };
 
@@ -174,7 +175,7 @@ const LeagueUnitChartAndTableContent = <Data extends ChartData>(props: {
             <InputLabel id="season-select-label">{t('filter.season')}</InputLabel>
             <Select
                 labelId="season-select-label"
-                value={stateAndRequest.currentRequest}
+                value={stateAndRequest.currentRequest.season}
                 label={t('filter.season')}
                 onChange={handleSeasonChange}
             >
@@ -215,7 +216,7 @@ const LeagueUnitChartAndTableContent = <Data extends ChartData>(props: {
         <LeagueUnitTeamSeasonTable<Data>
             dataToShow={dataToShow}
             charts={props.charts}
-            />
+        />
     </Box>
 }
 
@@ -225,17 +226,19 @@ export interface ChartConfig<Data extends ChartData> {
     field: (data: Data) => number | undefined,
     fieldFormatted?: (data: Data) => string | number | JSX.Element,
     label: string,
+    format?: ChartFormat
 }
 
 const LeagueUnitChartAndTable = <Data extends { season: number, round: number; teamSortingKey: TeamSortingKey }>(props: {
+    initialRequestParams: RequestParams,
     levelDataProps: LeagueUnitLevelDataProps,
-    executeRequestCallback: (leagueUnitId: number, season: number, callback: (loadingEnum: LoadingEnum, result?: Data[]) => void) => void,
+    executeRequestCallback: (leagueUnitId: number, requestParams: RequestParams, callback: (loadingEnum: LoadingEnum, result?: Data[]) => void) => void,
     charts: ChartConfig<Data>[]
     avgMerger?: (entries: Data[]) => Data | undefined,
     maxMerger?: (entries: Data[]) => Data | undefined,
 }) => {
-    return <ExecutableComponent<number, Data[]>
-        initialRequest={props.levelDataProps.currentSeason()}
+    return <ExecutableComponent<RequestParams, Data[]>
+        initialRequest={props.initialRequestParams}
         executeRequest={(request, callback) => props.executeRequestCallback(props.levelDataProps.leagueUnitId(), request, callback)}
         responseToState={(response => response ?? [])}
         content={stateAndRequest =>

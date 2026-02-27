@@ -12,16 +12,16 @@ import PlayerInjuriesTable from '../common/tables/player/PlayerInjuriesTable';
 import PlayerRatingsTable from '../common/tables/player/PlayerRatingsTable';
 import PlayerSalaryTsiTable from '../common/tables/player/PlayerSalaryTsiTable';
 import OldestTeamsTable from '../common/tables/team/OldestTeamsTable';
-import TeamAgeInjuryTable from '../common/tables/team/TeamAgeInjuryTable';
-import TeamFanclubFlagsTable from '../common/tables/team/TeamFanclubFlagsTable';
-import TeamPowerRatingsTable from '../common/tables/team/TeamPowerRatingsTable';
-import TeamRatingsTable from '../common/tables/team/TeamRatingsTable';
-import TeamSalaryTSITable from '../common/tables/team/TeamSalaryTSITable';
-import TeamStreakTrophiesTable from '../common/tables/team/TeamStreakTrophiesTable';
 import { default as LeagueLevelDataProps, default as LeagueUnitLevelDataProps } from './LeagueUnitLevelDataProps';
 import TeamPositionsTable from './TeamPositionsTable';
 import TeamCardsSeasonChartAndTable from './TeamCardsSeasonChartAndTable';
 import TeamHatstatsSeasonChartAndTable from './TeamHatstatsSeasonChartAndTable';
+import { TeamSalaryTsiSeasonChartAndTable } from './TeamSalaryTsiSeasonChartAndTable';
+import { TeamRatingsSeasonChartAndTable } from './TeamRatingsSeasonChartAndTable';
+import { TeamAgeInjuriesSeasonChartAndTable } from './TeamAgeInjuriesSeasonChartAndTable';
+import { TeamPowerRatingsSeasonChartAndTable } from './TeamPowerRatingsSeasonChartAndTable';
+import { TeamFanclubFlagsSeasonChartAndTable } from './TeamFanclubFlagsSeasonChartAndTable';
+import { TeamStreakTrophiesSeasonChartAndTable } from './TeamStreakTrophiesSeasonChartAndTable';
 
 export default function pages(): Map<PagesEnum, (props: LeagueLevelDataProps) => JSX.Element> {
     const pagesMap = new Map<PagesEnum, (props: LeagueUnitLevelDataProps,) => JSX.Element>()
@@ -37,13 +37,13 @@ export default function pages(): Map<PagesEnum, (props: LeagueLevelDataProps) =>
     pagesMap.set(PagesEnum.PLAYER_SALARY_TSI, props => <PlayerSalaryTsiTable<LeagueUnitLevelDataProps> levelDataProps={props} />)
     pagesMap.set(PagesEnum.PLAYER_RATINGS, props => <PlayerRatingsTable<LeagueUnitLevelDataProps> levelDataProps={props} />)
     pagesMap.set(PagesEnum.PLAYER_INJURIES, props => <PlayerInjuriesTable<LeagueUnitLevelDataProps> levelDataProps={props} />)
-    pagesMap.set(PagesEnum.TEAM_SALARY_TSI, props => <TeamSalaryTSITable<LeagueUnitLevelDataProps> levelDataProps={props} />)
+    pagesMap.set(PagesEnum.TEAM_SALARY_TSI, props => <TeamSalaryTsiSeasonChartAndTable levelDataProps={props} />)
     pagesMap.set(PagesEnum.TEAM_CARDS, props => <TeamCardsSeasonChartAndTable levelDataProps={props} />)
-    pagesMap.set(PagesEnum.TEAM_RATINGS, props => <TeamRatingsTable<LeagueUnitLevelDataProps> levelDataProps={props} />)
-    pagesMap.set(PagesEnum.TEAM_AGE_INJURY, props => <TeamAgeInjuryTable<LeagueUnitLevelDataProps> levelDataProps={props} />)
-    pagesMap.set(PagesEnum.TEAM_POWER_RATINGS, props => <TeamPowerRatingsTable<LeagueUnitLevelDataProps> levelDataProps={props} />)
-    pagesMap.set(PagesEnum.TEAM_FANCLUB_FLAGS, props => <TeamFanclubFlagsTable<LeagueUnitLevelDataProps> levelDataProps={props} />)
-    pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES, props => <TeamStreakTrophiesTable<LeagueUnitLevelDataProps> levelDataProps={props} />)
+    pagesMap.set(PagesEnum.TEAM_RATINGS, props => <TeamRatingsSeasonChartAndTable levelDataProps={props} />)
+    pagesMap.set(PagesEnum.TEAM_AGE_INJURY, props => <TeamAgeInjuriesSeasonChartAndTable levelDataProps={props} />)
+    pagesMap.set(PagesEnum.TEAM_POWER_RATINGS, props => <TeamPowerRatingsSeasonChartAndTable levelDataProps={props} />)
+    pagesMap.set(PagesEnum.TEAM_FANCLUB_FLAGS, props => <TeamFanclubFlagsSeasonChartAndTable levelDataProps={props} />)
+    pagesMap.set(PagesEnum.TEAM_STREAK_TROPHIES, props => <TeamStreakTrophiesSeasonChartAndTable levelDataProps={props} />)
     pagesMap.set(PagesEnum.OLDEST_TEAMS, props => <OldestTeamsTable<LeagueUnitLevelDataProps> levelDataProps={props} />)
     pagesMap.set(PagesEnum.MATCH_TOP_HATSTATS, props => <MatchTopHatstatsTable<LeagueUnitLevelDataProps> levelDataProps={props} />)
     pagesMap.set(PagesEnum.MATCH_SURPRISING, props => <MatchSurprisingTable<LeagueUnitLevelDataProps> levelDataProps={props} />)

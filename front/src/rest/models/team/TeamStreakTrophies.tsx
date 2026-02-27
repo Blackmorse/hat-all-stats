@@ -7,4 +7,6 @@ interface TeamStreakTrophies {
     numberOfUndefeated: number
 }
 
+export type TeamStreakTrophiesChart = TeamStreakTrophies & { season: number, round: number }
+
 export default TeamStreakTrophies

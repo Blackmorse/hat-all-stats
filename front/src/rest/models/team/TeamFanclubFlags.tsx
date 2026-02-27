@@ -8,4 +8,6 @@ interface TeamFanclubFlags {
     allFlags: number
 }
 
+export type TeamFanclubFlagsChart = TeamFanclubFlags & { season: number, round: number }
+
 export default TeamFanclubFlags

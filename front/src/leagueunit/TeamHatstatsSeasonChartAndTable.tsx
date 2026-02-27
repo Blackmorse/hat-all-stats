@@ -14,6 +14,7 @@ const TeamHatstatsSeasonChartAndTable = (props: LevelDataPropsWrapper<LeagueUnit
 
 	return <Section title={t('team_charts.rating.title')}
                 element={<LeagueUnitChartAndTable<TeamHatstatsChart>
+                    initialRequestParams={{ season: props.levelDataProps.currentSeason() }}
                     levelDataProps={props.levelDataProps}
                     executeRequestCallback={teamHatstatsChart}
                     avgMerger={(data) => genericAvgMerge(data, teamHatstatsChartNumericFields)}

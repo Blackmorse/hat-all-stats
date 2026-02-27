@@ -100,7 +100,7 @@ const LeagueUnitTeamsSeasonCharts = <Data extends ChartData>(props: Props<Data>)
 				<RechartsSeasonChart<ChartEntry<Data>>
 					chartData={chartEntries}
 					title={chart.label}
-					format={props.format ?? { type: 'number', decimals: 0 }}
+					format={chart.format ?? { type: 'number', decimals: 0 }}
 					fieldConfig={configs}
 					seasonOffset={leagueUnitLevelProps.seasonOffset()}
 					currencyName={leagueUnitLevelProps.currency()}

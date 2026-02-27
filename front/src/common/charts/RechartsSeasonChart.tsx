@@ -2,13 +2,13 @@ import { type JSX } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine, TooltipProps, DefaultLegendContent } from 'recharts';
 import { Box, Typography } from '@mui/material';
 import '../Formatters.css';
-import { ratingFormatter, stringSalaryFormatter } from '../Formatters';
+import { ratingFormatter, stringAgeFormatter, stringSalaryFormatter } from '../Formatters';
 import { NameType, Payload, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 export type TimeSeries = { season: number; round: number };
 
 export interface ChartFormat {
-    type: 'number' | 'currency' | 'rating'; // Type of formatting to apply
+    type: 'number' | 'currency' | 'rating' | 'age'; // Type of formatting to apply
     divideBy?: number; // Value to divide by (e.g. 10 for ratings)
     decimals?: number; // Number of decimal places
     showCurrency?: boolean; // Whether to show currency symbol
@@ -22,12 +22,7 @@ export interface ChartDataProps<T extends TimeSeries> {
     seasonOffset: number;
     legendPosition: 'bottom' | 'right';
     showXAxisRounds?: boolean;
-    format?: {
-        type: 'number' | 'currency' | 'rating'; // Type of formatting to apply
-        divideBy?: number; // Value to divide by (e.g. 10 for ratings)
-        decimals?: number; // Number of decimal places
-        showCurrency?: boolean; // Whether to show currency symbol
-    };
+    format?: ChartFormat;
     fieldConfig: Array<{
         fieldFunction: (data: T) => number | undefined; // Field from TeamRanking to display
         label: string; // Custom label for the legend
@@ -76,6 +71,8 @@ const formatValue = <T extends TimeSeries>(value: number, config?: ChartDataProp
 
         case 'rating':
             return formattedValue.toFixed(config.decimals || 1);
+        case 'age':
+            return stringAgeFormatter(formattedValue)
         case 'number':
         default:
             return formattedValue.toLocaleString(undefined, {

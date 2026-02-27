@@ -6,4 +6,6 @@ interface TeamRating {
     ratingEndOfMatch: number
 }
 
+export type TeamRatingChart = TeamRating & { season: number, round: number }
+
 export default TeamRating

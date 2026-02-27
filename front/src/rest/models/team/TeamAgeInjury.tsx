@@ -7,4 +7,6 @@ interface TeamAgeInjury {
     injuryCount: number
 }
 
+export type TeamAgeInjuryChart = TeamAgeInjury & { season: number, round: number }
+
 export default TeamAgeInjury

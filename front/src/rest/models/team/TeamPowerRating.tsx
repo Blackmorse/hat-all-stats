@@ -5,4 +5,6 @@ interface TeamPowerRating {
     powerRating: number
 }
 
+export type TeamPowerRatingChart = TeamPowerRating & { season: number, round: number }
+
 export default TeamPowerRating
