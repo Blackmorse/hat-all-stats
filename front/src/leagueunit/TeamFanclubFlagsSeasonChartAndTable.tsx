@@ -4,7 +4,6 @@ import LeagueUnitLevelDataProps from "./LeagueUnitLevelDataProps";
 import Section from "../common/sections/HookSection";
 import LeagueUnitChartAndTable from "./seasonchart/LeagueUnitChartAndTable";
 import { teamFanclubFlagsChart } from "../rest/clients/LeagueUnitClient";
-import { TeamPowerRatingChart } from "../rest/models/team/TeamPowerRating";
 import { useTranslation } from "react-i18next";
 import { TeamFanclubFlagsChart } from "../rest/models/team/TeamFanclubFlags";
 
