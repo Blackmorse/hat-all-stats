@@ -97,13 +97,6 @@ lazy val akkaLoader = (project in file("akka-loader"))
   .dependsOn(chpp)
   .settings(akkaLoaderSetting)
 
-lazy val web = (project in file("web"))
-  .dependsOn(scalaCommon)
-  .dependsOn(chpp)
-  .dependsOn(sqlBuilder)
-  .settings(webSettings)
-  .enablePlugins(PlayScala)
-
 lazy val webZio = (project in file("web-zio"))
   .dependsOn(scalaCommon)
   .dependsOn(chpp)
