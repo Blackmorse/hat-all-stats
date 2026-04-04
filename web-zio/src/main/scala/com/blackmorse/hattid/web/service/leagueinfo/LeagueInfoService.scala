@@ -153,7 +153,7 @@ class LeagueInfoServiceZIO(private val leagueInfoMap: ConcurrentMap[LeagueId, Le
     for {
       list <- leagueInfoMap.toList
       x <- ZIO.foreach(list)(_._2.getLoadingStatus)
-      processedCountriesNumber = list.zip(x).count { case ((_, leagueInfo), status) => status == Scheduled }
+      processedCountriesNumber = list.zip(x).count { case ((_, leagueInfo), status) => status == Finished }
     } yield processedCountriesNumber
 
   def getNextAndCurrentCountry: UIO[(Option[(LeagueId, String, Date)], Option[(LeagueId, String)])] = {
