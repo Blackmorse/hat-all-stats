@@ -45,7 +45,7 @@ class OauthService(customerConfig: CustomerConfig, tokenRef: Ref[String], tokenS
 
   def redirectUrl(requestToken: OAuth1RequestToken): String = service.getAuthorizationUrl(requestToken)
 
-  def grantAccessToken(oauthVerifier: String): IO[OauthError, OAuth1AccessToken] = { 
+  def grantAccessToken(oauthVerifier: String): IO[OauthError, OAuth1AccessToken] = {
     for {
       requestToken <- tokenRef.get
       requestTokenSecret <- tokenSecretRef.get
