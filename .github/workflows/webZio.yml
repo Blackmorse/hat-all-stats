@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - oauth
     paths:
       - chpp/**
       - project/**

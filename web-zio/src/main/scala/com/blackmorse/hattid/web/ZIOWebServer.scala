@@ -19,7 +19,7 @@ object ZIOWebServer extends ZIOAppDefault {
       MatchesRoutes.routes ++
       OverviewRoutes.routes ++
       PlayerRoutes.routes ++
-      TeamRoutes.routes
+      TeamRoutes.routes ++ OauthRoutes.routes
 
   val routes: Routes[HattidEnv, Nothing] = Routes(routesSeq.head, routesSeq.tail *)
     .tapErrorZIO(e => ZIO.logError(e.toString))

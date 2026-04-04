@@ -151,8 +151,8 @@ class LeagueInfoServiceZIO(private val leagueInfoMap: ConcurrentMap[LeagueId, Le
 
   def getProcessedCountriesNumber: UIO[Int] =
     for {
-      list <- leagueInfoMap.toList
-      x <- ZIO.foreach(list)(_._2.getLoadingStatus)
+      list                    <- leagueInfoMap.toList
+      x                       <- ZIO.foreach(list)(_._2.getLoadingStatus)
       processedCountriesNumber = list.zip(x).count { case ((_, leagueInfo), status) => status == Finished }
     } yield processedCountriesNumber
 
@@ -220,16 +220,18 @@ object LeagueInfoServiceZIO {
   lazy val layer: ZLayer[CHPPServices & ClickhousePool, HattidError, LeagueInfoServiceZIO] = {
     ZLayer {
       for {
-        chppService <- ZIO.service[ChppService]
-        worldDetails <- chppService.getWorldDetails()
+        _                        <- ZIO.log("Initializing LeagueInfoServiceZIO")
+        chppService              <- ZIO.service[ChppService]
+        worldDetails             <- chppService.getWorldDetails()
         leagueIdToCountryNameMap = worldDetails.leagueList.map(league => league.leagueId -> league)
-        history <- HistoryInfoRequest.execute(None, None, None)
-        leagueHistoryInfos = history.groupBy(_.leagueId)
-        map = leagueIdToCountryNameMap
-          .filter{ case (leagueId, _) => leagueHistoryInfos.contains(leagueId) }
-          .map((leagueId, league) => leagueId -> LeagueInfoZIO.make(leagueHistoryInfos(leagueId), league))
-        sequenced <- ZIO.foreach(map){ case (k, vZio) => vZio.map(v => k -> v) }
-        zioMap    <- ConcurrentMap.fromIterable(sequenced)
+        history                  <- HistoryInfoRequest.execute(None, None, None)
+                                      leagueHistoryInfos = history.groupBy(_.leagueId)
+        map                      = leagueIdToCountryNameMap
+                                    .filter{ case (leagueId, _) => leagueHistoryInfos.contains(leagueId) }
+                                    .map((leagueId, league) => leagueId -> LeagueInfoZIO.make(leagueHistoryInfos(leagueId), league))
+        sequenced                <- ZIO.foreach(map){ case (k, vZio) => vZio.map(v => k -> v) }
+        zioMap                   <- ConcurrentMap.fromIterable(sequenced)
+        _                        <- ZIO.log(s"Initialized LeagueInfoServiceZIO")
       } yield new LeagueInfoServiceZIO(zioMap)
     }
   }

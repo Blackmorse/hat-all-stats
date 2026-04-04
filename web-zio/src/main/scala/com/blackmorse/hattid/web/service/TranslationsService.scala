@@ -20,10 +20,12 @@ object TranslationsService {
   
   lazy val layer: ZLayer[CHPPServices, HattidError, TranslationsService] = ZLayer {
     for {
+      _            <- ZIO.logInfo("Initializing TranslationsService...")
       chppService  <- ZIO.service[ChppService]
       translations <- ZIO.foreach(languages.map { case (languageAbbr, languageId) =>
         languageAbbr -> chppService.translations(languageId)
       }) { case (languageAbbr, zio) => zio.map(translations => languageAbbr -> LanguageTranslations(translations)) }
+      _            <- ZIO.logInfo("TranslationsService Initialized")
     } yield TranslationsService(translations)
   }
 }

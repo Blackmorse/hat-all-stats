@@ -1,11 +1,12 @@
 package com.blackmorse.hattid.web.zios
 
 import com.blackmorse.hattid.web.models.web.HattidError
+import com.blackmorse.hattid.web.routes.OauthService
 import com.blackmorse.hattid.web.service.*
 import com.blackmorse.hattid.web.service.cache.{DreamTeamCache, OverviewCache}
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
 import com.blackmorse.hattid.web.service.leagueunit.LeagueUnitCalculatorService
-import com.blackmorse.hattid.web.webclients.{AuthConfig, ChppClient}
+import com.blackmorse.hattid.web.webclients.{AccessConfig, AuthConfig, ChppClient, CustomerConfig}
 import zio.config.magnolia.deriveConfig
 import zio.config.typesafe.TypesafeConfigProvider
 import zio.http.*
@@ -25,13 +26,28 @@ object DatabaseConfig {
 }
 
 object HattidEnv {
-  implicit val authConfig: Config[AuthConfig] = deriveConfig[AuthConfig].nested("hattrick")
+  private val customerConfig = deriveConfig[CustomerConfig].nested("hattrick")
+  private val accessConfig = deriveConfig[AccessConfig].nested("hattrick")
+  
+  private val hoCustomerConfig = deriveConfig[CustomerConfig].nested("ho")
 
   def env(configPath: String): ZIO[Scope, Throwable, ZEnvironment[HattidEnv]] = {
-    val chppAuthConfigLayer = ZLayer {
+    val chppCustomerConfigLayer = ZLayer {
       TypesafeConfigProvider
         .fromHoconFilePath(configPath)
-        .load(authConfig)
+        .load(customerConfig)
+    }
+    
+    val chppAccessConfigLayer = ZLayer {
+      TypesafeConfigProvider
+        .fromHoconFilePath(configPath)
+        .load(accessConfig)
+    }
+    
+    val hoCustomerConfigLayer = ZLayer {
+      TypesafeConfigProvider
+        .fromHoconFilePath(configPath)
+        .load(hoCustomerConfig)
     }
 
     val databaseConfigLayer: ZLayer[Any, Config.Error, DatabaseConfig] = ZLayer {
@@ -55,6 +71,8 @@ object HattidEnv {
       new ru.yandex.clickhouse.ClickHouseDriver().connect(url, properties)
 //      DriverManager.getConnection(url, properties)
     }
+    
+    val oauthServiceLayer = hoCustomerConfigLayer >>> OauthService.make
 
 
     val acquireRelease = ZIO.acquireRelease(acquire)(conn => ZIO.succeed(conn.close()))
@@ -66,19 +84,20 @@ object HattidEnv {
     )
 
     val leagueInfoLayer = LeagueInfoServiceZIO.layer
-
-    val chppServiceLayer: ULayer[ChppService] = ZLayer.succeed(new ChppService)
     val httpClientLayer: ZLayer[Any, Throwable, Client] = Client.default
-    val chppClientLayer: ULayer[ChppClient] = ZLayer.succeed(new ChppClient)
+    
+    val chppClientLayer = (chppCustomerConfigLayer ++ chppAccessConfigLayer ++ httpClientLayer) >>> ChppClient.make
+    val chppServiceLayer = chppClientLayer >>> ChppService.make
+
     val poolLayer: ZLayer[DatabaseConfig & Scope, Nothing, ZPool[Nothing, Connection]] = ZLayer.fromZIO(zPool)
     val translationLayer = TranslationsService.layer
       .mapError(he => new Exception(he.toString))
-//      .orDie
 
     val res: ZIO[Scope, Throwable | HattidError, ZEnvironment[HattidEnv]] = for {
-      chppClientEnv <- ZLayer.succeed(new ChppClient).build
+      chppClientEnv <- chppClientLayer.build
       chppServiceEnv <- chppServiceLayer.build
-      authConfigEnv <- chppAuthConfigLayer.build
+      chppAccessConfigEnv <- chppAccessConfigLayer.build
+      chppCustomerConfigEnv <- chppCustomerConfigLayer.build
       databaseConfigEnv <- databaseConfigLayer.build
       serverEnv <- Server.defaultWithPort(9000).build
       httpClientEnv <- Client.default.build
@@ -87,16 +106,18 @@ object HattidEnv {
 
       zPoolEnv <- (databaseConfigLayer >>> poolLayer).build
       httpClientEnv <- httpClientLayer.build
-      leagueInfoEnv <- ((chppServiceLayer ++ chppAuthConfigLayer ++ httpClientLayer ++ chppClientLayer ++ (databaseConfigLayer >>> poolLayer)) >>> leagueInfoLayer).build
-      translationEnv <- ((chppAuthConfigLayer ++ chppServiceLayer ++ httpClientLayer ++ chppClientLayer) >>> translationLayer).build
+      leagueInfoEnv <- ((chppServiceLayer ++ chppCustomerConfigLayer ++ chppAccessConfigLayer ++ httpClientLayer ++ chppClientLayer ++ (databaseConfigLayer >>> poolLayer)) >>> leagueInfoLayer).build
+      translationEnv <- ((chppCustomerConfigLayer ++ chppAccessConfigLayer ++ chppServiceLayer ++ httpClientLayer ++ chppClientLayer) >>> translationLayer).build
       similarMatchesServiceEnv <- ZLayer.succeed(new SimilarMatchesService()).build
       overviewCache <- (databaseConfigLayer >>> poolLayer >>> OverviewCache.layer).build
       dreamTeamCache <- (databaseConfigLayer >>> poolLayer >>> DreamTeamCache.make).build
+      oauthServiceEnv <- oauthServiceLayer.build
     } yield {
       serverEnv ++
         chppClientEnv ++
         chppServiceEnv ++
-        authConfigEnv ++
+        chppAccessConfigEnv ++
+        chppCustomerConfigEnv ++
         databaseConfigEnv ++
         httpClientEnv ++
         zPoolEnv ++
@@ -106,7 +127,8 @@ object HattidEnv {
         translationEnv ++
         similarMatchesServiceEnv ++
         overviewCache ++
-        dreamTeamCache
+        dreamTeamCache ++
+        oauthServiceEnv
     }
 
     res

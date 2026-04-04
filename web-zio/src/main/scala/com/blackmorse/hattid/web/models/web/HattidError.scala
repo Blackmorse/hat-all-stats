@@ -19,6 +19,8 @@ case class HattidInternalError(description: String) extends HattidError
 
 case class SqlInjectionError() extends HattidError
 
+case class OauthError(exception: Throwable) extends HattidError
+
 object NotFoundError {
   val PLAYER: String = "PLAYER"
   val TEAM: String = "TEAM"
