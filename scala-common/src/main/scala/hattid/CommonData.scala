@@ -166,6 +166,7 @@ object CommonData {
       176 -> CommonLeagueUnitInfo(269093, "I.1"),
       177 -> CommonLeagueUnitInfo(269178, "I.1"),
       1003 -> CommonLeagueUnitInfo(266599, "I.1"),
+      3000 -> CommonLeagueUnitInfo(269264, "I.1")
     )
   }
 
