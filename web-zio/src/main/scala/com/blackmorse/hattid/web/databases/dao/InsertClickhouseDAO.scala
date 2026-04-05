@@ -14,10 +14,12 @@ object InsertClickhouseDAO  {
         pool       <- ZIO.service[ZPool[Nothing, Connection]]
         connection <- pool.get
         _ <- tzio { implicit conn =>
-          BatchSql("insert into hattrick.oauth_tokens values ({requestToken}, {accessToken}, {accessTokenSecret}, now())",
+          BatchSql("insert into hattrick.oauth_tokens values ({requestToken}, {accessToken}, {accessTokenSecret}, {time}",
             Seq[NamedParameter]("requestToken" -> requestToken,
               "accessToken" -> accessToken,
-              "accessTokenSecret" -> accessTokenSecret)).execute()
+              "accessTokenSecret" -> accessTokenSecret,
+              "time" -> java.time.LocalDateTime.now())
+          ).execute()
         }.provide(ZLayer.succeed(connection))
       } yield ()
     }
@@ -31,9 +33,6 @@ object InsertClickhouseDAO  {
         _ <- tzio { implicit conn =>
           val keys = params.map(_._1).map(v => s"'$v'").mkString("[", ",", "]")
           val values = params.map(_._2).map(v => s"'$v'").mkString("[", ",", "]")
-
-          val entry = s"insert into hattrick.request_log_buffer values " +
-            s"(now(), '$request', $keys, $values)"
 
           val sql = BatchSql("insert into hattrick.request_log_buffer values ({time}, {request}, {keys}, {values})",
             Seq[NamedParameter]("time" -> java.time.LocalDateTime.now(),
