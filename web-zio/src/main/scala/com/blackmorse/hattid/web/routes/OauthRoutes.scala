@@ -67,6 +67,7 @@ object OauthRoutes {
         accessToken   <- oauthService.grantAccessToken(requestToken, oauthVerifier.getOrElse(""))
         _             <- ZIO.debug(s"Access token granted: ${accessToken.getToken}, secret: ${accessToken.getTokenSecret}")
         _             <- InsertClickhouseDAO.insertOauthTokens(requestToken, accessToken.getToken, accessToken.getTokenSecret)
+                           .tapError(e => ZIO.succeed(e.printStackTrace()))
                            .mapError(error => OauthError(error))
       } yield Response.text(requestToken)
     }
