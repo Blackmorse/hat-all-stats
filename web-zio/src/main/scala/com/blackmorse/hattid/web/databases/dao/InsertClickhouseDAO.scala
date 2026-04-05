@@ -14,7 +14,7 @@ object InsertClickhouseDAO  {
         pool       <- ZIO.service[ZPool[Nothing, Connection]]
         connection <- pool.get
         _ <- tzio { implicit conn =>
-          BatchSql("insert into hattrick.oauth_tokens values ({requestToken}, {accessToken}, {accessTokenSecret}, {time}",
+          BatchSql("insert into hattrick.oauth_tokens values ({requestToken}, {accessToken}, {accessTokenSecret}, {time})",
             Seq[NamedParameter]("requestToken" -> requestToken,
               "accessToken" -> accessToken,
               "accessTokenSecret" -> accessTokenSecret,
