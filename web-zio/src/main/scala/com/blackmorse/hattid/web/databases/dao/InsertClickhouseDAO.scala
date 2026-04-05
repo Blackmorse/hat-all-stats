@@ -6,13 +6,27 @@ import io.github.gaelrenoux.tranzactio.anorm.tzio
 import zio.{ZIO, ZLayer, ZPool}
 
 import java.sql.Connection
-import scala.concurrent.Future
 
-class InsertClickhouseDAO  {
+object InsertClickhouseDAO  {
+  def insertOauthTokens(requestToken: String, accessToken: String, accessTokenSecret: String): ZIO[ZPool[Nothing, Connection], DbException, Unit] = {
+    ZIO.scoped {
+      for {
+        pool       <- ZIO.service[ZPool[Nothing, Connection]]
+        connection <- pool.get
+        _ <- tzio { implicit conn =>
+          BatchSql("insert into hattrick.oauth_tokens values ({requestToken}, {accessToken}, {accessTokenSecret}, now())",
+            Seq[NamedParameter]("requestToken" -> requestToken,
+              "accessToken" -> accessToken,
+              "accessTokenSecret" -> accessTokenSecret)).execute()
+        }.provide(ZLayer.succeed(connection))
+      } yield ()
+    }
+  }
+
   def requestLogZio(request: String, params: Seq[(String, String)]): ZIO[ZPool[Nothing, Connection], DbException, Unit] = {
     ZIO.scoped {
       for {
-        pool       <- ZIO.service[ZPool[Nothing, java.sql.Connection]]
+        pool       <- ZIO.service[ZPool[Nothing, Connection]]
         connection <- pool.get
         _ <- tzio { implicit conn =>
           val keys = params.map(_._1).map(v => s"'$v'").mkString("[", ",", "]")
