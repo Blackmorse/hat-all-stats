@@ -53,7 +53,7 @@
     "table.games": "Partite",
     "table.games_abbr": "P",
     "table.minutes_abbr": "Min",
-    "table.minutes": "Played Minuti",
+    "table.minutes": "Minuti Giocati",
     "table.scored_abbr": "Sc",
     "table.scored": "Segnati",
     "table.minutes_per_goal_abbr": "MPG",
@@ -178,11 +178,11 @@
 
     "menu.dream_team": "Squadra del cuore",
     "dream_team.keeper": "Portiere",
-    "dream_team.wingback": "Wingback",
+    "dream_team.wingback": "Terzino",
     "dream_team.defender": "Difensore",
-    "dream_team.winger": "Winger",
+    "dream_team.winger": "Ala",
     "dream_team.midfielder": "Centrocampista",
-    "dream_team.forward": "Inoltrare",
+    "dream_team.forward": "Attaccante",
     "dream_team.substitions": "Sostituzioni",
     "dream_team.undefined": "",
 
