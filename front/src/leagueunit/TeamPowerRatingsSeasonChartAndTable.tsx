@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 export const TeamPowerRatingsSeasonChartAndTable = (props: LevelDataPropsWrapper<LeagueUnitLevelDataProps>) => {
 	const { t } = useTranslation();
 
-	return <Box mt={2}>
+	return <Box sx={{ mt: 2 }}>
 		<Section title={t('team_charts.tab.power_rating')}
 			element={<LeagueUnitChartAndTable<TeamPowerRatingChart>
 				initialRequestParams={{

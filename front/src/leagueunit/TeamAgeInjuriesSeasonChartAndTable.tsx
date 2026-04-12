@@ -11,7 +11,7 @@ import { ageFormatter, injuryFormatter } from "../common/Formatters";
 export const TeamAgeInjuriesSeasonChartAndTable = (props: LevelDataPropsWrapper<LeagueUnitLevelDataProps>) => {
 	const { t } = useTranslation();
 
-	return <Box mt={2}>
+	return <Box sx={{ mt: 2 }}>
 		<Section title={t('menu.team_age_injury')}
 			element={<LeagueUnitChartAndTable<TeamAgeInjuryChart>
 				initialRequestParams={{

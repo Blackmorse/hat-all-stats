@@ -224,7 +224,7 @@ const RechartsSeasonChart = <T extends TimeSeries>({
                                 <Typography variant="body2" sx={{ mr: 1 }}>
                                     {entry.name}:
                                 </Typography>
-                                <Typography variant="body2" fontWeight="bold" sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography variant="body2" sx={{ display: 'flex', fontWeight: 'bold', alignItems: 'center' }}>
                                     {isRating ? (ratingFormatter(typed.value)) : (
                                         formatValue(
                                             entry.value,

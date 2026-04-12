@@ -12,7 +12,7 @@ import { Box } from "@mui/material";
 export const TeamSalaryTsiSeasonChartAndTable = (props: LevelDataPropsWrapper<LeagueUnitLevelDataProps>) => {
 	const { t } = useTranslation();
 
-	return <Box mt={2}>
+	return <Box sx={{ mt: 2 }}>
 		<Section title={t('menu.player_salary_tsi')}
 			element={<LeagueUnitChartAndTable<TeamSalaryTSIChart>
 				initialRequestParams={{

@@ -12,7 +12,7 @@ import { ratingFormatter } from "../common/Formatters";
 export const TeamRatingsSeasonChartAndTable = (props: LevelDataPropsWrapper<LeagueUnitLevelDataProps>) => {
 	const { t } = useTranslation();
 
-	return <Box mt={2}>
+	return <Box sx={{ mt: 2 }}>
 		<Section title={t('menu.team_ratings')}
 			element={<LeagueUnitChartAndTable<TeamRatingChart>
 				initialRequestParams={{

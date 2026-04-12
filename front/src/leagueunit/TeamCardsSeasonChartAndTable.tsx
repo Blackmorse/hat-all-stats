@@ -11,7 +11,7 @@ import { Box } from "@mui/material";
 const TeamCardsSeasonChartAndTable = (props: LevelDataPropsWrapper<LeagueUnitLevelDataProps>) => {
 	const { t } = useTranslation();
 
-	return <Box mt={2}>
+	return <Box sx={{ mt: 2 }}>
 		<Section title={t('menu.team_cards')}
 			element={<LeagueUnitChartAndTable<TeamCardsChart>
 				initialRequestParams={{ season: props.levelDataProps.currentSeason() }}

@@ -1,4 +1,4 @@
-CREATE TABLE oauth_tokens
+CREATE TABLE hattrick.oauth_tokens
 (
     `request_token` String,
     `accessToken` String,

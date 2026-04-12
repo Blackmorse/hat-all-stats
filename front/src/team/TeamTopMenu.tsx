@@ -2,13 +2,12 @@ import '../common/menu/TopMenu.css'
 import ExternalTeamLink from '../common/links/ExternalTeamLink'
 import TeamLevelDataProps from './TeamLevelDataProps';
 import { TopMenuMUI } from '../common/menu/TopMenuMUI';
-import { TopMenuLink } from '../common/menu/TopMenu';
 import ExternalLeagueLink from '../common/links/ExternalLeagueLink';
 
 const TeamTopMenu = (props: {levelProps?: TeamLevelDataProps}) => {
     const externaTeamlLink = <ExternalTeamLink id={props.levelProps?.teamId() || 0} black={false} /> 
     const externalLeagueLink = <ExternalLeagueLink id={props.levelProps?.leagueId() || 1000} black={false} />
-    const links: TopMenuLink[] = [
+    const links = [
             {
                 href: "/league/" + props.levelProps?.leagueId(), 
                 content: props.levelProps?.leagueName(),

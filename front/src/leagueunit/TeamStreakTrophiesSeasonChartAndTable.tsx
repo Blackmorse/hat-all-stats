@@ -11,7 +11,7 @@ import { TeamStreakTrophiesChart } from "../rest/models/team/TeamStreakTrophies"
 export const TeamStreakTrophiesSeasonChartAndTable = (props: LevelDataPropsWrapper<LeagueUnitLevelDataProps>) => {
 	const { t } = useTranslation();
 
-	return <Box mt={2}>
+	return <Box sx={{ mt: 2 }}>
 		<Section title={t('menu.streak_trophies')}
 			element={<LeagueUnitChartAndTable<TeamStreakTrophiesChart>
 				initialRequestParams={{
