@@ -29,8 +29,6 @@ object HattidEnv {
   private val customerConfig = deriveConfig[CustomerConfig].nested("hattrick")
   private val accessConfig = deriveConfig[AccessConfig].nested("hattrick")
   
-  private val hoCustomerConfig = deriveConfig[CustomerConfig].nested("ho")
-
   def env(configPath: String): ZIO[Scope, Throwable, ZEnvironment[HattidEnv]] = {
     val chppCustomerConfigLayer = ZLayer {
       TypesafeConfigProvider
@@ -44,12 +42,6 @@ object HattidEnv {
         .load(accessConfig)
     }
     
-    val hoCustomerConfigLayer = ZLayer {
-      TypesafeConfigProvider
-        .fromHoconFilePath(configPath)
-        .load(hoCustomerConfig)
-    }
-
     val databaseConfigLayer: ZLayer[Any, Config.Error, DatabaseConfig] = ZLayer {
       TypesafeConfigProvider
         .fromHoconFilePath(configPath)
@@ -72,7 +64,7 @@ object HattidEnv {
 //      DriverManager.getConnection(url, properties)
     }
     
-    val oauthServiceLayer = hoCustomerConfigLayer >>> OauthService.make
+    val oauthServiceLayer = chppCustomerConfigLayer >>> OauthService.make
 
     val acquireRelease = ZIO.acquireRelease(acquire)(conn => ZIO.succeed(conn.close()))
 
