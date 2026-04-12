@@ -1,5 +1,5 @@
 import ExternalPlayerLink from '../common/links/ExternalPlayerLink'
-import TopMenu from '../common/menu/TopMenu'
+import { TopMenuMUI } from '../common/menu/TopMenuMUI'
 import PlayerLevelDataProps from './PlayerLevelDataProps'
 
 const PlayerTopMenu = (props: {levelProps?: PlayerLevelDataProps}) => {
@@ -28,7 +28,7 @@ const PlayerTopMenu = (props: {levelProps?: PlayerLevelDataProps}) => {
         }
     ]
 
-    return <TopMenu 
+    return <TopMenuMUI 
         links={links}
         levelProps={props.levelProps}
         externalLink={externalLink}

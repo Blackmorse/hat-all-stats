@@ -11,7 +11,9 @@ import scala.util.Random
 
 case class ChppRequestData(uri: String, header: String)
 
-abstract class AbstractRequest[Model](val file: String, val version: String, params: (String, Option[Any])*) {
+abstract class AbstractRequest[Model](val file: String, 
+                                      val version: String, 
+                                      params: (String, Option[Any])*) {
   private val URL = "chpp.hattrick.org"
   private val API_ENDPOINT = "/chppxml.ashx"
   private val oauthSignatureMethod = "HMAC-SHA1"

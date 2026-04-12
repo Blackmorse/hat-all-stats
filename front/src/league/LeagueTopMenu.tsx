@@ -1,10 +1,10 @@
 import '../common/menu/TopMenu.css'
-import TopMenu from '../common/menu/TopMenu'
 import { toArabian } from "../common/Utils"
 import ExternalLeagueLink from '../common/links/ExternalLeagueLink';
 import { Form } from 'react-bootstrap';
 import {useNavigate} from 'react-router';
 import LeagueLevelDataProps from './LeagueLevelDataProps';
+import { TopMenuMUI } from '../common/menu/TopMenuMUI';
 
 const LeagueTopMenu = (props: {levelProps?: LeagueLevelDataProps}) => {
     const navigate = useNavigate()
@@ -28,7 +28,7 @@ const LeagueTopMenu = (props: {levelProps?: LeagueLevelDataProps}) => {
         </Form.Select>
       </Form>
 
-    return <TopMenu
+    return <TopMenuMUI
             levelProps={props.levelProps}
             selectBox={selectBox}
             externalLink={externalLink}

@@ -22,5 +22,7 @@ extension (error: HattidError) {
     case HattidInternalError(description) => Response.internalServerError(description)
     case SqlInjectionError() => Response.badRequest("Illegal parameters")
     case TeamNotFoundError(_) => Response(Status.NoContent)
+    case OauthError(exception) => Response.internalServerError(exception.getMessage)
+    case OauthRequestTokenDoesntExist => Response.badRequest("Request token expired or doesn't exist")
   }
 }

@@ -2,6 +2,7 @@ package com.blackmorse.hattid.web.zios
 
 import com.blackmorse.hattid.web.databases.ClickhousePool.ClickhousePool
 import com.blackmorse.hattid.web.databases.dao.RestClickhouseDAO
+import com.blackmorse.hattid.web.oauth.{OauthCache, OauthService}
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
 import com.blackmorse.hattid.web.service.leagueunit.LeagueUnitCalculatorService
 import com.blackmorse.hattid.web.service.*
@@ -24,6 +25,8 @@ type HattidEnv = ChppClient &
   TranslationsService &
   SimilarMatchesService &
   OverviewCache.CacheType &
-  DreamTeamCache
+  DreamTeamCache &
+  OauthService &
+  OauthCache.CacheType
 
 type CHPPServices = ChppClient & Client & AuthConfig & ChppService
