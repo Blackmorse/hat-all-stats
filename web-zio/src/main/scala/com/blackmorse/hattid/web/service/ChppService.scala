@@ -7,6 +7,8 @@ import chpp.leaguedetails.LeagueDetailsRequest
 import chpp.leaguedetails.models.LeagueDetails
 import chpp.leaguefixtures.LeagueFixturesRequest
 import chpp.leaguefixtures.models.LeagueFixtures
+import chpp.managercompendium.ManagerCompendiumRequest
+import chpp.managercompendium.models.ManagerCompendium
 import chpp.matchdetails.MatchDetailsRequest
 import chpp.matchdetails.models.MatchDetails
 import chpp.matches.MatchesRequest
@@ -27,8 +29,8 @@ import com.blackmorse.hattid.web.models.clickhouse.NearestMatch
 import com.blackmorse.hattid.web.models.web.player.AvatarPart
 import com.blackmorse.hattid.web.models.web.{BadRequestError, HattidError, NotFoundError, TeamNotFoundError}
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
-import com.blackmorse.hattid.web.webclients.{AuthConfig, ChppClient}
-import zio.{ZIO, ZLayer}
+import com.blackmorse.hattid.web.webclients.{AccessConfig, AuthConfig, ChppClient}
+import zio.{IO, ZIO, ZLayer}
 import zio.http.Client
 import zio.json.{DeriveJsonEncoder, JsonEncoder}
 
@@ -212,4 +214,7 @@ class ChppService(chppClient: ChppClient) {
   
   def translations(languageId: Int): ZIO[Any, HattidError, Translations] =
     chppClient.executeZio[Translations, TranslationsRequest](TranslationsRequest(languageId = languageId))
+    
+  def managerCompendium(accessConfig: AccessConfig): IO[HattidError, ManagerCompendium] =
+    chppClient.executeZio[ManagerCompendium, ManagerCompendiumRequest](ManagerCompendiumRequest(), Some(accessConfig))
 }

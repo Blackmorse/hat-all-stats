@@ -1,6 +1,7 @@
 package com.blackmorse.hattid.web.databases.dao
 
 import anorm.{BatchSql, NamedParameter}
+import com.blackmorse.hattid.web.models.clickhouse.OauthTokenCh
 import io.github.gaelrenoux.tranzactio.DbException
 import io.github.gaelrenoux.tranzactio.anorm.tzio
 import zio.{ZIO, ZLayer, ZPool}
@@ -8,17 +9,19 @@ import zio.{ZIO, ZLayer, ZPool}
 import java.sql.Connection
 
 object InsertClickhouseDAO  {
-  def insertOauthTokens(requestToken: String, accessToken: String, accessTokenSecret: String): ZIO[ZPool[Nothing, Connection], DbException, Unit] = {
+  def insertOauthTokens(oauthTokenCh: OauthTokenCh): ZIO[ZPool[Nothing, Connection], DbException, Unit] = {
     ZIO.scoped {
       for {
         pool       <- ZIO.service[ZPool[Nothing, Connection]]
         connection <- pool.get
-        _ <- tzio { implicit conn =>
-          BatchSql("insert into hattrick.oauth_tokens values ({requestToken}, {accessToken}, {accessTokenSecret}, {time})",
-            Seq[NamedParameter]("requestToken" -> requestToken,
-              "accessToken" -> accessToken,
-              "accessTokenSecret" -> accessTokenSecret,
-              "time" -> java.time.LocalDateTime.now())
+        _          <- tzio { implicit conn =>
+          BatchSql("insert into hattrick.oauth_tokens values ({requestToken}, {accessToken}, {accessTokenSecret}, {time}, {userId})",
+            Seq[NamedParameter](
+              "requestToken" -> oauthTokenCh.requestToken,
+              "accessToken" -> oauthTokenCh.accessToken,
+              "accessTokenSecret" -> oauthTokenCh.accessTokenSecret,
+              "time" -> oauthTokenCh.creationTime,
+              "userId" -> oauthTokenCh.userId)
           ).execute()
         }.provide(ZLayer.succeed(connection))
       } yield ()

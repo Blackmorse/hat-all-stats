@@ -1,9 +1,9 @@
 import React from 'react'
-import TopMenu from '../common/menu/TopMenu'
 import { Form } from 'react-bootstrap'
 import {useNavigate} from 'react-router'
 import {useTranslation} from 'react-i18next'
 import WorldLevelDataProps from './WorldLevelDataProps'
+import { TopMenuMUI } from '../common/menu/TopMenuMUI'
 
 const WorldTopMenu = (props: {levelProps?: WorldLevelDataProps}) => {
     const t = useTranslation().t
@@ -27,7 +27,7 @@ const WorldTopMenu = (props: {levelProps?: WorldLevelDataProps}) => {
     </Form> 
 
 
-    return <TopMenu 
+    return <TopMenuMUI 
         selectBox={selectBox}
         levelProps={props.levelProps}
         links={[]}

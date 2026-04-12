@@ -35,9 +35,9 @@ object ChppClient {
 }
 
 class ChppClient(client: Client, customerConfig: CustomerConfig, accessConfig: AccessConfig) {
-  def executeZio[Model, Request <: AbstractRequest[Model]](request: Request)(implicit reader: XmlReader[Model]): IO[HattidError, Model] = {
+  def executeZio[Model, Request <: AbstractRequest[Model]](request: Request, userAccessConfig: Option[AccessConfig] = None)(implicit reader: XmlReader[Model]): IO[HattidError, Model] = {
     ZIO.attemptBlocking {
-      executeZioInner(request).retry(Schedule.exponential(zio.Duration.fromMillis(800L)) && Schedule.recurs(4))
+      executeZioInner(request, userAccessConfig).retry(Schedule.exponential(zio.Duration.fromMillis(800L)) && Schedule.recurs(4))
     }.flatten
       .mapError {
         case e: HattidError => e
@@ -46,7 +46,8 @@ class ChppClient(client: Client, customerConfig: CustomerConfig, accessConfig: A
     
   }
 
-  private def executeZioInner[Model, Request <: AbstractRequest[Model]](request: Request)(implicit reader: XmlReader[Model]): IO[HattidError, Model] = {
+  private def executeZioInner[Model, Request <: AbstractRequest[Model]](request: Request, userAccessConfig: Option[AccessConfig])(implicit reader: XmlReader[Model]): IO[HattidError, Model] = {
+    val accessConfig = userAccessConfig.getOrElse(this.accessConfig)
     ZIO.scoped {
       val requestData = request.requestData(OauthTokens(accessConfig.accessToken, customerConfig.customerKey, customerConfig.customerSecret, accessConfig.accessTokenSecret))
       val zClient = client.host("chpp.hattrick.org/chppxml.ashx").port(443)

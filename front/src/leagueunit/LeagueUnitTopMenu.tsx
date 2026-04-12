@@ -1,11 +1,11 @@
 import '../common/menu/TopMenu.css'
-import TopMenu from '../common/menu/TopMenu';
 import ExternalLeagueUnitLink from '../common/links/ExternalLeagueUnitLink';
 import { Form } from 'react-bootstrap';
 import {useNavigate} from 'react-router';
 import {nextLeagueUnit, previousLeagueUnit} from '../common/Utils';
 import {getLeagueUnitIdByName} from '../rest/Client';
 import LeagueUnitLevelDataProps from './LeagueUnitLevelDataProps';
+import { TopMenuMUI } from '../common/menu/TopMenuMUI';
 
 const LeagueUnitTopMenu = (props: {levelProps?: LeagueUnitLevelDataProps}) => {
     const navigate = useNavigate()
@@ -60,7 +60,7 @@ const LeagueUnitTopMenu = (props: {levelProps?: LeagueUnitLevelDataProps}) => {
             </Form.Select>
         </Form>
 
-    return <TopMenu
+    return <TopMenuMUI
             levelProps={props.levelProps}
             links={links}
             externalLink={externalLink}

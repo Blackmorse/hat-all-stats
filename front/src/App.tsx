@@ -6,20 +6,44 @@ import LeagueUnit from './leagueunit/LeagueUnit'
 import Team from './team/Team'
 import World from './world/World';
 import AboutLayout from './world/AboutLayout'
+import { Login } from './login/Login'
 import CookieWidget from './CookieWidget'
 import LeagueRedirect from './common/redirect/LeagueRedirect'
 import LeagueUnitRedirect from './common/redirect/LeagueUnitRedirect'
 import TeamRedirect from './common/redirect/TeamRedirect'
 import './main.css'
 import Player from './player/Player';
+import { createContext, useEffect, useState } from 'react';
+import { UserContext } from './rest/models/UserContext';
+import { userContext } from './rest/clients/AuthClient';
+
+export const AuthContext = createContext<UserContext | null>(null)
 
 function App() {
+  const [auth, setAuth] = useState<UserContext | null>(null)
+
+  useEffect(() => {
+    const requestToken = localStorage.getItem("request_token")
+    if (!requestToken) {
+      setAuth(null)
+      return
+    }
+    userContext(requestToken).then(context => {
+      if (context.status === 200) {
+        setAuth(context.data)
+      } else {
+        setAuth(null)
+      }
+    })
+  }, [])
 
   return (<>
+      <AuthContext value={auth}>
     <Router>
       <Routes>
         <Route path="/" element={<AboutLayout />} />
         <Route path="/about" element={<AboutLayout />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/worldOverview" element={<World />} />
         <Route path="/league" element={<LeagueRedirect />} />
         <Route path="/league/:leagueId" element={<League />} />
@@ -32,6 +56,7 @@ function App() {
       </Routes>
     </Router>
     <CookieWidget />
+    </AuthContext>
   </>
   );
 }

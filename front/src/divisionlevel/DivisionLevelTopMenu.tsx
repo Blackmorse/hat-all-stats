@@ -1,10 +1,10 @@
 import React from 'react'
 import '../common/menu/TopMenu.css'
-import TopMenu from '../common/menu/TopMenu';
 import { Form } from 'react-bootstrap';
 import {useNavigate} from 'react-router';
 import {getLeagueUnitIdByName} from '../rest/Client';
 import DivisionLevelDataProps from './DivisionLevelDataProps';
+import { TopMenuMUI } from '../common/menu/TopMenuMUI';
 
 const DivisionLevelTopMenu = (props: {levelProps?: DivisionLevelDataProps}) => {
     const navigate = useNavigate()
@@ -37,7 +37,7 @@ const DivisionLevelTopMenu = (props: {levelProps?: DivisionLevelDataProps}) => {
             </Form.Select>
           </Form>
 
-    return <TopMenu
+    return <TopMenuMUI
             levelProps={props.levelProps}
             selectBox={selectBox}
             links={links}

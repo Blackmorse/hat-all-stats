@@ -1,16 +1,16 @@
 package com.blackmorse.hattid.web.zios
 
 import com.blackmorse.hattid.web.models.web.HattidError
-import com.blackmorse.hattid.web.routes.OauthService
+import com.blackmorse.hattid.web.oauth.{OauthCache, OauthService}
 import com.blackmorse.hattid.web.service.*
 import com.blackmorse.hattid.web.service.cache.{DreamTeamCache, OverviewCache}
 import com.blackmorse.hattid.web.service.leagueinfo.LeagueInfoServiceZIO
 import com.blackmorse.hattid.web.service.leagueunit.LeagueUnitCalculatorService
-import com.blackmorse.hattid.web.webclients.{AccessConfig, AuthConfig, ChppClient, CustomerConfig}
+import com.blackmorse.hattid.web.webclients.{AccessConfig, ChppClient, CustomerConfig}
 import zio.config.magnolia.deriveConfig
 import zio.config.typesafe.TypesafeConfigProvider
 import zio.http.*
-import zio.{Config, Duration, Scope, ULayer, ZEnvironment, ZIO, ZLayer, ZPool}
+import zio.{Config, Duration, Scope, ZEnvironment, ZIO, ZLayer, ZPool}
 
 import java.sql.Connection
 import java.util.Properties
@@ -74,7 +74,6 @@ object HattidEnv {
     
     val oauthServiceLayer = hoCustomerConfigLayer >>> OauthService.make
 
-
     val acquireRelease = ZIO.acquireRelease(acquire)(conn => ZIO.succeed(conn.close()))
 
     val zPool = ZPool.make(
@@ -90,8 +89,10 @@ object HattidEnv {
     val chppServiceLayer = chppClientLayer >>> ChppService.make
 
     val poolLayer: ZLayer[DatabaseConfig & Scope, Nothing, ZPool[Nothing, Connection]] = ZLayer.fromZIO(zPool)
-    val translationLayer = TranslationsService.layer
-      .mapError(he => new Exception(he.toString))
+
+    val oauthCacheLayer = (databaseConfigLayer ++ (databaseConfigLayer >>> poolLayer) ++ chppServiceLayer) >>> OauthCache.make
+    
+    val translationLayer = TranslationsService.layer.mapError(he => new Exception(he.toString))
 
     val res: ZIO[Scope, Throwable | HattidError, ZEnvironment[HattidEnv]] = for {
       chppClientEnv <- chppClientLayer.build
@@ -112,6 +113,7 @@ object HattidEnv {
       overviewCache <- (databaseConfigLayer >>> poolLayer >>> OverviewCache.layer).build
       dreamTeamCache <- (databaseConfigLayer >>> poolLayer >>> DreamTeamCache.make).build
       oauthServiceEnv <- oauthServiceLayer.build
+      oauthCacheEnv <- oauthCacheLayer.build
     } yield {
       serverEnv ++
         chppClientEnv ++
@@ -128,7 +130,8 @@ object HattidEnv {
         similarMatchesServiceEnv ++
         overviewCache ++
         dreamTeamCache ++
-        oauthServiceEnv
+        oauthServiceEnv ++
+        oauthCacheEnv
     }
 
     res
