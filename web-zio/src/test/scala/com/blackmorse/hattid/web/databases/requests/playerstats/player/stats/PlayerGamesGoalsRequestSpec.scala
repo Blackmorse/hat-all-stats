@@ -58,15 +58,12 @@ object PlayerGamesGoalsRequestSpec extends ZIOSpecDefault:
           |(
           | (season = {main_season_0}) and (league_id = {main_league_id_1}) and
           | (division_level = {main_division_level_2}) and (league_unit_id = {main_league_unit_id_3}) and
-          | (team_id = {main_team_id_4}) and (cup_level = {main_cup_level_5})
-          |)
-          |group by player_id, first_name, last_name, team_id, league_unit_id, league_unit_name
-          |having
-          |(
+          | (team_id = {main_team_id_4}) and (cup_level = {main_cup_level_5}) and
           | (round <= {main_round_6}) and (role = {main_role_7}) and
           | (nationality = {main_nationality_8}) and (age >= {main_age_9}) and
           | (age <= {main_age_10})
           |)
+          |group by player_id, first_name, last_name, team_id, league_unit_id, league_unit_name
           |order by games asc, player_id asc
           |limit 16, 17
           |SETTINGS max_bytes_before_external_group_by = 700000000

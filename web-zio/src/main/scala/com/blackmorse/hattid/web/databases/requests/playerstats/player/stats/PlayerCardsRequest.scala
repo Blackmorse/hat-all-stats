@@ -39,13 +39,12 @@ object PlayerCardsRequest extends ClickhousePlayerStatsRequest[PlayerCards] {
       .season(parameters.season)
       .orderingKeyPath(orderingKeyPath)
       .isLeagueMatch
-      .groupBy("player_id", "first_name", "last_name", "team_id", "league_unit_id", "league_unit_name")
-      .having
       .round.lessEqual(round)
       .role(role.map(Roles.reverseMapping))
       .nationality(playersParameters.nationality)
       .age.greaterEqual(playersParameters.minAge.map(_ * 112))
       .age.lessEqual(playersParameters.maxAge.map(_ * 112 + 111))
+      .groupBy("player_id", "first_name", "last_name", "team_id", "league_unit_id", "league_unit_name")
       .orderBy(
         parameters.sortBy.to(parameters.sortingDirection.toSql),
         "player_id".to(parameters.sortingDirection.toSql)
