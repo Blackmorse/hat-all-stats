@@ -8,5 +8,5 @@ object TrophyTypeId extends Enumeration {
   val HATTRICK_MASTERS_TOP_SCORER = Value("93")
   val TOURNAMENT_WINNER = Value("103")
   val STUDY_TOURNNAMENT = Value("203")
-  val UNKNOWN = Value("204")
+  val UNKNOWN2 = Value("204")
 }
